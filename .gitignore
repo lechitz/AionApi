@@ -22,4 +22,5 @@ go.work
 go.work.sum
 
 # env file
-.env
+cmd/aion-api/.env
+.idea
