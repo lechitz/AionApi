@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/gorilla/mux"
+	"github.com/lechitz/AionApi/src/auth"
 	"github.com/lechitz/AionApi/src/database"
 	"github.com/lechitz/AionApi/src/models"
 	"github.com/lechitz/AionApi/src/repository"
@@ -104,6 +106,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userIDToken, err := auth.ExtractUserID(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID != userIDToken {
+		responses.Error(w, http.StatusForbidden, errors.New("cannot update another user"))
+		return
+	}
+
 	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		responses.Error(w, http.StatusUnprocessableEntity, err)
@@ -146,6 +159,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseUint(params["userId"], 10, 64)
 	if err != nil {
 		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userIDToken, err := auth.ExtractUserID(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID != userIDToken {
+		responses.Error(w, http.StatusForbidden, errors.New("cannot delete another user"))
 		return
 	}
 

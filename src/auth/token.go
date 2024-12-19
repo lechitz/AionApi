@@ -6,6 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/lechitz/AionApi/src/config"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -22,8 +23,8 @@ func CreateToken(userID uint64) (string, error) {
 }
 
 func ValidateToken(r *http.Request) error {
-	tokenString := ExtractToken(r)
-	token, err := jwt.Parse(tokenString, ReturnKeyVerification)
+	tokenString := extractToken(r)
+	token, err := jwt.Parse(tokenString, returnKeyVerification)
 	if err != nil {
 		return err
 	}
@@ -35,7 +36,7 @@ func ValidateToken(r *http.Request) error {
 	return errors.New("invalid token")
 }
 
-func ExtractToken(r *http.Request) string {
+func extractToken(r *http.Request) string {
 	token := r.Header.Get("Authorization")
 
 	if len(strings.Split(token, " ")) == 2 {
@@ -45,10 +46,28 @@ func ExtractToken(r *http.Request) string {
 	return ""
 }
 
-func ReturnKeyVerification(token *jwt.Token) (interface{}, error) {
+func returnKeyVerification(token *jwt.Token) (interface{}, error) {
 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 		return nil, fmt.Errorf("method signing invalid: %v", token.Header["alg"])
 	}
 
 	return config.SecretKey, nil
+}
+
+func ExtractUserID(r *http.Request) (uint64, error) {
+	tokenString := extractToken(r)
+	token, err := jwt.Parse(tokenString, returnKeyVerification)
+	if err != nil {
+		return 0, err
+	}
+
+	if permissions, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userID, err := strconv.ParseUint(fmt.Sprintf("%.0f", permissions["userId"]), 10, 64)
+		if err != nil {
+			return 0, err
+		}
+		return userID, nil
+	}
+
+	return 0, errors.New("invalid token")
 }
