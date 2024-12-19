@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"github.com/badoux/checkmail"
+	"github.com/lechitz/AionApi/src/security"
 	"strings"
 	"time"
 )
@@ -21,7 +22,9 @@ func (user *User) Prepare(step string) error {
 		return err
 	}
 
-	user.format()
+	if err := user.format(step); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -47,8 +50,19 @@ func (user *User) validate(step string) error {
 	return nil
 }
 
-func (user *User) format() {
+func (user *User) format(step string) error {
 	user.Name = strings.TrimSpace(user.Name)
 	user.Username = strings.TrimSpace(user.Username)
 	user.Email = strings.TrimSpace(user.Email)
+
+	if step == "register" {
+		hashedPassword, err := security.Hash(user.Password)
+		if err != nil {
+			return err
+		}
+
+		user.Password = string(hashedPassword)
+	}
+
+	return nil
 }

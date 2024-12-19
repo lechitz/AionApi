@@ -14,14 +14,14 @@ import (
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	corpoRequest, err := io.ReadAll(r.Body)
+	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		responses.Error(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	var user models.User
-	if err = json.Unmarshal(corpoRequest, &user); err != nil {
+	if err = json.Unmarshal(requestBody, &user); err != nil {
 		responses.Error(w, http.StatusBadRequest, err)
 		return
 	}
@@ -104,7 +104,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	corpoRequest, err := io.ReadAll(r.Body)
+	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		responses.Error(w, http.StatusUnprocessableEntity, err)
 		return
@@ -112,7 +112,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	var user models.User
 
-	if err = json.Unmarshal(corpoRequest, &user); err != nil {
+	if err = json.Unmarshal(requestBody, &user); err != nil {
 		responses.Error(w, http.StatusBadRequest, err)
 		return
 	}
