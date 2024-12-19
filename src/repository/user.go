@@ -81,7 +81,7 @@ func (repository Users) GetUserByID(id uint64) (models.User, error) {
 	return user, nil
 }
 
-func (repository *Users) UpdateUser(ID uint64, user models.User) error {
+func (repository Users) UpdateUser(ID uint64, user models.User) error {
 	statement, err := repository.db.Prepare("update users set name = ?, username = ?, email = ? where id = ?")
 	if err != nil {
 		return err
@@ -95,7 +95,7 @@ func (repository *Users) UpdateUser(ID uint64, user models.User) error {
 	return nil
 }
 
-func (repository *Users) DeleteUser(ID uint64) error {
+func (repository Users) DeleteUser(ID uint64) error {
 	statement, err := repository.db.Prepare("delete from users where id = ?")
 	if err != nil {
 		return err
@@ -103,6 +103,56 @@ func (repository *Users) DeleteUser(ID uint64) error {
 	defer statement.Close()
 
 	if _, err = statement.Exec(ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repository Users) GetUserByEmail(email string) (models.User, error) {
+	lines, err := repository.db.Query("select id, password from users where email = ?", email)
+	if err != nil {
+		return models.User{}, err
+	}
+	defer lines.Close()
+
+	var user models.User
+
+	if lines.Next() {
+		if err = lines.Scan(&user.ID, &user.Password); err != nil {
+			return models.User{}, err
+		}
+	}
+
+	return user, nil
+}
+
+func (repository Users) GetPassword(userID uint64) (string, error) {
+	line, err := repository.db.Query("select password from users where id = ?", userID)
+	if err != nil {
+		return "", err
+	}
+	defer line.Close()
+
+	var user models.User
+
+	if line.Next() {
+		if err = line.Scan(&user.Password); err != nil {
+			return "", err
+		}
+	}
+
+	return user.Password, nil
+}
+
+func (repository Users) UpdatePassword(userID uint64, newPassword string) error {
+	statement, err := repository.db.Prepare("update users set password = ? where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(newPassword, userID); err != nil {
 		return err
 	}
 

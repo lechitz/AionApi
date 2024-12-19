@@ -2,11 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/gorilla/mux"
+	"github.com/lechitz/AionApi/src/auth"
 	"github.com/lechitz/AionApi/src/database"
 	"github.com/lechitz/AionApi/src/models"
 	"github.com/lechitz/AionApi/src/repository"
 	"github.com/lechitz/AionApi/src/responses"
+	"github.com/lechitz/AionApi/src/security"
 	"io"
 	"net/http"
 	"strconv"
@@ -14,14 +17,14 @@ import (
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	corpoRequest, err := io.ReadAll(r.Body)
+	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		responses.Error(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	var user models.User
-	if err = json.Unmarshal(corpoRequest, &user); err != nil {
+	if err = json.Unmarshal(requestBody, &user); err != nil {
 		responses.Error(w, http.StatusBadRequest, err)
 		return
 	}
@@ -104,7 +107,18 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	corpoRequest, err := io.ReadAll(r.Body)
+	userIDToken, err := auth.ExtractUserID(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID != userIDToken {
+		responses.Error(w, http.StatusForbidden, errors.New("cannot update another user"))
+		return
+	}
+
+	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		responses.Error(w, http.StatusUnprocessableEntity, err)
 		return
@@ -112,7 +126,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	var user models.User
 
-	if err = json.Unmarshal(corpoRequest, &user); err != nil {
+	if err = json.Unmarshal(requestBody, &user); err != nil {
 		responses.Error(w, http.StatusBadRequest, err)
 		return
 	}
@@ -149,6 +163,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userIDToken, err := auth.ExtractUserID(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID != userIDToken {
+		responses.Error(w, http.StatusForbidden, errors.New("cannot delete another user"))
+		return
+	}
+
 	db, err := database.Connect()
 	if err != nil {
 		responses.Error(w, http.StatusInternalServerError, err)
@@ -159,6 +184,73 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	repositoryDB := repository.NewUserRepository(db)
 
 	if err = repositoryDB.DeleteUser(userID); err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
+}
+
+func UpdatePassword(w http.ResponseWriter, r *http.Request) {
+	userIDToken, err := auth.ExtractUserID(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	params := mux.Vars(r)
+
+	userID, err := strconv.ParseUint(params["userId"], 10, 64)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if userID != userIDToken {
+		responses.Error(w, http.StatusForbidden, errors.New("cannot update another user"))
+		return
+	}
+
+	requestBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		responses.Error(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var password models.Password
+
+	if err = json.Unmarshal(requestBody, &password); err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repositoryDB := repository.NewUserRepository(db)
+
+	passwordDB, err := repositoryDB.GetPassword(userID)
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err = security.VerifyPassword(passwordDB, password.Current); err != nil {
+		responses.Error(w, http.StatusUnauthorized, errors.New("invalid password"))
+		return
+	}
+
+	passwordHash, err := security.Hash(password.New)
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err = repositoryDB.UpdatePassword(userID, string(passwordHash)); err != nil {
 		responses.Error(w, http.StatusInternalServerError, err)
 		return
 	}

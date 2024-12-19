@@ -11,6 +11,7 @@ import (
 var (
 	Port             = 5000
 	StringConnection = ""
+	SecretKey        []byte
 )
 
 func LoadEnv() {
@@ -30,6 +31,8 @@ func LoadEnv() {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 	)
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 
 	fmt.Println("Configurations loaded successfully")
 	fmt.Printf(" - Connection: %s\n", StringConnection)
