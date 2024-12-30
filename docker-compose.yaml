@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=aion
+      - POSTGRES_PASSWORD=aion
+      - POSTGRES_DB=aion
+    volumes:
+      - /tmp/postgres-volume:/data/db
+      - ./config/db/migrations/:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    networks:
+      rede_local:
+
+  petshop-api:
+    container_name: petshop-api
+    build: ${AION_GO_FOLDER}
+    restart: always
+    environment:
+      - REDIS_ADDR=redis:6379
+      - DB_USER=aion
+      - DB_PASSWORD=aion
+      - DB_NAME=aion
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_TYPE=postgres
+    ports:
+      - "5001:5001"
+    expose:
+      - "5001"
+    depends_on:
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      rede_local:
+
+networks:
+  rede_local:
