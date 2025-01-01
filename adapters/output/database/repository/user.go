@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+const (
+	ErrorToCreateUser  = "error to create user into postgres"
+	ErrorToGetAllUser  = "error to get all users from postgres"
+	ErrorToGetUserByID = "error to get user by ID from postgres"
+)
+
 type UserPostgresDB struct {
 	DB          *gorm.DB
 	LoggerSugar *zap.SugaredLogger
@@ -42,6 +48,7 @@ func (u UserDB) CopyToUserDomain() domain.UserDomain {
 		Email:     u.Email,
 		Password:  u.Password,
 		CreatedAt: u.CreatedAt,
+		UpdatedAt: u.UpdatedAt,
 	}
 }
 
@@ -52,7 +59,38 @@ func (up UserPostgresDB) CreateUser(contextControl domain.ContextControl, userDo
 
 	if err := up.DB.WithContext(contextControl.Context).
 		Create(&userDB).Error; err != nil {
-		up.LoggerSugar.Errorw("error to save the user into postgres", "error", err.Error())
+		up.LoggerSugar.Errorw(ErrorToCreateUser, "error", err.Error())
+		return domain.UserDomain{}, err
+	}
+
+	return userDB.CopyToUserDomain(), nil
+}
+
+func (up UserPostgresDB) GetAllUsers(contextControl domain.ContextControl) ([]domain.UserDomain, error) {
+	var usersDB []UserDB
+	var usersDomain []domain.UserDomain
+
+	if err := up.DB.WithContext(contextControl.Context).
+		Select("id", "name", "username", "email").
+		Find(&usersDB).Error; err != nil {
+		up.LoggerSugar.Errorw(ErrorToGetAllUser, "error", err.Error())
+		return []domain.UserDomain{}, err
+	}
+
+	for _, userDB := range usersDB {
+		usersDomain = append(usersDomain, userDB.CopyToUserDomain())
+	}
+
+	return usersDomain, nil
+}
+
+func (up UserPostgresDB) GetUserByID(contextControl domain.ContextControl, userID uint64) (domain.UserDomain, error) {
+	var userDB UserDB
+
+	if err := up.DB.WithContext(contextControl.Context).
+		Where("id = ?", userID).
+		First(&userDB).Error; err != nil {
+		up.LoggerSugar.Errorw(ErrorToGetUserByID, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
 

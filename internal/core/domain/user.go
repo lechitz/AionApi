@@ -9,5 +9,5 @@ type UserDomain struct {
 	Email     string
 	Password  string
 	CreatedAt time.Time
-	UpdateAt  time.Time
+	UpdatedAt time.Time
 }
