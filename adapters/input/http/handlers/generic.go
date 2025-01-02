@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/lechitz/AionApi/internal/core/utils"
+	"github.com/lechitz/AionApi/pkg/utils"
 	"go.uber.org/zap"
 	"net/http"
 )

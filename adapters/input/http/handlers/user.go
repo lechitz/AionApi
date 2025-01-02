@@ -9,7 +9,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/lechitz/AionApi/adapters/middlewares"
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/utils"
+	"github.com/lechitz/AionApi/pkg/utils"
 	"net/http"
 	"strconv"
 	"strings"
@@ -24,7 +24,8 @@ const (
 	ErrorToExtractUserID     = "error to extract user ID"
 	ErrorToUpdateUser        = "error to update user"
 
-	ErrorToParseUser = "error to parse user"
+	ErrUserPermissionDenied = "user permission denied"
+	ErrorToParseUser        = "error to parse user"
 
 	SuccessToCreateUser = "user created successfully"
 	SuccessToGetUser    = "user get successfully"
@@ -50,16 +51,12 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var userRequest UserRequest
 	if err := json.NewDecoder(r.Body).Decode(&userRequest); err != nil {
-		u.LoggerSugar.Errorw(ErrorToDecodeUserRequest, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToDecodeUserRequest, err.Error())
-		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToDecodeUserRequest, err)
 		return
 	}
 
 	if err := userRequest.prepareUser("register"); err != nil {
-		u.LoggerSugar.Errorw(ErrorToPrepareUser, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToPrepareUser, err.Error())
-		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToPrepareUser, err)
 		return
 	}
 
@@ -68,15 +65,13 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	userDomain, err := u.UserService.CreateUser(contextControl, userDomain)
 	if err != nil {
-		u.LoggerSugar.Errorw(ErrorToCreateUser, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToCreateUser, err.Error())
-		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToCreateUser, err)
 		return
 	}
 
-	var userResponse UserResponse
-	copier.Copy(&userResponse, &userDomain)
-	response := utils.ObjectResponse(userResponse, SuccessToCreateUser)
+	var createUserResponse CreateUserResponse
+	copier.Copy(&createUserResponse, &userDomain)
+	response := utils.ObjectResponse(createUserResponse, SuccessToCreateUser)
 	utils.ResponseReturn(w, http.StatusCreated, response.Bytes())
 }
 
@@ -88,9 +83,7 @@ func (u *User) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	usersDomain, err := u.UserService.GetAllUsers(contextControl)
 	if err != nil {
-		u.LoggerSugar.Errorw(ErrorToGetUsers, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToGetUsers, err.Error())
-		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToGetUsers, err)
 		return
 	}
 
@@ -109,25 +102,19 @@ func (u *User) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDParam := chi.URLParam(r, "id")
 
 	if userIDParam == "" {
-		u.LoggerSugar.Errorw(MissingUserIDParameter)
-		response := utils.ObjectResponse(MissingUserIDParameter, UserIDIsRequired)
-		utils.ResponseReturn(w, http.StatusBadRequest, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, MissingUserIDParameter, errors.New(UserIDIsRequired))
 		return
 	}
 
 	userID, err := strconv.ParseUint(userIDParam, 10, 64)
 	if err != nil {
-		u.LoggerSugar.Errorw(ErrorToParseUser, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToParseUser, err.Error())
-		utils.ResponseReturn(w, http.StatusBadRequest, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, ErrorToParseUser, err)
 		return
 	}
 
 	userDomain, err := u.UserService.GetUserByID(contextControl, userID)
 	if err != nil {
-		u.LoggerSugar.Errorw(ErrorToGetUser, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToGetUser, err.Error())
-		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToGetUser, err)
 		return
 	}
 
@@ -146,48 +133,36 @@ func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userIDParam := chi.URLParam(r, "id")
 
 	if userIDParam == "" {
-		u.LoggerSugar.Errorw(MissingUserIDParameter)
-		response := utils.ObjectResponse(MissingUserIDParameter, UserIDIsRequired)
-		utils.ResponseReturn(w, http.StatusBadRequest, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, MissingUserIDParameter, errors.New(UserIDIsRequired))
 		return
 	}
 
 	userID, err := strconv.ParseUint(userIDParam, 10, 64)
 	if err != nil {
-		u.LoggerSugar.Errorw(ErrorToParseUser, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToParseUser, err.Error())
-		utils.ResponseReturn(w, http.StatusBadRequest, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, ErrorToParseUser, err)
 		return
 	}
 
 	userIDToken, err := middlewares.ExtractUserID(r)
 	if err != nil {
-		u.LoggerSugar.Errorw(ErrorToExtractUserID, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToExtractUserID, err.Error())
-		utils.ResponseReturn(w, http.StatusUnauthorized, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, ErrorToExtractUserID, err)
 		return
 	}
 
 	if userID != userIDToken {
-		u.LoggerSugar.Errorw(ErrorToExtractUserID, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToExtractUserID, err.Error())
-		utils.ResponseReturn(w, http.StatusForbidden, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusForbidden, ErrUserPermissionDenied, errors.New(ErrUserPermissionDenied))
 		return
 	}
 
 	var userRequest UserRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&userRequest); err != nil {
-		u.LoggerSugar.Errorw(ErrorToDecodeUserRequest, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToDecodeUserRequest, err.Error())
-		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToDecodeUserRequest, err)
 		return
 	}
 
 	if err := userRequest.prepareUser("edit"); err != nil {
-		u.LoggerSugar.Errorw(ErrorToPrepareUser, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToPrepareUser, err.Error())
-		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToPrepareUser, err)
 		return
 	}
 
@@ -196,9 +171,7 @@ func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	userDomain, err = u.UserService.UpdateUser(contextControl, userDomain)
 	if err != nil {
-		u.LoggerSugar.Errorw(ErrorToUpdateUser, "error", err.Error())
-		response := utils.ObjectResponse(ErrorToUpdateUser, err.Error())
-		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToUpdateUser, err)
 		return
 	}
 
