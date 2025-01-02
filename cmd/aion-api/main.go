@@ -16,6 +16,11 @@ import (
 	"os"
 )
 
+const (
+	ServerStarted                = "server started"
+	ErrorToListenAndStartsServer = "error to listen and starts server"
+)
+
 var loggerSugar *zap.SugaredLogger
 
 func init() {
@@ -80,10 +85,10 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	loggerSugar.Infow("server started", "port", serverHttp.Addr, "contextPath", contextPath)
+	loggerSugar.Infow(ServerStarted, "port", serverHttp.Addr, "contextPath", contextPath)
 
 	if err := serverHttp.ListenAndServe(); err != nil {
-		loggerSugar.Errorw("error to listen and starts server", "port", serverHttp.Addr,
+		loggerSugar.Errorw(ErrorToListenAndStartsServer, "port", serverHttp.Addr,
 			"contextPath", contextPath, "err", err.Error())
 		panic(err.Error())
 	}

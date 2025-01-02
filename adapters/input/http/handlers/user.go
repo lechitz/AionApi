@@ -14,6 +14,30 @@ import (
 	"strings"
 )
 
+const (
+	ErrorToDecodeUserRequest = "error to decode user request"
+	ErrorToPrepareUser       = "error to prepare user"
+	ErrorToCreateUser        = "error to create user"
+	ErrorToGetUser           = "error to get user"
+	ErrorToGetUsers          = "error to get users"
+
+	ErrorToParseUser = "error to parse user"
+
+	SuccessToCreateUser = "user created successfully"
+	SucessToGetUser     = "user get successfully"
+	SucessToGetUsers    = "users get successfully"
+
+	MissingUserIDParameter = "missing user ID parameter"
+
+	NameIsRequired     = "name is required"
+	UsernameIsRequired = "username is required"
+	EmailIsRequired    = "email is required"
+	PasswordIsRequired = "password is required"
+	UserIDIsRequired   = "user ID is required"
+
+	InvalidEmail = "invalid email"
+)
+
 func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	contextControl := domain.ContextControl{
@@ -22,15 +46,15 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var userRequest UserRequest
 	if err := json.NewDecoder(r.Body).Decode(&userRequest); err != nil {
-		u.LoggerSugar.Errorw(utils.ErrorToDecodeUserRequest, "error", err.Error())
-		response := utils.ObjectResponse(utils.ErrorToDecodeUserRequest, err.Error())
+		u.LoggerSugar.Errorw(ErrorToDecodeUserRequest, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToDecodeUserRequest, err.Error())
 		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
 		return
 	}
 
 	if err := userRequest.prepareUser("register"); err != nil {
-		u.LoggerSugar.Errorw(utils.ErrorToPrepareUser, "error", err.Error())
-		response := utils.ObjectResponse(utils.ErrorToPrepareUser, err.Error())
+		u.LoggerSugar.Errorw(ErrorToPrepareUser, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToPrepareUser, err.Error())
 		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
 		return
 	}
@@ -40,19 +64,19 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	userDomain, err := u.UserService.CreateUser(contextControl, userDomain)
 	if err != nil {
-		u.LoggerSugar.Errorw(utils.ErrorToCreateUser, "error", err.Error())
-		response := utils.ObjectResponse(utils.ErrorToCreateUser, err.Error())
+		u.LoggerSugar.Errorw(ErrorToCreateUser, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToCreateUser, err.Error())
 		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
 		return
 	}
 
 	var userResponse UserResponse
 	copier.Copy(&userResponse, &userDomain)
-	response := utils.ObjectResponse(userResponse, utils.SuccessToCreateUser)
+	response := utils.ObjectResponse(userResponse, SuccessToCreateUser)
 	utils.ResponseReturn(w, http.StatusCreated, response.Bytes())
 }
 
-func (u *User) GetAllUsers(w http.ResponseWriter) {
+func (u *User) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	contextControl := domain.ContextControl{
 		Context: context.Background(),
@@ -60,15 +84,15 @@ func (u *User) GetAllUsers(w http.ResponseWriter) {
 
 	usersDomain, err := u.UserService.GetAllUsers(contextControl)
 	if err != nil {
-		u.LoggerSugar.Errorw(utils.ErrorToGetUsers, "error", err.Error())
-		response := utils.ObjectResponse(utils.ErrorToGetUsers, err.Error())
+		u.LoggerSugar.Errorw(ErrorToGetUsers, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToGetUsers, err.Error())
 		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
 		return
 	}
 
 	var getUsersResponse []GetUserResponse
 	copier.Copy(&getUsersResponse, &usersDomain)
-	response := utils.ObjectResponse(getUsersResponse, utils.SucessToGetUsers)
+	response := utils.ObjectResponse(getUsersResponse, SucessToGetUsers)
 	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
 
@@ -81,31 +105,31 @@ func (u *User) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDParam := chi.URLParam(r, "id")
 
 	if userIDParam == "" {
-		u.LoggerSugar.Errorw(utils.MissingUserIDParameter)
-		response := utils.ObjectResponse(utils.MissingUserIDParameter, utils.UserIDIsRequired)
+		u.LoggerSugar.Errorw(MissingUserIDParameter)
+		response := utils.ObjectResponse(MissingUserIDParameter, UserIDIsRequired)
 		utils.ResponseReturn(w, http.StatusBadRequest, response.Bytes())
 		return
 	}
 
 	userID, err := strconv.ParseUint(userIDParam, 10, 64)
 	if err != nil {
-		u.LoggerSugar.Errorw(utils.ErrorToParseUser, "error", err.Error())
-		response := utils.ObjectResponse(utils.ErrorToParseUser, err.Error())
+		u.LoggerSugar.Errorw(ErrorToParseUser, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToParseUser, err.Error())
 		utils.ResponseReturn(w, http.StatusBadRequest, response.Bytes())
 		return
 	}
 
 	userDomain, err := u.UserService.GetUserByID(contextControl, userID)
 	if err != nil {
-		u.LoggerSugar.Errorw(utils.ErrorToGetUser, "error", err.Error())
-		response := utils.ObjectResponse(utils.ErrorToGetUser, err.Error())
+		u.LoggerSugar.Errorw(ErrorToGetUser, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToGetUser, err.Error())
 		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
 		return
 	}
 
 	var getUserResponse []GetUserResponse
 	copier.Copy(&getUserResponse, &userDomain)
-	response := utils.ObjectResponse(getUserResponse, utils.SucessToGetUser)
+	response := utils.ObjectResponse(getUserResponse, SucessToGetUser)
 	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
 
@@ -123,21 +147,21 @@ func (userRequest *UserRequest) prepareUser(step string) error {
 
 func (userRequest *UserRequest) validate(step string) error {
 	if userRequest.Name == "" {
-		return errors.New(utils.NameIsRequired)
+		return errors.New(NameIsRequired)
 	}
 	if userRequest.Username == "" {
-		return errors.New(utils.UsernameIsRequired)
+		return errors.New(UsernameIsRequired)
 	}
 	if userRequest.Email == "" {
-		return errors.New(utils.EmailIsRequired)
+		return errors.New(EmailIsRequired)
 	}
 
 	if err := checkmail.ValidateFormat(userRequest.Email); err != nil {
-		return errors.New(utils.InvalidEmail)
+		return errors.New(InvalidEmail)
 	}
 
 	if step == "register" && userRequest.Password == "" {
-		return errors.New(utils.PasswordIsRequired)
+		return errors.New(PasswordIsRequired)
 	}
 	return nil
 }
