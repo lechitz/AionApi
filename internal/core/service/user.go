@@ -46,3 +46,13 @@ func (service *UserService) GetUserByID(contextControl domain.ContextControl, ID
 	}
 	return user, nil
 }
+
+func (service *UserService) UpdateUser(contextControl domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error) {
+
+	user, err := service.UserDomainDataBaseRepository.UpdateUser(contextControl, user)
+	if err != nil {
+		service.LoggerSugar.Errorw(ErrorToCreateUser, "error", err.Error())
+		return domain.UserDomain{}, err
+	}
+	return user, nil
+}

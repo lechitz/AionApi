@@ -7,6 +7,7 @@ import (
 	"github.com/badoux/checkmail"
 	"github.com/go-chi/chi/v5"
 	"github.com/jinzhu/copier"
+	"github.com/lechitz/AionApi/adapters/middlewares"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/utils"
 	"net/http"
@@ -20,12 +21,15 @@ const (
 	ErrorToCreateUser        = "error to create user"
 	ErrorToGetUser           = "error to get user"
 	ErrorToGetUsers          = "error to get users"
+	ErrorToExtractUserID     = "error to extract user ID"
+	ErrorToUpdateUser        = "error to update user"
 
 	ErrorToParseUser = "error to parse user"
 
 	SuccessToCreateUser = "user created successfully"
-	SucessToGetUser     = "user get successfully"
-	SucessToGetUsers    = "users get successfully"
+	SuccessToGetUser    = "user get successfully"
+	SuccessToGetUsers   = "users get successfully"
+	SuccessToUpdateUser = "user updated successfully"
 
 	MissingUserIDParameter = "missing user ID parameter"
 
@@ -92,7 +96,7 @@ func (u *User) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	var getUsersResponse []GetUserResponse
 	copier.Copy(&getUsersResponse, &usersDomain)
-	response := utils.ObjectResponse(getUsersResponse, SucessToGetUsers)
+	response := utils.ObjectResponse(getUsersResponse, SuccessToGetUsers)
 	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
 
@@ -129,8 +133,79 @@ func (u *User) GetUserByID(w http.ResponseWriter, r *http.Request) {
 
 	var getUserResponse []GetUserResponse
 	copier.Copy(&getUserResponse, &userDomain)
-	response := utils.ObjectResponse(getUserResponse, SucessToGetUser)
+	response := utils.ObjectResponse(getUserResponse, SuccessToGetUser)
 	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
+}
+
+func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
+
+	contextControl := domain.ContextControl{
+		Context: context.Background(),
+	}
+
+	userIDParam := chi.URLParam(r, "id")
+
+	if userIDParam == "" {
+		u.LoggerSugar.Errorw(MissingUserIDParameter)
+		response := utils.ObjectResponse(MissingUserIDParameter, UserIDIsRequired)
+		utils.ResponseReturn(w, http.StatusBadRequest, response.Bytes())
+		return
+	}
+
+	userID, err := strconv.ParseUint(userIDParam, 10, 64)
+	if err != nil {
+		u.LoggerSugar.Errorw(ErrorToParseUser, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToParseUser, err.Error())
+		utils.ResponseReturn(w, http.StatusBadRequest, response.Bytes())
+		return
+	}
+
+	userIDToken, err := middlewares.ExtractUserID(r)
+	if err != nil {
+		u.LoggerSugar.Errorw(ErrorToExtractUserID, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToExtractUserID, err.Error())
+		utils.ResponseReturn(w, http.StatusUnauthorized, response.Bytes())
+		return
+	}
+
+	if userID != userIDToken {
+		u.LoggerSugar.Errorw(ErrorToExtractUserID, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToExtractUserID, err.Error())
+		utils.ResponseReturn(w, http.StatusForbidden, response.Bytes())
+		return
+	}
+
+	var userRequest UserRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&userRequest); err != nil {
+		u.LoggerSugar.Errorw(ErrorToDecodeUserRequest, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToDecodeUserRequest, err.Error())
+		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
+
+	if err := userRequest.prepareUser("edit"); err != nil {
+		u.LoggerSugar.Errorw(ErrorToPrepareUser, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToPrepareUser, err.Error())
+		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
+
+	var userDomain domain.UserDomain
+	copier.Copy(&userDomain, &userRequest)
+
+	userDomain, err = u.UserService.UpdateUser(contextControl, userDomain)
+	if err != nil {
+		u.LoggerSugar.Errorw(ErrorToUpdateUser, "error", err.Error())
+		response := utils.ObjectResponse(ErrorToUpdateUser, err.Error())
+		utils.ResponseReturn(w, http.StatusInternalServerError, response.Bytes())
+		return
+	}
+
+	var userResponse UserResponse
+	copier.Copy(&userResponse, &userDomain)
+	response := utils.ObjectResponse(userResponse, SuccessToUpdateUser)
+	utils.ResponseReturn(w, http.StatusNoContent, response.Bytes())
 }
 
 func (userRequest *UserRequest) prepareUser(step string) error {
@@ -172,7 +247,7 @@ func (userRequest *UserRequest) format(step string) error {
 	userRequest.Email = strings.TrimSpace(userRequest.Email)
 
 	if step == "register" {
-		hashedPassword, err := utils.Hash(userRequest.Password)
+		hashedPassword, err := middlewares.Hash(userRequest.Password)
 		if err != nil {
 			return err
 		}

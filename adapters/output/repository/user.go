@@ -12,6 +12,7 @@ const (
 	ErrorToCreateUser  = "error to create user into postgres"
 	ErrorToGetAllUser  = "error to get all users from postgres"
 	ErrorToGetUserByID = "error to get user by ID from postgres"
+	ErrorToUpdateUser  = "error to update user into postgres"
 )
 
 type UserPostgresDB struct {
@@ -91,6 +92,26 @@ func (up UserPostgresDB) GetUserByID(contextControl domain.ContextControl, userI
 		Where("id = ?", userID).
 		First(&userDB).Error; err != nil {
 		up.LoggerSugar.Errorw(ErrorToGetUserByID, "error", err.Error())
+		return domain.UserDomain{}, err
+	}
+
+	return userDB.CopyToUserDomain(), nil
+}
+
+func (up UserPostgresDB) UpdateUser(contextControl domain.ContextControl, userDomain domain.UserDomain) (domain.UserDomain, error) {
+
+	var userDB UserDB
+	copier.Copy(&userDB, &userDomain)
+
+	if err := up.DB.WithContext(contextControl.Context).
+		Where("id = ?", userDB.ID).
+		Updates(map[string]interface{}{
+			"name":       userDB.Name,
+			"username":   userDB.Username,
+			"email":      userDB.Email,
+			"updated_at": time.Now(),
+		}).Error; err != nil {
+		up.LoggerSugar.Errorw(ErrorToUpdateUser, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
 

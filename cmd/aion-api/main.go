@@ -6,8 +6,8 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	adpterHttpInput "github.com/lechitz/AionApi/adapters/input/http"
 	"github.com/lechitz/AionApi/adapters/input/http/handlers"
-	"github.com/lechitz/AionApi/adapters/output/database/config"
-	"github.com/lechitz/AionApi/adapters/output/database/repository"
+	"github.com/lechitz/AionApi/adapters/output/repository"
+	"github.com/lechitz/AionApi/config/db"
 	"github.com/lechitz/AionApi/config/environments"
 	"github.com/lechitz/AionApi/internal/core/service"
 	"go.uber.org/zap"
@@ -40,11 +40,11 @@ func init() {
 	loggerSugar = logger.Sugar()
 
 	//GenerateJWTKey is used to generate a new JWT key for the .env file one time
-	//utils.GenerateJWTKey()
+	//middleware.GenerateJWTKey()
 }
 
 func main() {
-	postgresConnectionDB := config.NewPostgresDB(
+	postgresConnectionDB := db.NewPostgresDB(
 		environments.Setting.Postgres.DBUser,
 		environments.Setting.Postgres.DBPassword,
 		environments.Setting.Postgres.DBName,

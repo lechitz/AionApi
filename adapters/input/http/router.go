@@ -3,6 +3,7 @@ package http
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/adapters/input/http/handlers"
+	"github.com/lechitz/AionApi/adapters/middlewares"
 	"go.uber.org/zap"
 )
 
@@ -36,8 +37,13 @@ func (router Router) AddGroupHandlerUser(ah *handlers.User) func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Route("/user", func(r chi.Router) {
 			r.Post("/create", ah.CreateUser)
-			r.Get("/all", ah.GetAllUsers)
-			r.Get("/{id}", ah.GetUserByID)
+
+			r.Group(func(r chi.Router) {
+				r.Use(middlewares.AuthMiddleware(router.LoggerSugar))
+				r.Get("/all", ah.GetAllUsers)
+				r.Get("/{userId}", ah.GetUserByID)
+				r.Put("/{userId}", ah.UpdateUser)
+			})
 		})
 	}
 }
