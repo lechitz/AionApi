@@ -10,7 +10,7 @@ services:
       - POSTGRES_DB=aion
     volumes:
       - /tmp/postgres-volume:/data/db
-      - ./config/db/migrations/:/docker-entrypoint-initdb.d
+      - ./adapters/output/db/migrations/:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     expose:
