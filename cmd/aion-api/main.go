@@ -6,9 +6,9 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	adpterHttpInput "github.com/lechitz/AionApi/adapters/input/http"
 	"github.com/lechitz/AionApi/adapters/input/http/handlers"
+	"github.com/lechitz/AionApi/adapters/output/db"
 	"github.com/lechitz/AionApi/adapters/output/repository"
-	"github.com/lechitz/AionApi/config/db"
-	"github.com/lechitz/AionApi/config/environments"
+	"github.com/lechitz/AionApi/config"
 	"github.com/lechitz/AionApi/internal/core/service"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -24,7 +24,7 @@ const (
 var loggerSugar *zap.SugaredLogger
 
 func init() {
-	err := envconfig.Process("setting", &environments.Setting)
+	err := envconfig.Process("setting", &config.Setting)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -45,11 +45,11 @@ func init() {
 
 func main() {
 	postgresConnectionDB := db.NewPostgresDB(
-		environments.Setting.Postgres.DBUser,
-		environments.Setting.Postgres.DBPassword,
-		environments.Setting.Postgres.DBName,
-		environments.Setting.Postgres.DBHost,
-		environments.Setting.Postgres.DBPort,
+		config.Setting.Postgres.DBUser,
+		config.Setting.Postgres.DBPassword,
+		config.Setting.Postgres.DBName,
+		config.Setting.Postgres.DBHost,
+		config.Setting.Postgres.DBPort,
 		loggerSugar,
 	)
 
@@ -69,7 +69,7 @@ func main() {
 		LoggerSugar: loggerSugar,
 	}
 
-	contextPath := environments.Setting.Server.Context
+	contextPath := config.Setting.Server.Context
 	newRouter := adpterHttpInput.GetNewRouter(loggerSugar)
 	newRouter.GetChiRouter().Route(fmt.Sprintf("/%s", contextPath), func(r chi.Router) {
 		r.NotFound(genericHandler.NotFound)
@@ -78,10 +78,10 @@ func main() {
 	})
 
 	serverHttp := &http.Server{
-		Addr:           fmt.Sprintf(":%s", environments.Setting.Server.Port),
+		Addr:           fmt.Sprintf(":%s", config.Setting.Server.Port),
 		Handler:        newRouter.GetChiRouter(),
-		ReadTimeout:    environments.Setting.Server.ReadTimeout,
-		WriteTimeout:   environments.Setting.Server.WriteTimeout,
+		ReadTimeout:    config.Setting.Server.ReadTimeout,
+		WriteTimeout:   config.Setting.Server.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
 
