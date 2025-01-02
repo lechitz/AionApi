@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+// USER STRUCTS
+
 type User struct {
 	UserService input.IUserService
 	LoggerSugar *zap.SugaredLogger
@@ -44,4 +46,21 @@ type CreateUserResponse struct {
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+// LOGIN STRUCTS
+
+type Login struct {
+	LoginService input.ILoginService
+	LoggerSugar  *zap.SugaredLogger
+}
+
+type LoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	Username string `json:"username"`
+	Token    string `json:"token"`
 }

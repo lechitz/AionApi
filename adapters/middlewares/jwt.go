@@ -16,6 +16,5 @@ func GenerateJWTKey() {
 	}
 
 	stringBase64 := base64.StdEncoding.EncodeToString(key)
-
-	fmt.Println(stringBase64)
+	fmt.Println("JWT_KEY: " + stringBase64)
 }

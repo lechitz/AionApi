@@ -41,8 +41,18 @@ func (router Router) AddGroupHandlerUser(ah *handlers.User) func(r chi.Router) {
 			r.Group(func(r chi.Router) {
 				r.Use(middlewares.AuthMiddleware(router.LoggerSugar))
 				r.Get("/all", ah.GetAllUsers)
-				r.Get("/{userId}", ah.GetUserByID)
-				r.Put("/{userId}", ah.UpdateUser)
+				r.Get("/{id}", ah.GetUserByID)
+				r.Put("/{id}", ah.UpdateUser)
+			})
+		})
+	}
+}
+
+func (router Router) AddGroupHandlerLogin(ah *handlers.Login) func(r chi.Router) {
+	return func(r chi.Router) {
+		r.Route("/login", func(r chi.Router) {
+			r.Group(func(r chi.Router) {
+				r.Post("/", ah.Login)
 			})
 		})
 	}

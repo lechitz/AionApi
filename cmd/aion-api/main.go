@@ -40,7 +40,7 @@ func init() {
 	loggerSugar = logger.Sugar()
 
 	//GenerateJWTKey is used to generate a new JWT key for the .env file one time
-	//middleware.GenerateJWTKey()
+	//middlewares.GenerateJWTKey()
 }
 
 func main() {
@@ -65,6 +65,18 @@ func main() {
 		LoggerSugar: loggerSugar,
 	}
 
+	loginPostgresDB := repository.NewLoginPostgresDB(postgresConnectionDB, loggerSugar)
+
+	loginService := &service.LoginService{
+		LoginDomainDataBaseRepository: &loginPostgresDB,
+		LoggerSugar:                   loggerSugar,
+	}
+
+	loginHandler := &handlers.Login{
+		LoginService: loginService,
+		LoggerSugar:  loggerSugar,
+	}
+
 	genericHandler := &handlers.Generic{
 		LoggerSugar: loggerSugar,
 	}
@@ -75,6 +87,7 @@ func main() {
 		r.NotFound(genericHandler.NotFound)
 		r.Group(newRouter.AddGroupHandlerHealthCheck(genericHandler))
 		r.Group(newRouter.AddGroupHandlerUser(userHandler))
+		r.Group(newRouter.AddGroupHandlerLogin(loginHandler))
 	})
 
 	serverHttp := &http.Server{

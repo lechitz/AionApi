@@ -161,6 +161,8 @@ func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userRequest.ID = userID //TODO: SERÁ QUE É NECESSÁRIO ?
+
 	if err := userRequest.prepareUser("edit"); err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToPrepareUser, err)
 		return
@@ -177,23 +179,24 @@ func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	var userResponse UserResponse
 	copier.Copy(&userResponse, &userDomain)
+
 	response := utils.ObjectResponse(userResponse, SuccessToUpdateUser)
-	utils.ResponseReturn(w, http.StatusNoContent, response.Bytes())
+	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
 
 func (userRequest *UserRequest) prepareUser(step string) error {
-	if err := userRequest.validate(step); err != nil {
+	if err := userRequest.validateUser(step); err != nil {
 		return err
 	}
 
-	if err := userRequest.format(step); err != nil {
+	if err := userRequest.formatUser(step); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (userRequest *UserRequest) validate(step string) error {
+func (userRequest *UserRequest) validateUser(step string) error {
 	if userRequest.Name == "" {
 		return errors.New(NameIsRequired)
 	}
@@ -214,7 +217,7 @@ func (userRequest *UserRequest) validate(step string) error {
 	return nil
 }
 
-func (userRequest *UserRequest) format(step string) error {
+func (userRequest *UserRequest) formatUser(step string) error {
 	userRequest.Name = strings.TrimSpace(userRequest.Name)
 	userRequest.Username = strings.TrimSpace(userRequest.Username)
 	userRequest.Email = strings.TrimSpace(userRequest.Email)
