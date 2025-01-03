@@ -3,7 +3,7 @@ package middlewares
 import (
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/adapters/security"
 	"go.uber.org/zap"
 	"net/http"

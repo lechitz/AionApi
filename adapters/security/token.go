@@ -2,7 +2,7 @@ package security
 
 import (
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/config"
 	"time"
 )

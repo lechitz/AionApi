@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/badoux/checkmail v1.2.4
 	github.com/go-chi/chi/v5 v5.0.14
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/jinzhu/copier v0.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	go.uber.org/zap v1.27.0
@@ -14,7 +15,6 @@ require (
 )
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.5.5 // indirect
