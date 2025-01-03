@@ -1,6 +1,8 @@
 module github.com/lechitz/AionApi
 
-go 1.20
+go 1.21
+
+toolchain go1.23.4
 
 require (
 	github.com/badoux/checkmail v1.2.4
@@ -16,12 +18,14 @@ require (
 
 require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
-	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
-	github.com/jackc/pgx/v5 v5.5.5 // indirect
-	github.com/jackc/puddle/v2 v2.2.1 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+	github.com/jackc/pgx/v5 v5.7.2 // indirect
+	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	go.uber.org/multierr v1.10.0 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 )
+
+replace github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.2.1
