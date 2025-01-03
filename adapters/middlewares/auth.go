@@ -44,7 +44,7 @@ func ValidateToken(r *http.Request) error {
 	return errors.New("invalid token")
 }
 
-func ExtractUserID(r *http.Request) (uint64, error) {
+func ExtractUserIDFromToken(r *http.Request) (uint64, error) {
 	tokenString, err := extractTokenFromCookie(r)
 	if err != nil {
 		return 0, err

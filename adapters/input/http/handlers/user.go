@@ -152,7 +152,7 @@ func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userIDToken, err := middlewares.ExtractUserID(r)
+	userIDToken, err := middlewares.ExtractUserIDFromToken(r)
 	if err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, ErrorToExtractUserID, err)
 		return
@@ -212,7 +212,7 @@ func (u *User) SoftDeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userIDToken, err := middlewares.ExtractUserID(r)
+	userIDToken, err := middlewares.ExtractUserIDFromToken(r)
 	if err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, ErrorToExtractUserID, err)
 		return
