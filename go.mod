@@ -2,8 +2,6 @@ module github.com/lechitz/AionApi
 
 go 1.21
 
-toolchain go1.23.4
-
 require (
 	github.com/badoux/checkmail v1.2.4
 	github.com/go-chi/chi/v5 v5.2.0

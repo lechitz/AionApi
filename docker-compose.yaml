@@ -17,6 +17,11 @@ services:
       - "5432"
     networks:
       rede_local:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   aion-api:
     container_name: aion-api
@@ -35,9 +40,7 @@ services:
       - "5001"
     depends_on:
       postgres:
-        condition: service_started
-      redis:
-        condition: service_started
+        condition: service_healthy
     networks:
       rede_local:
 
