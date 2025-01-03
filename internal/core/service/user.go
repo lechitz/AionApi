@@ -7,11 +7,12 @@ import (
 )
 
 const (
-	ErrorToCreateUser  = "error to create user"
-	ErrorToGetUsers    = "error to get users"
-	ErrorToGetUserByID = "error to get user"
-	ErrorToUpdateUser  = "error to update user"
-	ErrorToDeleteUser  = "error to delete user"
+	ErrorToCreateUser        = "error to create user"
+	ErrorToGetUsers          = "error to get users"
+	ErrorToGetUserByID       = "error to get user"
+	ErrorToGetUserByUserName = "error to get user by username"
+	ErrorToUpdateUser        = "error to update user"
+	ErrorToDeleteUser        = "error to delete user"
 )
 
 type UserService struct {
@@ -47,6 +48,16 @@ func (service *UserService) GetUserByID(contextControl domain.ContextControl, ID
 		return domain.UserDomain{}, err
 	}
 	return user, nil
+}
+
+func (service *UserService) GetUserByUsername(contextControl domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error) {
+
+	login, err := service.UserDomainDataBaseRepository.GetUserByUsername(contextControl, user)
+	if err != nil {
+		service.LoggerSugar.Errorw(ErrorToGetUserByUserName, "error", err.Error())
+		return domain.UserDomain{}, err
+	}
+	return login, nil
 }
 
 func (service *UserService) UpdateUser(contextControl domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error) {

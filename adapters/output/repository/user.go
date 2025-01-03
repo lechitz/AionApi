@@ -9,11 +9,12 @@ import (
 )
 
 const (
-	ErrorToCreateUser     = "error to create user into postgres"
-	ErrorToGetAllUser     = "error to get all users from postgres"
-	ErrorToGetUserByID    = "error to get user by ID from postgres"
-	ErrorToUpdateUser     = "error to update user into postgres"
-	ErrorToSoftDeleteUser = "error to delete user into postgres"
+	ErrorToCreateUser        = "error to create user into postgres"
+	ErrorToGetAllUser        = "error to get all users from postgres"
+	ErrorToGetUserByID       = "error to get user by ID from postgres"
+	ErrorToGetUserByUsername = "error to get user by username from postgres"
+	ErrorToUpdateUser        = "error to update user into postgres"
+	ErrorToSoftDeleteUser    = "error to delete user into postgres"
 )
 
 type UserPostgresDB struct {
@@ -76,7 +77,7 @@ func (up UserPostgresDB) GetAllUsers(contextControl domain.ContextControl) ([]do
 
 	if err := up.DB.WithContext(contextControl.Context).
 		Where("deleted_at IS NULL").
-		Select("id", "name", "username", "email").
+		Select("id", "name", "username", "email", "created_at").
 		Find(&usersDB).Error; err != nil {
 		up.LoggerSugar.Errorw(ErrorToGetAllUser, "error", err.Error())
 		return []domain.UserDomain{}, err
@@ -96,6 +97,22 @@ func (up UserPostgresDB) GetUserByID(contextControl domain.ContextControl, userI
 		Where("id = ?", userID).
 		First(&userDB).Error; err != nil {
 		up.LoggerSugar.Errorw(ErrorToGetUserByID, "error", err.Error())
+		return domain.UserDomain{}, err
+	}
+
+	return userDB.CopyToUserDomain(), nil
+}
+
+func (up UserPostgresDB) GetUserByUsername(contextControl domain.ContextControl, userDomain domain.UserDomain) (domain.UserDomain, error) {
+
+	var userDB UserDB
+	copier.Copy(&userDB, &userDomain)
+
+	if err := up.DB.WithContext(contextControl.Context).
+		Select("id, username, password").
+		Where("username = ?", userDB.Username).
+		First(&userDB).Error; err != nil {
+		up.LoggerSugar.Errorw(ErrorToGetUserByUsername, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
 

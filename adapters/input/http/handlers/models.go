@@ -29,7 +29,7 @@ type UserResponse struct {
 	Email     string         `json:"email"`
 	Password  string         `json:"password"`
 	CreatedAt time.Time      `json:"created_at"`
-	UpdateAt  time.Time      `json:"update_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`
 }
 
@@ -50,17 +50,12 @@ type CreateUserResponse struct {
 
 // LOGIN STRUCTS
 
-type Login struct {
-	LoginService input.ILoginService
-	LoggerSugar  *zap.SugaredLogger
-}
-
-type LoginRequest struct {
+type LoginUserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type LoginResponse struct {
+type LoginUserResponse struct {
 	Username string `json:"username"`
 	Token    string `json:"token"`
 }

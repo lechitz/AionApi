@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/jinzhu/copier"
 	"github.com/lechitz/AionApi/adapters/middlewares"
+	"github.com/lechitz/AionApi/adapters/security"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/pkg/utils"
 	"net/http"
@@ -42,6 +43,13 @@ const (
 	UserIDIsRequired   = "user ID is required"
 
 	InvalidEmail = "invalid email"
+
+	ErrorToDecodeLoginRequest = "error to decode login request"
+	ErrorToGetUserByUsername  = "error to get user by username"
+	ErrorToVerifyPassword     = "error to verify password"
+	ErrorToCreateToken        = "error to create token"
+
+	SuccessToLogin = "success to login"
 )
 
 func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -223,6 +231,58 @@ func (u *User) SoftDeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	response := utils.ObjectResponse(nil, SuccessToDeleteUser)
 	utils.ResponseReturn(w, http.StatusNoContent, response.Bytes())
+}
+
+func (u *User) Login(w http.ResponseWriter, r *http.Request) {
+
+	contextControl := domain.ContextControl{
+		Context: context.Background(),
+	}
+
+	var loginUserRequest LoginUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&loginUserRequest); err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToDecodeLoginRequest, err)
+		return
+	}
+
+	var userDomain domain.UserDomain
+	copier.Copy(&userDomain, &loginUserRequest)
+
+	userDB, err := u.UserService.GetUserByUsername(contextControl, userDomain)
+	if err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToGetUserByUsername, err)
+		return
+	}
+
+	if err = middlewares.VerifyPassword(userDB.Password, userDomain.Password); err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, ErrorToVerifyPassword, err)
+		return
+	}
+
+	token, err := security.CreateToken(userDB.ID)
+	if err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToCreateToken, err)
+		return
+	}
+
+	//If you want to use the function: auth.extractTokenFromBearer
+	// you don't need to set the cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "auth_token",
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true, // It's not possible to access the cookie via JavaScript
+		Secure:   true, // Only send the cookie if the request is being sent over HTTPS
+		SameSite: http.SameSiteStrictMode,
+	})
+
+	var loginUserResponse LoginUserResponse
+	copier.Copy(&loginUserResponse, &userDomain)
+
+	loginUserResponse.Token = token
+
+	response := utils.ObjectResponse(loginUserResponse, SuccessToLogin)
+	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
 
 func (userRequest *UserRequest) prepareUser(step string) error {

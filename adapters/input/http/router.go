@@ -46,11 +46,6 @@ func (router Router) AddGroupHandlerUser(ah *handlers.User) func(r chi.Router) {
 				r.Delete("/{id}", ah.SoftDeleteUser)
 			})
 		})
-	}
-}
-
-func (router Router) AddGroupHandlerLogin(ah *handlers.Login) func(r chi.Router) {
-	return func(r chi.Router) {
 		r.Route("/login", func(r chi.Router) {
 			r.Group(func(r chi.Router) {
 				r.Post("/", ah.Login)

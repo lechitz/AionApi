@@ -36,7 +36,7 @@ func init() {
 		zapcore.NewCore(jsonEncoder, zapcore.AddSync(os.Stdout), zapcore.DebugLevel),
 	)
 	logger := zap.New(core, zap.AddCaller())
-	defer logger.Sync() // flushes buffer, if any
+	defer logger.Sync()
 	loggerSugar = logger.Sugar()
 
 	//GenerateJWTKey is used to generate a new JWT key for the .env file one time
@@ -65,18 +65,6 @@ func main() {
 		LoggerSugar: loggerSugar,
 	}
 
-	loginPostgresDB := repository.NewLoginPostgresDB(postgresConnectionDB, loggerSugar)
-
-	loginService := &service.LoginService{
-		LoginDomainDataBaseRepository: &loginPostgresDB,
-		LoggerSugar:                   loggerSugar,
-	}
-
-	loginHandler := &handlers.Login{
-		LoginService: loginService,
-		LoggerSugar:  loggerSugar,
-	}
-
 	genericHandler := &handlers.Generic{
 		LoggerSugar: loggerSugar,
 	}
@@ -87,7 +75,6 @@ func main() {
 		r.NotFound(genericHandler.NotFound)
 		r.Group(newRouter.AddGroupHandlerHealthCheck(genericHandler))
 		r.Group(newRouter.AddGroupHandlerUser(userHandler))
-		r.Group(newRouter.AddGroupHandlerLogin(loginHandler))
 	})
 
 	serverHttp := &http.Server{
