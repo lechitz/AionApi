@@ -161,7 +161,7 @@ func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userRequest.ID = userID //TODO: SERÁ QUE É NECESSÁRIO ?
+	userRequest.ID = userID
 
 	if err := userRequest.prepareUser("edit"); err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToPrepareUser, err)

@@ -28,7 +28,10 @@ func AuthMiddleware(logger *zap.SugaredLogger) func(next http.Handler) http.Hand
 }
 
 func ValidateToken(r *http.Request) error {
-	tokenString := extractToken(r)
+	tokenString, err := extractTokenFromCookie(r)
+	if err != nil {
+		return err
+	}
 	token, err := jwt.Parse(tokenString, security.ReturnKeyVerification)
 	if err != nil {
 		return err
@@ -42,7 +45,11 @@ func ValidateToken(r *http.Request) error {
 }
 
 func ExtractUserID(r *http.Request) (uint64, error) {
-	tokenString := extractToken(r)
+	tokenString, err := extractTokenFromCookie(r)
+	if err != nil {
+		return 0, err
+	}
+
 	token, err := jwt.Parse(tokenString, security.ReturnKeyVerification)
 	if err != nil {
 		return 0, err
@@ -59,10 +66,18 @@ func ExtractUserID(r *http.Request) (uint64, error) {
 	return 0, errors.New("invalid token")
 }
 
-func extractToken(r *http.Request) string {
+func extractTokenFromCookie(r *http.Request) (string, error) {
+	cookie, err := r.Cookie("auth_token")
+	if err != nil {
+		return "", err
+	}
+	return cookie.Value, nil
+}
+
+func extractTokenFromBearer(r *http.Request) (string, error) {
 	token := r.Header.Get("Authorization")
 	if strings.HasPrefix(token, "Bearer ") {
-		return strings.TrimPrefix(token, "Bearer ")
+		return strings.TrimPrefix(token, "Bearer "), nil
 	}
-	return ""
+	return "", nil
 }

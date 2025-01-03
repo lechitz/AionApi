@@ -52,6 +52,17 @@ func (lg *Login) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//If you want to use the function: auth.extractTokenFromBearer
+	// you don't need to set the cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "auth_token",
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true, // It's not possible to access the cookie via JavaScript
+		Secure:   true, // Only send the cookie if the request is being sent over HTTPS
+		SameSite: http.SameSiteStrictMode,
+	})
+
 	var loginResponse LoginResponse
 	copier.Copy(&loginResponse, &loginDomain)
 
