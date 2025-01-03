@@ -9,10 +9,11 @@ import (
 )
 
 const (
-	ErrorToCreateUser  = "error to create user into postgres"
-	ErrorToGetAllUser  = "error to get all users from postgres"
-	ErrorToGetUserByID = "error to get user by ID from postgres"
-	ErrorToUpdateUser  = "error to update user into postgres"
+	ErrorToCreateUser     = "error to create user into postgres"
+	ErrorToGetAllUser     = "error to get all users from postgres"
+	ErrorToGetUserByID    = "error to get user by ID from postgres"
+	ErrorToUpdateUser     = "error to update user into postgres"
+	ErrorToSoftDeleteUser = "error to delete user into postgres"
 )
 
 type UserPostgresDB struct {
@@ -21,13 +22,14 @@ type UserPostgresDB struct {
 }
 
 type UserDB struct {
-	ID        uint64    `gorm:"primaryKey, column:id"`
-	Name      string    `gorm:"column:name"`
-	Username  string    `gorm:"column:username"`
-	Email     string    `gorm:"column:email"`
-	Password  string    `gorm:"column:password"`
-	CreatedAt time.Time `gorm:"column:created_at"`
-	UpdatedAt time.Time `gorm:"column:updated_at"`
+	ID        uint64         `gorm:"primaryKey, column:id"`
+	Name      string         `gorm:"column:name"`
+	Username  string         `gorm:"column:username"`
+	Email     string         `gorm:"column:email"`
+	Password  string         `gorm:"column:password"`
+	CreatedAt time.Time      `gorm:"column:created_at"`
+	UpdatedAt time.Time      `gorm:"column:updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`
 }
 
 func NewUserPostgresDB(gormDB *gorm.DB, loggerSugar *zap.SugaredLogger) UserPostgresDB {
@@ -50,6 +52,7 @@ func (u UserDB) CopyToUserDomain() domain.UserDomain {
 		Password:  u.Password,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
+		DeletedAt: u.DeletedAt,
 	}
 }
 
@@ -72,6 +75,7 @@ func (up UserPostgresDB) GetAllUsers(contextControl domain.ContextControl) ([]do
 	var usersDomain []domain.UserDomain
 
 	if err := up.DB.WithContext(contextControl.Context).
+		Where("deleted_at IS NULL").
 		Select("id", "name", "username", "email").
 		Find(&usersDB).Error; err != nil {
 		up.LoggerSugar.Errorw(ErrorToGetAllUser, "error", err.Error())
@@ -112,4 +116,17 @@ func (up UserPostgresDB) UpdateUser(contextControl domain.ContextControl, userDo
 	}
 
 	return userDB.CopyToUserDomain(), nil
+}
+
+func (up UserPostgresDB) SoftDeleteUser(contextControl domain.ContextControl, userID uint64) error {
+
+	if err := up.DB.WithContext(contextControl.Context).
+		Model(&UserDB{}).
+		Where("id = ?", userID).
+		Update("deleted_at", time.Now()).Error; err != nil {
+		up.LoggerSugar.Errorw(ErrorToSoftDeleteUser, "error", err.Error())
+		return err
+	}
+
+	return nil
 }

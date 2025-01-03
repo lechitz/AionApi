@@ -18,12 +18,11 @@ services:
     networks:
       rede_local:
 
-  petshop-api:
-    container_name: petshop-api
+  aion-api:
+    container_name: aion-api
     build: ${AION_GO_FOLDER}
     restart: always
     environment:
-      - REDIS_ADDR=redis:6379
       - DB_USER=aion
       - DB_PASSWORD=aion
       - DB_NAME=aion

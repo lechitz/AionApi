@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type UserDomain struct {
 	ID        uint64
@@ -10,4 +13,5 @@ type UserDomain struct {
 	Password  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
 }

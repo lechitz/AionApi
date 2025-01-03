@@ -43,6 +43,7 @@ func (router Router) AddGroupHandlerUser(ah *handlers.User) func(r chi.Router) {
 				r.Get("/all", ah.GetAllUsers)
 				r.Get("/{id}", ah.GetUserByID)
 				r.Put("/{id}", ah.UpdateUser)
+				r.Delete("/{id}", ah.SoftDeleteUser)
 			})
 		})
 	}

@@ -31,6 +31,7 @@ const (
 	SuccessToGetUser    = "user get successfully"
 	SuccessToGetUsers   = "users get successfully"
 	SuccessToUpdateUser = "user updated successfully"
+	SuccessToDeleteUser = "user deleted successfully"
 
 	MissingUserIDParameter = "missing user ID parameter"
 
@@ -182,6 +183,46 @@ func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	response := utils.ObjectResponse(userResponse, SuccessToUpdateUser)
 	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
+}
+
+func (u *User) SoftDeleteUser(w http.ResponseWriter, r *http.Request) {
+
+	contextControl := domain.ContextControl{
+		Context: context.Background(),
+	}
+
+	userIDParam := chi.URLParam(r, "id")
+
+	if userIDParam == "" {
+		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, MissingUserIDParameter, errors.New(UserIDIsRequired))
+		return
+	}
+
+	userID, err := strconv.ParseUint(userIDParam, 10, 64)
+	if err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, ErrorToParseUser, err)
+		return
+	}
+
+	userIDToken, err := middlewares.ExtractUserID(r)
+	if err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, ErrorToExtractUserID, err)
+		return
+	}
+
+	if userID != userIDToken {
+		utils.HandleError(w, u.LoggerSugar, http.StatusForbidden, ErrUserPermissionDenied, errors.New(ErrUserPermissionDenied))
+		return
+	}
+
+	err = u.UserService.SoftDeleteUser(contextControl, userID)
+	if err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToUpdateUser, err)
+		return
+	}
+
+	response := utils.ObjectResponse(nil, SuccessToDeleteUser)
+	utils.ResponseReturn(w, http.StatusNoContent, response.Bytes())
 }
 
 func (userRequest *UserRequest) prepareUser(step string) error {

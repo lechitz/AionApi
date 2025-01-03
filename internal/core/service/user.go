@@ -7,9 +7,11 @@ import (
 )
 
 const (
-	ErrorToCreateUser = "error to create user"
-	ErrorToGetUsers   = "error to get users"
-	ErrorToGetUser    = "error to get user"
+	ErrorToCreateUser  = "error to create user"
+	ErrorToGetUsers    = "error to get users"
+	ErrorToGetUserByID = "error to get user"
+	ErrorToUpdateUser  = "error to update user"
+	ErrorToDeleteUser  = "error to delete user"
 )
 
 type UserService struct {
@@ -41,7 +43,7 @@ func (service *UserService) GetUserByID(contextControl domain.ContextControl, ID
 
 	user, err := service.UserDomainDataBaseRepository.GetUserByID(contextControl, ID)
 	if err != nil {
-		service.LoggerSugar.Errorw(ErrorToGetUser, "error", err.Error())
+		service.LoggerSugar.Errorw(ErrorToGetUserByID, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
 	return user, nil
@@ -51,8 +53,18 @@ func (service *UserService) UpdateUser(contextControl domain.ContextControl, use
 
 	user, err := service.UserDomainDataBaseRepository.UpdateUser(contextControl, user)
 	if err != nil {
-		service.LoggerSugar.Errorw(ErrorToCreateUser, "error", err.Error())
+		service.LoggerSugar.Errorw(ErrorToUpdateUser, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
 	return user, nil
+}
+
+func (service *UserService) SoftDeleteUser(contextControl domain.ContextControl, ID uint64) error {
+
+	err := service.UserDomainDataBaseRepository.SoftDeleteUser(contextControl, ID)
+	if err != nil {
+		service.LoggerSugar.Errorw(ErrorToDeleteUser, "error", err.Error())
+		return err
+	}
+	return nil
 }

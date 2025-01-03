@@ -1,21 +1,29 @@
 --- New Schema
-create schema aion_api
+CREATE SCHEMA aion_api;
 
--- auto-generated definition
+CREATE TABLE aion_api.users
+(
+    id         SERIAL NOT NULL UNIQUE,
+    name       VARCHAR(255) NOT NULL,
+    username   VARCHAR(255) NOT NULL UNIQUE,
+    password   VARCHAR(255) NOT NULL,
+    email      VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP DEFAULT NULL
+);
 
-    create table users
-    (
-        id         SERIAL not null unique,
-        name       varchar(255) not null,
-        username   varchar(255) not null unique,
-        password   varchar(255) not null,
-        email      varchar(255) not null unique,
-        created_at timestamp default current_timestamp,
-        updated_at timestamp default current_timestamp
-    );
+-- Function to update updated_at column
+CREATE OR REPLACE FUNCTION update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-INSERT INTO aion_api.users (name, username, password, email)
-VALUES ('Felipe Bravo', 'lechitz', '123456', 'felipe@gmail.com');
-
-INSERT INTO aion_api.users (name, username, password, email)
-VALUES ('Silvana Bravo', 'sil', '123456', 'silbravo@gmail.com');
+-- Create trigger to update updated_at column
+CREATE TRIGGER update_users_updated_at
+    BEFORE UPDATE ON aion_api.users
+    FOR EACH ROW
+    EXECUTE FUNCTION update_timestamp();

@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/lechitz/AionApi/ports/input"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -22,13 +23,14 @@ type UserRequest struct {
 }
 
 type UserResponse struct {
-	ID        uint64    `json:"id"`
-	Name      string    `json:"name"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdateAt  time.Time `json:"update_at"`
+	ID        uint64         `json:"id"`
+	Name      string         `json:"name"`
+	Username  string         `json:"username"`
+	Email     string         `json:"email"`
+	Password  string         `json:"password"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdateAt  time.Time      `json:"update_at"`
+	DeletedAt gorm.DeletedAt `json:"deleted_at"`
 }
 
 type GetUserResponse struct {
