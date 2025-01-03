@@ -5,9 +5,9 @@ services:
     image: postgres
     restart: always
     environment:
-      - POSTGRES_USER=aion
-      - POSTGRES_PASSWORD=aion
-      - POSTGRES_DB=aion
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - /tmp/postgres-volume:/data/db
       - ./adapters/output/db/migrations/:/docker-entrypoint-initdb.d
@@ -23,12 +23,12 @@ services:
     build: ${AION_GO_FOLDER}
     restart: always
     environment:
-      - DB_USER=aion
-      - DB_PASSWORD=aion
-      - DB_NAME=aion
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_TYPE=postgres
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_TYPE=${DB_TYPE}
     ports:
       - "5001:5001"
     expose:

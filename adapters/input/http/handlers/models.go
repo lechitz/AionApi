@@ -42,11 +42,10 @@ type GetUserResponse struct {
 }
 
 type CreateUserResponse struct {
-	ID        uint64    `json:"id"`
-	Name      string    `json:"name"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
+	ID       uint64 `json:"id"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
 }
 
 // LOGIN STRUCTS
