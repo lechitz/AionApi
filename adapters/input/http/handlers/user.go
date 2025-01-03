@@ -186,10 +186,10 @@ func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var userResponse UserResponse
-	copier.Copy(&userResponse, &userDomain)
+	var updateUserResponse UpdateUserResponse
+	copier.Copy(&updateUserResponse, &userDomain)
 
-	response := utils.ObjectResponse(userResponse, SuccessToUpdateUser)
+	response := utils.ObjectResponse(updateUserResponse, SuccessToUpdateUser)
 	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
 
