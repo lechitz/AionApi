@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	adpterHttpInput "github.com/lechitz/AionApi/adapters/input/http"
 	"github.com/lechitz/AionApi/adapters/input/http/handlers"
@@ -24,7 +25,13 @@ const (
 var loggerSugar *zap.SugaredLogger
 
 func init() {
-	err := envconfig.Process("setting", &config.Setting)
+
+	err := godotenv.Load()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	err = envconfig.Process("setting", &config.Setting)
 	if err != nil {
 		panic(err.Error())
 	}
