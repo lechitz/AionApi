@@ -17,9 +17,9 @@ type setting struct {
 	}
 
 	Postgres struct {
-		DBUser     string `envconfig:"DB_USER" default:"aion"`
-		DBPassword string `envconfig:"DB_PASSWORD" default:"aion"`
-		DBName     string `envconfig:"DB_NAME" default:"aion"`
+		DBUser     string `envconfig:"DB_USER" required:"true"`
+		DBPassword string `envconfig:"DB_PASSWORD" required:"true"`
+		DBName     string `envconfig:"DB_NAME" required:"true"`
 		DBHost     string `envconfig:"DB_HOST" default:"localhost"`
 		DBPort     string `envconfig:"DB_PORT" default:"5432"`
 		DBType     string `envconfig:"DB_TYPE" default:"postgres"`
