@@ -47,9 +47,7 @@ func (router Router) AddGroupHandlerUser(ah *handlers.User) func(r chi.Router) {
 			})
 		})
 		r.Route("/login", func(r chi.Router) {
-			r.Group(func(r chi.Router) {
-				r.Post("/", ah.Login)
-			})
+			r.Post("/", ah.Login)
 		})
 	}
 }
