@@ -125,7 +125,7 @@ func (up UserPostgresDB) UpdateUser(contextControl domain.ContextControl, userDo
 	copier.Copy(&userDB, &userDomain)
 
 	if err := up.DB.WithContext(contextControl.Context).
-		Model(&userDB).
+		Model(&UserDB{}).
 		Where("id = ?", userDB.ID).
 		Updates(userDB).Error; err != nil {
 		up.LoggerSugar.Errorw(ErrorToUpdateUser, "error", err.Error())
