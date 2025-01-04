@@ -17,16 +17,19 @@ import (
 )
 
 const (
-	ErrorToDecodeUserRequest = "error to decode user request"
-	ErrorToPrepareUser       = "error to prepare user"
-	ErrorToCreateUser        = "error to create user"
-	ErrorToGetUser           = "error to get user"
-	ErrorToGetUsers          = "error to get users"
-	ErrorToExtractUserID     = "error to extract user ID"
-	ErrorToUpdateUser        = "error to update user"
+	ErrorToDecodeUserRequest  = "error to decode user request"
+	ErrorToPrepareUser        = "error to prepare user"
+	ErrorToCreateUser         = "error to create user"
+	ErrorToGetUser            = "error to get user"
+	ErrorToGetUsers           = "error to get users"
+	ErrorToExtractUserID      = "error to extract user ID"
+	ErrorToUpdateUser         = "error to update user"
+	ErrorToValidateCreateUser = "error to validate create user"
+	ErrorToFormatCreateUser   = "error to format create user"
+	ErrorUserPermissionDenied = "user permission denied"
+	ErrorToParseUser          = "error to parse user"
 
-	ErrUserPermissionDenied = "user permission denied"
-	ErrorToParseUser        = "error to parse user"
+	ErrorMissingFields = "missing fields"
 
 	SuccessToCreateUser = "user created successfully"
 	SuccessToGetUser    = "user get successfully"
@@ -58,19 +61,24 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Context: context.Background(),
 	}
 
-	var userRequest UserRequest
-	if err := json.NewDecoder(r.Body).Decode(&userRequest); err != nil {
+	var createUserRequest CreateUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&createUserRequest); err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToDecodeUserRequest, err)
 		return
 	}
 
-	if err := userRequest.prepareUser("register"); err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToPrepareUser, err)
+	if err := createUserRequest.validateCreateUser(); err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToValidateCreateUser, err)
+		return
+	}
+
+	if err := createUserRequest.formatCreateUser(); err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToFormatCreateUser, err)
 		return
 	}
 
 	var userDomain domain.UserDomain
-	copier.Copy(&userDomain, &userRequest)
+	copier.Copy(&userDomain, &createUserRequest)
 
 	userDomain, err := u.UserService.CreateUser(contextControl, userDomain)
 	if err != nil {
@@ -152,33 +160,33 @@ func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userIDToken, err := middlewares.ExtractUserID(r)
+	userIDToken, err := middlewares.ExtractUserIDFromToken(r)
 	if err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, ErrorToExtractUserID, err)
 		return
 	}
 
 	if userID != userIDToken {
-		utils.HandleError(w, u.LoggerSugar, http.StatusForbidden, ErrUserPermissionDenied, errors.New(ErrUserPermissionDenied))
+		utils.HandleError(w, u.LoggerSugar, http.StatusForbidden, ErrorUserPermissionDenied, errors.New(ErrorUserPermissionDenied))
 		return
 	}
 
-	var userRequest UserRequest
+	var updateUserRequest UpdateUserRequest
 
-	if err := json.NewDecoder(r.Body).Decode(&userRequest); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&updateUserRequest); err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToDecodeUserRequest, err)
 		return
 	}
 
-	userRequest.ID = userID
+	updateUserRequest.ID = userID
 
-	if err := userRequest.prepareUser("edit"); err != nil {
+	if err := updateUserRequest.formatUpdateUser(); err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, ErrorToPrepareUser, err)
 		return
 	}
 
 	var userDomain domain.UserDomain
-	copier.Copy(&userDomain, &userRequest)
+	copier.Copy(&userDomain, &updateUserRequest)
 
 	userDomain, err = u.UserService.UpdateUser(contextControl, userDomain)
 	if err != nil {
@@ -186,10 +194,10 @@ func (u *User) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var userResponse UserResponse
-	copier.Copy(&userResponse, &userDomain)
+	var updateUserResponse UpdateUserResponse
+	copier.Copy(&updateUserResponse, &userDomain)
 
-	response := utils.ObjectResponse(userResponse, SuccessToUpdateUser)
+	response := utils.ObjectResponse(updateUserResponse, SuccessToUpdateUser)
 	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
 
@@ -212,14 +220,14 @@ func (u *User) SoftDeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userIDToken, err := middlewares.ExtractUserID(r)
+	userIDToken, err := middlewares.ExtractUserIDFromToken(r)
 	if err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, ErrorToExtractUserID, err)
 		return
 	}
 
 	if userID != userIDToken {
-		utils.HandleError(w, u.LoggerSugar, http.StatusForbidden, ErrUserPermissionDenied, errors.New(ErrUserPermissionDenied))
+		utils.HandleError(w, u.LoggerSugar, http.StatusForbidden, ErrorUserPermissionDenied, errors.New(ErrorUserPermissionDenied))
 		return
 	}
 
@@ -285,51 +293,55 @@ func (u *User) Login(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
 
-func (userRequest *UserRequest) prepareUser(step string) error {
-	if err := userRequest.validateUser(step); err != nil {
-		return err
-	}
-
-	if err := userRequest.formatUser(step); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (userRequest *UserRequest) validateUser(step string) error {
-	if userRequest.Name == "" {
+func (createUserRequest *CreateUserRequest) validateCreateUser() error {
+	if createUserRequest.Name == "" {
 		return errors.New(NameIsRequired)
 	}
-	if userRequest.Username == "" {
+	if createUserRequest.Username == "" {
 		return errors.New(UsernameIsRequired)
 	}
-	if userRequest.Email == "" {
+	if createUserRequest.Email == "" {
 		return errors.New(EmailIsRequired)
 	}
 
-	if err := checkmail.ValidateFormat(userRequest.Email); err != nil {
+	if createUserRequest.Password == "" {
+		return errors.New(PasswordIsRequired)
+	}
+
+	if err := checkmail.ValidateFormat(createUserRequest.Email); err != nil {
 		return errors.New(InvalidEmail)
 	}
 
-	if step == "register" && userRequest.Password == "" {
-		return errors.New(PasswordIsRequired)
-	}
 	return nil
 }
 
-func (userRequest *UserRequest) formatUser(step string) error {
-	userRequest.Name = strings.TrimSpace(userRequest.Name)
-	userRequest.Username = strings.TrimSpace(userRequest.Username)
-	userRequest.Email = strings.TrimSpace(userRequest.Email)
+func (createUserRequest *CreateUserRequest) formatCreateUser() error {
+	createUserRequest.Name = strings.TrimSpace(createUserRequest.Name)
+	createUserRequest.Username = strings.TrimSpace(createUserRequest.Username)
+	createUserRequest.Email = strings.TrimSpace(createUserRequest.Email)
 
-	if step == "register" {
-		hashedPassword, err := middlewares.Hash(userRequest.Password)
-		if err != nil {
-			return err
-		}
-
-		userRequest.Password = string(hashedPassword)
+	hashedPassword, err := middlewares.Hash(createUserRequest.Password)
+	if err != nil {
+		return err
 	}
+
+	createUserRequest.Password = string(hashedPassword)
+
+	return nil
+}
+
+func (updateUserRequest *UpdateUserRequest) formatUpdateUser() error {
+	if updateUserRequest.Name != nil {
+		*updateUserRequest.Name = strings.TrimSpace(*updateUserRequest.Name)
+	}
+
+	if updateUserRequest.Username != nil {
+		*updateUserRequest.Username = strings.TrimSpace(*updateUserRequest.Username)
+	}
+
+	if updateUserRequest.Email != nil {
+		*updateUserRequest.Email = strings.TrimSpace(*updateUserRequest.Email)
+	}
+
 	return nil
 }

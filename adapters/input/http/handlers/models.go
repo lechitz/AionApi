@@ -33,6 +33,21 @@ type UserResponse struct {
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`
 }
 
+type CreateUserRequest struct {
+	ID       uint64 `json:"id"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type CreateUserResponse struct {
+	ID       uint64 `json:"id"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
 type GetUserResponse struct {
 	ID        uint64    `json:"id"`
 	Name      string    `json:"name"`
@@ -41,11 +56,19 @@ type GetUserResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type CreateUserResponse struct {
-	ID       uint64 `json:"id"`
-	Name     string `json:"name"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+type UpdateUserRequest struct {
+	ID       uint64  `json:"id"`
+	Name     *string `json:"name"`
+	Username *string `json:"username"`
+	Email    *string `json:"email"`
+}
+
+type UpdateUserResponse struct {
+	ID        uint64    `json:"id"`
+	Name      *string   `json:"name"`
+	Username  *string   `json:"username"`
+	Email     *string   `json:"email"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // LOGIN STRUCTS
