@@ -1,4 +1,4 @@
-CREATE TABLE aion_api.day_tag_summary
+CREATE TABLE IF NOT EXISTS aion_api.day_tag_summary
 (
     id           SERIAL PRIMARY KEY,                               -- Unique Summary ID
     day_id       INT NOT NULL,                                     -- Foreign Key to Day

@@ -1,7 +1,7 @@
 --- New Schema
-CREATE SCHEMA aion_api;
+CREATE SCHEMA IF NOT EXISTS aion_api;
 
-CREATE TABLE aion_api.users
+CREATE TABLE IF NOT EXISTS aion_api.users
 (
     id         SERIAL NOT NULL UNIQUE,
     name       VARCHAR(255) NOT NULL,
