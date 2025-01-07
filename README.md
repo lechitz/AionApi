@@ -27,6 +27,8 @@
     - [Authentication](#authentication)
     - [Activity Management](#activity-management)
 - [Docker Integration](#docker-integration)
+    - [Prerequisites](#prerequisites)
+    - [Running the Project with Docker](#running-the-project-with-docker)
 - [License](#license)
 
 ---
@@ -42,13 +44,16 @@ Aion API is your go-to platform for managing users, activities, and personal wor
 - **User Management:**
     - User creation, retrieval, update, and soft deletion.
     - Authentication with secure JWT-based mechanisms.
+      
 - **Activity Tracking:**
     - Organize and track daily activities using custom tags.
     - Flexible structure to support personal or organizational workflows.
+      
 - **Developer-Friendly:**
     - Comprehensive documentation.
     - Easy-to-use API endpoints.
     - Architecture designed for extensibility, scalability, and maintainability.
+      
 - **Future-Ready:**
     - Prepared for frontend integration and advanced features like analytics.
 
@@ -70,6 +75,8 @@ To set up and run the Aion API, follow these steps:
    ```bash
    go mod tidy
    ```
+
+---
 
 ## **Configuration**
 
@@ -120,7 +127,66 @@ To set up and run the Aion API, follow these steps:
 		    middlewares.GenerateJWTKey()
 		}
 		```
+---
+     
+## **Docker Integration**
 
+### **Prerequisites**
+
+1. Download and install Docker for your system:
+
+    - [Docker Desktop for Windows](https://docs.docker.com/docker-for-windows/install/)
+    - [Docker Desktop for Mac](https://docs.docker.com/docker-for-mac/install/)
+    - [Docker Engine for Linux](https://docs.docker.com/engine/install/)
+
+2. Verify the installation:
+
+   ```bash
+   docker --version
+   ```
+
+3. Choose the appropriate Docker Compose file:
+
+    - `docker-compose-dev.yaml`: for development.
+    - `docker-compose-prod.yaml`: for production.
+
+### **Running the Project with Docker**
+
+#### For Development:
+   - To start the application in a development environment, use the following commands:
+     - First, build the Docker image for development:
+       
+        ```bash
+         make docker-build-dev
+        ```
+        
+     - Then, start the application with the development Docker Compose file:
+       
+        ```bash
+        make docker-compose-dev-up
+        ```
+
+    
+#### For Production:
+   - To start the application in a production environment, follow these steps:
+     - First, build the Docker image for development:
+       
+        ```bash
+         make docker-build-prod
+        ```
+        
+     - Then, start the application with the development Docker Compose file:
+       
+        ```bash
+        make docker-compose-prod-up
+        ```
+        
+
+### Other Available Commands in Makefile:
+   - In addition to the commands for starting the development and production environments, the Makefile also includes other useful commands, such as those for cleaning up Docker containers, volumes, and images, as well as specific commands for running tests and generating coverage reports. To view all available commands, simply run `make help`.
+     
+
+---
 
 ## **Development**
 
@@ -225,56 +291,116 @@ The complete folder structure here
 
 #### **Create User**
 - **Method:** `POST`
-- **Endpoint:** `/user/create`
+- **Endpoint:** `localhost:5001/aion-api/user/create`
 - **Request Body:**
 
   ```json
   {
-      "name": "string",
-      "username": "string",
-      "email": "string",
-      "password": "string"
+    "name": "John Doe",
+    "username": "johndoe",
+    "email": "johndoe@example.com",
+    "password": "securePassword123"
   }
   ```
 - **Response:**
 
   ```json
   {
-      "id": "uuid",
-      "name": "string",
-      "username": "string",
-      "email": "string"
+    "message": "user created successfully",
+    "result": {
+        "id": 1,
+        "name": "John Doe",
+        "username": "johndoe",
+        "email": "johndoe@example.com"
+    },
+    "date": "2025-01-07T15:41:50.803251738Z"
   }
   ```
 
 #### **Get All Users**
 - **Method:** `GET`
-- **Endpoint:** `/user/all`
+- **Endpoint:** `localhost:5001/aion-api/user/all`
 - **Headers:**
     - `Authorization: Bearer <token>`
+- **Response:**
+
+  ```json
+  {
+    "message": "users get successfully",
+    "result": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "username": "johndoe",
+            "email": "johndoe@example.com",
+            "created_at": "2025-01-07T15:41:50.800147Z"
+        },
+        {
+            "id": 2,
+            "name": "Alice Smith",
+            "username": "alicesmith",
+            "email": "alice.smith@example.com",
+            "created_at": "2025-01-07T15:56:32.174753Z"
+        }
+    ],
+    "date": "2025-01-07T15:56:35.028477172Z"
+  }
+  ```
 
 #### **Get User by ID**
 - **Method:** `GET`
-- **Endpoint:** `/user/{id}`
+- **Endpoint:** `localhost:5001/aion-api/user/{id}`
 - **Headers:**
     - `Authorization: Bearer <token>`
+- **Response:**
+
+  ```json
+  {
+    "message": "user get successfully",
+    "result": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "username": "johndoe",
+            "email": "johndoe@example.com",
+            "created_at": "2025-01-07T15:41:50.800147Z"
+        }
+    ],
+    "date": "2025-01-07T15:59:05.406681717Z"
+  }
+  ```
 
 #### **Update User**
 - **Method:** `PUT`
-- **Endpoint:** `/user/{id}`
+- **Endpoint:** `localhost:5001/aion-api/user/{id}`
 - **Request Body:**
 
   ```json
   {
-      "name": "string",
-      "username": "string",
-      "email": "string"
+      "name": "Mark Taylor",
+      "username": "markt89",
+      "email": "mark.taylor@example.com"
+  }
+  ```
+- **Response:**
+
+  ```json
+  {
+    "message": "user updated successfully",
+    "result": {
+        "id": 2,
+        "name": "Mark Taylor",
+        "username": "markt89",
+        "email": "mark.taylor@example.com",
+        "updated_at": "2025-01-07T16:01:47.919084Z"
+    },
+    "date": "2025-01-07T16:01:47.929188372Z"
   }
   ```
 
 #### **Soft Delete User**
 - **Method:** `DELETE`
-- **Endpoint:** `/user/{id}`
+- **Endpoint:** `localhost:5001/aion-api/user/{id}`
 - **Headers:**
     - `Authorization: Bearer <token>`
 </details>
@@ -286,22 +412,28 @@ The complete folder structure here
 <summary> 
  The authentication endpoints here
 </summary>
+	
 #### **Login**
 - **Method:** `POST`
-- **Endpoint:** `/login`
+- **Endpoint:** `localhost:5001/aion-api/login`
 - **Request Body:**
 
   ```json
   {
-      "username": "string",
-      "password": "string"
+      "username": "johndoe",
+      "password": "securePassword123"
   }
   ```
 - **Response:**
 
   ```json
   {
-      "token": "string"
+    "message": "success to login",
+    "result": {
+        "username": "johndoe",
+        "token": "eyJhbUHaiHL9AS6IkpXVCJ9.eyJhdXRob3JKAPkSVnS"
+    },
+    "date": "2025-01-07T15:50:48.751092612Z"
   }
   ```
 </details>
@@ -313,80 +445,12 @@ The complete folder structure here
  The activity management endpoints here
 </summary>
 
-#### **Create Activity**
-- **Method:** `POST`
-- **Endpoint:** `/activity/create`
-- **Request Body:**
+- This section is still under development.
 
-  ```json
-  {
-      "title": "string",
-      "description": "string",
-      "tags": ["string"]
-  }
-  ```
 
-#### **Get All Activities**
-- **Method:** `GET`
-- **Endpoint:** `/activity/all`
-- **Headers:**
-    - `Authorization: Bearer <token>`
-
-#### **Update Activity**
-- **Method:** `PUT`
-- **Endpoint:** `/activity/{id}`
-- **Request Body:**
-
-  ```json
-  {
-      "title": "string",
-      "description": "string",
-      "tags": ["string"]
-  }
-  ```
-
-#### **Delete Activity**
-- **Method:** `DELETE`
-- **Endpoint:** `/activity/{id}`
-- **Headers:**
-    - `Authorization: Bearer <token>`
-
----
 </details>
 
 ---
-
-## **Docker Integration**
-
-### Prerequisites
-
-1. Download and install Docker for your system:
-
-    - [Docker Desktop for Windows](https://docs.docker.com/docker-for-windows/install/)
-    - [Docker Desktop for Mac](https://docs.docker.com/docker-for-mac/install/)
-    - [Docker Engine for Linux](https://docs.docker.com/engine/install/)
-
-2. Verify the installation:
-
-   ```bash
-   docker --version
-   ```
-
-3. Choose the appropriate Docker Compose file:
-
-    - `docker-compose-dev.yaml`: for development.
-    - `docker-compose-prod.yaml`: for production.
-
-4. Build the Docker image:
-   ```bash
-   make docker-build-prod
-   ```
-
-5. Start the Docker container:
-
-   ```bash
-   make docker-compose-prod-up
-   ```
 
 ## **License**
 
