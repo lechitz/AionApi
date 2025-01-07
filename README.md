@@ -1,18 +1,27 @@
 # AionApi
-Aion is a habit manager that organizes, tracks, and analyzes your routine to enhance your physical and mental well-being.
+
+<h2>Aion: Empowering you to take control of your time, habits, and aspirations.</h2>
+
+> _Aion is an innovative habit management system designed to help you organize, track, and analyze your daily routine for improved physical, mental, and emotional well-being. It combines cutting-edge technology with a user-centered approach to make your productivity and self-improvement journey seamless and insightful._
+>
+> Whether you’re focusing on fitness, learning, or personal growth, Aion is your companion in building the discipline you need to achieve sustainable success.
 
 
-# Aion API Documentation
-
-_Aion API: Transforming how you manage your time, activities, and goals._ 
+**With Aion, you can:**
+  
+  - Streamline your habits with an intuitive system that adapts to your needs.
+  - Track and analyze your activities to uncover insights about your behavior.
+  - Visualize progress in real-time to stay motivated and on track with your goals.
+  - Integrate effortlessly with modern tools and platforms for enhanced usability.
+    
 
 ## **Table of Contents**
 
 - [Overview](#overview)
 - [Features](#features)
 - [Installation](#installation)
-- [Development](#development)
 - [Configuration](#configuration)
+- [Development](#development)
 - [API Endpoints](#api-endpoints)
     - [User Management](#user-management)
     - [Authentication](#authentication)
@@ -62,13 +71,15 @@ To set up and run the Aion API, follow these steps:
    go mod tidy
    ```
 
-3. Set up the environment variables:
+## **Configuration**
+
+1. Set up the environment variables:
 
    ```bash
    cp .env.example .env
    ```
 
-4. Update the `.env` file with your database credentials and other configurations.
+2. Update the `.env` file with your database credentials and other configurations.
 
 <div align="center">
 
@@ -85,36 +96,50 @@ To set up and run the Aion API, follow these steps:
 | `SECRET_KEY`         | Secret key for JWT                 |
 </div>
 
-5. Set up the database:
+3. Set up the database:
 
     - Create a new database in PostgreSQL.
+    - Connect to the database by configuring the connection settings in the .env file.
     - Run all the migration files in the `infra/db/migrations` folder.
 
 
-## **Generate JWT Secret Key**
+4. Generate JWT Secret Key:
 
-he GenerateJWTKey() function generates a unique secret key for JWT authentication and saves it to the .env file. It should be called once during the initial setup in the init() function to ensure the key is generated automatically and not overwritten if it already exists. The generated key is stored in the SECRET_KEY variable in the .env file.
+     - The `GenerateJWTKey()` function generates a unique secret key for JWT authentication and saves it to the `.env` file. This function is commented out by default in the `init()` function.
 
-Example usage:
+     - **Steps to Set Up the JWT Key:**
+          1. **Uncomment the `GenerateJWTKey()` call in the `init()` function** during the first setup.  
+          2. Run the application once to generate the key.  
+          3. After the key is generated and stored in the `SECRET_KEY` variable in the `.env` file, **comment out the `GenerateJWTKey()` function again** to prevent overwriting the key in future runs.
 
-```go
-func init() {
-	// Generate a unique secret key for JWT authentication
-	middlewares.GenerateJWTKey()
-}
-```
+     - **Example Code:**
+
+		```go
+		func init() {
+		    // Uncomment the line below for the first setup
+		    middlewares.GenerateJWTKey()
+		}
+		```
+
 
 ## **Development**
 
 ### **Folder Structure**
 
-- **adapters:** Contains the input and output adapters for the application.
-- **cmd:** Contains the main application entry point.
-- **config:** Contains environment variables and configurations.
-- **infra:** Contains the database connection and migration files.
-- **internal:** Contains the core business logic of the application.
-- **pkg:** Contains utility functions and shared code.
-- **ports:** Contains the input and output interfaces for the application.
+  - The Ports and Adapters Architecture (Hexagonal Architecture) was chosen for the Aion API to ensure flexibility, scalability, and testability. This design approach promotes a clear separation of concerns, dividing the application into core business logic (internal) and external systems (adapters).
+
+<div align="center">
+	
+| **Directory** | **Description**                                                        |
+|---------------|------------------------------------------------------------------------|
+| `adapters`    | Contains the input and output adapters for the application.            |
+| `cmd`         | Contains the main application entry point.                             |
+| `config`      | Contains environment variables and configurations.                     |
+| `infra`       | Contains the database connection and migration files.                  |
+| `internal`    | Contains the core business logic of the application.                   |
+| `pkg`         | Contains utility functions and shared code.                            |
+| `ports`       | Contains the input and output interfaces for the application.          |
+</div>
 
 <details>
 <summary> 
