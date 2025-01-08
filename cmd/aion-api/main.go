@@ -11,6 +11,7 @@ import (
 	"github.com/lechitz/AionApi/config"
 	"github.com/lechitz/AionApi/infra/db"
 	"github.com/lechitz/AionApi/internal/core/service"
+	"github.com/lechitz/AionApi/pkg/utils"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"net/http"
@@ -24,18 +25,7 @@ const (
 
 var loggerSugar *zap.SugaredLogger
 
-func init() {
-
-	err := godotenv.Load()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	err = envconfig.Process("setting", &config.Setting)
-	if err != nil {
-		panic(err.Error())
-	}
-
+func InitLogger() {
 	configZap := zap.NewProductionEncoderConfig()
 	configZap.EncodeTime = zapcore.ISO8601TimeEncoder
 	jsonEncoder := zapcore.NewJSONEncoder(configZap)
@@ -45,12 +35,26 @@ func init() {
 	logger := zap.New(core, zap.AddCaller())
 	defer logger.Sync()
 	loggerSugar = logger.Sugar()
+}
 
-	//GenerateJWTKey is used to generate a new JWT key for the .env file one time
-	//middlewares.GenerateJWTKey()
+func LoadConfig() {
+	err := godotenv.Load()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	err = envconfig.Process("setting", &config.Setting)
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 func main() {
+
+	LoadConfig()
+	InitLogger()
+	utils.GenerateJWTKey()
+
 	postgresConnectionDB := db.NewPostgresDB(
 		config.Setting.Postgres.DBUser,
 		config.Setting.Postgres.DBPassword,
@@ -72,6 +76,16 @@ func main() {
 		LoggerSugar: loggerSugar,
 	}
 
+	authService := &service.AuthService{
+		UserDomainDataBaseRepository: &userPostgresDB,
+		LoggerSugar:                  loggerSugar,
+	}
+
+	authHandler := &handlers.Auth{
+		AuthService: authService,
+		LoggerSugar: loggerSugar,
+	}
+
 	genericHandler := &handlers.Generic{
 		LoggerSugar: loggerSugar,
 	}
@@ -79,9 +93,10 @@ func main() {
 	contextPath := config.Setting.Server.Context
 	newRouter := adpterHttpInput.GetNewRouter(loggerSugar)
 	newRouter.GetChiRouter().Route(fmt.Sprintf("/%s", contextPath), func(r chi.Router) {
-		r.NotFound(genericHandler.NotFound)
+		r.NotFound(genericHandler.NotFoundHandler)
 		r.Group(newRouter.AddGroupHandlerHealthCheck(genericHandler))
 		r.Group(newRouter.AddGroupHandlerUser(userHandler))
+		r.Group(newRouter.AddGroupHandlerAuth(authHandler))
 	})
 
 	serverHttp := &http.Server{
@@ -95,8 +110,7 @@ func main() {
 	loggerSugar.Infow(ServerStarted, "port", serverHttp.Addr, "contextPath", contextPath)
 
 	if err := serverHttp.ListenAndServe(); err != nil {
-		loggerSugar.Errorw(ErrorToListenAndStartsServer, "port", serverHttp.Addr,
-			"contextPath", contextPath, "err", err.Error())
+		loggerSugar.Errorw(ErrorToListenAndStartsServer, "port", serverHttp.Addr, "contextPath", contextPath, "err", err.Error())
 		panic(err.Error())
 	}
 }

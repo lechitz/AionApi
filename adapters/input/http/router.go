@@ -28,7 +28,7 @@ func (router Router) GetChiRouter() chi.Router {
 func (router Router) AddGroupHandlerHealthCheck(ah *handlers.Generic) func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Route("/health-check", func(r chi.Router) {
-			r.Get("/", ah.HealthCheck)
+			r.Get("/", ah.HealthCheckHandler)
 		})
 	}
 }
@@ -36,18 +36,23 @@ func (router Router) AddGroupHandlerHealthCheck(ah *handlers.Generic) func(r chi
 func (router Router) AddGroupHandlerUser(ah *handlers.User) func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Route("/user", func(r chi.Router) {
-			r.Post("/create", ah.CreateUser)
+			r.Post("/create", ah.CreateUserHandler)
 
 			r.Group(func(r chi.Router) {
 				r.Use(middlewares.AuthMiddleware(router.LoggerSugar))
-				r.Get("/all", ah.GetAllUsers)
-				r.Get("/{id}", ah.GetUserByID)
-				r.Put("/{id}", ah.UpdateUser)
-				r.Delete("/{id}", ah.SoftDeleteUser)
+				r.Get("/all", ah.GetAllUsersHandler)
+				r.Get("/{id}", ah.GetUserByIDHandler)
+				r.Put("/{id}", ah.UpdateUserHandler)
+				r.Delete("/{id}", ah.SoftDeleteUserHandler)
 			})
 		})
+	}
+}
+
+func (router Router) AddGroupHandlerAuth(ah *handlers.Auth) func(r chi.Router) {
+	return func(r chi.Router) {
 		r.Route("/login", func(r chi.Router) {
-			r.Post("/", ah.Login)
+			r.Post("/", ah.LoginHandler)
 		})
 	}
 }
