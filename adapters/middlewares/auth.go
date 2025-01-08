@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/lechitz/AionApi/adapters/security"
+	"github.com/lechitz/AionApi/pkg/utils"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
@@ -32,7 +32,7 @@ func ValidateToken(r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	token, err := jwt.Parse(tokenString, security.ReturnKeyVerification)
+	token, err := jwt.Parse(tokenString, utils.ReturnKeyVerification)
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,7 @@ func ExtractUserIDFromToken(r *http.Request) (uint64, error) {
 		return 0, err
 	}
 
-	token, err := jwt.Parse(tokenString, security.ReturnKeyVerification)
+	token, err := jwt.Parse(tokenString, utils.ReturnKeyVerification)
 	if err != nil {
 		return 0, err
 	}
