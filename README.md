@@ -2,18 +2,20 @@
 
 <h2>Aion: Empowering you to take control of your time, habits, and aspirations.</h2>
 
-> _Aion is an innovative habit management system designed to help you organize, track, and analyze your daily routine for improved physical, mental, and emotional well-being. It combines cutting-edge technology with a user-centered approach to make your productivity and self-improvement journey seamless and insightful._
+> _Aion is an innovative habit management system designed to help you organize, track, and analyze your daily routine
+for improved physical, mental, and emotional well-being. It combines cutting-edge technology with a user-centered
+approach to make your productivity and self-improvement journey seamless and insightful._
 >
-> Whether you’re focusing on fitness, learning, or personal growth, Aion is your companion in building the discipline you need to achieve sustainable success.
+> Whether you’re focusing on fitness, learning, or personal growth, Aion is your companion in building the discipline
+> you need to achieve sustainable success.
 
 
 **With Aion, you can:**
-  
-  - Streamline your habits with an intuitive system that adapts to your needs.
-  - Track and analyze your activities to uncover insights about your behavior.
-  - Visualize progress in real-time to stay motivated and on track with your goals.
-  - Integrate effortlessly with modern tools and platforms for enhanced usability.
-    
+
+- Streamline your habits with an intuitive system that adapts to your needs.
+- Track and analyze your activities to uncover insights about your behavior.
+- Visualize progress in real-time to stay motivated and on track with your goals.
+- Integrate effortlessly with modern tools and platforms for enhanced usability.
 
 ## **Table of Contents**
 
@@ -35,7 +37,9 @@
 
 ## **Overview**
 
-The Aion API is a RESTful backend solution designed to help developers build productivity applications with robust user and activity management capabilities. Built with **Go**, powered by **PostgreSQL**, and based on the **Ports & Adapters architecture** for scalability.
+The Aion API is a RESTful backend solution designed to help developers build productivity applications with robust user
+and activity management capabilities. Built with **Go**, powered by **PostgreSQL**, and based on the **Ports & Adapters
+architecture** for scalability.
 
 Aion API is your go-to platform for managing users, activities, and personal workflows.
 
@@ -44,16 +48,16 @@ Aion API is your go-to platform for managing users, activities, and personal wor
 - **User Management:**
     - User creation, retrieval, update, and soft deletion.
     - Authentication with secure JWT-based mechanisms.
-      
+
 - **Activity Tracking:**
     - Organize and track daily activities using custom tags.
     - Flexible structure to support personal or organizational workflows.
-      
+
 - **Developer-Friendly:**
     - Comprehensive documentation.
     - Easy-to-use API endpoints.
     - Architecture designed for extensibility, scalability, and maintainability.
-      
+
 - **Future-Ready:**
     - Prepared for frontend integration and advanced features like analytics.
 
@@ -90,17 +94,18 @@ To set up and run the Aion API, follow these steps:
 
 <div align="center">
 
-| Variable            | Description                        |
-|---------------------|------------------------------------|
-| `SERVER_CONTEXT`     | Path for the server context        |
-| `PORT`               | The port the server will run on    |
-| `DB_USER`            | Database username                  |
-| `DB_PASSWORD`        | Database password                  |
-| `DB_NAME`            | Database name                      |
-| `DB_HOST`            | Database host address              |
-| `DB_PORT`            | Database port                      |
-| `DB_TYPE`            | Database type (e.g., postgres)     |
-| `SECRET_KEY`         | Secret key for JWT                 |
+| Variable         | Description                     |
+|------------------|---------------------------------|
+| `SERVER_CONTEXT` | Path for the server context     |
+| `PORT`           | The port the server will run on |
+| `DB_USER`        | Database username               |
+| `DB_PASSWORD`    | Database password               |
+| `DB_NAME`        | Database name                   |
+| `DB_HOST`        | Database host address           |
+| `DB_PORT`        | Database port                   |
+| `DB_TYPE`        | Database type (e.g., postgres)  |
+| `SECRET_KEY`     | Secret key for JWT              |
+
 </div>
 
 3. Set up the database:
@@ -112,23 +117,25 @@ To set up and run the Aion API, follow these steps:
 
 4. Generate JWT Secret Key:
 
-     - The `GenerateJWTKey()` function generates a unique secret key for JWT authentication and saves it to the `.env` file. This function is commented out by default in the `init()` function.
+    - The `GenerateJWTKey()` function generates a unique secret key for JWT authentication and saves it to the `.env`
+      file. This function is commented out by default in the `init()` function.
 
-     - **Steps to Set Up the JWT Key:**
-          1. **Uncomment the `GenerateJWTKey()` call in the `init()` function** during the first setup.  
-          2. Run the application once to generate the key.  
-          3. After the key is generated and stored in the `SECRET_KEY` variable in the `.env` file, **comment out the `GenerateJWTKey()` function again** to prevent overwriting the key in future runs.
+    - **Steps to Set Up the JWT Key:**
+        1. **Uncomment the `GenerateJWTKey()` call in the `main()` function** during the first setup.
+        2. Run the application once to generate the key.
+        3. After the key is generated and stored in the `SECRET_KEY` variable in the `.env` file, **comment out
+           the `GenerateJWTKey()` function again** to prevent overwriting the key in future runs.
 
-     - **Example Code:**
+      - **Example Code:**
 
-		```go
-		func init() {
-		    // Uncomment the line below for the first setup
-		    middlewares.GenerateJWTKey()
-		}
-		```
+        ```bash
+        func main() {
+          // Uncomment the line below for the first setup
+          middlewares.GenerateJWTKey()
+          }
+        ```
 ---
-     
+
 ## **Docker Integration**
 
 ### **Prerequisites**
@@ -153,38 +160,40 @@ To set up and run the Aion API, follow these steps:
 ### **Running the Project with Docker**
 
 #### For Development:
-   - To start the application in a development environment, use the following commands:
-     - First, build the Docker image for development:
-       
-        ```bash
-         make docker-build-dev
-        ```
-        
-     - Then, start the application with the development Docker Compose file:
-       
-        ```bash
-        make docker-compose-dev-up
-        ```
 
-    
+- To start the application in a development environment, use the following commands:
+    - First, build the Docker image for development:
+
+       ```bash
+        make docker-build-dev
+       ```
+
+    - Then, start the application with the development Docker Compose file:
+
+       ```bash
+       make docker-compose-dev-up
+       ```
+
 #### For Production:
-   - To start the application in a production environment, follow these steps:
-     - First, build the Docker image for development:
-       
-        ```bash
-         make docker-build-prod
-        ```
-        
-     - Then, start the application with the development Docker Compose file:
-       
-        ```bash
-        make docker-compose-prod-up
-        ```
-        
+
+- To start the application in a production environment, follow these steps:
+    - First, build the Docker image for development:
+
+       ```bash
+        make docker-build-prod
+       ```
+
+    - Then, start the application with the development Docker Compose file:
+
+       ```bash
+       make docker-compose-prod-up
+       ```
 
 ### Other Available Commands in Makefile:
-   - In addition to the commands for starting the development and production environments, the Makefile also includes other useful commands, such as those for cleaning up Docker containers, volumes, and images, as well as specific commands for running tests and generating coverage reports. To view all available commands, simply run `make help`.
-     
+
+- In addition to the commands for starting the development and production environments, the Makefile also includes other
+  useful commands, such as those for cleaning up Docker containers, volumes, and images, as well as specific commands
+  for running tests and generating coverage reports. To view all available commands, simply run `make help`.
 
 ---
 
@@ -192,19 +201,22 @@ To set up and run the Aion API, follow these steps:
 
 ### **Folder Structure**
 
-  - The Ports and Adapters Architecture (Hexagonal Architecture) was chosen for the Aion API to ensure flexibility, scalability, and testability. This design approach promotes a clear separation of concerns, dividing the application into core business logic (internal) and external systems (adapters).
+- The Ports and Adapters Architecture (Hexagonal Architecture) was chosen for the Aion API to ensure flexibility,
+  scalability, and testability. This design approach promotes a clear separation of concerns, dividing the application
+  into core business logic (internal) and external systems (adapters).
 
 <div align="center">
-	
-| **Directory** | **Description**                                                        |
-|---------------|------------------------------------------------------------------------|
-| `adapters`    | Contains the input and output adapters for the application.            |
-| `cmd`         | Contains the main application entry point.                             |
-| `config`      | Contains environment variables and configurations.                     |
-| `infra`       | Contains the database connection and migration files.                  |
-| `internal`    | Contains the core business logic of the application.                   |
-| `pkg`         | Contains utility functions and shared code.                            |
-| `ports`       | Contains the input and output interfaces for the application.          |
+
+| **Directory** | **Description**                                               |
+|---------------|---------------------------------------------------------------|
+| `adapters`    | Contains the input and output adapters for the application.   |
+| `cmd`         | Contains the main application entry point.                    |
+| `config`      | Contains environment variables and configurations.            |
+| `infra`       | Contains the database connection and migration files.         |
+| `internal`    | Contains the core business logic of the application.          |
+| `pkg`         | Contains utility functions and shared code.                   |
+| `ports`       | Contains the input and output interfaces for the application. |
+
 </div>
 
 <details>
@@ -276,6 +288,7 @@ The complete folder structure here
 │       └── user.go
 └── README.md
 ```
+
 </details>
 
 ---
@@ -283,13 +296,14 @@ The complete folder structure here
 ## **API Endpoints**
 
 ### **User Management**
+
 <details>
 <summary> 
  The user management endpoints here
 </summary>
 
-
 #### **Create User**
+
 - **Method:** `POST`
 - **Endpoint:** `localhost:5001/aion-api/user/create`
 - **Request Body:**
@@ -318,6 +332,7 @@ The complete folder structure here
   ```
 
 #### **Get All Users**
+
 - **Method:** `GET`
 - **Endpoint:** `localhost:5001/aion-api/user/all`
 - **Headers:**
@@ -348,6 +363,7 @@ The complete folder structure here
   ```
 
 #### **Get User by ID**
+
 - **Method:** `GET`
 - **Endpoint:** `localhost:5001/aion-api/user/{id}`
 - **Headers:**
@@ -371,6 +387,7 @@ The complete folder structure here
   ```
 
 #### **Update User**
+
 - **Method:** `PUT`
 - **Endpoint:** `localhost:5001/aion-api/user/{id}`
 - **Request Body:**
@@ -399,12 +416,13 @@ The complete folder structure here
   ```
 
 #### **Soft Delete User**
+
 - **Method:** `DELETE`
 - **Endpoint:** `localhost:5001/aion-api/user/{id}`
 - **Headers:**
     - `Authorization: Bearer <token>`
-</details>
 
+</details>
 
 ### **Authentication**
 
@@ -412,8 +430,9 @@ The complete folder structure here
 <summary> 
  The authentication endpoints here
 </summary>
-	
+
 #### **Login**
+
 - **Method:** `POST`
 - **Endpoint:** `localhost:5001/aion-api/login`
 - **Request Body:**
@@ -436,6 +455,7 @@ The complete folder structure here
     "date": "2025-01-07T15:50:48.751092612Z"
   }
   ```
+
 </details>
 
 ### **Activity Management**
@@ -446,7 +466,6 @@ The complete folder structure here
 </summary>
 
 - This section is still under development.
-
 
 </details>
 

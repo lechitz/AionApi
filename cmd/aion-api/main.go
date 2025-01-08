@@ -11,7 +11,6 @@ import (
 	"github.com/lechitz/AionApi/config"
 	"github.com/lechitz/AionApi/infra/db"
 	"github.com/lechitz/AionApi/internal/core/service"
-	"github.com/lechitz/AionApi/pkg/utils"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"net/http"
@@ -53,7 +52,10 @@ func main() {
 
 	LoadConfig()
 	InitLogger()
-	utils.GenerateJWTKey()
+
+	// The GenerateJWTKey() function generates a unique secret key for JWT authentication and saves it to the .env file.
+	////This function is commented out by default in the main() function.
+	//utils.GenerateJWTKey()
 
 	postgresConnectionDB := db.NewPostgresDB(
 		config.Setting.Postgres.DBUser,
