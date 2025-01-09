@@ -1,6 +1,7 @@
 package constants
 
 // Errors related to user
+
 const (
 	ErrorToCreateUser         = "error to create user"
 	ErrorToDecodeUserRequest  = "error to decode user request"
@@ -15,6 +16,7 @@ const (
 )
 
 // Errors related to authentication
+
 const (
 	ErrorToLogin              = "error to login"
 	ErrorToVerifyPassword     = "error to verify password"
@@ -22,12 +24,14 @@ const (
 )
 
 // Errors related healthcheck and not found
+
 const (
 	ErrorToHealthCheck   = "error to health check"
 	ErrorNotFoundHandler = "handler not found"
 )
 
 // Success messages
+
 const (
 	SuccessToCreateUser = "user created successfully"
 	SuccessToGetUser    = "user get successfully"

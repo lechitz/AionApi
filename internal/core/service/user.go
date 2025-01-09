@@ -84,7 +84,6 @@ func (service *UserService) UpdateUser(contextControl domain.ContextControl, use
 		service.LoggerSugar.Errorw(constants.ErrorToGetUserByID, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
-
 	return user, nil
 }
 
