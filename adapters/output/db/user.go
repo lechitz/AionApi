@@ -2,19 +2,11 @@ package db
 
 import (
 	"github.com/jinzhu/copier"
+	"github.com/lechitz/AionApi/internal/core/constants"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"time"
-)
-
-const (
-	ErrorToCreateUser        = "error to create user into postgres"
-	ErrorToGetAllUser        = "error to get all users from postgres"
-	ErrorToGetUserByID       = "error to get user by ID from postgres"
-	ErrorToGetUserByUsername = "error to get user by username from postgres"
-	ErrorToUpdateUser        = "error to update user into postgres"
-	ErrorToSoftDeleteUser    = "error to delete user into postgres"
 )
 
 type UserPostgresDB struct {
@@ -64,7 +56,7 @@ func (up UserPostgresDB) CreateUser(contextControl domain.ContextControl, userDo
 
 	if err := up.DB.WithContext(contextControl.Context).
 		Create(&userDB).Error; err != nil {
-		up.LoggerSugar.Errorw(ErrorToCreateUser, "error", err.Error())
+		up.LoggerSugar.Errorw(constants.ErrorToCreateUser, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
 
@@ -79,7 +71,7 @@ func (up UserPostgresDB) GetAllUsers(contextControl domain.ContextControl) ([]do
 		Where("deleted_at IS NULL").
 		Select("id", "name", "username", "email", "created_at").
 		Find(&usersDB).Error; err != nil {
-		up.LoggerSugar.Errorw(ErrorToGetAllUser, "error", err.Error())
+		up.LoggerSugar.Errorw(constants.ErrorToGetAllUsers, "error", err.Error())
 		return []domain.UserDomain{}, err
 	}
 
@@ -96,7 +88,7 @@ func (up UserPostgresDB) GetUserByID(contextControl domain.ContextControl, userI
 	if err := up.DB.WithContext(contextControl.Context).
 		Where("id = ?", userID).
 		First(&userDB).Error; err != nil {
-		up.LoggerSugar.Errorw(ErrorToGetUserByID, "error", err.Error())
+		up.LoggerSugar.Errorw(constants.ErrorToGetUserByID, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
 
@@ -112,7 +104,7 @@ func (up UserPostgresDB) GetUserByUsername(contextControl domain.ContextControl,
 		Select("id, username, password").
 		Where("username = ?", userDB.Username).
 		First(&userDB).Error; err != nil {
-		up.LoggerSugar.Errorw(ErrorToGetUserByUsername, "error", err.Error())
+		up.LoggerSugar.Errorw(constants.ErrorToGetUserByUserName, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
 
@@ -128,7 +120,7 @@ func (up UserPostgresDB) UpdateUser(contextControl domain.ContextControl, userDo
 		Model(&UserDB{}).
 		Where("id = ?", userDB.ID).
 		Updates(userDB).Error; err != nil {
-		up.LoggerSugar.Errorw(ErrorToUpdateUser, "error", err.Error())
+		up.LoggerSugar.Errorw(constants.ErrorToUpdateUser, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
 
@@ -141,7 +133,7 @@ func (up UserPostgresDB) SoftDeleteUser(contextControl domain.ContextControl, us
 		Model(&UserDB{}).
 		Where("id = ?", userID).
 		Update("deleted_at", time.Now()).Error; err != nil {
-		up.LoggerSugar.Errorw(ErrorToSoftDeleteUser, "error", err.Error())
+		up.LoggerSugar.Errorw(constants.ErrorToSoftDeleteUser, "error", err.Error())
 		return err
 	}
 

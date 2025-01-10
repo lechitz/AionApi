@@ -33,6 +33,8 @@ func (service *UserService) CreateUser(contextControl domain.ContextControl, use
 		service.LoggerSugar.Errorw(constants.ErrorToCreateUser, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
+
+	service.LoggerSugar.Infow(constants.SuccessUserCreated, "userID", user.ID)
 	return user, nil
 }
 
@@ -40,9 +42,11 @@ func (service *UserService) GetAllUsers(contextControl domain.ContextControl) ([
 
 	users, err := service.UserDomainDataBaseRepository.GetAllUsers(contextControl)
 	if err != nil {
-		service.LoggerSugar.Errorw(constants.ErrorToGetUsers, "error", err.Error())
+		service.LoggerSugar.Errorw(constants.ErrorToGetAllUsers, "error", err.Error())
 		return []domain.UserDomain{}, err
 	}
+
+	service.LoggerSugar.Infow(constants.SuccessUsersRetrieved, "users", users)
 	return users, nil
 }
 
@@ -53,6 +57,8 @@ func (service *UserService) GetUserByID(contextControl domain.ContextControl, ID
 		service.LoggerSugar.Errorw(constants.ErrorToGetUserByID, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
+
+	service.LoggerSugar.Infow(constants.SuccessUserRetrieved, "userID", user.ID)
 	return user, nil
 }
 
@@ -63,6 +69,8 @@ func (service *UserService) GetUserByUsername(contextControl domain.ContextContr
 		service.LoggerSugar.Errorw(constants.ErrorToGetUserByUserName, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
+
+	service.LoggerSugar.Infow(constants.SuccessUserRetrieved, "userID", user.ID)
 	return user, nil
 }
 
@@ -84,6 +92,8 @@ func (service *UserService) UpdateUser(contextControl domain.ContextControl, use
 		service.LoggerSugar.Errorw(constants.ErrorToGetUserByID, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
+
+	service.LoggerSugar.Infow(constants.SuccessUserUpdated, "userID", user.ID)
 	return user, nil
 }
 
@@ -91,9 +101,11 @@ func (service *UserService) SoftDeleteUser(contextControl domain.ContextControl,
 
 	err := service.UserDomainDataBaseRepository.SoftDeleteUser(contextControl, ID)
 	if err != nil {
-		service.LoggerSugar.Errorw(constants.ErrorToDeleteUser, "error", err.Error())
+		service.LoggerSugar.Errorw(constants.ErrorToSoftDeleteUser, "error", err.Error())
 		return err
 	}
+
+	service.LoggerSugar.Infow(constants.SuccessUserSoftDeleted, "userID", ID)
 	return nil
 }
 

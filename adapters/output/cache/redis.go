@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/infra/cache"
+	"github.com/lechitz/AionApi/internal/core/constants"
 	"go.uber.org/zap"
 	"time"
 )
@@ -32,18 +33,18 @@ func (t *TokenStore) CreateToken(ctx context.Context, userID uint64) (string, er
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString(t.SecretKey)
 	if err != nil {
-		t.LoggerSugar.Errorw("Failed to create token", "error", err.Error())
+		t.LoggerSugar.Errorw(constants.ErrorToCreateToken, "error", err.Error())
 		return "", err
 	}
 
 	key := fmt.Sprintf("user:%d:token", userID)
 	err = t.RedisClient.Client.Set(ctx, key, signedToken, 24*time.Hour).Err()
 	if err != nil {
-		t.LoggerSugar.Errorw("Failed to store token in Redis", "error", err.Error(), "userID", userID)
+		t.LoggerSugar.Errorw(constants.ErrorToStoreTokenInRedis, "error", err.Error(), "userID", userID)
 		return "", err
 	}
 
-	t.LoggerSugar.Infow("Token created successfully", "userID", userID, "token", signedToken)
+	t.LoggerSugar.Infow(constants.SuccessTokenCreated, "userID", userID)
 	return signedToken, nil
 }
 
@@ -52,35 +53,36 @@ func (t *TokenStore) ValidateToken(ctx context.Context, tokenFromCookie string) 
 		return t.SecretKey, nil
 	})
 	if err != nil || !parsedToken.Valid {
-		t.LoggerSugar.Errorw("Invalid token", "token", tokenFromCookie, "error", err)
-		return "", 0, fmt.Errorf("invalid token")
+		t.LoggerSugar.Errorw(constants.ErrorInvalidToken, "token", tokenFromCookie, "error", err)
+		return "", 0, fmt.Errorf(constants.ErrorInvalidToken)
 	}
 
 	claims, ok := parsedToken.Claims.(jwt.MapClaims)
 	if !ok {
-		t.LoggerSugar.Errorw("Invalid token claims", "token", tokenFromCookie)
-		return "", 0, fmt.Errorf("invalid token claims")
+		t.LoggerSugar.Errorw(constants.ErrorInvalidTokenClaims, "token", tokenFromCookie)
+		return "", 0, fmt.Errorf(constants.ErrorInvalidTokenClaims)
 	}
 
 	userIDFloat, ok := claims["id"].(float64)
 	if !ok {
-		t.LoggerSugar.Errorw("Invalid userID claim", "token", tokenFromCookie)
-		return "", 0, fmt.Errorf("invalid userID claim")
+		t.LoggerSugar.Errorw(constants.ErrorInvalidUserIDClaim, "token", tokenFromCookie)
+		return "", 0, fmt.Errorf(constants.ErrorInvalidUserIDClaim)
 	}
 
 	userID := uint64(userIDFloat)
 
 	tokenFromRedis, err := t.GetTokenByUserID(ctx, userID)
 	if err != nil {
-		t.LoggerSugar.Errorw("Error retrieving token from Redis", "error", err.Error(), "userID", userID)
-		return "", 0, fmt.Errorf("token not found or revoked")
+		t.LoggerSugar.Errorw(constants.ErrorToRetrieveTokenFromRedis, "error", err.Error(), "userID", userID)
+		return "", 0, fmt.Errorf(constants.ErrorToRetrieveTokenFromRedis)
 	}
 
 	if tokenFromCookie != tokenFromRedis {
-		t.LoggerSugar.Errorw("Token mismatch in Redis", "userID", userID, "tokenFromCookie", tokenFromCookie, "tokenFromRedis", tokenFromRedis)
-		return "", 0, fmt.Errorf("token mismatch")
+		t.LoggerSugar.Errorw(constants.ErrorTokenMismatch, "userID", userID, "tokenFromCookie", tokenFromCookie, "tokenFromRedis", tokenFromRedis)
+		return "", 0, fmt.Errorf(constants.ErrorTokenMismatch)
 	}
 
+	t.LoggerSugar.Infow(constants.SuccessTokenValidated, "userID", userID)
 	return tokenFromCookie, userID, nil
 }
 
@@ -88,11 +90,11 @@ func (t *TokenStore) GetTokenByUserID(ctx context.Context, userID uint64) (strin
 	key := fmt.Sprintf("user:%d:token", userID)
 	value, err := t.RedisClient.Client.Get(ctx, key).Result()
 	if err != nil {
-		t.LoggerSugar.Errorw("Error to get token from Redis", "error", err.Error(), "key", key)
+		t.LoggerSugar.Errorw(constants.ErrorToRetrieveTokenFromRedis, "error", err.Error(), "key", key)
 		return "", err
 	}
 
-	t.LoggerSugar.Infow("Token retrieved successfully", "userID", userID, "token", value)
+	t.LoggerSugar.Infow(constants.InfoTokenRetrieved, "userID", userID)
 	return value, nil
 }
 
@@ -100,10 +102,10 @@ func (t *TokenStore) DeleteTokenByUserID(ctx context.Context, userID uint64) err
 	key := fmt.Sprintf("user:%d:token", userID)
 	err := t.RedisClient.Client.Del(ctx, key).Err()
 	if err != nil {
-		t.LoggerSugar.Errorw("Error to delete token from Redis", "error", err.Error(), "key", key)
+		t.LoggerSugar.Errorw(constants.ErrorToDeleteTokenFromRedis, "error", err.Error(), "key", key)
 		return err
 	}
 
-	t.LoggerSugar.Infow("Token deleted successfully", "userID", userID)
+	t.LoggerSugar.Infow(constants.SuccessTokenDeleted, "userID", userID)
 	return nil
 }
