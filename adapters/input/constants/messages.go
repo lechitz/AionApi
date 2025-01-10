@@ -3,34 +3,19 @@ package constants
 // Errors related to user
 
 const (
-	ErrorToCreateUser         = "error to create user"
-	ErrorToDecodeUserRequest  = "error to decode user request"
-	ErrorToCreateToken        = "error to create token"
-	ErrorToParseUser          = "error to parse user"
-	ErrorToGetUsers           = "error to get users"
-	ErrorToGetUser            = "error to get user"
-	ErrorToGetUserByUsername  = "error to get user by username"
-	ErrorToExtractUserID      = "error to extract user ID"
-	ErrorToUpdateUser         = "error to update user"
-	ErrorUserPermissionDenied = "user permission denied"
+	ErrorToCreateUser               = "error to create user"
+	ErrorToDecodeUserRequest        = "error to decode user request"
+	ErrorToCreateToken              = "error to create token"
+	ErrorToParseUser                = "error to parse user"
+	ErrorToGetUsers                 = "error to get users"
+	ErrorToGetUser                  = "error to get user"
+	ErrorToGetUserByUsername        = "error to get user by username"
+	ErrorToUpdateUser               = "error to update user"
+	ErrorUserPermissionDenied       = "user permission denied"
+	ErrorToExtractUserIDFromContext = "failed to extract userID from context"
 )
 
-// Errors related to authentication
-
-const (
-	ErrorToLogin              = "error to login"
-	ErrorToVerifyPassword     = "error to verify password"
-	ErrorToDecodeLoginRequest = "error to decode login request"
-)
-
-// Errors related healthcheck and not found
-
-const (
-	ErrorToHealthCheck   = "error to health check"
-	ErrorNotFoundHandler = "handler not found"
-)
-
-// Success messages
+// Success messages related to user
 
 const (
 	SuccessToCreateUser = "user created successfully"
@@ -39,4 +24,20 @@ const (
 	SuccessToUpdateUser = "user updated successfully"
 	SuccessToDeleteUser = "user deleted successfully"
 	SuccessToLogin      = "success to login"
+)
+
+// Errors related to authentication
+
+const (
+	ErrorToLogin              = "error to login"
+	ErrorToVerifyPassword     = "error to verify password"
+	ErrorToDecodeLoginRequest = "error to decode login request"
+	ErrorToRetrieveToken      = "error to retrieve token"
+	ErrorToLogout             = "error to logout"
+)
+
+// Success messages related to authentication
+
+const (
+	SuccessToLogout = "success to logout"
 )

@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"github.com/lechitz/AionApi/config"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -9,16 +10,17 @@ import (
 	"time"
 )
 
-func NewPostgresDB(DBUser, DBPassword, DBName, DBHost, DBPort string, loggerSugar *zap.SugaredLogger) *gorm.DB {
+func NewPostgresDB(config config.PostgresConfig, loggerSugar *zap.SugaredLogger) *gorm.DB {
 	var err error
 	conString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		DBHost,
-		DBPort,
-		DBUser,
-		DBPassword,
-		DBName)
+		config.DBHost,
+		config.DBPort,
+		config.DBUser,
+		config.DBPassword,
+		config.DBName,
+	)
 
-	loggerSugar.Infow("db connection", "connection_string", conString)
+	loggerSugar.Infow("db connection", "host", config.DBHost, "port", config.DBPort, "dbname", config.DBName)
 
 	DB, err := connecting(conString, loggerSugar)
 	if err != nil {
@@ -48,5 +50,16 @@ func connecting(conString string, loggerSugar *zap.SugaredLogger) (*gorm.DB, err
 		}
 
 		return DB, err
+	}
+}
+
+func Close(DB *gorm.DB, loggerSugar *zap.SugaredLogger) {
+	sqlDB, err := DB.DB()
+	if err != nil {
+		loggerSugar.Errorw("Failed to retrieve SQL DB from Gorm", "error", err.Error())
+		return
+	}
+	if err := sqlDB.Close(); err != nil {
+		loggerSugar.Errorw("Failed to close Postgres connection", "error", err.Error())
 	}
 }

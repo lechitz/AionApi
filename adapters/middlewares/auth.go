@@ -1,69 +1,48 @@
 package middlewares
 
 import (
-	"errors"
-	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/lechitz/AionApi/pkg/utils"
+	"context"
+	"github.com/lechitz/AionApi/ports/output"
 	"go.uber.org/zap"
 	"net/http"
-	"strconv"
-	"strings"
 )
 
-func AuthMiddleware(logger *zap.SugaredLogger) func(next http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+type AuthMiddleware struct {
+	TokenStore output.ITokenStore
+	Logger     *zap.SugaredLogger
+}
 
-			err := ValidateToken(r)
-			if err != nil {
-				logger.Warnw("Unauthorized access attempt", "error", err.Error())
-				http.Error(w, "Unauthorized", http.StatusUnauthorized)
-				return
-			}
-
-			next.ServeHTTP(w, r)
-		})
+func NewAuthMiddleware(tokenStore output.ITokenStore, logger *zap.SugaredLogger) *AuthMiddleware {
+	return &AuthMiddleware{
+		TokenStore: tokenStore,
+		Logger:     logger,
 	}
 }
 
-func ValidateToken(r *http.Request) error {
-	tokenString, err := extractTokenFromCookie(r)
-	if err != nil {
-		return err
-	}
-	token, err := jwt.Parse(tokenString, utils.ReturnKeyVerification)
-	if err != nil {
-		return err
-	}
+func (a *AuthMiddleware) Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		return nil
-	}
-
-	return errors.New("invalid token")
-}
-
-func ExtractUserIDFromToken(r *http.Request) (uint64, error) {
-	tokenString, err := extractTokenFromCookie(r)
-	if err != nil {
-		return 0, err
-	}
-
-	token, err := jwt.Parse(tokenString, utils.ReturnKeyVerification)
-	if err != nil {
-		return 0, err
-	}
-
-	if permissions, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		userID, err := strconv.ParseUint(fmt.Sprintf("%.0f", permissions["id"]), 10, 64)
+		tokenCookie, err := extractTokenFromCookie(r)
 		if err != nil {
-			return 0, err
+			a.Logger.Warnw("Unauthorized access: missing token", "error", err.Error())
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
 		}
-		return userID, nil
-	}
 
-	return 0, errors.New("invalid token")
+		token, userIDFloat, err := a.TokenStore.ValidateToken(r.Context(), tokenCookie)
+		if err != nil {
+			a.Logger.Warnw("Unauthorized access: invalid token", "error", err.Error())
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		a.Logger.Infow("Token validated successfully, adding userID to context", "userID", userIDFloat)
+
+		ctx := context.WithValue(r.Context(), "id", userIDFloat)
+		ctx = context.WithValue(ctx, "auth_token", token)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
 
 func extractTokenFromCookie(r *http.Request) (string, error) {
@@ -72,12 +51,4 @@ func extractTokenFromCookie(r *http.Request) (string, error) {
 		return "", err
 	}
 	return cookie.Value, nil
-}
-
-func extractTokenFromBearer(r *http.Request) (string, error) {
-	token := r.Header.Get("Authorization")
-	if strings.HasPrefix(token, "Bearer ") {
-		return strings.TrimPrefix(token, "Bearer "), nil
-	}
-	return "", nil
 }

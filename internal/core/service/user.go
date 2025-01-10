@@ -23,7 +23,7 @@ func (service *UserService) CreateUser(contextControl domain.ContextControl, use
 		return domain.UserDomain{}, err
 	}
 
-	if err := service.formatCreateUser(user); err != nil {
+	if err := service.formatCreateUser(&user); err != nil {
 		service.LoggerSugar.Errorw(constants.ErrorToFormatCreateUser, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
@@ -58,12 +58,12 @@ func (service *UserService) GetUserByID(contextControl domain.ContextControl, ID
 
 func (service *UserService) GetUserByUsername(contextControl domain.ContextControl, userDomain domain.UserDomain) (domain.UserDomain, error) {
 
-	login, err := service.UserDomainDataBaseRepository.GetUserByUsername(contextControl, userDomain)
+	user, err := service.UserDomainDataBaseRepository.GetUserByUsername(contextControl, userDomain)
 	if err != nil {
 		service.LoggerSugar.Errorw(constants.ErrorToGetUserByUserName, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
-	return login, nil
+	return user, nil
 }
 
 func (service *UserService) UpdateUser(contextControl domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error) {
@@ -119,7 +119,7 @@ func (service *UserService) validateCreateUser(user domain.UserDomain) error {
 	return nil
 }
 
-func (service *UserService) formatCreateUser(user domain.UserDomain) error {
+func (service *UserService) formatCreateUser(user *domain.UserDomain) error {
 	user.Name = strings.TrimSpace(user.Name)
 	user.Username = strings.TrimSpace(user.Username)
 	user.Email = strings.TrimSpace(user.Email)

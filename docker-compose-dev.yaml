@@ -24,8 +24,25 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:alpine
+    container_name: redis-aion
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    networks:
+      - rede_local
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
   aion-api:
     container_name: aion-api-dev
+    image: aion-api
     build: ${AION_GO_FOLDER}
     restart: always
     environment:
@@ -36,6 +53,7 @@ services:
       - DB_PORT=${DB_PORT}
       - DB_TYPE=${DB_TYPE}
       - SECRET_KEY=${SECRET_KEY}
+      - REDIS_ADDR=${REDIS_ADDR}
     ports:
       - "5001:5001"
     expose:

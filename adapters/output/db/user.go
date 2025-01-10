@@ -1,4 +1,4 @@
-package repository
+package db
 
 import (
 	"github.com/jinzhu/copier"

@@ -14,7 +14,7 @@ const (
 	MissingUserIdParameter = "missing user ID parameter"
 )
 
-func ParseAndValidateUserIDFromRequest(w http.ResponseWriter, logger *zap.SugaredLogger, r *http.Request) (uint64, error) {
+func UserIDFromParam(w http.ResponseWriter, logger *zap.SugaredLogger, r *http.Request) (uint64, error) {
 	userIDParam := chi.URLParam(r, "id")
 
 	if userIDParam == "" {

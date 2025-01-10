@@ -7,11 +7,9 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/lechitz/AionApi/adapters/input/constants"
 	"github.com/lechitz/AionApi/adapters/input/http/dto"
-	"github.com/lechitz/AionApi/adapters/middlewares"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/pkg/utils"
 	"github.com/lechitz/AionApi/ports/input"
-
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -73,7 +71,7 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		Context: context.Background(),
 	}
 
-	userID, err := utils.ParseAndValidateUserIDFromRequest(w, u.LoggerSugar, r)
+	userID, err := utils.UserIDFromParam(w, u.LoggerSugar, r)
 	if err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, constants.ErrorToParseUser, err)
 		return
@@ -97,15 +95,16 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		Context: context.Background(),
 	}
 
-	userIDParam, err := utils.ParseAndValidateUserIDFromRequest(w, u.LoggerSugar, r)
+	userIDParam, err := utils.UserIDFromParam(w, u.LoggerSugar, r)
 	if err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, constants.ErrorToParseUser, err)
 		return
 	}
 
-	userIDToken, err := middlewares.ExtractUserIDFromToken(r)
+	userIDToken, err := getUserIDFromContext(r.Context())
 	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, constants.ErrorToExtractUserID, err)
+		u.LoggerSugar.Errorw("Failed to extract userID from context", "error", err.Error())
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -145,15 +144,16 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		Context: context.Background(),
 	}
 
-	userIDParam, err := utils.ParseAndValidateUserIDFromRequest(w, u.LoggerSugar, r)
+	userIDParam, err := utils.UserIDFromParam(w, u.LoggerSugar, r)
 	if err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, constants.ErrorToParseUser, err)
 		return
 	}
 
-	userIDToken, err := middlewares.ExtractUserIDFromToken(r)
+	userIDToken, err := getUserIDFromContext(r.Context())
 	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, constants.ErrorToExtractUserID, err)
+		u.LoggerSugar.Errorw("Failed to extract userID from context", "error", err.Error())
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -170,4 +170,12 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	response := utils.ObjectResponse(nil, constants.SuccessToDeleteUser)
 	utils.ResponseReturn(w, http.StatusNoContent, response.Bytes())
+}
+
+func getUserIDFromContext(ctx context.Context) (uint64, error) {
+	userID, ok := ctx.Value("id").(uint64)
+	if !ok {
+		return 0, errors.New(constants.ErrorToExtractUserIDFromContext)
+	}
+	return userID, nil
 }
