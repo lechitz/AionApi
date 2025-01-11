@@ -18,12 +18,13 @@ const (
 // Success messages related to user
 
 const (
-	SuccessToCreateUser = "user created successfully"
-	SuccessToGetUser    = "user get successfully"
-	SuccessToGetUsers   = "users get successfully"
-	SuccessToUpdateUser = "user updated successfully"
-	SuccessToDeleteUser = "user deleted successfully"
-	SuccessToLogin      = "success to login"
+	SuccessToCreateUser     = "user created successfully"
+	SuccessToGetUser        = "user get successfully"
+	SuccessToGetUsers       = "users get successfully"
+	SuccessToUpdateUser     = "user updated successfully"
+	SuccessToDeleteUser     = "user deleted successfully"
+	SuccessToLogin          = "success to login"
+	SuccessToUpdatePassword = "password updated successfully"
 )
 
 // Errors related to authentication

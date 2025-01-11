@@ -8,11 +8,11 @@ import (
 )
 
 type AuthMiddleware struct {
-	TokenStore output.ITokenStore
+	TokenStore output.IAuthRepository
 	Logger     *zap.SugaredLogger
 }
 
-func NewAuthMiddleware(tokenStore output.ITokenStore, logger *zap.SugaredLogger) *AuthMiddleware {
+func NewAuthMiddleware(tokenStore output.IAuthRepository, logger *zap.SugaredLogger) *AuthMiddleware {
 	return &AuthMiddleware{
 		TokenStore: tokenStore,
 		Logger:     logger,

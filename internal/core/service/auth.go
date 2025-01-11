@@ -13,7 +13,7 @@ import (
 
 type AuthService struct {
 	UserDomainDataBaseRepository output.IUserDomainDataBaseRepository
-	TokenStore                   output.ITokenStore
+	TokenStore                   output.IAuthRepository
 	LoggerSugar                  *zap.SugaredLogger
 }
 
@@ -39,6 +39,7 @@ func (service *AuthService) Login(contextControl domain.ContextControl, userDoma
 }
 
 func (service *AuthService) Logout(contextControl domain.ContextControl, userDomain domain.UserDomain, token string) error {
+
 	if userDomain.ID == 0 {
 		service.LoggerSugar.Errorw(constants.ErrorInvalidUserID, "userID", userDomain.ID)
 		return fmt.Errorf(constants.ErrorInvalidUserID)

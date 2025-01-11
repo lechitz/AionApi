@@ -138,6 +138,60 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
 
+func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
+
+	contextControl := domain.ContextControl{
+		Context: context.Background(),
+	}
+
+	UserIDParam, err := utils.UserIDFromParam(w, u.LoggerSugar, r)
+	if err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, constants.ErrorToParseUser, err)
+		return
+	}
+
+	UserIDToken, err := getUserIDFromContext(r.Context())
+	if err != nil {
+		u.LoggerSugar.Errorw("Failed to extract userID from context", "error", err.Error())
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	if UserIDParam != UserIDToken {
+		utils.HandleError(w, u.LoggerSugar, http.StatusForbidden, constants.ErrorUserPermissionDenied, errors.New(constants.ErrorUserPermissionDenied))
+		return
+	}
+
+	var updatePasswordRequest dto.UpdatePasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&updatePasswordRequest); err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, constants.ErrorToDecodeUserRequest, err)
+		return
+	}
+
+	var userDomain domain.UserDomain
+	copier.Copy(&userDomain, &updatePasswordRequest)
+
+	userDomain.ID = UserIDToken
+
+	_, token, err := u.UserService.UpdatePassword(contextControl, userDomain, updatePasswordRequest.Password, updatePasswordRequest.NewPassword)
+	if err != nil {
+		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, constants.ErrorToUpdateUser, err)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "auth_token",
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true, // It's not possible to access the cookie via JavaScript
+		Secure:   true, // Only send the cookie if the request is being sent over HTTPS
+		SameSite: http.SameSiteStrictMode,
+	})
+
+	response := utils.ObjectResponse(nil, constants.SuccessToUpdatePassword)
+	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
+}
+
 func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	contextControl := domain.ContextControl{

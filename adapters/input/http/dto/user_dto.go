@@ -41,3 +41,8 @@ type UpdateUserResponse struct {
 	Email     *string   `json:"email"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type UpdatePasswordRequest struct {
+	Password    string `json:"password"`
+	NewPassword string `json:"new_password"`
+}

@@ -15,7 +15,7 @@ type Router struct {
 	AuthMiddleware *middlewares.AuthMiddleware
 }
 
-func GetNewRouter(loggerSugar *zap.SugaredLogger, tokenStore output.ITokenStore) Router {
+func GetNewRouter(loggerSugar *zap.SugaredLogger, tokenStore output.IAuthRepository) Router {
 	router := chi.NewRouter()
 
 	authMiddleware := middlewares.NewAuthMiddleware(tokenStore, loggerSugar)
@@ -49,6 +49,7 @@ func (router Router) AddGroupHandlerUser(ah *handlers.User) func(r chi.Router) {
 				r.Get("/all", ah.GetAllUsersHandler)
 				r.Get("/{id}", ah.GetUserByIDHandler)
 				r.Put("/{id}", ah.UpdateUserHandler)
+				r.Put("/password/{id}", ah.UpdatePasswordHandler)
 				r.Delete("/{id}", ah.SoftDeleteUserHandler)
 			})
 		})
