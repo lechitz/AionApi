@@ -98,6 +98,17 @@ func (t *TokenStore) GetTokenByUserID(ctx context.Context, userID uint64) (strin
 	return value, nil
 }
 
+func (t *TokenStore) UpdateTokenByUserID(ctx context.Context, userID uint64) (string, error) {
+	token, err := t.CreateToken(ctx, userID)
+	if err != nil {
+		t.LoggerSugar.Errorw(constants.ErrorToUpdateToken, "error", err.Error(), "userID", userID)
+		return "", err
+	}
+
+	t.LoggerSugar.Infow(constants.SuccessTokenUpdated, "userID", userID)
+	return token, nil
+}
+
 func (t *TokenStore) DeleteTokenByUserID(ctx context.Context, userID uint64) error {
 	key := fmt.Sprintf("user:%d:token", userID)
 	err := t.RedisClient.Client.Del(ctx, key).Err()

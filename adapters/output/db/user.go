@@ -127,6 +127,22 @@ func (up UserPostgresDB) UpdateUser(contextControl domain.ContextControl, userDo
 	return userDB.CopyToUserDomain(), nil
 }
 
+func (up UserPostgresDB) UpdatePassword(contextControl domain.ContextControl, userDomain domain.UserDomain) (domain.UserDomain, error) {
+
+	var userDB UserDB
+	copier.Copy(&userDB, &userDomain)
+
+	if err := up.DB.WithContext(contextControl.Context).
+		Model(&UserDB{}).
+		Where("id = ?", userDB.ID).
+		Update("password", userDB.Password).Error; err != nil {
+		up.LoggerSugar.Errorw(constants.ErrorToUpdatePassword, "error", err.Error())
+		return domain.UserDomain{}, err
+	}
+
+	return userDB.CopyToUserDomain(), nil
+}
+
 func (up UserPostgresDB) SoftDeleteUser(contextControl domain.ContextControl, userID uint64) error {
 
 	if err := up.DB.WithContext(contextControl.Context).

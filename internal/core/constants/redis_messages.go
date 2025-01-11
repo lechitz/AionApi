@@ -5,6 +5,7 @@ const (
 	ErrorToStoreTokenInRedis      = "Failed to store token in Redis"
 	ErrorToDeleteTokenFromRedis   = "Error to delete token from Redis"
 	ErrorToRetrieveTokenFromRedis = "Error retrieving token from Redis"
+	ErrorToUpdateToken            = "Error updating token"
 )
 
 // Error Messages to Validate Token
@@ -20,4 +21,5 @@ const (
 	SuccessTokenValidated = "Token validated successfully"
 	InfoTokenRetrieved    = "Token retrieved successfully"
 	SuccessTokenDeleted   = "Token deleted successfully"
+	SuccessTokenUpdated   = "Token updated successfully"
 )

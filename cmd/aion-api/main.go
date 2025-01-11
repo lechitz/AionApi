@@ -97,6 +97,7 @@ func main() {
 
 	userService := &service.UserService{
 		UserDomainDataBaseRepository: &userPostgresDB,
+		UserDomainCacheRepository:    tokenStore,
 		LoggerSugar:                  loggerSugar,
 	}
 

@@ -13,6 +13,7 @@ import (
 
 type UserService struct {
 	UserDomainDataBaseRepository output.IUserDomainDataBaseRepository
+	UserDomainCacheRepository    output.IAuthRepository
 	LoggerSugar                  *zap.SugaredLogger
 }
 
@@ -95,6 +96,45 @@ func (service *UserService) UpdateUser(contextControl domain.ContextControl, use
 
 	service.LoggerSugar.Infow(constants.SuccessUserUpdated, "userID", user.ID)
 	return user, nil
+}
+
+func (service *UserService) UpdatePassword(contextControl domain.ContextControl, userDomain domain.UserDomain, password, newPassword string) (domain.UserDomain, string, error) {
+
+	userDB, err := service.UserDomainDataBaseRepository.GetUserByID(contextControl, userDomain.ID)
+	if err != nil {
+		service.LoggerSugar.Errorw(constants.ErrorToGetUserByID, "error", err.Error())
+		return domain.UserDomain{}, "", err
+	}
+
+	if err := utils.VerifyPassword(userDB.Password, password); err != nil {
+		service.LoggerSugar.Errorw(constants.ErrorToVerifyPassword, "error", err.Error())
+		return domain.UserDomain{}, "", err
+	}
+
+	err = service.UserDomainCacheRepository.DeleteTokenByUserID(contextControl.Context, userDB.ID)
+	if err != nil {
+		service.LoggerSugar.Errorw(constants.ErrorToDeleteToken, "error", err.Error())
+		return domain.UserDomain{}, "", err
+	}
+
+	hashedPassword, err := utils.Hash(newPassword)
+	if err != nil {
+		service.LoggerSugar.Errorw(constants.ErrorToHashPassword, "error", err.Error())
+		return domain.UserDomain{}, "", err
+	}
+
+	userDB.Password = string(hashedPassword)
+
+	userDB, err = service.UserDomainDataBaseRepository.UpdatePassword(contextControl, userDB)
+	if err != nil {
+		service.LoggerSugar.Errorw(constants.ErrorToUpdatePassword, "error", err.Error())
+		return domain.UserDomain{}, "", err
+	}
+
+	newToken, err := service.UserDomainCacheRepository.CreateToken(contextControl.Context, userDB.ID)
+
+	service.LoggerSugar.Infow(constants.SuccessPasswordUpdated, "userID", userDB.ID)
+	return userDB, newToken, nil
 }
 
 func (service *UserService) SoftDeleteUser(contextControl domain.ContextControl, ID uint64) error {
