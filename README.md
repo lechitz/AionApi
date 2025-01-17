@@ -6,24 +6,17 @@
 >
 > Whether you’re focusing on fitness, learning, or personal growth, Aion is your companion in building the discipline you need to achieve sustainable success.
 
-## **Current and Upcoming Features**
-
-- **Streamlined Habit Management:** Organize and track your habits effortlessly.
-- **Data-Driven Insights:** Visualize your progress and analyze behavior patterns.
-- **Modern Integrations:** Sync with tools and platforms for extended usability.
-- **Developer-Friendly API:** Clear, scalable, and extensible endpoints for all your needs.
-
 ## **Table of Contents**
 
 - [Overview](#overview)
-- [Features](#features)
+- [Current and Upcoming Features](#Current-and-Upcoming-Features)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Development](#development)
+- [Docker Integration](#docker-integration)
 - [API Endpoints](#api-endpoints)
     - [User Management](#user-management)
     - [Authentication](#authentication)
-    - [Activity Management](#activity-management)
 - [License](#license)
 
 ---
@@ -31,6 +24,15 @@
 ## **Overview**
 
 The Aion API is a RESTful backend solution designed to empower developers to build productivity applications with robust user and activity management features. Built with **Go**, powered by **PostgreSQL**, and based on the **Ports & Adapters architecture** for scalability and maintainability.
+
+---
+
+## **Current and Upcoming Features**
+
+- **Streamlined Habit Management:** Organize and track your habits effortlessly.
+- **Data-Driven Insights:** Visualize your progress and analyze behavior patterns.
+- **Modern Integrations:** Sync with tools and platforms for extended usability.
+- **Developer-Friendly API:** Clear, scalable, and extensible endpoints for all your needs.
 
 ---
 
@@ -110,8 +112,6 @@ The Aion API adopts the Ports and Adapters Architecture (Hexagonal Architecture)
 </div>
 
 
-
-### **Folder Structure**
 
 The Aion API is organized following the **Ports and Adapters Architecture (Hexagonal Architecture)** to promote clear separation between the core business logic and external systems. Here is the folder structure:
 
