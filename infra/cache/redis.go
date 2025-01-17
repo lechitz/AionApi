@@ -2,38 +2,29 @@ package cache
 
 import (
 	"context"
+	"time"
+
+	"github.com/lechitz/AionApi/app/config"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
-	"time"
 )
 
-type RedisClient struct {
-	Client      *redis.Client
-	LoggerSugar *zap.SugaredLogger
-}
-
-func NewRedisClient(addr, password string, db int, loggerSugar *zap.SugaredLogger) *RedisClient {
+func NewCacheConnection(config config.CacheConfig, loggerSugar *zap.SugaredLogger) *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		Password: password,
-		DB:       db,
+		Addr:     config.Addr,
+		Password: config.Password,
+		DB:       config.DB,
+		PoolSize: config.PoolSize,
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {
-		loggerSugar.Fatalf("Failed to connect to Redis: %v", err)
+		loggerSugar.Fatalf(msgFailedToConnectToRedis, err)
 	}
 
-	loggerSugar.Infow("redis connection established", "address", addr, "db", db)
+	loggerSugar.Infow(SuccessToConnectToRedis, "address", config.Addr, "db", config.DB)
 
-	return &RedisClient{
-		Client:      client,
-		LoggerSugar: loggerSugar,
-	}
-}
-
-func (r *RedisClient) Close() error {
-	return r.Client.Close()
+	return client
 }

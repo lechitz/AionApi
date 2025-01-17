@@ -1,6 +1,7 @@
 # ========================
 # Global Variables
 # ========================
+include .env
 APPLICATION_NAME := aion-api
 PORT := 5001
 COMPOSE_FILE_DEV := docker-compose-dev.yaml
@@ -34,20 +35,13 @@ help:
 	@echo "  test-cover                Run tests and generate a coverage report."
 
 # ========================
-# Docker Compose Commands
-# ========================
-docker-compose-up: docker-compose-down
-	docker-compose -f $(COMPOSE_FILE) up
-
-docker-compose-down:
-	docker-compose -f $(COMPOSE_FILE) down -v
-
-docker-compose-rm:
-	docker-compose -f $(COMPOSE_FILE) rm -f -v
-
-# ========================
 # Development Environment
 # ========================
+.PHONY: docker-build-dev docker-compose-dev-up docker-compose-dev-down docker-build-run-dev docker-clean-dev
+
+docker-build-dev:
+	docker build -t $(APPLICATION_NAME):dev .
+
 docker-compose-dev-up: docker-compose-dev-down
 	docker-compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres
 	docker-compose -f $(COMPOSE_FILE_DEV) up
@@ -55,49 +49,50 @@ docker-compose-dev-up: docker-compose-dev-down
 docker-compose-dev-down:
 	docker-compose -f $(COMPOSE_FILE_DEV) down -v
 
-docker-build-dev:
-	docker build -t $(APPLICATION_NAME):dev .
+docker-build-run-dev: docker-build-dev docker-compose-dev-up
 
 docker-clean-dev:
-	docker rm -f $(shell docker ps -a --filter "name=dev" -q)
-	docker volume rm $(shell docker volume ls --filter "name=dev" -q)
-	docker rmi -f $(shell docker images --filter "reference=*dev*" -q)
+	docker rm -f $(shell docker ps -a --filter "name=dev" -q) || true
+	docker volume rm $(shell docker volume ls --filter "name=dev" -q) || true
+	docker rmi -f $(shell docker images --filter "reference=*dev*" -q) || true
 
 # ========================
 # Production Environment
 # ========================
-docker-compose-prod-up: docker-compose-prod-down
-	docker-compose -f $(COMPOSE_FILE_PROD) up
-
-docker-compose-prod-down:
-	docker-compose -f $(COMPOSE_FILE_PROD) down
+.PHONY: docker-build-prod docker-compose-prod-up docker-compose-prod-down docker-build-run-prod docker-clean-prod
 
 docker-build-prod:
 	docker build -t $(APPLICATION_NAME):prod .
 
+docker-compose-prod-up: docker-compose-prod-down
+	docker-compose -f $(COMPOSE_FILE_PROD) up
+
+docker-compose-prod-down:
+	docker-compose -f $(COMPOSE_FILE_PROD) down -v
+
+docker-build-run-prod: docker-build-prod docker-compose-prod-up
+
 docker-clean-prod:
-	docker rm -f $(shell docker ps -a --filter "name=prod" -q)
-	docker volume rm $(shell docker volume ls --filter "name=prod" -q)
-	docker rmi -f $(shell docker images --filter "reference=*prod*" -q)
+	docker rm -f $(shell docker ps -a --filter "name=prod" -q) || true
+	docker volume rm $(shell docker volume ls --filter "name=prod" -q) || true
+	docker rmi -f $(shell docker images --filter "reference=*prod*" -q) || true
 
 # ========================
 # General Docker Commands
 # ========================
+.PHONY: docker-clean-all
 docker-clean-all:
 	# Remove all containers:
-	docker rm -f $(shell docker ps -a -q)
+	docker rm -f $(shell docker ps -a -q) || true
 	# Remove all volumes:
-	docker volume rm $(shell docker volume ls -q)
+	docker volume rm $(shell docker volume ls -q) || true
 	# Remove all images:
-	docker rmi -f $(shell docker images -a -q)
-
-docker-build-run-dev: docker-build-dev docker-compose-dev-up
-
-docker-build-run-prod: docker-build-prod docker-compose-prod-up
+	docker rmi -f $(shell docker images -a -q) || true
 
 # ========================
 # Go Testing Commands
 # ========================
+.PHONY: test-cover
 test-cover:
 	go test ./... -coverprofile=coverage_tmp.out
 	cat coverage_tmp.out | grep -v "Mock" > coverage.out
