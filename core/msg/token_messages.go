@@ -1,25 +1,36 @@
 package msg
 
 // Error Messages
-const (
-	ErrorToStoreTokenInRedis      = "failed to store token in Redis"
-	ErrorToDeleteTokenFromRedis   = "error to delete token from Redis"
-	ErrorToRetrieveTokenFromRedis = "error retrieving token from Redis"
-	ErrorToUpdateToken            = "error updating token"
-)
 
-// Error Messages to Validate Token
 const (
-	ErrorInvalidToken       = "invalid token"
-	ErrorInvalidTokenClaims = "invalid token claims"
-	ErrorInvalidUserIDClaim = "invalid userID claim in token"
+	ErrorToCreateToken            = "error creating authentication token"
+	ErrorTokenMismatch            = "provided token does not match stored token"
+	ErrorRevokeToken              = "failed to revoke token during logout"
+	ErrorToUpdatePassword         = "error updating password"
+	ErrorToDeleteToken            = "error deleting token"
+	ErrorToAssignToken            = "error assigning token"
+	ErrorToGenerateToken          = "error generating token"
+	ErrorToSaveToken              = "error saving token"
+	ErrorToCheckToken             = "error to check token"
+	ErrorToRetrieveTokenFromCache = "error retrieving token from cache"
+	ErrorToUpdateToken            = "error updating token"
+	ErrorInvalidToken             = "invalid token"
+	ErrorInvalidTokenClaims       = "invalid token claims"
+	ErrorInvalidUserIDClaim       = "invalid userID claim in token"
 )
 
 // Success Messages
+
 const (
 	SuccessTokenCreated   = "token created successfully"
 	SuccessTokenValidated = "token validated successfully"
-	InfoTokenRetrieved    = "token retrieved successfully"
 	SuccessTokenDeleted   = "token deleted successfully"
 	SuccessTokenUpdated   = "token updated successfully"
+)
+
+// Messages
+
+const (
+	TokenFromCookie = "tokenFromCookie"
+	TokenFromCache  = "tokenFromCache"
 )

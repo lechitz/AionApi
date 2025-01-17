@@ -13,11 +13,11 @@ import (
 func InitRouter(dependencies *bootstrap.AppDependencies, logger *zap.SugaredLogger, contextPath string) (*Router, error) {
 
 	if contextPath == "" {
-		return nil, fmt.Errorf("contextPath cannot be empty")
+		return nil, fmt.Errorf(ErrorContextPathEmpty)
 	}
 
 	if strings.Contains(contextPath[1:], "/") {
-		return nil, fmt.Errorf("contextPath cannot contain additional slashes `/`")
+		return nil, fmt.Errorf(ErrorContextPathSlash)
 	}
 
 	userHandler, authHandler, genericHandler := initializeHandlers(dependencies, logger)
@@ -53,7 +53,7 @@ func configureRoutes(router *Router, userHandler *handlers.User, authHandler *ha
 	contextPath := router.ContextPath
 
 	if len(contextPath) < 1 || contextPath[0] != '/' {
-		return fmt.Errorf("contextPath must start with a '/'")
+		return fmt.Errorf(ErrorContextPathSlash)
 	}
 
 	router.GetChiRouter().Route(contextPath, func(r chi.Router) {

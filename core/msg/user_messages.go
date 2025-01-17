@@ -12,16 +12,18 @@ const (
 
 // Error Messages for User
 const (
-	ErrorToCreateUser         = "error creating user"
-	ErrorToNormalizeUserData  = "error formatting user during creation"
-	ErrorToValidateCreateUser = "error validating user during creation"
-	ErrorToGetAllUsers        = "error retrieving all users"
-	ErrorToGetUserByID        = "error retrieving user by ID"
-	ErrorToGetUserByUserName  = "error retrieving user by username"
-	ErrorParsingUserId        = "error parsing user ID"
-	ErrorToSoftDeleteUser     = "error soft deleting user"
-	ErrorToUpdateUser         = "error updating user"
-	ErrorToFormatUpdateUser   = "error formatting user during update"
+	ErrorToCreateUser             = "error creating user"
+	ErrorToNormalizeUserData      = "error formatting user during creation"
+	ErrorToValidateCreateUser     = "error validating user during creation"
+	ErrorToGetAllUsers            = "error retrieving all users"
+	ErrorToGetUserByID            = "error retrieving user by ID"
+	ErrorToGetUserByUserName      = "error retrieving user by username"
+	ErrorParsingUserId            = "error parsing user ID"
+	ErrorToSoftDeleteUser         = "error soft deleting user"
+	ErrorToUpdateUser             = "error updating user"
+	ErrorToFormatUpdateUser       = "error formatting user during update"
+	ErrorToHashPassword           = "error hashing password"
+	ErrorToCompareHashAndPassword = "invalid password provided"
 )
 
 // Success Messages for User

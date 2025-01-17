@@ -11,6 +11,7 @@ const (
 	ErrorTokenMismatch            = "provided token does not match stored token"
 	ErrorToUpdateToken            = "error updating token"
 	ErrorToDeleteTokenFromRedis   = "error deleting token from Redis"
+	ErrorTokenNotFound            = "token not found"
 )
 
 // Success messages related to token

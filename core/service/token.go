@@ -41,7 +41,7 @@ func (service *TokenService) CreateToken(ctx entities.ContextControl, tokenDomai
 
 	claims := jwt.MapClaims{
 		contextkeys.UserID: tokenDomain.UserID,
-		"exp":              time.Now().Add(contextkeys.ExpTimeToken).Unix(), // ExpTimeToken é definido em pkg/contextkeys ou similar
+		contextkeys.Exp:    time.Now().Add(contextkeys.ExpTimeToken).Unix(),
 	}
 
 	newToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -69,7 +69,7 @@ func (service *TokenService) SaveToken(ctx entities.ContextControl, tokenDomain 
 func (service *TokenService) GetToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) (string, error) {
 	token, err := service.TokenRepository.GetToken(ctx, tokenDomain)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToRetrieveTokenFromRedis, contextkeys.Error, err.Error())
+		service.LoggerSugar.Errorw(msg.ErrorToRetrieveTokenFromCache, contextkeys.Error, err.Error())
 		return "", err
 	}
 
@@ -126,17 +126,17 @@ func (service *TokenService) CheckToken(ctx entities.ContextControl, token strin
 		Token:  token,
 	}
 
-	tokenFromRedis, err := service.GetToken(ctx, tokenDomain)
+	tokenFromCache, err := service.GetToken(ctx, tokenDomain)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToRetrieveTokenFromRedis, contextkeys.Error, err.Error(), contextkeys.UserID, userID)
-		return 0, "", fmt.Errorf(msg.ErrorToRetrieveTokenFromRedis)
+		service.LoggerSugar.Errorw(msg.ErrorToRetrieveTokenFromCache, contextkeys.Error, err.Error(), contextkeys.UserID, userID)
+		return 0, "", fmt.Errorf(msg.ErrorToRetrieveTokenFromCache)
 	}
 
-	if token != tokenFromRedis {
-		service.LoggerSugar.Errorw(msg.ErrorTokenMismatch, contextkeys.UserID, userID, "tokenFromCookie", token, "tokenFromRedis", tokenFromRedis)
+	if token != tokenFromCache {
+		service.LoggerSugar.Errorw(msg.ErrorTokenMismatch, contextkeys.UserID, userID, msg.TokenFromCookie, token, msg.TokenFromCache, tokenFromCache)
 		return 0, "", fmt.Errorf(msg.ErrorTokenMismatch)
 	}
 
 	service.LoggerSugar.Infow(msg.SuccessTokenValidated, contextkeys.UserID, userID)
-	return userID, tokenFromRedis, nil
+	return userID, tokenFromCache, nil
 }
