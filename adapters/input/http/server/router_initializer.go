@@ -10,8 +10,6 @@ import (
 	"go.uber.org/zap"
 )
 
-//todo tá tudo certo.. erros estranhos, possíveis de serem do pacote router para o server, apos a mudanća de nome do pacote
-
 func InitRouter(dependencies *bootstrap.AppDependencies, logger *zap.SugaredLogger, contextPath string) (*Router, error) {
 
 	if contextPath == "" {

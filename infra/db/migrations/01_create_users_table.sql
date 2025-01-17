@@ -24,5 +24,5 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER update_users_updated_at
     BEFORE UPDATE ON aion_api.users
     FOR EACH ROW
-    WHEN (OLD.* IS DISTINCT FROM NEW.*) -- Only update if something changes
+    WHEN (OLD.* IS DISTINCT FROM NEW.*)
 EXECUTE FUNCTION update_timestamp();

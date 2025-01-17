@@ -24,6 +24,8 @@ type AppDependencies struct {
 	Config config.Config
 }
 
+const ErrorInitializingDependencies = "error closing cache connection: "
+
 func InitializeDependencies(loggerSugar *zap.SugaredLogger, cfg config.Config) (*AppDependencies, func(), error) {
 	cacheConn := infraCache.NewCacheConnection(cfg.CacheConfig, loggerSugar)
 	tokenRepo := redis.NewCacheRepo(cacheConn, loggerSugar)
@@ -38,7 +40,7 @@ func InitializeDependencies(loggerSugar *zap.SugaredLogger, cfg config.Config) (
 	cleanup := func() {
 		infraDB.Close(databaseConn, loggerSugar)
 		if err := cacheConn.Close(); err != nil {
-			loggerSugar.Error("error closing cache connection: ", err)
+			loggerSugar.Error(ErrorInitializingDependencies, err)
 		}
 	}
 

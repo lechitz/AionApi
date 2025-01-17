@@ -27,7 +27,7 @@ func NewCacheRepo(redisClient *redis.Client, loggerSugar *zap.SugaredLogger) cac
 func (c *CacheRepo) SaveToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) error {
 	redisCtx := ctx.BaseContext
 
-	//TODO: se não me engano em outra parte do código estamos configurando o expiration para 1 hora
+	//TODO: Move expiration to config
 	expiration := 24 * time.Hour
 
 	key := c.formatTokenKey(tokenDomain.UserID)

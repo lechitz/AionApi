@@ -9,7 +9,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// NewHTTPServer creates and configures an HTTP server.
 func NewHTTPServer(deps *bootstrap.AppDependencies, logger *zap.SugaredLogger, setting *config.Config) (*http.Server, error) {
 
 	route, err := InitRouter(deps, logger, setting.Server.Context)

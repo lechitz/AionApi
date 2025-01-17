@@ -68,8 +68,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 
 func (a *MiddlewareAuth) AuthRevoke(next http.Handler) http.Handler {
 
-	//TODO: Do I need to implement this method to revoke the token ?!
-	//next.ServeHTTP(w, r)
+	//TODO: Implement AuthRevoke middleware
 
 	return nil
 }
