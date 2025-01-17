@@ -257,7 +257,7 @@ The complete folder structure here
 ├── infra
 │   └── db
 │       ├── migrations
-│       │   ├── 01-users.sql
+│       │   ├── 01_create_users_table.sql
 │       │   ├── 02-tags.sql
 │       │   ├── 03_days.sql
 │       │   ├── 04_personal_diaries.sql

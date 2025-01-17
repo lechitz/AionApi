@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"net/http"
+
+	msg "github.com/lechitz/AionApi/adapters/input/http/handlers/messages"
 	"github.com/lechitz/AionApi/pkg/utils"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type Generic struct {
@@ -11,9 +13,11 @@ type Generic struct {
 }
 
 func (h *Generic) HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	utils.ResponseReturn(w, http.StatusOK, []byte(`{"message": "Service is healthy"}`))
+	utils.ResponseReturn(w, http.StatusOK, []byte(msg.MsgServiceIsHealthy))
+	h.LoggerSugar.Infow(msg.MsgServiceIsHealthy)
 }
 
 func (h *Generic) NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	utils.ResponseReturn(w, http.StatusNotFound, []byte(`{"error": "Resource not found"}`))
+	utils.ResponseReturn(w, http.StatusNotFound, []byte(msg.MsgResourceNotFound))
+	h.LoggerSugar.Infow(msg.MsgResourceNotFound)
 }

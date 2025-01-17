@@ -3,7 +3,7 @@ package utils
 import (
 	"errors"
 	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/internal/core/constants"
+	"github.com/lechitz/AionApi/core/msg"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
@@ -18,13 +18,13 @@ func UserIDFromParam(w http.ResponseWriter, logger *zap.SugaredLogger, r *http.R
 	userIDParam := chi.URLParam(r, "id")
 
 	if userIDParam == "" {
-		HandleError(w, logger, http.StatusBadRequest, MissingUserIdParameter, errors.New(constants.UserIdIsRequired))
-		return 0, errors.New(constants.UserIdIsRequired)
+		HandleError(w, logger, http.StatusBadRequest, MissingUserIdParameter, errors.New(msg.UserIdIsRequired))
+		return 0, errors.New(msg.UserIdIsRequired)
 	}
 
 	userID, err := strconv.ParseUint(userIDParam, 10, 64)
 	if err != nil {
-		HandleError(w, logger, http.StatusBadRequest, ErrorParsingUserId, errors.New(constants.ErrorParsingUserId))
+		HandleError(w, logger, http.StatusBadRequest, ErrorParsingUserId, errors.New(msg.ErrorParsingUserId))
 		return 0, errors.New(ErrorParsingUserId)
 	}
 

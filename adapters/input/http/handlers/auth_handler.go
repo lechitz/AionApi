@@ -1,113 +1,103 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
-	"errors"
-	"github.com/jinzhu/copier"
-	"github.com/lechitz/AionApi/adapters/input/constants"
-	"github.com/lechitz/AionApi/adapters/input/http/dto"
-	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/pkg/utils"
-	"github.com/lechitz/AionApi/ports/input"
-	"go.uber.org/zap"
 	"net/http"
+
+	"github.com/lechitz/AionApi/adapters/input/http/dto"
+	msg "github.com/lechitz/AionApi/adapters/input/http/handlers/messages"
+	"github.com/lechitz/AionApi/core/domain/entities"
+	"github.com/lechitz/AionApi/pkg/contextkeys"
+	"github.com/lechitz/AionApi/pkg/utils"
+	inputHttp "github.com/lechitz/AionApi/ports/input/http"
+	"go.uber.org/zap"
 )
 
 type Auth struct {
-	AuthService input.IAuthService
+	AuthService inputHttp.IAuthService
 	LoggerSugar *zap.SugaredLogger
 }
 
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
-	contextControl := domain.ContextControl{
-		Context: context.Background(),
+	contextControl := entities.ContextControl{
+		BaseContext: r.Context(),
 	}
 
 	var loginUserRequest dto.LoginUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginUserRequest); err != nil {
-		utils.HandleError(w, a.LoggerSugar, http.StatusInternalServerError, constants.ErrorToDecodeLoginRequest, err)
+		utils.HandleError(w, a.LoggerSugar, http.StatusBadRequest, msg.ErrorToDecodeLoginRequest, err)
+		a.LoggerSugar.Errorw(msg.ErrorToDecodeLoginRequest, contextkeys.Error, err.Error())
 		return
 	}
 
-	var userDomain domain.UserDomain
-	copier.Copy(&userDomain, &loginUserRequest)
+	userDomain := entities.UserDomain{
+		Username: loginUserRequest.Username,
+		Password: loginUserRequest.Password,
+	}
 
-	userDB, token, err := a.AuthService.Login(contextControl, userDomain)
+	userDB, token, err := a.AuthService.Login(contextControl, userDomain, loginUserRequest.Password)
 	if err != nil {
-		utils.HandleError(w, a.LoggerSugar, http.StatusInternalServerError, constants.ErrorToLogin, err)
+		utils.HandleError(w, a.LoggerSugar, http.StatusInternalServerError, msg.ErrorToLogin, err)
+		a.LoggerSugar.Errorw(msg.ErrorToLogin, contextkeys.Error, err.Error())
 		return
 	}
 
-	//If you want to use the function: auth.extractTokenFromBearer
-	// you don't need to set the cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     "auth_token",
-		Value:    token,
-		Path:     "/",
-		HttpOnly: true, // It's not possible to access the cookie via JavaScript
-		Secure:   true, // Only send the cookie if the request is being sent over HTTPS
-		SameSite: http.SameSiteStrictMode,
-	})
+	setAuthCookie(w, token, 0)
 
-	var loginUserResponse dto.LoginUserResponse
-	copier.Copy(&loginUserResponse, &userDB)
+	loginUserResponse := dto.LoginUserResponse{
+		Username: userDB.Username,
+	}
 
-	response := utils.ObjectResponse(loginUserResponse, constants.SuccessToLogin)
+	response := utils.ObjectResponse(loginUserResponse, msg.SuccessToLogin)
+	a.LoggerSugar.Infow(msg.SuccessToLogin, contextkeys.Username, loginUserResponse.Username)
 	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
 
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	contextControl := domain.ContextControl{
-		Context: context.Background(),
+
+	contextControl := entities.ContextControl{
+		BaseContext: r.Context(),
 	}
 
-	userIDParam, err := utils.UserIDFromParam(w, a.LoggerSugar, r)
+	tokenCookie, err := r.Cookie(contextkeys.AuthToken)
 	if err != nil {
-		utils.HandleError(w, a.LoggerSugar, http.StatusBadRequest, constants.ErrorToParseUser, err)
+		utils.HandleError(w, a.LoggerSugar, http.StatusUnauthorized, msg.ErrorToRetrieveToken, err)
+		a.LoggerSugar.Errorw(msg.ErrorToRetrieveToken, contextkeys.Error, err.Error())
 		return
 	}
 
-	userIDToken, err := getUserIDFromContext(r.Context())
-	if err != nil {
-		a.LoggerSugar.Errorw("Failed to extract userID from context", "error", err.Error())
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	tokenValue := tokenCookie.Value
+
+	userID, ok := contextControl.BaseContext.Value(contextkeys.UserID).(uint64)
+	if !ok {
+		utils.HandleError(w, a.LoggerSugar, http.StatusInternalServerError, msg.ErrorToRetrieveUserID, err)
+		a.LoggerSugar.Errorw(msg.ErrorToRetrieveUserID, contextkeys.Error, msg.ErrorUserIDIsNil)
 		return
 	}
 
-	if userIDParam != userIDToken {
-		utils.HandleError(w, a.LoggerSugar, http.StatusForbidden, constants.ErrorUserPermissionDenied, errors.New(constants.ErrorUserPermissionDenied))
+	if err := a.AuthService.Logout(contextControl, tokenValue); err != nil {
+		utils.HandleError(w, a.LoggerSugar, http.StatusInternalServerError, msg.ErrorToLogout, err)
+		a.LoggerSugar.Errorw(msg.ErrorToLogout, contextkeys.Error, err.Error())
 		return
 	}
 
-	tokenCookie, err := r.Cookie("auth_token")
-	if err != nil {
-		utils.HandleError(w, a.LoggerSugar, http.StatusUnauthorized, constants.ErrorToRetrieveToken, err)
-		return
-	}
+	setAuthCookie(w, "", -1)
 
-	var userDomain domain.UserDomain
+	response := utils.ObjectResponse(nil, msg.SuccessToLogout)
+	a.LoggerSugar.Infow(msg.SuccessToLogout, contextkeys.UserID, userID)
+	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
+}
 
-	userDomain.ID = userIDParam
-	userDomain.Password = tokenCookie.Value
-
-	err = a.AuthService.Logout(contextControl, userDomain, tokenCookie.Value)
-	if err != nil {
-		utils.HandleError(w, a.LoggerSugar, http.StatusInternalServerError, constants.ErrorToLogout, err)
-		return
-	}
-
+func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     "auth_token",
-		Value:    "",
-		Path:     "/",
+		Name:     contextkeys.AuthToken,
+		Value:    token,
+		Path:     contextkeys.Path,
+		Domain:   contextkeys.Domain,
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
-		MaxAge:   -1,
+		MaxAge:   maxAge,
 	})
-
-	response := utils.ObjectResponse(nil, constants.SuccessToLogout)
-	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
 }
