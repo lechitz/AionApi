@@ -15,7 +15,6 @@ func InitLoggerSugar() (*zap.SugaredLogger, func()) {
 		return lvl >= zapcore.InfoLevel && lvl < zapcore.ErrorLevel
 	})
 	errorLevel := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		// Quero todos os logs >= Error
 		return lvl >= zapcore.ErrorLevel
 	})
 

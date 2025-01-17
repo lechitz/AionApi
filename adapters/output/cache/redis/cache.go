@@ -41,7 +41,7 @@ func (c *CacheRepo) GetToken(ctx entities.ContextControl, tokenDomain entities.T
 	token, err := c.redis.Get(redisCtx, key).Result()
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
-			return "", fmt.Errorf("token not found")
+			return "", fmt.Errorf(ErrorTokenNotFound)
 		}
 		return "", err
 	}

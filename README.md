@@ -1,81 +1,50 @@
 # AionApi
 
-<h2>Aion: Empowering you to take control of your time, habits, and aspirations.</h2>
+## Aion: Empowering you to take control of your time, habits, and aspirations
 
-> _Aion is an innovative habit management system designed to help you organize, track, and analyze your daily routine
-for improved physical, mental, and emotional well-being. It combines cutting-edge technology with a user-centered
-approach to make your productivity and self-improvement journey seamless and insightful._
+> _Aion is an innovative habit management system designed to help you organize, track, and analyze your daily routine for improved physical, mental, and emotional well-being. It combines cutting-edge technology with a user-centered approach to make your productivity and self-improvement journey seamless and insightful._
 >
-> Whether you’re focusing on fitness, learning, or personal growth, Aion is your companion in building the discipline
-> you need to achieve sustainable success.
-
-
-**With Aion, you can:**
-
-- Streamline your habits with an intuitive system that adapts to your needs.
-- Track and analyze your activities to uncover insights about your behavior.
-- Visualize progress in real-time to stay motivated and on track with your goals.
-- Integrate effortlessly with modern tools and platforms for enhanced usability.
+> Whether you’re focusing on fitness, learning, or personal growth, Aion is your companion in building the discipline you need to achieve sustainable success.
 
 ## **Table of Contents**
 
 - [Overview](#overview)
-- [Features](#features)
+- [Current and Upcoming Features](#Current-and-Upcoming-Features)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Development](#development)
+- [Docker Integration](#docker-integration)
 - [API Endpoints](#api-endpoints)
     - [User Management](#user-management)
     - [Authentication](#authentication)
-    - [Activity Management](#activity-management)
-- [Docker Integration](#docker-integration)
-    - [Prerequisites](#prerequisites)
-    - [Running the Project with Docker](#running-the-project-with-docker)
 - [License](#license)
 
 ---
 
 ## **Overview**
 
-The Aion API is a RESTful backend solution designed to help developers build productivity applications with robust user
-and activity management capabilities. Built with **Go**, powered by **PostgreSQL**, and based on the **Ports & Adapters
-architecture** for scalability.
+The Aion API is a RESTful backend solution designed to empower developers to build productivity applications with robust user and activity management features. Built with **Go**, powered by **PostgreSQL**, and based on the **Ports & Adapters architecture** for scalability and maintainability.
 
-Aion API is your go-to platform for managing users, activities, and personal workflows.
+---
 
-## **Features**
+## **Current and Upcoming Features**
 
-- **User Management:**
-    - User creation, retrieval, update, and soft deletion.
-    - Authentication with secure JWT-based mechanisms.
-
-- **Activity Tracking:**
-    - Organize and track daily activities using custom tags.
-    - Flexible structure to support personal or organizational workflows.
-
-- **Developer-Friendly:**
-    - Comprehensive documentation.
-    - Easy-to-use API endpoints.
-    - Architecture designed for extensibility, scalability, and maintainability.
-
-- **Future-Ready:**
-    - Prepared for frontend integration and advanced features like analytics.
+- **Streamlined Habit Management:** Organize and track your habits effortlessly.
+- **Data-Driven Insights:** Visualize your progress and analyze behavior patterns.
+- **Modern Integrations:** Sync with tools and platforms for extended usability.
+- **Developer-Friendly API:** Clear, scalable, and extensible endpoints for all your needs.
 
 ---
 
 ## **Installation**
 
-To set up and run the Aion API, follow these steps:
-
-1. Clone the repository:
-
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/lechitz/AionApi.git
    cd AionApi
    ```
 
-2. Install dependencies:
-
+2. **Install dependencies:**
    ```bash
    go mod tidy
    ```
@@ -84,15 +53,14 @@ To set up and run the Aion API, follow these steps:
 
 ## **Configuration**
 
-1. Set up the environment variables:
-
+1. **Set up environment variables:**
    ```bash
    cp .env.example .env
    ```
 
-2. Update the `.env` file with your database credentials and other configurations.
+2. **Update the `.env` file** with your database credentials and configurations:
 
-<div align="center">
+<div style="text-align: center;">
 
 | Variable         | Description                     |
 |------------------|---------------------------------|
@@ -103,97 +71,23 @@ To set up and run the Aion API, follow these steps:
 | `DB_NAME`        | Database name                   |
 | `DB_HOST`        | Database host address           |
 | `DB_PORT`        | Database port                   |
-| `DB_TYPE`        | Database type (e.g., postgres)  |
+| `DB_TYPE`        | Database type                   |
 | `SECRET_KEY`     | Secret key for JWT              |
 
 </div>
 
-3. Set up the database:
-
+3. **Set up the database:**
     - Create a new database in PostgreSQL.
-    - Connect to the database by configuring the connection settings in the .env file.
-    - Run all the migration files in the `infra/db/migrations` folder.
+    - Connect to the database by configuring the connection settings in the `.env` file.
+    - Run all migration files located in `infra/db/migrations`.
 
-
-4. Generate JWT Secret Key:
-
-    - The `GenerateJWTKey()` function generates a unique secret key for JWT authentication and saves it to the `.env`
-      file. This function is commented out by default in the `init()` function.
-
-    - **Steps to Set Up the JWT Key:**
-        1. **Uncomment the `GenerateJWTKey()` call in the `main()` function** during the first setup.
-        2. Run the application once to generate the key.
-        3. After the key is generated and stored in the `SECRET_KEY` variable in the `.env` file, **comment out
-           the `GenerateJWTKey()` function again** to prevent overwriting the key in future runs.
-
-      - **Example Code:**
-
-        ```bash
-        func main() {
-          // Uncomment the line below for the first setup
-          middlewares.GenerateJWTKey()
-          }
-        ```
----
-
-## **Docker Integration**
-
-### **Prerequisites**
-
-1. Download and install Docker for your system:
-
-    - [Docker Desktop for Windows](https://docs.docker.com/docker-for-windows/install/)
-    - [Docker Desktop for Mac](https://docs.docker.com/docker-for-mac/install/)
-    - [Docker Engine for Linux](https://docs.docker.com/engine/install/)
-
-2. Verify the installation:
-
-   ```bash
-   docker --version
-   ```
-
-3. Choose the appropriate Docker Compose file:
-
-    - `docker-compose-dev.yaml`: for development.
-    - `docker-compose-prod.yaml`: for production.
-
-### **Running the Project with Docker**
-
-#### For Development:
-
-- To start the application in a development environment, use the following commands:
-    - First, build the Docker image for development:
-
-       ```bash
-        make docker-build-dev
-       ```
-
-    - Then, start the application with the development Docker Compose file:
-
-       ```bash
-       make docker-compose-dev-up
-       ```
-
-#### For Production:
-
-- To start the application in a production environment, follow these steps:
-    - First, build the Docker image for development:
-
-       ```bash
-        make docker-build-prod
-       ```
-
-    - Then, start the application with the development Docker Compose file:
-
-       ```bash
-       make docker-compose-prod-up
-       ```
-
-### Other Available Commands in Makefile:
-
-- In addition to the commands for starting the development and production environments, the Makefile also includes other
-  useful commands, such as those for cleaning up Docker containers, volumes, and images, as well as specific commands
-  for running tests and generating coverage reports. To view all available commands, simply run `make help`.
+4. **Generate JWT Secret Key (optional):**
+    - Use the `GenerateJWTKey()` function to produce a random 64-byte secret key (base64-encoded).
+    - Run the key generator:
+      ```bash
+      go run pkg/utils/generate_jwt_key.go
+      ```
+    - Copy the generated key into your `.env` file under `SECRET_KEY`.
 
 ---
 
@@ -201,27 +95,29 @@ To set up and run the Aion API, follow these steps:
 
 ### **Folder Structure**
 
-- The Ports and Adapters Architecture (Hexagonal Architecture) was chosen for the Aion API to ensure flexibility,
-  scalability, and testability. This design approach promotes a clear separation of concerns, dividing the application
-  into core business logic (internal) and external systems (adapters).
+The Aion API adopts the Ports and Adapters Architecture (Hexagonal Architecture) to ensure flexibility, scalability, and testability. Below is an overview of the folder structure:
 
-<div align="center">
+<div style="text-align: center;">
 
-| **Directory** | **Description**                                               |
-|---------------|---------------------------------------------------------------|
-| `adapters`    | Contains the input and output adapters for the application.   |
-| `cmd`         | Contains the main application entry point.                    |
-| `config`      | Contains environment variables and configurations.            |
-| `infra`       | Contains the database connection and migration files.         |
-| `internal`    | Contains the core business logic of the application.          |
-| `pkg`         | Contains utility functions and shared code.                   |
-| `ports`       | Contains the input and output interfaces for the application. |
+| Directory       | Description                                                 |
+|-----------------|-------------------------------------------------------------|
+| `adapters`      | Contains input/output adapters for external communications. |
+| `cmd`           | Main application entry point.                               |
+| `config`        | Environment variables and configurations.                   |
+| `infra`         | Infrastructure setup including database connections.        |
+| `internal`      | Core business logic and domain entities.                    |
+| `pkg`           | Shared utilities and helper functions.                      |
+| `ports`         | Input/output interfaces for the application.                |
 
 </div>
 
+
+
+The Aion API is organized following the **Ports and Adapters Architecture (Hexagonal Architecture)** to promote clear separation between the core business logic and external systems. Here is the folder structure:
+
 <details>
-<summary> 
-The complete folder structure here
+<summary>
+Complete Folder Structure
 </summary>
 
 ```plaintext
@@ -229,65 +125,119 @@ The complete folder structure here
 ├── adapters
 │   ├── input
 │   │   └── http
+│   │       ├── dto
 │   │       ├── handlers
-│   │       │   ├── generic.go
-│   │       │   ├── models.go
-│   │       │   └── user.go
-│   │       └── router.go
-│   ├── middlewares
-│   │   ├── auth.go
-│   │   ├── jwt.go
-│   │   └── security.go
-│   ├── output
-│   │   └── repository
-│   │       └── user.go
-│   └── security
-│       └── token.go
+│   │       └── server
+
+│   └── output
+│       ├── cache
+│       │   └── redis
+│       └── db
+│           └── postgres
+├── app
+│   ├── bootstrap
+│   ├── config
+│   ├── logger
+│   ├── logs
+│   └── middlewares
+│       └── auth
 ├── cmd
 │   └── aion-api
 │       └── main.go
-├── config
-│   └── environments.go
+├── core
+│   ├── domain
+│   │   ├── entities
+│   │   ├── events
+│   │   └── exceptions
+│   ├── msg
+│   └── service
+├── infra
+│   ├── cache
+│   ├── db
+│   │   ├── migrations
+│   │   ├── postgres
+│   │   │   └── migrations
+│   ├── messaging
+│   ├── observability
+├── pkg
+│   ├── contextkeys
+│   ├── errors
+│   └── utils
+├── ports
+│   ├── input
+│   │   └── http
+│   └── output
+│       ├── cache
+│       └── db
+├── .env
+├── .env.example
+├── .gitignore
 ├── docker-compose-dev.yaml
 ├── docker-compose-prod.yaml
 ├── Dockerfile
-├── docs
 ├── go.mod
-├── go.sum
-├── infra
-│   └── db
-│       ├── migrations
-│       │   ├── 01_create_users_table.sql
-│       │   ├── 02-tags.sql
-│       │   ├── 03_days.sql
-│       │   ├── 04_personal_diaries.sql
-│       │   ├── 05_professional_diaries.sql
-│       │   ├── 06_day_tag_summary.sql
-│       │   ├── 07_day_moods.sql
-│       │   ├── 08_day_energy.sql
-│       │   ├── 09_day_water_intake.sql
-│       │   └── 10_day_intentions.sql
-│       └── postgres.go
-├── internal
-│   └── core
-│       ├── domain
-│       │   ├── context.go
-│       │   └── user.go
-│       └── service
-│           └── user.go
 ├── LICENSE
 ├── Makefile
-├── pkg
-│   └── utils
-│       ├── error_handler.go
-│       └── response.go
-├── ports
-│   ├── input
-│   │   └── user.go
-│   └── output
-│       └── user.go
-└── README.md
+└──  README.md
 ```
+
+</details>
+
+---
+
+## **Docker Integration**
+
+### **Prerequisites**
+
+- Install **Docker**. Follow the [official Docker documentation](https://docs.docker.com/get-docker/) for installation instructions.
+- Optionally, install **Docker Compose** for managing multi-container setups.
+
+### **Running the Project with Docker**
+
+---
+
+<details>
+<summary> 
+ The development environment setup
+</summary>
+
+1. **Build the development image:**
+   ```bash
+   make docker-build-dev
+   ```
+
+2. **Start the development environment:**
+   ```bash
+   make docker-compose-dev-up
+   ```
+
+3. **Stop the development environment:**
+   ```bash
+   make docker-compose-dev-down
+   ```
+</details>
+
+----
+
+<details>
+<summary> 
+ The production environment setup
+</summary>
+
+1. **Build the production image:**
+   ```bash
+   make docker-build-prod
+   ```
+
+2. **Start the production environment:**
+   ```bash
+   make docker-compose-prod-up
+   ```
+
+3. **Stop the production environment:**
+   ```bash
+   make docker-compose-prod-down
+   ```
 
 </details>
 
@@ -455,22 +405,11 @@ The complete folder structure here
     "date": "2025-01-07T15:50:48.751092612Z"
   }
   ```
-
 </details>
 
-### **Activity Management**
-
-<details>
-<summary> 
- The activity management endpoints here
-</summary>
-
-- This section is still under development.
-
-</details>
 
 ---
 
 ## **License**
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+- This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

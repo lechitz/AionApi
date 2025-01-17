@@ -36,10 +36,18 @@ func LoadConfig() error {
 
 		fmt.Println()
 		fmt.Println("====================================================================")
+		fmt.Println(" ")
+		fmt.Println(" ")
+		fmt.Println(" ")
 		fmt.Println("SECRET_KEY was not found. A new one has been generated.")
 		fmt.Println("Please copy and add this to your .env if you want to reuse it later:")
 		fmt.Println(" ")
+		fmt.Println(" ")
+		fmt.Println(" ")
 		fmt.Printf("SECRET_KEY=%s\n", Setting.SecretKey)
+		fmt.Println(" ")
+		fmt.Println(" ")
+		fmt.Println(" ")
 		fmt.Println("====================================================================")
 		fmt.Println()
 	}

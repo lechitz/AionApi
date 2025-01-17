@@ -34,4 +34,5 @@ const (
 
 const (
 	ExpTimeToken = 1 * time.Hour
+	Exp          = "exp"
 )

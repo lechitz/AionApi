@@ -6,8 +6,6 @@ import (
 	"fmt"
 )
 
-// //You need to run this script and copy the generated key to the .env file
-// GenerateJWTKey generates a random key for JWT
 func GenerateJWTKey() (string, error) {
 	key := make([]byte, 64)
 
