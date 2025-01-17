@@ -153,8 +153,6 @@ Complete Folder Structure
 │   └── service
 ├── infra
 │   ├── cache
-│   │   ├── redis.go
-│   │   └── redis_messages.go
 │   ├── db
 │   │   ├── migrations
 │   │   ├── postgres
