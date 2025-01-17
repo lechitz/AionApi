@@ -6,7 +6,7 @@
 >
 > Whether you’re focusing on fitness, learning, or personal growth, Aion is your companion in building the discipline you need to achieve sustainable success.
 
-## **Features**
+## **Current and Upcoming Features**
 
 - **Streamlined Habit Management:** Organize and track your habits effortlessly.
 - **Data-Driven Insights:** Visualize your progress and analyze behavior patterns.
