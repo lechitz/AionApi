@@ -1,0 +1,56 @@
+name: "Database Task"
+description: "Describe a task related to database changes or improvements."
+title: "[DATABASE] Brief description of the database task"
+labels: ["database"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## General Information
+        - **Priority:** *(Low / Medium / High / Critical)*
+        - **Status:** *(To Do / In Progress / Review / Done)*
+        - **Creation Date:** *(YYYY-MM-DD)*
+
+        ---
+
+  - type: textarea
+    id: task_scope
+    attributes:
+      label: "Scope of Database Task"
+      description: "Explain the context and details of the database task, including the tables, schemas, or queries involved."
+      placeholder: "Describe the scope of the database task here."
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Acceptance Criteria
+  - type: checkboxes
+    id: acceptance_criteria
+    attributes:
+      label: "Acceptance Criteria"
+      options:
+        - label: "Criterion 1"
+        - label: "Criterion 2"
+        - label: "Criterion 3"
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Execution Plan
+  - type: textarea
+    id: execution_plan
+    attributes:
+      label: "Execution Plan"
+      description: "Explain the steps required to complete the task, including migrations, optimizations, or new structures."
+      placeholder: "Detail the execution plan for the database task."
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Impacts
+  - type: textarea
+    id: impacts
+    attributes:
+      label: "Impacts"
+      description: "List positive impacts (performance improvements, new features) and negative impacts (risks or potential data loss)."
+      placeholder: "Detail the impacts here."
