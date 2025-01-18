@@ -147,30 +147,18 @@ func (service *UserService) UpdateUserPassword(ctx entities.ContextControl, user
 		return entities.UserDomain{}, "", err
 	}
 
-	tokenDomain := entities.TokenDomain{
-		UserID: userDB.ID,
-	}
-	err = service.TokenRepository.DeleteToken(ctx, tokenDomain)
-	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToDeleteToken, contextkeys.Error, err.Error())
-		return entities.UserDomain{}, "", err
-	}
-
 	hashedPassword, err := service.HashPassword(newPasswordReq)
 	if err != nil {
 		service.LoggerSugar.Errorw(msg.ErrorToHashPassword, contextkeys.Error, err.Error())
 		return entities.UserDomain{}, "", err
 	}
 
-	userDB.Password = hashedPassword
-	userDB, err = service.UserRepository.UpdatePassword(ctx, userDB)
-	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToUpdatePassword, contextkeys.Error, err.Error())
-		return entities.UserDomain{}, "", err
+	tokenDomain := entities.TokenDomain{
+		UserID: userDB.ID,
+		Token:  hashedPassword,
 	}
 
 	newToken, err := service.AuthService.TokenService.CreateToken(ctx, tokenDomain)
-	// tokenDomain = {UserID: userDB.ID, Token: ""}
 	if err != nil {
 		service.LoggerSugar.Errorw(msg.ErrorToGenerateToken, contextkeys.Error, err.Error())
 		return userDB, "", err

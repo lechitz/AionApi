@@ -189,8 +189,15 @@ Complete Folder Structure
 
 ### **Prerequisites**
 
-- Install **Docker**. Follow the [official Docker documentation](https://docs.docker.com/get-docker/) for installation instructions.
-- Optionally, install **Docker Compose** for managing multi-container setups.
+ 1. Install **Docker**. Follow the [official Docker documentation](https://docs.docker.com/get-docker/) for installation instructions.
+ 2. **Docker Compose** is required to manage multi-container setups. You can install it by following the [official installation](https://docs.docker.com/compose/) guide.
+ 3. Verify the installations:
+      - Run the following commands:
+
+        ```bash
+          docker --version
+          docker-compose --version   
+         ```
 
 ### **Running the Project with Docker**
 
@@ -285,8 +292,6 @@ Complete Folder Structure
 
 - **Method:** `GET`
 - **Endpoint:** `localhost:5001/aion-api/user/all`
-- **Headers:**
-    - `Authorization: Bearer <token>`
 - **Response:**
 
   ```json
@@ -316,8 +321,6 @@ Complete Folder Structure
 
 - **Method:** `GET`
 - **Endpoint:** `localhost:5001/aion-api/user/{id}`
-- **Headers:**
-    - `Authorization: Bearer <token>`
 - **Response:**
 
   ```json
@@ -369,8 +372,14 @@ Complete Folder Structure
 
 - **Method:** `DELETE`
 - **Endpoint:** `localhost:5001/aion-api/user/{id}`
-- **Headers:**
-    - `Authorization: Bearer <token>`
+- **Response:**
+
+  ```json
+  {
+    "message": "user deleted successfully",
+    "date": "2025-01-07T16:03:12.929188372Z"
+  }
+  ```
 
 </details>
 
@@ -404,9 +413,20 @@ Complete Folder Structure
     },
     "date": "2025-01-07T15:50:48.751092612Z"
   }
+  
+#### **Logout**
+
+- **Method:** `POST`
+- **Endpoint:** `localhost:5001/aion-api/logout`
+- **Response:**
+
+  ```json
+  {
+    "message": "success to logout",
+    "date": "2025-01-07T15:52:12.751092612Z"
+  }
   ```
 </details>
-
 
 ---
 
