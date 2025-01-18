@@ -1,0 +1,43 @@
+name: Auto-PR Workflow
+
+on:
+  push:
+    branches:
+      - feature/*
+      - bugfix/*
+      - refactor/*
+      - docs/*
+      - tests/*
+      - devops/*
+      - database/*
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate branch name
+        run: |
+          if [[ ! "${GITHUB_REF##refs/heads/}" =~ ^(feature|bugfix|refactor|docs|tests|devops|database)/.+$ ]]; then
+            echo "Branch name '${GITHUB_REF##refs/heads/}' does not follow the naming convention!"
+            exit 1
+          fi
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: dev
+          head: ${{ github.ref_name }}
+          title: "Auto PR - ${{ github.ref_name }}"
+          body: |
+            ## Aion - Pull Request Description
+
+            This PR was automatically created for the branch `${{ github.ref_name }}`.
+
+            **Linked Issue**: Resolves #${{ github.event.head_commit.message }}
+          labels: |
+            auto-pr
+            ${{ github.ref_name }}
