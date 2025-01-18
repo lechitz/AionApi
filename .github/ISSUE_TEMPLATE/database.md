@@ -1,3 +1,11 @@
+---
+name: Database Task
+about: Use this template to create a database-related issue.
+title: "[DATABASE] Brief description of the issue"
+labels: database
+assignees: ''
+---
+
 # Database Task Issue Template
 
 ## General Information
