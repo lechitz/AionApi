@@ -1,0 +1,28 @@
+# Test Task Issue Template
+
+## General Information
+- **Priority:** *(Low / Medium / High / Critical)*
+- **Status:** *(To Do / In Progress / Review / Done)*
+- **Creation Date:** *(YYYY-MM-DD)*
+
+---
+
+## Scope of Testing
+Explain what needs to be tested, including the context and expected outcomes.
+
+---
+
+## Acceptance Criteria
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
+
+---
+
+## Execution Plan
+Explain the approach or steps required to complete the testing task. Include tools, strategies, and types of tests to be conducted.
+
+---
+
+## Impacts
+List positive impacts (ensuring functionality, preventing regressions) and negative impacts (risks or challenges in testing).
