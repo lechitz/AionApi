@@ -1,0 +1,56 @@
+name: "Test Task"
+description: "Describe a task related to testing."
+title: "[TESTS] Brief description of the testing task"
+labels: ["tests"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## General Information
+        - **Priority:** *(Low / Medium / High / Critical)*
+        - **Status:** *(To Do / In Progress / Review / Done)*
+        - **Creation Date:** *(YYYY-MM-DD)*
+
+        ---
+
+  - type: textarea
+    id: test_scope
+    attributes:
+      label: "Scope of Testing"
+      description: "Explain what needs to be tested, including the context and expected outcomes."
+      placeholder: "Describe the scope of testing here."
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Acceptance Criteria
+  - type: checkboxes
+    id: acceptance_criteria
+    attributes:
+      label: "Acceptance Criteria"
+      options:
+        - label: "Criterion 1"
+        - label: "Criterion 2"
+        - label: "Criterion 3"
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Execution Plan
+  - type: textarea
+    id: execution_plan
+    attributes:
+      label: "Execution Plan"
+      description: "Explain the approach or steps required to complete the testing task. Include tools, strategies, and types of tests to be conducted."
+      placeholder: "Detail the execution plan for testing."
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Impacts
+  - type: textarea
+    id: impacts
+    attributes:
+      label: "Impacts"
+      description: "List positive impacts (ensuring functionality, preventing regressions) and negative impacts (risks or challenges in testing)."
+      placeholder: "Detail the impacts here."
