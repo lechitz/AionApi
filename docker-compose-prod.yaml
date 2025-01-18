@@ -4,7 +4,11 @@ services:
   postgres:
     image: postgres
     container_name: postgres-prod
-    # ...
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - postgres-data-prod:/var/lib/postgresql/data
       - ./infra/db/migrations:/docker-entrypoint-initdb.d
@@ -19,8 +23,8 @@ services:
       retries: 5
 
   redis:
-    image: redis:alpine
-    container_name: redis-aion-prod
+    image: redis
+    container_name: redis-aion
     ports:
       - "6379:6379"
     networks:
@@ -32,24 +36,15 @@ services:
       retries: 5
 
   aion-api:
-    container_name: aion-api-prod
     image: aion-api:prod
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_TYPE=${DB_TYPE}
-      - SECRET_KEY=${SECRET_KEY}
-      - REDIS_ADDR=${REDIS_ADDR}
+    container_name: aion-api:prod
+    env_file:
+      - .env
     ports:
       - "5001:5001"
-    expose:
-      - "5001"
     depends_on:
       postgres:
         condition: service_healthy
