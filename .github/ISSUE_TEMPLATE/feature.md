@@ -1,3 +1,11 @@
+---
+name: Feature Task
+about: Use this template to create a feature-related issue.
+title: "[FEATURE] Brief description of the feature"
+labels: feature
+assignees: ''
+---
+
 # Feature Task Issue Template
 
 ## General Information

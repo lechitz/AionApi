@@ -1,3 +1,11 @@
+---
+name: Documentation Task
+about: Use this template to create a documentation-related issue.
+title: "[DOCS] Brief description of the issue"
+labels: docs
+assignees: ''
+---
+
 # Documentation Task Issue Template
 
 ## General Information
