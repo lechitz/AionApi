@@ -10,8 +10,6 @@ assignees: ''
 
 ## General Information
 - **Priority:** *(Low / Medium / High / Critical)*
-- **Status:** *(To Do / In Progress / Review / Done)*
-- **Creation Date:** *(YYYY-MM-DD)*
 
 ---
 
