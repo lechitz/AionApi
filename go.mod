@@ -7,9 +7,8 @@ require (
 	github.com/go-chi/chi/v5 v5.2.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/jinzhu/copier v0.4.0
-	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/redis/go-redis/v9 v9.7.0
+	github.com/redis/go-redis/v9 v9.7.3
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.31.0
 	gorm.io/driver/postgres v1.5.11
