@@ -3,13 +3,13 @@ package bootstrap
 import (
 	"github.com/lechitz/AionApi/adapters/output/cache/redis"
 	dbadapter "github.com/lechitz/AionApi/adapters/output/db/postgres"
+	portsCache "github.com/lechitz/AionApi/ports/output/cache"
+	portsDB "github.com/lechitz/AionApi/ports/output/db"
 
 	"github.com/lechitz/AionApi/app/config"
 	"github.com/lechitz/AionApi/core/service"
 	infraCache "github.com/lechitz/AionApi/infra/cache"
 	infraDB "github.com/lechitz/AionApi/infra/db"
-	portsCache "github.com/lechitz/AionApi/ports/output/cache"
-	portsDB "github.com/lechitz/AionApi/ports/output/db"
 	"go.uber.org/zap"
 )
 
@@ -35,7 +35,7 @@ func InitializeDependencies(loggerSugar *zap.SugaredLogger, cfg config.Config) (
 
 	tokenService := service.NewTokenService(userRepo, tokenRepo, loggerSugar, cfg.SecretKey)
 	authService := service.NewAuthService(userRepo, tokenRepo, tokenService, loggerSugar, cfg.SecretKey)
-	userService := service.NewUserService(userRepo, tokenRepo, loggerSugar, authService)
+	userService := service.NewUserService(userRepo, tokenService, authService, loggerSugar)
 
 	cleanup := func() {
 		infraDB.Close(databaseConn, loggerSugar)

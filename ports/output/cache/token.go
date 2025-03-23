@@ -1,12 +1,12 @@
 package cache
 
 import (
-	"github.com/lechitz/AionApi/core/domain/entities"
+	"github.com/lechitz/AionApi/core/domain"
 )
 
 type ITokenRepository interface {
-	SaveToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) error
-	GetToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) (string, error)
-	UpdateToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) error
-	DeleteToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) error
+	SaveToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) error
+	GetToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) (string, error)
+	UpdateToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) error
+	DeleteToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) error
 }

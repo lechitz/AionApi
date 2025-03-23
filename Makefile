@@ -39,7 +39,7 @@ help:
 # ========================
 .PHONY: docker-build-dev docker-compose-dev-up docker-compose-dev-down docker-build-run-dev docker-clean-dev
 
-docker-build-dev:
+docker-build-dev: docker-clean-dev
 	docker build -t $(APPLICATION_NAME):dev .
 
 docker-compose-dev-up: docker-compose-dev-down
@@ -49,7 +49,7 @@ docker-compose-dev-up: docker-compose-dev-down
 docker-compose-dev-down:
 	docker-compose -f $(COMPOSE_FILE_DEV) down -v
 
-docker-build-run-dev: docker-build-dev docker-compose-dev-up
+docker-build-run-dev: docker-clean-dev docker-build-dev docker-compose-dev-up
 
 docker-clean-dev:
 	docker rm -f $(shell docker ps -a --filter "name=dev" -q) || true
@@ -61,7 +61,7 @@ docker-clean-dev:
 # ========================
 .PHONY: docker-build-prod docker-compose-prod-up docker-compose-prod-down docker-build-run-prod docker-clean-prod
 
-docker-build-prod:
+docker-build-prod: docker-clean-prod
 	docker build -t $(APPLICATION_NAME):prod .
 
 docker-compose-prod-up: docker-compose-prod-down

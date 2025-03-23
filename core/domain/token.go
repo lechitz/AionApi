@@ -1,4 +1,4 @@
-package entities
+package domain
 
 type TokenDomain struct {
 	UserID uint64

@@ -2,15 +2,15 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/lechitz/AionApi/core/domain"
+	inputHttp "github.com/lechitz/AionApi/ports/input/http"
 	"net/http"
 
 	"github.com/jinzhu/copier"
 	"github.com/lechitz/AionApi/adapters/input/http/dto"
 	msg "github.com/lechitz/AionApi/adapters/input/http/handlers/messages"
-	"github.com/lechitz/AionApi/core/domain/entities"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"github.com/lechitz/AionApi/pkg/utils"
-	inputHttp "github.com/lechitz/AionApi/ports/input/http"
 	"go.uber.org/zap"
 )
 
@@ -21,7 +21,7 @@ type User struct {
 
 func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
-	ctx := &entities.ContextControl{
+	ctx := &domain.ContextControl{
 		BaseContext:     r.Context(),
 		CancelCauseFunc: nil,
 	}
@@ -33,7 +33,7 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var userDomain entities.UserDomain
+	var userDomain domain.UserDomain
 	copier.Copy(&userDomain, &createUserRequest)
 
 	user, err := u.UserService.CreateUser(*ctx, userDomain, createUserRequest.Password)
@@ -53,7 +53,7 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 
-	contextControl := entities.ContextControl{
+	contextControl := domain.ContextControl{
 		BaseContext: r.Context(),
 	}
 
@@ -74,7 +74,7 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 
-	contextControl := entities.ContextControl{
+	contextControl := domain.ContextControl{
 		BaseContext: r.Context(),
 	}
 
@@ -106,6 +106,10 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 
 func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
+	contextControl := domain.ContextControl{
+		BaseContext: r.Context(),
+	}
+
 	userID, ok := r.Context().Value(contextkeys.UserID).(uint64)
 	if !ok {
 		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, msg.ErrorUnauthorizedAccessMissingToken, nil)
@@ -121,33 +125,21 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contextControl := entities.ContextControl{
-		BaseContext: r.Context(),
-	}
-
-	existingUser, err := u.UserService.GetUserByID(contextControl, userID)
-	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, msg.ErrorToGetUser, err)
-		u.LoggerSugar.Errorw(msg.ErrorToGetUser, contextkeys.Error, err.Error())
-		return
+	userDomain := domain.UserDomain{
+		ID: userID,
 	}
 
 	if updateUserRequest.Name != nil {
-		existingUser.Name = *updateUserRequest.Name
-	}
-	if updateUserRequest.Email != nil {
-		existingUser.Email = *updateUserRequest.Email
+		userDomain.Name = *updateUserRequest.Name
 	}
 	if updateUserRequest.Username != nil {
-		existingUser.Username = *updateUserRequest.Username
+		userDomain.Username = *updateUserRequest.Username
+	}
+	if updateUserRequest.Email != nil {
+		userDomain.Email = *updateUserRequest.Email
 	}
 
-	userDomain := entities.UserDomain{
-		ID:       userID,
-		Name:     existingUser.Name,
-		Username: existingUser.Username,
-		Email:    existingUser.Email,
-	}
+	u.LoggerSugar.Info("UserDomain: ", userDomain)
 
 	updateUser, err := u.UserService.UpdateUser(contextControl, userDomain)
 	if err != nil {
@@ -158,6 +150,7 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	updateUserResponse := dto.UpdateUserResponse{
 		ID:       updateUser.ID,
+		Name:     &updateUser.Name,
 		Username: &updateUser.Username,
 		Email:    &updateUser.Email,
 	}
@@ -169,11 +162,11 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
-	contextControl := entities.ContextControl{
+	contextControl := domain.ContextControl{
 		BaseContext: r.Context(),
 	}
 
-	var updatePasswordRequest dto.UpdatePasswordRequest
+	var updatePasswordRequest dto.UpdatePasswordUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&updatePasswordRequest); err != nil {
 		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, msg.ErrorToDecodeUserRequest, err)
 		u.LoggerSugar.Errorw(msg.ErrorToDecodeUserRequest, contextkeys.Error, err.Error())
@@ -187,7 +180,9 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var userDomain entities.UserDomain
+	clearAuthCookie(w)
+
+	var userDomain domain.UserDomain
 	userDomain.ID = userID
 
 	_, token, err := u.UserService.UpdateUserPassword(contextControl, userDomain, updatePasswordRequest.Password, updatePasswordRequest.NewPassword)
@@ -205,7 +200,7 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	contextControl := entities.ContextControl{
+	contextControl := domain.ContextControl{
 		BaseContext: r.Context(),
 	}
 
@@ -222,6 +217,8 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		u.LoggerSugar.Errorw(msg.ErrorToSoftDeleteUser, contextkeys.Error, err.Error(), contextkeys.UserID, userID)
 		return
 	}
+
+	clearAuthCookie(w)
 
 	response := utils.ObjectResponse(nil, msg.SuccessUserSoftDeleted)
 	u.LoggerSugar.Infow(msg.SuccessUserSoftDeleted, contextkeys.UserID, userID)

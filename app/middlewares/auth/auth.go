@@ -2,9 +2,9 @@ package auth
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/core/domain"
 	"net/http"
 
-	"github.com/lechitz/AionApi/core/domain/entities"
 	"github.com/lechitz/AionApi/core/service"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"go.uber.org/zap"
@@ -27,7 +27,7 @@ func NewAuthMiddleware(authService *service.AuthService, tokenService *service.T
 func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		ctx := &entities.ContextControl{
+		ctx := &domain.ContextControl{
 			BaseContext:     r.Context(),
 			CancelCauseFunc: nil,
 		}
@@ -39,7 +39,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		tokenDomain := entities.TokenDomain{
+		tokenDomain := domain.TokenDomain{
 			Token: tokenCookie,
 		}
 
@@ -64,13 +64,6 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
-}
-
-func (a *MiddlewareAuth) AuthRevoke(next http.Handler) http.Handler {
-
-	//TODO: Implement AuthRevoke middleware
-
-	return nil
 }
 
 func extractTokenFromCookie(r *http.Request) (string, error) {

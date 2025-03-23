@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/lechitz/AionApi/core/domain/entities"
+	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/core/msg"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"github.com/lechitz/AionApi/ports/output/cache"
@@ -28,47 +28,47 @@ func NewAuthService(userRepo db.IUserRepository, tokenRepo cache.ITokenRepositor
 	}
 }
 
-func (service *AuthService) Login(ctx entities.ContextControl, userDomain entities.UserDomain, passwordReq string) (entities.UserDomain, string, error) {
+func (service *AuthService) Login(ctx domain.ContextControl, userDomain domain.UserDomain, passwordReq string) (domain.UserDomain, string, error) {
 
 	userDB, err := service.UserRepository.GetUserByUsername(ctx, userDomain.Username)
 	if err != nil {
 		service.LoggerSugar.Errorw(msg.ErrorToGetUserByUserName, contextkeys.Error, err.Error())
-		return entities.UserDomain{}, "", err
+		return domain.UserDomain{}, "", err
 	}
 
 	if err = service.compareHashAndPassword(userDB.Password, passwordReq); err != nil {
 		service.LoggerSugar.Errorw(msg.ErrorToCompareHashAndPassword, contextkeys.Error, err.Error())
-		return entities.UserDomain{}, "", err
+		return domain.UserDomain{}, "", err
 	}
 
-	tokenDomain := entities.TokenDomain{
+	tokenDomain := domain.TokenDomain{
 		UserID: userDB.ID,
 	}
 
 	token, err := service.TokenService.CreateToken(ctx, tokenDomain)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToGenerateToken, contextkeys.Error, err.Error())
-		return entities.UserDomain{}, "", err
+		service.LoggerSugar.Errorw(msg.ErrorToCreateToken, contextkeys.Error, err.Error())
+		return domain.UserDomain{}, "", err
 	}
 
 	tokenDomain.Token = token
 
-	if err := service.TokenRepository.SaveToken(ctx, tokenDomain); err != nil {
+	if err := service.TokenService.SaveToken(ctx, tokenDomain); err != nil {
 		service.LoggerSugar.Errorw(msg.ErrorToSaveToken, contextkeys.Error, err.Error())
-		return entities.UserDomain{}, "", err
+		return domain.UserDomain{}, "", err
 	}
 
-	return userDB, token, nil
+	return userDB, tokenDomain.Token, nil
 }
 
-func (service *AuthService) Logout(ctx entities.ContextControl, token string) error {
+func (service *AuthService) Logout(ctx domain.ContextControl, token string) error {
 	userID, _, err := service.TokenService.CheckToken(ctx, token)
 	if err != nil {
 		service.LoggerSugar.Errorw(msg.ErrorToCheckToken, contextkeys.Error, err.Error())
 		return err
 	}
 
-	tokenDomain := entities.TokenDomain{
+	tokenDomain := domain.TokenDomain{
 		UserID: userID,
 		Token:  token,
 	}

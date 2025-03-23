@@ -2,14 +2,15 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/lechitz/AionApi/core/domain"
+	inputHttp "github.com/lechitz/AionApi/ports/input/http"
 	"net/http"
+	"time"
 
 	"github.com/lechitz/AionApi/adapters/input/http/dto"
 	msg "github.com/lechitz/AionApi/adapters/input/http/handlers/messages"
-	"github.com/lechitz/AionApi/core/domain/entities"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"github.com/lechitz/AionApi/pkg/utils"
-	inputHttp "github.com/lechitz/AionApi/ports/input/http"
 	"go.uber.org/zap"
 )
 
@@ -20,7 +21,7 @@ type Auth struct {
 
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
-	contextControl := entities.ContextControl{
+	contextControl := domain.ContextControl{
 		BaseContext: r.Context(),
 	}
 
@@ -31,7 +32,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDomain := entities.UserDomain{
+	userDomain := domain.UserDomain{
 		Username: loginUserRequest.Username,
 		Password: loginUserRequest.Password,
 	}
@@ -56,7 +57,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
-	contextControl := entities.ContextControl{
+	contextControl := domain.ContextControl{
 		BaseContext: r.Context(),
 	}
 
@@ -82,7 +83,7 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	setAuthCookie(w, "", -1)
+	clearAuthCookie(w)
 
 	response := utils.ObjectResponse(nil, msg.SuccessToLogout)
 	a.LoggerSugar.Infow(msg.SuccessToLogout, contextkeys.UserID, userID)
@@ -99,5 +100,18 @@ func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
 		MaxAge:   maxAge,
+	})
+}
+
+func clearAuthCookie(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     contextkeys.AuthToken,
+		Value:    "",
+		Path:     contextkeys.Path,
+		MaxAge:   -1,
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
 	})
 }

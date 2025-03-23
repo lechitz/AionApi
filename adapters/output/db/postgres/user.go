@@ -3,9 +3,9 @@ package postgres
 import (
 	"fmt"
 	"github.com/jinzhu/copier"
-	"github.com/lechitz/AionApi/core/domain/entities"
+	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
-	portsdb "github.com/lechitz/AionApi/ports/output/db"
+	"github.com/lechitz/AionApi/ports/output/db"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"time"
@@ -16,7 +16,7 @@ type UserStore struct {
 	loggerSugar *zap.SugaredLogger
 }
 
-func NewUserRepo(db *gorm.DB, loggerSugar *zap.SugaredLogger) portsdb.IUserRepository {
+func NewUserRepo(db *gorm.DB, loggerSugar *zap.SugaredLogger) db.IUserRepository {
 	return &UserStore{
 		db:          db,
 		loggerSugar: loggerSugar,
@@ -38,8 +38,8 @@ func (UserDB) TableName() string {
 	return TableUsers
 }
 
-func (u UserDB) CopyToUserDomain() entities.UserDomain {
-	return entities.UserDomain{
+func (u UserDB) CopyToUserDomain() domain.UserDomain {
+	return domain.UserDomain{
 		ID:        u.ID,
 		Name:      u.Name,
 		Username:  u.Username,
@@ -51,7 +51,7 @@ func (u UserDB) CopyToUserDomain() entities.UserDomain {
 	}
 }
 
-func (up UserStore) CreateUser(contextControl entities.ContextControl, userDomain entities.UserDomain) (entities.UserDomain, error) {
+func (up UserStore) CreateUser(contextControl domain.ContextControl, userDomain domain.UserDomain) (domain.UserDomain, error) {
 
 	var userDB UserDB
 	copier.Copy(&userDB, &userDomain)
@@ -60,22 +60,22 @@ func (up UserStore) CreateUser(contextControl entities.ContextControl, userDomai
 		Create(&userDB).Error; err != nil {
 		wrappedErr := fmt.Errorf(ErrorToCreateUser, err)
 		up.loggerSugar.Errorw(ErrorToCreateUser, contextkeys.Error, wrappedErr.Error())
-		return entities.UserDomain{}, wrappedErr
+		return domain.UserDomain{}, wrappedErr
 	}
 
 	return userDB.CopyToUserDomain(), nil
 }
 
-func (up UserStore) GetAllUsers(contextControl entities.ContextControl) ([]entities.UserDomain, error) {
+func (up UserStore) GetAllUsers(contextControl domain.ContextControl) ([]domain.UserDomain, error) {
 	var usersDB []UserDB
-	var usersDomain []entities.UserDomain
+	var usersDomain []domain.UserDomain
 
 	if err := up.db.WithContext(contextControl.BaseContext).
 		Where(DeleteAtIsNull).
 		Select(contextkeys.UserID, contextkeys.Name, contextkeys.Username, contextkeys.Email, contextkeys.CreatedAt).
 		Find(&usersDB).Error; err != nil {
 		up.loggerSugar.Errorw(ErrorToGetAllUsers, contextkeys.Error, err.Error())
-		return []entities.UserDomain{}, err
+		return []domain.UserDomain{}, err
 	}
 
 	for _, userDB := range usersDB {
@@ -85,7 +85,7 @@ func (up UserStore) GetAllUsers(contextControl entities.ContextControl) ([]entit
 	return usersDomain, nil
 }
 
-func (up UserStore) GetUserByID(contextControl entities.ContextControl, userID uint64) (entities.UserDomain, error) {
+func (up UserStore) GetUserByID(contextControl domain.ContextControl, userID uint64) (domain.UserDomain, error) {
 
 	var userDB UserDB
 
@@ -93,13 +93,13 @@ func (up UserStore) GetUserByID(contextControl entities.ContextControl, userID u
 		Where("id = ?", userID).
 		First(&userDB).Error; err != nil {
 		up.loggerSugar.Errorw(ErrorToGetUserByID, contextkeys.Error, err.Error())
-		return entities.UserDomain{}, err
+		return domain.UserDomain{}, err
 	}
 
 	return userDB.CopyToUserDomain(), nil
 }
 
-func (up UserStore) GetUserByUsername(contextControl entities.ContextControl, username string) (entities.UserDomain, error) {
+func (up UserStore) GetUserByUsername(contextControl domain.ContextControl, username string) (domain.UserDomain, error) {
 
 	var userDB UserDB
 
@@ -108,56 +108,20 @@ func (up UserStore) GetUserByUsername(contextControl entities.ContextControl, us
 		Where("username = ?", username).
 		First(&userDB).Error; err != nil {
 		up.loggerSugar.Errorw(ErrorToGetUserByUserName, contextkeys.Error, err.Error())
-		return entities.UserDomain{}, err
+		return domain.UserDomain{}, err
 	}
 
 	return userDB.CopyToUserDomain(), nil
 }
 
-func (up UserStore) UpdateUser(contextControl entities.ContextControl, userDomain entities.UserDomain) (entities.UserDomain, error) {
-
-	var userDB UserDB
-	copier.Copy(&userDB, &userDomain)
-
-	if err := up.db.WithContext(contextControl.BaseContext).
-		Model(&UserDB{}).
-		Where("id = ?", userDB.ID).
-		Updates(userDB).Error; err != nil {
-		up.loggerSugar.Errorw(ErrorToUpdateUser, contextkeys.Error, err.Error())
-		return entities.UserDomain{}, err
-	}
-
-	return userDB.CopyToUserDomain(), nil
-}
-
-func (up UserStore) UpdatePassword(contextControl entities.ContextControl, userDomain entities.UserDomain) (entities.UserDomain, error) {
-
-	var userDB UserDB
-	copier.Copy(&userDB, &userDomain)
-
-	if err := up.db.WithContext(contextControl.BaseContext).
-		Model(&UserDB{}).
-		Where("id = ?", userDB.ID).
-		Update(contextkeys.Password, userDB.Password).Error; err != nil {
-		up.loggerSugar.Errorw(ErrorToUpdatePassword, contextkeys.Error, err.Error())
-		return entities.UserDomain{}, err
-	}
-
-	return userDB.CopyToUserDomain(), nil
-}
-
-func (up UserStore) SoftDeleteUser(contextControl entities.ContextControl, userID uint64) error {
-	now := time.Now()
-	if err := up.db.WithContext(contextControl.BaseContext).
+func (up UserStore) UpdateUserFields(ctx domain.ContextControl, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
+	if err := up.db.WithContext(ctx.BaseContext).
 		Model(&UserDB{}).
 		Where("id = ?", userID).
-		Updates(map[string]interface{}{
-			contextkeys.DeletedAt: now,
-		}).Error; err != nil {
-		up.loggerSugar.Errorw(ErrorToSoftDeleteUser, contextkeys.UserID, userID, contextkeys.Error, err.Error())
-		return err
+		Updates(fields).Error; err != nil {
+		up.loggerSugar.Errorw(ErrorToUpdateUser, contextkeys.Error, err.Error())
+		return domain.UserDomain{}, err
 	}
 
-	up.loggerSugar.Infow(SuccesfullyDeletedUser, contextkeys.UserID, userID, contextkeys.DeletedAt, now)
-	return nil
+	return up.GetUserByID(ctx, userID)
 }

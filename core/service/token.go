@@ -2,14 +2,14 @@ package service
 
 import (
 	"fmt"
+	"github.com/lechitz/AionApi/core/domain"
+	"github.com/lechitz/AionApi/ports/output/cache"
+	"github.com/lechitz/AionApi/ports/output/db"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/lechitz/AionApi/core/domain/entities"
 	"github.com/lechitz/AionApi/core/msg"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
-	"github.com/lechitz/AionApi/ports/output/cache"
-	"github.com/lechitz/AionApi/ports/output/db"
 	"go.uber.org/zap"
 )
 
@@ -29,7 +29,7 @@ func NewTokenService(userRepo db.IUserRepository, tokenRepo cache.ITokenReposito
 	}
 }
 
-func (service *TokenService) CreateToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) (string, error) {
+func (service *TokenService) CreateToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) (string, error) {
 
 	_, err := service.TokenRepository.GetToken(ctx, tokenDomain)
 	if err == nil {
@@ -56,7 +56,7 @@ func (service *TokenService) CreateToken(ctx entities.ContextControl, tokenDomai
 	return signedToken, nil
 }
 
-func (service *TokenService) SaveToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) error {
+func (service *TokenService) SaveToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) error {
 	err := service.TokenRepository.SaveToken(ctx, tokenDomain)
 	if err != nil {
 		service.LoggerSugar.Errorw(msg.ErrorToCreateToken, contextkeys.Error, err.Error(), contextkeys.UserID, tokenDomain.UserID)
@@ -66,7 +66,7 @@ func (service *TokenService) SaveToken(ctx entities.ContextControl, tokenDomain 
 	return nil
 }
 
-func (service *TokenService) GetToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) (string, error) {
+func (service *TokenService) GetToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) (string, error) {
 	token, err := service.TokenRepository.GetToken(ctx, tokenDomain)
 	if err != nil {
 		service.LoggerSugar.Errorw(msg.ErrorToRetrieveTokenFromCache, contextkeys.Error, err.Error())
@@ -77,7 +77,7 @@ func (service *TokenService) GetToken(ctx entities.ContextControl, tokenDomain e
 	return token, nil
 }
 
-func (service *TokenService) UpdateToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) error {
+func (service *TokenService) UpdateToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) error {
 	err := service.TokenRepository.UpdateToken(ctx, tokenDomain)
 	if err != nil {
 		service.LoggerSugar.Errorw(msg.ErrorToUpdateToken, contextkeys.Error, err.Error())
@@ -87,7 +87,7 @@ func (service *TokenService) UpdateToken(ctx entities.ContextControl, tokenDomai
 	return nil
 }
 
-func (service *TokenService) DeleteToken(ctx entities.ContextControl, tokenDomain entities.TokenDomain) error {
+func (service *TokenService) DeleteToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) error {
 	err := service.TokenRepository.DeleteToken(ctx, tokenDomain)
 	if err != nil {
 		service.LoggerSugar.Errorw(msg.ErrorToDeleteToken, contextkeys.Error, err.Error())
@@ -97,7 +97,7 @@ func (service *TokenService) DeleteToken(ctx entities.ContextControl, tokenDomai
 	return nil
 }
 
-func (service *TokenService) CheckToken(ctx entities.ContextControl, token string) (uint64, string, error) {
+func (service *TokenService) CheckToken(ctx domain.ContextControl, token string) (uint64, string, error) {
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 
 		return []byte(service.SecretKey), nil
@@ -121,7 +121,7 @@ func (service *TokenService) CheckToken(ctx entities.ContextControl, token strin
 
 	userID := uint64(userIDFloat)
 
-	tokenDomain := entities.TokenDomain{
+	tokenDomain := domain.TokenDomain{
 		UserID: userID,
 		Token:  token,
 	}

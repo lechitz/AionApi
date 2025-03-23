@@ -1,10 +1,10 @@
 package http
 
 import (
-	"github.com/lechitz/AionApi/core/domain/entities"
+	"github.com/lechitz/AionApi/core/domain"
 )
 
 type IAuthService interface {
-	Login(ctx entities.ContextControl, userDomain entities.UserDomain, passwordReq string) (entities.UserDomain, string, error)
-	Logout(ctx entities.ContextControl, token string) error
+	Login(ctx domain.ContextControl, userDomain domain.UserDomain, passwordReq string) (domain.UserDomain, string, error)
+	Logout(ctx domain.ContextControl, token string) error
 }
