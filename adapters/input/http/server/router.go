@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/adapters/input/http/handlers"
-	"github.com/lechitz/AionApi/app/middlewares/auth"
+	"github.com/lechitz/AionApi/app/middleware/auth"
 	"go.uber.org/zap"
 )
 

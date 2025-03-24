@@ -120,7 +120,8 @@ func (service *UserService) UpdateUser(ctx domain.ContextControl, user domain.Us
 
 func (service *UserService) SoftDeleteUser(ctx domain.ContextControl, userID uint64) error {
 	fields := map[string]interface{}{
-		"deleted_at": time.Now(),
+		contextkeys.DeletedAt: time.Now(),
+		contextkeys.UpdatedAt: time.Now(),
 	}
 
 	if _, err := service.UserRepository.UpdateUserFields(ctx, userID, fields); err != nil {

@@ -1,8 +1,8 @@
 package bootstrap
 
 import (
-	"github.com/lechitz/AionApi/adapters/output/cache/redis"
-	dbadapter "github.com/lechitz/AionApi/adapters/output/db/postgres"
+	"github.com/lechitz/AionApi/adapters/output/cache"
+	dbadapter "github.com/lechitz/AionApi/adapters/output/db"
 	portsCache "github.com/lechitz/AionApi/ports/output/cache"
 	portsDB "github.com/lechitz/AionApi/ports/output/db"
 
@@ -28,7 +28,7 @@ const ErrorInitializingDependencies = "error closing cache connection: "
 
 func InitializeDependencies(loggerSugar *zap.SugaredLogger, cfg config.Config) (*AppDependencies, func(), error) {
 	cacheConn := infraCache.NewCacheConnection(cfg.CacheConfig, loggerSugar)
-	tokenRepo := redis.NewCacheRepo(cacheConn, loggerSugar)
+	tokenRepo := cache.NewCacheRepo(cacheConn, loggerSugar)
 
 	databaseConn := infraDB.NewDatabaseConnection(cfg.DBConfig, loggerSugar)
 	userRepo := dbadapter.NewUserRepo(databaseConn, loggerSugar)

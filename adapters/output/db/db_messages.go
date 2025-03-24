@@ -1,4 +1,4 @@
-package postgres
+package db
 
 // Error messages for user
 
