@@ -1,7 +1,6 @@
 # ========================
 # Global Variables
 # ========================
-include .env
 APPLICATION_NAME := aion-api
 PORT := 5001
 COMPOSE_FILE_DEV := docker-compose-dev.yaml
@@ -43,18 +42,40 @@ docker-build-dev: docker-clean-dev
 	docker build -t $(APPLICATION_NAME):dev .
 
 docker-compose-dev-up: docker-compose-dev-down
-	docker-compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres
-	docker-compose -f $(COMPOSE_FILE_DEV) up
+	@echo "Starting Dev Environment..."
+	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres
+	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) up
 
 docker-compose-dev-down:
-	docker-compose -f $(COMPOSE_FILE_DEV) down -v
+	@echo "Stopping Dev Environment..."
+	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) down -v
 
 docker-build-run-dev: docker-clean-dev docker-build-dev docker-compose-dev-up
 
 docker-clean-dev:
-	docker rm -f $(shell docker ps -a --filter "name=dev" -q) || true
-	docker volume rm $(shell docker volume ls --filter "name=dev" -q) || true
-	docker rmi -f $(shell docker images --filter "reference=*dev*" -q) || true
+	@containers=$$(docker ps -a --filter "name=dev" -q); \
+	if [ -n "$$containers" ]; then \
+		echo "Removing dev containers..."; \
+		docker rm -f $$containers; \
+	else \
+		echo "No dev containers to remove."; \
+	fi
+
+	@volumes=$$(docker volume ls --filter "name=dev" -q); \
+	if [ -n "$$volumes" ]; then \
+		echo "Removing dev volumes..."; \
+		docker volume rm $$volumes; \
+	else \
+		echo "No dev volumes to remove."; \
+	fi
+
+	@images=$$(docker images --filter "reference=*dev*" -q); \
+	if [ -n "$$images" ]; then \
+		echo "Removing dev images..."; \
+		docker rmi -f $$images; \
+	else \
+		echo "No dev images to remove."; \
+	fi
 
 # ========================
 # Production Environment
@@ -73,28 +94,83 @@ docker-compose-prod-down:
 docker-build-run-prod: docker-build-prod docker-compose-prod-up
 
 docker-clean-prod:
-	docker rm -f $(shell docker ps -a --filter "name=prod" -q) || true
-	docker volume rm $(shell docker volume ls --filter "name=prod" -q) || true
-	docker rmi -f $(shell docker images --filter "reference=*prod*" -q) || true
+	@containers=$$(docker ps -a --filter "name=prod" -q); \
+	if [ -n "$$containers" ]; then \
+		echo "Removing prod containers..."; \
+		docker rm -f $$containers; \
+	else \
+		echo "No prod containers to remove."; \
+	fi
+
+	@volumes=$$(docker volume ls --filter "name=prod" -q); \
+	if [ -n "$$volumes" ]; then \
+		echo "Removing prod volumes..."; \
+		docker volume rm $$volumes; \
+	else \
+		echo "No prod volumes to remove."; \
+	fi
+
+	@images=$$(docker images --filter "reference=*prod*" -q); \
+	if [ -n "$$images" ]; then \
+		echo "Removing prod images..."; \
+		docker rmi -f $$images; \
+	else \
+		echo "✅ No prod images to remove."; \
+	fi
 
 # ========================
 # General Docker Commands
 # ========================
 .PHONY: docker-clean-all
 docker-clean-all:
-	# Remove all containers:
-	docker rm -f $(shell docker ps -a -q) || true
-	# Remove all volumes:
-	docker volume rm $(shell docker volume ls -q) || true
-	# Remove all images:
-	docker rmi -f $(shell docker images -a -q) || true
+	@containers=$$(docker ps -a -q); \
+	if [ -n "$$containers" ]; then \
+		echo "Removing ALL containers..."; \
+		docker rm -f $$containers; \
+	else \
+		echo "No containers to remove."; \
+	fi
+
+	@volumes=$$(docker volume ls -q); \
+	if [ -n "$$volumes" ]; then \
+		echo "Removing ALL volumes..."; \
+		docker volume rm $$volumes; \
+	else \
+		echo "No volumes to remove."; \
+	fi
+
+	@images=$$(docker images -a -q); \
+	if [ -n "$$images" ]; then \
+		echo "Removing ALL images..."; \
+		docker rmi -f $$images; \
+	else \
+		echo "No images to remove."; \
+	fi
 
 # ========================
 # Go Testing Commands
 # ========================
+.PHONY: test
+test:
+	@echo "📦 Running unit tests..."
+	go test ./... -v
+
 .PHONY: test-cover
 test-cover:
-	go test ./... -coverprofile=coverage_tmp.out
+	@echo "🧪 Running tests with coverage report..."
+	go test ./... -coverprofile=coverage_tmp.out -v
+	@echo "📁 Filtering out mock files from coverage..."
 	cat coverage_tmp.out | grep -v "Mock" > coverage.out
-	rm -f coverage_tmp.out
+	@rm -f coverage_tmp.out
+	@echo "📊 Generating HTML coverage report..."
 	go tool cover -html=coverage.out
+
+.PHONY: test-ci
+test-ci:
+	@echo "🤖 Running CI tests with coverage output..."
+	go test ./... -coverprofile=coverage.out -v
+
+.PHONY: test-clean
+test-clean:
+	@echo "🧹 Cleaning up coverage reports..."
+	@rm -f coverage.out coverage_tmp.out

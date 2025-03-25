@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"log"
 	"os"
 
 	"go.uber.org/zap"
@@ -9,7 +10,10 @@ import (
 
 func InitLoggerSugar() (*zap.SugaredLogger, func()) {
 
-	encoder := zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
+	encoderCfg := zap.NewProductionEncoderConfig()
+	encoderCfg.TimeKey = "timestamp"
+	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
+	encoder := zapcore.NewJSONEncoder(encoderCfg)
 
 	infoLevel := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
 		return lvl >= zapcore.InfoLevel && lvl < zapcore.ErrorLevel
@@ -18,18 +22,21 @@ func InitLoggerSugar() (*zap.SugaredLogger, func()) {
 		return lvl >= zapcore.ErrorLevel
 	})
 
-	infoWriter := zapcore.AddSync(os.Stdout)
-	errorWriter := zapcore.AddSync(os.Stderr)
+	infoWriter := zapcore.Lock(os.Stdout)
+	errorWriter := zapcore.Lock(os.Stderr)
 
 	infoCore := zapcore.NewCore(encoder, infoWriter, infoLevel)
 	errorCore := zapcore.NewCore(encoder, errorWriter, errorLevel)
+	tee := zapcore.NewTee(infoCore, errorCore)
 
-	core := zapcore.NewTee(infoCore, errorCore)
-	logger := zap.New(core).Sugar()
+	logger := zap.New(tee, zap.AddCaller(), zap.AddCallerSkip(1))
+	sugar := logger.Sugar()
 
 	cleanup := func() {
-		_ = logger.Sync()
+		if err := sugar.Sync(); err != nil {
+			log.Printf("Failed to flush logger: %v", err)
+		}
 	}
 
-	return logger, cleanup
+	return sugar, cleanup
 }

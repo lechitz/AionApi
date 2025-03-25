@@ -2,232 +2,220 @@ package service
 
 import (
 	"errors"
-	"github.com/lechitz/AionApi/core/domain"
-	"github.com/lechitz/AionApi/ports/output/db"
+	"fmt"
+	"github.com/lechitz/AionApi/ports/output/security"
 	"strings"
 	"time"
 
 	"github.com/badoux/checkmail"
+	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/core/msg"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
+	"github.com/lechitz/AionApi/ports/output/db"
 	"go.uber.org/zap"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
-	UserRepository db.IUserRepository
-	TokenService   *TokenService
-	AuthService    *AuthService
-	LoggerSugar    *zap.SugaredLogger
+	UserRepository  db.IUserRepository
+	TokenService    security.ITokenService
+	PasswordService security.IPasswordService
+	LoggerSugar     *zap.SugaredLogger
 }
 
-func NewUserService(userRepo db.IUserRepository, tokenService *TokenService, authService *AuthService, loggerSugar *zap.SugaredLogger) *UserService {
+func NewUserService(userRepo db.IUserRepository, tokenService security.ITokenService, passwordService security.IPasswordService, loggerSugar *zap.SugaredLogger) *UserService {
 	return &UserService{
-		UserRepository: userRepo,
-		TokenService:   tokenService,
-		AuthService:    authService,
-		LoggerSugar:    loggerSugar,
+		UserRepository:  userRepo,
+		TokenService:    tokenService,
+		PasswordService: passwordService,
+		LoggerSugar:     loggerSugar,
 	}
 }
 
-func (service *UserService) CreateUser(ctx domain.ContextControl, userDomain domain.UserDomain, passwordReq string) (domain.UserDomain, error) {
+func (s *UserService) CreateUser(ctx domain.ContextControl, user domain.UserDomain, password string) (domain.UserDomain, error) {
+	user = s.NormalizeUserData(&user)
 
-	normalizedUser := service.NormalizeUserData(&userDomain)
-
-	if err := service.validateCreateUserRequired(normalizedUser, passwordReq); err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToValidateCreateUser, contextkeys.Error, err.Error())
+	if err := s.validateCreateUserRequired(user, password); err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorToValidateCreateUser, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 
-	hashPassword, err := service.HashPassword(passwordReq)
+	existingByUsername, err := s.UserRepository.GetUserByUsername(ctx, user.Username)
+	if err == nil && existingByUsername.ID != 0 {
+		return domain.UserDomain{}, fmt.Errorf("username '%s' is already in use", user.Username)
+	}
+
+	existingByEmail, err := s.UserRepository.GetUserByEmail(ctx, user.Email)
+	if err == nil && existingByEmail.ID != 0 {
+		return domain.UserDomain{}, fmt.Errorf("email '%s' is already in use", user.Email)
+	}
+
+	hashPassword, err := s.PasswordService.HashPassword(password)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToHashPassword, contextkeys.Error, err.Error())
+		s.LoggerSugar.Errorw(msg.ErrorToHashPassword, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
+	user.Password = hashPassword
 
-	normalizedUser.Password = hashPassword
-
-	userDB, err := service.UserRepository.CreateUser(ctx, normalizedUser)
+	userDB, err := s.UserRepository.CreateUser(ctx, user)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToCreateUser, contextkeys.Error, err.Error())
+		s.LoggerSugar.Errorw(msg.ErrorToCreateUser, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 
-	service.LoggerSugar.Infow(msg.SuccessUserCreated, contextkeys.UserID, userDB.ID)
+	s.LoggerSugar.Infow(msg.SuccessUserCreated, contextkeys.UserID, userDB.ID)
 	return userDB, nil
 }
 
-func (service *UserService) GetAllUsers(ctx domain.ContextControl) ([]domain.UserDomain, error) {
-	users, err := service.UserRepository.GetAllUsers(ctx)
+func (s *UserService) GetAllUsers(ctx domain.ContextControl) ([]domain.UserDomain, error) {
+	users, err := s.UserRepository.GetAllUsers(ctx)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToGetAllUsers, contextkeys.Error, err.Error())
-		return []domain.UserDomain{}, err
+		s.LoggerSugar.Errorw(msg.ErrorToGetAllUsers, contextkeys.Error, err.Error())
+		return nil, err
 	}
-
-	service.LoggerSugar.Infow(msg.SuccessUsersRetrieved, "count", len(users))
+	s.LoggerSugar.Infow(msg.SuccessUsersRetrieved, "count", len(users))
 	return users, nil
 }
 
-func (service *UserService) GetUserByID(ctx domain.ContextControl, ID uint64) (domain.UserDomain, error) {
-	user, err := service.UserRepository.GetUserByID(ctx, ID)
+func (s *UserService) GetUserByID(ctx domain.ContextControl, id uint64) (domain.UserDomain, error) {
+	user, err := s.UserRepository.GetUserByID(ctx, id)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToGetUserByID, contextkeys.Error, err.Error())
+		s.LoggerSugar.Errorw(msg.ErrorToGetUserByID, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
-
-	service.LoggerSugar.Infow(msg.SuccessUserRetrieved, contextkeys.UserID, user.ID)
+	s.LoggerSugar.Infow(msg.SuccessUserRetrieved, contextkeys.UserID, user.ID)
 	return user, nil
 }
 
-func (service *UserService) GetUserByUsername(ctx domain.ContextControl, userDomain domain.UserDomain) (domain.UserDomain, error) {
-	user, err := service.UserRepository.GetUserByUsername(ctx, userDomain.Username)
+func (s *UserService) GetUserByUsername(ctx domain.ContextControl, username string) (domain.UserDomain, error) {
+	userDB, err := s.UserRepository.GetUserByUsername(ctx, username)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToGetUserByUserName, contextkeys.Error, err.Error())
+		s.LoggerSugar.Errorw(msg.ErrorToGetUserByUserName, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
+	s.LoggerSugar.Infow(msg.SuccessUserRetrieved, contextkeys.UserID, userDB.ID)
+	return userDB, nil
+}
 
-	service.LoggerSugar.Infow(msg.SuccessUserRetrieved, contextkeys.UserID, user.ID)
+func (s *UserService) GetUserByEmail(ctx domain.ContextControl, email string) (domain.UserDomain, error) {
+	user, err := s.UserRepository.GetUserByEmail(ctx, email)
+	if err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorToGetUserByEmail, contextkeys.Error, err.Error())
+		return domain.UserDomain{}, err
+	}
+	s.LoggerSugar.Infow(msg.SuccessUserRetrieved, contextkeys.UserID, user.ID)
 	return user, nil
 }
 
-func (service *UserService) UpdateUser(ctx domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error) {
-	updateFields := map[string]interface{}{}
+func (s *UserService) UpdateUser(ctx domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error) {
+	updateFields := make(map[string]interface{})
 
 	if user.Name != "" {
-		updateFields["name"] = user.Name
+		updateFields[contextkeys.Name] = user.Name
 	}
 	if user.Username != "" {
-		updateFields["username"] = user.Username
+		updateFields[contextkeys.Username] = user.Username
 	}
 	if user.Email != "" {
-		updateFields["email"] = user.Email
+		updateFields[contextkeys.Email] = user.Email
 	}
-
 	if len(updateFields) == 0 {
-		return domain.UserDomain{}, errors.New("no fields to update")
+		return domain.UserDomain{}, errors.New(msg.ErrorNoFieldsToUpdate)
 	}
+	updateFields[contextkeys.UpdatedAt] = time.Now().UTC()
 
-	updateFields["updated_at"] = time.Now()
-
-	updatedUser, err := service.UserRepository.UpdateUserFields(ctx, user.ID, updateFields)
-	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToUpdateUser, contextkeys.Error, err.Error())
-		return domain.UserDomain{}, err
-	}
-
-	return updatedUser, nil
+	return s.UserRepository.UpdateUser(ctx, user.ID, updateFields)
 }
 
-func (service *UserService) SoftDeleteUser(ctx domain.ContextControl, userID uint64) error {
+func (s *UserService) UpdateUserPassword(ctx domain.ContextControl, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error) {
+	userDB, err := s.UserRepository.GetUserByID(ctx, user.ID)
+	if err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorToGetUserByID, contextkeys.Error, err.Error())
+		return domain.UserDomain{}, "", err
+	}
+
+	if err := s.PasswordService.ComparePasswords(userDB.Password, oldPassword); err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorToCompareHashAndPassword, contextkeys.Error, err.Error())
+		return domain.UserDomain{}, "", err
+	}
+
+	hashedPassword, err := s.PasswordService.HashPassword(newPassword)
+	if err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorToHashPassword, contextkeys.Error, err.Error())
+		return domain.UserDomain{}, "", err
+	}
+
 	fields := map[string]interface{}{
-		contextkeys.DeletedAt: time.Now(),
-		contextkeys.UpdatedAt: time.Now(),
-	}
-
-	if _, err := service.UserRepository.UpdateUserFields(ctx, userID, fields); err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToSoftDeleteUser, contextkeys.Error, err.Error())
-		return err
-	}
-
-	tokenDomain := domain.TokenDomain{
-		UserID: userID,
-	}
-
-	if err := service.TokenService.DeleteToken(ctx, tokenDomain); err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToDeleteToken, contextkeys.Error, err.Error())
-		return err
-	}
-
-	service.LoggerSugar.Infow(msg.SuccessUserSoftDeleted, contextkeys.UserID, userID)
-	return nil
-}
-
-func (service *UserService) UpdateUserPassword(ctx domain.ContextControl, userDomain domain.UserDomain, passwordReq, newPasswordReq string) (domain.UserDomain, string, error) {
-
-	userDB, err := service.UserRepository.GetUserByID(ctx, userDomain.ID)
-	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToGetUserByID, contextkeys.Error, err.Error())
-		return domain.UserDomain{}, "", err
-	}
-
-	if err = service.AuthService.compareHashAndPassword(userDB.Password, passwordReq); err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToCompareHashAndPassword, contextkeys.Error, err.Error())
-		return domain.UserDomain{}, "", err
-	}
-
-	hashedPassword, err := service.HashPassword(newPasswordReq)
-	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToHashPassword, contextkeys.Error, err.Error())
-		return domain.UserDomain{}, "", err
-	}
-
-	updateFields := map[string]interface{}{
 		contextkeys.Password:  hashedPassword,
-		contextkeys.UpdatedAt: time.Now(),
+		contextkeys.UpdatedAt: time.Now().UTC(),
 	}
 
-	updatedUser, err := service.UserRepository.UpdateUserFields(ctx, userDomain.ID, updateFields)
+	updatedUser, err := s.UserRepository.UpdateUser(ctx, user.ID, fields)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToUpdatePassword, contextkeys.Error, err.Error())
+		s.LoggerSugar.Errorw(msg.ErrorToUpdatePassword, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
-	tokenDomain := domain.TokenDomain{
-		UserID: userDomain.ID,
-	}
-	token, err := service.TokenService.CreateToken(ctx, tokenDomain)
+	tokenDomain := domain.TokenDomain{UserID: user.ID}
+	token, err := s.TokenService.Create(ctx, tokenDomain)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToCreateToken, contextkeys.Error, err.Error())
+		s.LoggerSugar.Errorw(msg.ErrorToCreateToken, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 	tokenDomain.Token = token
 
-	if err := service.TokenService.SaveToken(ctx, tokenDomain); err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToSaveToken, contextkeys.Error, err.Error())
-		return domain.UserDomain{}, "", errors.New("error to save token")
+	if err := s.TokenService.Save(ctx, tokenDomain); err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorToSaveToken, contextkeys.Error, err.Error())
+		return domain.UserDomain{}, "", errors.New(msg.ErrorToSaveToken)
 	}
 
-	service.LoggerSugar.Infow(msg.SuccessPasswordUpdated, contextkeys.UserID, updatedUser.ID)
+	s.LoggerSugar.Infow(msg.SuccessPasswordUpdated, contextkeys.UserID, updatedUser.ID)
 	return updatedUser, tokenDomain.Token, nil
 }
 
-func (service *UserService) NormalizeUserData(userDomain *domain.UserDomain) domain.UserDomain {
-	if userDomain.Name != "" {
-		userDomain.Name = strings.TrimSpace(userDomain.Name)
-	}
-	if userDomain.Username != "" {
-		userDomain.Username = strings.TrimSpace(userDomain.Username)
-	}
-	if userDomain.Email != "" {
-		userDomain.Email = strings.ToLower(strings.TrimSpace(userDomain.Email))
+func (s *UserService) SoftDeleteUser(ctx domain.ContextControl, userID uint64) error {
+	if err := s.UserRepository.SoftDeleteUser(ctx, userID); err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorToSoftDeleteUser, contextkeys.Error, err.Error())
+		return err
 	}
 
-	return *userDomain
+	tokenDomain := domain.TokenDomain{UserID: userID}
+	if err := s.TokenService.Delete(ctx, tokenDomain); err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorToDeleteToken, contextkeys.Error, err.Error())
+		return err
+	}
+
+	s.LoggerSugar.Infow(msg.SuccessUserSoftDeleted, contextkeys.UserID, userID)
+	return nil
 }
 
-func (service *UserService) validateCreateUserRequired(userDomain domain.UserDomain, password string) error {
-	if userDomain.Name == "" {
+func (s *UserService) NormalizeUserData(user *domain.UserDomain) domain.UserDomain {
+	if user.Name != "" {
+		user.Name = strings.TrimSpace(user.Name)
+	}
+	if user.Username != "" {
+		user.Username = strings.TrimSpace(user.Username)
+	}
+	if user.Email != "" {
+		user.Email = strings.ToLower(strings.TrimSpace(user.Email))
+	}
+	return *user
+}
+
+func (s *UserService) validateCreateUserRequired(user domain.UserDomain, password string) error {
+	if user.Name == "" {
 		return errors.New(msg.NameIsRequired)
 	}
-	if userDomain.Username == "" {
+	if user.Username == "" {
 		return errors.New(msg.UsernameIsRequired)
 	}
-	if userDomain.Email == "" {
+	if user.Email == "" {
 		return errors.New(msg.EmailIsRequired)
 	}
 	if password == "" {
 		return errors.New(msg.PasswordIsRequired)
 	}
-	if err := checkmail.ValidateFormat(userDomain.Email); err != nil {
+	if err := checkmail.ValidateFormat(user.Email); err != nil {
 		return errors.New(msg.InvalidEmail)
 	}
 	return nil
-}
-
-func (service *UserService) HashPassword(password string) (string, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-	return string(hashedPassword), nil
 }

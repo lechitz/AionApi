@@ -13,7 +13,7 @@ type DBConfig struct {
 
 type CacheConfig struct {
 	Addr     string `envconfig:"REDIS_ADDR" default:"redis-aion:6379"`
-	Password string `envconfig:"REDIS_PASSWORD" default:""`
+	Password string `envconfig:"REDIS_PASSWORD"`
 	DB       int    `envconfig:"REDIS_DB" default:"0"`
 	PoolSize int    `envconfig:"REDIS_POOL_SIZE" default:"10"`
 }
@@ -26,7 +26,7 @@ type Config struct {
 	}
 	Server struct {
 		Context      string        `envconfig:"SERVER_CONTEXT" default:"aion-api"`
-		Port         string        `envconfig:"PORT" default:"5001" required:"true" ignored:"false"`
+		Port         string        `envconfig:"PORT" default:"5001" required:"true"`
 		ReadTimeout  time.Duration `envconfig:"READ_TIMEOUT" default:"10s"`
 		WriteTimeout time.Duration `envconfig:"WRITE_TIMEOUT" default:"10s"`
 	}

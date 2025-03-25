@@ -114,7 +114,21 @@ func (up UserStore) GetUserByUsername(contextControl domain.ContextControl, user
 	return userDB.CopyToUserDomain(), nil
 }
 
-func (up UserStore) UpdateUserFields(ctx domain.ContextControl, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
+func (up UserStore) GetUserByEmail(ctx domain.ContextControl, email string) (domain.UserDomain, error) {
+	var userDB UserDB
+
+	if err := up.db.WithContext(ctx.BaseContext).
+		Select("id, email").
+		Where("email = ?", email).
+		First(&userDB).Error; err != nil {
+		up.loggerSugar.Errorw("error to get user by email", contextkeys.Error, err.Error())
+		return domain.UserDomain{}, err
+	}
+
+	return userDB.CopyToUserDomain(), nil
+}
+
+func (up UserStore) UpdateUser(ctx domain.ContextControl, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
 	if err := up.db.WithContext(ctx.BaseContext).
 		Model(&UserDB{}).
 		Where("id = ?", userID).
@@ -124,4 +138,21 @@ func (up UserStore) UpdateUserFields(ctx domain.ContextControl, userID uint64, f
 	}
 
 	return up.GetUserByID(ctx, userID)
+}
+
+func (up UserStore) SoftDeleteUser(ctx domain.ContextControl, userID uint64) error {
+	fields := map[string]interface{}{
+		contextkeys.DeletedAt: time.Now().UTC(),
+		contextkeys.UpdatedAt: time.Now().UTC(),
+	}
+
+	if err := up.db.WithContext(ctx.BaseContext).
+		Model(&UserDB{}).
+		Where("id = ?", userID).
+		Updates(fields).Error; err != nil {
+		up.loggerSugar.Errorw(ErrorToSoftDeleteUser, contextkeys.Error, err.Error())
+		return err
+	}
+
+	return nil
 }

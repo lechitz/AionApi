@@ -4,67 +4,71 @@ import (
 	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/core/msg"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
-	"github.com/lechitz/AionApi/ports/output/cache"
 	"github.com/lechitz/AionApi/ports/output/db"
+	"github.com/lechitz/AionApi/ports/output/security"
 	"go.uber.org/zap"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService struct {
 	UserRepository  db.IUserRepository
-	TokenRepository cache.ITokenRepository
-	TokenService    *TokenService
+	TokenService    security.ITokenService
+	PasswordService security.IPasswordService
 	LoggerSugar     *zap.SugaredLogger
 	SecretKey       string
 }
 
-func NewAuthService(userRepo db.IUserRepository, tokenRepo cache.ITokenRepository, tokenService *TokenService, loggerSugar *zap.SugaredLogger, secretKey string) *AuthService {
+func NewAuthService(
+	userRepo db.IUserRepository,
+	tokenService security.ITokenService,
+	passwordService security.IPasswordService,
+	loggerSugar *zap.SugaredLogger,
+	secretKey string,
+) *AuthService {
 	return &AuthService{
 		UserRepository:  userRepo,
-		TokenRepository: tokenRepo,
 		TokenService:    tokenService,
+		PasswordService: passwordService,
 		LoggerSugar:     loggerSugar,
 		SecretKey:       secretKey,
 	}
 }
 
-func (service *AuthService) Login(ctx domain.ContextControl, userDomain domain.UserDomain, passwordReq string) (domain.UserDomain, string, error) {
+func (s *AuthService) Login(ctx domain.ContextControl, user domain.UserDomain, passwordReq string) (domain.UserDomain, string, error) {
 
-	userDB, err := service.UserRepository.GetUserByUsername(ctx, userDomain.Username)
+	userDB, err := s.UserRepository.GetUserByUsername(ctx, user.Username)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToGetUserByUserName, contextkeys.Error, err.Error())
+		s.LoggerSugar.Errorw(msg.ErrorToGetUserByUserName, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
-	if err = service.compareHashAndPassword(userDB.Password, passwordReq); err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToCompareHashAndPassword, contextkeys.Error, err.Error())
+	if err := s.PasswordService.ComparePasswords(userDB.Password, passwordReq); err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorToCompareHashAndPassword, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
-	tokenDomain := domain.TokenDomain{
-		UserID: userDB.ID,
-	}
+	tokenDomain := domain.TokenDomain{UserID: userDB.ID}
 
-	token, err := service.TokenService.CreateToken(ctx, tokenDomain)
+	token, err := s.TokenService.Create(ctx, tokenDomain)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToCreateToken, contextkeys.Error, err.Error())
+		s.LoggerSugar.Errorw(msg.ErrorToCreateToken, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
 	tokenDomain.Token = token
 
-	if err := service.TokenService.SaveToken(ctx, tokenDomain); err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToSaveToken, contextkeys.Error, err.Error())
+	if err := s.TokenService.Save(ctx, tokenDomain); err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorToSaveToken, contextkeys.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
+	s.LoggerSugar.Infow(msg.SuccessToLogin, contextkeys.UserID, userDB.ID)
 	return userDB, tokenDomain.Token, nil
 }
 
-func (service *AuthService) Logout(ctx domain.ContextControl, token string) error {
-	userID, _, err := service.TokenService.CheckToken(ctx, token)
+func (s *AuthService) Logout(ctx domain.ContextControl, token string) error {
+	userID, _, err := s.TokenService.Check(ctx, token)
 	if err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorToCheckToken, contextkeys.Error, err.Error())
+		s.LoggerSugar.Errorw(msg.ErrorToCheckToken, contextkeys.Error, err.Error())
 		return err
 	}
 
@@ -73,15 +77,11 @@ func (service *AuthService) Logout(ctx domain.ContextControl, token string) erro
 		Token:  token,
 	}
 
-	if err := service.TokenRepository.DeleteToken(ctx, tokenDomain); err != nil {
-		service.LoggerSugar.Errorw(msg.ErrorRevokeToken, contextkeys.Error, err.Error(), contextkeys.UserID, userID)
+	if err := s.TokenService.Delete(ctx, tokenDomain); err != nil {
+		s.LoggerSugar.Errorw(msg.ErrorRevokeToken, contextkeys.Error, err.Error(), contextkeys.UserID, userID)
 		return err
 	}
 
-	service.LoggerSugar.Infow(msg.SuccessUserLoggedOut, contextkeys.UserID, userID)
+	s.LoggerSugar.Infow(msg.SuccessUserLoggedOut, contextkeys.UserID, userID)
 	return nil
-}
-
-func (service *AuthService) compareHashAndPassword(hashedPassword, password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }

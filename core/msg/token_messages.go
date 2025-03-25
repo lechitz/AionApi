@@ -26,6 +26,7 @@ const (
 	SuccessTokenValidated = "token validated successfully"
 	SuccessTokenDeleted   = "token deleted successfully"
 	SuccessTokenUpdated   = "token updated successfully"
+	SuccessToLogin        = "user logged in successfully"
 )
 
 // Messages

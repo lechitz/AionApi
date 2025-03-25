@@ -17,7 +17,7 @@ func main() {
 
 	loggerSugar.Infow(msg.StartingApplication)
 
-	if err := config.LoadConfig(); err != nil {
+	if err := config.LoadConfig(loggerSugar); err != nil {
 		errors.HandleCriticalError(loggerSugar, msg.ErrToFailedLoadConfiguration, err)
 		return
 	}

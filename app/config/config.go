@@ -10,12 +10,8 @@ import (
 	"go.uber.org/zap"
 )
 
-var loggerSuggar *zap.SugaredLogger
-
-func LoadConfig() error {
-
-	err := envconfig.Process(contextkeys.Setting, &Setting)
-	if err != nil {
+func LoadConfig(logger *zap.SugaredLogger) error {
+	if err := envconfig.Process(contextkeys.Setting, &Setting); err != nil {
 		return fmt.Errorf(msg.ErrFailedToProcessEnvVars, err)
 	}
 
@@ -26,30 +22,16 @@ func LoadConfig() error {
 		return fmt.Errorf(msg.ErrServerPortEmpty)
 	}
 
-	if len(Setting.SecretKey) == 0 {
+	if Setting.SecretKey == "" {
 		generated, err := utils.GenerateJWTKey()
 		if err != nil {
-			errors.HandleCriticalError(loggerSuggar, msg.ErrGenerateSecretKey, err)
+			errors.HandleCriticalError(logger, msg.ErrGenerateSecretKey, err)
 			return err
 		}
 		Setting.SecretKey = generated
 
-		fmt.Println()
-		fmt.Println("====================================================================")
-		fmt.Println(" ")
-		fmt.Println(" ")
-		fmt.Println(" ")
-		fmt.Println("SECRET_KEY was not found. A new one has been generated.")
-		fmt.Println("Please copy and add this to your .env if you want to reuse it later:")
-		fmt.Println(" ")
-		fmt.Println(" ")
-		fmt.Println(" ")
-		fmt.Printf("SECRET_KEY=%s\n", Setting.SecretKey)
-		fmt.Println(" ")
-		fmt.Println(" ")
-		fmt.Println(" ")
-		fmt.Println("====================================================================")
-		fmt.Println()
+		logger.Warn("SECRET_KEY was not set. A new one was generated for this runtime session.")
+		fmt.Printf("\n👉 SECRET_KEY=%s\n", Setting.SecretKey)
 	}
 
 	return nil
