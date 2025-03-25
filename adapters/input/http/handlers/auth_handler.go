@@ -3,10 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/lechitz/AionApi/adapters/input/http/dto"
 	msg "github.com/lechitz/AionApi/adapters/input/http/handlers/messages"
-	"github.com/lechitz/AionApi/core/domain/entities"
+	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"github.com/lechitz/AionApi/pkg/utils"
 	inputHttp "github.com/lechitz/AionApi/ports/input/http"
@@ -19,74 +20,56 @@ type Auth struct {
 }
 
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	ctxControl := domain.ContextControl{BaseContext: r.Context()}
 
-	contextControl := entities.ContextControl{
-		BaseContext: r.Context(),
-	}
-
-	var loginUserRequest dto.LoginUserRequest
-	if err := json.NewDecoder(r.Body).Decode(&loginUserRequest); err != nil {
-		utils.HandleError(w, a.LoggerSugar, http.StatusBadRequest, msg.ErrorToDecodeLoginRequest, err)
-		a.LoggerSugar.Errorw(msg.ErrorToDecodeLoginRequest, contextkeys.Error, err.Error())
+	var loginReq dto.LoginUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
+		a.logAndRespondError(w, http.StatusBadRequest, msg.ErrorToDecodeLoginRequest, err)
 		return
 	}
 
-	userDomain := entities.UserDomain{
-		Username: loginUserRequest.Username,
-		Password: loginUserRequest.Password,
-	}
+	userDomain := domain.UserDomain{Username: loginReq.Username}
 
-	userDB, token, err := a.AuthService.Login(contextControl, userDomain, loginUserRequest.Password)
+	userDB, token, err := a.AuthService.Login(ctxControl, userDomain, loginReq.Password)
 	if err != nil {
-		utils.HandleError(w, a.LoggerSugar, http.StatusInternalServerError, msg.ErrorToLogin, err)
-		a.LoggerSugar.Errorw(msg.ErrorToLogin, contextkeys.Error, err.Error())
+		a.logAndRespondError(w, http.StatusInternalServerError, msg.ErrorToLogin, err)
 		return
 	}
 
 	setAuthCookie(w, token, 0)
 
-	loginUserResponse := dto.LoginUserResponse{
-		Username: userDB.Username,
-	}
+	response := dto.LoginUserResponse{Username: userDB.Username}
+	a.LoggerSugar.Infow(msg.SuccessToLogin, contextkeys.Username, userDB.Username)
 
-	response := utils.ObjectResponse(loginUserResponse, msg.SuccessToLogin)
-	a.LoggerSugar.Infow(msg.SuccessToLogin, contextkeys.Username, loginUserResponse.Username)
-	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
+	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(response, msg.SuccessToLogin).Bytes())
 }
 
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	ctxControl := domain.ContextControl{BaseContext: r.Context()}
 
-	contextControl := entities.ContextControl{
-		BaseContext: r.Context(),
-	}
-
-	tokenCookie, err := r.Cookie(contextkeys.AuthToken)
+	cookie, err := r.Cookie(contextkeys.AuthToken)
 	if err != nil {
-		utils.HandleError(w, a.LoggerSugar, http.StatusUnauthorized, msg.ErrorToRetrieveToken, err)
-		a.LoggerSugar.Errorw(msg.ErrorToRetrieveToken, contextkeys.Error, err.Error())
+		a.logAndRespondError(w, http.StatusUnauthorized, msg.ErrorToRetrieveToken, err)
 		return
 	}
 
-	tokenValue := tokenCookie.Value
+	token := cookie.Value
 
-	userID, ok := contextControl.BaseContext.Value(contextkeys.UserID).(uint64)
+	userID, ok := ctxControl.BaseContext.Value(contextkeys.UserID).(uint64)
 	if !ok {
-		utils.HandleError(w, a.LoggerSugar, http.StatusInternalServerError, msg.ErrorToRetrieveUserID, err)
-		a.LoggerSugar.Errorw(msg.ErrorToRetrieveUserID, contextkeys.Error, msg.ErrorUserIDIsNil)
+		a.logAndRespondError(w, http.StatusInternalServerError, msg.ErrorToRetrieveUserID, nil)
 		return
 	}
 
-	if err := a.AuthService.Logout(contextControl, tokenValue); err != nil {
-		utils.HandleError(w, a.LoggerSugar, http.StatusInternalServerError, msg.ErrorToLogout, err)
-		a.LoggerSugar.Errorw(msg.ErrorToLogout, contextkeys.Error, err.Error())
+	if err := a.AuthService.Logout(ctxControl, token); err != nil {
+		a.logAndRespondError(w, http.StatusInternalServerError, msg.ErrorToLogout, err)
 		return
 	}
 
-	setAuthCookie(w, "", -1)
+	clearAuthCookie(w)
 
-	response := utils.ObjectResponse(nil, msg.SuccessToLogout)
 	a.LoggerSugar.Infow(msg.SuccessToLogout, contextkeys.UserID, userID)
-	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
+	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(nil, msg.SuccessToLogout).Bytes())
 }
 
 func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {
@@ -100,4 +83,26 @@ func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {
 		SameSite: http.SameSiteStrictMode,
 		MaxAge:   maxAge,
 	})
+}
+
+func clearAuthCookie(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     contextkeys.AuthToken,
+		Value:    "",
+		Path:     contextkeys.Path,
+		MaxAge:   -1,
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	})
+}
+
+func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {
+	if err != nil {
+		a.LoggerSugar.Errorw(message, contextkeys.Error, err.Error())
+	} else {
+		a.LoggerSugar.Errorw(message)
+	}
+	utils.HandleError(w, a.LoggerSugar, status, message, err)
 }

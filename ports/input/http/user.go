@@ -1,16 +1,15 @@
 package http
 
 import (
-	"github.com/lechitz/AionApi/core/domain/entities"
+	"github.com/lechitz/AionApi/core/domain"
 )
 
 type IUserService interface {
-	CreateUser(ctx entities.ContextControl, userDomain entities.UserDomain, password string) (entities.UserDomain, error)
-	GetAllUsers(ctx entities.ContextControl) ([]entities.UserDomain, error)
-	GetUserByID(ctx entities.ContextControl, ID uint64) (entities.UserDomain, error)
-	GetUserByUsername(ctx entities.ContextControl, userDomain entities.UserDomain) (entities.UserDomain, error)
-	UpdateUser(ctx entities.ContextControl, userDomain entities.UserDomain) (entities.UserDomain, error)
-	UpdateUserPassword(ctx entities.ContextControl, userDomain entities.UserDomain, password, newPassword string) (entities.UserDomain, string, error)
-	SoftDeleteUser(ctx entities.ContextControl, ID uint64) error
-	HashPassword(password string) (string, error)
+	CreateUser(ctx domain.ContextControl, user domain.UserDomain, password string) (domain.UserDomain, error)
+	GetAllUsers(ctx domain.ContextControl) ([]domain.UserDomain, error)
+	GetUserByID(ctx domain.ContextControl, id uint64) (domain.UserDomain, error)
+	GetUserByUsername(ctx domain.ContextControl, username string) (domain.UserDomain, error)
+	UpdateUser(ctx domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error)
+	UpdateUserPassword(ctx domain.ContextControl, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error)
+	SoftDeleteUser(ctx domain.ContextControl, id uint64) error
 }

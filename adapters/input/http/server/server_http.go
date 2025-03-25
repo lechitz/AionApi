@@ -11,7 +11,13 @@ import (
 
 func NewHTTPServer(deps *bootstrap.AppDependencies, logger *zap.SugaredLogger, setting *config.Config) (*http.Server, error) {
 
-	route, err := InitRouter(deps, logger, setting.Server.Context)
+	route, err := InitRouter(
+		logger,
+		deps.UserService,
+		deps.AuthService,
+		deps.TokenService,
+		setting.Server.Context,
+	)
 	if err != nil {
 		return nil, err
 	}

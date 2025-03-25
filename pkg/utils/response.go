@@ -24,7 +24,7 @@ func ObjectResponse(obj any, message string) *bytes.Buffer {
 	}{
 		Message: message,
 		Result:  obj,
-		Date:    time.Now(),
+		Date:    time.Now().UTC(),
 	}
 
 	body := new(bytes.Buffer)

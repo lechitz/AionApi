@@ -18,12 +18,14 @@ const (
 	ErrorToGetAllUsers            = "error retrieving all users"
 	ErrorToGetUserByID            = "error retrieving user by ID"
 	ErrorToGetUserByUserName      = "error retrieving user by username"
+	ErrorToGetUserByEmail         = "error retrieving user by email"
 	ErrorParsingUserId            = "error parsing user ID"
 	ErrorToSoftDeleteUser         = "error soft deleting user"
 	ErrorToUpdateUser             = "error updating user"
 	ErrorToFormatUpdateUser       = "error formatting user during update"
 	ErrorToHashPassword           = "error hashing password"
 	ErrorToCompareHashAndPassword = "invalid password provided"
+	ErrorNoFieldsToUpdate         = "no fields to update"
 )
 
 // Success Messages for User

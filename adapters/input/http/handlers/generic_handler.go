@@ -19,5 +19,5 @@ func (h *Generic) HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Generic) NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseReturn(w, http.StatusNotFound, []byte(msg.MsgResourceNotFound))
-	h.LoggerSugar.Infow(msg.MsgResourceNotFound)
+	h.LoggerSugar.Infow(msg.MsgResourceNotFound, "path", r.URL.Path)
 }

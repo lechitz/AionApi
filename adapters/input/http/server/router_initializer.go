@@ -6,50 +6,53 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/adapters/input/http/handlers"
-	"github.com/lechitz/AionApi/app/bootstrap"
+	inputHttp "github.com/lechitz/AionApi/ports/input/http"
+	outputHttp "github.com/lechitz/AionApi/ports/output/security"
+
 	"go.uber.org/zap"
 )
 
-func InitRouter(dependencies *bootstrap.AppDependencies, logger *zap.SugaredLogger, contextPath string) (*Router, error) {
+func InitRouter(
+	logger *zap.SugaredLogger,
+	userService inputHttp.IUserService,
+	authService inputHttp.IAuthService,
+	tokenService outputHttp.ITokenService,
+	contextPath string,
+) (*Router, error) {
 
 	if contextPath == "" {
 		return nil, fmt.Errorf(ErrorContextPathEmpty)
 	}
-
 	if strings.Contains(contextPath[1:], "/") {
 		return nil, fmt.Errorf(ErrorContextPathSlash)
 	}
 
-	userHandler, authHandler, genericHandler := initializeHandlers(dependencies, logger)
+	userHandler := &handlers.User{
+		UserService: userService,
+		LoggerSugar: logger,
+	}
+	authHandler := &handlers.Auth{
+		AuthService: authService,
+		LoggerSugar: logger,
+	}
+	genericHandler := &handlers.Generic{
+		LoggerSugar: logger,
+	}
 
-	router, err := GetNewRouter(logger, dependencies.AuthService, dependencies.TokenService, contextPath)
+	router, err := GetNewRouter(logger, authService, tokenService, contextPath)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := configureRoutes(router, userHandler, authHandler, genericHandler); err != nil {
+	err = configureRoutes(router, userHandler, authHandler, genericHandler)
+	if err != nil {
 		return nil, err
 	}
 
 	return router, nil
 }
 
-func initializeHandlers(dependencies *bootstrap.AppDependencies, loggerSugar *zap.SugaredLogger) (*handlers.User, *handlers.Auth, *handlers.Generic) {
-	return &handlers.User{
-			UserService: dependencies.UserService,
-			LoggerSugar: loggerSugar,
-		},
-		&handlers.Auth{
-			AuthService: dependencies.AuthService,
-			LoggerSugar: loggerSugar,
-		},
-		&handlers.Generic{
-			LoggerSugar: loggerSugar,
-		}
-}
-
-func configureRoutes(router *Router, userHandler *handlers.User, authHandler *handlers.Auth, genericHandler *handlers.Generic) error {
-
+func configureRoutes(router *Router, uh *handlers.User, ah *handlers.Auth, gh *handlers.Generic) error {
 	contextPath := router.ContextPath
 
 	if len(contextPath) < 1 || contextPath[0] != '/' {
@@ -57,10 +60,10 @@ func configureRoutes(router *Router, userHandler *handlers.User, authHandler *ha
 	}
 
 	router.GetChiRouter().Route(contextPath, func(r chi.Router) {
-		r.NotFound(genericHandler.NotFoundHandler)
-		r.Group(router.AddHealthCheckRoutes(genericHandler))
-		r.Group(router.AddUserRoutes(userHandler))
-		r.Group(router.AddAuthRoutes(authHandler))
+		r.NotFound(gh.NotFoundHandler)
+		r.Group(router.AddHealthCheckRoutes(gh))
+		r.Group(router.AddUserRoutes(uh))
+		r.Group(router.AddAuthRoutes(ah))
 	})
 
 	return nil

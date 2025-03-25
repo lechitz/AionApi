@@ -28,9 +28,10 @@ type GetUserResponse struct {
 }
 
 type UpdateUserRequest struct {
+	ID       uint64  `json:"id"`
 	Name     *string `json:"name,omitempty"`
-	Email    *string `json:"email,omitempty"`
 	Username *string `json:"username,omitempty"`
+	Email    *string `json:"email,omitempty"`
 }
 
 type UpdateUserResponse struct {
@@ -41,7 +42,7 @@ type UpdateUserResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type UpdatePasswordRequest struct {
+type UpdatePasswordUserRequest struct {
 	Password    string `json:"password"`
 	NewPassword string `json:"new_password"`
 }

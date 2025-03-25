@@ -2,32 +2,37 @@ package auth
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/core/domain"
+	inputHttp "github.com/lechitz/AionApi/ports/input/http"
+	outputHttp "github.com/lechitz/AionApi/ports/output/security"
 	"net/http"
 
-	"github.com/lechitz/AionApi/core/domain/entities"
-	"github.com/lechitz/AionApi/core/service"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"go.uber.org/zap"
 )
 
 type MiddlewareAuth struct {
-	AuthService  *service.AuthService
-	TokenService *service.TokenService
+	AuthService  inputHttp.IAuthService
+	TokenService outputHttp.ITokenService
 	LoggerSugar  *zap.SugaredLogger
 }
 
-func NewAuthMiddleware(authService *service.AuthService, tokenService *service.TokenService, loggerSugar *zap.SugaredLogger) *MiddlewareAuth {
+func NewAuthMiddleware(
+	authService inputHttp.IAuthService,
+	tokenService outputHttp.ITokenService,
+	logger *zap.SugaredLogger,
+) *MiddlewareAuth {
 	return &MiddlewareAuth{
 		AuthService:  authService,
 		TokenService: tokenService,
-		LoggerSugar:  loggerSugar,
+		LoggerSugar:  logger,
 	}
 }
 
 func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		ctx := &entities.ContextControl{
+		ctx := &domain.ContextControl{
 			BaseContext:     r.Context(),
 			CancelCauseFunc: nil,
 		}
@@ -39,11 +44,11 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		tokenDomain := entities.TokenDomain{
+		tokenDomain := domain.TokenDomain{
 			Token: tokenCookie,
 		}
 
-		userID, token, err := a.TokenService.CheckToken(*ctx, tokenDomain.Token)
+		userID, token, err := a.TokenService.Check(*ctx, tokenDomain.Token)
 		if err != nil {
 			a.LoggerSugar.Warnw(ErrorUnauthorizedAccessInvalidToken, contextkeys.Error, err.Error())
 			http.Error(w, ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
@@ -64,13 +69,6 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
-}
-
-func (a *MiddlewareAuth) AuthRevoke(next http.Handler) http.Handler {
-
-	//TODO: Implement AuthRevoke middleware
-
-	return nil
 }
 
 func extractTokenFromCookie(r *http.Request) (string, error) {

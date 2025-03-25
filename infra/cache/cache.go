@@ -9,6 +9,11 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	FailedToConnectToRedis  = "Failed to connect to Redis: %v"
+	SuccessToConnectToRedis = "Redis connection established"
+)
+
 func NewCacheConnection(config config.CacheConfig, loggerSugar *zap.SugaredLogger) *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:     config.Addr,
@@ -21,7 +26,7 @@ func NewCacheConnection(config config.CacheConfig, loggerSugar *zap.SugaredLogge
 	defer cancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {
-		loggerSugar.Fatalf(msgFailedToConnectToRedis, err)
+		loggerSugar.Fatalf(FailedToConnectToRedis, err)
 	}
 
 	loggerSugar.Infow(SuccessToConnectToRedis, "address", config.Addr, "db", config.DB)

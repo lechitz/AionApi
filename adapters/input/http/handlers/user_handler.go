@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/lechitz/AionApi/adapters/input/http/dto"
 	msg "github.com/lechitz/AionApi/adapters/input/http/handlers/messages"
-	"github.com/lechitz/AionApi/core/domain/entities"
+	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"github.com/lechitz/AionApi/pkg/utils"
 	inputHttp "github.com/lechitz/AionApi/ports/input/http"
@@ -20,210 +20,170 @@ type User struct {
 }
 
 func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := domain.ContextControl{BaseContext: r.Context()}
 
-	ctx := &entities.ContextControl{
-		BaseContext:     r.Context(),
-		CancelCauseFunc: nil,
-	}
-
-	var createUserRequest dto.CreateUserRequest
-	if err := json.NewDecoder(r.Body).Decode(&createUserRequest); err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, msg.ErrorToDecodeUserRequest, err)
-		u.LoggerSugar.Errorw(msg.ErrorToDecodeUserRequest, contextkeys.Error, err.Error())
+	var req dto.CreateUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		u.logAndHandleError(w, http.StatusBadRequest, msg.ErrorToDecodeUserRequest, err)
 		return
 	}
 
-	var userDomain entities.UserDomain
-	copier.Copy(&userDomain, &createUserRequest)
+	var userDomain domain.UserDomain
+	_ = copier.Copy(&userDomain, &req)
 
-	user, err := u.UserService.CreateUser(*ctx, userDomain, createUserRequest.Password)
+	user, err := u.UserService.CreateUser(ctx, userDomain, req.Password)
 	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, msg.ErrorToCreateUser, err)
-		u.LoggerSugar.Errorw(msg.ErrorToCreateUser, contextkeys.Error, err.Error())
+		u.logAndHandleError(w, http.StatusInternalServerError, msg.ErrorToCreateUser, err)
 		return
 	}
 
-	var createUserResponse dto.CreateUserResponse
-	copier.Copy(&createUserResponse, &user)
+	var res dto.CreateUserResponse
+	_ = copier.Copy(&res, &user)
 
-	response := utils.ObjectResponse(createUserResponse, msg.SuccessToCreateUser)
-	u.LoggerSugar.Infow(msg.SuccessToCreateUser, contextkeys.Username, createUserResponse.Username)
-	utils.ResponseReturn(w, http.StatusCreated, response.Bytes())
+	u.LoggerSugar.Infow(msg.SuccessToCreateUser, contextkeys.Username, res.Username)
+	utils.ResponseReturn(w, http.StatusCreated, utils.ObjectResponse(res, msg.SuccessToCreateUser).Bytes())
 }
 
 func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := domain.ContextControl{BaseContext: r.Context()}
 
-	contextControl := entities.ContextControl{
-		BaseContext: r.Context(),
-	}
-
-	usersDomain, err := u.UserService.GetAllUsers(contextControl)
+	users, err := u.UserService.GetAllUsers(ctx)
 	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, msg.ErrorToGetUsers, err)
-		u.LoggerSugar.Errorw(msg.ErrorToGetUsers, contextkeys.Error, err.Error())
+		u.logAndHandleError(w, http.StatusInternalServerError, msg.ErrorToGetUsers, err)
 		return
 	}
 
-	var getUsersResponse []dto.GetUserResponse
-	copier.Copy(&getUsersResponse, &usersDomain)
+	var res []dto.GetUserResponse
+	_ = copier.Copy(&res, &users)
 
-	response := utils.ObjectResponse(getUsersResponse, msg.SuccessToGetUsers)
-	u.LoggerSugar.Infow(msg.SuccessToGetUsers, contextkeys.Users, getUsersResponse)
-	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
+	u.LoggerSugar.Infow(msg.SuccessToGetUsers, contextkeys.Users, res)
+	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(res, msg.SuccessToGetUsers).Bytes())
 }
 
 func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := domain.ContextControl{BaseContext: r.Context()}
 
-	contextControl := entities.ContextControl{
-		BaseContext: r.Context(),
-	}
-
-	userIDParam, err := utils.UserIDFromParam(w, u.LoggerSugar, r)
+	userID, err := utils.UserIDFromParam(w, u.LoggerSugar, r)
 	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, msg.ErrorToParseUser, err)
-		u.LoggerSugar.Errorw(msg.ErrorToParseUser, contextkeys.Error, err.Error())
+		u.logAndHandleError(w, http.StatusBadRequest, msg.ErrorToParseUser, err)
 		return
 	}
 
-	userDomain, err := u.UserService.GetUserByID(contextControl, userIDParam)
+	user, err := u.UserService.GetUserByID(ctx, userID)
 	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, msg.ErrorToGetUser, err)
-		u.LoggerSugar.Errorw(msg.ErrorToGetUser, contextkeys.Error, err.Error())
+		u.logAndHandleError(w, http.StatusInternalServerError, msg.ErrorToGetUser, err)
 		return
 	}
 
-	getUserResponse := dto.GetUserResponse{
-		ID:       userDomain.ID,
-		Name:     userDomain.Name,
-		Username: userDomain.Username,
-		Email:    userDomain.Email,
+	res := dto.GetUserResponse{
+		ID:       user.ID,
+		Name:     user.Name,
+		Username: user.Username,
+		Email:    user.Email,
 	}
 
-	response := utils.ObjectResponse(getUserResponse, msg.SuccessToGetUser)
-	u.LoggerSugar.Infow(msg.SuccessToGetUser, contextkeys.User, getUserResponse)
-	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
+	u.LoggerSugar.Infow(msg.SuccessToGetUser, contextkeys.User, res)
+	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(res, msg.SuccessToGetUser).Bytes())
 }
 
 func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := domain.ContextControl{BaseContext: r.Context()}
 
-	userID, ok := r.Context().Value(contextkeys.UserID).(uint64)
+	userID, ok := ctx.BaseContext.Value(contextkeys.UserID).(uint64)
 	if !ok {
-		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, msg.ErrorUnauthorizedAccessMissingToken, nil)
-		u.LoggerSugar.Errorw(msg.ErrorUnauthorizedAccessMissingToken, contextkeys.Context, r.Context())
+		u.logAndHandleError(w, http.StatusUnauthorized, msg.ErrorUnauthorizedAccessMissingToken, nil)
 		return
 	}
 
-	var updateUserRequest dto.UpdateUserRequest
-
-	if err := json.NewDecoder(r.Body).Decode(&updateUserRequest); err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, msg.ErrorToDecodeUserRequest, err)
-		u.LoggerSugar.Errorw(msg.ErrorToDecodeUserRequest, contextkeys.Error, err.Error())
+	var req dto.UpdateUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		u.logAndHandleError(w, http.StatusBadRequest, msg.ErrorToDecodeUserRequest, err)
 		return
 	}
 
-	contextControl := entities.ContextControl{
-		BaseContext: r.Context(),
+	userDomain := domain.UserDomain{ID: userID}
+	if req.Name != nil {
+		userDomain.Name = *req.Name
+	}
+	if req.Username != nil {
+		userDomain.Username = *req.Username
+	}
+	if req.Email != nil {
+		userDomain.Email = *req.Email
 	}
 
-	existingUser, err := u.UserService.GetUserByID(contextControl, userID)
+	userUpdated, err := u.UserService.UpdateUser(ctx, userDomain)
 	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, msg.ErrorToGetUser, err)
-		u.LoggerSugar.Errorw(msg.ErrorToGetUser, contextkeys.Error, err.Error())
+		u.logAndHandleError(w, http.StatusInternalServerError, msg.ErrorToUpdateUser, err)
 		return
 	}
 
-	if updateUserRequest.Name != nil {
-		existingUser.Name = *updateUserRequest.Name
-	}
-	if updateUserRequest.Email != nil {
-		existingUser.Email = *updateUserRequest.Email
-	}
-	if updateUserRequest.Username != nil {
-		existingUser.Username = *updateUserRequest.Username
+	res := dto.UpdateUserResponse{
+		ID:       userUpdated.ID,
+		Name:     &userUpdated.Name,
+		Username: &userUpdated.Username,
+		Email:    &userUpdated.Email,
 	}
 
-	userDomain := entities.UserDomain{
-		ID:       userID,
-		Name:     existingUser.Name,
-		Username: existingUser.Username,
-		Email:    existingUser.Email,
-	}
-
-	updateUser, err := u.UserService.UpdateUser(contextControl, userDomain)
-	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, msg.ErrorToUpdateUser, err)
-		u.LoggerSugar.Errorw(msg.ErrorToUpdateUser, contextkeys.Error, err.Error())
-		return
-	}
-
-	updateUserResponse := dto.UpdateUserResponse{
-		ID:       updateUser.ID,
-		Username: &updateUser.Username,
-		Email:    &updateUser.Email,
-	}
-
-	response := utils.ObjectResponse(updateUserResponse, msg.SuccessToUpdateUser)
-	u.LoggerSugar.Infow(msg.SuccessToUpdateUser, contextkeys.Username, updateUserResponse.Username)
-	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
+	u.LoggerSugar.Infow(msg.SuccessToUpdateUser, contextkeys.Username, res.Username)
+	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(res, msg.SuccessToUpdateUser).Bytes())
 }
 
 func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := domain.ContextControl{BaseContext: r.Context()}
 
-	contextControl := entities.ContextControl{
-		BaseContext: r.Context(),
-	}
-
-	var updatePasswordRequest dto.UpdatePasswordRequest
-	if err := json.NewDecoder(r.Body).Decode(&updatePasswordRequest); err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusBadRequest, msg.ErrorToDecodeUserRequest, err)
-		u.LoggerSugar.Errorw(msg.ErrorToDecodeUserRequest, contextkeys.Error, err.Error())
+	var req dto.UpdatePasswordUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		u.logAndHandleError(w, http.StatusBadRequest, msg.ErrorToDecodeUserRequest, err)
 		return
 	}
 
-	userID, ok := contextControl.BaseContext.Value(contextkeys.UserID).(uint64)
+	userID, ok := ctx.BaseContext.Value(contextkeys.UserID).(uint64)
 	if !ok {
-		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, msg.ErrorUnauthorizedAccessMissingToken, nil)
-		u.LoggerSugar.Errorw(msg.ErrorUnauthorizedAccessMissingToken, contextkeys.Context, contextControl.BaseContext)
+		u.logAndHandleError(w, http.StatusUnauthorized, msg.ErrorUnauthorizedAccessMissingToken, nil)
 		return
 	}
 
-	var userDomain entities.UserDomain
-	userDomain.ID = userID
+	clearAuthCookie(w)
 
-	_, token, err := u.UserService.UpdateUserPassword(contextControl, userDomain, updatePasswordRequest.Password, updatePasswordRequest.NewPassword)
+	userDomain := domain.UserDomain{ID: userID}
+	_, newToken, err := u.UserService.UpdateUserPassword(ctx, userDomain, req.Password, req.NewPassword)
 	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, msg.ErrorToUpdateUser, err)
-		u.LoggerSugar.Errorw(msg.ErrorToUpdateUser, contextkeys.Error, err.Error())
+		u.logAndHandleError(w, http.StatusInternalServerError, msg.ErrorToUpdateUser, err)
 		return
 	}
 
-	setAuthCookie(w, token, 0)
+	setAuthCookie(w, newToken, 0)
 
-	response := utils.ObjectResponse(nil, msg.SuccessToUpdatePassword)
-	u.LoggerSugar.Infow(msg.SuccessToUpdatePassword, contextkeys.Username, userDomain.Username)
-	utils.ResponseReturn(w, http.StatusOK, response.Bytes())
+	u.LoggerSugar.Infow(msg.SuccessToUpdatePassword, contextkeys.UserID, userID)
+	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(nil, msg.SuccessToUpdatePassword).Bytes())
 }
 
 func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	contextControl := entities.ContextControl{
-		BaseContext: r.Context(),
-	}
+	ctx := domain.ContextControl{BaseContext: r.Context()}
 
-	userID, ok := contextControl.BaseContext.Value(contextkeys.UserID).(uint64)
+	userID, ok := ctx.BaseContext.Value(contextkeys.UserID).(uint64)
 	if !ok {
-		utils.HandleError(w, u.LoggerSugar, http.StatusUnauthorized, msg.ErrorUnauthorizedAccessMissingToken, nil)
-		u.LoggerSugar.Errorw(msg.ErrorUnauthorizedAccessMissingToken, contextkeys.Context, contextControl.BaseContext)
+		u.logAndHandleError(w, http.StatusUnauthorized, msg.ErrorUnauthorizedAccessMissingToken, nil)
 		return
 	}
 
-	err := u.UserService.SoftDeleteUser(contextControl, userID)
-	if err != nil {
-		utils.HandleError(w, u.LoggerSugar, http.StatusInternalServerError, msg.ErrorToSoftDeleteUser, err)
-		u.LoggerSugar.Errorw(msg.ErrorToSoftDeleteUser, contextkeys.Error, err.Error(), contextkeys.UserID, userID)
+	if err := u.UserService.SoftDeleteUser(ctx, userID); err != nil {
+		u.logAndHandleError(w, http.StatusInternalServerError, msg.ErrorToSoftDeleteUser, err)
 		return
 	}
 
-	response := utils.ObjectResponse(nil, msg.SuccessUserSoftDeleted)
+	clearAuthCookie(w)
+
 	u.LoggerSugar.Infow(msg.SuccessUserSoftDeleted, contextkeys.UserID, userID)
-	utils.ResponseReturn(w, http.StatusNoContent, response.Bytes())
+	utils.ResponseReturn(w, http.StatusNoContent, utils.ObjectResponse(nil, msg.SuccessUserSoftDeleted).Bytes())
+}
+
+func (u *User) logAndHandleError(w http.ResponseWriter, status int, message string, err error) {
+	if err != nil {
+		u.LoggerSugar.Errorw(message, contextkeys.Error, err.Error())
+	} else {
+		u.LoggerSugar.Errorw(message)
+	}
+	utils.HandleError(w, u.LoggerSugar, status, message, err)
 }

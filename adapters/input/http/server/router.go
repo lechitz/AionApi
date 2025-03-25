@@ -2,11 +2,12 @@ package server
 
 import (
 	"fmt"
-	"github.com/lechitz/AionApi/core/service"
+	inputHttp "github.com/lechitz/AionApi/ports/input/http"
+	outputHttp "github.com/lechitz/AionApi/ports/output/security"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/adapters/input/http/handlers"
-	"github.com/lechitz/AionApi/app/middlewares/auth"
+	"github.com/lechitz/AionApi/app/middleware/auth"
 	"go.uber.org/zap"
 )
 
@@ -17,8 +18,12 @@ type Router struct {
 	AuthMiddleware *auth.MiddlewareAuth
 }
 
-func GetNewRouter(loggerSugar *zap.SugaredLogger, authService *service.AuthService, tokenService *service.TokenService, contextPath string) (*Router, error) {
-
+func GetNewRouter(
+	loggerSugar *zap.SugaredLogger,
+	authService inputHttp.IAuthService,
+	tokenService outputHttp.ITokenService,
+	contextPath string,
+) (*Router, error) {
 	if len(contextPath) > 0 && contextPath[0] != '/' {
 		contextPath = "/" + contextPath
 	}
@@ -31,24 +36,22 @@ func GetNewRouter(loggerSugar *zap.SugaredLogger, authService *service.AuthServi
 
 	authMiddleware := auth.NewAuthMiddleware(authService, tokenService, loggerSugar)
 
-	router := &Router{
+	return &Router{
 		ContextPath:    contextPath,
 		Router:         r,
 		LoggerSugar:    loggerSugar,
 		AuthMiddleware: authMiddleware,
-	}
-
-	return router, nil
+	}, nil
 }
 
 func (router *Router) GetChiRouter() chi.Router {
 	return router.Router
 }
 
-func (router *Router) AddHealthCheckRoutes(ah *handlers.Generic) func(r chi.Router) {
+func (router *Router) AddHealthCheckRoutes(gh *handlers.Generic) func(r chi.Router) {
 	return func(r chi.Router) {
 		r.Route("/health-check", func(r chi.Router) {
-			r.Get("/", ah.HealthCheckHandler)
+			r.Get("/", gh.HealthCheckHandler)
 		})
 	}
 }
@@ -63,9 +66,9 @@ func (router *Router) AddUserRoutes(uh *handlers.User) func(r chi.Router) {
 
 				r.Get("/all", uh.GetAllUsersHandler)
 				r.Get("/{id}", uh.GetUserByIDHandler)
-				r.Put("/{id}", uh.UpdateUserHandler)
-				r.Put("/password/{id}", uh.UpdatePasswordHandler)
-				r.Delete("/{id}", uh.SoftDeleteUserHandler)
+				r.Put("/", uh.UpdateUserHandler)
+				r.Put("/password", uh.UpdatePasswordHandler)
+				r.Delete("/", uh.SoftDeleteUserHandler)
 			})
 		})
 	}
