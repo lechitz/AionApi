@@ -8,7 +8,7 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/security"
 	"github.com/lechitz/AionApi/internal/core/service"
 	"github.com/lechitz/AionApi/internal/infrastructure/cache"
-	"github.com/lechitz/AionApi/internal/infrastructure/db"
+	"github.com/lechitz/AionApi/internal/infrastructure/db/postgres"
 	"github.com/lechitz/AionApi/internal/platform/config"
 
 	"go.uber.org/zap"
@@ -29,7 +29,7 @@ func InitializeDependencies(loggerSugar *zap.SugaredLogger, cfg config.Config) (
 	cacheConn := cache.NewCacheConnection(cfg.CacheConfig, loggerSugar)
 	tokenStore := tokenadapter.NewTokenStore(cacheConn, loggerSugar)
 
-	databaseConn := db.NewDatabaseConnection(cfg.DBConfig, loggerSugar)
+	databaseConn := postgres.NewDatabaseConnection(cfg.DBConfig, loggerSugar)
 	userRepo := dbadapter.NewUserRepo(databaseConn, loggerSugar)
 
 	var passwordHasher security.IPasswordService = securityadapter.BcryptPasswordAdapter{}
@@ -39,7 +39,7 @@ func InitializeDependencies(loggerSugar *zap.SugaredLogger, cfg config.Config) (
 	authService := service.NewAuthService(userRepo, tokenService, passwordHasher, loggerSugar, cfg.SecretKey)
 
 	cleanup := func() {
-		db.Close(databaseConn, loggerSugar)
+		postgres.Close(databaseConn, loggerSugar)
 		if err := cacheConn.Close(); err != nil {
 			loggerSugar.Error(ErrorInitializingDependencies, err)
 		}
