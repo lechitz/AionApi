@@ -2,9 +2,9 @@ package cache
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/platform/config"
 	"time"
 
-	"github.com/lechitz/AionApi/app/config"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )

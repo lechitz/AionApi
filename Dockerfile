@@ -13,6 +13,6 @@ FROM alpine:3.19.1
 
 WORKDIR /app
 
-COPY --from=builder /app/aion-api .
+COPY --from=builder /internal/app/aion-api .
 
 ENTRYPOINT ["./aion-api"]

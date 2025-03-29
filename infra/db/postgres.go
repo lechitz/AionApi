@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"github.com/lechitz/AionApi/app/config"
+	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
