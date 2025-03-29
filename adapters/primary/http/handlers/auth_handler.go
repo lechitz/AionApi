@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lechitz/AionApi/adapters/input/http/dto"
-	msg "github.com/lechitz/AionApi/adapters/input/http/handlers/messages"
+	"github.com/lechitz/AionApi/adapters/primary/http/dto"
+	msg "github.com/lechitz/AionApi/adapters/primary/http/handlers/messages"
 	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"github.com/lechitz/AionApi/pkg/utils"
