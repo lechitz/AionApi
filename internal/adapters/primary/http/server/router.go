@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	outputHttp "github.com/lechitz/AionApi/internal/core/ports/output/security"
-	"github.com/lechitz/AionApi/internal/platform/middleware/auth"
 	"go.uber.org/zap"
 )
 
