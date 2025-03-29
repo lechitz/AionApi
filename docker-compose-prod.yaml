@@ -5,11 +5,8 @@ services:
     image: postgres
     container_name: postgres-prod
     restart: always
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - TZ=${TZ}
+    env_file:
+      - .env.prod
     volumes:
       - postgres-data-prod:/var/lib/postgresql/data
       - ./infra/db/migrations:/docker-entrypoint-initdb.d

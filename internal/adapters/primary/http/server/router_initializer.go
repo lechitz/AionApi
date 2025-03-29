@@ -2,12 +2,12 @@ package server
 
 import (
 	"fmt"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
 	"github.com/lechitz/AionApi/internal/core/ports/input/http"
 	"github.com/lechitz/AionApi/internal/core/ports/output/security"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/adapters/primary/http/handlers"
 	"go.uber.org/zap"
 )
 
