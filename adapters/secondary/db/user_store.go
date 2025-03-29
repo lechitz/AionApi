@@ -3,8 +3,8 @@ package db
 import (
 	"fmt"
 	"github.com/jinzhu/copier"
-	"github.com/lechitz/AionApi/core/domain"
-	"github.com/lechitz/AionApi/core/ports/output/db"
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/ports/output/db"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"go.uber.org/zap"
 	"gorm.io/gorm"

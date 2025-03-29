@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/lechitz/AionApi/core/msg"
+	"github.com/lechitz/AionApi/internal/core/msg"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"github.com/lechitz/AionApi/pkg/errors"
 	"github.com/lechitz/AionApi/pkg/utils"

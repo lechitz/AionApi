@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/lechitz/AionApi/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
 type ITokenRepository interface {

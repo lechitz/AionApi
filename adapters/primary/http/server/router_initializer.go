@@ -2,8 +2,8 @@ package server
 
 import (
 	"fmt"
-	"github.com/lechitz/AionApi/core/ports/input/http"
-	outputHttp "github.com/lechitz/AionApi/core/ports/output/security"
+	"github.com/lechitz/AionApi/internal/core/ports/input/http"
+	"github.com/lechitz/AionApi/internal/core/ports/output/security"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
@@ -15,7 +15,7 @@ func InitRouter(
 	logger *zap.SugaredLogger,
 	userService http.IUserService,
 	authService http.IAuthService,
-	tokenService outputHttp.ITokenService,
+	tokenService security.ITokenService,
 	contextPath string,
 ) (*Router, error) {
 
