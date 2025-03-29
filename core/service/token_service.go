@@ -2,13 +2,13 @@ package service
 
 import (
 	"fmt"
+	"github.com/lechitz/AionApi/core/ports/output/cache"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/core/msg"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
-	"github.com/lechitz/AionApi/ports/output/cache"
 	"go.uber.org/zap"
 )
 

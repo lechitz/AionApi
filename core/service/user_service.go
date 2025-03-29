@@ -3,7 +3,8 @@ package service
 import (
 	"errors"
 	"fmt"
-	"github.com/lechitz/AionApi/ports/output/security"
+	"github.com/lechitz/AionApi/core/ports/output/db"
+	security2 "github.com/lechitz/AionApi/core/ports/output/security"
 	"strings"
 	"time"
 
@@ -11,18 +12,17 @@ import (
 	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/core/msg"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
-	"github.com/lechitz/AionApi/ports/output/db"
 	"go.uber.org/zap"
 )
 
 type UserService struct {
 	UserRepository  db.IUserRepository
-	TokenService    security.ITokenService
-	PasswordService security.IPasswordService
+	TokenService    security2.ITokenService
+	PasswordService security2.IPasswordService
 	LoggerSugar     *zap.SugaredLogger
 }
 
-func NewUserService(userRepo db.IUserRepository, tokenService security.ITokenService, passwordService security.IPasswordService, loggerSugar *zap.SugaredLogger) *UserService {
+func NewUserService(userRepo db.IUserRepository, tokenService security2.ITokenService, passwordService security2.IPasswordService, loggerSugar *zap.SugaredLogger) *UserService {
 	return &UserService{
 		UserRepository:  userRepo,
 		TokenService:    tokenService,
