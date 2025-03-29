@@ -1,26 +1,26 @@
 package service
 
 import (
-	"github.com/lechitz/AionApi/core/domain"
-	"github.com/lechitz/AionApi/core/msg"
-	"github.com/lechitz/AionApi/core/ports/output/db"
-	security2 "github.com/lechitz/AionApi/core/ports/output/security"
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/msg"
+	"github.com/lechitz/AionApi/internal/core/ports/output/db"
+	"github.com/lechitz/AionApi/internal/core/ports/output/security"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"go.uber.org/zap"
 )
 
 type AuthService struct {
 	UserRepository  db.IUserRepository
-	TokenService    security2.ITokenService
-	PasswordService security2.IPasswordService
+	TokenService    security.ITokenService
+	PasswordService security.IPasswordService
 	LoggerSugar     *zap.SugaredLogger
 	SecretKey       string
 }
 
 func NewAuthService(
 	userRepo db.IUserRepository,
-	tokenService security2.ITokenService,
-	passwordService security2.IPasswordService,
+	tokenService security.ITokenService,
+	passwordService security.IPasswordService,
 	loggerSugar *zap.SugaredLogger,
 	secretKey string,
 ) *AuthService {

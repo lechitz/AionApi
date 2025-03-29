@@ -5,10 +5,10 @@
 package mocks
 
 import (
-	reflect "reflect"
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"reflect"
 
-	gomock "github.com/golang/mock/gomock"
-	domain "github.com/lechitz/AionApi/core/domain"
+	"github.com/golang/mock/gomock"
 )
 
 // MockITokenRepository is a mock of ITokenRepository interface.

@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
-	inputHttp "github.com/lechitz/AionApi/core/ports/input/http"
+	"github.com/lechitz/AionApi/internal/core/domain"
+	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	"net/http"
 	"time"
 
 	"github.com/lechitz/AionApi/adapters/primary/http/dto"
 	msg "github.com/lechitz/AionApi/adapters/primary/http/handlers/messages"
-	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"github.com/lechitz/AionApi/pkg/utils"
 	"go.uber.org/zap"

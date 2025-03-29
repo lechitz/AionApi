@@ -3,7 +3,7 @@ package utils
 import (
 	"errors"
 	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/core/msg"
+	"github.com/lechitz/AionApi/internal/core/msg"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"

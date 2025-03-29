@@ -1,11 +1,11 @@
 package setup
 
 import (
+	"github.com/lechitz/AionApi/internal/core/service"
 	"go.uber.org/zap"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/lechitz/AionApi/core/service"
 	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/zap/zaptest"
 )

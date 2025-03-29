@@ -1,7 +1,7 @@
 package security
 
 import (
-	"github.com/lechitz/AionApi/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
 type ITokenService interface {

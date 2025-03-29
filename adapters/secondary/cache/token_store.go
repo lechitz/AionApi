@@ -3,10 +3,10 @@ package cache
 import (
 	"errors"
 	"fmt"
-	"github.com/lechitz/AionApi/core/ports/output/cache"
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"time"
 
-	"github.com/lechitz/AionApi/core/domain"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )

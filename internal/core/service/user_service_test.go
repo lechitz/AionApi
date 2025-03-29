@@ -2,17 +2,15 @@ package service
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/msg"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap/zaptest"
 
-	"github.com/lechitz/AionApi/core/domain"
-	"github.com/lechitz/AionApi/core/msg"
-	mockdb "github.com/lechitz/AionApi/tests/mocks"
-	mocksecurity "github.com/lechitz/AionApi/tests/mocks"
-	mocktoken "github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/AionApi/tests/mocks"
 )
 
 // Tests to CreateUser
@@ -21,9 +19,9 @@ func TestCreateUser_WhenValidData_ShouldCreateUserSuccessfully(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 
 	logger := zaptest.NewLogger(t).Sugar()
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -82,9 +80,9 @@ func TestCreateUser_WhenRequiredFieldsMissing_ReturnsError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 
 	logger := zaptest.NewLogger(t).Sugar()
 
@@ -105,9 +103,9 @@ func TestCreateUser_WhenUsernameAlreadyExists_ReturnsError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 
 	logger := zaptest.NewLogger(t).Sugar()
 
@@ -137,9 +135,9 @@ func TestCreateUser_WhenEmailAlreadyExists_ReturnsError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 
 	logger := zaptest.NewLogger(t).Sugar()
 
@@ -174,9 +172,9 @@ func TestCreateUser_WhenHashPasswordFails_ReturnsError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 
 	logger := zaptest.NewLogger(t).Sugar()
 
@@ -216,9 +214,9 @@ func TestCreateUser_WhenCreateUserFailsInRepository_ReturnsError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 
 	logger := zaptest.NewLogger(t).Sugar()
 
@@ -266,9 +264,9 @@ func TestGetAllUsers_WhenRepositoryReturnsUsers_ShouldReturnUserList(t *testing.
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -296,9 +294,9 @@ func TestGetAllUsers_WhenRepositoryFails_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -324,9 +322,9 @@ func TestGetUserByID_WhenUserExists_ShouldReturnUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -357,9 +355,9 @@ func TestGetUserByID_WhenRepoFails_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -386,9 +384,9 @@ func TestGetUserByUsername_WhenUserExists_ShouldReturnUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -413,9 +411,9 @@ func TestGetUserByUsername_WhenRepositoryFails_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -441,9 +439,9 @@ func TestGetUserByEmail_WhenUserExists_ShouldReturnUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -472,9 +470,9 @@ func TestGetUserByEmail_WhenUserNotFound_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -499,9 +497,9 @@ func TestUpdateUser_WhenValidFields_ShouldUpdateUserSuccessfully(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -533,9 +531,9 @@ func TestUpdateUser_WhenNoFieldsProvided_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -553,9 +551,9 @@ func TestUpdateUser_WhenRepositoryFails_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	userService := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -587,9 +585,9 @@ func TestUpdateUserPassword(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-		mockTokenService := mocktoken.NewMockITokenService(ctrl)
-		mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+		mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+		mockTokenService := mocks.NewMockITokenService(ctrl)
+		mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 		logger := zaptest.NewLogger(t).Sugar()
 
 		service := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -642,9 +640,9 @@ func TestUpdateUserPassword(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-		mockTokenService := mocktoken.NewMockITokenService(ctrl)
-		mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+		mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+		mockTokenService := mocks.NewMockITokenService(ctrl)
+		mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 		logger := zaptest.NewLogger(t).Sugar()
 
 		service := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -666,9 +664,9 @@ func TestUpdateUserPassword(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-		mockTokenService := mocktoken.NewMockITokenService(ctrl)
-		mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+		mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+		mockTokenService := mocks.NewMockITokenService(ctrl)
+		mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 		logger := zaptest.NewLogger(t).Sugar()
 
 		service := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -695,9 +693,9 @@ func TestUpdateUserPassword(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-		mockTokenService := mocktoken.NewMockITokenService(ctrl)
-		mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+		mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+		mockTokenService := mocks.NewMockITokenService(ctrl)
+		mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 		logger := zaptest.NewLogger(t).Sugar()
 
 		service := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -728,9 +726,9 @@ func TestUpdateUserPassword(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-		mockTokenService := mocktoken.NewMockITokenService(ctrl)
-		mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+		mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+		mockTokenService := mocks.NewMockITokenService(ctrl)
+		mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 		logger := zaptest.NewLogger(t).Sugar()
 
 		service := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -780,9 +778,9 @@ func TestSoftDeleteUser_WhenSuccess_ShouldDeleteUserAndToken(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	service := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -809,9 +807,9 @@ func TestSoftDeleteUser_WhenUserRepoFails_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	service := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)
@@ -835,9 +833,9 @@ func TestSoftDeleteUser_WhenTokenServiceFails_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mockdb.NewMockIUserRepository(ctrl)
-	mockTokenService := mocktoken.NewMockITokenService(ctrl)
-	mockPasswordService := mocksecurity.NewMockIPasswordService(ctrl)
+	mockUserRepo := mocks.NewMockIUserRepository(ctrl)
+	mockTokenService := mocks.NewMockITokenService(ctrl)
+	mockPasswordService := mocks.NewMockIPasswordService(ctrl)
 	logger := zaptest.NewLogger(t).Sugar()
 
 	service := NewUserService(mockUserRepo, mockTokenService, mockPasswordService, logger)

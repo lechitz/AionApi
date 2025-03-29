@@ -5,9 +5,9 @@
 package mocks
 
 import (
-	reflect "reflect"
+	"reflect"
 
-	gomock "github.com/golang/mock/gomock"
+	"github.com/golang/mock/gomock"
 )
 
 // MockIPasswordService is a mock of IPasswordService interface.
