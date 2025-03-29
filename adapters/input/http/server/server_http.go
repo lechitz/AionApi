@@ -2,10 +2,10 @@ package server
 
 import (
 	"fmt"
+	"github.com/lechitz/AionApi/internal/platform/bootstrap"
+	"github.com/lechitz/AionApi/internal/platform/config"
 	"net/http"
 
-	"github.com/lechitz/AionApi/app/bootstrap"
-	"github.com/lechitz/AionApi/app/config"
 	"go.uber.org/zap"
 )
 

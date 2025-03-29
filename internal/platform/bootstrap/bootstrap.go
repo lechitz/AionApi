@@ -6,8 +6,8 @@ import (
 	securityadapter "github.com/lechitz/AionApi/adapters/output/security"
 	"github.com/lechitz/AionApi/core/ports/input/http"
 	"github.com/lechitz/AionApi/core/ports/output/security"
+	"github.com/lechitz/AionApi/internal/platform/config"
 
-	"github.com/lechitz/AionApi/app/config"
 	"github.com/lechitz/AionApi/core/service"
 	"github.com/lechitz/AionApi/infra/cache"
 	"github.com/lechitz/AionApi/infra/db"
