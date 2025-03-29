@@ -4,22 +4,21 @@ import (
 	tokenadapter "github.com/lechitz/AionApi/adapters/output/cache"
 	dbadapter "github.com/lechitz/AionApi/adapters/output/db"
 	securityadapter "github.com/lechitz/AionApi/adapters/output/security"
+	"github.com/lechitz/AionApi/core/ports/input/http"
+	"github.com/lechitz/AionApi/core/ports/output/security"
 
 	"github.com/lechitz/AionApi/app/config"
 	"github.com/lechitz/AionApi/core/service"
 	"github.com/lechitz/AionApi/infra/cache"
 	"github.com/lechitz/AionApi/infra/db"
 
-	inputHttp "github.com/lechitz/AionApi/ports/input/http"
-	portSecurity "github.com/lechitz/AionApi/ports/output/security"
-
 	"go.uber.org/zap"
 )
 
 type AppDependencies struct {
-	UserService  inputHttp.IUserService
-	AuthService  inputHttp.IAuthService
-	TokenService portSecurity.ITokenService
+	UserService  http.IUserService
+	AuthService  http.IAuthService
+	TokenService security.ITokenService
 
 	Config config.Config
 }
@@ -34,8 +33,8 @@ func InitializeDependencies(loggerSugar *zap.SugaredLogger, cfg config.Config) (
 	databaseConn := db.NewDatabaseConnection(cfg.DBConfig, loggerSugar)
 	userRepo := dbadapter.NewUserRepo(databaseConn, loggerSugar)
 
-	var passwordHasher portSecurity.IPasswordService = securityadapter.BcryptPasswordAdapter{}
-	var tokenService portSecurity.ITokenService = service.NewTokenService(tokenStore, loggerSugar, cfg.SecretKey)
+	var passwordHasher security.IPasswordService = securityadapter.BcryptPasswordAdapter{}
+	var tokenService security.ITokenService = service.NewTokenService(tokenStore, loggerSugar, cfg.SecretKey)
 
 	userService := service.NewUserService(userRepo, tokenService, passwordHasher, loggerSugar)
 	authService := service.NewAuthService(userRepo, tokenService, passwordHasher, loggerSugar, cfg.SecretKey)

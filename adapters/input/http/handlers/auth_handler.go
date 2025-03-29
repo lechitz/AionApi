@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	inputHttp "github.com/lechitz/AionApi/core/ports/input/http"
 	"net/http"
 	"time"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/lechitz/AionApi/core/domain"
 	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"github.com/lechitz/AionApi/pkg/utils"
-	inputHttp "github.com/lechitz/AionApi/ports/input/http"
 	"go.uber.org/zap"
 )
 
