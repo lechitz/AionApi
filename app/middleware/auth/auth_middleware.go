@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 	"github.com/lechitz/AionApi/core/domain"
-	inputHttp "github.com/lechitz/AionApi/ports/input/http"
-	outputHttp "github.com/lechitz/AionApi/ports/output/security"
+	inputHttp "github.com/lechitz/AionApi/core/ports/input/http"
+	outputHttp "github.com/lechitz/AionApi/core/ports/output/security"
 	"net/http"
 
 	"github.com/lechitz/AionApi/pkg/contextkeys"

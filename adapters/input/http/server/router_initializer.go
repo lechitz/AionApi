@@ -2,20 +2,19 @@ package server
 
 import (
 	"fmt"
+	"github.com/lechitz/AionApi/core/ports/input/http"
+	outputHttp "github.com/lechitz/AionApi/core/ports/output/security"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/adapters/input/http/handlers"
-	inputHttp "github.com/lechitz/AionApi/ports/input/http"
-	outputHttp "github.com/lechitz/AionApi/ports/output/security"
-
 	"go.uber.org/zap"
 )
 
 func InitRouter(
 	logger *zap.SugaredLogger,
-	userService inputHttp.IUserService,
-	authService inputHttp.IAuthService,
+	userService http.IUserService,
+	authService http.IAuthService,
 	tokenService outputHttp.ITokenService,
 	contextPath string,
 ) (*Router, error) {
