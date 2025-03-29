@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/lechitz/AionApi/adapters/input/http/server"
+	"github.com/lechitz/AionApi/adapters/primary/http/server"
 	"github.com/lechitz/AionApi/core/msg"
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 	config2 "github.com/lechitz/AionApi/internal/platform/config"

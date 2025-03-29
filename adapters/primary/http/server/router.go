@@ -3,7 +3,7 @@ package server
 import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/adapters/input/http/handlers"
+	"github.com/lechitz/AionApi/adapters/primary/http/handlers"
 	inputHttp "github.com/lechitz/AionApi/core/ports/input/http"
 	outputHttp "github.com/lechitz/AionApi/core/ports/output/security"
 	"github.com/lechitz/AionApi/internal/platform/middleware/auth"

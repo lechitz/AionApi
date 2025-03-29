@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	msg "github.com/lechitz/AionApi/adapters/input/http/handlers/messages"
+	msg "github.com/lechitz/AionApi/adapters/primary/http/handlers/messages"
 	"github.com/lechitz/AionApi/pkg/utils"
 	"go.uber.org/zap"
 )

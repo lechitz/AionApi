@@ -1,9 +1,9 @@
 package bootstrap
 
 import (
-	tokenadapter "github.com/lechitz/AionApi/adapters/output/cache"
-	dbadapter "github.com/lechitz/AionApi/adapters/output/db"
-	securityadapter "github.com/lechitz/AionApi/adapters/output/security"
+	tokenadapter "github.com/lechitz/AionApi/adapters/secondary/cache"
+	dbadapter "github.com/lechitz/AionApi/adapters/secondary/db"
+	securityadapter "github.com/lechitz/AionApi/adapters/secondary/security"
 	"github.com/lechitz/AionApi/core/ports/input/http"
 	"github.com/lechitz/AionApi/core/ports/output/security"
 	"github.com/lechitz/AionApi/internal/infrastructure/cache"

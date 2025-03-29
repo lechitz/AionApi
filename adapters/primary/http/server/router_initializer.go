@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/adapters/input/http/handlers"
+	"github.com/lechitz/AionApi/adapters/primary/http/handlers"
 	"go.uber.org/zap"
 )
 
