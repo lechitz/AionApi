@@ -21,4 +21,6 @@ const (
 	EmailIsRequired           = "email is required"
 	PasswordIsRequired        = "password is required"
 	InvalidEmail              = "invalid email format"
+	UsernameIsAlreadyInUse    = "username is already in use"
+	EmailIsAlreadyInUse       = "email is already in use"
 )

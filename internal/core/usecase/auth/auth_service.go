@@ -4,8 +4,8 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 	dbports "github.com/lechitz/AionApi/internal/core/ports/output/db"
 	securityports "github.com/lechitz/AionApi/internal/core/ports/output/security"
-	"github.com/lechitz/AionApi/internal/core/service/constants"
-	"github.com/lechitz/AionApi/internal/core/service/token"
+	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	"go.uber.org/zap"
 )
 
@@ -36,7 +36,7 @@ func NewAuthService(
 func (s *AuthService) Login(ctx domain.ContextControl, user domain.UserDomain, passwordReq string) (domain.UserDomain, string, error) {
 	userDB, err := s.UserRepository.GetUserByUsername(ctx, user.Username)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToGetUserByUserName, constants.Error, err.Error())
+		s.LoggerSugar.Errorw(user.ErrorToGetUserByUserName, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
