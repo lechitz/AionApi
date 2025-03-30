@@ -4,7 +4,7 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
-type IUserRepository interface {
+type UserRepository interface {
 	CreateUser(ctx domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error)
 	GetAllUsers(ctx domain.ContextControl) ([]domain.UserDomain, error)
 	GetUserByID(ctx domain.ContextControl, ID uint64) (domain.UserDomain, error)

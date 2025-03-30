@@ -1,6 +1,6 @@
 package security
 
-type IPasswordService interface {
+type PasswordManager interface {
 	HashPassword(plain string) (string, error)
 	ComparePasswords(hashed, plain string) error
 }

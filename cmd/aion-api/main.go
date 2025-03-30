@@ -2,12 +2,10 @@ package main
 
 import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/server"
-	"github.com/lechitz/AionApi/internal/core/msg"
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/logger"
-	"github.com/lechitz/AionApi/pkg/contextkeys"
-	"github.com/lechitz/AionApi/pkg/errors"
+	"github.com/lechitz/AionApi/pkg/utils"
 )
 
 func main() {
@@ -15,35 +13,35 @@ func main() {
 	loggerSugar, closeLogger := logger.InitLoggerSugar()
 	defer closeLogger()
 
-	loggerSugar.Infow(msg.StartingApplication)
+	loggerSugar.Infow(StartingApplication)
 
 	if err := config.LoadConfig(loggerSugar); err != nil {
-		errors.HandleCriticalError(loggerSugar, msg.ErrToFailedLoadConfiguration, err)
+		utils.HandleCriticalError(loggerSugar, ErrToFailedLoadConfiguration, err)
 		return
 	}
-	loggerSugar.Infow(msg.SuccessToLoadConfiguration, contextkeys.Setting, config.Setting)
+	loggerSugar.Infow(SuccessToLoadConfiguration, Settings, config.Setting)
 
 	appDependencies, cleanup, err := bootstrap.InitializeDependencies(loggerSugar, config.Setting)
 	if err != nil {
-		errors.HandleCriticalError(loggerSugar, msg.ErrInitializeDependencies, err)
+		utils.HandleCriticalError(loggerSugar, ErrInitializeDependencies, err)
 		return
 	}
 	defer cleanup()
 
-	loggerSugar.Infow(msg.SuccessToInitializeDependencies)
+	loggerSugar.Infow(SuccessToInitializeDependencies)
 
 	newServer, err := server.NewHTTPServer(appDependencies, loggerSugar, &config.Setting)
 	if err != nil {
-		loggerSugar.Infow(msg.ErrStartServer)
-		errors.HandleCriticalError(loggerSugar, msg.ErrStartServer, nil)
+		loggerSugar.Infow(ErrStartServer)
+		utils.HandleCriticalError(loggerSugar, ErrStartServer, nil)
 		return
 	}
 
-	loggerSugar.Infow(msg.ServerStarted, contextkeys.Port, newServer.Addr, contextkeys.ContextPath, config.Setting.Server.Context)
+	loggerSugar.Infow(ServerStarted, Port, newServer.Addr, ContextPath, config.Setting.Server.Context)
 
 	if err := newServer.ListenAndServe(); err != nil {
-		errors.HandleCriticalError(loggerSugar, msg.ErrStartServer, err)
-		loggerSugar.Infow(msg.ErrStartServer, contextkeys.Error, err)
+		utils.HandleCriticalError(loggerSugar, ErrStartServer, err)
+		loggerSugar.Infow(ErrStartServer, Error, err)
 		return
 	}
 }
