@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
+	"go.uber.org/zap"
 	"net/http"
 	"time"
 )
@@ -30,4 +31,18 @@ func ObjectResponse(obj any, message string) *bytes.Buffer {
 	body := new(bytes.Buffer)
 	json.NewEncoder(body).Encode(response)
 	return body
+}
+
+func HandleError(w http.ResponseWriter, logger *zap.SugaredLogger, status int, msg string, err error) {
+	logger.Errorw(msg, "error", err.Error())
+	response := ObjectResponse(msg, err.Error())
+	ResponseReturn(w, status, response.Bytes())
+}
+
+func HandleCriticalError(loggerSugar *zap.SugaredLogger, message string, err error) {
+	if err != nil {
+		loggerSugar.Fatalw(message, "error", err.Error())
+	} else {
+		loggerSugar.Fatal(message)
+	}
 }

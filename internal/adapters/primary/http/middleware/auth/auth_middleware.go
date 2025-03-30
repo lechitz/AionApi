@@ -2,24 +2,24 @@ package auth
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
-	outputHttp "github.com/lechitz/AionApi/internal/core/ports/output/security"
+	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"net/http"
 
-	"github.com/lechitz/AionApi/pkg/contextkeys"
 	"go.uber.org/zap"
 )
 
 type MiddlewareAuth struct {
 	AuthService  inputHttp.IAuthService
-	TokenService outputHttp.ITokenService
+	TokenService tokenports.TokenRepository
 	LoggerSugar  *zap.SugaredLogger
 }
 
 func NewAuthMiddleware(
 	authService inputHttp.IAuthService,
-	tokenService outputHttp.ITokenService,
+	tokenService tokenports.TokenRepository,
 	logger *zap.SugaredLogger,
 ) *MiddlewareAuth {
 	return &MiddlewareAuth{
@@ -39,8 +39,8 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 
 		tokenCookie, err := extractTokenFromCookie(r)
 		if err != nil {
-			a.LoggerSugar.Warnw(ErrorUnauthorizedAccessMissingToken, contextkeys.Error, err.Error())
-			http.Error(w, ErrorUnauthorizedAccessMissingToken, http.StatusUnauthorized)
+			a.LoggerSugar.Warnw(constants.ErrorUnauthorizedAccessMissingToken, constants.Error, err.Error())
+			http.Error(w, constants.ErrorUnauthorizedAccessMissingToken, http.StatusUnauthorized)
 			return
 		}
 
@@ -50,29 +50,29 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 
 		userID, token, err := a.TokenService.Check(*ctx, tokenDomain.Token)
 		if err != nil {
-			a.LoggerSugar.Warnw(ErrorUnauthorizedAccessInvalidToken, contextkeys.Error, err.Error())
-			http.Error(w, ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
+			a.LoggerSugar.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, constants.Error, err.Error())
+			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
 			return
 		}
 
-		if r.Context().Value(contextkeys.UserID) == nil {
-			newCtx := context.WithValue(r.Context(), contextkeys.UserID, userID)
+		if r.Context().Value(constants.UserID) == nil {
+			newCtx := context.WithValue(r.Context(), constants.UserID, userID)
 			r = r.WithContext(newCtx)
 		}
 
-		if r.Context().Value(contextkeys.Token) == nil {
-			newCtx := context.WithValue(r.Context(), contextkeys.Token, token)
+		if r.Context().Value(constants.Token) == nil {
+			newCtx := context.WithValue(r.Context(), constants.Token, token)
 			r = r.WithContext(newCtx)
 		}
 
-		a.LoggerSugar.Infow(SuccessTokenValidated, contextkeys.UserID, userID)
+		a.LoggerSugar.Infow(constants.SuccessTokenValidated, constants.UserID, userID)
 
 		next.ServeHTTP(w, r)
 	})
 }
 
 func extractTokenFromCookie(r *http.Request) (string, error) {
-	cookie, err := r.Cookie(contextkeys.AuthToken)
+	cookie, err := r.Cookie(constants.AuthToken)
 	if err != nil {
 		return "", err
 	}

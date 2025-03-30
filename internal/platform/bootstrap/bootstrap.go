@@ -1,54 +1,51 @@
 package bootstrap
 
 import (
-	tokenadapter "github.com/lechitz/AionApi/internal/adapters/secondary/cache"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/cache"
 	dbadapter "github.com/lechitz/AionApi/internal/adapters/secondary/db"
-	securityadapter "github.com/lechitz/AionApi/internal/adapters/secondary/security"
-	"github.com/lechitz/AionApi/internal/core/ports/input/http"
-	"github.com/lechitz/AionApi/internal/core/ports/output/security"
-	"github.com/lechitz/AionApi/internal/core/service"
-	"github.com/lechitz/AionApi/internal/infrastructure/cache"
+	httpports "github.com/lechitz/AionApi/internal/core/ports/input/http"
+	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/cache"
+	"github.com/lechitz/AionApi/internal/core/service/auth"
+	"github.com/lechitz/AionApi/internal/core/service/token"
+	"github.com/lechitz/AionApi/internal/core/service/user"
+	tokeninfra "github.com/lechitz/AionApi/internal/infrastructure/cache"
 	"github.com/lechitz/AionApi/internal/infrastructure/db/postgres"
+	securityadapter "github.com/lechitz/AionApi/internal/infrastructure/security"
 	"github.com/lechitz/AionApi/internal/platform/config"
 
 	"go.uber.org/zap"
 )
 
 type AppDependencies struct {
-	UserService  http.IUserService
-	AuthService  http.IAuthService
-	TokenService security.ITokenService
-
-	Config config.Config
+	UserService  httpports.IUserService
+	AuthService  httpports.IAuthService
+	TokenService tokenports.TokenRepository
 }
 
 const ErrorInitializingDependencies = "error closing cache connection"
 
-func InitializeDependencies(loggerSugar *zap.SugaredLogger, cfg config.Config) (*AppDependencies, func(), error) {
+func InitializeDependencies(logger *zap.SugaredLogger, cfg config.Config) (*AppDependencies, func(), error) {
 
-	cacheConn := cache.NewCacheConnection(cfg.CacheConfig, loggerSugar)
-	tokenStore := tokenadapter.NewTokenStore(cacheConn, loggerSugar)
+	redisClient := tokeninfra.NewRedisConnection(cfg.CacheConfig, logger)
+	tokenStore := cache.NewTokenRepository(redisClient, logger)
 
-	databaseConn := postgres.NewDatabaseConnection(cfg.DBConfig, loggerSugar)
-	userRepo := dbadapter.NewUserRepo(databaseConn, loggerSugar)
+	dbConn := postgres.NewDatabaseConnection(cfg.DBConfig, logger)
+	userRepo := dbadapter.NewUserRepository(dbConn, logger)
 
-	var passwordHasher security.IPasswordService = securityadapter.BcryptPasswordAdapter{}
-	var tokenService security.ITokenService = service.NewTokenService(tokenStore, loggerSugar, cfg.SecretKey)
-
-	userService := service.NewUserService(userRepo, tokenService, passwordHasher, loggerSugar)
-	authService := service.NewAuthService(userRepo, tokenService, passwordHasher, loggerSugar, cfg.SecretKey)
+	tokenService := token.NewTokenService(*tokenStore, logger, cfg.SecretKey)
+	userService := user.NewUserService(userRepo, tokenService, securityadapter.BcryptPasswordAdapter{}, logger)
+	authService := auth.NewAuthService(userRepo, tokenService, securityadapter.BcryptPasswordAdapter{}, logger, cfg.SecretKey)
 
 	cleanup := func() {
-		postgres.Close(databaseConn, loggerSugar)
-		if err := cacheConn.Close(); err != nil {
-			loggerSugar.Error(ErrorInitializingDependencies, err)
+		postgres.Close(dbConn, logger)
+		if err := redisClient.Close(); err != nil {
+			logger.Error(ErrorInitializingDependencies, err)
 		}
 	}
 
 	return &AppDependencies{
-		TokenService: tokenService,
 		UserService:  userService,
 		AuthService:  authService,
-		Config:       cfg,
+		TokenService: tokenService,
 	}, cleanup, nil
 }

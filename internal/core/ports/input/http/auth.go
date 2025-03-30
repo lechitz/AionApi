@@ -1,7 +1,7 @@
 package http
 
 import (
-	domain "github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
 type IAuthService interface {

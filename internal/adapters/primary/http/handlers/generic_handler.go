@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	msg "github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/messages"
+	constants "github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
 	"net/http"
 
 	"github.com/lechitz/AionApi/pkg/utils"
@@ -13,11 +13,11 @@ type Generic struct {
 }
 
 func (h *Generic) HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	utils.ResponseReturn(w, http.StatusOK, []byte(msg.MsgServiceIsHealthy))
-	h.LoggerSugar.Infow(msg.MsgServiceIsHealthy)
+	utils.ResponseReturn(w, http.StatusOK, []byte(constants.MsgServiceIsHealthy))
+	h.LoggerSugar.Infow(constants.MsgServiceIsHealthy)
 }
 
 func (h *Generic) NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	utils.ResponseReturn(w, http.StatusNotFound, []byte(msg.MsgResourceNotFound))
-	h.LoggerSugar.Infow(msg.MsgResourceNotFound, "path", r.URL.Path)
+	utils.ResponseReturn(w, http.StatusNotFound, []byte(constants.MsgResourceNotFound))
+	h.LoggerSugar.Infow(constants.MsgResourceNotFound, "path", r.URL.Path)
 }

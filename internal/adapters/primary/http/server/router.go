@@ -2,11 +2,12 @@ package server
 
 import (
 	"fmt"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
-	outputHttp "github.com/lechitz/AionApi/internal/core/ports/output/security"
+	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"go.uber.org/zap"
 )
 
@@ -20,7 +21,7 @@ type Router struct {
 func GetNewRouter(
 	loggerSugar *zap.SugaredLogger,
 	authService inputHttp.IAuthService,
-	tokenService outputHttp.ITokenService,
+	tokenService tokenports.TokenRepository,
 	contextPath string,
 ) (*Router, error) {
 	if len(contextPath) > 0 && contextPath[0] != '/' {
@@ -32,7 +33,6 @@ func GetNewRouter(
 	}
 
 	r := chi.NewRouter()
-
 	authMiddleware := auth.NewAuthMiddleware(authService, tokenService, loggerSugar)
 
 	return &Router{
@@ -62,7 +62,6 @@ func (router *Router) AddUserRoutes(uh *handlers.User) func(r chi.Router) {
 
 			r.Group(func(r chi.Router) {
 				r.Use(router.AuthMiddleware.Auth)
-
 				r.Get("/all", uh.GetAllUsersHandler)
 				r.Get("/{id}", uh.GetUserByIDHandler)
 				r.Put("/", uh.UpdateUserHandler)

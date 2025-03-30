@@ -1,7 +1,7 @@
 package setup
 
 import (
-	"github.com/lechitz/AionApi/internal/core/service"
+	"github.com/lechitz/AionApi/internal/core/service/user"
 	"go.uber.org/zap"
 	"testing"
 
@@ -16,7 +16,7 @@ type TestDependencies struct {
 	MockUserRepo     *mocks.MockIUserRepository
 	MockTokenService *mocks.MockITokenService
 	MockPasswordSvc  *mocks.MockIPasswordService
-	Service          *service.UserService
+	Service          *user.UserService
 }
 
 func NewUserServiceTestSetup(t *testing.T) *TestDependencies {
@@ -27,7 +27,7 @@ func NewUserServiceTestSetup(t *testing.T) *TestDependencies {
 	mockTokenSvc := mocks.NewMockITokenService(ctrl)
 	mockPasswordSvc := mocks.NewMockIPasswordService(ctrl)
 
-	userService := service.NewUserService(
+	userService := user.NewUserService(
 		mockUserRepo,
 		mockTokenSvc,
 		mockPasswordSvc,

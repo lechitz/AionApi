@@ -2,34 +2,55 @@ package cache
 
 import (
 	"context"
-	"github.com/lechitz/AionApi/internal/platform/config"
 	"time"
 
+	cacheport "github.com/lechitz/AionApi/internal/core/ports/output/cache"
+	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
 
-const (
-	FailedToConnectToRedis  = "Failed to connect to Redis: %v"
-	SuccessToConnectToRedis = "Redis connection established"
-)
+type RedisCache struct {
+	client *redis.Client
+	logger *zap.SugaredLogger
+	ctx    context.Context
+}
 
-func NewCacheConnection(config config.CacheConfig, loggerSugar *zap.SugaredLogger) *redis.Client {
+func NewRedisConnection(cfg config.CacheConfig, logger *zap.SugaredLogger) cacheport.ICache {
+	ctx := context.Background()
+
 	client := redis.NewClient(&redis.Options{
-		Addr:     config.Addr,
-		Password: config.Password,
-		DB:       config.DB,
-		PoolSize: config.PoolSize,
+		Addr:     cfg.Addr,
+		Password: cfg.Password,
+		DB:       cfg.DB,
+		PoolSize: cfg.PoolSize,
 	})
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
 	if err := client.Ping(ctx).Err(); err != nil {
-		loggerSugar.Fatalf(FailedToConnectToRedis, err)
+		logger.Fatalf("Failed to connect to Redis: %v", err)
 	}
 
-	loggerSugar.Infow(SuccessToConnectToRedis, "address", config.Addr, "db", config.DB)
+	logger.Infow("Redis connected", "addr", cfg.Addr, "db", cfg.DB)
 
-	return client
+	return &RedisCache{
+		client: client,
+		logger: logger,
+		ctx:    ctx,
+	}
+}
+
+func (r *RedisCache) Set(key string, value any, ttl time.Duration) error {
+	return r.client.Set(r.ctx, key, value, ttl).Err()
+}
+
+func (r *RedisCache) Get(key string) (string, error) {
+	return r.client.Get(r.ctx, key).Result()
+}
+
+func (r *RedisCache) Delete(key string) error {
+	return r.client.Del(r.ctx, key).Err()
+}
+
+func (r *RedisCache) Close() error {
+	return r.client.Close()
 }
