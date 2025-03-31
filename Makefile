@@ -115,7 +115,7 @@ docker-clean-prod:
 		echo "Removing prod images..."; \
 		docker rmi -f $$images; \
 	else \
-		echo "✅ No prod images to remove."; \
+		echo "No prod images to remove."; \
 	fi
 
 # ========================
@@ -157,20 +157,43 @@ test:
 
 .PHONY: test-cover
 test-cover:
-	@echo "🧪 Running tests with coverage report..."
+	@echo "Running tests with coverage report..."
 	go test ./... -coverprofile=coverage_tmp.out -v
-	@echo "📁 Filtering out mock files from coverage..."
+	@echo "Filtering out mock files from coverage..."
 	cat coverage_tmp.out | grep -v "Mock" > coverage.out
 	@rm -f coverage_tmp.out
-	@echo "📊 Generating HTML coverage report..."
+	@echo "Generating HTML coverage report..."
 	go tool cover -html=coverage.out
 
 .PHONY: test-ci
 test-ci:
-	@echo "🤖 Running CI tests with coverage output..."
+	@echo "Running CI tests with coverage output..."
 	go test ./... -coverprofile=coverage.out -v
 
 .PHONY: test-clean
 test-clean:
-	@echo "🧹 Cleaning up coverage reports..."
+	@echo "Cleaning up coverage reports..."
 	@rm -f coverage.out coverage_tmp.out
+
+# ========================
+# HTML Test Report (go-test-html-report)
+# ========================
+.PHONY: test-html-report
+test-html-report:
+	@echo "🧪 Running tests and generating JSON output..."
+	go test ./... -json > internal/docs/coverage/report.json
+	@echo "📄 Generating HTML report..."
+	go-test-html-report -f internal/docs/coverage/report.json -o internal/docs/coverage/
+	@echo "✅ HTML report generated at: internal/docs/coverage/report.html"
+
+# ========================
+# Mock Generation Commands
+# ========================
+.PHONY: generate-mocks
+generate-mocks:
+	@echo "Generating mocks for User use cases..."
+	mockgen -source=internal/core/usecase/user/create_user.go -destination=tests/mocks/user/mock_user_creator.go -package=mocks
+	mockgen -source=internal/core/usecase/user/update_user.go -destination=tests/mocks/user/mock_user_updater.go -package=mocks
+	mockgen -source=internal/core/usecase/user/delete_user.go -destination=tests/mocks/user/mock_user_deleter.go -package=mocks
+	mockgen -source=internal/core/usecase/user/get_user.go -destination=tests/mocks/user/mock_user_retriever.go -package=mocks
+	@echo "Mocks generated successfully!"

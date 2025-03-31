@@ -4,8 +4,8 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 	dbports "github.com/lechitz/AionApi/internal/core/ports/output/db"
 	securityports "github.com/lechitz/AionApi/internal/core/ports/output/security"
-	"github.com/lechitz/AionApi/internal/core/service/constants"
-	"github.com/lechitz/AionApi/internal/core/service/token"
+	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	"go.uber.org/zap"
 )
 

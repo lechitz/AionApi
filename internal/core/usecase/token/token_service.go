@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/service/constants"
+	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 )
 
 type TokenService interface {
