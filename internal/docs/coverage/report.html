@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        .root {
+            background-color: #232041;
+            color: white;
+        }
+
+        .successBackgroundColor {
+            background-color: darkgreen;
+        }
+
+        .failBackgroundColor {
+            background-color: darkred;
+        }
+
+        .skipBackgroundColor {
+            background-color: darkgrey;
+        }
+
+        .packageCardLayout {
+            grid-template-columns: 1fr auto auto auto;
+            grid-column-gap: 8px;
+            display: grid;
+        }
+
+        .testCardLayout {
+            grid-template-columns: 1fr auto auto;
+            display: grid;
+            width: 100%;
+            gap: 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            padding: 4px;
+        }
+
+        .collapsible {
+            cursor: pointer;
+        }
+
+        .collapsibleHeading {
+            color: white;
+            padding: 8px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .collapsibleHeading:after {
+            content: '\002B';
+        }
+
+        .active:after {
+            content: "\2212";
+        }
+
+        .collapsibleHeadingContent {
+            padding: 0 18px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+        }
+
+        .testStatsOverview {
+            grid-template-columns: 1fr 1fr auto;
+            display: grid;
+        }
+
+        .passedTests {
+            font-size: x-large;
+            color: green;
+        }
+
+        .failedTests {
+            font-size: x-large;
+            color: red;
+        }
+    </style>
+</head>
+<body class="root">
+<div style="display: flex; flex-direction: column; margin: 16px; height: 100vh">
+    <div style="font-size: large">Go Test Report</div>
+    <div style="font-size: large">Test Date: Sunday, 30-Mar-25 23:33:37 -03</div>
+    <div class="testStatsOverview">
+        <p style="margin-top: 0;" class="passedTests">Passed tests: 25</p>
+        <p style="margin-top: 0;" class="failedTests">Failed tests: 0</p>
+        <p style="font-size: x-large; margin-top: 0;">Total test time: 0.419350 s</p>
+    </div>
+    
+    
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/primary/http/validators</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/infrastructure/cache</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/infrastructure/db/postgres</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/infrastructure/security</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/platform/bootstrap</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/tests/setup</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/primary/http/constants</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/primary/http/dto</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/core/ports/output/security</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/platform/logger</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout successBackgroundColor ">
+								
+											<div>github.com/lechitz/AionApi/internal/core/usecase/user</div>
+											<div>-</div>
+											<div>0.008000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestCreateUser_Success</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestCreateUser_ErrorToGetUserByUsername</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestCreateUser_ErrorToGetUserByEmail</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestCreateUser_ErrorToHashPassword</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestCreateUser_ErrorToCreateUser</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestDeleteUser_Success</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestDeleteUser_ErrorToSoftDeleteUser</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestDeleteUser_ErrorToDeleteToken</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestGetUserByID_Success</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestGetUserByID_Error</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestGetUserByEmail_Success</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestGetUserByEmail_Error</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestGetUserByUsername_Success</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestGetUserByUsername_Error</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestGetAllUsers_Success</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestGetAllUsers_Error</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestUpdateUser_Success</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestUpdateUser_NoFieldsToUpdate</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestUpdateUserPassword_Success</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestUpdateUserPassword_ErrorToGetUserByID</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestUpdateUserPassword_ErrorToCompareHashAndPassword</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestUpdateUserPassword_ErrorToHashPassword</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestUpdateUserPassword_ErrorToUpdatePassword</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestUpdateUserPassword_ErrorToCreateToken</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+											<div class="testCardLayout successBackgroundColor collapsibleHeading">
+													
+										<div>TestUpdateUserPassword_ErrorToSaveToken</div>
+										<div>0.000000s</div>
+									
+											</div>
+										
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/core/usecase/token</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/platform/config</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/platform/config/constants</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/primary/http/server</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/core/ports/output/cache</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/core/ports/output/db</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/core/ports/input/http</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/core/usecase/auth</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/primary/http/server/constants</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/secondary/cache</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/core/usecase/constants</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/pkg/utils</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/tests/mocks/user</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/core/domain</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/infrastructure/db/constants</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/tests/mocks</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/secondary/db/constants</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/secondary/db</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/cmd/aion-api</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+
+						<div type="button" class="collapsible">
+							
+							<div class="collapsibleHeading packageCardLayout skipBackgroundColor">
+								
+											<div>github.com/lechitz/AionApi/internal/adapters/primary/http/handlers</div>
+											<div>-</div>
+											<div>0.000000s</div>
+											
+							</div>
+						
+							
+									<div class="collapsibleHeadingContent">
+										
+									</div>
+							
+						</div>
+							
+    
+</div>
+</body>
+<script>
+    
+    var coll = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < coll.length; i++) {
+        var collapsibleHeading = undefined
+
+        for (let j = 0; j < coll[i].children.length; j++) {
+            let element = coll[i].children.item(j)
+            if (element.className.includes("collapsibleHeading")) {
+                collapsibleHeading = element
+                break
+            }
+        }
+
+        collapsibleHeading.addEventListener("click", function () {
+            this.classList.toggle("active")
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = window.innerHeight + "px";
+            }
+        });
+    }
+</script>
+</html>

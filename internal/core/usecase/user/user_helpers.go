@@ -27,7 +27,7 @@ func (s *UserService) validateCreateUserRequired(user domain.UserDomain, passwor
 	return nil
 }
 
-func (s *UserService) NormalizeUserData(user *domain.UserDomain) domain.UserDomain {
+func (s *UserService) normalizeUserData(user *domain.UserDomain) domain.UserDomain {
 	if user.Name != "" {
 		user.Name = strings.TrimSpace(user.Name)
 	}

@@ -176,6 +176,17 @@ test-clean:
 	@rm -f coverage.out coverage_tmp.out
 
 # ========================
+# HTML Test Report (go-test-html-report)
+# ========================
+.PHONY: test-html-report
+test-html-report:
+	@echo "🧪 Running tests and generating JSON output..."
+	go test ./... -json > internal/docs/coverage/report.json
+	@echo "📄 Generating HTML report..."
+	go-test-html-report -f internal/docs/coverage/report.json -o internal/docs/coverage/
+	@echo "✅ HTML report generated at: internal/docs/coverage/report.html"
+
+# ========================
 # Mock Generation Commands
 # ========================
 .PHONY: generate-mocks

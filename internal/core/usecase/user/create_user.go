@@ -11,7 +11,7 @@ type UserCreator interface {
 }
 
 func (s *UserService) CreateUser(ctx domain.ContextControl, user domain.UserDomain, password string) (domain.UserDomain, error) {
-	user = s.NormalizeUserData(&user)
+	user = s.normalizeUserData(&user)
 
 	if err := s.validateCreateUserRequired(user, password); err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToValidateCreateUser, constants.Error, err.Error())

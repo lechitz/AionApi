@@ -36,7 +36,7 @@ func NewAuthService(
 func (s *AuthService) Login(ctx domain.ContextControl, user domain.UserDomain, passwordReq string) (domain.UserDomain, string, error) {
 	userDB, err := s.UserRepository.GetUserByUsername(ctx, user.Username)
 	if err != nil {
-		s.LoggerSugar.Errorw(user.ErrorToGetUserByUserName, constants.Error, err.Error())
+		s.LoggerSugar.Errorw(constants.ErrorToGetUserByUserName, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
