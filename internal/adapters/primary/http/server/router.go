@@ -7,7 +7,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
-	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	"go.uber.org/zap"
 )
 
@@ -18,7 +17,7 @@ type Router struct {
 	AuthMiddleware *auth.MiddlewareAuth
 }
 
-func GetNewRouter(loggerSugar *zap.SugaredLogger, authService inputHttp.AuthService, tokenService tokenports.Store, contextPath string) (*Router, error) {
+func GetNewRouter(loggerSugar *zap.SugaredLogger, tokenService tokenports.Store, contextPath string) (*Router, error) {
 	if len(contextPath) > 0 && contextPath[0] != '/' {
 		contextPath = "/" + contextPath
 	}
@@ -28,7 +27,7 @@ func GetNewRouter(loggerSugar *zap.SugaredLogger, authService inputHttp.AuthServ
 	}
 
 	r := chi.NewRouter()
-	authMiddleware := auth.NewAuthMiddleware(authService, tokenService, loggerSugar)
+	authMiddleware := auth.NewAuthMiddleware(tokenService, loggerSugar)
 
 	return &Router{
 		ContextPath:    contextPath,

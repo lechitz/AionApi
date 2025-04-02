@@ -11,32 +11,39 @@ COMPOSE_FILE_PROD := docker-compose-prod.yaml
 # ========================
 .PHONY: help
 help:
-	@echo "Available commands:"
 	@echo ""
-	@echo "Docker Compose Commands:"
-	@echo "  docker-compose-dev-up     Start the development environment (resetting the database)."
-	@echo "  docker-compose-dev-down   Stop the development environment and remove volumes."
-	@echo "  docker-compose-prod-up    Start the production environment (database is not reset)."
-	@echo "  docker-compose-prod-down  Stop the production environment."
+	@echo "\033[1;33m\033[1mAionApi - Developer CLI Help\033[0m"
 	@echo ""
-	@echo "Docker Build Commands:"
-	@echo "  docker-build-dev          Build the development Docker image."
-	@echo "  docker-build-prod         Build the production Docker image."
-	@echo "  docker-build-run-dev      Build and start the development environment."
-	@echo "  docker-build-run-prod     Build and start the production environment."
+
+	@echo "\033[1;34m🔵 Docker Compose Commands:\033[0m"
+	@echo "  \033[1;36mdocker-compose-dev-up\033[0m     → Start development environment (resets DB)"
+	@echo "  \033[1;36mdocker-compose-dev-down\033[0m   → Stop development and remove volumes"
+	@echo "  \033[1;36mdocker-compose-prod-up\033[0m    → Start production (keeps DB)"
+	@echo "  \033[1;36mdocker-compose-prod-down\033[0m  → Stop production environment"
 	@echo ""
-	@echo "Docker Cleanup Commands:"
-	@echo "  docker-clean-dev          Clean development containers, volumes, and images."
-	@echo "  docker-clean-prod         Clean production containers, volumes, and images."
-	@echo "  docker-clean-all          Clean all containers, volumes, and images."
+
+	@echo "\033[1;34m🔵 Docker Build Commands:\033[0m"
+	@echo "  \033[1;36mdocker-build-dev\033[0m          → Build dev image"
+	@echo "  \033[1;36mdocker-build-prod\033[0m         → Build prod image"
+	@echo "  \033[1;36mdev\033[0m                       → Build & start dev environment"
+	@echo "  \033[1;36mprod\033[0m                      → Build & start prod environment"
 	@echo ""
-	@echo "Testing Commands:"
-	@echo "  test-cover                Run tests and generate a coverage report."
+
+	@echo "\033[1;34m🔵 Docker Cleanup Commands:\033[0m"
+	@echo "  \033[1;36mdocker-clean-dev\033[0m          → Clean dev containers, volumes, images"
+	@echo "  \033[1;36mdocker-clean-prod\033[0m         → Clean prod containers, volumes, images"
+	@echo "  \033[1;36mdocker-clean-all\033[0m          → Remove ALL containers, volumes, images"
+	@echo ""
+
+	@echo "\033[1;34m🔵 Testing Commands:\033[0m"
+	@echo "  \033[1;36mtest-cover\033[0m                → Run tests and generate coverage report"
+	@echo ""
+
 
 # ========================
 # Development Environment
 # ========================
-.PHONY: docker-build-dev docker-compose-dev-up docker-compose-dev-down docker-build-run-dev docker-clean-dev
+.PHONY: docker-build-dev docker-compose-dev-up docker-compose-dev-down dev docker-clean-dev
 
 docker-build-dev: docker-clean-dev
 	docker build -t $(APPLICATION_NAME):dev .
@@ -50,7 +57,7 @@ docker-compose-dev-down:
 	@echo "Stopping Dev Environment..."
 	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) down -v
 
-docker-build-run-dev: docker-clean-dev docker-build-dev docker-compose-dev-up
+dev: docker-clean-dev docker-build-dev docker-compose-dev-up
 
 docker-clean-dev:
 	@containers=$$(docker ps -a --filter "name=dev" -q); \
@@ -80,7 +87,7 @@ docker-clean-dev:
 # ========================
 # Production Environment
 # ========================
-.PHONY: docker-build-prod docker-compose-prod-up docker-compose-prod-down docker-build-run-prod docker-clean-prod
+.PHONY: docker-build-prod docker-compose-prod-up docker-compose-prod-down prod docker-clean-prod
 
 docker-build-prod: docker-clean-prod
 	docker build -t $(APPLICATION_NAME):prod .
@@ -91,7 +98,7 @@ docker-compose-prod-up: docker-compose-prod-down
 docker-compose-prod-down:
 	docker-compose -f $(COMPOSE_FILE_PROD) down -v
 
-docker-build-run-prod: docker-build-prod docker-compose-prod-up
+prod: docker-build-prod docker-compose-prod-up
 
 docker-clean-prod:
 	@containers=$$(docker ps -a --filter "name=prod" -q); \
@@ -189,11 +196,26 @@ test-html-report:
 # ========================
 # Mock Generation Commands
 # ========================
-.PHONY: generate-mocks
-generate-mocks:
-	@echo "Generating mocks for User use cases..."
-	mockgen -source=internal/core/usecase/user/create_user.go -destination=tests/mocks/user/mock_user_creator.go -package=mocks
-	mockgen -source=internal/core/usecase/user/update_user.go -destination=tests/mocks/user/mock_user_updater.go -package=mocks
-	mockgen -source=internal/core/usecase/user/delete_user.go -destination=tests/mocks/user/mock_user_deleter.go -package=mocks
-	mockgen -source=internal/core/usecase/user/get_user.go -destination=tests/mocks/user/mock_user_retriever.go -package=mocks
-	@echo "Mocks generated successfully!"
+.PHONY: mocks
+mocks:
+	@echo "Generating mocks for output ports..."
+	@mkdir -p tests/mocks/user tests/mocks/auth tests/mocks/token tests/mocks/cache tests/mocks/security
+
+	@echo "→ User Repository"
+	mockgen -source=internal/core/ports/output/db/user.go -destination=tests/mocks/user/mock_user_repository.go -package=user
+
+	@echo "→ Token Store"
+	mockgen -source=internal/core/ports/output/token/token.go -destination=tests/mocks/token/mock_token_store.go -package=token
+
+	@echo "→ Cache Store"
+	mockgen -source=internal/core/ports/output/cache/cache.go -destination=tests/mocks/cache/mock_store.go -package=cache
+
+	@echo "→ Security Hasher"
+	mockgen -source=internal/core/ports/output/security/password.go -destination=tests/mocks/security/mock_hasher.go -package=security
+
+	@echo "Generating mocks for Auth use cases..."
+	mockgen -source=internal/core/usecase/auth/login_auth.go -destination=tests/mocks/auth/mock_authenticator.go -package=auth
+	mockgen -source=internal/core/usecase/auth/logout_auth.go -destination=tests/mocks/auth/mock_session_revoker.go -package=auth
+
+	@echo "All mocks generated successfully."
+
