@@ -1,24 +1,26 @@
 package setup
 
 import (
-	"go.uber.org/zap"
-	"gorm.io/gorm"
 	"testing"
 	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
-	"github.com/lechitz/AionApi/tests/mocks"
+	mocksSecurity "github.com/lechitz/AionApi/tests/mocks/security"
+	mocksToken "github.com/lechitz/AionApi/tests/mocks/token"
+	mocksUser "github.com/lechitz/AionApi/tests/mocks/user"
+	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
+	"gorm.io/gorm"
 )
 
 type UserServiceTestSuite struct {
 	Ctrl        *gomock.Controller
 	Logger      *zap.SugaredLogger
-	UserRepo    *mocks.MockUserRepository
-	PasswordSvc *mocks.MockPasswordManager
-	TokenSvc    *mocks.MockTokenServiceInterface
+	UserRepo    *mocksUser.MockRepository
+	PasswordSvc *mocksSecurity.MockHasher
+	TokenSvc    *mocksToken.MockStore
 	UserSvc     *user.UserService
 	Ctx         domain.ContextControl
 }
@@ -27,9 +29,10 @@ func SetupUserServiceTest(t *testing.T) *UserServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	logger := zaptest.NewLogger(t).Sugar()
-	userRepo := mocks.NewMockUserRepository(ctrl)
-	passwordSvc := mocks.NewMockPasswordManager(ctrl)
-	tokenSvc := mocks.NewMockTokenServiceInterface(ctrl)
+	userRepo := mocksUser.NewMockRepository(ctrl)
+	passwordSvc := mocksSecurity.NewMockHasher(ctrl)
+	tokenSvc := mocksToken.NewMockStore(ctrl)
+
 	userSvc := user.NewUserService(userRepo, tokenSvc, passwordSvc, logger)
 
 	return &UserServiceTestSuite{

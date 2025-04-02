@@ -6,10 +6,8 @@ import (
 	"github.com/lechitz/AionApi/tests/setup"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
-	"github.com/lechitz/AionApi/tests/mocks"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap/zaptest"
 )
@@ -65,16 +63,12 @@ func TestCreateUser_ErrorToGetUserByUsername(t *testing.T) {
 }
 
 func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	suite := setup.SetupUserServiceTest(t)
+	defer suite.Ctrl.Finish()
 
 	logger := zaptest.NewLogger(t).Sugar()
 
-	userRepo := mocks.NewMockUserRepository(ctrl)
-	passwordSvc := mocks.NewMockPasswordManager(ctrl)
-	tokenSvc := mocks.NewMockTokenServiceInterface(ctrl)
-
-	userSvc := user.NewUserService(userRepo, tokenSvc, passwordSvc, logger)
+	userSvc := user.NewUserService(suite.UserRepo, suite.TokenSvc, suite.PasswordSvc, logger)
 
 	ctx := domain.ContextControl{}
 	input := domain.UserDomain{
@@ -84,11 +78,11 @@ func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
 	}
 	password := setup.TestPerfectUser.Password
 
-	userRepo.EXPECT().
+	suite.UserRepo.EXPECT().
 		GetUserByUsername(ctx, setup.TestPerfectUser.Username).
 		Return(domain.UserDomain{}, nil)
 
-	userRepo.EXPECT().
+	suite.UserRepo.EXPECT().
 		GetUserByEmail(ctx, setup.TestPerfectUser.Email).
 		Return(domain.UserDomain{ID: 1}, nil)
 
@@ -100,16 +94,12 @@ func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
 }
 
 func TestCreateUser_ErrorToHashPassword(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	suite := setup.SetupUserServiceTest(t)
+	defer suite.Ctrl.Finish()
 
 	logger := zaptest.NewLogger(t).Sugar()
 
-	userRepo := mocks.NewMockUserRepository(ctrl)
-	passwordSvc := mocks.NewMockPasswordManager(ctrl)
-	tokenSvc := mocks.NewMockTokenServiceInterface(ctrl)
-
-	userSvc := user.NewUserService(userRepo, tokenSvc, passwordSvc, logger)
+	userSvc := user.NewUserService(suite.UserRepo, suite.TokenSvc, suite.PasswordSvc, logger)
 
 	ctx := domain.ContextControl{}
 
@@ -120,15 +110,15 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 	}
 	password := setup.TestPerfectUser.Password
 
-	userRepo.EXPECT().
+	suite.UserRepo.EXPECT().
 		GetUserByUsername(ctx, setup.TestPerfectUser.Username).
 		Return(domain.UserDomain{}, nil)
 
-	userRepo.EXPECT().
+	suite.UserRepo.EXPECT().
 		GetUserByEmail(ctx, setup.TestPerfectUser.Email).
 		Return(domain.UserDomain{}, nil)
 
-	passwordSvc.EXPECT().
+	suite.PasswordSvc.EXPECT().
 		HashPassword(password).
 		Return("", errors.New(constants.ErrorToHashPassword))
 
@@ -140,16 +130,12 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 }
 
 func TestCreateUser_ErrorToCreateUser(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	suite := setup.SetupUserServiceTest(t)
+	defer suite.Ctrl.Finish()
 
 	logger := zaptest.NewLogger(t).Sugar()
 
-	userRepo := mocks.NewMockUserRepository(ctrl)
-	passwordSvc := mocks.NewMockPasswordManager(ctrl)
-	tokenSvc := mocks.NewMockTokenServiceInterface(ctrl)
-
-	userSvc := user.NewUserService(userRepo, tokenSvc, passwordSvc, logger)
+	userSvc := user.NewUserService(suite.UserRepo, suite.TokenSvc, suite.PasswordSvc, logger)
 
 	ctx := domain.ContextControl{}
 
@@ -160,22 +146,22 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 	}
 	password := setup.TestPerfectUser.Password
 
-	userRepo.EXPECT().
+	suite.UserRepo.EXPECT().
 		GetUserByUsername(ctx, setup.TestPerfectUser.Username).
 		Return(domain.UserDomain{}, nil)
 
-	userRepo.EXPECT().
+	suite.UserRepo.EXPECT().
 		GetUserByEmail(ctx, setup.TestPerfectUser.Email).
 		Return(domain.UserDomain{}, nil)
 
-	passwordSvc.EXPECT().
+	suite.PasswordSvc.EXPECT().
 		HashPassword(password).
 		Return("hashed123", nil)
 
 	expectedUser := input
 	expectedUser.Password = "hashed123"
 
-	userRepo.EXPECT().
+	suite.UserRepo.EXPECT().
 		CreateUser(ctx, expectedUser).
 		Return(domain.UserDomain{}, errors.New(constants.ErrorToCreateUser))
 

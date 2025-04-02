@@ -2,33 +2,33 @@ package user_test
 
 import (
 	"errors"
-	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap/zaptest"
 	"testing"
 )
 
 func TestDeleteUser_Success(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	suite := setup.SetupUserServiceTest(t)
+	defer suite.Ctrl.Finish()
 
 	logger := zaptest.NewLogger(t).Sugar()
 
-	userRepo := mocks.NewMockUserRepository(ctrl)
-	passwordSvc := mocks.NewMockPasswordManager(ctrl)
-	tokenSvc := mocks.NewMockTokenServiceInterface(ctrl)
-
-	userSvc := user.NewUserService(userRepo, tokenSvc, passwordSvc, logger)
+	userSvc := user.NewUserService(suite.UserRepo, suite.TokenSvc, suite.PasswordSvc, logger)
 
 	ctx := domain.ContextControl{}
 	userID := uint64(1)
 
-	userRepo.EXPECT().SoftDeleteUser(ctx, userID).Return(nil)
-	tokenSvc.EXPECT().Delete(ctx, domain.TokenDomain{UserID: userID}).Return(nil)
+	suite.UserRepo.EXPECT().
+		SoftDeleteUser(ctx, userID).
+		Return(nil)
+
+	suite.TokenSvc.EXPECT().
+		Delete(ctx, domain.TokenDomain{UserID: userID}).
+		Return(nil)
 
 	err := userSvc.SoftDeleteUser(ctx, userID)
 
@@ -36,22 +36,20 @@ func TestDeleteUser_Success(t *testing.T) {
 }
 
 func TestDeleteUser_ErrorToSoftDeleteUser(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	suite := setup.SetupUserServiceTest(t)
+	defer suite.Ctrl.Finish()
 
 	logger := zaptest.NewLogger(t).Sugar()
 
-	userRepo := mocks.NewMockUserRepository(ctrl)
-	passwordSvc := mocks.NewMockPasswordManager(ctrl)
-	tokenSvc := mocks.NewMockTokenServiceInterface(ctrl)
-
-	userSvc := user.NewUserService(userRepo, tokenSvc, passwordSvc, logger)
+	userSvc := user.NewUserService(suite.UserRepo, suite.TokenSvc, suite.PasswordSvc, logger)
 
 	ctx := domain.ContextControl{}
 	userID := uint64(1)
 	expectedErr := errors.New(constants.ErrorToSoftDeleteUser)
 
-	userRepo.EXPECT().SoftDeleteUser(ctx, userID).Return(expectedErr)
+	suite.UserRepo.EXPECT().
+		SoftDeleteUser(ctx, userID).
+		Return(expectedErr)
 
 	err := userSvc.SoftDeleteUser(ctx, userID)
 
@@ -59,23 +57,24 @@ func TestDeleteUser_ErrorToSoftDeleteUser(t *testing.T) {
 }
 
 func TestDeleteUser_ErrorToDeleteToken(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	suite := setup.SetupUserServiceTest(t)
+	defer suite.Ctrl.Finish()
 
 	logger := zaptest.NewLogger(t).Sugar()
 
-	userRepo := mocks.NewMockUserRepository(ctrl)
-	passwordSvc := mocks.NewMockPasswordManager(ctrl)
-	tokenSvc := mocks.NewMockTokenServiceInterface(ctrl)
-
-	userSvc := user.NewUserService(userRepo, tokenSvc, passwordSvc, logger)
+	userSvc := user.NewUserService(suite.UserRepo, suite.TokenSvc, suite.PasswordSvc, logger)
 
 	ctx := domain.ContextControl{}
 	userID := uint64(1)
 	expectedErr := errors.New(constants.ErrorToDeleteToken)
 
-	userRepo.EXPECT().SoftDeleteUser(ctx, userID).Return(nil)
-	tokenSvc.EXPECT().Delete(ctx, domain.TokenDomain{UserID: userID}).Return(expectedErr)
+	suite.UserRepo.EXPECT().
+		SoftDeleteUser(ctx, userID).
+		Return(nil)
+
+	suite.TokenSvc.EXPECT().
+		Delete(ctx, domain.TokenDomain{UserID: userID}).
+		Return(expectedErr)
 
 	err := userSvc.SoftDeleteUser(ctx, userID)
 
