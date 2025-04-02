@@ -1,4 +1,4 @@
-package main
+package constants
 
 const (
 	StartingApplication             = "starting application"

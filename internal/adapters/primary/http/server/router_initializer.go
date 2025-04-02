@@ -32,7 +32,7 @@ func InitRouter(logger *zap.SugaredLogger, userService inputHttp.UserService, au
 		LoggerSugar: logger,
 	}
 
-	router, err := GetNewRouter(logger, authService, tokenService, contextPath)
+	router, err := GetNewRouter(logger, tokenService, contextPath)
 	if err != nil {
 		return nil, err
 	}
