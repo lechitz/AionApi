@@ -13,11 +13,11 @@ import (
 )
 
 type TokenRepository struct {
-	cache  cacheport.ICache
+	cache  cacheport.Store
 	logger *zap.SugaredLogger
 }
 
-func NewTokenRepository(cache cacheport.ICache, logger *zap.SugaredLogger) *TokenRepository {
+func NewTokenRepository(cache cacheport.Store, logger *zap.SugaredLogger) *TokenRepository {
 	return &TokenRepository{
 		cache:  cache,
 		logger: logger,

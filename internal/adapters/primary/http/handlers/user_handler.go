@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+
 	constants "github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/validators"
@@ -16,7 +17,7 @@ import (
 )
 
 type User struct {
-	UserService inputHttp.IUserService
+	UserService inputHttp.UserService
 	LoggerSugar *zap.SugaredLogger
 }
 

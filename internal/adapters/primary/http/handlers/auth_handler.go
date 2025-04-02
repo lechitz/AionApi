@@ -2,19 +2,20 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
+	"time"
+
 	constants "github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
-	"net/http"
-	"time"
 
 	"github.com/lechitz/AionApi/pkg/utils"
 	"go.uber.org/zap"
 )
 
 type Auth struct {
-	AuthService inputHttp.IAuthService
+	AuthService inputHttp.AuthService
 	LoggerSugar *zap.SugaredLogger
 }
 
@@ -71,6 +72,15 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(nil, constants.SuccessToLogout).Bytes())
 }
 
+func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {
+	if err != nil {
+		a.LoggerSugar.Errorw(message, constants.Error, err.Error())
+	} else {
+		a.LoggerSugar.Errorw(message)
+	}
+	utils.HandleError(w, a.LoggerSugar, status, message, err)
+}
+
 func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     constants.AuthToken,
@@ -95,13 +105,4 @@ func clearAuthCookie(w http.ResponseWriter) {
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
 	})
-}
-
-func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {
-	if err != nil {
-		a.LoggerSugar.Errorw(message, constants.Error, err.Error())
-	} else {
-		a.LoggerSugar.Errorw(message)
-	}
-	utils.HandleError(w, a.LoggerSugar, status, message, err)
 }

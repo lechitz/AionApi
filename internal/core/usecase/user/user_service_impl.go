@@ -8,13 +8,13 @@ import (
 )
 
 type UserService struct {
-	UserRepository  db.UserRepository
-	TokenService    token.TokenService
-	PasswordService security.PasswordManager
+	UserRepository  db.Repository
+	TokenService    token.Service
+	PasswordService security.Hasher
 	LoggerSugar     *zap.SugaredLogger
 }
 
-func NewUserService(userRepo db.UserRepository, tokenService token.TokenService, passwordService security.PasswordManager, loggerSugar *zap.SugaredLogger) *UserService {
+func NewUserService(userRepo db.Repository, tokenService token.Service, passwordService security.Hasher, loggerSugar *zap.SugaredLogger) *UserService {
 	return &UserService{
 		UserRepository:  userRepo,
 		TokenService:    tokenService,
