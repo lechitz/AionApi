@@ -2,12 +2,12 @@ package server
 
 import (
 	"fmt"
+	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/token"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
-	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"go.uber.org/zap"
 )
 
@@ -18,12 +18,7 @@ type Router struct {
 	AuthMiddleware *auth.MiddlewareAuth
 }
 
-func GetNewRouter(
-	loggerSugar *zap.SugaredLogger,
-	authService inputHttp.IAuthService,
-	tokenService tokenports.TokenRepository,
-	contextPath string,
-) (*Router, error) {
+func GetNewRouter(loggerSugar *zap.SugaredLogger, authService inputHttp.AuthService, tokenService tokenports.Store, contextPath string) (*Router, error) {
 	if len(contextPath) > 0 && contextPath[0] != '/' {
 		contextPath = "/" + contextPath
 	}

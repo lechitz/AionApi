@@ -1,6 +1,6 @@
 package security
 
-type PasswordManager interface { //TODO criar o mock
+type Hasher interface {
 	HashPassword(plain string) (string, error)
 	ComparePasswords(hashed, plain string) error
 }

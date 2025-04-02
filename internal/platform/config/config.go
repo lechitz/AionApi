@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/kelseyhightower/envconfig"
 	"github.com/lechitz/AionApi/internal/infrastructure/security"
 	"github.com/lechitz/AionApi/internal/platform/config/constants"

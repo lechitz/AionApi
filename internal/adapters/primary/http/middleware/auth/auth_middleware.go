@@ -2,26 +2,23 @@ package auth
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
-	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/cache"
-	"net/http"
+	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/token"
 
 	"go.uber.org/zap"
 )
 
 type MiddlewareAuth struct {
-	AuthService  inputHttp.IAuthService
-	TokenService tokenports.TokenRepository
+	AuthService  inputHttp.AuthService
+	TokenService tokenports.Store
 	LoggerSugar  *zap.SugaredLogger
 }
 
-func NewAuthMiddleware(
-	authService inputHttp.IAuthService,
-	tokenService tokenports.TokenRepository,
-	logger *zap.SugaredLogger,
-) *MiddlewareAuth {
+func NewAuthMiddleware(authService inputHttp.AuthService, tokenService tokenports.Store, logger *zap.SugaredLogger) *MiddlewareAuth {
 	return &MiddlewareAuth{
 		AuthService:  authService,
 		TokenService: tokenService,

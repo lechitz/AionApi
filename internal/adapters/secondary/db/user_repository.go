@@ -16,7 +16,7 @@ type UserRepository struct {
 	loggerSugar *zap.SugaredLogger
 }
 
-func NewUserRepository(db *gorm.DB, loggerSugar *zap.SugaredLogger) db.UserRepository {
+func NewUserRepository(db *gorm.DB, loggerSugar *zap.SugaredLogger) db.Repository {
 	return &UserRepository{
 		db:          db,
 		loggerSugar: loggerSugar,

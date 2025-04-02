@@ -16,7 +16,7 @@ type RedisCache struct {
 	ctx    context.Context
 }
 
-func NewRedisConnection(cfg config.CacheConfig, logger *zap.SugaredLogger) cacheport.ICache {
+func NewRedisConnection(cfg config.CacheConfig, logger *zap.SugaredLogger) cacheport.Store {
 	ctx := context.Background()
 
 	client := redis.NewClient(&redis.Options{

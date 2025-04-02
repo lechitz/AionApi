@@ -4,7 +4,7 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/secondary/cache"
 	dbadapter "github.com/lechitz/AionApi/internal/adapters/secondary/db"
 	httpports "github.com/lechitz/AionApi/internal/core/ports/input/http"
-	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/cache"
+	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/token"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
@@ -17,12 +17,12 @@ import (
 )
 
 type AppDependencies struct {
-	UserService  httpports.IUserService
-	AuthService  httpports.IAuthService
-	TokenService tokenports.TokenRepository
+	UserService  httpports.UserService
+	AuthService  httpports.AuthService
+	TokenService tokenports.Store
 }
 
-const ErrorInitializingDependencies = "error closing cache connection"
+var ErrorInitializingDependencies = "error closing cache connection"
 
 func InitializeDependencies(logger *zap.SugaredLogger, cfg config.Config) (*AppDependencies, func(), error) {
 
