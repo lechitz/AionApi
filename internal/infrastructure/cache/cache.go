@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/lechitz/AionApi/config"
 	cacheport "github.com/lechitz/AionApi/internal/core/ports/output/cache"
-	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )

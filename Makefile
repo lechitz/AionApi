@@ -5,6 +5,14 @@ APPLICATION_NAME := aion-api
 PORT := 5001
 COMPOSE_FILE_DEV := docker-compose-dev.yaml
 COMPOSE_FILE_PROD := docker-compose-prod.yaml
+DATABASE_HOST ?= localhost
+DATABASE_PORT ?= 5432
+DATABASE_USER ?= root
+DATABASE_PASSWORD ?= root
+DATABASE_SSL ?= disable
+DATABASE_DATABASE = devicio
+DATABASE_DSN := "postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}?sslmode=${DATABASE_SSL}"
+MIGRATIONS_PATH="db/migration"
 
 # ========================
 # Help Section
@@ -188,10 +196,10 @@ test-clean:
 .PHONY: test-html-report
 test-html-report:
 	@echo "🧪 Running tests and generating JSON output..."
-	go test ./... -json > internal/docs/coverage/report.json
+	go test ./... -json > docs/coverage/report.json
 	@echo "📄 Generating HTML report..."
-	go-test-html-report -f internal/docs/coverage/report.json -o internal/docs/coverage/
-	@echo "✅ HTML report generated at: internal/docs/coverage/report.html"
+	go-test-html-report -f docs/coverage/report.json -o docs/coverage/
+	@echo "✅ HTML report generated at: docs/coverage/report.html"
 
 # ========================
 # Mock Generation Commands
@@ -219,3 +227,18 @@ mocks:
 
 	@echo "All mocks generated successfully."
 
+
+# ========================
+# Database
+# ========================
+.PHONY: mig-up
+mig-up: ## Runs the migrations up
+	migrate -path ${MIGRATIONS_PATH} -database ${DATABASE_DSN} up
+
+.PHONY: mig-down
+mig-down: ## Runs the migrations down
+	migrate -path ${MIGRATIONS_PATH} -database ${DATABASE_DSN} down
+
+.PHONY: new-mig
+new-mig:
+	migrate create -ext sql -dir ${MIGRATIONS_PATH} -seq $(NAME)

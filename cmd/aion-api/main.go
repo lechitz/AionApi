@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/lechitz/AionApi/cmd/aion-api/constants"
+	"github.com/lechitz/AionApi/config"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/server"
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
-	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/logger"
 	"github.com/lechitz/AionApi/pkg/utils"
 )

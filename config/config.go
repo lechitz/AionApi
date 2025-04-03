@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/kelseyhightower/envconfig"
+	"github.com/lechitz/AionApi/config/constants"
 	"github.com/lechitz/AionApi/internal/infrastructure/security"
-	"github.com/lechitz/AionApi/internal/platform/config/constants"
 	"github.com/lechitz/AionApi/pkg/utils"
 	"go.uber.org/zap"
 )

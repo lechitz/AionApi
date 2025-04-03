@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"github.com/lechitz/AionApi/config"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/cache"
 	dbadapter "github.com/lechitz/AionApi/internal/adapters/secondary/db"
 	httpports "github.com/lechitz/AionApi/internal/core/ports/input/http"
@@ -11,7 +12,6 @@ import (
 	tokeninfra "github.com/lechitz/AionApi/internal/infrastructure/cache"
 	"github.com/lechitz/AionApi/internal/infrastructure/db/postgres"
 	securityadapter "github.com/lechitz/AionApi/internal/infrastructure/security"
-	"github.com/lechitz/AionApi/internal/platform/config"
 
 	"go.uber.org/zap"
 )

@@ -2,13 +2,14 @@ package postgres
 
 import (
 	"fmt"
+	"log"
+	"time"
+
+	"github.com/lechitz/AionApi/config"
 	"github.com/lechitz/AionApi/internal/infrastructure/db/constants"
-	"github.com/lechitz/AionApi/internal/platform/config"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
-	"time"
 )
 
 func NewDatabaseConnection(config config.DBConfig, loggerSugar *zap.SugaredLogger) *gorm.DB {
