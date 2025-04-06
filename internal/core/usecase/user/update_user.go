@@ -2,9 +2,10 @@ package user
 
 import (
 	"errors"
+	"time"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/constants"
-	"time"
 )
 
 type UserUpdater interface {
@@ -29,7 +30,14 @@ func (s *UserService) UpdateUser(ctx domain.ContextControl, user domain.UserDoma
 	}
 	updateFields[constants.UpdatedAt] = time.Now().UTC()
 
-	return s.UserRepository.UpdateUser(ctx, user.ID, updateFields)
+	updatedUser, err := s.UserRepository.UpdateUser(ctx, user.ID, updateFields)
+	if err != nil {
+		s.LoggerSugar.Errorw(constants.ErrorToUpdateUser, "error", err.Error())
+		return domain.UserDomain{}, err
+	}
+
+	s.LoggerSugar.Infow(constants.SuccessUserUpdated, constants.UserID, updatedUser.ID)
+	return updatedUser, nil
 }
 
 func (s *UserService) UpdateUserPassword(ctx domain.ContextControl, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error) {
@@ -39,12 +47,12 @@ func (s *UserService) UpdateUserPassword(ctx domain.ContextControl, user domain.
 		return domain.UserDomain{}, "", err
 	}
 
-	if err := s.PasswordService.ComparePasswords(userDB.Password, oldPassword); err != nil {
+	if err := s.SecurityHasher.ValidatePassword(userDB.Password, oldPassword); err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToCompareHashAndPassword, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
-	hashedPassword, err := s.PasswordService.HashPassword(newPassword)
+	hashedPassword, err := s.SecurityHasher.HashPassword(newPassword)
 	if err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToHashPassword, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
@@ -62,7 +70,7 @@ func (s *UserService) UpdateUserPassword(ctx domain.ContextControl, user domain.
 	}
 
 	tokenDomain := domain.TokenDomain{UserID: user.ID}
-	token, err := s.TokenService.Create(ctx, tokenDomain)
+	token, err := s.TokenService.CreateToken(ctx, tokenDomain)
 	if err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToCreateToken, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
@@ -75,5 +83,5 @@ func (s *UserService) UpdateUserPassword(ctx domain.ContextControl, user domain.
 	}
 
 	s.LoggerSugar.Infow(constants.SuccessPasswordUpdated, constants.UserID, updatedUser.ID)
-	return updatedUser, tokenDomain.Token, nil
+	return updatedUser, token, nil
 }

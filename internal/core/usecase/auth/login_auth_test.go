@@ -2,10 +2,11 @@ package auth_test
 
 import (
 	"errors"
+	"github.com/golang/mock/gomock"
+	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"
 )
@@ -14,45 +15,39 @@ func TestLogin_Success(t *testing.T) {
 	suite := setup.SetupAuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	ctx := suite.Ctx
 	inputUser := domain.UserDomain{Username: "lechitz"}
 	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
 
-	suite.UserRepo.EXPECT().
-		GetUserByUsername(ctx, "lechitz").
+	suite.UserRepository.EXPECT().
+		GetUserByUsername(suite.Ctx, "lechitz").
 		Return(mockUser, nil)
 
 	suite.PasswordHasher.EXPECT().
-		ComparePasswords("hashed", "123456").
+		ValidatePassword("hashed", "test123").
 		Return(nil)
 
 	suite.TokenService.EXPECT().
-		Create(ctx, domain.TokenDomain{UserID: 1}).
-		Return("token123", nil)
+		CreateToken(suite.Ctx, gomock.AssignableToTypeOf(domain.TokenDomain{UserID: 1})).
+		Return("token-string", nil)
 
-	suite.TokenService.EXPECT().
-		Save(ctx, domain.TokenDomain{UserID: 1, Token: "token123"}).
-		Return(nil)
-
-	userOut, tokenOut, err := suite.AuthService.Login(ctx, inputUser, "123456")
+	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "test123")
 
 	assert.NoError(t, err)
 	assert.Equal(t, mockUser, userOut)
-	assert.Equal(t, "token123", tokenOut)
+	assert.Equal(t, "token-string", tokenOut)
 }
 
 func TestLogin_UserNotFound(t *testing.T) {
 	suite := setup.SetupAuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	ctx := suite.Ctx
 	inputUser := domain.UserDomain{Username: "invalid_user"}
 
-	suite.UserRepo.EXPECT().
-		GetUserByUsername(ctx, "invalid_user").
+	suite.UserRepository.EXPECT().
+		GetUserByUsername(suite.Ctx, "invalid_user").
 		Return(domain.UserDomain{}, errors.New("not found"))
 
-	userOut, tokenOut, err := suite.AuthService.Login(ctx, inputUser, "123456")
+	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "123456")
 
 	assert.Error(t, err)
 	assert.Empty(t, userOut)
@@ -63,19 +58,18 @@ func TestLogin_WrongPassword(t *testing.T) {
 	suite := setup.SetupAuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	ctx := suite.Ctx
 	inputUser := domain.UserDomain{Username: "lechitz"}
 	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
 
-	suite.UserRepo.EXPECT().
-		GetUserByUsername(ctx, "lechitz").
+	suite.UserRepository.EXPECT().
+		GetUserByUsername(suite.Ctx, "lechitz").
 		Return(mockUser, nil)
 
 	suite.PasswordHasher.EXPECT().
-		ComparePasswords("hashed", "wrongpass").
+		ValidatePassword("hashed", "wrongpass").
 		Return(errors.New(constants.ErrorToCompareHashAndPassword))
 
-	userOut, tokenOut, err := suite.AuthService.Login(ctx, inputUser, "wrongpass")
+	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "wrongpass")
 
 	assert.Error(t, err)
 	assert.Empty(t, userOut)
@@ -87,15 +81,22 @@ func TestLogin_TokenCreationFails(t *testing.T) {
 	suite := setup.SetupAuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	ctx := suite.Ctx
 	inputUser := domain.UserDomain{Username: "lechitz"}
 	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
 
-	suite.UserRepo.EXPECT().GetUserByUsername(ctx, "lechitz").Return(mockUser, nil)
-	suite.PasswordHasher.EXPECT().ComparePasswords("hashed", "123456").Return(nil)
-	suite.TokenService.EXPECT().Create(ctx, domain.TokenDomain{UserID: 1}).Return("", errors.New(constants.ErrorToCreateToken))
+	suite.UserRepository.EXPECT().
+		GetUserByUsername(suite.Ctx, "lechitz").
+		Return(mockUser, nil)
 
-	userOut, tokenOut, err := suite.AuthService.Login(ctx, inputUser, "123456")
+	suite.PasswordHasher.EXPECT().
+		ValidatePassword("hashed", "123456").
+		Return(nil)
+
+	suite.TokenService.EXPECT().
+		CreateToken(suite.Ctx, gomock.Any()).
+		Return("", errors.New(constants.ErrorToCreateToken))
+
+	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "123456")
 
 	assert.Error(t, err)
 	assert.Empty(t, userOut)

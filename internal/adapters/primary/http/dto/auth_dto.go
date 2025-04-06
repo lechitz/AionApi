@@ -8,3 +8,8 @@ type LoginUserRequest struct {
 type LoginUserResponse struct {
 	Username string `json:"username"`
 }
+
+type LogoutUserRequest struct {
+	UserID uint64 `json:"id"`
+	Token  string `json:"token"`
+}

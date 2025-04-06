@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 )
@@ -18,22 +19,21 @@ func (s *UserService) CreateUser(ctx domain.ContextControl, user domain.UserDoma
 		return domain.UserDomain{}, errors.New(constants.ErrorToValidateCreateUser)
 	}
 
-	existingByUsername, err := s.UserRepository.GetUserByUsername(ctx, user.Username)
-	if err == nil && existingByUsername.ID != 0 {
+	if existingByUsername, err := s.UserRepository.GetUserByUsername(ctx, user.Username); err == nil && existingByUsername.ID != 0 {
 		return domain.UserDomain{}, errors.New(constants.UsernameIsAlreadyInUse)
 	}
 
-	existingByEmail, err := s.UserRepository.GetUserByEmail(ctx, user.Email)
-	if err == nil && existingByEmail.ID != 0 {
+	if existingByEmail, err := s.UserRepository.GetUserByEmail(ctx, user.Email); err == nil && existingByEmail.ID != 0 {
 		return domain.UserDomain{}, errors.New(constants.EmailIsAlreadyInUse)
 	}
 
-	hashPassword, err := s.PasswordService.HashPassword(password)
+	hashedPassword, err := s.SecurityHasher.HashPassword(password)
 	if err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToHashPassword, constants.Error, err.Error())
 		return domain.UserDomain{}, errors.New(constants.ErrorToHashPassword)
 	}
-	user.Password = hashPassword
+
+	user.Password = hashedPassword
 
 	userDB, err := s.UserRepository.CreateUser(ctx, user)
 	if err != nil {

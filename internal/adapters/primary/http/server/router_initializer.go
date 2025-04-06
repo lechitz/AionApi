@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/token"
+	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func InitRouter(logger *zap.SugaredLogger, userService inputHttp.UserService, authService inputHttp.AuthService, tokenService tokenports.Store, contextPath string) (*Router, error) {
+func InitRouter(logger *zap.SugaredLogger, userService inputHttp.UserService, authService inputHttp.AuthService, tokenRepository cache.TokenRepositoryPort, contextPath string) (*Router, error) {
 	if contextPath == "" {
 		return nil, fmt.Errorf(constants.ErrorContextPathEmpty)
 	}
@@ -32,7 +32,7 @@ func InitRouter(logger *zap.SugaredLogger, userService inputHttp.UserService, au
 		LoggerSugar: logger,
 	}
 
-	router, err := GetNewRouter(logger, tokenService, contextPath)
+	router, err := GetNewRouter(logger, tokenRepository, contextPath)
 	if err != nil {
 		return nil, err
 	}

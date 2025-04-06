@@ -34,9 +34,15 @@ func ObjectResponse(obj any, message string) *bytes.Buffer {
 }
 
 func HandleError(w http.ResponseWriter, logger *zap.SugaredLogger, status int, msg string, err error) {
-	logger.Errorw(msg, "error", err.Error())
-	response := ObjectResponse(msg, err.Error())
-	ResponseReturn(w, status, response.Bytes())
+	if err != nil {
+		logger.Errorw(msg, "error", err.Error())
+		response := ObjectResponse(nil, msg+": "+err.Error())
+		ResponseReturn(w, status, response.Bytes())
+	} else {
+		logger.Errorw(msg)
+		response := ObjectResponse(nil, msg)
+		ResponseReturn(w, status, response.Bytes())
+	}
 }
 
 func HandleCriticalError(loggerSugar *zap.SugaredLogger, message string, err error) {

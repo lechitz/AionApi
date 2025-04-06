@@ -1,275 +1,288 @@
-{"Time":"2025-04-02T03:29:20.538829093-03:00","Action":"start","Package":"github.com/lechitz/AionApi/cmd/aion-api"}
-{"Time":"2025-04-02T03:29:20.538889848-03:00","Action":"output","Package":"github.com/lechitz/AionApi/cmd/aion-api","Output":"?   \tgithub.com/lechitz/AionApi/cmd/aion-api\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.538899707-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/cmd/aion-api","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.538909846-03:00","Action":"start","Package":"github.com/lechitz/AionApi/cmd/aion-api/constants"}
-{"Time":"2025-04-02T03:29:20.538914846-03:00","Action":"output","Package":"github.com/lechitz/AionApi/cmd/aion-api/constants","Output":"?   \tgithub.com/lechitz/AionApi/cmd/aion-api/constants\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.538919505-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/cmd/aion-api/constants","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.538927139-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"}
-{"Time":"2025-04-02T03:29:20.538931978-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/constants\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.538935745-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/constants","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.538944181-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"}
-{"Time":"2025-04-02T03:29:20.53894843-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/dto","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/dto\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.538952487-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/dto","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.538961013-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"}
-{"Time":"2025-04-02T03:29:20.538965903-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/handlers\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.53896951-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.538977685-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"}
-{"Time":"2025-04-02T03:29:20.538982404-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.538988265-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539056906-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"}
-{"Time":"2025-04-02T03:29:20.539089067-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539103194-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539166434-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server"}
-{"Time":"2025-04-02T03:29:20.539197022-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/server\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539209065-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539226208-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server/constants"}
-{"Time":"2025-04-02T03:29:20.539321609-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/server/constants\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539352388-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server/constants","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539376564-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/validators"}
-{"Time":"2025-04-02T03:29:20.5393905-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/validators","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/validators\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539401231-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/validators","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539483277-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache"}
-{"Time":"2025-04-02T03:29:20.539519826-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/secondary/cache\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539535606-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539536929-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants"}
-{"Time":"2025-04-02T03:29:20.539555704-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/secondary/cache/constants\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539562177-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539572326-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db"}
-{"Time":"2025-04-02T03:29:20.539578127-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/secondary/db\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539582876-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539593636-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants"}
-{"Time":"2025-04-02T03:29:20.539637901-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/secondary/db/constants\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539649523-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539665964-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/domain"}
-{"Time":"2025-04-02T03:29:20.539675182-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/domain","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/domain\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539684549-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/domain","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539692444-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/ports/input/http"}
-{"Time":"2025-04-02T03:29:20.539710759-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/ports/input/http","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/ports/input/http\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539738332-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/ports/input/http","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539757668-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/ports/output/cache"}
-{"Time":"2025-04-02T03:29:20.539769721-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/ports/output/cache","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/ports/output/cache\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539777686-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/ports/output/cache","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539778197-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/ports/output/db"}
-{"Time":"2025-04-02T03:29:20.539796362-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/ports/output/db","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/ports/output/db\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539804147-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/ports/output/db","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539817372-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/ports/output/security"}
-{"Time":"2025-04-02T03:29:20.539826349-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/ports/output/security","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/ports/output/security\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539834064-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/ports/output/security","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.539845746-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/ports/output/token"}
-{"Time":"2025-04-02T03:29:20.539854613-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/ports/output/token","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/ports/output/token\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.539862357-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/ports/output/token","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.822968888-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth"}
-{"Time":"2025-04-02T03:29:20.823018242-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/usecase/constants"}
-{"Time":"2025-04-02T03:29:20.823040494-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/usecase/constants\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823047698-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/usecase/constants","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823058178-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/usecase/token"}
-{"Time":"2025-04-02T03:29:20.823062997-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/usecase/token\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823067045-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823084147-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/usecase/user"}
-{"Time":"2025-04-02T03:29:20.823135695-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/infrastructure/cache"}
-{"Time":"2025-04-02T03:29:20.823144322-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/infrastructure/cache","Output":"?   \tgithub.com/lechitz/AionApi/internal/infrastructure/cache\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823148189-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/infrastructure/cache","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823165763-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/infrastructure/db/constants"}
-{"Time":"2025-04-02T03:29:20.823170642-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/infrastructure/db/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/infrastructure/db/constants\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.82317498-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/infrastructure/db/constants","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823180831-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/infrastructure/db/postgres"}
-{"Time":"2025-04-02T03:29:20.82318559-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/infrastructure/db/postgres","Output":"?   \tgithub.com/lechitz/AionApi/internal/infrastructure/db/postgres\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823189548-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/infrastructure/db/postgres","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823202352-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/infrastructure/security"}
-{"Time":"2025-04-02T03:29:20.823230355-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/infrastructure/security","Output":"?   \tgithub.com/lechitz/AionApi/internal/infrastructure/security\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823242609-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/infrastructure/security","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823255754-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/platform/bootstrap"}
-{"Time":"2025-04-02T03:29:20.823565783-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/platform/bootstrap","Output":"?   \tgithub.com/lechitz/AionApi/internal/platform/bootstrap\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823576824-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/platform/bootstrap","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823589598-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/platform/config"}
-{"Time":"2025-04-02T03:29:20.823598616-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/platform/config","Output":"?   \tgithub.com/lechitz/AionApi/internal/platform/config\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.82360643-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/platform/config","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823616049-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/platform/config/constants"}
-{"Time":"2025-04-02T03:29:20.823624344-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/platform/config/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/platform/config/constants\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823632099-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/platform/config/constants","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.82364302-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/platform/logger"}
-{"Time":"2025-04-02T03:29:20.823651596-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/platform/logger","Output":"?   \tgithub.com/lechitz/AionApi/internal/platform/logger\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823659121-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/platform/logger","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.82366924-03:00","Action":"start","Package":"github.com/lechitz/AionApi/pkg/utils"}
-{"Time":"2025-04-02T03:29:20.823677886-03:00","Action":"output","Package":"github.com/lechitz/AionApi/pkg/utils","Output":"?   \tgithub.com/lechitz/AionApi/pkg/utils\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823685661-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/pkg/utils","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823696091-03:00","Action":"start","Package":"github.com/lechitz/AionApi/tests/mocks/auth"}
-{"Time":"2025-04-02T03:29:20.823719065-03:00","Action":"output","Package":"github.com/lechitz/AionApi/tests/mocks/auth","Output":"?   \tgithub.com/lechitz/AionApi/tests/mocks/auth\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.82372726-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/tests/mocks/auth","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.82373254-03:00","Action":"start","Package":"github.com/lechitz/AionApi/tests/mocks/cache"}
-{"Time":"2025-04-02T03:29:20.823810318-03:00","Action":"output","Package":"github.com/lechitz/AionApi/tests/mocks/cache","Output":"?   \tgithub.com/lechitz/AionApi/tests/mocks/cache\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823835235-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/tests/mocks/cache","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823851977-03:00","Action":"start","Package":"github.com/lechitz/AionApi/tests/mocks/security"}
-{"Time":"2025-04-02T03:29:20.823864441-03:00","Action":"output","Package":"github.com/lechitz/AionApi/tests/mocks/security","Output":"?   \tgithub.com/lechitz/AionApi/tests/mocks/security\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823875833-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/tests/mocks/security","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823887695-03:00","Action":"start","Package":"github.com/lechitz/AionApi/tests/mocks/token"}
-{"Time":"2025-04-02T03:29:20.823901021-03:00","Action":"output","Package":"github.com/lechitz/AionApi/tests/mocks/token","Output":"?   \tgithub.com/lechitz/AionApi/tests/mocks/token\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823910829-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/tests/mocks/token","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823910318-03:00","Action":"start","Package":"github.com/lechitz/AionApi/tests/mocks/user"}
-{"Time":"2025-04-02T03:29:20.823930667-03:00","Action":"output","Package":"github.com/lechitz/AionApi/tests/mocks/user","Output":"?   \tgithub.com/lechitz/AionApi/tests/mocks/user\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823940836-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/tests/mocks/user","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.823943872-03:00","Action":"start","Package":"github.com/lechitz/AionApi/tests/setup"}
-{"Time":"2025-04-02T03:29:20.823966034-03:00","Action":"output","Package":"github.com/lechitz/AionApi/tests/setup","Output":"?   \tgithub.com/lechitz/AionApi/tests/setup\t[no test files]\n"}
-{"Time":"2025-04-02T03:29:20.823976915-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/tests/setup","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.827543397-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_Success"}
-{"Time":"2025-04-02T03:29:20.827587841-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_Success","Output":"=== RUN   TestCreateUser_Success\n"}
-{"Time":"2025-04-02T03:29:20.827795186-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_Success","Output":"    logger.go:146: 2025-04-02T03:29:20.827-0300\tINFO\tuser created successfully\t{\"id\": 0}\n"}
-{"Time":"2025-04-02T03:29:20.827810605-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_Success","Output":"--- PASS: TestCreateUser_Success (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.827814943-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_Success","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.827822047-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByUsername"}
-{"Time":"2025-04-02T03:29:20.827825694-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByUsername","Output":"=== RUN   TestCreateUser_ErrorToGetUserByUsername\n"}
-{"Time":"2025-04-02T03:29:20.827845261-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByUsername","Output":"--- PASS: TestCreateUser_ErrorToGetUserByUsername (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.82786058-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByUsername","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.827866221-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByEmail"}
-{"Time":"2025-04-02T03:29:20.827869447-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByEmail","Output":"=== RUN   TestCreateUser_ErrorToGetUserByEmail\n"}
-{"Time":"2025-04-02T03:29:20.827888453-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByEmail","Output":"--- PASS: TestCreateUser_ErrorToGetUserByEmail (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.82789222-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByEmail","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.827895757-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToHashPassword"}
-{"Time":"2025-04-02T03:29:20.827898722-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToHashPassword","Output":"=== RUN   TestCreateUser_ErrorToHashPassword\n"}
-{"Time":"2025-04-02T03:29:20.827944449-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_Success"}
-{"Time":"2025-04-02T03:29:20.827952595-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_Success","Output":"=== RUN   TestLogin_Success\n"}
-{"Time":"2025-04-02T03:29:20.827969868-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToHashPassword","Output":"    logger.go:146: 2025-04-02T03:29:20.827-0300\tERROR\terror to hash password\t{\"error\": \"error to hash password\"}\n"}
-{"Time":"2025-04-02T03:29:20.827975168-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToHashPassword","Output":"--- PASS: TestCreateUser_ErrorToHashPassword (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.827979386-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToHashPassword","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.827982983-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToCreateUser"}
-{"Time":"2025-04-02T03:29:20.827985968-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToCreateUser","Output":"=== RUN   TestCreateUser_ErrorToCreateUser\n"}
-{"Time":"2025-04-02T03:29:20.82803929-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToCreateUser","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to create user\t{\"error\": \"error to create user\"}\n"}
-{"Time":"2025-04-02T03:29:20.828051072-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToCreateUser","Output":"--- PASS: TestCreateUser_ErrorToCreateUser (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.82805515-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToCreateUser","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828058797-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_Success"}
-{"Time":"2025-04-02T03:29:20.828061873-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_Success","Output":"=== RUN   TestDeleteUser_Success\n"}
-{"Time":"2025-04-02T03:29:20.828094805-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_Success","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tINFO\tuser soft deleted successfully\t{\"id\": 1}\n"}
-{"Time":"2025-04-02T03:29:20.828100326-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_Success","Output":"--- PASS: TestDeleteUser_Success (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828103712-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_Success","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828108642-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_ErrorToSoftDeleteUser"}
-{"Time":"2025-04-02T03:29:20.828111808-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_ErrorToSoftDeleteUser","Output":"=== RUN   TestDeleteUser_ErrorToSoftDeleteUser\n"}
-{"Time":"2025-04-02T03:29:20.828117609-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_Success","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tINFO\tuser logged in successfully\t{\"id\": 1}\n"}
-{"Time":"2025-04-02T03:29:20.828138048-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_ErrorToSoftDeleteUser","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to soft delete user\t{\"error\": \"error to soft delete user\"}\n"}
-{"Time":"2025-04-02T03:29:20.828143207-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_ErrorToSoftDeleteUser","Output":"--- PASS: TestDeleteUser_ErrorToSoftDeleteUser (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828146604-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_ErrorToSoftDeleteUser","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828152495-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_Success","Output":"--- PASS: TestLogin_Success (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828155781-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_Success","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828159058-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_UserNotFound"}
-{"Time":"2025-04-02T03:29:20.828162053-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_UserNotFound","Output":"=== RUN   TestLogin_UserNotFound\n"}
-{"Time":"2025-04-02T03:29:20.828167694-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_ErrorToDeleteToken"}
-{"Time":"2025-04-02T03:29:20.8281707-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_ErrorToDeleteToken","Output":"=== RUN   TestDeleteUser_ErrorToDeleteToken\n"}
-{"Time":"2025-04-02T03:29:20.828189095-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_UserNotFound","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to get user by username\t{\"error\": \"not found\"}\n"}
-{"Time":"2025-04-02T03:29:20.828195006-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_UserNotFound","Output":"--- PASS: TestLogin_UserNotFound (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828199304-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_UserNotFound","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828202691-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_WrongPassword"}
-{"Time":"2025-04-02T03:29:20.828209493-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_WrongPassword","Output":"=== RUN   TestLogin_WrongPassword\n"}
-{"Time":"2025-04-02T03:29:20.828215004-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_ErrorToDeleteToken","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to delete token\t{\"error\": \"error to delete token\"}\n"}
-{"Time":"2025-04-02T03:29:20.828218891-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_ErrorToDeleteToken","Output":"--- PASS: TestDeleteUser_ErrorToDeleteToken (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828222158-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestDeleteUser_ErrorToDeleteToken","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828225344-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Success"}
-{"Time":"2025-04-02T03:29:20.828228299-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Success","Output":"=== RUN   TestGetUserByID_Success\n"}
-{"Time":"2025-04-02T03:29:20.8282338-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_WrongPassword","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\tinvalid password provided\t{\"error\": \"invalid password provided\"}\n"}
-{"Time":"2025-04-02T03:29:20.828238669-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_WrongPassword","Output":"--- PASS: TestLogin_WrongPassword (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828241975-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_WrongPassword","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828246073-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_TokenCreationFails"}
-{"Time":"2025-04-02T03:29:20.828249049-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_TokenCreationFails","Output":"=== RUN   TestLogin_TokenCreationFails\n"}
-{"Time":"2025-04-02T03:29:20.828254429-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Success","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tINFO\tuser retrieved successfully\t{\"id\": 1}\n"}
-{"Time":"2025-04-02T03:29:20.828264258-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Success","Output":"--- PASS: TestGetUserByID_Success (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828270209-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Success","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828274758-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Error"}
-{"Time":"2025-04-02T03:29:20.828277683-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Error","Output":"=== RUN   TestGetUserByID_Error\n"}
-{"Time":"2025-04-02T03:29:20.828303873-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_TokenCreationFails","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to create token\t{\"error\": \"error to create token\"}\n"}
-{"Time":"2025-04-02T03:29:20.828308011-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_TokenCreationFails","Output":"--- PASS: TestLogin_TokenCreationFails (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828312219-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_TokenCreationFails","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828319112-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_Success"}
-{"Time":"2025-04-02T03:29:20.828322238-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_Success","Output":"=== RUN   TestLogout_Success\n"}
-{"Time":"2025-04-02T03:29:20.828320324-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Error","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to get user by id\t{\"error\": \"record not found\"}\n"}
-{"Time":"2025-04-02T03:29:20.828337397-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Error","Output":"--- PASS: TestGetUserByID_Error (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828343418-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Error","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828358266-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Success"}
-{"Time":"2025-04-02T03:29:20.828362705-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Success","Output":"=== RUN   TestGetUserByEmail_Success\n"}
-{"Time":"2025-04-02T03:29:20.828369057-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Success","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tINFO\tuser retrieved successfully\t{\"id\": 1}\n"}
-{"Time":"2025-04-02T03:29:20.828375619-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Success","Output":"--- PASS: TestGetUserByEmail_Success (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828383815-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Success","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828378755-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_Success","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tINFO\tuser logged out successfully\t{\"id\": 1}\n"}
-{"Time":"2025-04-02T03:29:20.828407179-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_Success","Output":"--- PASS: TestLogout_Success (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828413862-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_Success","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828418721-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_CheckTokenFails"}
-{"Time":"2025-04-02T03:29:20.828421937-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_CheckTokenFails","Output":"=== RUN   TestLogout_CheckTokenFails\n"}
-{"Time":"2025-04-02T03:29:20.828389566-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Error"}
-{"Time":"2025-04-02T03:29:20.828430484-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Error","Output":"=== RUN   TestGetUserByEmail_Error\n"}
-{"Time":"2025-04-02T03:29:20.828442196-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Error","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to get user by email\t{\"error\": \"record not found\"}\n"}
-{"Time":"2025-04-02T03:29:20.828446715-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Error","Output":"--- PASS: TestGetUserByEmail_Error (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828459699-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Error","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828463376-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Success"}
-{"Time":"2025-04-02T03:29:20.828466703-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Success","Output":"=== RUN   TestGetUserByUsername_Success\n"}
-{"Time":"2025-04-02T03:29:20.828470109-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Success","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tINFO\tuser retrieved successfully\t{\"id\": 1}\n"}
-{"Time":"2025-04-02T03:29:20.828475199-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Success","Output":"--- PASS: TestGetUserByUsername_Success (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828478806-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Success","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828482493-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Error"}
-{"Time":"2025-04-02T03:29:20.828485508-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Error","Output":"=== RUN   TestGetUserByUsername_Error\n"}
-{"Time":"2025-04-02T03:29:20.828489907-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Error","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to get user by username\t{\"error\": \"record not found\"}\n"}
-{"Time":"2025-04-02T03:29:20.828498723-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Error","Output":"--- PASS: TestGetUserByUsername_Error (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.82850219-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Error","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828505857-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Success"}
-{"Time":"2025-04-02T03:29:20.828509033-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Success","Output":"=== RUN   TestGetAllUsers_Success\n"}
-{"Time":"2025-04-02T03:29:20.828514153-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Success","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tINFO\tusers retrieved successfully\t{\"count\": 3}\n"}
-{"Time":"2025-04-02T03:29:20.828519232-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Success","Output":"--- PASS: TestGetAllUsers_Success (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828522609-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Success","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828442006-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_CheckTokenFails","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to check token\t{\"error\": \"invalid token\"}\n"}
-{"Time":"2025-04-02T03:29:20.828540393-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_CheckTokenFails","Output":"--- PASS: TestLogout_CheckTokenFails (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.82854937-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_CheckTokenFails","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828564038-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_DeleteTokenFails"}
-{"Time":"2025-04-02T03:29:20.828571291-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_DeleteTokenFails","Output":"=== RUN   TestLogout_DeleteTokenFails\n"}
-{"Time":"2025-04-02T03:29:20.828578605-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_DeleteTokenFails","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to revoke token\t{\"error\": \"delete error\", \"id\": 1}\n"}
-{"Time":"2025-04-02T03:29:20.828587292-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_DeleteTokenFails","Output":"--- PASS: TestLogout_DeleteTokenFails (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828526797-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Error"}
-{"Time":"2025-04-02T03:29:20.82859686-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_DeleteTokenFails","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828605256-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Output":"PASS\n"}
-{"Time":"2025-04-02T03:29:20.828599655-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Error","Output":"=== RUN   TestGetAllUsers_Error\n"}
-{"Time":"2025-04-02T03:29:20.828622308-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Error","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to get all users\t{\"error\": \"record not found\"}\n"}
-{"Time":"2025-04-02T03:29:20.828632007-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Error","Output":"--- PASS: TestGetAllUsers_Error (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828639361-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Error","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828646935-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_Success"}
-{"Time":"2025-04-02T03:29:20.828653558-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_Success","Output":"=== RUN   TestUpdateUser_Success\n"}
-{"Time":"2025-04-02T03:29:20.828663567-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_Success","Output":"--- PASS: TestUpdateUser_Success (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828671131-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_Success","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828678505-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_NoFieldsToUpdate"}
-{"Time":"2025-04-02T03:29:20.828685098-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_NoFieldsToUpdate","Output":"=== RUN   TestUpdateUser_NoFieldsToUpdate\n"}
-{"Time":"2025-04-02T03:29:20.828695097-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_NoFieldsToUpdate","Output":"--- PASS: TestUpdateUser_NoFieldsToUpdate (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828702511-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_NoFieldsToUpdate","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828709885-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_Success"}
-{"Time":"2025-04-02T03:29:20.828716427-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_Success","Output":"=== RUN   TestUpdateUserPassword_Success\n"}
-{"Time":"2025-04-02T03:29:20.828730364-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_Success","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tINFO\tpassword updated successfully\t{\"id\": 1}\n"}
-{"Time":"2025-04-02T03:29:20.828740633-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_Success","Output":"--- PASS: TestUpdateUserPassword_Success (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828747987-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_Success","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828755181-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToGetUserByID"}
-{"Time":"2025-04-02T03:29:20.828761904-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToGetUserByID","Output":"=== RUN   TestUpdateUserPassword_ErrorToGetUserByID\n"}
-{"Time":"2025-04-02T03:29:20.828771332-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToGetUserByID","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to get user by id\t{\"error\": \"error to get user by id\"}\n"}
-{"Time":"2025-04-02T03:29:20.828780008-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToGetUserByID","Output":"--- PASS: TestUpdateUserPassword_ErrorToGetUserByID (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828787402-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToGetUserByID","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828794816-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCompareHashAndPassword"}
-{"Time":"2025-04-02T03:29:20.828801489-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCompareHashAndPassword","Output":"=== RUN   TestUpdateUserPassword_ErrorToCompareHashAndPassword\n"}
-{"Time":"2025-04-02T03:29:20.828810787-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCompareHashAndPassword","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\tinvalid password provided\t{\"error\": \"invalid password provided\"}\n"}
-{"Time":"2025-04-02T03:29:20.828819323-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCompareHashAndPassword","Output":"--- PASS: TestUpdateUserPassword_ErrorToCompareHashAndPassword (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828826707-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCompareHashAndPassword","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828834031-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToHashPassword"}
-{"Time":"2025-04-02T03:29:20.828840714-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToHashPassword","Output":"=== RUN   TestUpdateUserPassword_ErrorToHashPassword\n"}
-{"Time":"2025-04-02T03:29:20.828850693-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToHashPassword","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to hash password\t{\"error\": \"error to hash password\"}\n"}
-{"Time":"2025-04-02T03:29:20.828869739-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToHashPassword","Output":"--- PASS: TestUpdateUserPassword_ErrorToHashPassword (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828877714-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToHashPassword","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.828885769-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToUpdatePassword"}
-{"Time":"2025-04-02T03:29:20.828892482-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToUpdatePassword","Output":"=== RUN   TestUpdateUserPassword_ErrorToUpdatePassword\n"}
-{"Time":"2025-04-02T03:29:20.828933049-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToUpdatePassword","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to update password\t{\"error\": \"error to update password\"}\n"}
-{"Time":"2025-04-02T03:29:20.828945593-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToUpdatePassword","Output":"--- PASS: TestUpdateUserPassword_ErrorToUpdatePassword (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.828950262-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToUpdatePassword","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.82895467-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCreateToken"}
-{"Time":"2025-04-02T03:29:20.828958528-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCreateToken","Output":"=== RUN   TestUpdateUserPassword_ErrorToCreateToken\n"}
-{"Time":"2025-04-02T03:29:20.828996259-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCreateToken","Output":"    logger.go:146: 2025-04-02T03:29:20.828-0300\tERROR\terror to create token\t{\"error\": \"error to create token\"}\n"}
-{"Time":"2025-04-02T03:29:20.829002792-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCreateToken","Output":"--- PASS: TestUpdateUserPassword_ErrorToCreateToken (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.82900694-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCreateToken","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.82901217-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToSaveToken"}
-{"Time":"2025-04-02T03:29:20.829016047-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToSaveToken","Output":"=== RUN   TestUpdateUserPassword_ErrorToSaveToken\n"}
-{"Time":"2025-04-02T03:29:20.829076963-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToSaveToken","Output":"    logger.go:146: 2025-04-02T03:29:20.829-0300\tERROR\terror to save token\t{\"error\": \"error to save token\"}\n"}
-{"Time":"2025-04-02T03:29:20.829083395-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToSaveToken","Output":"--- PASS: TestUpdateUserPassword_ErrorToSaveToken (0.00s)\n"}
-{"Time":"2025-04-02T03:29:20.829087463-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToSaveToken","Elapsed":0}
-{"Time":"2025-04-02T03:29:20.829092212-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Output":"PASS\n"}
-{"Time":"2025-04-02T03:29:20.829415016-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Output":"ok  \tgithub.com/lechitz/AionApi/internal/core/usecase/auth\t0.006s\n"}
-{"Time":"2025-04-02T03:29:20.829893285-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Output":"ok  \tgithub.com/lechitz/AionApi/internal/core/usecase/user\t0.007s\n"}
-{"Time":"2025-04-02T03:29:20.829883086-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Elapsed":0.007}
-{"Time":"2025-04-02T03:29:20.830228803-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Elapsed":0.007}
+{"Time":"2025-04-06T17:28:44.005902421-03:00","Action":"start","Package":"github.com/lechitz/AionApi/cmd/aion-api"}
+{"Time":"2025-04-06T17:28:44.005959008-03:00","Action":"output","Package":"github.com/lechitz/AionApi/cmd/aion-api","Output":"?   \tgithub.com/lechitz/AionApi/cmd/aion-api\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.005977583-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/cmd/aion-api","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.005987963-03:00","Action":"start","Package":"github.com/lechitz/AionApi/cmd/aion-api/constants"}
+{"Time":"2025-04-06T17:28:44.005992852-03:00","Action":"output","Package":"github.com/lechitz/AionApi/cmd/aion-api/constants","Output":"?   \tgithub.com/lechitz/AionApi/cmd/aion-api/constants\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.00599722-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/cmd/aion-api/constants","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.006006598-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"}
+{"Time":"2025-04-06T17:28:44.006011257-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/constants\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.006015515-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/constants","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.006024371-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"}
+{"Time":"2025-04-06T17:28:44.006029551-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/dto","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/dto\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.006033869-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/dto","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.006146782-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"}
+{"Time":"2025-04-06T17:28:44.00616115-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/handlers\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.006167782-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.006244337-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"}
+{"Time":"2025-04-06T17:28:44.006280986-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.00628861-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.006355036-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"}
+{"Time":"2025-04-06T17:28:44.006394851-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.006402856-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.006420199-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server"}
+{"Time":"2025-04-06T17:28:44.006444585-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/server\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.006450406-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.006499819-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server/constants"}
+{"Time":"2025-04-06T17:28:44.006522852-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/server/constants\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.006530497-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/server/constants","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.006890987-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/validators"}
+{"Time":"2025-04-06T17:28:44.006936112-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/validators","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/primary/http/validators\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.006945691-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/primary/http/validators","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.007004241-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache"}
+{"Time":"2025-04-06T17:28:44.007079343-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/secondary/cache\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.007091035-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.007201143-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants"}
+{"Time":"2025-04-06T17:28:44.007209929-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/secondary/cache/constants\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.007216061-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.007237892-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db"}
+{"Time":"2025-04-06T17:28:44.007245917-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/secondary/db\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.007251868-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.007267949-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants"}
+{"Time":"2025-04-06T17:28:44.007276495-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/adapters/secondary/db/constants\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.007282797-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.007306962-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/domain"}
+{"Time":"2025-04-06T17:28:44.007320909-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/domain","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/domain\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.007337941-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/domain","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.007354673-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/ports/input/http"}
+{"Time":"2025-04-06T17:28:44.007363339-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/ports/input/http","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/ports/input/http\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.007382054-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/ports/input/http","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.00740077-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/ports/output/cache"}
+{"Time":"2025-04-06T17:28:44.007408785-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/ports/output/cache","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/ports/output/cache\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.007418844-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/ports/output/cache","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.007433451-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/ports/output/db"}
+{"Time":"2025-04-06T17:28:44.007441436-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/ports/output/db","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/ports/output/db\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.007447448-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/ports/output/db","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.007515186-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/ports/output/security"}
+{"Time":"2025-04-06T17:28:44.007627097-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/ports/output/security","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/ports/output/security\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.007651904-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/ports/output/security","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.064600602-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth"}
+{"Time":"2025-04-06T17:28:44.064699759-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/usecase/constants"}
+{"Time":"2025-04-06T17:28:44.064736258-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/core/usecase/constants\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.064743882-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/core/usecase/constants","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.069794716-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_Success"}
+{"Time":"2025-04-06T17:28:44.069836756-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_Success","Output":"=== RUN   TestLogin_Success\n"}
+{"Time":"2025-04-06T17:28:44.070023799-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.069-0300\tINFO\tuser logged in successfully\t{\"id\": 1, \"token\": \"token-string\"}\n"}
+{"Time":"2025-04-06T17:28:44.070062221-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_Success","Output":"--- PASS: TestLogin_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.070067431-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.070074755-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_UserNotFound"}
+{"Time":"2025-04-06T17:28:44.070077861-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_UserNotFound","Output":"=== RUN   TestLogin_UserNotFound\n"}
+{"Time":"2025-04-06T17:28:44.070195653-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_UserNotFound","Output":"    logger.go:146: 2025-04-06T17:28:44.070-0300\tERROR\terror to get user by username\t{\"error\": \"not found\"}\n"}
+{"Time":"2025-04-06T17:28:44.070283389-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_UserNotFound","Output":"--- PASS: TestLogin_UserNotFound (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.070303617-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_UserNotFound","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.070311211-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_WrongPassword"}
+{"Time":"2025-04-06T17:28:44.070315449-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_WrongPassword","Output":"=== RUN   TestLogin_WrongPassword\n"}
+{"Time":"2025-04-06T17:28:44.070328003-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_WrongPassword","Output":"    logger.go:146: 2025-04-06T17:28:44.070-0300\tERROR\tinvalid password provided\t{\"error\": \"invalid password provided\"}\n"}
+{"Time":"2025-04-06T17:28:44.070333383-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_WrongPassword","Output":"--- PASS: TestLogin_WrongPassword (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.070337301-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_WrongPassword","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.07034236-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_TokenCreationFails"}
+{"Time":"2025-04-06T17:28:44.070345887-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_TokenCreationFails","Output":"=== RUN   TestLogin_TokenCreationFails\n"}
+{"Time":"2025-04-06T17:28:44.070351157-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_TokenCreationFails","Output":"    logger.go:146: 2025-04-06T17:28:44.070-0300\tERROR\terror to create token\t{\"error\": \"error to create token\"}\n"}
+{"Time":"2025-04-06T17:28:44.070356136-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_TokenCreationFails","Output":"--- PASS: TestLogin_TokenCreationFails (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.070362007-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogin_TokenCreationFails","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.070369381-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_Success"}
+{"Time":"2025-04-06T17:28:44.070372667-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_Success","Output":"=== RUN   TestLogout_Success\n"}
+{"Time":"2025-04-06T17:28:44.070446607-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.070-0300\tINFO\tuser logged out successfully\t{\"id\": 1}\n"}
+{"Time":"2025-04-06T17:28:44.070455383-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_Success","Output":"--- PASS: TestLogout_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.070461635-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.070466404-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_CheckTokenFails"}
+{"Time":"2025-04-06T17:28:44.070470933-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_CheckTokenFails","Output":"=== RUN   TestLogout_CheckTokenFails\n"}
+{"Time":"2025-04-06T17:28:44.070513834-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_CheckTokenFails","Output":"    logger.go:146: 2025-04-06T17:28:44.070-0300\tERROR\terror to check token\t{\"error\": \"invalid token\"}\n"}
+{"Time":"2025-04-06T17:28:44.070528351-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_CheckTokenFails","Output":"--- PASS: TestLogout_CheckTokenFails (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.07053834-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_CheckTokenFails","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.070542428-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_DeleteTokenFails"}
+{"Time":"2025-04-06T17:28:44.070545864-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_DeleteTokenFails","Output":"=== RUN   TestLogout_DeleteTokenFails\n"}
+{"Time":"2025-04-06T17:28:44.070630935-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_DeleteTokenFails","Output":"    logger.go:146: 2025-04-06T17:28:44.070-0300\tERROR\terror to revoke token\t{\"error\": \"delete error\", \"id\": 1}\n"}
+{"Time":"2025-04-06T17:28:44.070641835-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_DeleteTokenFails","Output":"--- PASS: TestLogout_DeleteTokenFails (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.070647306-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Test":"TestLogout_DeleteTokenFails","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.070654539-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Output":"PASS\n"}
+{"Time":"2025-04-06T17:28:44.072070492-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Output":"ok  \tgithub.com/lechitz/AionApi/internal/core/usecase/auth\t0.007s\n"}
+{"Time":"2025-04-06T17:28:44.072894618-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/auth","Elapsed":0.008}
+{"Time":"2025-04-06T17:28:44.274708598-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/usecase/token"}
+{"Time":"2025-04-06T17:28:44.279726209-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestVerifyToken_Success"}
+{"Time":"2025-04-06T17:28:44.279786964-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestVerifyToken_Success","Output":"=== RUN   TestVerifyToken_Success\n"}
+{"Time":"2025-04-06T17:28:44.279937067-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestVerifyToken_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.279-0300\tINFO\ttoken validated successfully\t{\"id\": 1}\n"}
+{"Time":"2025-04-06T17:28:44.279967124-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestVerifyToken_Success","Output":"--- PASS: TestVerifyToken_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.279972504-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestVerifyToken_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.279978906-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_InvalidToken"}
+{"Time":"2025-04-06T17:28:44.279984667-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_InvalidToken","Output":"=== RUN   TestCheck_InvalidToken\n"}
+{"Time":"2025-04-06T17:28:44.280008633-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_InvalidToken","Output":"    logger.go:146: 2025-04-06T17:28:44.279-0300\tERROR\tinvalid token\t{\"token\": \"invalidToken\", \"error\": \"token is malformed: token contains an invalid number of segments\"}\n"}
+{"Time":"2025-04-06T17:28:44.280030083-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_InvalidToken","Output":"--- PASS: TestCheck_InvalidToken (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.28003401-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_InvalidToken","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.280038769-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_TokenMismatch"}
+{"Time":"2025-04-06T17:28:44.280042376-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_TokenMismatch","Output":"=== RUN   TestCheck_TokenMismatch\n"}
+{"Time":"2025-04-06T17:28:44.280091018-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_TokenMismatch","Output":"    logger.go:146: 2025-04-06T17:28:44.280-0300\tERROR\tprovided token does not match stored token\t{\"id\": 1, \"TokenFromCookie\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDM5NzQ5MjQsImlkIjoxfQ.Y9hmQSsaZoOZ0EI9mu2rsyKn-PTI5Wt8Jx2ts1pWFFI\", \"TokenFromCache\": \"differentToken\"}\n"}
+{"Time":"2025-04-06T17:28:44.280100466-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_TokenMismatch","Output":"--- PASS: TestCheck_TokenMismatch (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.280109092-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_TokenMismatch","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.28011346-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_ErrorToRetrieveTokenFromCache"}
+{"Time":"2025-04-06T17:28:44.280119241-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_ErrorToRetrieveTokenFromCache","Output":"=== RUN   TestCheck_ErrorToRetrieveTokenFromCache\n"}
+{"Time":"2025-04-06T17:28:44.280172011-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_ErrorToRetrieveTokenFromCache","Output":"    logger.go:146: 2025-04-06T17:28:44.280-0300\tERROR\terror to retrieve token from cache\t{\"error\": \"error to retrieve token from cache\", \"id\": 1}\n"}
+{"Time":"2025-04-06T17:28:44.280178714-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_ErrorToRetrieveTokenFromCache","Output":"--- PASS: TestCheck_ErrorToRetrieveTokenFromCache (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.280194153-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Test":"TestCheck_ErrorToRetrieveTokenFromCache","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.280200204-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Output":"PASS\n"}
+{"Time":"2025-04-06T17:28:44.280905445-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/core/usecase/user"}
+{"Time":"2025-04-06T17:28:44.281060829-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/infrastructure/cache"}
+{"Time":"2025-04-06T17:28:44.281116223-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/infrastructure/cache","Output":"?   \tgithub.com/lechitz/AionApi/internal/infrastructure/cache\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281128767-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/infrastructure/cache","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281144497-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/infrastructure/db"}
+{"Time":"2025-04-06T17:28:44.281151269-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/infrastructure/db","Output":"?   \tgithub.com/lechitz/AionApi/internal/infrastructure/db\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281157401-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/infrastructure/db","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.28117832-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/infrastructure/db/constants"}
+{"Time":"2025-04-06T17:28:44.281250687-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Output":"ok  \tgithub.com/lechitz/AionApi/internal/core/usecase/token\t0.006s\n"}
+{"Time":"2025-04-06T17:28:44.281272969-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/infrastructure/db/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/infrastructure/db/constants\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281291194-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/infrastructure/db/constants","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281312744-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/infrastructure/security"}
+{"Time":"2025-04-06T17:28:44.281321381-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/infrastructure/security","Output":"?   \tgithub.com/lechitz/AionApi/internal/infrastructure/security\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281327382-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/infrastructure/security","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281340176-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/platform/bootstrap"}
+{"Time":"2025-04-06T17:28:44.281356467-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/platform/bootstrap","Output":"?   \tgithub.com/lechitz/AionApi/internal/platform/bootstrap\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281361847-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/platform/bootstrap","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281370553-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/platform/config"}
+{"Time":"2025-04-06T17:28:44.281376394-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/platform/config","Output":"?   \tgithub.com/lechitz/AionApi/internal/platform/config\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281380312-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/platform/config","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.2813902-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/platform/config/constants"}
+{"Time":"2025-04-06T17:28:44.28139529-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/platform/config/constants","Output":"?   \tgithub.com/lechitz/AionApi/internal/platform/config/constants\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281399929-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/platform/config/constants","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281408034-03:00","Action":"start","Package":"github.com/lechitz/AionApi/internal/platform/logger"}
+{"Time":"2025-04-06T17:28:44.281413524-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/platform/logger","Output":"?   \tgithub.com/lechitz/AionApi/internal/platform/logger\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281417532-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/internal/platform/logger","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281429144-03:00","Action":"start","Package":"github.com/lechitz/AionApi/pkg/utils"}
+{"Time":"2025-04-06T17:28:44.281441788-03:00","Action":"output","Package":"github.com/lechitz/AionApi/pkg/utils","Output":"?   \tgithub.com/lechitz/AionApi/pkg/utils\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281448631-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/pkg/utils","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281461425-03:00","Action":"start","Package":"github.com/lechitz/AionApi/tests/mocks/security"}
+{"Time":"2025-04-06T17:28:44.28148508-03:00","Action":"output","Package":"github.com/lechitz/AionApi/tests/mocks/security","Output":"?   \tgithub.com/lechitz/AionApi/tests/mocks/security\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281493435-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/tests/mocks/security","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281513443-03:00","Action":"start","Package":"github.com/lechitz/AionApi/tests/mocks/token"}
+{"Time":"2025-04-06T17:28:44.281520026-03:00","Action":"output","Package":"github.com/lechitz/AionApi/tests/mocks/token","Output":"?   \tgithub.com/lechitz/AionApi/tests/mocks/token\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281525195-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/tests/mocks/token","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281533912-03:00","Action":"start","Package":"github.com/lechitz/AionApi/tests/mocks/user"}
+{"Time":"2025-04-06T17:28:44.281540664-03:00","Action":"output","Package":"github.com/lechitz/AionApi/tests/mocks/user","Output":"?   \tgithub.com/lechitz/AionApi/tests/mocks/user\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281545433-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/tests/mocks/user","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281553749-03:00","Action":"start","Package":"github.com/lechitz/AionApi/tests/setup"}
+{"Time":"2025-04-06T17:28:44.281561033-03:00","Action":"output","Package":"github.com/lechitz/AionApi/tests/setup","Output":"?   \tgithub.com/lechitz/AionApi/tests/setup\t[no test files]\n"}
+{"Time":"2025-04-06T17:28:44.281565962-03:00","Action":"skip","Package":"github.com/lechitz/AionApi/tests/setup","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.281851181-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/token","Elapsed":0.007}
+{"Time":"2025-04-06T17:28:44.286691738-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_Success"}
+{"Time":"2025-04-06T17:28:44.286734549-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_Success","Output":"=== RUN   TestCreateUser_Success\n"}
+{"Time":"2025-04-06T17:28:44.287033954-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.286-0300\tINFO\tuser created successfully\t{\"id\": 0}\n"}
+{"Time":"2025-04-06T17:28:44.287078879-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_Success","Output":"--- PASS: TestCreateUser_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287094678-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287108625-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByUsername"}
+{"Time":"2025-04-06T17:28:44.287120527-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByUsername","Output":"=== RUN   TestCreateUser_ErrorToGetUserByUsername\n"}
+{"Time":"2025-04-06T17:28:44.287131778-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByUsername","Output":"--- PASS: TestCreateUser_ErrorToGetUserByUsername (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287141216-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByUsername","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287151516-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByEmail"}
+{"Time":"2025-04-06T17:28:44.287159751-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByEmail","Output":"=== RUN   TestCreateUser_ErrorToGetUserByEmail\n"}
+{"Time":"2025-04-06T17:28:44.287171123-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByEmail","Output":"--- PASS: TestCreateUser_ErrorToGetUserByEmail (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.28720129-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToGetUserByEmail","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287209124-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToHashPassword"}
+{"Time":"2025-04-06T17:28:44.287215987-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToHashPassword","Output":"=== RUN   TestCreateUser_ErrorToHashPassword\n"}
+{"Time":"2025-04-06T17:28:44.287227569-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToHashPassword","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tERROR\terror to hash password\t{\"error\": \"error to hash password\"}\n"}
+{"Time":"2025-04-06T17:28:44.287238049-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToHashPassword","Output":"--- PASS: TestCreateUser_ErrorToHashPassword (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287258187-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToHashPassword","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287265721-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToCreateUser"}
+{"Time":"2025-04-06T17:28:44.287272584-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToCreateUser","Output":"=== RUN   TestCreateUser_ErrorToCreateUser\n"}
+{"Time":"2025-04-06T17:28:44.287282643-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToCreateUser","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tERROR\terror to create user\t{\"error\": \"error to create user\"}\n"}
+{"Time":"2025-04-06T17:28:44.28729134-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToCreateUser","Output":"--- PASS: TestCreateUser_ErrorToCreateUser (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287298663-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestCreateUser_ErrorToCreateUser","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287306208-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_Success"}
+{"Time":"2025-04-06T17:28:44.28731293-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_Success","Output":"=== RUN   TestSoftDeleteUser_Success\n"}
+{"Time":"2025-04-06T17:28:44.287323911-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tINFO\tuser soft deleted successfully\t{\"id\": 1}\n"}
+{"Time":"2025-04-06T17:28:44.287334461-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_Success","Output":"--- PASS: TestSoftDeleteUser_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287342817-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287350361-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_ErrorToSoftDeleteUser"}
+{"Time":"2025-04-06T17:28:44.287357104-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_ErrorToSoftDeleteUser","Output":"=== RUN   TestSoftDeleteUser_ErrorToSoftDeleteUser\n"}
+{"Time":"2025-04-06T17:28:44.287375799-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_ErrorToSoftDeleteUser","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tERROR\terror to soft delete user\t{\"error\": \"error to soft delete user\"}\n"}
+{"Time":"2025-04-06T17:28:44.287393643-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_ErrorToSoftDeleteUser","Output":"--- PASS: TestSoftDeleteUser_ErrorToSoftDeleteUser (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287401257-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_ErrorToSoftDeleteUser","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287410635-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_ErrorToDeleteToken"}
+{"Time":"2025-04-06T17:28:44.287417418-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_ErrorToDeleteToken","Output":"=== RUN   TestSoftDeleteUser_ErrorToDeleteToken\n"}
+{"Time":"2025-04-06T17:28:44.287453386-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_ErrorToDeleteToken","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tERROR\terror to delete token\t{\"error\": \"error to delete token\"}\n"}
+{"Time":"2025-04-06T17:28:44.287462683-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_ErrorToDeleteToken","Output":"--- PASS: TestSoftDeleteUser_ErrorToDeleteToken (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.28747166-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestSoftDeleteUser_ErrorToDeleteToken","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287479335-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Success"}
+{"Time":"2025-04-06T17:28:44.287486238-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Success","Output":"=== RUN   TestGetUserByID_Success\n"}
+{"Time":"2025-04-06T17:28:44.287501797-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tINFO\tuser retrieved successfully\t{\"id\": 1}\n"}
+{"Time":"2025-04-06T17:28:44.287512607-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Success","Output":"--- PASS: TestGetUserByID_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287520071-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287529369-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Error"}
+{"Time":"2025-04-06T17:28:44.287535991-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Error","Output":"=== RUN   TestGetUserByID_Error\n"}
+{"Time":"2025-04-06T17:28:44.28755128-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Error","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tERROR\terror to get user by id\t{\"error\": \"record not found\"}\n"}
+{"Time":"2025-04-06T17:28:44.287563403-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Error","Output":"--- PASS: TestGetUserByID_Error (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287570677-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByID_Error","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287578011-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Success"}
+{"Time":"2025-04-06T17:28:44.287584663-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Success","Output":"=== RUN   TestGetUserByEmail_Success\n"}
+{"Time":"2025-04-06T17:28:44.287600854-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tINFO\tuser retrieved successfully\t{\"id\": 1}\n"}
+{"Time":"2025-04-06T17:28:44.287610382-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Success","Output":"--- PASS: TestGetUserByEmail_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287617936-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.28762542-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Error"}
+{"Time":"2025-04-06T17:28:44.287632504-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Error","Output":"=== RUN   TestGetUserByEmail_Error\n"}
+{"Time":"2025-04-06T17:28:44.287641671-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Error","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tERROR\terror to get user by email\t{\"error\": \"record not found\"}\n"}
+{"Time":"2025-04-06T17:28:44.287650067-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Error","Output":"--- PASS: TestGetUserByEmail_Error (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287657341-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByEmail_Error","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287664624-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Success"}
+{"Time":"2025-04-06T17:28:44.287671277-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Success","Output":"=== RUN   TestGetUserByUsername_Success\n"}
+{"Time":"2025-04-06T17:28:44.287680354-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tINFO\tuser retrieved successfully\t{\"id\": 1}\n"}
+{"Time":"2025-04-06T17:28:44.28768868-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Success","Output":"--- PASS: TestGetUserByUsername_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287695943-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287703297-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Error"}
+{"Time":"2025-04-06T17:28:44.28770992-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Error","Output":"=== RUN   TestGetUserByUsername_Error\n"}
+{"Time":"2025-04-06T17:28:44.287718967-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Error","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tERROR\terror to get user by username\t{\"error\": \"record not found\"}\n"}
+{"Time":"2025-04-06T17:28:44.287727363-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Error","Output":"--- PASS: TestGetUserByUsername_Error (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287734707-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetUserByUsername_Error","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287743844-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Success"}
+{"Time":"2025-04-06T17:28:44.287756908-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Success","Output":"=== RUN   TestGetAllUsers_Success\n"}
+{"Time":"2025-04-06T17:28:44.287766206-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tINFO\tusers retrieved successfully\t{\"count\": 3}\n"}
+{"Time":"2025-04-06T17:28:44.287776606-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Success","Output":"--- PASS: TestGetAllUsers_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.28778397-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287791384-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Error"}
+{"Time":"2025-04-06T17:28:44.287797936-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Error","Output":"=== RUN   TestGetAllUsers_Error\n"}
+{"Time":"2025-04-06T17:28:44.28783729-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Error","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tERROR\terror to get all users\t{\"error\": \"record not found\"}\n"}
+{"Time":"2025-04-06T17:28:44.287846357-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Error","Output":"--- PASS: TestGetAllUsers_Error (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287853621-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestGetAllUsers_Error","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287861015-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_Success"}
+{"Time":"2025-04-06T17:28:44.287867577-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_Success","Output":"=== RUN   TestUpdateUser_Success\n"}
+{"Time":"2025-04-06T17:28:44.287896692-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tINFO\tuser updated successfully\t{\"id\": 1}\n"}
+{"Time":"2025-04-06T17:28:44.287909957-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_Success","Output":"--- PASS: TestUpdateUser_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287917592-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287924966-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_NoFieldsToUpdate"}
+{"Time":"2025-04-06T17:28:44.287931759-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_NoFieldsToUpdate","Output":"=== RUN   TestUpdateUser_NoFieldsToUpdate\n"}
+{"Time":"2025-04-06T17:28:44.287942559-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_NoFieldsToUpdate","Output":"--- PASS: TestUpdateUser_NoFieldsToUpdate (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.287950434-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUser_NoFieldsToUpdate","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.287958038-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_Success"}
+{"Time":"2025-04-06T17:28:44.287965422-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_Success","Output":"=== RUN   TestUpdateUserPassword_Success\n"}
+{"Time":"2025-04-06T17:28:44.287983677-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_Success","Output":"    logger.go:146: 2025-04-06T17:28:44.287-0300\tINFO\tpassword updated successfully\t{\"id\": 1}\n"}
+{"Time":"2025-04-06T17:28:44.287994186-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_Success","Output":"--- PASS: TestUpdateUserPassword_Success (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.28800162-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_Success","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.288011118-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToGetUserByID"}
+{"Time":"2025-04-06T17:28:44.288018081-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToGetUserByID","Output":"=== RUN   TestUpdateUserPassword_ErrorToGetUserByID\n"}
+{"Time":"2025-04-06T17:28:44.288027449-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToGetUserByID","Output":"    logger.go:146: 2025-04-06T17:28:44.288-0300\tERROR\terror to get user by id\t{\"error\": \"error to get user by id\"}\n"}
+{"Time":"2025-04-06T17:28:44.288037889-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToGetUserByID","Output":"--- PASS: TestUpdateUserPassword_ErrorToGetUserByID (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.288045553-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToGetUserByID","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.288055051-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCompareHashAndPassword"}
+{"Time":"2025-04-06T17:28:44.288061844-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCompareHashAndPassword","Output":"=== RUN   TestUpdateUserPassword_ErrorToCompareHashAndPassword\n"}
+{"Time":"2025-04-06T17:28:44.288074799-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCompareHashAndPassword","Output":"    logger.go:146: 2025-04-06T17:28:44.288-0300\tERROR\tinvalid password provided\t{\"error\": \"invalid password provided\"}\n"}
+{"Time":"2025-04-06T17:28:44.28808606-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCompareHashAndPassword","Output":"--- PASS: TestUpdateUserPassword_ErrorToCompareHashAndPassword (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.288093855-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCompareHashAndPassword","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.288101349-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToHashPassword"}
+{"Time":"2025-04-06T17:28:44.288108011-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToHashPassword","Output":"=== RUN   TestUpdateUserPassword_ErrorToHashPassword\n"}
+{"Time":"2025-04-06T17:28:44.2881447-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToHashPassword","Output":"    logger.go:146: 2025-04-06T17:28:44.288-0300\tERROR\terror to hash password\t{\"error\": \"error to hash password\"}\n"}
+{"Time":"2025-04-06T17:28:44.288154118-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToHashPassword","Output":"--- PASS: TestUpdateUserPassword_ErrorToHashPassword (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.288168876-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToHashPassword","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.288177883-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToUpdatePassword"}
+{"Time":"2025-04-06T17:28:44.288184676-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToUpdatePassword","Output":"=== RUN   TestUpdateUserPassword_ErrorToUpdatePassword\n"}
+{"Time":"2025-04-06T17:28:44.288229601-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToUpdatePassword","Output":"    logger.go:146: 2025-04-06T17:28:44.288-0300\tERROR\terror to update password\t{\"error\": \"error to update password\"}\n"}
+{"Time":"2025-04-06T17:28:44.288240732-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToUpdatePassword","Output":"--- PASS: TestUpdateUserPassword_ErrorToUpdatePassword (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.288248276-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToUpdatePassword","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.288258545-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCreateToken"}
+{"Time":"2025-04-06T17:28:44.288265338-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCreateToken","Output":"=== RUN   TestUpdateUserPassword_ErrorToCreateToken\n"}
+{"Time":"2025-04-06T17:28:44.288302078-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCreateToken","Output":"    logger.go:146: 2025-04-06T17:28:44.288-0300\tERROR\terror to create token\t{\"error\": \"error to create token\"}\n"}
+{"Time":"2025-04-06T17:28:44.288311535-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCreateToken","Output":"--- PASS: TestUpdateUserPassword_ErrorToCreateToken (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.288318889-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToCreateToken","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.288328247-03:00","Action":"run","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToSaveToken"}
+{"Time":"2025-04-06T17:28:44.28833512-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToSaveToken","Output":"=== RUN   TestUpdateUserPassword_ErrorToSaveToken\n"}
+{"Time":"2025-04-06T17:28:44.288380786-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToSaveToken","Output":"    logger.go:146: 2025-04-06T17:28:44.288-0300\tERROR\terror to save token\t{\"error\": \"error to save token\"}\n"}
+{"Time":"2025-04-06T17:28:44.288390695-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToSaveToken","Output":"--- PASS: TestUpdateUserPassword_ErrorToSaveToken (0.00s)\n"}
+{"Time":"2025-04-06T17:28:44.288398169-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Test":"TestUpdateUserPassword_ErrorToSaveToken","Elapsed":0}
+{"Time":"2025-04-06T17:28:44.288405413-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Output":"PASS\n"}
+{"Time":"2025-04-06T17:28:44.289207266-03:00","Action":"output","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Output":"ok  \tgithub.com/lechitz/AionApi/internal/core/usecase/user\t0.008s\n"}
+{"Time":"2025-04-06T17:28:44.289664479-03:00","Action":"pass","Package":"github.com/lechitz/AionApi/internal/core/usecase/user","Elapsed":0.009}

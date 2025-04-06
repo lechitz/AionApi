@@ -3,19 +3,19 @@ package config
 import "time"
 
 type DBConfig struct {
-	DBUser     string `envconfig:"DB_USER" required:"true"`
-	DBPassword string `envconfig:"DB_PASSWORD" required:"true"`
 	DBName     string `envconfig:"DB_NAME" required:"true"`
 	DBHost     string `envconfig:"DB_HOST" default:"localhost"`
 	DBPort     string `envconfig:"DB_PORT" default:"5432"`
 	DBType     string `envconfig:"DB_TYPE" default:"postgres"`
+	DBUser     string `envconfig:"DB_USER" required:"true"`
+	DBPassword string `envconfig:"DB_PASSWORD" required:"true"`
 }
 
 type CacheConfig struct {
-	Addr     string `envconfig:"REDIS_ADDR" default:"redis-aion:6379"`
-	Password string `envconfig:"REDIS_PASSWORD"`
-	DB       int    `envconfig:"REDIS_DB" default:"0"`
-	PoolSize int    `envconfig:"REDIS_POOL_SIZE" default:"10"`
+	Addr     string `envconfig:"CACHE_ADDR" default:"redis-aion:6379"`
+	Password string `envconfig:"CACHE_PASSWORD"`
+	DB       int    `envconfig:"CACHE_REPO" default:"0"`
+	PoolSize int    `envconfig:"CACHE_POOL_SIZE" default:"10"`
 }
 
 var Setting Config
@@ -26,11 +26,11 @@ type Config struct {
 	}
 	Server struct {
 		Context      string        `envconfig:"SERVER_CONTEXT" default:"aion-api"`
-		Port         string        `envconfig:"PORT" default:"5001" required:"true"`
-		ReadTimeout  time.Duration `envconfig:"READ_TIMEOUT" default:"10s"`
-		WriteTimeout time.Duration `envconfig:"WRITE_TIMEOUT" default:"10s"`
+		Port         string        `envconfig:"SERVER_PORT" default:"5001" required:"true"`
+		ReadTimeout  time.Duration `envconfig:"SERVER_READ_TIMEOUT" default:"10s"`
+		WriteTimeout time.Duration `envconfig:"SERVER_WRITE_TIMEOUT" default:"10s"`
 	}
-	DBConfig    DBConfig    `envconfig:"POSTGRES"`
-	CacheConfig CacheConfig `envconfig:"REDIS"`
-	SecretKey   string      `envconfig:"SECRET_KEY"`
+	DB        DBConfig    `envconfig:"POSTGRES"`
+	Cache     CacheConfig `envconfig:"REDIS"`
+	SecretKey string      `envconfig:"SECRET_KEY"`
 }

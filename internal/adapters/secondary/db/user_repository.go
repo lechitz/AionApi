@@ -5,7 +5,6 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants"
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/ports/output/db"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"time"
@@ -16,7 +15,7 @@ type UserRepository struct {
 	loggerSugar *zap.SugaredLogger
 }
 
-func NewUserRepository(db *gorm.DB, loggerSugar *zap.SugaredLogger) db.Repository {
+func NewUserRepository(db *gorm.DB, loggerSugar *zap.SugaredLogger) *UserRepository {
 	return &UserRepository{
 		db:          db,
 		loggerSugar: loggerSugar,
@@ -71,8 +70,8 @@ func (up UserRepository) GetAllUsers(contextControl domain.ContextControl) ([]do
 	var usersDomain []domain.UserDomain
 
 	if err := up.db.WithContext(contextControl.BaseContext).
-		Where(constants.DeleteAtIsNull).
-		Select(constants.UserID, constants.Name, constants.Username, constants.Email, constants.CreatedAt).
+		Model(&UserDB{}).
+		Select("id, name, username, email, created_at").
 		Find(&usersDB).Error; err != nil {
 		up.loggerSugar.Errorw(constants.ErrorToGetAllUsers, constants.Error, err.Error())
 		return []domain.UserDomain{}, err
@@ -90,6 +89,7 @@ func (up UserRepository) GetUserByID(contextControl domain.ContextControl, userI
 	var userDB UserDB
 
 	if err := up.db.WithContext(contextControl.BaseContext).
+		Model(&UserDB{}).
 		Where("id = ?", userID).
 		First(&userDB).Error; err != nil {
 		up.loggerSugar.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())
@@ -100,13 +100,13 @@ func (up UserRepository) GetUserByID(contextControl domain.ContextControl, userI
 }
 
 func (up UserRepository) GetUserByUsername(contextControl domain.ContextControl, username string) (domain.UserDomain, error) {
-
 	var userDB UserDB
 
 	if err := up.db.WithContext(contextControl.BaseContext).
-		Select("id, username, password").
+		Select("id, username, email, password, created_at").
 		Where("username = ?", username).
 		First(&userDB).Error; err != nil {
+
 		up.loggerSugar.Errorw(constants.ErrorToGetUserByUsername, constants.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
@@ -118,7 +118,7 @@ func (up UserRepository) GetUserByEmail(ctx domain.ContextControl, email string)
 	var userDB UserDB
 
 	if err := up.db.WithContext(ctx.BaseContext).
-		Select("id, email").
+		Select("id, email, created_at").
 		Where("email = ?", email).
 		First(&userDB).Error; err != nil {
 		up.loggerSugar.Errorw(constants.ErrorToGetUserByEmail, constants.Error, err.Error())
@@ -129,6 +129,8 @@ func (up UserRepository) GetUserByEmail(ctx domain.ContextControl, email string)
 }
 
 func (up UserRepository) UpdateUser(ctx domain.ContextControl, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
+	delete(fields, constants.CreatedAt)
+
 	if err := up.db.WithContext(ctx.BaseContext).
 		Model(&UserDB{}).
 		Where("id = ?", userID).

@@ -15,17 +15,14 @@ func TestLogout_Success(t *testing.T) {
 
 	token := "valid.token.value"
 	userID := uint64(1)
-	tokenDomain := domain.TokenDomain{
-		UserID: userID,
-		Token:  token,
-	}
 
 	suite.TokenService.EXPECT().
-		Check(suite.Ctx, token).
+		VerifyToken(suite.Ctx, token).
 		Return(userID, token, nil)
 
 	suite.TokenService.EXPECT().
-		Delete(suite.Ctx, tokenDomain).Return(nil)
+		Delete(suite.Ctx, domain.TokenDomain{UserID: userID, Token: token}).
+		Return(nil)
 
 	err := suite.AuthService.Logout(suite.Ctx, token)
 
@@ -40,7 +37,7 @@ func TestLogout_CheckTokenFails(t *testing.T) {
 	expectedErr := errors.New("invalid token")
 
 	suite.TokenService.EXPECT().
-		Check(suite.Ctx, token).
+		VerifyToken(suite.Ctx, token).
 		Return(uint64(0), "", expectedErr)
 
 	err := suite.AuthService.Logout(suite.Ctx, token)
@@ -54,14 +51,15 @@ func TestLogout_DeleteTokenFails(t *testing.T) {
 
 	token := "valid.token.value"
 	userID := uint64(1)
+	tokenDomain := domain.TokenDomain{UserID: userID, Token: token}
 	expectedErr := errors.New("delete error")
 
 	suite.TokenService.EXPECT().
-		Check(suite.Ctx, token).
+		VerifyToken(suite.Ctx, token).
 		Return(userID, token, nil)
 
 	suite.TokenService.EXPECT().
-		Delete(suite.Ctx, domain.TokenDomain{UserID: userID, Token: token}).
+		Delete(suite.Ctx, tokenDomain).
 		Return(expectedErr)
 
 	err := suite.AuthService.Logout(suite.Ctx, token)

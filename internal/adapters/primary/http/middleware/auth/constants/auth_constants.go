@@ -14,7 +14,7 @@ const (
 
 const (
 	Error     = "error"
-	UserID    = "id"
 	Token     = "token"
+	UserID    = "id"
 	AuthToken = "auth_token"
 )

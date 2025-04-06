@@ -15,7 +15,7 @@ func NewHTTPServer(deps *bootstrap.AppDependencies, logger *zap.SugaredLogger, s
 		logger,
 		deps.UserService,
 		deps.AuthService,
-		deps.TokenService,
+		deps.TokenRepository,
 		setting.Server.Context,
 	)
 	if err != nil {
