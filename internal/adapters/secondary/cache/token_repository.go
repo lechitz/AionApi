@@ -23,19 +23,6 @@ func NewTokenRepository(cache *redis.Client, loggerSugar *zap.SugaredLogger) *To
 	}
 }
 
-//func (t *TokenRepository) CreateToken(ctx domain.ContextControl, token domain.TokenDomain) error {
-//	key := t.formatTokenKey(token.UserID)
-//	expiration := 24 * time.Hour
-//	err := t.cache.Set(ctx.BaseContext, key, token.Token, expiration).Err()
-//	if err != nil {
-//		t.logger.Errorw(constants.ErrorToCreateTokenInRedis, constants.Key, key, constants.Error, err)
-//		return err
-//	}
-//
-//	t.logger.Infow(constants.SuccessToCreateTokenInRedis, constants.Key, key)
-//	return nil
-//}
-
 func (t *TokenRepository) Save(ctx domain.ContextControl, token domain.TokenDomain) error {
 	key := t.formatTokenKey(token.UserID)
 	expiration := 24 * time.Hour
@@ -44,8 +31,7 @@ func (t *TokenRepository) Save(ctx domain.ContextControl, token domain.TokenDoma
 		t.logger.Errorw(constants.ErrorToSaveTokenToRedis, constants.Key, key, constants.Error, err)
 		return err
 	}
-
-	t.logger.Infow(constants.SuccessToSaveTokenToRedis, constants.Key, key)
+	
 	return nil
 }
 

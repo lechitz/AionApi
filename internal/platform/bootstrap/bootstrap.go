@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"github.com/lechitz/AionApi/internal/core/domain"
 	portsToken "github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	infraCache "github.com/lechitz/AionApi/internal/infrastructure/cache"
 	infraDB "github.com/lechitz/AionApi/internal/infrastructure/db"
@@ -21,24 +22,28 @@ import (
 )
 
 type AppDependencies struct {
-	TokenService portsToken.TokenService
-	AuthService  portsHttp.AuthService
-	UserService  portsHttp.UserService
+	TokenRepository portsToken.TokenRepositoryPort
+	TokenService    token.TokenUsecase
+	AuthService     portsHttp.AuthService
+	UserService     portsHttp.UserService
 }
 
 var ErrorInitializingDependencies = "error closing cache connection"
 
 func InitializeDependencies(logger *zap.SugaredLogger, cfg config.Config) (*AppDependencies, func(), error) {
 
-	cacheConn := infraCache.NewCacheConnection(cfg.CacheConfig, logger)
+	cacheConn := infraCache.NewCacheConnection(cfg.Cache, logger)
 	tokenRepository := adapterCache.NewTokenRepository(cacheConn, logger)
 
-	dbConn := infraDB.NewDatabaseConnection(cfg.DBConfig, logger)
+	dbConn := infraDB.NewDatabaseConnection(cfg.DB, logger)
 	userRepository := adapterDB.NewUserRepository(dbConn, logger)
 
-	tokenService := token.NewTokenService(*tokenRepository, logger, cfg.SecretKey)
-	authService := auth.NewAuthService(userRepository, *tokenService, adapterSecurity.BcryptPasswordAdapter{}, logger, cfg.SecretKey)
-	userService := user.NewUserService(userRepository, *tokenService, adapterSecurity.BcryptPasswordAdapter{}, logger)
+	tokenService := token.NewTokenService(tokenRepository, logger, domain.TokenConfig{
+		SecretKey: cfg.SecretKey,
+	})
+	
+	authService := auth.NewAuthService(userRepository, tokenService, adapterSecurity.BcryptPasswordAdapter{}, logger, cfg.SecretKey)
+	userService := user.NewUserService(userRepository, tokenService, adapterSecurity.BcryptPasswordAdapter{}, logger)
 
 	cleanup := func() {
 		infraDB.Close(dbConn, logger)
@@ -48,8 +53,9 @@ func InitializeDependencies(logger *zap.SugaredLogger, cfg config.Config) (*AppD
 	}
 
 	return &AppDependencies{
-		TokenService: tokenService,
-		AuthService:  authService,
-		UserService:  userService,
+		TokenRepository: tokenRepository,
+		TokenService:    tokenService,
+		AuthService:     authService,
+		UserService:     userService,
 	}, cleanup, nil
 }

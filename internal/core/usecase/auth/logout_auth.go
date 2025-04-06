@@ -10,7 +10,7 @@ type SessionRevoker interface {
 }
 
 func (s *AuthService) Logout(ctx domain.ContextControl, token string) error {
-	userID, _, err := s.TokenService.Check(ctx, token)
+	userID, _, err := s.TokenService.VerifyToken(ctx, token)
 	if err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToCheckToken, constants.Error, err.Error())
 		return err

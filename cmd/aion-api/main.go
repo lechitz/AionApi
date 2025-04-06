@@ -43,7 +43,7 @@ func main() {
 
 	if err := newServer.ListenAndServe(); err != nil {
 		utils.HandleCriticalError(loggerSugar, constants.ErrStartServer, err)
-		loggerSugar.Infow(constants.ErrStartServer, constants.Error, err)
+		loggerSugar.Errorw(constants.ErrStartServer, constants.Error, err)
 		return
 	}
 }

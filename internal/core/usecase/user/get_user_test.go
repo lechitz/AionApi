@@ -20,7 +20,7 @@ func TestGetUserByID_Success(t *testing.T) {
 		GetUserByID(suite.Ctx, userID).
 		Return(expectedUser, nil)
 
-	userDomain, err := suite.UserSvc.GetUserByID(suite.Ctx, userID)
+	userDomain, err := suite.UserService.GetUserByID(suite.Ctx, userID)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedUser, userDomain)
@@ -36,7 +36,7 @@ func TestGetUserByID_Error(t *testing.T) {
 		GetUserByID(suite.Ctx, userID).
 		Return(domain.UserDomain{}, gorm.ErrRecordNotFound)
 
-	userDomain, err := suite.UserSvc.GetUserByID(suite.Ctx, userID)
+	userDomain, err := suite.UserService.GetUserByID(suite.Ctx, userID)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, userDomain)
@@ -54,7 +54,7 @@ func TestGetUserByEmail_Success(t *testing.T) {
 		GetUserByEmail(suite.Ctx, userEmail).
 		Return(expectedUser, nil)
 
-	userDomain, err := suite.UserSvc.GetUserByEmail(suite.Ctx, userEmail)
+	userDomain, err := suite.UserService.GetUserByEmail(suite.Ctx, userEmail)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedUser, userDomain)
@@ -70,7 +70,7 @@ func TestGetUserByEmail_Error(t *testing.T) {
 		GetUserByEmail(suite.Ctx, userEmail).
 		Return(domain.UserDomain{}, gorm.ErrRecordNotFound)
 
-	userDomain, err := suite.UserSvc.GetUserByEmail(suite.Ctx, userEmail)
+	userDomain, err := suite.UserService.GetUserByEmail(suite.Ctx, userEmail)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, userDomain)
@@ -88,7 +88,7 @@ func TestGetUserByUsername_Success(t *testing.T) {
 		GetUserByUsername(suite.Ctx, username).
 		Return(expectedUser, nil)
 
-	userDomain, err := suite.UserSvc.GetUserByUsername(suite.Ctx, username)
+	userDomain, err := suite.UserService.GetUserByUsername(suite.Ctx, username)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedUser, userDomain)
@@ -104,7 +104,7 @@ func TestGetUserByUsername_Error(t *testing.T) {
 		GetUserByUsername(suite.Ctx, username).
 		Return(domain.UserDomain{}, gorm.ErrRecordNotFound)
 
-	userDomain, err := suite.UserSvc.GetUserByUsername(suite.Ctx, username)
+	userDomain, err := suite.UserService.GetUserByUsername(suite.Ctx, username)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, userDomain)
@@ -124,7 +124,7 @@ func TestGetAllUsers_Success(t *testing.T) {
 		GetAllUsers(suite.Ctx).
 		Return(expectedUsers, nil)
 
-	users, err := suite.UserSvc.GetAllUsers(suite.Ctx)
+	users, err := suite.UserService.GetAllUsers(suite.Ctx)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedUsers, users)
@@ -138,7 +138,7 @@ func TestGetAllUsers_Error(t *testing.T) {
 		GetAllUsers(suite.Ctx).
 		Return(nil, gorm.ErrRecordNotFound)
 
-	users, err := suite.UserSvc.GetAllUsers(suite.Ctx)
+	users, err := suite.UserService.GetAllUsers(suite.Ctx)
 
 	assert.Error(t, err)
 	assert.Nil(t, users)

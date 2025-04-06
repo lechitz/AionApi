@@ -4,12 +4,12 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
-type TokenCreator interface {
+type Creator interface {
 	CreateToken(ctx domain.ContextControl, token domain.TokenDomain) (string, error)
 }
 
 type TokenChecker interface {
-	Check(ctx domain.ContextControl, token string) (uint64, string, error)
+	Get(ctx domain.ContextControl, token domain.TokenDomain) (string, error)
 }
 
 type TokenSaver interface {
@@ -24,8 +24,11 @@ type TokenDeleter interface {
 	Delete(ctx domain.ContextControl, token domain.TokenDomain) error
 }
 
-type TokenService interface {
-	TokenCreator
+type TokenVerify interface {
+	VerifyToken(ctx domain.ContextControl, token string) (uint64, string, error)
+}
+
+type TokenRepositoryPort interface {
 	TokenChecker
 	TokenSaver
 	TokenUpdater

@@ -60,26 +60,26 @@ docker-compose-dev-down:
 dev: docker-clean-dev docker-build-dev docker-compose-dev-up
 
 docker-clean-dev:
+	@echo "\033[1;33m Cleaning dev containers...\033[0m"
 	@containers=$$(docker ps -a --filter "name=dev" -q); \
 	if [ -n "$$containers" ]; then \
-		echo "Removing dev containers..."; \
 		docker rm -f $$containers; \
 	else \
 		echo "No dev containers to remove."; \
 	fi
 
+	@echo "\033[1;33m Cleaning dev volumes...\033[0m"
 	@volumes=$$(docker volume ls --filter "name=dev" -q); \
 	if [ -n "$$volumes" ]; then \
-		echo "Removing dev volumes..."; \
 		docker volume rm $$volumes; \
 	else \
 		echo "No dev volumes to remove."; \
 	fi
 
-	@images=$$(docker images --filter "reference=*dev*" -q); \
+	@echo "\033[1;33m Cleaning dev images...\033[0m"
+	@images=$$(docker images --filter "reference=$(APPLICATION_NAME):dev" -q); \
 	if [ -n "$$images" ]; then \
-		echo "Removing dev images..."; \
-		docker rmi -f $$images; \
+		docker rmi -f $$images || true; \
 	else \
 		echo "No dev images to remove."; \
 	fi
@@ -198,25 +198,28 @@ test-html-report:
 # ========================
 .PHONY: mocks
 mocks:
-	@echo "Generating mocks for output ports..."
-	@mkdir -p tests/mocks
+	@echo "Generating mocks for output ports and usecases..."
+	@mkdir -p tests/mocks/token tests/mocks/user tests/mocks/security
 
-	@echo "→ Token Repository"
-	mockgen -source=internal/core/ports/output/cache/token.go -destination=tests/mocks/mock_token_repository.go -package=mocks
+	@echo "→ TokenStore"
+	mockgen -source=internal/core/ports/output/cache/token.go \
+		-destination=tests/mocks/token/mock_token_store.go \
+		-package=tokenmocks
 
-	@echo "→ User Repository"
-	mockgen -source=internal/core/ports/output/db/user.go -destination=tests/mocks/mock_user_repository.go -package=mocks
+	@echo "→ TokenUsecase"
+	mockgen -source=internal/core/usecase/token/token_usecase.go \
+		-destination=tests/mocks/token/mock_token_usecase.go \
+		-package=tokenmocks TokenUsecase
 
-	@echo "→ Security Hasher"
-	mockgen -source=internal/core/ports/output/security/hasher.go -destination=tests/mocks/mock_security_store.go -package=mocks
+	@echo "→ UserStore"
+	mockgen -source=internal/core/ports/output/db/user.go \
+		-destination=tests/mocks/user/mock_user_store.go \
+		-package=usermocks
 
-	@echo "→ Redis Client"
-	mockgen -source=internal/infrastructure/cache/redis.go -destination=tests/mocks/mock_redis_client.go -package=mocks
+	@echo "→ SecurityStore"
+	mockgen -source=internal/core/ports/output/security/hasher.go \
+		-destination=tests/mocks/security/mock_security_store.go \
+		-package=securitymocks
 
-	@echo "→ Auth Service"
-	mockgen -source=internal/core/ports/input/http/auth.go -destination=tests/mocks/mock_auth_service.go -package=mocks
+	@echo "✅ All mocks generated successfully."
 
-	@echo "→ User Service"
-	mockgen -source=internal/core/ports/input/http/user.go -destination=tests/mocks/mock_user_service.go -package=mocks
-
-	@echo "All mocks generated successfully."

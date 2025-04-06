@@ -1,14 +1,15 @@
 package setup
 
 import (
-	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	"testing"
 	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
-	"github.com/lechitz/AionApi/tests/mocks"
+	mockSecurity "github.com/lechitz/AionApi/tests/mocks/security"
+	mockToken "github.com/lechitz/AionApi/tests/mocks/token"
+	mockUser "github.com/lechitz/AionApi/tests/mocks/user"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 	"gorm.io/gorm"
@@ -16,36 +17,32 @@ import (
 
 type UserServiceTestSuite struct {
 	Ctrl           *gomock.Controller
-	UserRepository *mocks.MockUserRepository
-	HasherStore    *mocks.MockSecurityStore
-	TokenService   *mocks.MockTokenService
-	UserSvc        *user.UserService
 	LoggerSugar    *zap.SugaredLogger
+	UserRepository *mockUser.MockUserStore
+	PasswordHasher *mockSecurity.MockSecurityStore
+	TokenService   *mockToken.MockTokenUsecase
+	UserService    *user.UserService
 	Ctx            domain.ContextControl
 }
 
 func SetupUserServiceTest(t *testing.T) *UserServiceTestSuite {
 	ctrl := gomock.NewController(t)
-
 	logger := zaptest.NewLogger(t).Sugar()
 
-	mockUserRepository := mocks.NewMockUserRepository(ctrl)
+	mockUserRepo := mockUser.NewMockUserStore(ctrl)
+	mockSecurityStore := mockSecurity.NewMockSecurityStore(ctrl)
+	mockTokenUsecase := mockToken.NewMockTokenUsecase(ctrl)
 
-	tokenService := mocks.NewMockTokenService(ctrl)
-	mockHasherStore := mocks.NewMockSecurityStore(ctrl)
-
-	ctx := domain.ContextControl{}
-
-	userSvc := user.NewUserService(mockUserRepository, token.TokenService{}, mockHasherStore, logger)
+	userService := user.NewUserService(mockUserRepo, mockTokenUsecase, mockSecurityStore, logger)
 
 	return &UserServiceTestSuite{
 		Ctrl:           ctrl,
-		UserRepository: mockUserRepository,
-		HasherStore:    mockHasherStore,
-		TokenService:   tokenService,
-		UserSvc:        userSvc,
 		LoggerSugar:    logger,
-		Ctx:            ctx,
+		UserRepository: mockUserRepo,
+		TokenService:   mockTokenUsecase,
+		PasswordHasher: mockSecurityStore,
+		UserService:    userService,
+		Ctx:            domain.ContextControl{},
 	}
 }
 

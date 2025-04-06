@@ -2,11 +2,11 @@ package user_test
 
 import (
 	"errors"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
-	"github.com/lechitz/AionApi/tests/setup"
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,10 +30,10 @@ func TestCreateUser_Success(t *testing.T) {
 
 	suite.UserRepository.EXPECT().GetUserByUsername(suite.Ctx, "lechitz").Return(domain.UserDomain{}, nil)
 	suite.UserRepository.EXPECT().GetUserByEmail(suite.Ctx, "lechitz@example.com").Return(domain.UserDomain{}, nil)
-	suite.HasherStore.EXPECT().HashPassword(password).Return("hashed123", nil)
+	suite.PasswordHasher.EXPECT().HashPassword(password).Return("hashed123", nil)
 	suite.UserRepository.EXPECT().CreateUser(suite.Ctx, normalized).Return(normalized, nil)
 
-	createdUser, err := suite.UserSvc.CreateUser(suite.Ctx, input, password)
+	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
 
 	assert.NoError(t, err)
 	assert.Equal(t, normalized, createdUser)
@@ -54,7 +54,8 @@ func TestCreateUser_ErrorToGetUserByUsername(t *testing.T) {
 		GetUserByUsername(suite.Ctx, setup.TestPerfectUser.Username).
 		Return(domain.UserDomain{ID: 1}, nil)
 
-	createdUser, err := suite.UserSvc.CreateUser(suite.Ctx, input, password)
+	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
+
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, createdUser)
 	assert.Equal(t, constants.UsernameIsAlreadyInUse, err.Error())
@@ -79,7 +80,7 @@ func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
 		GetUserByEmail(suite.Ctx, setup.TestPerfectUser.Email).
 		Return(domain.UserDomain{ID: 1}, nil)
 
-	createdUser, err := suite.UserSvc.CreateUser(suite.Ctx, input, password)
+	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, createdUser)
@@ -105,11 +106,11 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 		GetUserByEmail(suite.Ctx, setup.TestPerfectUser.Email).
 		Return(domain.UserDomain{}, nil)
 
-	suite.HasherStore.EXPECT().
+	suite.PasswordHasher.EXPECT().
 		HashPassword(password).
 		Return("", errors.New(constants.ErrorToHashPassword))
 
-	createdUser, err := suite.UserSvc.CreateUser(suite.Ctx, input, password)
+	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, createdUser)
@@ -120,8 +121,6 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 	suite := setup.SetupUserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	ctx := domain.ContextControl{}
-
 	input := domain.UserDomain{
 		Name:     setup.TestPerfectUser.Name,
 		Username: setup.TestPerfectUser.Username,
@@ -130,14 +129,14 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 	password := setup.TestPerfectUser.Password
 
 	suite.UserRepository.EXPECT().
-		GetUserByUsername(ctx, setup.TestPerfectUser.Username).
+		GetUserByUsername(suite.Ctx, setup.TestPerfectUser.Username).
 		Return(domain.UserDomain{}, nil)
 
 	suite.UserRepository.EXPECT().
-		GetUserByEmail(ctx, setup.TestPerfectUser.Email).
+		GetUserByEmail(suite.Ctx, setup.TestPerfectUser.Email).
 		Return(domain.UserDomain{}, nil)
 
-	suite.HasherStore.EXPECT().
+	suite.PasswordHasher.EXPECT().
 		HashPassword(password).
 		Return("hashed123", nil)
 
@@ -145,10 +144,10 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 	expectedUser.Password = "hashed123"
 
 	suite.UserRepository.EXPECT().
-		CreateUser(ctx, expectedUser).
+		CreateUser(suite.Ctx, expectedUser).
 		Return(domain.UserDomain{}, errors.New(constants.ErrorToCreateUser))
 
-	createdUser, err := suite.UserSvc.CreateUser(ctx, input, password)
+	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, createdUser)

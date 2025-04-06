@@ -1,20 +1,21 @@
 package token
 
 import (
-	"github.com/lechitz/AionApi/internal/adapters/secondary/cache"
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"go.uber.org/zap"
 )
 
 type TokenService struct {
-	TokenRepository cache.TokenRepository
+	TokenRepository cache.TokenRepositoryPort
 	LoggerSugar     *zap.SugaredLogger
-	SecretKey       string
+	ConfigToken     domain.TokenConfig
 }
 
-func NewTokenService(tokenRepo cache.TokenRepository, logger *zap.SugaredLogger, secretKey string) *TokenService {
+func NewTokenService(tokenRepo cache.TokenRepositoryPort, logger *zap.SugaredLogger, config domain.TokenConfig) *TokenService {
 	return &TokenService{
 		TokenRepository: tokenRepo,
 		LoggerSugar:     logger,
-		SecretKey:       secretKey,
+		ConfigToken:     config,
 	}
 }

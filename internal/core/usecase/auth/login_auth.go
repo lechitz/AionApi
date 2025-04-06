@@ -30,5 +30,5 @@ func (s *AuthService) Login(ctx domain.ContextControl, user domain.UserDomain, p
 	}
 
 	s.LoggerSugar.Infow(constants.SuccessToLogin, constants.UserID, userDB.ID, constants.Token, newToken)
-	return userDB, tokenDomain.Token, nil
+	return userDB, newToken, nil
 }

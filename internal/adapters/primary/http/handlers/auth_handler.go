@@ -47,28 +47,36 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ctxControl := domain.ContextControl{BaseContext: r.Context()}
 
-	cookie, err := r.Cookie(constants.AuthToken)
-	if err != nil {
-		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, err)
+	userID, ok := r.Context().Value(constants.UserID).(uint64)
+	if !ok || userID == 0 {
+		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveUserID, nil)
 		return
 	}
 
-	token := cookie.Value
-
-	userID, ok := ctxControl.BaseContext.Value(constants.UserID).(uint64)
-	if !ok {
-		a.logAndRespondError(w, http.StatusInternalServerError, constants.ErrorToRetrieveUserID, nil)
+	tokenString, ok := r.Context().Value(constants.Token).(string)
+	if !ok || tokenString == "" {
+		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, nil)
 		return
 	}
 
-	if err := a.AuthService.Logout(ctxControl, token); err != nil {
+	if err := a.AuthService.Logout(ctxControl, tokenString); err != nil {
 		a.logAndRespondError(w, http.StatusInternalServerError, constants.ErrorToLogout, err)
 		return
 	}
 
 	clearAuthCookie(w)
 
-	a.LoggerSugar.Infow(constants.SuccessToLogout, constants.UserID, userID)
+	tokenPreview := ""
+	if len(tokenString) >= 10 {
+		tokenPreview = tokenString[:10] + "..."
+	}
+
+	a.LoggerSugar.Infow(
+		constants.SuccessToLogout,
+		constants.UserID, userID,
+		constants.Token, tokenPreview,
+	)
+
 	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(nil, constants.SuccessToLogout).Bytes())
 }
 

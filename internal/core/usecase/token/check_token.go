@@ -2,18 +2,15 @@ package token
 
 import (
 	"fmt"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 )
 
-type Checker interface {
-	Check(ctx domain.ContextControl, token string) (uint64, string, error)
-}
-
-func (s *TokenService) Check(ctx domain.ContextControl, token string) (uint64, string, error) {
+func (s *TokenService) VerifyToken(ctx domain.ContextControl, token string) (uint64, string, error) {
 	parsedToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		return []byte(s.SecretKey), nil
+		return []byte(s.ConfigToken.SecretKey), nil
 	})
 	if err != nil || parsedToken == nil || !parsedToken.Valid {
 		s.LoggerSugar.Errorw(constants.ErrorInvalidToken, constants.Token, token, constants.Error, err)

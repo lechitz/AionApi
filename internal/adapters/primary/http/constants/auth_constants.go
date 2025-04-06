@@ -1,11 +1,11 @@
 package messages
 
 // Auth Constants
-
 const (
-	AuthToken = "auth_token"
+	Token     = "token"
 	Path      = "/"
 	Domain    = "localhost"
+	AuthToken = "auth_token"
 )
 
 // Error Auth Messages

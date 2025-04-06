@@ -23,7 +23,7 @@ type UserDeleter interface {
 	SoftDeleteUser(ctx domain.ContextControl, userID uint64) error
 }
 
-type UserRepository interface {
+type UserStore interface {
 	UserCreator
 	UserRetriever
 	UserUpdater

@@ -9,13 +9,13 @@ import (
 
 type AuthService struct {
 	UserRetriever  db.UserRetriever
-	TokenService   token.TokenService
+	TokenService   token.TokenUsecase
 	SecurityHasher security.SecurityStore
 	LoggerSugar    *zap.SugaredLogger
 	SecretKey      string
 }
 
-func NewAuthService(userRetriever db.UserRetriever, tokenService token.TokenService, securityHasher security.SecurityStore, loggerSugar *zap.SugaredLogger, secretKey string) *AuthService {
+func NewAuthService(userRetriever db.UserStore, tokenService token.TokenUsecase, securityHasher security.SecurityStore, loggerSugar *zap.SugaredLogger, secretKey string) *AuthService {
 	return &AuthService{
 		UserRetriever:  userRetriever,
 		TokenService:   tokenService,

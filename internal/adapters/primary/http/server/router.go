@@ -5,7 +5,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
-	tokenports "github.com/lechitz/AionApi/internal/core/ports/output/cache"
+	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"go.uber.org/zap"
 )
 
@@ -16,7 +16,7 @@ type Router struct {
 	AuthMiddleware *auth.MiddlewareAuth
 }
 
-func GetNewRouter(loggerSugar *zap.SugaredLogger, tokenService tokenports.TokenService, contextPath string) (*Router, error) {
+func GetNewRouter(loggerSugar *zap.SugaredLogger, tokenRepository cache.TokenRepositoryPort, contextPath string) (*Router, error) {
 	if len(contextPath) > 0 && contextPath[0] != '/' {
 		contextPath = "/" + contextPath
 	}
@@ -26,7 +26,7 @@ func GetNewRouter(loggerSugar *zap.SugaredLogger, tokenService tokenports.TokenS
 	}
 
 	r := chi.NewRouter()
-	authMiddleware := auth.NewAuthMiddleware(tokenService, loggerSugar)
+	authMiddleware := auth.NewAuthMiddleware(tokenRepository, loggerSugar)
 
 	return &Router{
 		ContextPath:    contextPath,
@@ -72,7 +72,7 @@ func (router *Router) AddAuthRoutes(ah *handlers.Auth) func(r chi.Router) {
 
 			r.Group(func(r chi.Router) {
 				r.Use(router.AuthMiddleware.Auth)
-				r.Post("/logout/{id}", ah.LogoutHandler)
+				r.Post("/logout", ah.LogoutHandler)
 			})
 		})
 	}

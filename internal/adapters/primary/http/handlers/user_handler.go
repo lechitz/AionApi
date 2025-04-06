@@ -78,10 +78,11 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := dto.GetUserResponse{
-		ID:       user.ID,
-		Name:     user.Name,
-		Username: user.Username,
-		Email:    user.Email,
+		ID:        user.ID,
+		Name:      user.Name,
+		Username:  user.Username,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt,
 	}
 
 	u.LoggerSugar.Infow(constants.SuccessToGetUser, constants.User, res)
