@@ -1,4 +1,4 @@
-package postgres
+package db
 
 import (
 	"fmt"
@@ -11,11 +11,11 @@ import (
 	"time"
 )
 
-func NewDatabaseConnection(config config.DBConfig, loggerSugar *zap.SugaredLogger) *gorm.DB {
+func NewDatabaseConnection(cfg config.DBConfig, loggerSugar *zap.SugaredLogger) *gorm.DB {
 	var err error
-	conString := fmt.Sprintf(constants.MsgFormatConString, config.DBHost, config.DBPort, config.DBUser, config.DBPassword, config.DBName)
+	conString := fmt.Sprintf(constants.MsgFormatConString, cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName)
 
-	loggerSugar.Infow(constants.MsgDBConnection, constants.Host, config.DBHost, constants.Port, config.DBPort, constants.DBName, config.DBName)
+	loggerSugar.Infow(constants.MsgDBConnection, constants.Host, cfg.DBHost, constants.Port, cfg.DBPort, constants.DBName, cfg.DBName)
 
 	DB, err := connecting(conString, loggerSugar)
 	if err != nil {

@@ -39,12 +39,12 @@ func (s *UserService) UpdateUserPassword(ctx domain.ContextControl, user domain.
 		return domain.UserDomain{}, "", err
 	}
 
-	if err := s.PasswordService.ComparePasswords(userDB.Password, oldPassword); err != nil {
+	if err := s.SecurityHasher.ValidatePassword(userDB.Password, oldPassword); err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToCompareHashAndPassword, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
-	hashedPassword, err := s.PasswordService.HashPassword(newPassword)
+	hashedPassword, err := s.SecurityHasher.HashPassword(newPassword)
 	if err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToHashPassword, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
@@ -62,7 +62,7 @@ func (s *UserService) UpdateUserPassword(ctx domain.ContextControl, user domain.
 	}
 
 	tokenDomain := domain.TokenDomain{UserID: user.ID}
-	token, err := s.TokenService.Create(ctx, tokenDomain)
+	token, err := s.TokenService.CreateToken(ctx, tokenDomain)
 	if err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToCreateToken, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err

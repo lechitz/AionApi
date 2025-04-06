@@ -16,7 +16,7 @@ func TestGetUserByID_Success(t *testing.T) {
 
 	expectedUser := setup.TestPerfectUser
 
-	suite.UserRepo.EXPECT().
+	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, userID).
 		Return(expectedUser, nil)
 
@@ -32,7 +32,7 @@ func TestGetUserByID_Error(t *testing.T) {
 
 	userID := setup.TestPerfectUser.ID
 
-	suite.UserRepo.EXPECT().
+	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, userID).
 		Return(domain.UserDomain{}, gorm.ErrRecordNotFound)
 
@@ -50,7 +50,7 @@ func TestGetUserByEmail_Success(t *testing.T) {
 
 	expectedUser := setup.TestPerfectUser
 
-	suite.UserRepo.EXPECT().
+	suite.UserRepository.EXPECT().
 		GetUserByEmail(suite.Ctx, userEmail).
 		Return(expectedUser, nil)
 
@@ -66,7 +66,7 @@ func TestGetUserByEmail_Error(t *testing.T) {
 
 	userEmail := setup.TestPerfectUser.Email
 
-	suite.UserRepo.EXPECT().
+	suite.UserRepository.EXPECT().
 		GetUserByEmail(suite.Ctx, userEmail).
 		Return(domain.UserDomain{}, gorm.ErrRecordNotFound)
 
@@ -84,7 +84,7 @@ func TestGetUserByUsername_Success(t *testing.T) {
 
 	expectedUser := setup.TestPerfectUser
 
-	suite.UserRepo.EXPECT().
+	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, username).
 		Return(expectedUser, nil)
 
@@ -100,7 +100,7 @@ func TestGetUserByUsername_Error(t *testing.T) {
 
 	username := setup.TestPerfectUser.Username
 
-	suite.UserRepo.EXPECT().
+	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, username).
 		Return(domain.UserDomain{}, gorm.ErrRecordNotFound)
 
@@ -120,7 +120,7 @@ func TestGetAllUsers_Success(t *testing.T) {
 		setup.TestPerfectUser,
 	}
 
-	suite.UserRepo.EXPECT().
+	suite.UserRepository.EXPECT().
 		GetAllUsers(suite.Ctx).
 		Return(expectedUsers, nil)
 
@@ -134,7 +134,7 @@ func TestGetAllUsers_Error(t *testing.T) {
 	suite := setup.SetupUserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	suite.UserRepo.EXPECT().
+	suite.UserRepository.EXPECT().
 		GetAllUsers(suite.Ctx).
 		Return(nil, gorm.ErrRecordNotFound)
 

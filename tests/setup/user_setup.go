@@ -1,60 +1,61 @@
 package setup
 
 import (
+	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	"testing"
 	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
-	mocksSecurity "github.com/lechitz/AionApi/tests/mocks/security"
-	mocksToken "github.com/lechitz/AionApi/tests/mocks/token"
-	mocksUser "github.com/lechitz/AionApi/tests/mocks/user"
+	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 	"gorm.io/gorm"
 )
 
 type UserServiceTestSuite struct {
-	Ctrl        *gomock.Controller
-	Logger      *zap.SugaredLogger
-	UserRepo    *mocksUser.MockRepository
-	PasswordSvc *mocksSecurity.MockHasher
-	TokenSvc    *mocksToken.MockStore
-	UserSvc     *user.UserService
-	Ctx         domain.ContextControl
+	Ctrl           *gomock.Controller
+	UserRepository *mocks.MockUserRepository
+	HasherStore    *mocks.MockSecurityStore
+	TokenService   *mocks.MockTokenService
+	UserSvc        *user.UserService
+	LoggerSugar    *zap.SugaredLogger
+	Ctx            domain.ContextControl
 }
 
 func SetupUserServiceTest(t *testing.T) *UserServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	logger := zaptest.NewLogger(t).Sugar()
-	userRepo := mocksUser.NewMockRepository(ctrl)
-	passwordSvc := mocksSecurity.NewMockHasher(ctrl)
-	tokenSvc := mocksToken.NewMockStore(ctrl)
 
-	userSvc := user.NewUserService(userRepo, tokenSvc, passwordSvc, logger)
+	mockUserRepository := mocks.NewMockUserRepository(ctrl)
+
+	tokenService := mocks.NewMockTokenService(ctrl)
+	mockHasherStore := mocks.NewMockSecurityStore(ctrl)
+
+	ctx := domain.ContextControl{}
+
+	userSvc := user.NewUserService(mockUserRepository, token.TokenService{}, mockHasherStore, logger)
 
 	return &UserServiceTestSuite{
-		Ctrl:        ctrl,
-		Logger:      logger,
-		UserRepo:    userRepo,
-		PasswordSvc: passwordSvc,
-		TokenSvc:    tokenSvc,
-		UserSvc:     userSvc,
-		Ctx:         domain.ContextControl{},
+		Ctrl:           ctrl,
+		UserRepository: mockUserRepository,
+		HasherStore:    mockHasherStore,
+		TokenService:   tokenService,
+		UserSvc:        userSvc,
+		LoggerSugar:    logger,
+		Ctx:            ctx,
 	}
 }
 
-var (
-	TestPerfectUser = domain.UserDomain{
-		ID:        1,
-		Name:      "Test User",
-		Username:  "testuser",
-		Email:     "user@example.com",
-		Password:  "password123",
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		DeletedAt: gorm.DeletedAt{},
-	}
-)
+var TestPerfectUser = domain.UserDomain{
+	ID:        1,
+	Name:      "Test User",
+	Username:  "testuser",
+	Email:     "user@example.com",
+	Password:  "password123",
+	CreatedAt: time.Now(),
+	UpdatedAt: time.Now(),
+	DeletedAt: gorm.DeletedAt{},
+}

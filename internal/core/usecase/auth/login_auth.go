@@ -16,26 +16,19 @@ func (s *AuthService) Login(ctx domain.ContextControl, user domain.UserDomain, p
 		return domain.UserDomain{}, "", err
 	}
 
-	if err := s.PasswordHasher.ComparePasswords(userDB.Password, passwordReq); err != nil {
+	if err := s.SecurityHasher.ValidatePassword(userDB.Password, passwordReq); err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToCompareHashAndPassword, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
 	tokenDomain := domain.TokenDomain{UserID: userDB.ID}
 
-	newToken, err := s.TokenService.Create(ctx, tokenDomain)
+	newToken, err := s.TokenService.CreateToken(ctx, tokenDomain)
 	if err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToCreateToken, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
-	tokenDomain.Token = newToken
-
-	if err := s.TokenService.Save(ctx, tokenDomain); err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToSaveToken, constants.Error, err.Error())
-		return domain.UserDomain{}, "", err
-	}
-
-	s.LoggerSugar.Infow(constants.SuccessToLogin, constants.UserID, userDB.ID)
+	s.LoggerSugar.Infow(constants.SuccessToLogin, constants.UserID, userDB.ID, constants.Token, newToken)
 	return userDB, tokenDomain.Token, nil
 }

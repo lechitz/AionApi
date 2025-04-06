@@ -20,6 +20,7 @@ func main() {
 		utils.HandleCriticalError(loggerSugar, constants.ErrToFailedLoadConfiguration, err)
 		return
 	}
+
 	loggerSugar.Infow(constants.SuccessToLoadConfiguration, constants.Settings, config.Setting)
 
 	appDependencies, cleanup, err := bootstrap.InitializeDependencies(loggerSugar, config.Setting)
@@ -34,7 +35,7 @@ func main() {
 	newServer, err := server.NewHTTPServer(appDependencies, loggerSugar, &config.Setting)
 	if err != nil {
 		loggerSugar.Infow(constants.ErrStartServer)
-		utils.HandleCriticalError(loggerSugar, constants.ErrStartServer, nil)
+		utils.HandleCriticalError(loggerSugar, constants.ErrStartServer, err)
 		return
 	}
 

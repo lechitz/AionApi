@@ -199,23 +199,24 @@ test-html-report:
 .PHONY: mocks
 mocks:
 	@echo "Generating mocks for output ports..."
-	@mkdir -p tests/mocks/user tests/mocks/auth tests/mocks/token tests/mocks/cache tests/mocks/security
+	@mkdir -p tests/mocks
+
+	@echo "→ Token Repository"
+	mockgen -source=internal/core/ports/output/cache/token.go -destination=tests/mocks/mock_token_repository.go -package=mocks
 
 	@echo "→ User Repository"
-	mockgen -source=internal/core/ports/output/db/user.go -destination=tests/mocks/user/mock_user_repository.go -package=user
-
-	@echo "→ Token Store"
-	mockgen -source=internal/core/ports/output/token/token.go -destination=tests/mocks/token/mock_token_store.go -package=token
-
-	@echo "→ Cache Store"
-	mockgen -source=internal/core/ports/output/cache/cache.go -destination=tests/mocks/cache/mock_store.go -package=cache
+	mockgen -source=internal/core/ports/output/db/user.go -destination=tests/mocks/mock_user_repository.go -package=mocks
 
 	@echo "→ Security Hasher"
-	mockgen -source=internal/core/ports/output/security/password.go -destination=tests/mocks/security/mock_hasher.go -package=security
+	mockgen -source=internal/core/ports/output/security/hasher.go -destination=tests/mocks/mock_security_store.go -package=mocks
 
-	@echo "Generating mocks for Auth use cases..."
-	mockgen -source=internal/core/usecase/auth/login_auth.go -destination=tests/mocks/auth/mock_authenticator.go -package=auth
-	mockgen -source=internal/core/usecase/auth/logout_auth.go -destination=tests/mocks/auth/mock_session_revoker.go -package=auth
+	@echo "→ Redis Client"
+	mockgen -source=internal/infrastructure/cache/redis.go -destination=tests/mocks/mock_redis_client.go -package=mocks
+
+	@echo "→ Auth Service"
+	mockgen -source=internal/core/ports/input/http/auth.go -destination=tests/mocks/mock_auth_service.go -package=mocks
+
+	@echo "→ User Service"
+	mockgen -source=internal/core/ports/input/http/user.go -destination=tests/mocks/mock_user_service.go -package=mocks
 
 	@echo "All mocks generated successfully."
-

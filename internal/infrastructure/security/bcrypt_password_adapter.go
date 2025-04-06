@@ -9,6 +9,6 @@ func (BcryptPasswordAdapter) HashPassword(plain string) (string, error) {
 	return string(bytes), err
 }
 
-func (BcryptPasswordAdapter) ComparePasswords(hashed, plain string) error {
+func (BcryptPasswordAdapter) ValidatePassword(hashed, plain string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(plain))
 }

@@ -28,7 +28,7 @@ func (s *UserService) CreateUser(ctx domain.ContextControl, user domain.UserDoma
 		return domain.UserDomain{}, errors.New(constants.EmailIsAlreadyInUse)
 	}
 
-	hashPassword, err := s.PasswordService.HashPassword(password)
+	hashPassword, err := s.SecurityHasher.HashPassword(password)
 	if err != nil {
 		s.LoggerSugar.Errorw(constants.ErrorToHashPassword, constants.Error, err.Error())
 		return domain.UserDomain{}, errors.New(constants.ErrorToHashPassword)

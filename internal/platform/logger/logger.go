@@ -8,6 +8,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+const (
+	failedToFlushLogger = "Failed to flush logger: %v"
+)
+
 func InitLoggerSugar() (*zap.SugaredLogger, func()) {
 
 	encoderCfg := zap.NewProductionEncoderConfig()
@@ -34,7 +38,7 @@ func InitLoggerSugar() (*zap.SugaredLogger, func()) {
 
 	cleanup := func() {
 		if err := sugar.Sync(); err != nil {
-			log.Printf("Failed to flush logger: %v", err)
+			log.Printf(failedToFlushLogger, err)
 		}
 	}
 
