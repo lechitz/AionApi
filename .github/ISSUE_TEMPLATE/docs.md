@@ -1,6 +1,15 @@
+---
+name: Documentation
+about: Use this template to create a Documentation issue.
+title: "Brief description of the issue"
+labels: docs
+assignees: lechitz
+---
+
 ## General Information
 - **Category:** `docs`
 - **Priority:** *(Low / Medium / High / Critical)*
+
 ---
 
 ## Documentation Details

@@ -1,3 +1,11 @@
+---
+name: Database
+about: Use this template to create a Database-related issue.
+title: "Brief description of the issue"
+labels: database
+assignees: lechitz
+---
+
 ## General Information
 - **Category:** `database`
 - **Priority:** *(Low / Medium / High / Critical)*

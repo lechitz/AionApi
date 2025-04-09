@@ -1,3 +1,11 @@
+---
+name: Bugfix
+about: Use this template to create a Bugfix issue.
+title: "Describe the issue"
+labels: bugfix
+assignees: lechitz
+---
+
 ## General Information
 - **Category:** `bugfixes`
 - **Priority:** *(Low / Medium / High / Critical)*

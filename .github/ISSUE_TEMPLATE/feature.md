@@ -1,3 +1,11 @@
+---
+name: Feature
+about: Use this template to create a Feature issue.
+title: "Brief description of the feature"
+labels: feature
+assignees: lechitz
+---
+
 ## General Information
 - **Category:** `feature`
 - **Priority:** *(Low / Medium / High / Critical)*
