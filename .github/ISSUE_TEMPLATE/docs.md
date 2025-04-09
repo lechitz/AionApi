@@ -9,6 +9,7 @@ assignees: lechitz
 ## General Information
 - **Category:** `docs`
 - **Priority:** *(Low / Medium / High / Critical)*
+
 ---
 
 ## Documentation Details
