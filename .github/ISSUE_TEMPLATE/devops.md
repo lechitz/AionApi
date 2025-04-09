@@ -1,14 +1,5 @@
----
-name: DevOps Task
-about: Use this template to create a DevOps-related issue.
-title: "[DEVOPS] Brief description of the issue"
-labels: devops
-assignees: ''
----
-
-# DevOps Task Issue Template
-
 ## General Information
+- **Category:** `devops`
 - **Priority:** *(Low / Medium / High / Critical)*
 
 ---

@@ -1,14 +1,5 @@
----
-name: Refactor Task
-about: Use this template to create a refactor-related issue.
-title: "[REFACTOR] Brief description of the refactor"
-labels: refactor
-assignees: ''
----
-
-# Refactor Task Issue Template
-
 ## General Information
+- **Category:** `refactor`
 - **Priority:** *(Low / Medium / High / Critical)*
 
 ---
