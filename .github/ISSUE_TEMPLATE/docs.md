@@ -1,16 +1,6 @@
----
-name: Documentation Task
-about: Use this template to create a documentation-related issue.
-title: "[DOCS] Brief description of the issue"
-labels: docs
-assignees: ''
----
-
-# Documentation Task Issue Template
-
 ## General Information
+- **Category:** `docs`
 - **Priority:** *(Low / Medium / High / Critical)*
-
 ---
 
 ## Documentation Details
@@ -26,19 +16,6 @@ Describe the purpose and scope of the documentation task. Include:
 - [ ] All relevant sections are covered.
 - [ ] The formatting adheres to the project's standards.
 - [ ] The documentation is tested, if applicable.
-
----
-
-## Execution Plan
-Explain the steps to complete the documentation task. Include:
-- Tools or platforms to be used.
-- The specific areas of the project to be documented.
-- A review process to ensure quality and consistency.
-
----
-
-## Impacts
-List positive impacts.
 
 ---
 

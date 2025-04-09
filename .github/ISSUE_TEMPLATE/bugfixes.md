@@ -1,14 +1,5 @@
----
-name: Bugfix Task
-about: Use this template to create a bugfix-related issue.
-title: "[BUGFIX] Brief description of the issue"
-labels: bugfix
-assignees: ''
----
-
-# Bugfix Task Issue Template
-
 ## General Information
+- **Category:** `bugfixes`
 - **Priority:** *(Low / Medium / High / Critical)*
 
 ---

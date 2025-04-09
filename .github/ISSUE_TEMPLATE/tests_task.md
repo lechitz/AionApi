@@ -1,14 +1,5 @@
----
-name: Test Task
-about: Use this template to create a test-related issue.
-title: "[TESTS] Brief description of the test"
-labels: tests
-assignees: ''
----
-
-# Test Task Issue Template
-
 ## General Information
+- **Category:** `tests`
 - **Priority:** *(Low / Medium / High / Critical)*
 
 ---
