@@ -1,6 +1,6 @@
 ---
 name: Bugfix
-about: Use this template to create a Bugfix-related issue.
+about: Use this template to create a Bugfix issue.
 title: "Describe the issue"
 labels: bugfix
 assignees: lechitz
