@@ -1,3 +1,11 @@
+---
+name: Tests
+about: Use this template to create a Test issue.
+title: "Brief description of the feature"
+labels: tests
+assignees: lechitz
+---
+
 ## General Information
 - **Category:** `tests`
 - **Priority:** *(Low / Medium / High / Critical)*

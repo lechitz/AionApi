@@ -1,3 +1,11 @@
+---
+name: User Story
+about: Use this template to create a User Story.
+title: "`Category` - Title"
+labels: user story
+assignees: lechitz
+---
+
 ## General Information
 - **Category:** `user story`
 - **Priority:** *(Low / Medium / High / Critical)*

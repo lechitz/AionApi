@@ -1,3 +1,11 @@
+---
+name: DevOps
+about: Use this template to create a DevOps-related issue.
+title: "Brief description of the issue"
+labels: devops
+assignees: lechitz
+---
+
 ## General Information
 - **Category:** `devops`
 - **Priority:** *(Low / Medium / High / Critical)*

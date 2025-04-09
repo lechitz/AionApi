@@ -1,3 +1,11 @@
+---
+name: Refactor
+about: Use this template to create a Refactor issue.
+title: "Brief description of the feature"
+labels: refactor
+assignees: lechitz
+---
+
 ## General Information
 - **Category:** `refactor`
 - **Priority:** *(Low / Medium / High / Critical)*

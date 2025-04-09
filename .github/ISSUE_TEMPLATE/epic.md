@@ -1,3 +1,11 @@
+---
+name: Epic
+about: Use this template to create a Epic.
+title: "`[ㅤEpicㅤ]`"
+labels: epic
+assignees: lechitz
+---
+
 ## General Information
 - **Category:** `epic`
 - **Priority:** *(Low / Medium / High / Critical)*
