@@ -4,9 +4,16 @@ import "golang.org/x/crypto/bcrypt"
 
 type BcryptPasswordAdapter struct{}
 
+func NewBcryptPasswordAdapter() BcryptPasswordAdapter {
+	return BcryptPasswordAdapter{}
+}
+
 func (BcryptPasswordAdapter) HashPassword(plain string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(plain), bcrypt.DefaultCost)
-	return string(bytes), err
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }
 
 func (BcryptPasswordAdapter) ValidatePassword(hashed, plain string) error {

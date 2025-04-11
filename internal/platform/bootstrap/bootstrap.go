@@ -41,8 +41,10 @@ func InitializeDependencies(logger *zap.SugaredLogger, cfg config.Config) (*AppD
 		SecretKey: cfg.SecretKey,
 	})
 
-	authService := auth.NewAuthService(userRepository, tokenService, adapterSecurity.BcryptPasswordAdapter{}, logger, cfg.SecretKey)
-	userService := user.NewUserService(userRepository, tokenService, adapterSecurity.BcryptPasswordAdapter{}, logger)
+	passwordHasher := adapterSecurity.NewBcryptPasswordAdapter()
+
+	authService := auth.NewAuthService(userRepository, tokenService, passwordHasher, logger, cfg.SecretKey)
+	userService := user.NewUserService(userRepository, tokenService, passwordHasher, logger)
 
 	cleanup := func() {
 		infraDB.Close(dbConn, logger)

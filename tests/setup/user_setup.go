@@ -12,7 +12,6 @@ import (
 	mockUser "github.com/lechitz/AionApi/tests/mocks/user"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
-	"gorm.io/gorm"
 )
 
 type UserServiceTestSuite struct {
@@ -54,5 +53,5 @@ var TestPerfectUser = domain.UserDomain{
 	Password:  "password123",
 	CreatedAt: time.Now(),
 	UpdatedAt: time.Now(),
-	DeletedAt: gorm.DeletedAt{},
+	DeletedAt: nil,
 }
