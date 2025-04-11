@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -13,5 +12,5 @@ type UserDomain struct {
 	Password  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt
+	DeletedAt *time.Time
 }

@@ -12,14 +12,6 @@ const (
 	ErrorToSoftDeleteUser    = "error to soft delete user"
 )
 
-const (
-	SuccesfullyDeletedUser = "Soft deleted user successfully"
-)
-
-const (
-	DeleteAtIsNull = "deleted_at IS NULL"
-)
-
 // Table names
 
 const (
@@ -28,10 +20,6 @@ const (
 
 const (
 	Error     = "error"
-	UserID    = "id"
-	Name      = "name"
-	Username  = "username"
-	Email     = "email"
 	CreatedAt = "created_at"
 	UpdatedAt = "updated_at"
 	DeletedAt = "deleted_at"

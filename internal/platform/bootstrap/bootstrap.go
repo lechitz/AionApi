@@ -7,8 +7,7 @@ import (
 	infraDB "github.com/lechitz/AionApi/internal/infrastructure/db"
 
 	adapterCache "github.com/lechitz/AionApi/internal/adapters/secondary/cache"
-	adapterDB "github.com/lechitz/AionApi/internal/adapters/secondary/db"
-
+	adapterDB "github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
 	adapterSecurity "github.com/lechitz/AionApi/internal/infrastructure/security"
 
 	portsHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
@@ -41,7 +40,7 @@ func InitializeDependencies(logger *zap.SugaredLogger, cfg config.Config) (*AppD
 	tokenService := token.NewTokenService(tokenRepository, logger, domain.TokenConfig{
 		SecretKey: cfg.SecretKey,
 	})
-	
+
 	authService := auth.NewAuthService(userRepository, tokenService, adapterSecurity.BcryptPasswordAdapter{}, logger, cfg.SecretKey)
 	userService := user.NewUserService(userRepository, tokenService, adapterSecurity.BcryptPasswordAdapter{}, logger)
 
