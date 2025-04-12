@@ -3,8 +3,8 @@ package validators
 import (
 	"errors"
 	"github.com/go-chi/chi/v5"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/pkg/utils"
-	"go.uber.org/zap"
 	"net/http"
 	"strconv"
 )
@@ -15,7 +15,7 @@ const (
 	UserIdIsRequired       = "user ID is required"
 )
 
-func UserIDFromParam(w http.ResponseWriter, logger *zap.SugaredLogger, r *http.Request) (uint64, error) {
+func UserIDFromParam(w http.ResponseWriter, logger logger.Logger, r *http.Request) (uint64, error) {
 	userIDParam := chi.URLParam(r, "id")
 
 	if userIDParam == "" {

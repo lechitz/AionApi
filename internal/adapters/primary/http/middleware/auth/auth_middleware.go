@@ -3,24 +3,24 @@ package auth
 import (
 	"context"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
-	"go.uber.org/zap"
 )
 
 type MiddlewareAuth struct {
-	TokenService cache.TokenRepositoryPort
-	LoggerSugar  *zap.SugaredLogger
+	tokenService cache.TokenRepositoryPort
+	logger       logger.Logger
 }
 
-func NewAuthMiddleware(tokenService cache.TokenRepositoryPort, logger *zap.SugaredLogger) *MiddlewareAuth {
+func NewAuthMiddleware(tokenService cache.TokenRepositoryPort, logger logger.Logger) *MiddlewareAuth {
 	return &MiddlewareAuth{
-		TokenService: tokenService,
-		LoggerSugar:  logger,
+		tokenService: tokenService,
+		logger:       logger,
 	}
 }
 
@@ -33,7 +33,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 
 		tokenCookie, err := extractTokenFromCookie(r)
 		if err != nil {
-			a.LoggerSugar.Warnw(constants.ErrorUnauthorizedAccessMissingToken, constants.Error, err.Error())
+			a.logger.Warnw(constants.ErrorUnauthorizedAccessMissingToken, constants.Error, err.Error())
 			http.Error(w, constants.ErrorUnauthorizedAccessMissingToken, http.StatusUnauthorized)
 			return
 		}
@@ -42,30 +42,30 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			return []byte(config.Setting.SecretKey), nil
 		})
 		if err != nil || parsedToken == nil || !parsedToken.Valid {
-			a.LoggerSugar.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, constants.Error, err)
+			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, constants.Error, err)
 			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
 			return
 		}
 
 		claims, ok := parsedToken.Claims.(jwt.MapClaims)
 		if !ok {
-			a.LoggerSugar.Warnw(constants.ErrorUnauthorizedAccessInvalidToken)
+			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken)
 			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
 			return
 		}
 
 		userIDFloat, ok := claims[constants.UserID].(float64)
 		if !ok {
-			a.LoggerSugar.Warnw(constants.ErrorUnauthorizedAccessInvalidToken)
+			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken)
 			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
 			return
 		}
 		userID := uint64(userIDFloat)
 
 		tokenDomain := domain.TokenDomain{UserID: userID, Token: tokenCookie}
-		_, err = a.TokenService.Get(*ctx, tokenDomain)
+		_, err = a.tokenService.Get(*ctx, tokenDomain)
 		if err != nil {
-			a.LoggerSugar.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, constants.Error, err.Error())
+			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, constants.Error, err.Error())
 			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
 			return
 		}
@@ -73,7 +73,6 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 		newCtx := context.WithValue(r.Context(), constants.UserID, tokenDomain.UserID)
 		newCtx = context.WithValue(newCtx, constants.Token, tokenCookie)
 
-		a.LoggerSugar.Infow(constants.SuccessTokenValidated, constants.UserID, tokenDomain.UserID)
 		next.ServeHTTP(w, r.WithContext(newCtx))
 	})
 }

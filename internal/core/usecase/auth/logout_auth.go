@@ -10,9 +10,9 @@ type SessionRevoker interface {
 }
 
 func (s *AuthService) Logout(ctx domain.ContextControl, token string) error {
-	userID, _, err := s.TokenService.VerifyToken(ctx, token)
+	userID, _, err := s.tokenService.VerifyToken(ctx, token)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToCheckToken, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToCheckToken, constants.Error, err.Error())
 		return err
 	}
 
@@ -21,11 +21,11 @@ func (s *AuthService) Logout(ctx domain.ContextControl, token string) error {
 		Token:  token,
 	}
 
-	if err := s.TokenService.Delete(ctx, tokenDomain); err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToRevokeToken, constants.Error, err.Error(), constants.UserID, userID)
+	if err := s.tokenService.Delete(ctx, tokenDomain); err != nil {
+		s.logger.Errorw(constants.ErrorToRevokeToken, constants.Error, err.Error(), constants.UserID, userID)
 		return err
 	}
 
-	s.LoggerSugar.Infow(constants.SuccessUserLoggedOut, constants.UserID, userID)
+	s.logger.Infow(constants.SuccessUserLoggedOut, constants.UserID, userID)
 	return nil
 }

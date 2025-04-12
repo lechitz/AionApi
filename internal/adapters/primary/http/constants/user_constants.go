@@ -1,4 +1,4 @@
-package messages
+package constants
 
 // User Constants
 

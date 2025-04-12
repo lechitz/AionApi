@@ -7,10 +7,11 @@ import (
 	"github.com/lechitz/AionApi/internal/infrastructure/security"
 	"github.com/lechitz/AionApi/internal/platform/config/constants"
 	"github.com/lechitz/AionApi/pkg/utils"
-	"go.uber.org/zap"
+
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
-func LoadConfig(logger *zap.SugaredLogger) error {
+func Load(logger logger.Logger) error {
 	if err := envconfig.Process(constants.Settings, &Setting); err != nil {
 		return fmt.Errorf(constants.ErrFailedToProcessEnvVars, err)
 	}
@@ -28,10 +29,11 @@ func LoadConfig(logger *zap.SugaredLogger) error {
 			utils.HandleCriticalError(logger, constants.ErrGenerateSecretKey, err)
 			return err
 		}
+
 		Setting.SecretKey = generated
 
-		logger.Warn(constants.SecretKeyWasNotSet)
-		fmt.Printf("\nSECRET_KEY=%s\n", Setting.SecretKey)
+		logger.Warnf(constants.SecretKeyWasNotSet)
+		fmt.Printf(constants.SecretKeyFormat, Setting.SecretKey)
 	}
 
 	return nil

@@ -12,16 +12,17 @@ const (
 	failedToFlushLogger = "Failed to flush logger: %v"
 )
 
-func InitLoggerSugar() (*zap.SugaredLogger, func()) {
-
+func NewZapLogger() (*zap.SugaredLogger, func()) {
 	encoderCfg := zap.NewProductionEncoderConfig()
 	encoderCfg.TimeKey = "timestamp"
 	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
+
 	encoder := zapcore.NewJSONEncoder(encoderCfg)
 
 	infoLevel := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
 		return lvl >= zapcore.InfoLevel && lvl < zapcore.ErrorLevel
 	})
+
 	errorLevel := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
 		return lvl >= zapcore.ErrorLevel
 	})
@@ -31,6 +32,7 @@ func InitLoggerSugar() (*zap.SugaredLogger, func()) {
 
 	infoCore := zapcore.NewCore(encoder, infoWriter, infoLevel)
 	errorCore := zapcore.NewCore(encoder, errorWriter, errorLevel)
+
 	tee := zapcore.NewTee(infoCore, errorCore)
 
 	logger := zap.New(tee, zap.AddCaller(), zap.AddCallerSkip(1))

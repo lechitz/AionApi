@@ -13,41 +13,41 @@ type UserRetriever interface {
 }
 
 func (s *UserService) GetUserByID(ctx domain.ContextControl, id uint64) (domain.UserDomain, error) {
-	user, err := s.UserRepository.GetUserByID(ctx, id)
+	user, err := s.userRepository.GetUserByID(ctx, id)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
-	s.LoggerSugar.Infow(constants.SuccessUserRetrieved, constants.UserID, user.ID)
+	s.logger.Infow(constants.SuccessUserRetrieved, constants.UserID, user.ID)
 	return user, nil
 }
 
 func (s *UserService) GetUserByEmail(ctx domain.ContextControl, email string) (domain.UserDomain, error) {
-	user, err := s.UserRepository.GetUserByEmail(ctx, email)
+	user, err := s.userRepository.GetUserByEmail(ctx, email)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToGetUserByEmail, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToGetUserByEmail, constants.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
-	s.LoggerSugar.Infow(constants.SuccessUserRetrieved, constants.UserID, user.ID)
+	s.logger.Infow(constants.SuccessUserRetrieved, constants.UserID, user.ID)
 	return user, nil
 }
 
 func (s *UserService) GetUserByUsername(ctx domain.ContextControl, username string) (domain.UserDomain, error) {
-	userDB, err := s.UserRepository.GetUserByUsername(ctx, username)
+	userDB, err := s.userRepository.GetUserByUsername(ctx, username)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToGetUserByUserName, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToGetUserByUserName, constants.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
-	s.LoggerSugar.Infow(constants.SuccessUserRetrieved, constants.UserID, userDB.ID)
+	s.logger.Infow(constants.SuccessUserRetrieved, constants.UserID, userDB.ID)
 	return userDB, nil
 }
 
 func (s *UserService) GetAllUsers(ctx domain.ContextControl) ([]domain.UserDomain, error) {
-	users, err := s.UserRepository.GetAllUsers(ctx)
+	users, err := s.userRepository.GetAllUsers(ctx)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToGetAllUsers, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToGetAllUsers, constants.Error, err.Error())
 		return nil, err
 	}
-	s.LoggerSugar.Infow(constants.SuccessUsersRetrieved, "count", len(users))
+	s.logger.Infow(constants.SuccessUsersRetrieved, "count", len(users))
 	return users, nil
 }

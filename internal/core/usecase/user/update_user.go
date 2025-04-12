@@ -30,31 +30,31 @@ func (s *UserService) UpdateUser(ctx domain.ContextControl, user domain.UserDoma
 	}
 	updateFields[constants.UpdatedAt] = time.Now().UTC()
 
-	updatedUser, err := s.UserRepository.UpdateUser(ctx, user.ID, updateFields)
+	updatedUser, err := s.userRepository.UpdateUser(ctx, user.ID, updateFields)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToUpdateUser, "error", err.Error())
+		s.logger.Errorw(constants.ErrorToUpdateUser, "error", err.Error())
 		return domain.UserDomain{}, err
 	}
 
-	s.LoggerSugar.Infow(constants.SuccessUserUpdated, constants.UserID, updatedUser.ID)
+	s.logger.Infow(constants.SuccessUserUpdated, constants.UserID, updatedUser.ID)
 	return updatedUser, nil
 }
 
 func (s *UserService) UpdateUserPassword(ctx domain.ContextControl, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error) {
-	userDB, err := s.UserRepository.GetUserByID(ctx, user.ID)
+	userDB, err := s.userRepository.GetUserByID(ctx, user.ID)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
-	if err := s.SecurityHasher.ValidatePassword(userDB.Password, oldPassword); err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToCompareHashAndPassword, constants.Error, err.Error())
+	if err := s.securityHasher.ValidatePassword(userDB.Password, oldPassword); err != nil {
+		s.logger.Errorw(constants.ErrorToCompareHashAndPassword, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
-	hashedPassword, err := s.SecurityHasher.HashPassword(newPassword)
+	hashedPassword, err := s.securityHasher.HashPassword(newPassword)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToHashPassword, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToHashPassword, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
@@ -63,25 +63,25 @@ func (s *UserService) UpdateUserPassword(ctx domain.ContextControl, user domain.
 		constants.UpdatedAt: time.Now().UTC(),
 	}
 
-	updatedUser, err := s.UserRepository.UpdateUser(ctx, user.ID, fields)
+	updatedUser, err := s.userRepository.UpdateUser(ctx, user.ID, fields)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToUpdatePassword, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToUpdatePassword, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 
 	tokenDomain := domain.TokenDomain{UserID: user.ID}
-	token, err := s.TokenService.CreateToken(ctx, tokenDomain)
+	token, err := s.tokenService.CreateToken(ctx, tokenDomain)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToCreateToken, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToCreateToken, constants.Error, err.Error())
 		return domain.UserDomain{}, "", err
 	}
 	tokenDomain.Token = token
 
-	if err := s.TokenService.Save(ctx, tokenDomain); err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToSaveToken, constants.Error, err.Error())
+	if err := s.tokenService.Save(ctx, tokenDomain); err != nil {
+		s.logger.Errorw(constants.ErrorToSaveToken, constants.Error, err.Error())
 		return domain.UserDomain{}, "", errors.New(constants.ErrorToSaveToken)
 	}
 
-	s.LoggerSugar.Infow(constants.SuccessPasswordUpdated, constants.UserID, updatedUser.ID)
+	s.logger.Infow(constants.SuccessPasswordUpdated, constants.UserID, updatedUser.ID)
 	return updatedUser, token, nil
 }

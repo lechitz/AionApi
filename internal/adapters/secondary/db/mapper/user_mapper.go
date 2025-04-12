@@ -1,10 +1,10 @@
 package mapper
 
 import (
+	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 	"gorm.io/gorm"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 

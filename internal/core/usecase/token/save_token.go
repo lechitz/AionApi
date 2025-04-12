@@ -10,10 +10,10 @@ type Saver interface {
 }
 
 func (s *TokenService) Save(ctx domain.ContextControl, token domain.TokenDomain) error {
-	if err := s.TokenRepository.Save(ctx, token); err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToSaveToken, constants.Error, err.Error())
+	if err := s.tokenRepository.Save(ctx, token); err != nil {
+		s.logger.Errorw(constants.ErrorToSaveToken, constants.Error, err.Error())
 		return err
 	}
-	s.LoggerSugar.Infow(constants.SuccessTokenCreated, constants.UserID, token.UserID)
+	s.logger.Infow(constants.SuccessTokenCreated, constants.UserID, token.UserID)
 	return nil
 }

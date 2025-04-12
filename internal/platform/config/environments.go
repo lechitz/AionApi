@@ -30,7 +30,7 @@ type Config struct {
 		ReadTimeout  time.Duration `envconfig:"SERVER_READ_TIMEOUT" default:"10s"`
 		WriteTimeout time.Duration `envconfig:"SERVER_WRITE_TIMEOUT" default:"10s"`
 	}
-	DB        DBConfig    `envconfig:"POSTGRES"`
-	Cache     CacheConfig `envconfig:"REDIS"`
-	SecretKey string      `envconfig:"SECRET_KEY"`
+	DB        DBConfig
+	Cache     CacheConfig
+	SecretKey string `envconfig:"SECRET_KEY"`
 }

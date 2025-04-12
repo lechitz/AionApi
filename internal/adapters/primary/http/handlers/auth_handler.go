@@ -2,21 +2,21 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"net/http"
 	"time"
 
-	constants "github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 
 	"github.com/lechitz/AionApi/pkg/utils"
-	"go.uber.org/zap"
 )
 
 type Auth struct {
 	AuthService inputHttp.AuthService
-	LoggerSugar *zap.SugaredLogger
+	Logger      logger.Logger
 }
 
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +39,6 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	setAuthCookie(w, token, 0)
 
 	response := dto.LoginUserResponse{Username: userDB.Username}
-	a.LoggerSugar.Infow(constants.SuccessToLogin, constants.Username, userDB.Username)
 
 	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(response, constants.SuccessToLogin).Bytes())
 }
@@ -71,7 +70,7 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		tokenPreview = tokenString[:10] + "..."
 	}
 
-	a.LoggerSugar.Infow(
+	a.Logger.Infow(
 		constants.SuccessToLogout,
 		constants.UserID, userID,
 		constants.Token, tokenPreview,
@@ -82,11 +81,11 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
-		a.LoggerSugar.Errorw(message, constants.Error, err.Error())
+		a.Logger.Errorw(message, constants.Error, err.Error())
 	} else {
-		a.LoggerSugar.Errorw(message)
+		a.Logger.Errorw(message)
 	}
-	utils.HandleError(w, a.LoggerSugar, status, message, err)
+	utils.HandleError(w, a.Logger, status, message, err)
 }
 
 func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {

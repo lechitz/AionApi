@@ -10,10 +10,10 @@ type Deleter interface {
 }
 
 func (s *TokenService) Delete(ctx domain.ContextControl, token domain.TokenDomain) error {
-	if err := s.TokenRepository.Delete(ctx, token); err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToDeleteToken, constants.Error, err.Error())
+	if err := s.tokenRepository.Delete(ctx, token); err != nil {
+		s.logger.Errorw(constants.ErrorToDeleteToken, constants.Error, err.Error())
 		return err
 	}
-	s.LoggerSugar.Infow(constants.SuccessTokenDeleted, constants.UserID, token.UserID)
+	s.logger.Infow(constants.SuccessTokenDeleted, constants.UserID, token.UserID)
 	return nil
 }

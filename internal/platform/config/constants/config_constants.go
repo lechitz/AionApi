@@ -8,3 +8,7 @@ const (
 	ErrGenerateSecretKey      = "failed to generate secret key"
 	SecretKeyWasNotSet        = "SECRET_KEY was not set. A new one was generated for this runtime session."
 )
+
+const (
+	SecretKeyFormat = "\nSECRET_KEY=%s\n"
+)

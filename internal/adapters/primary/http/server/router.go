@@ -6,17 +6,17 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
-	"go.uber.org/zap"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
 type Router struct {
 	ContextPath    string
 	Router         chi.Router
-	LoggerSugar    *zap.SugaredLogger
-	AuthMiddleware *auth.MiddlewareAuth
+	logger         logger.Logger
+	authMiddleware *auth.MiddlewareAuth
 }
 
-func GetNewRouter(loggerSugar *zap.SugaredLogger, tokenRepository cache.TokenRepositoryPort, contextPath string) (*Router, error) {
+func GetNewRouter(logger logger.Logger, tokenRepository cache.TokenRepositoryPort, contextPath string) (*Router, error) {
 	if len(contextPath) > 0 && contextPath[0] != '/' {
 		contextPath = "/" + contextPath
 	}
@@ -26,13 +26,13 @@ func GetNewRouter(loggerSugar *zap.SugaredLogger, tokenRepository cache.TokenRep
 	}
 
 	r := chi.NewRouter()
-	authMiddleware := auth.NewAuthMiddleware(tokenRepository, loggerSugar)
+	authMiddleware := auth.NewAuthMiddleware(tokenRepository, logger)
 
 	return &Router{
 		ContextPath:    contextPath,
 		Router:         r,
-		LoggerSugar:    loggerSugar,
-		AuthMiddleware: authMiddleware,
+		logger:         logger,
+		authMiddleware: authMiddleware,
 	}, nil
 }
 
@@ -54,7 +54,7 @@ func (router *Router) AddUserRoutes(uh *handlers.User) func(r chi.Router) {
 			r.Post("/create", uh.CreateUserHandler)
 
 			r.Group(func(r chi.Router) {
-				r.Use(router.AuthMiddleware.Auth)
+				r.Use(router.authMiddleware.Auth)
 				r.Get("/all", uh.GetAllUsersHandler)
 				r.Get("/{id}", uh.GetUserByIDHandler)
 				r.Put("/", uh.UpdateUserHandler)
@@ -71,7 +71,7 @@ func (router *Router) AddAuthRoutes(ah *handlers.Auth) func(r chi.Router) {
 			r.Post("/login", ah.LoginHandler)
 
 			r.Group(func(r chi.Router) {
-				r.Use(router.AuthMiddleware.Auth)
+				r.Use(router.authMiddleware.Auth)
 				r.Post("/logout", ah.LogoutHandler)
 			})
 		})
