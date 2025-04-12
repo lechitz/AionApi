@@ -4,7 +4,6 @@ const (
 	StartingApplication             = "starting application"
 	ErrToFailedLoadConfiguration    = "failed to load configuration"
 	SuccessToLoadConfiguration      = "success to load configuration"
-	Settings                        = "settings"
 	ErrInitializeDependencies       = "failed to initialize dependencies"
 	SuccessToInitializeDependencies = "success to initialize dependencies"
 	ErrStartServer                  = "failed to start server"

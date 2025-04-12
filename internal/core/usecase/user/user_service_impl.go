@@ -2,23 +2,23 @@ package user
 
 import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/db"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/core/ports/output/security"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
-	"go.uber.org/zap"
 )
 
 type UserService struct {
-	UserRepository db.UserStore
-	TokenService   token.TokenUsecase
-	SecurityHasher security.SecurityStore
-	LoggerSugar    *zap.SugaredLogger
+	userRepository db.UserStore
+	tokenService   token.TokenUsecase
+	securityHasher security.SecurityStore
+	logger         logger.Logger
 }
 
-func NewUserService(userRepo db.UserStore, tokenService token.TokenUsecase, securityHasher security.SecurityStore, loggerSugar *zap.SugaredLogger) *UserService {
+func NewUserService(userRepo db.UserStore, tokenService token.TokenUsecase, securityHasher security.SecurityStore, logger logger.Logger) *UserService {
 	return &UserService{
-		UserRepository: userRepo,
-		TokenService:   tokenService,
-		SecurityHasher: securityHasher,
-		LoggerSugar:    loggerSugar,
+		userRepository: userRepo,
+		tokenService:   tokenService,
+		securityHasher: securityHasher,
+		logger:         logger,
 	}
 }

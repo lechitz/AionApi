@@ -2,17 +2,17 @@ package server
 
 import (
 	"fmt"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/server/constants"
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/server/constants"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
-	"go.uber.org/zap"
 )
 
-func InitRouter(logger *zap.SugaredLogger, userService inputHttp.UserService, authService inputHttp.AuthService, tokenRepository cache.TokenRepositoryPort, contextPath string) (*Router, error) {
+func InitRouter(logger logger.Logger, userService inputHttp.UserService, authService inputHttp.AuthService, tokenRepository cache.TokenRepositoryPort, contextPath string) (*Router, error) {
 	if contextPath == "" {
 		return nil, fmt.Errorf(constants.ErrorContextPathEmpty)
 	}
@@ -22,14 +22,14 @@ func InitRouter(logger *zap.SugaredLogger, userService inputHttp.UserService, au
 
 	userHandler := &handlers.User{
 		UserService: userService,
-		LoggerSugar: logger,
+		Logger:      logger,
 	}
 	authHandler := &handlers.Auth{
 		AuthService: authService,
-		LoggerSugar: logger,
+		Logger:      logger,
 	}
 	genericHandler := &handlers.Generic{
-		LoggerSugar: logger,
+		Logger: logger,
 	}
 
 	router, err := GetNewRouter(logger, tokenRepository, contextPath)

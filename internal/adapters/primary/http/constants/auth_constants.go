@@ -1,4 +1,4 @@
-package messages
+package constants
 
 // Auth Constants
 const (

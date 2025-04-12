@@ -2,23 +2,22 @@ package handlers
 
 import (
 	"encoding/json"
-
-	constants "github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/validators"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 
 	"net/http"
 
 	"github.com/jinzhu/copier"
 	"github.com/lechitz/AionApi/pkg/utils"
-	"go.uber.org/zap"
 )
 
 type User struct {
 	UserService inputHttp.UserService
-	LoggerSugar *zap.SugaredLogger
+	Logger      logger.Logger
 }
 
 func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +41,6 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var res dto.CreateUserResponse
 	_ = copier.Copy(&res, &user)
 
-	u.LoggerSugar.Infow(constants.SuccessToCreateUser, constants.Username, res.Username)
 	utils.ResponseReturn(w, http.StatusCreated, utils.ObjectResponse(res, constants.SuccessToCreateUser).Bytes())
 }
 
@@ -58,14 +56,13 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	var res []dto.GetUserResponse
 	_ = copier.Copy(&res, &users)
 
-	u.LoggerSugar.Infow(constants.SuccessToGetUsers, constants.Users, res)
 	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(res, constants.SuccessToGetUsers).Bytes())
 }
 
 func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := domain.ContextControl{BaseContext: r.Context()}
 
-	userID, err := validators.UserIDFromParam(w, u.LoggerSugar, r)
+	userID, err := validators.UserIDFromParam(w, u.Logger, r)
 	if err != nil {
 		u.logAndHandleError(w, http.StatusBadRequest, constants.ErrorToParseUser, err)
 		return
@@ -85,7 +82,6 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		CreatedAt: user.CreatedAt,
 	}
 
-	u.LoggerSugar.Infow(constants.SuccessToGetUser, constants.User, res)
 	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(res, constants.SuccessToGetUser).Bytes())
 }
 
@@ -128,7 +124,6 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		Email:    &userUpdated.Email,
 	}
 
-	u.LoggerSugar.Infow(constants.SuccessToUpdateUser, constants.Username, res.Username)
 	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(res, constants.SuccessToUpdateUser).Bytes())
 }
 
@@ -158,7 +153,6 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	setAuthCookie(w, newToken, 0)
 
-	u.LoggerSugar.Infow(constants.SuccessToUpdatePassword, constants.UserID, userID)
 	utils.ResponseReturn(w, http.StatusOK, utils.ObjectResponse(nil, constants.SuccessToUpdatePassword).Bytes())
 }
 
@@ -178,15 +172,14 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	clearAuthCookie(w)
 
-	u.LoggerSugar.Infow(constants.SuccessUserSoftDeleted, constants.UserID, userID)
 	utils.ResponseReturn(w, http.StatusNoContent, utils.ObjectResponse(nil, constants.SuccessUserSoftDeleted).Bytes())
 }
 
 func (u *User) logAndHandleError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
-		u.LoggerSugar.Errorw(message, constants.Error, err.Error())
+		u.Logger.Errorw(message, constants.Error, err.Error())
 	} else {
-		u.LoggerSugar.Errorw(message)
+		u.Logger.Errorw(message)
 	}
-	utils.HandleError(w, u.LoggerSugar, status, message, err)
+	utils.HandleError(w, u.Logger, status, message, err)
 }

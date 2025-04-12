@@ -11,26 +11,26 @@ type Creator interface {
 }
 
 func (s *TokenService) CreateToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) (string, error) {
-	if _, err := s.TokenRepository.Get(ctx, tokenDomain); err == nil {
-		if err := s.TokenRepository.Delete(ctx, tokenDomain); err != nil {
-			s.LoggerSugar.Errorw(constants.ErrorToDeleteToken, constants.Error, err.Error())
+	if _, err := s.tokenRepository.Get(ctx, tokenDomain); err == nil {
+		if err := s.tokenRepository.Delete(ctx, tokenDomain); err != nil {
+			s.logger.Errorw(constants.ErrorToDeleteToken, constants.Error, err.Error())
 			return "", err
 		}
 	}
 
-	signedToken, err := security.GenerateToken(tokenDomain.UserID, s.ConfigToken.SecretKey)
+	signedToken, err := security.GenerateToken(tokenDomain.UserID, s.configToken.SecretKey)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToAssignToken, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToAssignToken, constants.Error, err.Error())
 		return "", err
 	}
 
 	tokenDomain.Token = signedToken
 
-	if err := s.TokenRepository.Save(ctx, tokenDomain); err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToSaveToken, constants.Error, err.Error())
+	if err := s.tokenRepository.Save(ctx, tokenDomain); err != nil {
+		s.logger.Errorw(constants.ErrorToSaveToken, constants.Error, err.Error())
 		return "", err
 	}
 
-	s.LoggerSugar.Infow(constants.SuccessTokenCreated, constants.UserID, tokenDomain.UserID)
+	s.logger.Infow(constants.SuccessTokenCreated, constants.UserID, tokenDomain.UserID)
 	return signedToken, nil
 }

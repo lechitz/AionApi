@@ -1,39 +1,40 @@
 package setup
 
 import (
-	"go.uber.org/zap"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
+	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
 	mockToken "github.com/lechitz/AionApi/tests/mocks/token"
-	"go.uber.org/zap/zaptest"
 )
 
 type TokenServiceTestSuite struct {
 	Ctrl         *gomock.Controller
+	Logger       *mockLogger.MockLogger
 	TokenStore   *mockToken.MockTokenRepositoryPort
 	TokenService token.TokenUsecase
-	LoggerSugar  *zap.SugaredLogger
 	Ctx          domain.ContextControl
 }
 
 func SetupTokenServiceTest(t *testing.T, secretKey string) *TokenServiceTestSuite {
 	ctrl := gomock.NewController(t)
-	logger := zaptest.NewLogger(t).Sugar()
 
+	mockLog := mockLogger.NewMockLogger(ctrl)
 	mockTokenStore := mockToken.NewMockTokenRepositoryPort(ctrl)
 
-	tokenService := token.NewTokenService(mockTokenStore, logger, domain.TokenConfig{
+	ExpectLoggerDefaultBehavior(mockLog)
+
+	tokenService := token.NewTokenService(mockTokenStore, mockLog, domain.TokenConfig{
 		SecretKey: secretKey,
 	})
 
 	return &TokenServiceTestSuite{
 		Ctrl:         ctrl,
+		Logger:       mockLog,
 		TokenStore:   mockTokenStore,
 		TokenService: tokenService,
-		LoggerSugar:  logger,
 		Ctx:          domain.ContextControl{},
 	}
 }

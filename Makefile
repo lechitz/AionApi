@@ -221,5 +221,10 @@ mocks:
 		-destination=tests/mocks/security/mock_security_store.go \
 		-package=securitymocks
 
+	@echo "→ Logger"
+	mockgen -source=internal/core/ports/output/logger/logger.go \
+		-destination=tests/mocks/logger/mock_logger.go \
+		-package=loggermocks
+
 	@echo "✅ All mocks generated successfully."
 

@@ -3,23 +3,23 @@ package cache
 import (
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
 )
 
 type TokenRepository struct {
 	cache  *redis.Client
-	logger *zap.SugaredLogger
+	logger logger.Logger
 }
 
-func NewTokenRepository(cache *redis.Client, loggerSugar *zap.SugaredLogger) *TokenRepository {
+func NewTokenRepository(cache *redis.Client, logger logger.Logger) *TokenRepository {
 	return &TokenRepository{
 		cache:  cache,
-		logger: loggerSugar,
+		logger: logger,
 	}
 }
 
@@ -31,7 +31,7 @@ func (t *TokenRepository) Save(ctx domain.ContextControl, token domain.TokenDoma
 		t.logger.Errorw(constants.ErrorToSaveTokenToRedis, constants.Key, key, constants.Error, err)
 		return err
 	}
-	
+
 	return nil
 }
 

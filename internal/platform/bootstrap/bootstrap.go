@@ -1,13 +1,15 @@
 package bootstrap
 
 import (
+	adapterCache "github.com/lechitz/AionApi/internal/adapters/secondary/cache"
+	adapterDB "github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
 	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
+
 	portsToken "github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	infraCache "github.com/lechitz/AionApi/internal/infrastructure/cache"
 	infraDB "github.com/lechitz/AionApi/internal/infrastructure/db"
 
-	adapterCache "github.com/lechitz/AionApi/internal/adapters/secondary/cache"
-	adapterDB "github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
 	adapterSecurity "github.com/lechitz/AionApi/internal/infrastructure/security"
 
 	portsHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
@@ -16,8 +18,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
 
 	"github.com/lechitz/AionApi/internal/platform/config"
-
-	"go.uber.org/zap"
 )
 
 type AppDependencies struct {
@@ -25,11 +25,12 @@ type AppDependencies struct {
 	TokenService    token.TokenUsecase
 	AuthService     portsHttp.AuthService
 	UserService     portsHttp.UserService
+	Logger          logger.Logger
 }
 
-var ErrorInitializingDependencies = "error closing cache connection"
+const ErrorInitializingDependencies = "error closing cache connection"
 
-func InitializeDependencies(logger *zap.SugaredLogger, cfg config.Config) (*AppDependencies, func(), error) {
+func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDependencies, func(), error) {
 
 	cacheConn := infraCache.NewCacheConnection(cfg.Cache, logger)
 	tokenRepository := adapterCache.NewTokenRepository(cacheConn, logger)
@@ -49,7 +50,7 @@ func InitializeDependencies(logger *zap.SugaredLogger, cfg config.Config) (*AppD
 	cleanup := func() {
 		infraDB.Close(dbConn, logger)
 		if err := cacheConn.Close(); err != nil {
-			logger.Error(ErrorInitializingDependencies, err)
+			logger.Errorf("%s: %v", ErrorInitializingDependencies, err)
 		}
 	}
 
@@ -58,5 +59,6 @@ func InitializeDependencies(logger *zap.SugaredLogger, cfg config.Config) (*AppD
 		TokenService:    tokenService,
 		AuthService:     authService,
 		UserService:     userService,
+		Logger:          logger,
 	}, cleanup, nil
 }

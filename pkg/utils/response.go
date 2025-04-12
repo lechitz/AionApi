@@ -3,9 +3,10 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
-	"go.uber.org/zap"
 	"net/http"
 	"time"
+
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
 func ResponseReturn(w http.ResponseWriter, statusCode int, body []byte) {
@@ -17,7 +18,6 @@ func ResponseReturn(w http.ResponseWriter, statusCode int, body []byte) {
 }
 
 func ObjectResponse(obj any, message string) *bytes.Buffer {
-
 	response := struct {
 		Message string    `json:"message,omitempty"`
 		Result  any       `json:"result,omitempty"`
@@ -33,22 +33,36 @@ func ObjectResponse(obj any, message string) *bytes.Buffer {
 	return body
 }
 
-func HandleError(w http.ResponseWriter, logger *zap.SugaredLogger, status int, msg string, err error) {
+func HandleError(w http.ResponseWriter, logger logger.Logger, status int, msg string, err error) {
 	if err != nil {
-		logger.Errorw(msg, "error", err.Error())
+		logger.Errorw("operation failed",
+			"message", msg,
+			"error", err.Error(),
+			"status", status,
+		)
 		response := ObjectResponse(nil, msg+": "+err.Error())
 		ResponseReturn(w, status, response.Bytes())
 	} else {
-		logger.Errorw(msg)
+		logger.Warnw("operation returned warning",
+			"message", msg,
+			"status", status,
+		)
 		response := ObjectResponse(nil, msg)
 		ResponseReturn(w, status, response.Bytes())
 	}
 }
 
-func HandleCriticalError(loggerSugar *zap.SugaredLogger, message string, err error) {
+func HandleCriticalError(logger logger.Logger, message string, err error) {
 	if err != nil {
-		loggerSugar.Fatalw(message, "error", err.Error())
+		logger.Errorw("critical failure",
+			"message", message,
+			"error", err.Error(),
+		)
+		panic(err)
 	} else {
-		loggerSugar.Fatal(message)
+		logger.Errorw("critical failure",
+			"message", message,
+		)
+		panic(message)
 	}
 }

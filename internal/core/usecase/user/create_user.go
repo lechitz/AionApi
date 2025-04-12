@@ -15,32 +15,32 @@ func (s *UserService) CreateUser(ctx domain.ContextControl, user domain.UserDoma
 	user = s.normalizeUserData(&user)
 
 	if err := s.validateCreateUserRequired(user, password); err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToValidateCreateUser, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToValidateCreateUser, constants.Error, err.Error())
 		return domain.UserDomain{}, errors.New(constants.ErrorToValidateCreateUser)
 	}
 
-	if existingByUsername, err := s.UserRepository.GetUserByUsername(ctx, user.Username); err == nil && existingByUsername.ID != 0 {
+	if existingByUsername, err := s.userRepository.GetUserByUsername(ctx, user.Username); err == nil && existingByUsername.ID != 0 {
 		return domain.UserDomain{}, errors.New(constants.UsernameIsAlreadyInUse)
 	}
 
-	if existingByEmail, err := s.UserRepository.GetUserByEmail(ctx, user.Email); err == nil && existingByEmail.ID != 0 {
+	if existingByEmail, err := s.userRepository.GetUserByEmail(ctx, user.Email); err == nil && existingByEmail.ID != 0 {
 		return domain.UserDomain{}, errors.New(constants.EmailIsAlreadyInUse)
 	}
 
-	hashedPassword, err := s.SecurityHasher.HashPassword(password)
+	hashedPassword, err := s.securityHasher.HashPassword(password)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToHashPassword, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToHashPassword, constants.Error, err.Error())
 		return domain.UserDomain{}, errors.New(constants.ErrorToHashPassword)
 	}
 
 	user.Password = hashedPassword
 
-	userDB, err := s.UserRepository.CreateUser(ctx, user)
+	userDB, err := s.userRepository.CreateUser(ctx, user)
 	if err != nil {
-		s.LoggerSugar.Errorw(constants.ErrorToCreateUser, constants.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToCreateUser, constants.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 
-	s.LoggerSugar.Infow(constants.SuccessUserCreated, constants.UserID, userDB.ID)
+	s.logger.Infow(constants.SuccessUserCreated, constants.UserID, userDB.ID)
 	return userDB, nil
 }

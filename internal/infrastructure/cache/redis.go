@@ -2,11 +2,11 @@ package cache
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"time"
 
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
 )
 
 type CacheClient interface {
@@ -15,7 +15,7 @@ type CacheClient interface {
 	Get(ctx context.Context, key string) (string, error)
 }
 
-func NewCacheConnection(cfg config.CacheConfig, logger *zap.SugaredLogger) *redis.Client {
+func NewCacheConnection(cfg config.CacheConfig, logger logger.Logger) *redis.Client {
 	ctx := context.Background()
 
 	client := redis.NewClient(&redis.Options{
@@ -26,7 +26,7 @@ func NewCacheConnection(cfg config.CacheConfig, logger *zap.SugaredLogger) *redi
 	})
 
 	if err := client.Ping(ctx).Err(); err != nil {
-		logger.Fatalf("Failed to connect to Redis: %v", err)
+		logger.Errorf("Failed to connect to Redis: %v", err)
 	}
 
 	logger.Infow("Redis connected", "addr", cfg.Addr, "db", cfg.DB)

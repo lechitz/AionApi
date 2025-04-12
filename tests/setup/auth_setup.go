@@ -6,16 +6,15 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
+	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
 	mockSecurity "github.com/lechitz/AionApi/tests/mocks/security"
 	mockToken "github.com/lechitz/AionApi/tests/mocks/token"
 	mockUser "github.com/lechitz/AionApi/tests/mocks/user"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zaptest"
 )
 
 type AuthServiceTestSuite struct {
 	Ctrl           *gomock.Controller
-	LoggerSugar    *zap.SugaredLogger
+	Logger         *mockLogger.MockLogger
 	UserRepository *mockUser.MockUserStore
 	PasswordHasher *mockSecurity.MockSecurityStore
 	TokenService   *mockToken.MockTokenUsecase
@@ -25,20 +24,22 @@ type AuthServiceTestSuite struct {
 
 func SetupAuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 	ctrl := gomock.NewController(t)
-	logger := zaptest.NewLogger(t).Sugar()
 
 	mockUserRepo := mockUser.NewMockUserStore(ctrl)
 	mockSecurityStore := mockSecurity.NewMockSecurityStore(ctrl)
-	mockTokenUsecase := mockToken.NewMockTokenUsecase(ctrl)
+	mockTokenUseCase := mockToken.NewMockTokenUsecase(ctrl)
+	mockLog := mockLogger.NewMockLogger(ctrl)
 
-	authService := auth.NewAuthService(mockUserRepo, mockTokenUsecase, mockSecurityStore, logger, "supersecretkey")
+	ExpectLoggerDefaultBehavior(mockLog)
+
+	authService := auth.NewAuthService(mockUserRepo, mockTokenUseCase, mockSecurityStore, mockLog, "supersecretkey")
 
 	return &AuthServiceTestSuite{
 		Ctrl:           ctrl,
-		LoggerSugar:    logger,
+		Logger:         mockLog,
 		UserRepository: mockUserRepo,
 		PasswordHasher: mockSecurityStore,
-		TokenService:   mockTokenUsecase,
+		TokenService:   mockTokenUseCase,
 		AuthService:    authService,
 		Ctx:            domain.ContextControl{},
 	}
