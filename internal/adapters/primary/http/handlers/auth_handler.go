@@ -19,6 +19,13 @@ type Auth struct {
 	Logger      logger.Logger
 }
 
+func NewAuth(authService inputHttp.AuthService, logger logger.Logger) *Auth {
+	return &Auth{
+		AuthService: authService,
+		Logger:      logger,
+	}
+}
+
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	ctxControl := domain.ContextControl{BaseContext: r.Context()}
 

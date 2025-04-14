@@ -1,15 +1,19 @@
 package handlers
 
 import (
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"net/http"
 
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/pkg/utils"
 )
 
 type Generic struct {
 	Logger logger.Logger
+}
+
+func NewGeneric(logger logger.Logger) *Generic {
+	return &Generic{Logger: logger}
 }
 
 func (h *Generic) HealthCheckHandler(w http.ResponseWriter, r *http.Request) {

@@ -1,6 +1,7 @@
 package constants
 
 const (
-	ErrorContextPathEmpty = "contextPath cannot be empty"
-	ErrorContextPathSlash = "contextPath cannot contain additional slashes `/`"
+	ErrContextPathEmpty = "contextPath cannot be empty"
+	ErrContextPathSlash = "contextPath cannot contain additional slashes `/`"
+	InvalidContextPath  = "invalid context path: '%s'"
 )
