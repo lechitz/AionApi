@@ -20,6 +20,13 @@ type User struct {
 	Logger      logger.Logger
 }
 
+func NewUser(userService inputHttp.UserService, logger logger.Logger) *User {
+	return &User{
+		UserService: userService,
+		Logger:      logger,
+	}
+}
+
 func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := domain.ContextControl{BaseContext: r.Context()}
 

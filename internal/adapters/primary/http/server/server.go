@@ -9,25 +9,16 @@ import (
 )
 
 func NewHTTPServer(deps *bootstrap.AppDependencies, logger logger.Logger, setting *config.Config) (*http.Server, error) {
-
-	route, err := InitRouter(
-		logger,
-		deps.UserService,
-		deps.AuthService,
-		deps.TokenRepository,
-		setting.Server.Context,
-	)
+	router, err := BuildRouter(deps, logger, setting.Server.Context)
 	if err != nil {
 		return nil, err
 	}
 
-	srv := &http.Server{
+	return &http.Server{
 		Addr:           fmt.Sprintf(":%s", setting.Server.Port),
-		Handler:        route.GetChiRouter(),
+		Handler:        router,
 		ReadTimeout:    setting.Server.ReadTimeout,
 		WriteTimeout:   setting.Server.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
-	}
-
-	return srv, nil
+	}, nil
 }

@@ -2,78 +2,60 @@ package server
 
 import (
 	"fmt"
-	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/server/constants"
+	routerAdapter "github.com/lechitz/AionApi/internal/adapters/primary/routeradapter"
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
+	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
+	"strings"
 )
 
-type Router struct {
+type HttpRouter struct {
 	ContextPath    string
-	Router         chi.Router
+	Router         portRouter.Router
 	logger         logger.Logger
 	authMiddleware *auth.MiddlewareAuth
 }
 
-func GetNewRouter(logger logger.Logger, tokenRepository cache.TokenRepositoryPort, contextPath string) (*Router, error) {
-	if len(contextPath) > 0 && contextPath[0] != '/' {
-		contextPath = "/" + contextPath
+func New(logger logger.Logger, tokenRepository cache.TokenRepositoryPort, contextPath string) (*HttpRouter, error) {
+	normalizedPath, err := normalizeContextPath(contextPath)
+	if err != nil {
+		return nil, err
 	}
 
-	if len(contextPath) <= 1 {
-		return nil, fmt.Errorf("invalid context path: '%s'", contextPath)
-	}
+	router := routerAdapter.NewRouter()
 
-	r := chi.NewRouter()
 	authMiddleware := auth.NewAuthMiddleware(tokenRepository, logger)
 
-	return &Router{
-		ContextPath:    contextPath,
-		Router:         r,
+	return &HttpRouter{
+		ContextPath:    normalizedPath,
+		Router:         router,
 		logger:         logger,
 		authMiddleware: authMiddleware,
 	}, nil
 }
 
-func (router *Router) GetChiRouter() chi.Router {
-	return router.Router
+func (r *HttpRouter) GetRouter() portRouter.Router {
+	return r.Router
 }
 
-func (router *Router) AddHealthCheckRoutes(gh *handlers.Generic) func(r chi.Router) {
-	return func(r chi.Router) {
-		r.Route("/health-check", func(r chi.Router) {
-			r.Get("/", gh.HealthCheckHandler)
-		})
+func normalizeContextPath(raw string) (string, error) {
+	if raw == "" {
+		return "", fmt.Errorf(constants.ErrorContextPathEmpty)
 	}
-}
 
-func (router *Router) AddUserRoutes(uh *handlers.User) func(r chi.Router) {
-	return func(r chi.Router) {
-		r.Route("/user", func(r chi.Router) {
-			r.Post("/create", uh.CreateUserHandler)
-
-			r.Group(func(r chi.Router) {
-				r.Use(router.authMiddleware.Auth)
-				r.Get("/all", uh.GetAllUsersHandler)
-				r.Get("/{id}", uh.GetUserByIDHandler)
-				r.Put("/", uh.UpdateUserHandler)
-				r.Put("/password", uh.UpdatePasswordHandler)
-				r.Delete("/", uh.SoftDeleteUserHandler)
-			})
-		})
+	if strings.Contains(raw[1:], "/") {
+		return "", fmt.Errorf(constants.ErrorContextPathSlash)
 	}
-}
 
-func (router *Router) AddAuthRoutes(ah *handlers.Auth) func(r chi.Router) {
-	return func(r chi.Router) {
-		r.Route("/auth", func(r chi.Router) {
-			r.Post("/login", ah.LoginHandler)
-
-			r.Group(func(r chi.Router) {
-				r.Use(router.authMiddleware.Auth)
-				r.Post("/logout", ah.LogoutHandler)
-			})
-		})
+	if raw[0] != '/' {
+		raw = "/" + raw
 	}
+
+	if len(raw) <= 1 {
+		return "", fmt.Errorf(constants.InvalidContextPath, raw)
+	}
+
+	return raw, nil
 }
