@@ -14,17 +14,19 @@ type RouterBuilder struct {
 	Router      portRouter.Router
 }
 
-func InitRouter(logger logger.Logger, userService http.UserService, authService http.AuthService, tokenRepo cache.TokenRepositoryPort, contextPath string, adapter portRouter.Router) (*RouterBuilder, error) {
+func BuildRouterRoutes(logger logger.Logger, userService http.UserService, authService http.AuthService, tokenRepo cache.TokenRepositoryPort, contextPath string, adapter portRouter.Router) (portRouter.Router, error) {
 
 	genericHandler := handlers.NewGeneric(logger)
 	userHandler := handlers.NewUser(userService, logger)
 	authHandler := handlers.NewAuth(authService, logger)
 
-	r := &HttpRouter{
-		ContextPath:    contextPath,
+	authMiddleware := auth.NewAuthMiddleware(tokenRepo, logger)
+
+	r := &RouteComposer{
+		BashPath:       contextPath,
 		Router:         adapter,
 		logger:         logger,
-		authMiddleware: auth.NewAuthMiddleware(tokenRepo, logger),
+		authMiddleware: authMiddleware,
 	}
 
 	adapter.Route(contextPath, func(rt portRouter.Router) {
@@ -33,8 +35,5 @@ func InitRouter(logger logger.Logger, userService http.UserService, authService 
 		rt.Group(r.AddAuthRoutes(authHandler))
 	})
 
-	return &RouterBuilder{
-		ContextPath: contextPath,
-		Router:      adapter,
-	}, nil
+	return adapter, nil
 }

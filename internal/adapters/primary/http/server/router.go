@@ -11,42 +11,38 @@ import (
 	"strings"
 )
 
-type HttpRouter struct {
-	ContextPath    string
+type RouteComposer struct {
+	BashPath       string
 	Router         portRouter.Router
 	logger         logger.Logger
 	authMiddleware *auth.MiddlewareAuth
 }
 
-func New(logger logger.Logger, tokenRepository cache.TokenRepositoryPort, contextPath string) (*HttpRouter, error) {
+func NewHttpRouter(logger logger.Logger, tokenRepository cache.TokenRepositoryPort, contextPath string) (*RouteComposer, error) {
 	normalizedPath, err := normalizeContextPath(contextPath)
 	if err != nil {
 		return nil, err
 	}
 
-	router := routerAdapter.NewRouter()
-
-	authMiddleware := auth.NewAuthMiddleware(tokenRepository, logger)
-
-	return &HttpRouter{
-		ContextPath:    normalizedPath,
-		Router:         router,
+	return &RouteComposer{
+		BashPath:       normalizedPath,
+		Router:         routerAdapter.NewRouter(),
 		logger:         logger,
-		authMiddleware: authMiddleware,
+		authMiddleware: auth.NewAuthMiddleware(tokenRepository, logger),
 	}, nil
 }
 
-func (r *HttpRouter) GetRouter() portRouter.Router {
+func (r *RouteComposer) GetRouter() portRouter.Router {
 	return r.Router
 }
 
 func normalizeContextPath(raw string) (string, error) {
 	if raw == "" {
-		return "", fmt.Errorf(constants.ErrorContextPathEmpty)
+		return "", fmt.Errorf(constants.ErrContextPathEmpty)
 	}
 
 	if strings.Contains(raw[1:], "/") {
-		return "", fmt.Errorf(constants.ErrorContextPathSlash)
+		return "", fmt.Errorf(constants.ErrContextPathSlash)
 	}
 
 	if raw[0] != '/' {

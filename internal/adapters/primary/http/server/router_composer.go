@@ -6,13 +6,13 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 )
 
-func BuildRouter(deps *bootstrap.AppDependencies, logger logger.Logger, contextPath string) (portRouter.Router, error) {
-	httpRouter, err := New(logger, deps.TokenRepository, contextPath)
+func ComposeRouter(deps *bootstrap.AppDependencies, logger logger.Logger, contextPath string) (portRouter.Router, error) {
+	httpRouter, err := NewHttpRouter(logger, deps.TokenRepository, contextPath)
 	if err != nil {
 		return nil, err
 	}
 
-	builder, err := InitRouter(
+	return BuildRouterRoutes(
 		logger,
 		deps.UserService,
 		deps.AuthService,
@@ -20,9 +20,4 @@ func BuildRouter(deps *bootstrap.AppDependencies, logger logger.Logger, contextP
 		contextPath,
 		httpRouter.GetRouter(),
 	)
-	if err != nil {
-		return nil, err
-	}
-
-	return builder.Router, nil
 }

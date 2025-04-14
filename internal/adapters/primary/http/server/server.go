@@ -9,7 +9,7 @@ import (
 )
 
 func NewHTTPServer(deps *bootstrap.AppDependencies, logger logger.Logger, setting *config.Config) (*http.Server, error) {
-	router, err := BuildRouter(deps, logger, setting.Server.Context)
+	router, err := ComposeRouter(deps, logger, setting.Server.Context)
 	if err != nil {
 		return nil, err
 	}
