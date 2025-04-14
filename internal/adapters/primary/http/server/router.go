@@ -12,7 +12,7 @@ import (
 )
 
 type RouteComposer struct {
-	BashPath       string
+	BasePath       string
 	Router         portRouter.Router
 	logger         logger.Logger
 	authMiddleware *auth.MiddlewareAuth
@@ -25,7 +25,7 @@ func NewHttpRouter(logger logger.Logger, tokenRepository cache.TokenRepositoryPo
 	}
 
 	return &RouteComposer{
-		BashPath:       normalizedPath,
+		BasePath:       normalizedPath,
 		Router:         routerAdapter.NewRouter(),
 		logger:         logger,
 		authMiddleware: auth.NewAuthMiddleware(tokenRepository, logger),

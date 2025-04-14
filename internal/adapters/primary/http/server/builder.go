@@ -23,7 +23,7 @@ func BuildRouterRoutes(logger logger.Logger, userService http.UserService, authS
 	authMiddleware := auth.NewAuthMiddleware(tokenRepo, logger)
 
 	r := &RouteComposer{
-		BashPath:       contextPath,
+		BasePath:       contextPath,
 		Router:         adapter,
 		logger:         logger,
 		authMiddleware: authMiddleware,
