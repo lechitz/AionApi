@@ -1,6 +1,7 @@
 package setup
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -20,7 +21,7 @@ type UserServiceTestSuite struct {
 	PasswordHasher *mockSecurity.MockSecurityStore
 	TokenService   *mockToken.MockTokenUsecase
 	UserService    *user.UserService
-	Ctx            domain.ContextControl
+	Ctx            context.Context
 }
 
 func SetupUserServiceTest(t *testing.T) *UserServiceTestSuite {
@@ -42,7 +43,7 @@ func SetupUserServiceTest(t *testing.T) *UserServiceTestSuite {
 		PasswordHasher: mockSecurityStore,
 		TokenService:   mockTokenUsecase,
 		UserService:    userService,
-		Ctx:            domain.ContextControl{},
+		Ctx:            context.Background(),
 	}
 }
 

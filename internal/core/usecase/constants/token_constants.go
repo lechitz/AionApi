@@ -25,4 +25,6 @@ const (
 	ExpTimeToken    = 1 * time.Hour
 	TokenFromCookie = "TokenFromCookie"
 	TokenFromCache  = "TokenFromCache"
+
+	SecretKey = "secret"
 )

@@ -2,15 +2,14 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"net/http"
 	"time"
 
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
-
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/pkg/utils"
 )
 
@@ -27,7 +26,7 @@ func NewAuth(authService inputHttp.AuthService, logger logger.Logger) *Auth {
 }
 
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	ctxControl := domain.ContextControl{BaseContext: r.Context()}
+	ctx := r.Context()
 
 	var loginReq dto.LoginUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
@@ -37,7 +36,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	userDomain := domain.UserDomain{Username: loginReq.Username}
 
-	userDB, token, err := a.AuthService.Login(ctxControl, userDomain, loginReq.Password)
+	userDB, token, err := a.AuthService.Login(ctx, userDomain, loginReq.Password)
 	if err != nil {
 		a.logAndRespondError(w, http.StatusInternalServerError, constants.ErrorToLogin, err)
 		return
@@ -51,21 +50,21 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	ctxControl := domain.ContextControl{BaseContext: r.Context()}
+	ctx := r.Context()
 
-	userID, ok := r.Context().Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok || userID == 0 {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveUserID, nil)
 		return
 	}
 
-	tokenString, ok := r.Context().Value(constants.Token).(string)
+	tokenString, ok := ctx.Value(constants.Token).(string)
 	if !ok || tokenString == "" {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, nil)
 		return
 	}
 
-	if err := a.AuthService.Logout(ctxControl, tokenString); err != nil {
+	if err := a.AuthService.Logout(ctx, tokenString); err != nil {
 		a.logAndRespondError(w, http.StatusInternalServerError, constants.ErrorToLogout, err)
 		return
 	}

@@ -5,6 +5,7 @@
 package tokenmocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,7 +36,7 @@ func (m *MockCreator) EXPECT() *MockCreatorMockRecorder {
 }
 
 // CreateToken mocks base method.
-func (m *MockCreator) CreateToken(ctx domain.ContextControl, token domain.TokenDomain) (string, error) {
+func (m *MockCreator) CreateToken(ctx context.Context, token domain.TokenDomain) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateToken", ctx, token)
 	ret0, _ := ret[0].(string)
@@ -73,7 +74,7 @@ func (m *MockTokenChecker) EXPECT() *MockTokenCheckerMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockTokenChecker) Get(ctx domain.ContextControl, token domain.TokenDomain) (string, error) {
+func (m *MockTokenChecker) Get(ctx context.Context, token domain.TokenDomain) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, token)
 	ret0, _ := ret[0].(string)
@@ -111,7 +112,7 @@ func (m *MockTokenSaver) EXPECT() *MockTokenSaverMockRecorder {
 }
 
 // Save mocks base method.
-func (m *MockTokenSaver) Save(ctx domain.ContextControl, token domain.TokenDomain) error {
+func (m *MockTokenSaver) Save(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -148,7 +149,7 @@ func (m *MockTokenUpdater) EXPECT() *MockTokenUpdaterMockRecorder {
 }
 
 // Update mocks base method.
-func (m *MockTokenUpdater) Update(ctx domain.ContextControl, token domain.TokenDomain) error {
+func (m *MockTokenUpdater) Update(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -185,7 +186,7 @@ func (m *MockTokenDeleter) EXPECT() *MockTokenDeleterMockRecorder {
 }
 
 // Delete mocks base method.
-func (m *MockTokenDeleter) Delete(ctx domain.ContextControl, token domain.TokenDomain) error {
+func (m *MockTokenDeleter) Delete(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -222,7 +223,7 @@ func (m *MockTokenVerify) EXPECT() *MockTokenVerifyMockRecorder {
 }
 
 // VerifyToken mocks base method.
-func (m *MockTokenVerify) VerifyToken(ctx domain.ContextControl, token string) (uint64, string, error) {
+func (m *MockTokenVerify) VerifyToken(ctx context.Context, token string) (uint64, string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "VerifyToken", ctx, token)
 	ret0, _ := ret[0].(uint64)
@@ -261,7 +262,7 @@ func (m *MockTokenRepositoryPort) EXPECT() *MockTokenRepositoryPortMockRecorder 
 }
 
 // Delete mocks base method.
-func (m *MockTokenRepositoryPort) Delete(ctx domain.ContextControl, token domain.TokenDomain) error {
+func (m *MockTokenRepositoryPort) Delete(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -275,7 +276,7 @@ func (mr *MockTokenRepositoryPortMockRecorder) Delete(ctx, token interface{}) *g
 }
 
 // Get mocks base method.
-func (m *MockTokenRepositoryPort) Get(ctx domain.ContextControl, token domain.TokenDomain) (string, error) {
+func (m *MockTokenRepositoryPort) Get(ctx context.Context, token domain.TokenDomain) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, token)
 	ret0, _ := ret[0].(string)
@@ -290,7 +291,7 @@ func (mr *MockTokenRepositoryPortMockRecorder) Get(ctx, token interface{}) *gomo
 }
 
 // Save mocks base method.
-func (m *MockTokenRepositoryPort) Save(ctx domain.ContextControl, token domain.TokenDomain) error {
+func (m *MockTokenRepositoryPort) Save(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -304,7 +305,7 @@ func (mr *MockTokenRepositoryPortMockRecorder) Save(ctx, token interface{}) *gom
 }
 
 // Update mocks base method.
-func (m *MockTokenRepositoryPort) Update(ctx domain.ContextControl, token domain.TokenDomain) error {
+func (m *MockTokenRepositoryPort) Update(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", ctx, token)
 	ret0, _ := ret[0].(error)

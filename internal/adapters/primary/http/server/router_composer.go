@@ -17,7 +17,7 @@ func ComposeRouter(deps *bootstrap.AppDependencies, logger logger.Logger, contex
 		deps.UserService,
 		deps.AuthService,
 		deps.TokenRepository,
-		httpRouter.BashPath,
+		httpRouter.BasePath,
 		httpRouter.GetRouter(),
 	)
 }

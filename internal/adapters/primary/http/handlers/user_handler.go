@@ -28,7 +28,7 @@ func NewUser(userService inputHttp.UserService, logger logger.Logger) *User {
 }
 
 func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := domain.ContextControl{BaseContext: r.Context()}
+	ctx := r.Context()
 
 	var req dto.CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -52,7 +52,7 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := domain.ContextControl{BaseContext: r.Context()}
+	ctx := r.Context()
 
 	users, err := u.UserService.GetAllUsers(ctx)
 	if err != nil {
@@ -67,7 +67,7 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := domain.ContextControl{BaseContext: r.Context()}
+	ctx := r.Context()
 
 	userID, err := validators.UserIDFromParam(w, u.Logger, r)
 	if err != nil {
@@ -93,9 +93,9 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := domain.ContextControl{BaseContext: r.Context()}
+	ctx := r.Context()
 
-	userID, ok := ctx.BaseContext.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
 		u.logAndHandleError(w, http.StatusUnauthorized, constants.ErrorUnauthorizedAccessMissingToken, nil)
 		return
@@ -135,7 +135,7 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := domain.ContextControl{BaseContext: r.Context()}
+	ctx := r.Context()
 
 	var req dto.UpdatePasswordUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -143,7 +143,7 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, ok := ctx.BaseContext.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
 		u.logAndHandleError(w, http.StatusUnauthorized, constants.ErrorUnauthorizedAccessMissingToken, nil)
 		return
@@ -164,9 +164,9 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := domain.ContextControl{BaseContext: r.Context()}
+	ctx := r.Context()
 
-	userID, ok := ctx.BaseContext.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
 		u.logAndHandleError(w, http.StatusUnauthorized, constants.ErrorUnauthorizedAccessMissingToken, nil)
 		return

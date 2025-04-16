@@ -1,8 +1,14 @@
 package domain
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
-type ContextControl struct {
-	BaseContext     context.Context
-	CancelCauseFunc context.CancelCauseFunc
+type CtxControl struct {
+	Ctx       context.Context
+	UserID    uint64
+	Token     string
+	RequestID string
+	StartTime time.Time
 }

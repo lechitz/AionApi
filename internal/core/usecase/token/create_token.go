@@ -1,16 +1,17 @@
 package token
 
 import (
+	"context"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 	"github.com/lechitz/AionApi/internal/infrastructure/security"
 )
 
 type Creator interface {
-	CreateToken(ctx domain.ContextControl, token domain.TokenDomain) (string, error)
+	CreateToken(ctx context.Context, token domain.TokenDomain) (string, error)
 }
 
-func (s *TokenService) CreateToken(ctx domain.ContextControl, tokenDomain domain.TokenDomain) (string, error) {
+func (s *TokenService) CreateToken(ctx context.Context, tokenDomain domain.TokenDomain) (string, error) {
 	if _, err := s.tokenRepository.Get(ctx, tokenDomain); err == nil {
 		if err := s.tokenRepository.Delete(ctx, tokenDomain); err != nil {
 			s.logger.Errorw(constants.ErrorToDeleteToken, constants.Error, err.Error())

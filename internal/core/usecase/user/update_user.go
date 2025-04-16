@@ -1,6 +1,7 @@
 package user
 
 import (
+	"context"
 	"errors"
 	"time"
 
@@ -9,11 +10,11 @@ import (
 )
 
 type UserUpdater interface {
-	UpdateUser(ctx domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error)
-	UpdateUserPassword(ctx domain.ContextControl, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error)
+	UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error)
+	UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error)
 }
 
-func (s *UserService) UpdateUser(ctx domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error) {
+func (s *UserService) UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error) {
 	updateFields := make(map[string]interface{})
 
 	if user.Name != "" {
@@ -40,7 +41,7 @@ func (s *UserService) UpdateUser(ctx domain.ContextControl, user domain.UserDoma
 	return updatedUser, nil
 }
 
-func (s *UserService) UpdateUserPassword(ctx domain.ContextControl, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error) {
+func (s *UserService) UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error) {
 	userDB, err := s.userRepository.GetUserByID(ctx, user.ID)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())

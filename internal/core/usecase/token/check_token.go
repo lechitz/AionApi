@@ -1,6 +1,7 @@
 package token
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -8,7 +9,7 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 )
 
-func (s *TokenService) VerifyToken(ctx domain.ContextControl, token string) (uint64, string, error) {
+func (s *TokenService) VerifyToken(ctx context.Context, token string) (uint64, string, error) {
 	parsedToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		return []byte(s.configToken.SecretKey), nil
 	})

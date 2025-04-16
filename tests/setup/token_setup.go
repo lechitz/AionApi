@@ -1,6 +1,7 @@
 package setup
 
 import (
+	"context"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -15,7 +16,7 @@ type TokenServiceTestSuite struct {
 	Logger       *mockLogger.MockLogger
 	TokenStore   *mockToken.MockTokenRepositoryPort
 	TokenService token.TokenUsecase
-	Ctx          domain.ContextControl
+	Ctx          context.Context
 }
 
 func SetupTokenServiceTest(t *testing.T, secretKey string) *TokenServiceTestSuite {
@@ -35,6 +36,6 @@ func SetupTokenServiceTest(t *testing.T, secretKey string) *TokenServiceTestSuit
 		Logger:       mockLog,
 		TokenStore:   mockTokenStore,
 		TokenService: tokenService,
-		Ctx:          domain.ContextControl{},
+		Ctx:          context.Background(),
 	}
 }

@@ -1,10 +1,10 @@
 package setup
 
 import (
+	"context"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
 	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
 	mockSecurity "github.com/lechitz/AionApi/tests/mocks/security"
@@ -19,7 +19,7 @@ type AuthServiceTestSuite struct {
 	PasswordHasher *mockSecurity.MockSecurityStore
 	TokenService   *mockToken.MockTokenUsecase
 	AuthService    *auth.AuthService
-	Ctx            domain.ContextControl
+	Ctx            context.Context
 }
 
 func SetupAuthServiceTest(t *testing.T) *AuthServiceTestSuite {
@@ -41,6 +41,6 @@ func SetupAuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 		PasswordHasher: mockSecurityStore,
 		TokenService:   mockTokenUseCase,
 		AuthService:    authService,
-		Ctx:            domain.ContextControl{},
+		Ctx:            context.Background(),
 	}
 }

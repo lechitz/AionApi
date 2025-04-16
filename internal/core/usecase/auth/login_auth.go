@@ -1,15 +1,17 @@
 package auth
 
 import (
+	"context"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 )
 
 type Authenticator interface {
-	Login(ctx domain.ContextControl, user domain.UserDomain, passwordReq string) (domain.UserDomain, string, error)
+	Login(ctx context.Context, user domain.UserDomain, passwordReq string) (domain.UserDomain, string, error)
 }
 
-func (s *AuthService) Login(ctx domain.ContextControl, user domain.UserDomain, passwordReq string) (domain.UserDomain, string, error) {
+func (s *AuthService) Login(ctx context.Context, user domain.UserDomain, passwordReq string) (domain.UserDomain, string, error) {
 	userDB, err := s.userRetriever.GetUserByUsername(ctx, user.Username)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToGetUserByUserName, constants.Error, err.Error())

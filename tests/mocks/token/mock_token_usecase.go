@@ -5,6 +5,7 @@
 package tokenmocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,7 +36,7 @@ func (m *MockTokenUsecase) EXPECT() *MockTokenUsecaseMockRecorder {
 }
 
 // CreateToken mocks base method.
-func (m *MockTokenUsecase) CreateToken(ctx domain.ContextControl, token domain.TokenDomain) (string, error) {
+func (m *MockTokenUsecase) CreateToken(ctx context.Context, token domain.TokenDomain) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateToken", ctx, token)
 	ret0, _ := ret[0].(string)
@@ -50,7 +51,7 @@ func (mr *MockTokenUsecaseMockRecorder) CreateToken(ctx, token interface{}) *gom
 }
 
 // Delete mocks base method.
-func (m *MockTokenUsecase) Delete(ctx domain.ContextControl, token domain.TokenDomain) error {
+func (m *MockTokenUsecase) Delete(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -64,7 +65,7 @@ func (mr *MockTokenUsecaseMockRecorder) Delete(ctx, token interface{}) *gomock.C
 }
 
 // Save mocks base method.
-func (m *MockTokenUsecase) Save(ctx domain.ContextControl, token domain.TokenDomain) error {
+func (m *MockTokenUsecase) Save(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -78,7 +79,7 @@ func (mr *MockTokenUsecaseMockRecorder) Save(ctx, token interface{}) *gomock.Cal
 }
 
 // Update mocks base method.
-func (m *MockTokenUsecase) Update(ctx domain.ContextControl, token domain.TokenDomain) error {
+func (m *MockTokenUsecase) Update(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -92,7 +93,7 @@ func (mr *MockTokenUsecaseMockRecorder) Update(ctx, token interface{}) *gomock.C
 }
 
 // VerifyToken mocks base method.
-func (m *MockTokenUsecase) VerifyToken(ctx domain.ContextControl, token string) (uint64, string, error) {
+func (m *MockTokenUsecase) VerifyToken(ctx context.Context, token string) (uint64, string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "VerifyToken", ctx, token)
 	ret0, _ := ret[0].(uint64)
