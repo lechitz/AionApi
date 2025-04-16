@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var TestPerfectAuthUser = domain.UserDomain{
+var TestPerfectUser = domain.UserDomain{
 	ID:        1,
 	Name:      "User Name",
 	Username:  "user",

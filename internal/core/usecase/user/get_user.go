@@ -1,18 +1,19 @@
 package user
 
 import (
+	"context"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 )
 
 type UserRetriever interface {
-	GetUserByID(ctx domain.ContextControl, id uint64) (domain.UserDomain, error)
-	GetUserByEmail(ctx domain.ContextControl, email string) (domain.UserDomain, error)
-	GetUserByUsername(ctx domain.ContextControl, username string) (domain.UserDomain, error)
-	GetAllUsers(ctx domain.ContextControl) ([]domain.UserDomain, error)
+	GetUserByID(ctx context.Context, id uint64) (domain.UserDomain, error)
+	GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error)
+	GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error)
+	GetAllUsers(ctx context.Context) ([]domain.UserDomain, error)
 }
 
-func (s *UserService) GetUserByID(ctx domain.ContextControl, id uint64) (domain.UserDomain, error) {
+func (s *UserService) GetUserByID(ctx context.Context, id uint64) (domain.UserDomain, error) {
 	user, err := s.userRepository.GetUserByID(ctx, id)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())
@@ -22,7 +23,7 @@ func (s *UserService) GetUserByID(ctx domain.ContextControl, id uint64) (domain.
 	return user, nil
 }
 
-func (s *UserService) GetUserByEmail(ctx domain.ContextControl, email string) (domain.UserDomain, error) {
+func (s *UserService) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
 	user, err := s.userRepository.GetUserByEmail(ctx, email)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToGetUserByEmail, constants.Error, err.Error())
@@ -32,7 +33,7 @@ func (s *UserService) GetUserByEmail(ctx domain.ContextControl, email string) (d
 	return user, nil
 }
 
-func (s *UserService) GetUserByUsername(ctx domain.ContextControl, username string) (domain.UserDomain, error) {
+func (s *UserService) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
 	userDB, err := s.userRepository.GetUserByUsername(ctx, username)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToGetUserByUserName, constants.Error, err.Error())
@@ -42,7 +43,7 @@ func (s *UserService) GetUserByUsername(ctx domain.ContextControl, username stri
 	return userDB, nil
 }
 
-func (s *UserService) GetAllUsers(ctx domain.ContextControl) ([]domain.UserDomain, error) {
+func (s *UserService) GetAllUsers(ctx context.Context) ([]domain.UserDomain, error) {
 	users, err := s.userRepository.GetAllUsers(ctx)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToGetAllUsers, constants.Error, err.Error())

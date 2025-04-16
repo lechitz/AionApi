@@ -5,6 +5,7 @@
 package usermocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,7 +36,7 @@ func (m *MockUserCreator) EXPECT() *MockUserCreatorMockRecorder {
 }
 
 // CreateUser mocks base method.
-func (m *MockUserCreator) CreateUser(ctx domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error) {
+func (m *MockUserCreator) CreateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", ctx, user)
 	ret0, _ := ret[0].(domain.UserDomain)
@@ -73,7 +74,7 @@ func (m *MockUserRetriever) EXPECT() *MockUserRetrieverMockRecorder {
 }
 
 // GetAllUsers mocks base method.
-func (m *MockUserRetriever) GetAllUsers(ctx domain.ContextControl) ([]domain.UserDomain, error) {
+func (m *MockUserRetriever) GetAllUsers(ctx context.Context) ([]domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllUsers", ctx)
 	ret0, _ := ret[0].([]domain.UserDomain)
@@ -88,7 +89,7 @@ func (mr *MockUserRetrieverMockRecorder) GetAllUsers(ctx interface{}) *gomock.Ca
 }
 
 // GetUserByEmail mocks base method.
-func (m *MockUserRetriever) GetUserByEmail(ctx domain.ContextControl, email string) (domain.UserDomain, error) {
+func (m *MockUserRetriever) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByEmail", ctx, email)
 	ret0, _ := ret[0].(domain.UserDomain)
@@ -103,7 +104,7 @@ func (mr *MockUserRetrieverMockRecorder) GetUserByEmail(ctx, email interface{}) 
 }
 
 // GetUserByID mocks base method.
-func (m *MockUserRetriever) GetUserByID(ctx domain.ContextControl, ID uint64) (domain.UserDomain, error) {
+func (m *MockUserRetriever) GetUserByID(ctx context.Context, ID uint64) (domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByID", ctx, ID)
 	ret0, _ := ret[0].(domain.UserDomain)
@@ -118,7 +119,7 @@ func (mr *MockUserRetrieverMockRecorder) GetUserByID(ctx, ID interface{}) *gomoc
 }
 
 // GetUserByUsername mocks base method.
-func (m *MockUserRetriever) GetUserByUsername(ctx domain.ContextControl, username string) (domain.UserDomain, error) {
+func (m *MockUserRetriever) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByUsername", ctx, username)
 	ret0, _ := ret[0].(domain.UserDomain)
@@ -156,7 +157,7 @@ func (m *MockUserUpdater) EXPECT() *MockUserUpdaterMockRecorder {
 }
 
 // UpdateUser mocks base method.
-func (m *MockUserUpdater) UpdateUser(ctx domain.ContextControl, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
+func (m *MockUserUpdater) UpdateUser(ctx context.Context, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateUser", ctx, userID, fields)
 	ret0, _ := ret[0].(domain.UserDomain)
@@ -194,7 +195,7 @@ func (m *MockUserDeleter) EXPECT() *MockUserDeleterMockRecorder {
 }
 
 // SoftDeleteUser mocks base method.
-func (m *MockUserDeleter) SoftDeleteUser(ctx domain.ContextControl, userID uint64) error {
+func (m *MockUserDeleter) SoftDeleteUser(ctx context.Context, userID uint64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SoftDeleteUser", ctx, userID)
 	ret0, _ := ret[0].(error)
@@ -231,7 +232,7 @@ func (m *MockUserStore) EXPECT() *MockUserStoreMockRecorder {
 }
 
 // CreateUser mocks base method.
-func (m *MockUserStore) CreateUser(ctx domain.ContextControl, user domain.UserDomain) (domain.UserDomain, error) {
+func (m *MockUserStore) CreateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", ctx, user)
 	ret0, _ := ret[0].(domain.UserDomain)
@@ -246,7 +247,7 @@ func (mr *MockUserStoreMockRecorder) CreateUser(ctx, user interface{}) *gomock.C
 }
 
 // GetAllUsers mocks base method.
-func (m *MockUserStore) GetAllUsers(ctx domain.ContextControl) ([]domain.UserDomain, error) {
+func (m *MockUserStore) GetAllUsers(ctx context.Context) ([]domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllUsers", ctx)
 	ret0, _ := ret[0].([]domain.UserDomain)
@@ -261,7 +262,7 @@ func (mr *MockUserStoreMockRecorder) GetAllUsers(ctx interface{}) *gomock.Call {
 }
 
 // GetUserByEmail mocks base method.
-func (m *MockUserStore) GetUserByEmail(ctx domain.ContextControl, email string) (domain.UserDomain, error) {
+func (m *MockUserStore) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByEmail", ctx, email)
 	ret0, _ := ret[0].(domain.UserDomain)
@@ -276,7 +277,7 @@ func (mr *MockUserStoreMockRecorder) GetUserByEmail(ctx, email interface{}) *gom
 }
 
 // GetUserByID mocks base method.
-func (m *MockUserStore) GetUserByID(ctx domain.ContextControl, ID uint64) (domain.UserDomain, error) {
+func (m *MockUserStore) GetUserByID(ctx context.Context, ID uint64) (domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByID", ctx, ID)
 	ret0, _ := ret[0].(domain.UserDomain)
@@ -291,7 +292,7 @@ func (mr *MockUserStoreMockRecorder) GetUserByID(ctx, ID interface{}) *gomock.Ca
 }
 
 // GetUserByUsername mocks base method.
-func (m *MockUserStore) GetUserByUsername(ctx domain.ContextControl, username string) (domain.UserDomain, error) {
+func (m *MockUserStore) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByUsername", ctx, username)
 	ret0, _ := ret[0].(domain.UserDomain)
@@ -306,7 +307,7 @@ func (mr *MockUserStoreMockRecorder) GetUserByUsername(ctx, username interface{}
 }
 
 // SoftDeleteUser mocks base method.
-func (m *MockUserStore) SoftDeleteUser(ctx domain.ContextControl, userID uint64) error {
+func (m *MockUserStore) SoftDeleteUser(ctx context.Context, userID uint64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SoftDeleteUser", ctx, userID)
 	ret0, _ := ret[0].(error)
@@ -320,7 +321,7 @@ func (mr *MockUserStoreMockRecorder) SoftDeleteUser(ctx, userID interface{}) *go
 }
 
 // UpdateUser mocks base method.
-func (m *MockUserStore) UpdateUser(ctx domain.ContextControl, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
+func (m *MockUserStore) UpdateUser(ctx context.Context, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateUser", ctx, userID, fields)
 	ret0, _ := ret[0].(domain.UserDomain)

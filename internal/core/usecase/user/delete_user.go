@@ -1,15 +1,16 @@
 package user
 
 import (
+	"context"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 )
 
 type UserDeleter interface {
-	SoftDeleteUser(ctx domain.ContextControl, id uint64) error
+	SoftDeleteUser(ctx context.Context, id uint64) error
 }
 
-func (s *UserService) SoftDeleteUser(ctx domain.ContextControl, userID uint64) error {
+func (s *UserService) SoftDeleteUser(ctx context.Context, userID uint64) error {
 	if err := s.userRepository.SoftDeleteUser(ctx, userID); err != nil {
 		s.logger.Errorw(constants.ErrorToSoftDeleteUser, constants.Error, err.Error())
 		return err

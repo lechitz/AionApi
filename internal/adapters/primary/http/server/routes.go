@@ -6,25 +6,27 @@ import (
 )
 
 func (r *RouteComposer) AddHealthCheckRoutes(gh *handlers.Generic) func(portRouter.Router) {
-	return func(rt portRouter.Router) {
-		rt.Route("/health-check", func(sub portRouter.Router) {
-			sub.Get("/", gh.HealthCheckHandler)
+	return func(healthGroup portRouter.Router) {
+		healthGroup.Route("/health-check", func(healthProtected portRouter.Router) {
+			healthProtected.Get("/", gh.HealthCheckHandler)
 		})
 	}
 }
 
 func (r *RouteComposer) AddUserRoutes(uh *handlers.User) func(portRouter.Router) {
 	return func(rt portRouter.Router) {
-		rt.Route("/user", func(sub portRouter.Router) {
-			sub.Post("/create", uh.CreateUserHandler)
+		rt.Route("/user", func(userGroup portRouter.Router) {
+			userGroup.Post("/create", uh.CreateUserHandler)
 
-			sub.Route("/", func(priv portRouter.Router) {
-				priv.Use(r.authMiddleware.Auth)
-				priv.Get("/all", uh.GetAllUsersHandler)
-				priv.Get("/{id}", uh.GetUserByIDHandler)
-				priv.Put("/", uh.UpdateUserHandler)
-				priv.Put("/password", uh.UpdatePasswordHandler)
-				priv.Delete("/", uh.SoftDeleteUserHandler)
+			userGroup.Route("/", func(userProtected portRouter.Router) {
+
+				userProtected.Use(r.authMiddleware.Auth)
+
+				userProtected.Get("/all", uh.GetAllUsersHandler)
+				userProtected.Get("/{id}", uh.GetUserByIDHandler)
+				userProtected.Put("/", uh.UpdateUserHandler)
+				userProtected.Put("/password", uh.UpdatePasswordHandler)
+				userProtected.Delete("/", uh.SoftDeleteUserHandler)
 			})
 		})
 	}
@@ -32,12 +34,14 @@ func (r *RouteComposer) AddUserRoutes(uh *handlers.User) func(portRouter.Router)
 
 func (r *RouteComposer) AddAuthRoutes(ah *handlers.Auth) func(portRouter.Router) {
 	return func(rt portRouter.Router) {
-		rt.Route("/auth", func(priv portRouter.Router) {
-			priv.Post("/login", ah.LoginHandler)
+		rt.Route("/auth", func(authGroup portRouter.Router) {
+			authGroup.Post("/login", ah.LoginHandler)
 
-			priv.Route("/", func(protected portRouter.Router) {
-				protected.Use(r.authMiddleware.Auth)
-				protected.Post("/logout", ah.LogoutHandler)
+			authGroup.Route("/", func(authProtected portRouter.Router) {
+
+				authProtected.Use(r.authMiddleware.Auth)
+
+				authProtected.Post("/logout", ah.LogoutHandler)
 			})
 		})
 	}

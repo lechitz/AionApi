@@ -2,14 +2,14 @@ package auth
 
 import (
 	"context"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/platform/config"
 	"net/http"
 
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/platform/config"
 )
 
 type MiddlewareAuth struct {
@@ -26,10 +26,6 @@ func NewAuthMiddleware(tokenService cache.TokenRepositoryPort, logger logger.Log
 
 func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := &domain.ContextControl{
-			BaseContext:     r.Context(),
-			CancelCauseFunc: nil,
-		}
 
 		tokenCookie, err := extractTokenFromCookie(r)
 		if err != nil {
@@ -60,10 +56,15 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
 			return
 		}
+
 		userID := uint64(userIDFloat)
 
-		tokenDomain := domain.TokenDomain{UserID: userID, Token: tokenCookie}
-		_, err = a.tokenService.Get(*ctx, tokenDomain)
+		tokenDomain := domain.TokenDomain{
+			UserID: userID,
+			Token:  tokenCookie,
+		}
+
+		_, err = a.tokenService.Get(r.Context(), tokenDomain)
 		if err != nil {
 			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, constants.Error, err.Error())
 			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
