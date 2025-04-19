@@ -1,4 +1,3 @@
-# Dockerfile corrigido
 FROM golang:1.24 AS builder
 
 WORKDIR /app
@@ -14,7 +13,6 @@ FROM alpine:3.19.1
 
 WORKDIR /app
 
-# ✅ Caminho correto do binário
 COPY --from=builder /app/aion-api .
 
 ENTRYPOINT ["./aion-api"]

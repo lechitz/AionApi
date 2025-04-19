@@ -1,13 +1,13 @@
 package main
 
 import (
+	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
+	"github.com/lechitz/AionApi/adapters/primary/http/server"
+	loggerAdapter "github.com/lechitz/AionApi/adapters/secondary/logger"
 	"github.com/lechitz/AionApi/cmd/aion-api/constants"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/server"
-	loggerAdapter "github.com/lechitz/AionApi/internal/adapters/secondary/logger"
-	"github.com/lechitz/AionApi/internal/platform/bootstrap"
-	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/AionApi/internal/infra/bootstrap"
+	"github.com/lechitz/AionApi/internal/infra/config"
 	loggerBuilder "github.com/lechitz/AionApi/pkg/logger"
-	"github.com/lechitz/AionApi/pkg/utils"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 	logger.Infow(constants.StartingApplication)
 
 	if err := config.Load(logger); err != nil {
-		utils.HandleCriticalError(logger, constants.ErrToFailedLoadConfiguration, err)
+		response.HandleCriticalError(logger, constants.ErrToFailedLoadConfiguration, err)
 		return
 	}
 
@@ -28,7 +28,7 @@ func main() {
 
 	appDependencies, cleanup, err := bootstrap.InitializeDependencies(config.Setting, logger)
 	if err != nil {
-		utils.HandleCriticalError(logger, constants.ErrInitializeDependencies, err)
+		response.HandleCriticalError(logger, constants.ErrInitializeDependencies, err)
 		return
 	}
 	defer cleanup()
@@ -37,7 +37,7 @@ func main() {
 
 	newServer, err := server.NewHTTPServer(appDependencies, logger, &config.Setting)
 	if err != nil {
-		utils.HandleCriticalError(logger, constants.ErrStartServer, err)
+		response.HandleCriticalError(logger, constants.ErrStartServer, err)
 		return
 	}
 
@@ -45,6 +45,6 @@ func main() {
 
 	if err := newServer.ListenAndServe(); err != nil {
 		logger.Errorw(constants.ErrStartServer, constants.Error, err)
-		utils.HandleCriticalError(logger, constants.ErrStartServer, err)
+		response.HandleCriticalError(logger, constants.ErrStartServer, err)
 	}
 }
