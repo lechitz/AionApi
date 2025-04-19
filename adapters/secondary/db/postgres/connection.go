@@ -7,45 +7,49 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 	"time"
 )
 
-func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) *gorm.DB {
-	var err error
+func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB, error) {
 	conString := fmt.Sprintf(constants.MsgFormatConString, cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName)
 
 	logger.Infow(constants.MsgDBConnection, constants.Host, cfg.DBHost, constants.Port, cfg.DBPort, constants.DBName, cfg.DBName)
 
-	DB, err := connecting(conString, logger)
+	db, err := tryConnectingWithRetries(conString, logger, 3)
 	if err != nil {
-		log.Panic(err)
+		logger.Errorw(constants.ErrorToStartDB, constants.Error, err.Error())
+		return nil, err
 	}
 
-	return DB
+	sqlDB, err := db.DB()
+	if err != nil {
+		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, constants.Error, err.Error())
+		return nil, err
+	}
+
+	if err := sqlDB.Ping(); err != nil {
+		logger.Errorw(constants.FailedToPingDB, constants.Error, err.Error())
+		return nil, err
+	}
+
+	return db, nil
 }
 
-func connecting(conString string, logger logger.Logger) (*gorm.DB, error) {
+func tryConnectingWithRetries(conString string, logger logger.Logger, maxRetries int) (*gorm.DB, error) {
+	var db *gorm.DB
+	var err error
 
-	tryConnect := 1
-
-	for {
-		logger.Infow(constants.MsgTryingStartsPostgresDB, "try", tryConnect)
-		DB, err := gorm.Open(postgres.Open(conString), &gorm.Config{})
-		if err != nil && tryConnect != 3 {
-
-			tryConnect++
-			if tryConnect > 3 {
-				logger.Infow(constants.ErrorToStartsThePostgresDB, constants.MsgTryingToConnect, tryConnect)
-				return nil, err
-			}
-
-			time.Sleep(3 * time.Second)
-			continue
+	for tryConnect := 1; tryConnect <= maxRetries; tryConnect++ {
+		logger.Infow(constants.MsgTryingStartsDB, constants.Try, tryConnect)
+		db, err = gorm.Open(postgres.Open(conString), &gorm.Config{})
+		if err == nil {
+			return db, nil
 		}
-
-		return DB, err
+		logger.Warnw(constants.ErrDBConnectionAttempt, constants.Error, err.Error())
+		time.Sleep(3 * time.Second)
 	}
+
+	return nil, err
 }
 
 func Close(DB *gorm.DB, logger logger.Logger) {
@@ -54,7 +58,10 @@ func Close(DB *gorm.DB, logger logger.Logger) {
 		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, constants.Error, err.Error())
 		return
 	}
+
 	if err := sqlDB.Close(); err != nil {
-		logger.Errorw(constants.ErrorToCloseThePostgresDB, constants.Error, err.Error())
+		logger.Errorw(constants.ErrorToCloseDB, constants.Error, err.Error())
+	} else {
+		logger.Infow(constants.MsgPostgresConnectionClosed)
 	}
 }
