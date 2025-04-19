@@ -44,9 +44,9 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	setAuthCookie(w, token, 0)
 
-	response := dto.LoginUserResponse{Username: userDB.Username}
+	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(response, constants2.SuccessToLogin).Bytes())
+	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(loginUserResponse, constants2.SuccessToLogin).Bytes())
 }
 
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
