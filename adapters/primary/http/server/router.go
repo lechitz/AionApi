@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth"
+	"github.com/lechitz/AionApi/adapters/primary/http/middleware/recovery"
 	"github.com/lechitz/AionApi/adapters/primary/http/router/chi"
 	"github.com/lechitz/AionApi/adapters/primary/http/server/constants"
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
@@ -24,11 +25,17 @@ func NewHttpRouter(logger logger.Logger, tokenRepository cache.TokenRepositoryPo
 		return nil, err
 	}
 
+	router := chi.NewRouter()
+
+	router.Use(recovery.RecoverMiddleware(logger))
+
+	authMiddleware := auth.NewAuthMiddleware(tokenRepository, logger)
+
 	return &RouteComposer{
 		BasePath:       normalizedPath,
-		Router:         chi.NewRouter(),
+		Router:         router,
 		logger:         logger,
-		authMiddleware: auth.NewAuthMiddleware(tokenRepository, logger),
+		authMiddleware: authMiddleware,
 	}, nil
 }
 
