@@ -3,10 +3,10 @@ package token_test
 import (
 	"context"
 	"errors"
+	"github.com/lechitz/AionApi/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/constants"
-	"github.com/lechitz/AionApi/internal/infrastructure/security"
-	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/AionApi/internal/infra/config"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"
 	"testing"
