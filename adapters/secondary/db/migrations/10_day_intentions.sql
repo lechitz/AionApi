@@ -5,18 +5,12 @@ CREATE TABLE IF NOT EXISTS aion_api.day_intentions
     intention     TEXT NOT NULL,
     is_completed  BOOLEAN DEFAULT FALSE,
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at    TIMESTAMP DEFAULT NULL,
     FOREIGN KEY (day_id) REFERENCES aion_api.days (id) ON DELETE CASCADE
-);
-
-CREATE OR REPLACE FUNCTION update_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+    );
 
 CREATE TRIGGER update_day_intentions_updated_at
     BEFORE UPDATE ON aion_api.day_intentions
     FOR EACH ROW
-    EXECUTE FUNCTION update_timestamp();
+    EXECUTE FUNCTION aion_api.update_timestamp();
