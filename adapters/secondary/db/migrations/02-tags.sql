@@ -8,18 +8,10 @@ CREATE TABLE IF NOT EXISTS aion_api.tags
     creation_date    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at       TIMESTAMP DEFAULT NULL,
-    FOREIGN KEY (user_id) REFERENCES aion_api.users (id) ON DELETE CASCADE -- Relationship to User
-);
-
-CREATE OR REPLACE FUNCTION update_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+    FOREIGN KEY (user_id) REFERENCES aion_api.users (id) ON DELETE CASCADE
+    );
 
 CREATE TRIGGER update_tags_updated_at
     BEFORE UPDATE ON aion_api.tags
     FOR EACH ROW
-    EXECUTE FUNCTION update_timestamp();
+    EXECUTE FUNCTION aion_api.update_timestamp();

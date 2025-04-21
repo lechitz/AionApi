@@ -13,16 +13,8 @@ CREATE TABLE IF NOT EXISTS aion_api.users
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE OR REPLACE FUNCTION update_timestamp()
-    RETURNS TRIGGER AS $$
-BEGIN
-        NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
 CREATE TRIGGER update_users_updated_at
     BEFORE UPDATE ON aion_api.users
     FOR EACH ROW
     WHEN (OLD.* IS DISTINCT FROM NEW.*)
-EXECUTE FUNCTION update_timestamp();
+EXECUTE FUNCTION aion_api.update_timestamp();
