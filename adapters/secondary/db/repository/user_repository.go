@@ -26,7 +26,7 @@ func NewUserRepository(db *gorm.DB, logger logger.Logger) *UserRepository {
 }
 
 func (up UserRepository) CreateUser(ctx context.Context, userDomain domain.UserDomain) (domain.UserDomain, error) {
-	userDB := mapper.ToDB(userDomain)
+	userDB := mapper.UserToDB(userDomain)
 
 	if err := up.db.WithContext(ctx).
 		Create(&userDB).Error; err != nil {
@@ -35,7 +35,7 @@ func (up UserRepository) CreateUser(ctx context.Context, userDomain domain.UserD
 		return domain.UserDomain{}, wrappedErr
 	}
 
-	return mapper.FromDB(userDB), nil
+	return mapper.UserFromDB(userDB), nil
 }
 
 func (up UserRepository) GetAllUsers(ctx context.Context) ([]domain.UserDomain, error) {
@@ -51,7 +51,7 @@ func (up UserRepository) GetAllUsers(ctx context.Context) ([]domain.UserDomain, 
 	}
 
 	for _, userDB := range usersDB {
-		usersDomain = append(usersDomain, mapper.FromDB(userDB))
+		usersDomain = append(usersDomain, mapper.UserFromDB(userDB))
 	}
 
 	return usersDomain, nil
@@ -68,7 +68,7 @@ func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain
 		return domain.UserDomain{}, err
 	}
 
-	return mapper.FromDB(userDB), nil
+	return mapper.UserFromDB(userDB), nil
 }
 
 func (up UserRepository) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
@@ -82,7 +82,7 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 		return domain.UserDomain{}, err
 	}
 
-	return mapper.FromDB(userDB), nil
+	return mapper.UserFromDB(userDB), nil
 }
 
 func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
@@ -96,7 +96,7 @@ func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (doma
 		return domain.UserDomain{}, err
 	}
 
-	return mapper.FromDB(userDB), nil
+	return mapper.UserFromDB(userDB), nil
 }
 
 func (up UserRepository) UpdateUser(ctx context.Context, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
