@@ -48,7 +48,6 @@ func (t *TokenRepository) Get(ctx context.Context, token domain.TokenDomain) (st
 		return "", err
 	}
 
-	t.logger.Infow(constants.SuccessToGetTokenFromRedis, constants.Key, key)
 	return value, nil
 }
 
