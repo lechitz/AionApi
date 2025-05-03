@@ -110,7 +110,30 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 
 // GetCategoryByName is the resolver for the GetCategoryByName field.
 func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error) {
-	panic(fmt.Errorf("not implemented: GetCategoryByName - GetCategoryByName"))
+	categoryIDUint, err := strconv.ParseUint(categoryRequest.UserID, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("invalid category ID format")
+	}
+
+	category := domain.Category{
+		ID:     categoryIDUint,
+		UserID: categoryIDUint,
+		Name:   categoryRequest.Name,
+	}
+
+	categoryDB, err := r.Resolver.CategoryService.GetCategoryByID(ctx, category)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Category{
+		CategoryID:  fmt.Sprintf("%d", categoryDB.ID),
+		UserID:      fmt.Sprintf("%d", categoryDB.UserID),
+		Name:        categoryDB.Name,
+		Description: &categoryDB.Description,
+		ColorHex:    &categoryDB.Color,
+		Icon:        &categoryDB.Icon,
+	}, nil
 }
 
 // GetAllTags is the resolver for the GetAllTags field.
