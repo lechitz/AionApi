@@ -25,5 +25,5 @@ const (
 	SecretKey = "secret"
 
 	Error  = "error"
-	UserID = "userID"
+	UserID = "user_id"
 )
