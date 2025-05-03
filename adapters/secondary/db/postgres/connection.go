@@ -11,9 +11,9 @@ import (
 )
 
 func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB, error) {
-	conString := fmt.Sprintf(constants.MsgFormatConString, cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName)
+	conString := fmt.Sprintf(constants.MsgFormatConString, cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
 
-	logger.Infow(constants.MsgDBConnection, constants.Host, cfg.DBHost, constants.Port, cfg.DBPort, constants.DBName, cfg.DBName)
+	logger.Infow(constants.MsgDBConnection, constants.Host, cfg.Host, constants.Port, cfg.Port, constants.DBName, cfg.Name)
 
 	db, err := tryConnectingWithRetries(conString, logger, 3)
 	if err != nil {
