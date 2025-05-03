@@ -8,25 +8,33 @@ import (
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/recovery"
 	"github.com/lechitz/AionApi/internal/infra/bootstrap"
+	"github.com/lechitz/AionApi/internal/infra/config"
+	"net/http"
 )
 
-func NewGraphqlServer(deps *bootstrap.AppDependencies) (*chi.Mux, error) {
+func NewGraphqlServer(deps *bootstrap.AppDependencies) (*http.Server, error) {
 	router := chi.NewRouter()
 
 	authMiddleware := auth.NewAuthMiddleware(deps.TokenRepository, deps.Logger)
 	router.Use(authMiddleware.Auth)
-
 	router.Use(recovery.RecoverMiddleware(deps.Logger))
 
-	schema := graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
-		CategoryService: deps.CategoryService,
-		Logger:          deps.Logger,
-	}})
+	schema := graph.NewExecutableSchema(graph.Config{
+		Resolvers: &graph.Resolver{
+			CategoryService: deps.CategoryService,
+			Logger:          deps.Logger,
+		},
+	})
 
 	srv := handler.New(schema)
 	srv.AddTransport(transport.POST{})
 
 	router.Post("/graphql", srv.ServeHTTP)
 
-	return router, nil
+	httpServer := &http.Server{
+		Addr:    ":" + config.Setting.ServerGraphql.Port,
+		Handler: router,
+	}
+
+	return httpServer, nil
 }

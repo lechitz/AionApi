@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/lechitz/AionApi/adapters/primary/graph/graphqlserver"
 	"github.com/lechitz/AionApi/adapters/primary/http/httpserver"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
@@ -19,7 +20,6 @@ import (
 )
 
 func main() {
-
 	loggerInstance, loggerCleanup := loggerBuilder.NewZapLogger()
 	defer loggerCleanup()
 	logger := loggerAdapter.NewZapLoggerAdapter(loggerInstance)
@@ -46,9 +46,9 @@ func main() {
 	}
 	logger.Infow(constants.ServerHTTPStarted, constants.Port, newHTTPServer.Addr, constants.ContextPath, config.Setting.ServerHTTP.Context)
 
-	newGraphqlServerHandler, err := graphqlserver.NewGraphqlServer(appDependencies)
+	graphqlServer, err := graphqlserver.NewGraphqlServer(appDependencies)
 	if err != nil {
-		response.HandleCriticalError(logger, constants.ErrStartGraphqlServer, err)
+		logger.Errorw(constants.ErrStartGraphqlServer, constants.Error, err)
 		return
 	}
 	logger.Infow(constants.GraphqlServerStarted, constants.ContextPath, config.Setting.ServerHTTP.Context)
@@ -59,31 +59,43 @@ func main() {
 	var wg sync.WaitGroup
 	wg.Add(2)
 
+	errChan := make(chan error, 2)
+
 	go func() {
 		defer wg.Done()
 		if err := newHTTPServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
+			errChan <- fmt.Errorf("failed to start HTTP server: %w", err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := http.ListenAndServe(":"+config.Setting.ServerGraphql.Port, newGraphqlServerHandler); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			logger.Errorw(constants.ErrStartGraphqlServer, constants.Error, err.Error())
-			response.HandleCriticalError(logger, constants.ErrStartGraphqlServer, err)
+		if err := graphqlServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			errChan <- fmt.Errorf("failed to start GraphQL server: %w", err)
 		}
 	}()
 
-	<-ctx.Done()
-	logger.Infow(constants.MsgShutdownSignalReceived)
+	select {
+	case err := <-errChan:
+		logger.Errorw("server error", "error", err.Error())
+		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
+		stop()
+	case <-ctx.Done():
+		logger.Infow(constants.MsgShutdownSignalReceived)
+	}
 
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	shutdownTimeout := time.Duration(config.Setting.Application.Timeout)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 
 	if err := newHTTPServer.Shutdown(shutdownCtx); err != nil {
-		logger.Errorw(constants.ErrGracefulShutdown, constants.Error, err.Error())
+		logger.Errorw(constants.ErrHTTPGracefulShutdown, constants.Error, err.Error())
 	} else {
 		logger.Infow(constants.MsgGracefulShutdownSuccess)
+	}
+
+	if err := graphqlServer.Shutdown(shutdownCtx); err != nil {
+		logger.Errorw(constants.ErrGraphqlGracefulShutdown, constants.Error, err)
 	}
 
 	cleanup()
