@@ -43,7 +43,7 @@ func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
 	category := testdata.TestPerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		GetCategoryByName(suite.Ctx, category.Name).
+		GetCategoryByName(suite.Ctx, category).
 		Return(category, nil)
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
@@ -59,7 +59,7 @@ func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
 	category := testdata.TestPerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		GetCategoryByName(suite.Ctx, category.Name).
+		GetCategoryByName(suite.Ctx, category).
 		Return(domain.Category{}, nil)
 
 	suite.CategoryRepository.EXPECT().
@@ -79,7 +79,7 @@ func TestCreateCategory_Success(t *testing.T) {
 	category := testdata.TestPerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		GetCategoryByName(suite.Ctx, category.Name).
+		GetCategoryByName(suite.Ctx, category).
 		Return(domain.Category{}, nil)
 
 	suite.CategoryRepository.EXPECT().

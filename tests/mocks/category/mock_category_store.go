@@ -74,48 +74,48 @@ func (m *MockCategoryRetriver) EXPECT() *MockCategoryRetriverMockRecorder {
 }
 
 // GetAllCategories mocks base method.
-func (m *MockCategoryRetriver) GetAllCategories(ctx context.Context) ([]domain.Category, error) {
+func (m *MockCategoryRetriver) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllCategories", ctx)
+	ret := m.ctrl.Call(m, "GetAllCategories", ctx, userID)
 	ret0, _ := ret[0].([]domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAllCategories indicates an expected call of GetAllCategories.
-func (mr *MockCategoryRetriverMockRecorder) GetAllCategories(ctx interface{}) *gomock.Call {
+func (mr *MockCategoryRetriverMockRecorder) GetAllCategories(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllCategories", reflect.TypeOf((*MockCategoryRetriver)(nil).GetAllCategories), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllCategories", reflect.TypeOf((*MockCategoryRetriver)(nil).GetAllCategories), ctx, userID)
 }
 
 // GetCategoryByID mocks base method.
-func (m *MockCategoryRetriver) GetCategoryByID(ctx context.Context, id uint64) (domain.Category, error) {
+func (m *MockCategoryRetriver) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCategoryByID", ctx, id)
+	ret := m.ctrl.Call(m, "GetCategoryByID", ctx, category)
 	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetCategoryByID indicates an expected call of GetCategoryByID.
-func (mr *MockCategoryRetriverMockRecorder) GetCategoryByID(ctx, id interface{}) *gomock.Call {
+func (mr *MockCategoryRetriverMockRecorder) GetCategoryByID(ctx, category interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByID", reflect.TypeOf((*MockCategoryRetriver)(nil).GetCategoryByID), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByID", reflect.TypeOf((*MockCategoryRetriver)(nil).GetCategoryByID), ctx, category)
 }
 
 // GetCategoryByName mocks base method.
-func (m *MockCategoryRetriver) GetCategoryByName(ctx context.Context, name string) (domain.Category, error) {
+func (m *MockCategoryRetriver) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCategoryByName", ctx, name)
+	ret := m.ctrl.Call(m, "GetCategoryByName", ctx, category)
 	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetCategoryByName indicates an expected call of GetCategoryByName.
-func (mr *MockCategoryRetriverMockRecorder) GetCategoryByName(ctx, name interface{}) *gomock.Call {
+func (mr *MockCategoryRetriverMockRecorder) GetCategoryByName(ctx, category interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByName", reflect.TypeOf((*MockCategoryRetriver)(nil).GetCategoryByName), ctx, name)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByName", reflect.TypeOf((*MockCategoryRetriver)(nil).GetCategoryByName), ctx, category)
 }
 
 // MockCategoryStore is a mock of CategoryStore interface.
@@ -157,46 +157,46 @@ func (mr *MockCategoryStoreMockRecorder) CreateCategory(ctx, category interface{
 }
 
 // GetAllCategories mocks base method.
-func (m *MockCategoryStore) GetAllCategories(ctx context.Context) ([]domain.Category, error) {
+func (m *MockCategoryStore) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllCategories", ctx)
+	ret := m.ctrl.Call(m, "GetAllCategories", ctx, userID)
 	ret0, _ := ret[0].([]domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAllCategories indicates an expected call of GetAllCategories.
-func (mr *MockCategoryStoreMockRecorder) GetAllCategories(ctx interface{}) *gomock.Call {
+func (mr *MockCategoryStoreMockRecorder) GetAllCategories(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllCategories", reflect.TypeOf((*MockCategoryStore)(nil).GetAllCategories), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllCategories", reflect.TypeOf((*MockCategoryStore)(nil).GetAllCategories), ctx, userID)
 }
 
 // GetCategoryByID mocks base method.
-func (m *MockCategoryStore) GetCategoryByID(ctx context.Context, id uint64) (domain.Category, error) {
+func (m *MockCategoryStore) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCategoryByID", ctx, id)
+	ret := m.ctrl.Call(m, "GetCategoryByID", ctx, category)
 	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetCategoryByID indicates an expected call of GetCategoryByID.
-func (mr *MockCategoryStoreMockRecorder) GetCategoryByID(ctx, id interface{}) *gomock.Call {
+func (mr *MockCategoryStoreMockRecorder) GetCategoryByID(ctx, category interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByID", reflect.TypeOf((*MockCategoryStore)(nil).GetCategoryByID), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByID", reflect.TypeOf((*MockCategoryStore)(nil).GetCategoryByID), ctx, category)
 }
 
 // GetCategoryByName mocks base method.
-func (m *MockCategoryStore) GetCategoryByName(ctx context.Context, name string) (domain.Category, error) {
+func (m *MockCategoryStore) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCategoryByName", ctx, name)
+	ret := m.ctrl.Call(m, "GetCategoryByName", ctx, category)
 	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetCategoryByName indicates an expected call of GetCategoryByName.
-func (mr *MockCategoryStoreMockRecorder) GetCategoryByName(ctx, name interface{}) *gomock.Call {
+func (mr *MockCategoryStoreMockRecorder) GetCategoryByName(ctx, category interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByName", reflect.TypeOf((*MockCategoryStore)(nil).GetCategoryByName), ctx, name)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByName", reflect.TypeOf((*MockCategoryStore)(nil).GetCategoryByName), ctx, category)
 }

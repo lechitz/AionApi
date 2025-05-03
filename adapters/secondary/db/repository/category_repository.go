@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/lechitz/AionApi/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/adapters/secondary/db/model"
@@ -36,39 +37,44 @@ func (c CategoryRepository) CreateCategory(ctx context.Context, category domain.
 	return mapper.CategoryFromDB(categoryDB), nil
 }
 
-func (c CategoryRepository) GetCategoryByID(ctx context.Context, categoryID uint64) (domain.Category, error) {
+func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
 	var categoryDB model.CategoryDB
 
 	if err := c.db.WithContext(ctx).
 		Select("category_id, user_id, name, description, color_hex, icon, created_at, updated_at").
-		Where("category_id = ?", categoryID).
+		Where("category_id = ? AND user_id = ?", category.ID, category.UserID).
 		First(&categoryDB).Error; err != nil {
-		c.logger.Errorw("error getting category", "id", categoryID, "error", err.Error())
+		c.logger.Errorw("error getting category", "category_id", category.ID, "error", err.Error())
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return domain.Category{}, fmt.Errorf("category not found")
+		}
+		return domain.Category{}, fmt.Errorf("error getting category")
+	}
+
+	return mapper.CategoryFromDB(categoryDB), nil
+}
+
+func (c CategoryRepository) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
+	var categoryDB model.CategoryDB
+
+	if err := c.db.WithContext(ctx).
+		Select("category_id, user_id, name, description, color_hex, icon, created_at, updated_at").
+		Where("name = ? AND user_id = ?", category.Name, category.UserID).
+		First(&categoryDB).Error; err != nil {
+		c.logger.Errorw("error getting category", "name", category.Name, "error", err.Error())
 		return domain.Category{}, err
 	}
 
 	return mapper.CategoryFromDB(categoryDB), nil
 }
 
-func (c CategoryRepository) GetCategoryByName(ctx context.Context, name string) (domain.Category, error) {
-	var categoryDB model.CategoryDB
-
-	if err := c.db.WithContext(ctx).
-		Select("category_id, user_id, name, description, color_hex, icon, created_at, updated_at").
-		Where("name = ?", name).
-		First(&categoryDB).Error; err != nil {
-		c.logger.Errorw("error getting category", "name", name, "error", err.Error())
-		return domain.Category{}, err
-	}
-
-	return mapper.CategoryFromDB(categoryDB), nil
-}
-
-func (c CategoryRepository) GetAllCategories(ctx context.Context) ([]domain.Category, error) {
+func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
 	var categoriesDB []model.CategoryDB
 
 	if err := c.db.WithContext(ctx).
 		Select("category_id, user_id, name, description, color_hex, icon, created_at, updated_at").
+		Where("user_id = ?", userID).
 		Find(&categoriesDB).Error; err != nil {
 		c.logger.Errorw("error getting categories", "error", err.Error())
 		return nil, err

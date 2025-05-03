@@ -18,7 +18,7 @@ func (s *CategoryService) CreateCategory(ctx context.Context, category domain.Ca
 		return domain.Category{}, err
 	}
 
-	existingCategory, err := s.CategoryRepository.GetCategoryByName(ctx, category.Name)
+	existingCategory, err := s.CategoryRepository.GetCategoryByName(ctx, category)
 	if err == nil && existingCategory.Name != "" {
 		s.Logger.Errorw(constants.CategoryAlreadyExists, constants.CategoryName, category.Name)
 		return domain.Category{}, errors.New(constants.CategoryAlreadyExists)

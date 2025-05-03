@@ -10,9 +10,9 @@ type CategoryCreator interface {
 }
 
 type CategoryRetriver interface {
-	GetCategoryByID(ctx context.Context, id uint64) (domain.Category, error)
-	GetCategoryByName(ctx context.Context, name string) (domain.Category, error)
-	GetAllCategories(ctx context.Context) ([]domain.Category, error)
+	GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error)
+	GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error)
+	GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error)
 }
 
 type CategoryStore interface {
