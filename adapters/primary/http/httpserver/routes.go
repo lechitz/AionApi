@@ -1,4 +1,4 @@
-package server
+package httpserver
 
 import (
 	"github.com/lechitz/AionApi/adapters/primary/http/handlers"
@@ -23,7 +23,7 @@ func (r *RouteComposer) AddUserRoutes(uh *handlers.User) func(portRouter.Router)
 				userProtected.Use(r.authMiddleware.Auth)
 
 				userProtected.Get("/all", uh.GetAllUsersHandler)
-				userProtected.Get("/{id}", uh.GetUserByIDHandler)
+				userProtected.Get("/{user_id}", uh.GetUserByIDHandler)
 				userProtected.Put("/", uh.UpdateUserHandler)
 				userProtected.Put("/password", uh.UpdatePasswordHandler)
 				userProtected.Delete("/", uh.SoftDeleteUserHandler)
