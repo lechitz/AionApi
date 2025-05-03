@@ -42,6 +42,7 @@ type ServerHTTP struct {
 
 type Application struct {
 	ContextRequest time.Duration `envconfig:"CONTEXT_REQUEST" default:"2.1s"`
+	Timeout        int           `envconfig:"SHUTDOWN_TIMEOUT" default:"5"`
 }
 
 type Secret struct {
