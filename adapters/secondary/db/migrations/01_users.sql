@@ -3,7 +3,7 @@ CREATE SCHEMA IF NOT EXISTS aion_api;
 
 CREATE TABLE IF NOT EXISTS aion_api.users
 (
-    id         SERIAL PRIMARY KEY,
+    user_id    SERIAL PRIMARY KEY,
     name       VARCHAR(255) NOT NULL,
     username   VARCHAR(255) NOT NULL UNIQUE,
     password   VARCHAR(255) NOT NULL,
