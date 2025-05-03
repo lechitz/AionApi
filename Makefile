@@ -16,21 +16,21 @@ help:
 	@echo ""
 
 	@echo "\033[1;34m🔵 Docker Compose Commands:\033[0m"
-	@echo "  \033[1;36mdocker-compose-dev-up\033[0m     → Start development environment (resets DB)"
-	@echo "  \033[1;36mdocker-compose-dev-down\033[0m   → Stop development and remove volumes"
+	@echo "  \033[1;36mdev-up\033[0m     → Start development environment (resets DB)"
+	@echo "  \033[1;36mdev-down\033[0m   → Stop development and remove volumes"
 	@echo "  \033[1;36mdocker-compose-prod-up\033[0m    → Start production (keeps DB)"
 	@echo "  \033[1;36mdocker-compose-prod-down\033[0m  → Stop production environment"
 	@echo ""
 
 	@echo "\033[1;34m🔵 Docker Build Commands:\033[0m"
-	@echo "  \033[1;36mdocker-build-dev\033[0m          → Build dev image"
+	@echo "  \033[1;36mbuild-dev\033[0m          → Build dev image"
 	@echo "  \033[1;36mdocker-build-prod\033[0m         → Build prod image"
 	@echo "  \033[1;36mdev\033[0m                       → Build & start dev environment"
 	@echo "  \033[1;36mprod\033[0m                      → Build & start prod environment"
 	@echo ""
 
 	@echo "\033[1;34m🔵 Docker Cleanup Commands:\033[0m"
-	@echo "  \033[1;36mdocker-clean-dev\033[0m          → Clean dev containers, volumes, images"
+	@echo "  \033[1;36mclean-dev\033[0m          → Clean dev containers, volumes, images"
 	@echo "  \033[1;36mdocker-clean-prod\033[0m         → Clean prod containers, volumes, images"
 	@echo "  \033[1;36mdocker-clean-all\033[0m          → Remove ALL containers, volumes, images"
 	@echo ""
@@ -43,23 +43,23 @@ help:
 # ========================
 # Development Environment
 # ========================
-.PHONY: docker-build-dev docker-compose-dev-up docker-compose-dev-down dev docker-clean-dev
+.PHONY: build-dev dev-up dev-down dev clean-dev
 
-docker-build-dev: docker-clean-dev
+build-dev: clean-dev
 	docker build -t $(APPLICATION_NAME):dev .
 
-docker-compose-dev-up: docker-compose-dev-down
+dev-up: dev-down
 	@echo "Starting Dev Environment..."
 	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres
 	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) up
 
-docker-compose-dev-down:
+dev-down:
 	@echo "Stopping Dev Environment..."
 	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) down -v
 
-dev: docker-clean-dev docker-build-dev docker-compose-dev-up
+dev: clean-dev build-dev dev-up
 
-docker-clean-dev:
+clean-dev:
 	@echo "\033[1;33m Cleaning dev containers...\033[0m"
 	@containers=$$(docker ps -a --filter "name=dev" -q); \
 	if [ -n "$$containers" ]; then \
@@ -188,10 +188,18 @@ test-clean:
 .PHONY: test-html-report
 test-html-report:
 	@echo "🧪 Running tests and generating JSON output..."
-	go test ./... -json > internal/docs/coverage/report.json
+	go test ./... -json > docs/coverage/report.json
 	@echo "📄 Generating HTML report..."
-	go-test-html-report -f internal/docs/coverage/report.json -o internal/docs/coverage/
-	@echo "✅ HTML report generated at: internal/docs/coverage/report.html"
+	go-test-html-report -f docs/coverage/report.json -o docs/coverage/
+	@echo "✅ HTML report generated at: docs/coverage/report.html"
+
+# ========================
+# Generate GraphQL
+# ========================
+.PHONY: graphql
+
+graphql:
+	cd adapters/primary/graph && go run github.com/99designs/gqlgen generate
 
 # ========================
 # Mock Generation Commands
@@ -199,7 +207,7 @@ test-html-report:
 .PHONY: mocks
 mocks:
 	@echo "Generating mocks for output ports and usecases..."
-	@mkdir -p tests/mocks/token tests/mocks/user tests/mocks/security
+	@mkdir -p tests/mocks/token tests/mocks/user tests/mocks/security tests/mocks/logger tests/mocks/category
 
 	@echo "→ TokenStore"
 	mockgen -source=internal/core/ports/output/cache/token.go \
@@ -215,6 +223,11 @@ mocks:
 	mockgen -source=internal/core/ports/output/db/user.go \
 		-destination=tests/mocks/user/mock_user_store.go \
 		-package=usermocks
+
+	@echo "→ CategoryStore"
+	mockgen -source=internal/core/ports/output/db/category.go \
+		-destination=tests/mocks/category/mock_category_store.go \
+		-package=categorymocks
 
 	@echo "→ SecurityStore"
 	mockgen -source=internal/core/ports/output/security/hasher.go \

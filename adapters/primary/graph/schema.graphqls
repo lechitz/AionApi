@@ -1,0 +1,40 @@
+type Category {
+    category_id: ID!
+    user_id: ID!
+    name: String!
+    description: String
+    color_hex: String
+    icon: String
+}
+
+type Tags {
+    tag_id: ID!
+    name: String!
+    category_id: Category!
+    description: String
+}
+
+input NewCategory {
+    name: String!
+    description: String
+    color_hex: String
+    icon: String
+}
+
+input NewTag {
+    name: String!
+    description: String
+    category_id: ID!
+}
+
+type Query {
+    categories: [Category!]!
+    category(category_id: ID!): Category
+    tags: [Tags]
+    tag(tag_id: ID): Tags
+}
+
+type Mutation {
+    createCategory(input: NewCategory!): Category!
+    createTag(input: NewTag!): Tags!
+}
