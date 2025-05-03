@@ -3,10 +3,9 @@ package token
 import (
 	"context"
 	"fmt"
-
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
 )
 
 func (s *TokenService) VerifyToken(ctx context.Context, token string) (uint64, string, error) {
