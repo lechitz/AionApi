@@ -14,24 +14,17 @@ func Load(logger logger.Logger) error {
 		return fmt.Errorf(constants.ErrFailedToProcessEnvVars, err)
 	}
 
-	if Setting.Server.Context == "" {
-		return fmt.Errorf(constants.ErrServerContextEmpty)
-	}
-	if Setting.Server.Port == "" {
-		return fmt.Errorf(constants.ErrServerPortEmpty)
-	}
-
-	if Setting.SecretKey == "" {
+	if Setting.Secret.Key == "" {
 		generated, err := security.GenerateJWTKey()
 		if err != nil {
 			response.HandleCriticalError(logger, constants.ErrGenerateSecretKey, err)
 			return err
 		}
 
-		Setting.SecretKey = generated
+		Setting.Secret.Key = generated
 
 		logger.Warnf(constants.SecretKeyWasNotSet)
-		fmt.Printf(constants.SecretKeyFormat, Setting.SecretKey)
+		fmt.Printf(constants.SecretKeyFormat, Setting.Secret)
 	}
 
 	return nil

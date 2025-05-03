@@ -2,13 +2,24 @@ package config
 
 import "time"
 
+var Setting Config
+
+type Config struct {
+	Application   Application
+	ServerHTTP    ServerHTTP
+	ServerGraphql ServerGraphql
+	DB            DBConfig
+	Cache         CacheConfig
+	Secret        Secret
+}
+
 type DBConfig struct {
-	DBName     string `envconfig:"DB_NAME" required:"true"`
-	DBHost     string `envconfig:"DB_HOST" default:"localhost"`
-	DBPort     string `envconfig:"DB_PORT" default:"5432"`
-	DBType     string `envconfig:"DB_TYPE" default:"postgres"`
-	DBUser     string `envconfig:"DB_USER" required:"true"`
-	DBPassword string `envconfig:"DB_PASSWORD" required:"true"`
+	Name     string `envconfig:"DB_NAME" required:"true"`
+	Host     string `envconfig:"DB_HOST" default:"localhost"`
+	Port     string `envconfig:"DB_PORT" default:"5432"`
+	Type     string `envconfig:"DB_TYPE" default:"postgres"`
+	User     string `envconfig:"DB_USER" required:"true"`
+	Password string `envconfig:"DB_PASSWORD" required:"true"`
 }
 
 type CacheConfig struct {
@@ -18,19 +29,21 @@ type CacheConfig struct {
 	PoolSize int    `envconfig:"CACHE_POOL_SIZE" default:"10"`
 }
 
-var Setting Config
+type ServerGraphql struct {
+	Port string `envconfig:"GRAPHQL_PORT" default:"8081" required:"true"`
+}
 
-type Config struct {
-	Application struct {
-		ContextRequest time.Duration `envconfig:"CONTEXT_REQUEST" default:"2.1s"`
-	}
-	Server struct {
-		Context      string        `envconfig:"SERVER_CONTEXT" default:"aion-api"`
-		Port         string        `envconfig:"SERVER_PORT" default:"5001" required:"true"`
-		ReadTimeout  time.Duration `envconfig:"SERVER_READ_TIMEOUT" default:"10s"`
-		WriteTimeout time.Duration `envconfig:"SERVER_WRITE_TIMEOUT" default:"10s"`
-	}
-	DB        DBConfig
-	Cache     CacheConfig
-	SecretKey string `envconfig:"SECRET_KEY"`
+type ServerHTTP struct {
+	Context      string        `envconfig:"HTTP_CONTEXT" default:"aion-api"`
+	Port         string        `envconfig:"HTTP_PORT" default:"5001" required:"true"`
+	ReadTimeout  time.Duration `envconfig:"HTTP_READ_TIMEOUT" default:"10s"`
+	WriteTimeout time.Duration `envconfig:"HTTP_WRITE_TIMEOUT" default:"10s"`
+}
+
+type Application struct {
+	ContextRequest time.Duration `envconfig:"CONTEXT_REQUEST" default:"2.1s"`
+}
+
+type Secret struct {
+	Key string `envconfig:"SECRET_KEY"`
 }
