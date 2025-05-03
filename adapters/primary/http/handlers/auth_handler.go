@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	constants2 "github.com/lechitz/AionApi/adapters/primary/http/constants"
+	"github.com/lechitz/AionApi/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
 	"net/http"
@@ -30,7 +30,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var loginReq dto.LoginUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
-		a.logAndRespondError(w, http.StatusBadRequest, constants2.ErrorToDecodeLoginRequest, err)
+		a.logAndRespondError(w, http.StatusBadRequest, constants.ErrorToDecodeLoginRequest, err)
 		return
 	}
 
@@ -38,7 +38,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	userDB, token, err := a.AuthService.Login(ctx, userDomain, loginReq.Password)
 	if err != nil {
-		a.logAndRespondError(w, http.StatusInternalServerError, constants2.ErrorToLogin, err)
+		a.logAndRespondError(w, http.StatusInternalServerError, constants.ErrorToLogin, err)
 		return
 	}
 
@@ -46,26 +46,26 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(loginUserResponse, constants2.SuccessToLogin).Bytes())
+	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(loginUserResponse, constants.SuccessToLogin).Bytes())
 }
 
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	userID, ok := ctx.Value(constants2.UserID).(uint64)
+	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok || userID == 0 {
-		a.logAndRespondError(w, http.StatusUnauthorized, constants2.ErrorToRetrieveUserID, nil)
+		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveUserID, nil)
 		return
 	}
 
-	tokenString, ok := ctx.Value(constants2.Token).(string)
+	tokenString, ok := ctx.Value(constants.Token).(string)
 	if !ok || tokenString == "" {
-		a.logAndRespondError(w, http.StatusUnauthorized, constants2.ErrorToRetrieveToken, nil)
+		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, nil)
 		return
 	}
 
 	if err := a.AuthService.Logout(ctx, tokenString); err != nil {
-		a.logAndRespondError(w, http.StatusInternalServerError, constants2.ErrorToLogout, err)
+		a.logAndRespondError(w, http.StatusInternalServerError, constants.ErrorToLogout, err)
 		return
 	}
 
@@ -77,17 +77,17 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	a.Logger.Infow(
-		constants2.SuccessToLogout,
-		constants2.UserID, userID,
-		constants2.Token, tokenPreview,
+		constants.SuccessToLogout,
+		constants.UserID, userID,
+		constants.Token, tokenPreview,
 	)
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(nil, constants2.SuccessToLogout).Bytes())
+	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(nil, constants.SuccessToLogout).Bytes())
 }
 
 func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
-		a.Logger.Errorw(message, constants2.Error, err.Error())
+		a.Logger.Errorw(message, constants.Error, err.Error())
 	} else {
 		a.Logger.Errorw(message)
 	}
@@ -96,10 +96,10 @@ func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message str
 
 func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     constants2.AuthToken,
+		Name:     constants.AuthToken,
 		Value:    token,
-		Path:     constants2.Path,
-		Domain:   constants2.Domain,
+		Path:     constants.Path,
+		Domain:   constants.Domain,
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
@@ -109,9 +109,9 @@ func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {
 
 func clearAuthCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     constants2.AuthToken,
+		Name:     constants.AuthToken,
 		Value:    "",
-		Path:     constants2.Path,
+		Path:     constants.Path,
 		MaxAge:   -1,
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
