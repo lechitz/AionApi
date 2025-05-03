@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"github.com/lechitz/AionApi/adapters/secondary/db/constants"
 	"github.com/lechitz/AionApi/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/adapters/secondary/db/model"
@@ -30,9 +29,7 @@ func (up UserRepository) CreateUser(ctx context.Context, userDomain domain.UserD
 
 	if err := up.db.WithContext(ctx).
 		Create(&userDB).Error; err != nil {
-		wrappedErr := fmt.Errorf(constants.ErrorToCreateUser, err)
-		up.logger.Errorw(constants.ErrorToCreateUser, constants.Error, wrappedErr.Error())
-		return domain.UserDomain{}, wrappedErr
+		return domain.UserDomain{}, err
 	}
 
 	return mapper.UserFromDB(userDB), nil
@@ -44,9 +41,8 @@ func (up UserRepository) GetAllUsers(ctx context.Context) ([]domain.UserDomain, 
 
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
-		Select("id, name, username, email, created_at").
+		Select("user_id, name, username, email, created_at").
 		Find(&usersDB).Error; err != nil {
-		up.logger.Errorw(constants.ErrorToGetAllUsers, constants.Error, err.Error())
 		return nil, err
 	}
 
@@ -62,9 +58,8 @@ func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain
 
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
-		Where("id = ?", userID).
+		Where("user_id = ?", userID).
 		First(&userDB).Error; err != nil {
-		up.logger.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 
@@ -75,10 +70,10 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 	var userDB model.UserDB
 
 	if err := up.db.WithContext(ctx).
-		Select("id, username, email, password, created_at").
+		Select("user_id, username, email, password, created_at").
 		Where("username = ?", username).
 		First(&userDB).Error; err != nil {
-		up.logger.Errorw(constants.ErrorToGetUserByUsername, constants.Error, err.Error())
+
 		return domain.UserDomain{}, err
 	}
 
@@ -89,10 +84,9 @@ func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (doma
 	var userDB model.UserDB
 
 	if err := up.db.WithContext(ctx).
-		Select("id, email, created_at").
+		Select("user_id, email, created_at").
 		Where("email = ?", email).
 		First(&userDB).Error; err != nil {
-		up.logger.Errorw(constants.ErrorToGetUserByEmail, constants.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 
@@ -104,9 +98,8 @@ func (up UserRepository) UpdateUser(ctx context.Context, userID uint64, fields m
 
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
-		Where("id = ?", userID).
+		Where("user_id = ?", userID).
 		Updates(fields).Error; err != nil {
-		up.logger.Errorw(constants.ErrorToUpdateUser, constants.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 
@@ -121,9 +114,8 @@ func (up UserRepository) SoftDeleteUser(ctx context.Context, userID uint64) erro
 
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
-		Where("id = ?", userID).
+		Where("user_id = ?", userID).
 		Updates(fields).Error; err != nil {
-		up.logger.Errorw(constants.ErrorToSoftDeleteUser, constants.Error, err.Error())
 		return err
 	}
 

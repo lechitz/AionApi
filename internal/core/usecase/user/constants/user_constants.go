@@ -32,7 +32,12 @@ const (
 )
 
 const (
-	UserID = "user_id"
-	Users  = "users"
-	Error  = "error"
+	UserID    = "user_id"
+	Users     = "users"
+	Error     = "error"
+	Name      = "name"
+	Username  = "username"
+	Email     = "email"
+	Password  = "password"
+	UpdatedAt = "updated_at"
 )

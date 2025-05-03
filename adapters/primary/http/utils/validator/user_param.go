@@ -13,10 +13,11 @@ const (
 	missingUserIDParam = "missing user ID parameter"
 	errorParsingUserID = "error parsing user ID"
 	userIDRequired     = "user ID is required"
+	UserID             = "user_id"
 )
 
 func ParseUserIDParam(w http.ResponseWriter, r *http.Request, log logger.Logger) (uint64, error) {
-	userIDParam := chi.URLParam(r, "id")
+	userIDParam := chi.URLParam(r, UserID)
 
 	if userIDParam == "" {
 		err := errors.New(userIDRequired)

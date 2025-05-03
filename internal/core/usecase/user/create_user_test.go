@@ -2,10 +2,10 @@ package user_test
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"
 )
