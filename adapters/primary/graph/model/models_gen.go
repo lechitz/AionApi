@@ -11,11 +11,24 @@ type Category struct {
 	Icon        *string `json:"icon,omitempty"`
 }
 
-type NewCategory struct {
+type DtoCreateCategory struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description,omitempty"`
 	ColorHex    *string `json:"color_hex,omitempty"`
 	Icon        *string `json:"icon,omitempty"`
+}
+
+type DtoGetCategoryByID struct {
+	CategoryID string `json:"category_id"`
+	UserID     string `json:"user_id"`
+}
+
+type DtoGetCategoryByName struct {
+	Name   string `json:"name"`
+	UserID string `json:"user_id"`
+}
+
+type Mutation struct {
 }
 
 type NewTag struct {
@@ -24,15 +37,12 @@ type NewTag struct {
 	CategoryID  string  `json:"category_id"`
 }
 
+type Query struct {
+}
+
 type Tags struct {
 	TagID       string    `json:"tag_id"`
 	Name        string    `json:"name"`
 	CategoryID  *Category `json:"category_id"`
 	Description *string   `json:"description,omitempty"`
-}
-
-type Mutation struct {
-}
-
-type Query struct {
 }

@@ -7,18 +7,28 @@ type Category {
     icon: String
 }
 
+input DtoCreateCategory {
+    name: String!
+    description: String
+    color_hex: String
+    icon: String
+}
+
+input DtoGetCategoryByID {
+    category_id: ID!
+    user_id: ID!
+}
+
+input DtoGetCategoryByName {
+    name: String!
+    user_id: ID!
+}
+
 type Tags {
     tag_id: ID!
     name: String!
     category_id: Category!
     description: String
-}
-
-input NewCategory {
-    name: String!
-    description: String
-    color_hex: String
-    icon: String
 }
 
 input NewTag {
@@ -28,13 +38,14 @@ input NewTag {
 }
 
 type Query {
-    categories: [Category!]!
-    category(category_id: ID!): Category
-    tags: [Tags]
-    tag(tag_id: ID): Tags
+    AllCategories(user_id: ID!): [Category!]!
+    GetCategoryByID(categoryRequest: DtoGetCategoryByID!): Category
+    GetCategoryByName(categoryRequest: DtoGetCategoryByName!): Category
+    GetAllTags: [Tags]
+    GetTagByID(tag_id: ID!): Tags
 }
 
 type Mutation {
-    createCategory(input: NewCategory!): Category!
-    createTag(input: NewTag!): Tags!
+    CreateCategory(category: DtoCreateCategory!): Category!
+    CreateTag(input: NewTag!): Tags!
 }

@@ -15,21 +15,21 @@ import (
 )
 
 // CreateCategory is the resolver for the createCategory field.
-func (r *mutationResolver) CreateCategory(ctx context.Context, input model.NewCategory) (*model.Category, error) {
+func (r *mutationResolver) CreateCategory(ctx context.Context, category model.DtoCreateCategory) (*model.Category, error) {
 	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
 		return nil, fmt.Errorf("userID not found in context")
 	}
 
-	category := domain.Category{
+	createCategory := domain.Category{
 		UserID:      userID,
-		Name:        input.Name,
-		Description: *input.Description,
-		Color:       *input.ColorHex,
-		Icon:        *input.Icon,
+		Name:        category.Name,
+		Description: *category.Description,
+		Color:       *category.ColorHex,
+		Icon:        *category.Icon,
 	}
 
-	categoryDB, err := r.Resolver.CategoryService.CreateCategory(ctx, category)
+	categoryDB, err := r.Resolver.CategoryService.CreateCategory(ctx, createCategory)
 	if err != nil {
 		return nil, err
 	}
@@ -45,13 +45,18 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, input model.NewCa
 }
 
 // CreateTag is the resolver for the createTag field.
-func (r *mutationResolver) CreateTag(_ context.Context, _ model.NewTag) (*model.Tags, error) {
+func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*model.Tags, error) {
 	panic(fmt.Errorf("not implemented: CreateTag - createTag"))
 }
 
-// Categories is the resolver for the categories field.
-func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, error) {
-	categoryDB, err := r.Resolver.CategoryService.GetAllCategories(ctx)
+// AllCategories is the resolver for the AllCategories field.
+func (r *queryResolver) AllCategories(ctx context.Context, userID string) ([]*model.Category, error) {
+	userIDUint, err := strconv.ParseUint(userID, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("invalid category ID format")
+	}
+
+	categoryDB, err := r.Resolver.CategoryService.GetAllCategories(ctx, userIDUint)
 	if err != nil {
 		return nil, errors.New("failed to fetch categories")
 	}
@@ -71,18 +76,24 @@ func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, erro
 	return categories, nil
 }
 
-// Category is the resolver for the category field.
-func (r *queryResolver) Category(ctx context.Context, categoryID string) (*model.Category, error) {
-	categoryIDUint, err := strconv.ParseUint(categoryID, 10, 64)
+// GetCategoryByID is the resolver for the GetCategoryByID field.
+func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest model.DtoGetCategoryByID) (*model.Category, error) {
+	categoryIDUint, err := strconv.ParseUint(categoryRequest.CategoryID, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("invalid category ID format")
 	}
 
-	category := domain.Category{
-		ID: categoryIDUint,
+	userIDUint, err := strconv.ParseUint(categoryRequest.UserID, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("invalid user ID format")
 	}
 
-	categoryDB, err := r.Resolver.CategoryService.GetCategoryByID(ctx, category.ID)
+	category := domain.Category{
+		ID:     categoryIDUint,
+		UserID: userIDUint,
+	}
+
+	categoryDB, err := r.Resolver.CategoryService.GetCategoryByID(ctx, category)
 	if err != nil {
 		return nil, err
 	}
@@ -97,14 +108,19 @@ func (r *queryResolver) Category(ctx context.Context, categoryID string) (*model
 	}, nil
 }
 
-// Tags is the resolver for the tags field.
-func (r *queryResolver) Tags(_ context.Context) ([]*model.Tags, error) {
-	panic(fmt.Errorf("not implemented: Tags - tags"))
+// GetCategoryByName is the resolver for the GetCategoryByName field.
+func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error) {
+	panic(fmt.Errorf("not implemented: GetCategoryByName - GetCategoryByName"))
 }
 
-// Tag is the resolver for the tag field.
-func (r *queryResolver) Tag(_ context.Context, _ *string) (*model.Tags, error) {
-	panic(fmt.Errorf("not implemented: Tag - tag"))
+// GetAllTags is the resolver for the GetAllTags field.
+func (r *queryResolver) GetAllTags(ctx context.Context) ([]*model.Tags, error) {
+	panic(fmt.Errorf("not implemented: GetAllTags - GetAllTags"))
+}
+
+// GetTagByID is the resolver for the GetTagByID field.
+func (r *queryResolver) GetTagByID(ctx context.Context, tagID string) (*model.Tags, error) {
+	panic(fmt.Errorf("not implemented: GetTagByID - GetTagByID"))
 }
 
 // Mutation returns MutationResolver implementation.
