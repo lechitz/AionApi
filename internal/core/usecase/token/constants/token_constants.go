@@ -1,7 +1,5 @@
 package constants
 
-import "time"
-
 const (
 	ErrorToSaveToken   = "error to save token"
 	ErrorToUpdateToken = "error to update token"
@@ -21,10 +19,11 @@ const (
 	SuccessTokenDeleted   = "token deleted successfully"
 
 	Token           = "token"
-	Exp             = "exp"
-	ExpTimeToken    = 1 * time.Hour
 	TokenFromCookie = "TokenFromCookie"
 	TokenFromCache  = "TokenFromCache"
 
 	SecretKey = "secret"
+
+	Error  = "error"
+	UserID = "userID"
 )

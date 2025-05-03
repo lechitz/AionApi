@@ -6,15 +6,9 @@ const (
 	ErrorUnauthorizedAccessInvalidToken = "Unauthorized access: invalid token"
 )
 
-// Success messages for the auth middleware
-
-const (
-	SuccessTokenValidated = "Token validated successfully, adding userID to context"
-)
-
 const (
 	Error     = "error"
 	Token     = "token"
-	UserID    = "id"
+	UserID    = "user_id"
 	AuthToken = "auth_token"
 )

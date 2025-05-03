@@ -26,3 +26,9 @@ const (
 	UsernameIsAlreadyInUse    = "username is already in use"
 	EmailIsAlreadyInUse       = "email is already in use"
 )
+
+const (
+	UserID = "user_id"
+	Users  = "users"
+	Error  = "error"
+)

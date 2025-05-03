@@ -3,10 +3,7 @@ package constants
 // User Constants
 
 const (
-	Username = "username"
-	Users    = "users"
-	User     = "user"
-	UserID   = "id"
+	UserID = "user_id"
 )
 
 // Error User Messages
