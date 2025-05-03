@@ -1,6 +1,3 @@
-
-CREATE SCHEMA IF NOT EXISTS aion_api;
-
 CREATE TABLE IF NOT EXISTS aion_api.users
 (
     user_id    SERIAL PRIMARY KEY,
@@ -12,9 +9,3 @@ CREATE TABLE IF NOT EXISTS aion_api.users
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );
-
-CREATE TRIGGER update_users_updated_at
-    BEFORE UPDATE ON aion_api.users
-    FOR EACH ROW
-    WHEN (OLD.* IS DISTINCT FROM NEW.*)
-EXECUTE FUNCTION aion_api.update_timestamp();
