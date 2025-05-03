@@ -45,7 +45,7 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, input model.NewCa
 }
 
 // CreateTag is the resolver for the createTag field.
-func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*model.Tags, error) {
+func (r *mutationResolver) CreateTag(_ context.Context, _ model.NewTag) (*model.Tags, error) {
 	panic(fmt.Errorf("not implemented: CreateTag - createTag"))
 }
 
@@ -98,12 +98,12 @@ func (r *queryResolver) Category(ctx context.Context, categoryID string) (*model
 }
 
 // Tags is the resolver for the tags field.
-func (r *queryResolver) Tags(ctx context.Context) ([]*model.Tags, error) {
+func (r *queryResolver) Tags(_ context.Context) ([]*model.Tags, error) {
 	panic(fmt.Errorf("not implemented: Tags - tags"))
 }
 
 // Tag is the resolver for the tag field.
-func (r *queryResolver) Tag(ctx context.Context, tagID *string) (*model.Tags, error) {
+func (r *queryResolver) Tag(_ context.Context, _ *string) (*model.Tags, error) {
 	panic(fmt.Errorf("not implemented: Tag - tag"))
 }
 

@@ -8,7 +8,6 @@ const (
 	FailedToGetCategoryByID      = "failed to get category by id"
 	FailedToGetCategoryByName    = "failed to get category by name"
 	FailedToGetAllCategories     = "failed to get all categories"
-	ErrCategoryNameIsEmpty       = "category name is empty"
 	CategoryIDIsRequired         = "category id is required"
 	CategoryNameIsRequired       = "category name is required"
 	CategoryDescriptionIsTooLong = "category description cannot exceed 200 characters"
