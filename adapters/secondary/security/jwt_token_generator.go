@@ -4,13 +4,18 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+)
+
+const (
+	UserID       = "user_id"
+	Exp          = "exp"
+	ExpTimeToken = 24 * time.Hour
 )
 
 func GenerateToken(userID uint64, secretKey string) (string, error) {
 	claims := jwt.MapClaims{
-		constants.UserID: userID,
-		constants.Exp:    time.Now().Add(constants.ExpTimeToken).Unix(),
+		UserID: userID,
+		Exp:    time.Now().Add(ExpTimeToken).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
