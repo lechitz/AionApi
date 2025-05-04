@@ -50,13 +50,14 @@ func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*
 }
 
 // AllCategories is the resolver for the AllCategories field.
-func (r *queryResolver) AllCategories(ctx context.Context, userID string) ([]*model.Category, error) {
-	userIDUint, err := strconv.ParseUint(userID, 10, 64)
-	if err != nil {
-		return nil, fmt.Errorf("invalid category ID format")
+func (r *queryResolver) AllCategories(ctx context.Context) ([]*model.Category, error) {
+	userID, ok := ctx.Value("user_id").(uint64)
+	if !ok {
+		r.Logger.Errorw("User ID not found in context", "error", "userID not found in context")
+		return nil, fmt.Errorf("userID not found in context")
 	}
 
-	categoryDB, err := r.Resolver.CategoryService.GetAllCategories(ctx, userIDUint)
+	categoryDB, err := r.Resolver.CategoryService.GetAllCategories(ctx, userID)
 	if err != nil {
 		return nil, errors.New("failed to fetch categories")
 	}
@@ -78,19 +79,20 @@ func (r *queryResolver) AllCategories(ctx context.Context, userID string) ([]*mo
 
 // GetCategoryByID is the resolver for the GetCategoryByID field.
 func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest model.DtoGetCategoryByID) (*model.Category, error) {
+	userID, ok := ctx.Value("user_id").(uint64)
+	if !ok {
+		r.Logger.Errorw("User ID not found in context", "error", "userID not found in context")
+		return nil, fmt.Errorf("userID not found in context")
+	}
+
 	categoryIDUint, err := strconv.ParseUint(categoryRequest.CategoryID, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("invalid category ID format")
 	}
 
-	userIDUint, err := strconv.ParseUint(categoryRequest.UserID, 10, 64)
-	if err != nil {
-		return nil, fmt.Errorf("invalid user ID format")
-	}
-
 	category := domain.Category{
 		ID:     categoryIDUint,
-		UserID: userIDUint,
+		UserID: userID,
 	}
 
 	categoryDB, err := r.Resolver.CategoryService.GetCategoryByID(ctx, category)
@@ -110,18 +112,18 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 
 // GetCategoryByName is the resolver for the GetCategoryByName field.
 func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error) {
-	categoryIDUint, err := strconv.ParseUint(categoryRequest.UserID, 10, 64)
-	if err != nil {
-		return nil, fmt.Errorf("invalid category ID format")
+	userID, ok := ctx.Value("user_id").(uint64)
+	if !ok {
+		r.Logger.Errorw("User ID not found in context", "error", "userID not found in context")
+		return nil, fmt.Errorf("userID not found in context")
 	}
 
 	category := domain.Category{
-		ID:     categoryIDUint,
-		UserID: categoryIDUint,
+		UserID: userID,
 		Name:   categoryRequest.Name,
 	}
 
-	categoryDB, err := r.Resolver.CategoryService.GetCategoryByID(ctx, category)
+	categoryDB, err := r.Resolver.CategoryService.GetCategoryByName(ctx, category)
 	if err != nil {
 		return nil, err
 	}

@@ -62,7 +62,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AllCategories     func(childComplexity int, userID string) int
+		AllCategories     func(childComplexity int) int
 		GetAllTags        func(childComplexity int) int
 		GetCategoryByID   func(childComplexity int, categoryRequest model.DtoGetCategoryByID) int
 		GetCategoryByName func(childComplexity int, categoryRequest model.DtoGetCategoryByName) int
@@ -82,7 +82,7 @@ type MutationResolver interface {
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tags, error)
 }
 type QueryResolver interface {
-	AllCategories(ctx context.Context, userID string) ([]*model.Category, error)
+	AllCategories(ctx context.Context) ([]*model.Category, error)
 	GetCategoryByID(ctx context.Context, categoryRequest model.DtoGetCategoryByID) (*model.Category, error)
 	GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error)
 	GetAllTags(ctx context.Context) ([]*model.Tags, error)
@@ -179,12 +179,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			break
 		}
 
-		args, err := ec.field_Query_AllCategories_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.AllCategories(childComplexity, args["user_id"].(string)), true
+		return e.complexity.Query.AllCategories(childComplexity), true
 
 	case "Query.GetAllTags":
 		if e.complexity.Query.GetAllTags == nil {
@@ -428,29 +423,6 @@ func (ec *executionContext) field_Mutation_CreateTag_argsInput(
 	}
 
 	var zeroVal model.NewTag
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_AllCategories_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := ec.field_Query_AllCategories_argsUserID(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["user_id"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Query_AllCategories_argsUserID(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (string, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
-	if tmp, ok := rawArgs["user_id"]; ok {
-		return ec.unmarshalNID2string(ctx, tmp)
-	}
-
-	var zeroVal string
 	return zeroVal, nil
 }
 
@@ -1049,7 +1021,7 @@ func (ec *executionContext) _Query_AllCategories(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().AllCategories(rctx, fc.Args["user_id"].(string))
+		return ec.resolvers.Query().AllCategories(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1066,7 +1038,7 @@ func (ec *executionContext) _Query_AllCategories(ctx context.Context, field grap
 	return ec.marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategoryᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_AllCategories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_AllCategories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -1089,17 +1061,6 @@ func (ec *executionContext) fieldContext_Query_AllCategories(ctx context.Context
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Category", field.Name)
 		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_AllCategories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
 	}
 	return fc, nil
 }
@@ -3673,7 +3634,7 @@ func (ec *executionContext) unmarshalInputDtoGetCategoryByID(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"category_id", "user_id"}
+	fieldsInOrder := [...]string{"category_id"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3687,13 +3648,6 @@ func (ec *executionContext) unmarshalInputDtoGetCategoryByID(ctx context.Context
 				return it, err
 			}
 			it.CategoryID = data
-		case "user_id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
-			data, err := ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
 		}
 	}
 
@@ -3707,7 +3661,7 @@ func (ec *executionContext) unmarshalInputDtoGetCategoryByName(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "user_id"}
+	fieldsInOrder := [...]string{"name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3721,13 +3675,6 @@ func (ec *executionContext) unmarshalInputDtoGetCategoryByName(ctx context.Conte
 				return it, err
 			}
 			it.Name = data
-		case "user_id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
-			data, err := ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
 		}
 	}
 

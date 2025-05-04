@@ -16,12 +16,10 @@ input DtoCreateCategory {
 
 input DtoGetCategoryByID {
     category_id: ID!
-    user_id: ID!
 }
 
 input DtoGetCategoryByName {
     name: String!
-    user_id: ID!
 }
 
 type Tags {
@@ -38,7 +36,7 @@ input NewTag {
 }
 
 type Query {
-    AllCategories(user_id: ID!): [Category!]!
+    AllCategories: [Category!]!
     GetCategoryByID(categoryRequest: DtoGetCategoryByID!): Category
     GetCategoryByName(categoryRequest: DtoGetCategoryByName!): Category
     GetAllTags: [Tags]

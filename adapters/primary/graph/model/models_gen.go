@@ -20,12 +20,10 @@ type DtoCreateCategory struct {
 
 type DtoGetCategoryByID struct {
 	CategoryID string `json:"category_id"`
-	UserID     string `json:"user_id"`
 }
 
 type DtoGetCategoryByName struct {
-	Name   string `json:"name"`
-	UserID string `json:"user_id"`
+	Name string `json:"name"`
 }
 
 type Mutation struct {
