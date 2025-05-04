@@ -35,7 +35,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 		}
 
 		parsedToken, err := jwt.Parse(tokenCookie, func(token *jwt.Token) (interface{}, error) {
-			return []byte(config.Setting.SecretKey), nil
+			return []byte(config.Setting.Secret.Key), nil
 		})
 		if err != nil || parsedToken == nil || !parsedToken.Valid {
 			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, constants.Error, err)

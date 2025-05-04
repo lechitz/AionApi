@@ -1,0 +1,49 @@
+type Category {
+    category_id: ID!
+    user_id: ID!
+    name: String!
+    description: String
+    color_hex: String
+    icon: String
+}
+
+input DtoCreateCategory {
+    name: String!
+    description: String
+    color_hex: String
+    icon: String
+}
+
+input DtoGetCategoryByID {
+    category_id: ID!
+}
+
+input DtoGetCategoryByName {
+    name: String!
+}
+
+type Tags {
+    tag_id: ID!
+    name: String!
+    category_id: Category!
+    description: String
+}
+
+input NewTag {
+    name: String!
+    description: String
+    category_id: ID!
+}
+
+type Query {
+    AllCategories: [Category!]!
+    GetCategoryByID(categoryRequest: DtoGetCategoryByID!): Category
+    GetCategoryByName(categoryRequest: DtoGetCategoryByName!): Category
+    GetAllTags: [Tags]
+    GetTagByID(tag_id: ID!): Tags
+}
+
+type Mutation {
+    CreateCategory(category: DtoCreateCategory!): Category!
+    CreateTag(input: NewTag!): Tags!
+}

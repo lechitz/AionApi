@@ -3,7 +3,7 @@ package auth_test
 import (
 	"errors"
 	"github.com/golang/mock/gomock"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/core/domain"

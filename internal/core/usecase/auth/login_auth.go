@@ -2,9 +2,8 @@ package auth
 
 import (
 	"context"
-
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 )
 
 type Authenticator interface {

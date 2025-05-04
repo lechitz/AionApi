@@ -1,4 +1,4 @@
-package server
+package httpserver
 
 import (
 	"github.com/lechitz/AionApi/adapters/primary/http/handlers"

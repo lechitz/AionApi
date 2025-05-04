@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"
 	"testing"

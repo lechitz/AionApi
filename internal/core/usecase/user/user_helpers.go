@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/badoux/checkmail"
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 	"strings"
 )
 

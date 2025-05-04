@@ -3,10 +3,10 @@ package user
 import (
 	"context"
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 	"time"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
 )
 
 type UserUpdater interface {

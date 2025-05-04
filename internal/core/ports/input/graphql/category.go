@@ -1,0 +1,21 @@
+package graphql
+
+import (
+	"context"
+	"github.com/lechitz/AionApi/internal/core/domain"
+)
+
+type CategoryCreator interface {
+	CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error)
+}
+
+type CategoryRetriver interface {
+	GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error)
+	GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error)
+	GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error)
+}
+
+type CategoryService interface {
+	CategoryCreator
+	CategoryRetriver
+}

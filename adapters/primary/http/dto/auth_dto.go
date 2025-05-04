@@ -10,6 +10,6 @@ type LoginUserResponse struct {
 }
 
 type LogoutUserRequest struct {
-	UserID uint64 `json:"id"`
+	UserID uint64 `json:"user_id"`
 	Token  string `json:"token"`
 }

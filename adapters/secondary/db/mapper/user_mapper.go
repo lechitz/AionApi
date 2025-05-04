@@ -8,39 +8,39 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
-func FromDB(u model.UserDB) domain.UserDomain {
+func UserFromDB(user model.UserDB) domain.UserDomain {
 	var deletedAt *time.Time
-	if u.DeletedAt.Valid {
-		deletedAt = &u.DeletedAt.Time
+	if user.DeletedAt.Valid {
+		deletedAt = &user.DeletedAt.Time
 	}
 
 	return domain.UserDomain{
-		ID:        u.ID,
-		Name:      u.Name,
-		Username:  u.Username,
-		Email:     u.Email,
-		Password:  u.Password,
-		CreatedAt: u.CreatedAt,
-		UpdatedAt: u.UpdatedAt,
+		ID:        user.ID,
+		Name:      user.Name,
+		Username:  user.Username,
+		Email:     user.Email,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 		DeletedAt: deletedAt,
 	}
 }
 
-func ToDB(u domain.UserDomain) model.UserDB {
+func UserToDB(user domain.UserDomain) model.UserDB {
 	var deleted gorm.DeletedAt
-	if u.DeletedAt != nil {
-		deleted.Time = *u.DeletedAt
+	if user.DeletedAt != nil {
+		deleted.Time = *user.DeletedAt
 		deleted.Valid = true
 	}
 
 	return model.UserDB{
-		ID:        u.ID,
-		Name:      u.Name,
-		Username:  u.Username,
-		Email:     u.Email,
-		Password:  u.Password,
-		CreatedAt: u.CreatedAt,
-		UpdatedAt: u.UpdatedAt,
+		ID:        user.ID,
+		Name:      user.Name,
+		Username:  user.Username,
+		Email:     user.Email,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 		DeletedAt: deleted,
 	}
 }

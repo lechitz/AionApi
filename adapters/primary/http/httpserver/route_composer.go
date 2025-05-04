@@ -1,19 +1,18 @@
-package server
+package httpserver
 
 import (
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 	"github.com/lechitz/AionApi/internal/infra/bootstrap"
 )
 
-func ComposeRouter(deps *bootstrap.AppDependencies, logger logger.Logger, contextPath string) (portRouter.Router, error) {
-	httpRouter, err := NewHttpRouter(logger, deps.TokenRepository, contextPath)
+func ComposeRouter(deps *bootstrap.AppDependencies, contextPath string) (portRouter.Router, error) {
+	httpRouter, err := NewHttpRouter(deps.Logger, deps.TokenRepository, contextPath)
 	if err != nil {
 		return nil, err
 	}
 
 	return BuildRouterRoutes(
-		logger,
+		deps.Logger,
 		deps.UserService,
 		deps.AuthService,
 		deps.TokenRepository,

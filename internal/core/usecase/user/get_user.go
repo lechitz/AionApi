@@ -3,18 +3,18 @@ package user
 import (
 	"context"
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
 
 type UserRetriever interface {
-	GetUserByID(ctx context.Context, id uint64) (domain.UserDomain, error)
+	GetUserByID(ctx context.Context, userID uint64) (domain.UserDomain, error)
 	GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error)
 	GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error)
 	GetAllUsers(ctx context.Context) ([]domain.UserDomain, error)
 }
 
-func (s *UserService) GetUserByID(ctx context.Context, id uint64) (domain.UserDomain, error) {
-	user, err := s.userRepository.GetUserByID(ctx, id)
+func (s *UserService) GetUserByID(ctx context.Context, userID uint64) (domain.UserDomain, error) {
+	user, err := s.userRepository.GetUserByID(ctx, userID)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())
 		return domain.UserDomain{}, err
@@ -49,6 +49,6 @@ func (s *UserService) GetAllUsers(ctx context.Context) ([]domain.UserDomain, err
 		s.logger.Errorw(constants.ErrorToGetAllUsers, constants.Error, err.Error())
 		return nil, err
 	}
-	s.logger.Infow(constants.SuccessUsersRetrieved, "count", len(users))
+	s.logger.Infow(constants.SuccessUsersRetrieved, constants.Users, len(users))
 	return users, nil
 }

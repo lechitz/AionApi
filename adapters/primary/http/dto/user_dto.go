@@ -5,7 +5,7 @@ import (
 )
 
 type CreateUserRequest struct {
-	ID       uint64 `json:"id"`
+	ID       uint64 `json:"user_id"`
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
@@ -13,14 +13,14 @@ type CreateUserRequest struct {
 }
 
 type CreateUserResponse struct {
-	ID       uint64 `json:"id"`
+	ID       uint64 `json:"user_id"`
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
 }
 
 type GetUserResponse struct {
-	ID        uint64    `json:"id"`
+	ID        uint64    `json:"user_id"`
 	Name      string    `json:"name"`
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
@@ -28,14 +28,14 @@ type GetUserResponse struct {
 }
 
 type UpdateUserRequest struct {
-	ID       uint64  `json:"id"`
+	ID       uint64  `json:"user_id"`
 	Name     *string `json:"name,omitempty"`
 	Username *string `json:"username,omitempty"`
 	Email    *string `json:"email,omitempty"`
 }
 
 type UpdateUserResponse struct {
-	ID        uint64    `json:"id"`
+	ID        uint64    `json:"user_id"`
 	Name      *string   `json:"name"`
 	Username  *string   `json:"username"`
 	Email     *string   `json:"email"`

@@ -5,9 +5,10 @@ import (
 	"errors"
 	"github.com/lechitz/AionApi/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/constants"
+	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
 	"github.com/lechitz/AionApi/internal/infra/config"
 	"github.com/lechitz/AionApi/tests/setup"
+	"github.com/lechitz/AionApi/tests/testdata"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -16,9 +17,7 @@ func TestVerifyToken_Success(t *testing.T) {
 	suite := setup.SetupTokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
 
-	config.Setting.SecretKey = constants.SecretKey
-
-	userID := uint64(1)
+	userID := testdata.TestPerfectUser.ID
 
 	tokenString, err := security.GenerateToken(userID, constants.SecretKey)
 	assert.NoError(t, err)
@@ -38,7 +37,7 @@ func TestCheck_InvalidToken(t *testing.T) {
 	suite := setup.SetupTokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
 
-	config.Setting.SecretKey = constants.SecretKey
+	config.Setting.Secret.Key = constants.SecretKey
 	tokenString := "invalidToken"
 
 	_, _, err := suite.TokenService.VerifyToken(context.Background(), tokenString)
@@ -50,9 +49,6 @@ func TestCheck_InvalidToken(t *testing.T) {
 func TestCheck_TokenMismatch(t *testing.T) {
 	suite := setup.SetupTokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
-
-	secretKey := constants.SecretKey
-	config.Setting.SecretKey = secretKey
 
 	userID := uint64(1)
 
@@ -76,9 +72,9 @@ func TestCheck_ErrorToRetrieveTokenFromCache(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	secretKey := constants.SecretKey
-	config.Setting.SecretKey = secretKey
+	config.Setting.Secret.Key = secretKey
 
-	userID := uint64(1)
+	userID := testdata.TestPerfectUser.ID
 
 	tokenString, err := security.GenerateToken(userID, constants.SecretKey)
 	assert.NoError(t, err)
