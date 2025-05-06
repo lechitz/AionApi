@@ -26,6 +26,14 @@ type DtoGetCategoryByName struct {
 	Name string `json:"name"`
 }
 
+type DtoUpdateCategory struct {
+	CategoryID  string  `json:"category_id"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	ColorHex    *string `json:"color_hex,omitempty"`
+	Icon        *string `json:"icon,omitempty"`
+}
+
 type Mutation struct {
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/adapters/secondary/db/constants"
 	"github.com/lechitz/AionApi/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/adapters/secondary/db/model"
 	"github.com/lechitz/AionApi/internal/core/domain"
@@ -24,7 +25,6 @@ func NewCategoryRepository(db *gorm.DB, logger logger.Logger) *CategoryRepositor
 }
 
 func (c CategoryRepository) CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
-
 	categoryDB := mapper.CategoryToDB(category)
 
 	if err := c.db.WithContext(ctx).
@@ -86,4 +86,26 @@ func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64)
 	}
 
 	return categories, nil
+}
+
+func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, updateFields map[string]interface{}) (domain.Category, error) {
+	delete(updateFields, constants.CreatedAt)
+
+	var categoryDB model.CategoryDB
+	if err := c.db.WithContext(ctx).
+		Model(&categoryDB).
+		Where("category_id = ? AND user_id = ?", categoryID, userID).
+		Updates(updateFields).Error; err != nil {
+		c.logger.Errorw("error updating category", "category_id", categoryID, "user_id", userID, "error", err.Error())
+		return domain.Category{}, err
+	}
+
+	if err := c.db.WithContext(ctx).
+		Where("category_id = ? AND user_id = ?", categoryID, userID).
+		First(&categoryDB).Error; err != nil {
+		c.logger.Errorw("error fetching updated category", "category_id", categoryID, "user_id", userID, "error", err.Error())
+		return domain.Category{}, err
+	}
+
+	return mapper.CategoryFromDB(categoryDB), nil
 }

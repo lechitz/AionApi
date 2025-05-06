@@ -33,7 +33,7 @@ func (s *UserService) UpdateUser(ctx context.Context, user domain.UserDomain) (d
 
 	updatedUser, err := s.userRepository.UpdateUser(ctx, user.ID, updateFields)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToUpdateUser, "error", err.Error())
+		s.logger.Errorw(constants.ErrorToUpdateUser, constants.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 

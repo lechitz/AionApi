@@ -49,6 +49,51 @@ func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*
 	panic(fmt.Errorf("not implemented: CreateTag - createTag"))
 }
 
+// UpdateCategory is the resolver for the UpdateCategory field.
+func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.DtoUpdateCategory) (*model.Category, error) {
+	userID, ok := ctx.Value("user_id").(uint64)
+	if !ok {
+		return nil, fmt.Errorf("userID not found in context")
+	}
+
+	categoryIDUint, err := strconv.ParseUint(category.CategoryID, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("invalid category ID format")
+	}
+
+	updateCategory := domain.Category{
+		ID:     categoryIDUint,
+		UserID: userID,
+	}
+
+	if category.Name != nil {
+		updateCategory.Name = *category.Name
+	}
+	if category.Description != nil {
+		updateCategory.Description = *category.Description
+	}
+	if category.ColorHex != nil {
+		updateCategory.Color = *category.ColorHex
+	}
+	if category.Icon != nil {
+		updateCategory.Icon = *category.Icon
+	}
+
+	categoryDB, err := r.Resolver.CategoryService.UpdateCategory(ctx, updateCategory)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Category{
+		CategoryID:  fmt.Sprintf("%d", categoryDB.ID),
+		UserID:      fmt.Sprintf("%d", categoryDB.UserID),
+		Name:        categoryDB.Name,
+		Description: &categoryDB.Description,
+		ColorHex:    &categoryDB.Color,
+		Icon:        &categoryDB.Icon,
+	}, nil
+}
+
 // AllCategories is the resolver for the AllCategories field.
 func (r *queryResolver) AllCategories(ctx context.Context) ([]*model.Category, error) {
 	userID, ok := ctx.Value("user_id").(uint64)

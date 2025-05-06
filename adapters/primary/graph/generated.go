@@ -59,6 +59,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateCategory func(childComplexity int, category model.DtoCreateCategory) int
 		CreateTag      func(childComplexity int, input model.NewTag) int
+		UpdateCategory func(childComplexity int, category model.DtoUpdateCategory) int
 	}
 
 	Query struct {
@@ -80,6 +81,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreateCategory(ctx context.Context, category model.DtoCreateCategory) (*model.Category, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tags, error)
+	UpdateCategory(ctx context.Context, category model.DtoUpdateCategory) (*model.Category, error)
 }
 type QueryResolver interface {
 	AllCategories(ctx context.Context) ([]*model.Category, error)
@@ -174,6 +176,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.CreateTag(childComplexity, args["input"].(model.NewTag)), true
 
+	case "Mutation.UpdateCategory":
+		if e.complexity.Mutation.UpdateCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_UpdateCategory_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateCategory(childComplexity, args["category"].(model.DtoUpdateCategory)), true
+
 	case "Query.AllCategories":
 		if e.complexity.Query.AllCategories == nil {
 			break
@@ -263,6 +277,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputDtoCreateCategory,
 		ec.unmarshalInputDtoGetCategoryByID,
 		ec.unmarshalInputDtoGetCategoryByName,
+		ec.unmarshalInputDtoUpdateCategory,
 		ec.unmarshalInputNewTag,
 	)
 	first := true
@@ -423,6 +438,29 @@ func (ec *executionContext) field_Mutation_CreateTag_argsInput(
 	}
 
 	var zeroVal model.NewTag
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_UpdateCategory_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_UpdateCategory_argsCategory(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["category"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_UpdateCategory_argsCategory(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.DtoUpdateCategory, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
+	if tmp, ok := rawArgs["category"]; ok {
+		return ec.unmarshalNDtoUpdateCategory2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoUpdateCategory(ctx, tmp)
+	}
+
+	var zeroVal model.DtoUpdateCategory
 	return zeroVal, nil
 }
 
@@ -1001,6 +1039,75 @@ func (ec *executionContext) fieldContext_Mutation_CreateTag(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_CreateTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_UpdateCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_UpdateCategory(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateCategory(rctx, fc.Args["category"].(model.DtoUpdateCategory))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Category)
+	fc.Result = res
+	return ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_UpdateCategory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "category_id":
+				return ec.fieldContext_Category_category_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Category_user_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Category_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Category_description(ctx, field)
+			case "color_hex":
+				return ec.fieldContext_Category_color_hex(ctx, field)
+			case "icon":
+				return ec.fieldContext_Category_icon(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Category", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_UpdateCategory_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -3681,6 +3788,61 @@ func (ec *executionContext) unmarshalInputDtoGetCategoryByName(ctx context.Conte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputDtoUpdateCategory(ctx context.Context, obj any) (model.DtoUpdateCategory, error) {
+	var it model.DtoUpdateCategory
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"category_id", "name", "description", "color_hex", "icon"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "category_id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category_id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CategoryID = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		case "color_hex":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("color_hex"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ColorHex = data
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Icon = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewTag(ctx context.Context, obj any) (model.NewTag, error) {
 	var it model.NewTag
 	asMap := map[string]any{}
@@ -3814,6 +3976,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "CreateTag":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_CreateTag(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "UpdateCategory":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_UpdateCategory(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -4460,6 +4629,11 @@ func (ec *executionContext) unmarshalNDtoGetCategoryByID2githubᚗcomᚋlechitz�
 
 func (ec *executionContext) unmarshalNDtoGetCategoryByName2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoGetCategoryByName(ctx context.Context, v any) (model.DtoGetCategoryByName, error) {
 	res, err := ec.unmarshalInputDtoGetCategoryByName(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNDtoUpdateCategory2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoUpdateCategory(ctx context.Context, v any) (model.DtoUpdateCategory, error) {
+	res, err := ec.unmarshalInputDtoUpdateCategory(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
