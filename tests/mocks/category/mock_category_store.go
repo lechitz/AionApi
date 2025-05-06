@@ -118,6 +118,44 @@ func (mr *MockCategoryRetriverMockRecorder) GetCategoryByName(ctx, category inte
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByName", reflect.TypeOf((*MockCategoryRetriver)(nil).GetCategoryByName), ctx, category)
 }
 
+// MockCategoryUpdater is a mock of CategoryUpdater interface.
+type MockCategoryUpdater struct {
+	ctrl     *gomock.Controller
+	recorder *MockCategoryUpdaterMockRecorder
+}
+
+// MockCategoryUpdaterMockRecorder is the mock recorder for MockCategoryUpdater.
+type MockCategoryUpdaterMockRecorder struct {
+	mock *MockCategoryUpdater
+}
+
+// NewMockCategoryUpdater creates a new mock instance.
+func NewMockCategoryUpdater(ctrl *gomock.Controller) *MockCategoryUpdater {
+	mock := &MockCategoryUpdater{ctrl: ctrl}
+	mock.recorder = &MockCategoryUpdaterMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockCategoryUpdater) EXPECT() *MockCategoryUpdaterMockRecorder {
+	return m.recorder
+}
+
+// UpdateCategory mocks base method.
+func (m *MockCategoryUpdater) UpdateCategory(ctx context.Context, categoryID, userID uint64, fields map[string]interface{}) (domain.Category, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateCategory", ctx, categoryID, userID, fields)
+	ret0, _ := ret[0].(domain.Category)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateCategory indicates an expected call of UpdateCategory.
+func (mr *MockCategoryUpdaterMockRecorder) UpdateCategory(ctx, categoryID, userID, fields interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCategory", reflect.TypeOf((*MockCategoryUpdater)(nil).UpdateCategory), ctx, categoryID, userID, fields)
+}
+
 // MockCategoryStore is a mock of CategoryStore interface.
 type MockCategoryStore struct {
 	ctrl     *gomock.Controller
@@ -199,4 +237,19 @@ func (m *MockCategoryStore) GetCategoryByName(ctx context.Context, category doma
 func (mr *MockCategoryStoreMockRecorder) GetCategoryByName(ctx, category interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByName", reflect.TypeOf((*MockCategoryStore)(nil).GetCategoryByName), ctx, category)
+}
+
+// UpdateCategory mocks base method.
+func (m *MockCategoryStore) UpdateCategory(ctx context.Context, categoryID, userID uint64, fields map[string]interface{}) (domain.Category, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateCategory", ctx, categoryID, userID, fields)
+	ret0, _ := ret[0].(domain.Category)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateCategory indicates an expected call of UpdateCategory.
+func (mr *MockCategoryStoreMockRecorder) UpdateCategory(ctx, categoryID, userID, fields interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCategory", reflect.TypeOf((*MockCategoryStore)(nil).UpdateCategory), ctx, categoryID, userID, fields)
 }

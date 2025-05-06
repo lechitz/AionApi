@@ -14,7 +14,7 @@ func TestGetCategoryByID_InvalidCategoryID(t *testing.T) {
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByID(suite.Ctx, category).
@@ -31,7 +31,7 @@ func TestGetCategoryByID_ErrorToGetCategoryByID(t *testing.T) {
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByID(suite.Ctx, category).
@@ -47,7 +47,7 @@ func TestGetCategoryByID_ErrorToCreateCategory(t *testing.T) {
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByID(suite.Ctx, category).
@@ -65,21 +65,21 @@ func TestGetCategoryByID_Success(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	suite.CategoryRepository.EXPECT().
-		GetCategoryByID(suite.Ctx, testdata.TestPerfectCategory).
-		Return(testdata.TestPerfectCategory, nil)
+		GetCategoryByID(suite.Ctx, testdata.PerfectCategory).
+		Return(testdata.PerfectCategory, nil)
 
-	categoryDB, err := suite.CategoryService.GetCategoryByID(suite.Ctx, testdata.TestPerfectCategory)
+	categoryDB, err := suite.CategoryService.GetCategoryByID(suite.Ctx, testdata.PerfectCategory)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, categoryDB)
-	assert.Equal(t, testdata.TestPerfectCategory.ID, categoryDB.ID)
+	assert.Equal(t, testdata.PerfectCategory.ID, categoryDB.ID)
 }
 
 func TestGetCategoryByName_InvalidCategoryName(t *testing.T) {
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByName(suite.Ctx, category).
@@ -96,7 +96,7 @@ func TestGetCategoryByName_ErrorToGetCategoryByName(t *testing.T) {
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByName(suite.Ctx, category).
@@ -113,11 +113,11 @@ func TestGetCategoryByName_Success(t *testing.T) {
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByName(suite.Ctx, category).
-		Return(testdata.TestPerfectCategory, nil)
+		Return(testdata.PerfectCategory, nil)
 
 	categoryDB, err := suite.CategoryService.GetCategoryByName(suite.Ctx, category)
 
@@ -150,12 +150,12 @@ func TestGetAllCategories_Success(t *testing.T) {
 
 	suite.CategoryRepository.EXPECT().
 		GetAllCategories(suite.Ctx, userID).
-		Return([]domain.Category{testdata.TestPerfectCategory}, nil)
+		Return([]domain.Category{testdata.PerfectCategory}, nil)
 
 	categories, err := suite.CategoryService.GetAllCategories(suite.Ctx, userID)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, categories)
 	assert.Len(t, categories, 1)
-	assert.Equal(t, testdata.TestPerfectCategory, categories[0])
+	assert.Equal(t, testdata.PerfectCategory, categories[0])
 }

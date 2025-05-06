@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var TestPerfectCategory = domain.Category{
+var PerfectCategory = domain.Category{
 	ID:          1,
 	UserID:      3,
 	Name:        "Work",

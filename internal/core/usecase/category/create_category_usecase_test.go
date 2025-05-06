@@ -14,7 +14,7 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_Name(t *testing.T)
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 	category.Name = ""
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
@@ -27,7 +27,7 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedL
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 	category.Description = "Lorem ipsum lor sit amet, consectetur adipiscing elit. Donec nec justo eget felis facilisis. Aliquam porttitor mauris sit a orci. Aenean dignissim, orci non feugiat placerat, augue justo posuere justo."
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
@@ -40,7 +40,7 @@ func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByName(suite.Ctx, category).
@@ -56,7 +56,7 @@ func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByName(suite.Ctx, category).
@@ -76,7 +76,7 @@ func TestCreateCategory_Success(t *testing.T) {
 	suite := setup.SetupCategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.TestPerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByName(suite.Ctx, category).

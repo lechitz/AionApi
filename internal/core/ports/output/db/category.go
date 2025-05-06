@@ -15,7 +15,12 @@ type CategoryRetriver interface {
 	GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error)
 }
 
+type CategoryUpdater interface {
+	UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, fields map[string]interface{}) (domain.Category, error)
+}
+
 type CategoryStore interface {
 	CategoryCreator
 	CategoryRetriver
+	CategoryUpdater
 }
