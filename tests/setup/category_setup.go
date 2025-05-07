@@ -12,8 +12,8 @@ import (
 type CategoryServiceTestSuite struct {
 	Ctrl               *gomock.Controller
 	Logger             *mockLogger.MockLogger
-	CategoryService    *category.CategoryService
 	CategoryRepository *mockCategory.MockCategoryStore
+	CategoryService    *category.CategoryService
 	Ctx                context.Context
 }
 

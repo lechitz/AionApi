@@ -156,6 +156,43 @@ func (mr *MockCategoryUpdaterMockRecorder) UpdateCategory(ctx, categoryID, userI
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCategory", reflect.TypeOf((*MockCategoryUpdater)(nil).UpdateCategory), ctx, categoryID, userID, fields)
 }
 
+// MockCategoryDeleter is a mock of CategoryDeleter interface.
+type MockCategoryDeleter struct {
+	ctrl     *gomock.Controller
+	recorder *MockCategoryDeleterMockRecorder
+}
+
+// MockCategoryDeleterMockRecorder is the mock recorder for MockCategoryDeleter.
+type MockCategoryDeleterMockRecorder struct {
+	mock *MockCategoryDeleter
+}
+
+// NewMockCategoryDeleter creates a new mock instance.
+func NewMockCategoryDeleter(ctrl *gomock.Controller) *MockCategoryDeleter {
+	mock := &MockCategoryDeleter{ctrl: ctrl}
+	mock.recorder = &MockCategoryDeleterMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockCategoryDeleter) EXPECT() *MockCategoryDeleterMockRecorder {
+	return m.recorder
+}
+
+// SoftDeleteCategory mocks base method.
+func (m *MockCategoryDeleter) SoftDeleteCategory(ctx context.Context, category domain.Category) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SoftDeleteCategory", ctx, category)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SoftDeleteCategory indicates an expected call of SoftDeleteCategory.
+func (mr *MockCategoryDeleterMockRecorder) SoftDeleteCategory(ctx, category interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftDeleteCategory", reflect.TypeOf((*MockCategoryDeleter)(nil).SoftDeleteCategory), ctx, category)
+}
+
 // MockCategoryStore is a mock of CategoryStore interface.
 type MockCategoryStore struct {
 	ctrl     *gomock.Controller
@@ -237,6 +274,20 @@ func (m *MockCategoryStore) GetCategoryByName(ctx context.Context, category doma
 func (mr *MockCategoryStoreMockRecorder) GetCategoryByName(ctx, category interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategoryByName", reflect.TypeOf((*MockCategoryStore)(nil).GetCategoryByName), ctx, category)
+}
+
+// SoftDeleteCategory mocks base method.
+func (m *MockCategoryStore) SoftDeleteCategory(ctx context.Context, category domain.Category) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SoftDeleteCategory", ctx, category)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SoftDeleteCategory indicates an expected call of SoftDeleteCategory.
+func (mr *MockCategoryStoreMockRecorder) SoftDeleteCategory(ctx, category interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftDeleteCategory", reflect.TypeOf((*MockCategoryStore)(nil).SoftDeleteCategory), ctx, category)
 }
 
 // UpdateCategory mocks base method.
