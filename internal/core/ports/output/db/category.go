@@ -19,8 +19,13 @@ type CategoryUpdater interface {
 	UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, fields map[string]interface{}) (domain.Category, error)
 }
 
+type CategoryDeleter interface {
+	SoftDeleteCategory(ctx context.Context, category domain.Category) error
+}
+
 type CategoryStore interface {
 	CategoryCreator
 	CategoryRetriver
 	CategoryUpdater
+	CategoryDeleter
 }

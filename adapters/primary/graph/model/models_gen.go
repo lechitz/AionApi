@@ -18,6 +18,10 @@ type DtoCreateCategory struct {
 	Icon        *string `json:"icon,omitempty"`
 }
 
+type DtoDeleteCategory struct {
+	CategoryID string `json:"category_id"`
+}
+
 type DtoGetCategoryByID struct {
 	CategoryID string `json:"category_id"`
 }

@@ -19,8 +19,13 @@ type CategoryUpdater interface {
 	UpdateCategory(ctx context.Context, category domain.Category) (domain.Category, error)
 }
 
+type CategoryDeleter interface {
+	SoftDeleteCategory(ctx context.Context, category domain.Category) error
+}
+
 type CategoryService interface {
 	CategoryCreator
 	CategoryRetriver
 	CategoryUpdater
+	CategoryDeleter
 }

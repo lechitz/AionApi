@@ -94,6 +94,30 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 	}, nil
 }
 
+// SoftDeleteCategory is the resolver for the SoftDeleteCategory field.
+func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category model.DtoDeleteCategory) (bool, error) {
+	userID, ok := ctx.Value("user_id").(uint64)
+	if !ok {
+		return false, fmt.Errorf("userID not found in context")
+	}
+
+	categoryIDUint, err := strconv.ParseUint(category.CategoryID, 10, 64)
+	if err != nil {
+		return false, fmt.Errorf("invalid category ID format: %w", err)
+	}
+
+	categoryDomain := domain.Category{
+		ID:     categoryIDUint,
+		UserID: userID,
+	}
+
+	if err := r.Resolver.CategoryService.SoftDeleteCategory(ctx, categoryDomain); err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 // AllCategories is the resolver for the AllCategories field.
 func (r *queryResolver) AllCategories(ctx context.Context) ([]*model.Category, error) {
 	userID, ok := ctx.Value("user_id").(uint64)
