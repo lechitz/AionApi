@@ -43,7 +43,15 @@ func (s *TokenService) VerifyToken(ctx context.Context, token string) (uint64, s
 	}
 
 	if cachedToken != token {
-		s.logger.Errorw(constants.ErrorTokenMismatch, constants.UserID, userID, constants.TokenFromCookie, token, constants.TokenFromCache, cachedToken)
+		s.logger.Errorw(
+			constants.ErrorTokenMismatch,
+			constants.UserID,
+			userID,
+			constants.TokenFromCookie,
+			token,
+			constants.TokenFromCache,
+			cachedToken,
+		)
 		return 0, "", fmt.Errorf(constants.ErrorTokenMismatch)
 	}
 

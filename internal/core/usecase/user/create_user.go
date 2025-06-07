@@ -13,7 +13,11 @@ type UserCreator interface {
 	CreateUser(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, error)
 }
 
-func (s *UserService) CreateUser(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, error) {
+func (s *UserService) CreateUser(
+	ctx context.Context,
+	user domain.UserDomain,
+	password string,
+) (domain.UserDomain, error) {
 	user = s.normalizeUserData(&user)
 
 	if err := s.validateCreateUserRequired(user, password); err != nil {
@@ -21,7 +25,8 @@ func (s *UserService) CreateUser(ctx context.Context, user domain.UserDomain, pa
 		return domain.UserDomain{}, errors.New(constants.ErrorToValidateCreateUser)
 	}
 
-	if existingByUsername, err := s.userRepository.GetUserByUsername(ctx, user.Username); err == nil && existingByUsername.ID != 0 {
+	if existingByUsername, err := s.userRepository.GetUserByUsername(ctx, user.Username); err == nil &&
+		existingByUsername.ID != 0 {
 		return domain.UserDomain{}, errors.New(constants.UsernameIsAlreadyInUse)
 	}
 

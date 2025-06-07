@@ -87,7 +87,12 @@ func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64)
 	return categories, nil
 }
 
-func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, updateFields map[string]interface{}) (domain.Category, error) {
+func (c CategoryRepository) UpdateCategory(
+	ctx context.Context,
+	categoryID uint64,
+	userID uint64,
+	updateFields map[string]interface{},
+) (domain.Category, error) {
 	delete(updateFields, constants.CreatedAt)
 
 	var categoryDB model.CategoryDB

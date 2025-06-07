@@ -20,7 +20,11 @@ type RouteComposer struct {
 	authMiddleware *auth.MiddlewareAuth
 }
 
-func NewHttpRouter(logger logger.Logger, tokenRepository cache.TokenRepositoryPort, contextPath string) (*RouteComposer, error) {
+func NewHttpRouter(
+	logger logger.Logger,
+	tokenRepository cache.TokenRepositoryPort,
+	contextPath string,
+) (*RouteComposer, error) {
 	normalizedPath, err := normalizeContextPath(contextPath)
 	if err != nil {
 		return nil, err

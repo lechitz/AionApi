@@ -47,7 +47,11 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(loginUserResponse, constants.SuccessToLogin).Bytes())
+	response.ResponseReturn(
+		w,
+		http.StatusOK,
+		response.ObjectResponse(loginUserResponse, constants.SuccessToLogin).Bytes(),
+	)
 }
 
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {

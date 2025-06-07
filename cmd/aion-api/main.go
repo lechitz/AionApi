@@ -45,7 +45,13 @@ func main() {
 		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
 		return
 	}
-	logger.Infow(constants.ServerHTTPStarted, constants.Port, newHTTPServer.Addr, constants.ContextPath, config.Setting.ServerHTTP.Context)
+	logger.Infow(
+		constants.ServerHTTPStarted,
+		constants.Port,
+		newHTTPServer.Addr,
+		constants.ContextPath,
+		config.Setting.ServerHTTP.Context,
+	)
 
 	graphqlServer, err := graphqlserver.NewGraphqlServer(appDependencies)
 	if err != nil {

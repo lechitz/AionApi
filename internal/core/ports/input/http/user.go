@@ -18,7 +18,11 @@ type UserRetriever interface {
 
 type UserUpdater interface {
 	UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error)
-	UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error)
+	UpdateUserPassword(
+		ctx context.Context,
+		user domain.UserDomain,
+		oldPassword, newPassword string,
+	) (domain.UserDomain, string, error)
 }
 
 type UserDeleter interface {

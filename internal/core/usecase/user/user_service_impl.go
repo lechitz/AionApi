@@ -14,7 +14,12 @@ type UserService struct {
 	logger         logger.Logger
 }
 
-func NewUserService(userRepo db.UserStore, tokenService token.TokenUsecase, securityHasher security.SecurityStore, logger logger.Logger) *UserService {
+func NewUserService(
+	userRepo db.UserStore,
+	tokenService token.TokenUsecase,
+	securityHasher security.SecurityStore,
+	logger logger.Logger,
+) *UserService {
 	return &UserService{
 		userRepository: userRepo,
 		tokenService:   tokenService,

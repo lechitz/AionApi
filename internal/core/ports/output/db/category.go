@@ -17,7 +17,12 @@ type CategoryRetriver interface {
 }
 
 type CategoryUpdater interface {
-	UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, fields map[string]interface{}) (domain.Category, error)
+	UpdateCategory(
+		ctx context.Context,
+		categoryID uint64,
+		userID uint64,
+		fields map[string]interface{},
+	) (domain.Category, error)
 }
 
 type CategoryDeleter interface {

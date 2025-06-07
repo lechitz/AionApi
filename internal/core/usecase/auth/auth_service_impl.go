@@ -15,7 +15,13 @@ type AuthService struct {
 	secretKey      string
 }
 
-func NewAuthService(userRetriever db.UserStore, tokenService token.TokenUsecase, securityHasher security.SecurityStore, logger logger.Logger, secretKey string) *AuthService {
+func NewAuthService(
+	userRetriever db.UserStore,
+	tokenService token.TokenUsecase,
+	securityHasher security.SecurityStore,
+	logger logger.Logger,
+	secretKey string,
+) *AuthService {
 	return &AuthService{
 		userRetriever:  userRetriever,
 		tokenService:   tokenService,

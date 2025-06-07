@@ -12,7 +12,11 @@ type TokenService struct {
 	configToken     domain.TokenConfig
 }
 
-func NewTokenService(tokenRepo cache.TokenRepositoryPort, logger logger.Logger, config domain.TokenConfig) *TokenService {
+func NewTokenService(
+	tokenRepo cache.TokenRepositoryPort,
+	logger logger.Logger,
+	config domain.TokenConfig,
+) *TokenService {
 	return &TokenService{
 		tokenRepository: tokenRepo,
 		logger:          logger,

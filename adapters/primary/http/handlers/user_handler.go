@@ -180,7 +180,11 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	clearAuthCookie(w)
 
-	response.ResponseReturn(w, http.StatusNoContent, response.ObjectResponse(nil, constants.SuccessUserSoftDeleted).Bytes())
+	response.ResponseReturn(
+		w,
+		http.StatusNoContent,
+		response.ObjectResponse(nil, constants.SuccessUserSoftDeleted).Bytes(),
+	)
 }
 
 func (u *User) logAndHandleError(w http.ResponseWriter, status int, message string, err error) {

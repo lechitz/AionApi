@@ -94,7 +94,11 @@ func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (doma
 	return mapper.UserFromDB(userDB), nil
 }
 
-func (up UserRepository) UpdateUser(ctx context.Context, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
+func (up UserRepository) UpdateUser(
+	ctx context.Context,
+	userID uint64,
+	fields map[string]interface{},
+) (domain.UserDomain, error) {
 	delete(fields, constants.CreatedAt)
 
 	if err := up.db.WithContext(ctx).

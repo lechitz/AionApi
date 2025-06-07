@@ -12,7 +12,11 @@ import (
 
 type UserUpdater interface {
 	UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error)
-	UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error)
+	UpdateUserPassword(
+		ctx context.Context,
+		user domain.UserDomain,
+		oldPassword, newPassword string,
+	) (domain.UserDomain, string, error)
 }
 
 func (s *UserService) UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error) {
@@ -42,7 +46,11 @@ func (s *UserService) UpdateUser(ctx context.Context, user domain.UserDomain) (d
 	return updatedUser, nil
 }
 
-func (s *UserService) UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error) {
+func (s *UserService) UpdateUserPassword(
+	ctx context.Context,
+	user domain.UserDomain,
+	oldPassword, newPassword string,
+) (domain.UserDomain, string, error) {
 	userDB, err := s.userRepository.GetUserByID(ctx, user.ID)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())

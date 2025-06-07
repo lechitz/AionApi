@@ -37,7 +37,13 @@ func (s *CategoryService) GetCategoryByName(ctx context.Context, category domain
 
 	categoryDB, err := s.CategoryRepository.GetCategoryByName(ctx, category)
 	if err != nil {
-		s.Logger.Errorw(constants.FailedToGetCategoryByName, constants.CategoryName, category.Name, constants.Error, err)
+		s.Logger.Errorw(
+			constants.FailedToGetCategoryByName,
+			constants.CategoryName,
+			category.Name,
+			constants.Error,
+			err,
+		)
 		return domain.Category{}, err
 	}
 

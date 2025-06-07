@@ -15,7 +15,14 @@ type RouterBuilder struct {
 	Router      portRouter.Router
 }
 
-func BuildRouterRoutes(logger logger.Logger, userService http.UserService, authService http.AuthService, tokenRepo cache.TokenRepositoryPort, contextPath string, adapter portRouter.Router) (portRouter.Router, error) {
+func BuildRouterRoutes(
+	logger logger.Logger,
+	userService http.UserService,
+	authService http.AuthService,
+	tokenRepo cache.TokenRepositoryPort,
+	contextPath string,
+	adapter portRouter.Router,
+) (portRouter.Router, error) {
 
 	adapter.Use(contextbuilder.InjectRequestIDMiddleware)
 
