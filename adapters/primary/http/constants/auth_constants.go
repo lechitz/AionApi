@@ -13,9 +13,11 @@ const (
 const (
 	ErrorToDecodeLoginRequest = "error to decode login request"
 	ErrorToLogin              = "error to login"
-	ErrorToRetrieveToken      = "error to retrieve token"
-	ErrorToRetrieveUserID     = "error to retrieve user id"
-	ErrorToLogout             = "error to logout"
+
+	// ErrorToRetrieveToken is a log message and does not contain sensitive data.
+	ErrorToRetrieveToken  = "error to retrieve token"
+	ErrorToRetrieveUserID = "error to retrieve user id"
+	ErrorToLogout         = "error to logout"
 )
 
 // Success Auth Messages
