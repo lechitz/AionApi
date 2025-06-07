@@ -2,8 +2,9 @@ package auth
 
 import (
 	"context"
-	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth/constants"
 	"net/http"
+
+	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth/constants"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/internal/core/domain"

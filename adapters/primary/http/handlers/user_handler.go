@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+
 	"github.com/lechitz/AionApi/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"

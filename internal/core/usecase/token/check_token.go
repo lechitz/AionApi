@@ -3,6 +3,7 @@ package token
 import (
 	"context"
 	"fmt"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"

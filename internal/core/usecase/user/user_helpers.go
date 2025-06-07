@@ -2,10 +2,11 @@ package user
 
 import (
 	"errors"
+	"strings"
+
 	"github.com/badoux/checkmail"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
-	"strings"
 )
 
 func (s *UserService) validateCreateUserRequired(user domain.UserDomain, password string) error {

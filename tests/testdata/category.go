@@ -1,8 +1,9 @@
 package testdata
 
 import (
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"time"
+
+	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
 var PerfectCategory = domain.Category{

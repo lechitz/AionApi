@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
+	"time"
+
 	"github.com/lechitz/AionApi/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
-	"net/http"
-	"time"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"

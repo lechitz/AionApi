@@ -2,10 +2,11 @@ package repository
 
 import (
 	"context"
+	"time"
+
 	"github.com/lechitz/AionApi/adapters/secondary/db/constants"
 	"github.com/lechitz/AionApi/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/adapters/secondary/db/model"
-	"time"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"

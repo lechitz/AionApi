@@ -2,12 +2,13 @@ package category_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestGetCategoryByID_InvalidCategoryID(t *testing.T) {

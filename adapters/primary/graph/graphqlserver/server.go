@@ -1,6 +1,8 @@
 package graphqlserver
 
 import (
+	"net/http"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/go-chi/chi/v5"
@@ -9,7 +11,6 @@ import (
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/recovery"
 	"github.com/lechitz/AionApi/internal/infra/bootstrap"
 	"github.com/lechitz/AionApi/internal/infra/config"
-	"net/http"
 )
 
 func NewGraphqlServer(deps *bootstrap.AppDependencies) (*http.Server, error) {

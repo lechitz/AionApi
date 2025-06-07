@@ -1,10 +1,11 @@
 package mapper
 
 import (
+	"time"
+
 	"github.com/lechitz/AionApi/adapters/secondary/db/model"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"gorm.io/gorm"
-	"time"
 )
 
 func CategoryFromDB(category model.CategoryDB) domain.Category {

@@ -3,6 +3,8 @@ package token_test
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/lechitz/AionApi/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
@@ -10,7 +12,6 @@ import (
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestVerifyToken_Success(t *testing.T) {

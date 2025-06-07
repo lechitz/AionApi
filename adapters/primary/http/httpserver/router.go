@@ -2,6 +2,8 @@ package httpserver
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/lechitz/AionApi/adapters/primary/http/httpserver/constants"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/recovery"
@@ -9,7 +11,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
-	"strings"
 )
 
 type RouteComposer struct {

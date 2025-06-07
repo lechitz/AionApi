@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/lechitz/AionApi/adapters/secondary/db/constants"
 	"github.com/lechitz/AionApi/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/adapters/secondary/db/model"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"gorm.io/gorm"
-	"time"
 )
 
 type CategoryRepository struct {

@@ -4,6 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"os/signal"
+	"sync"
+	"syscall"
+	"time"
+
 	"github.com/lechitz/AionApi/adapters/primary/graph/graphqlserver"
 	"github.com/lechitz/AionApi/adapters/primary/http/httpserver"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
@@ -12,11 +18,6 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/bootstrap"
 	"github.com/lechitz/AionApi/internal/infra/config"
 	loggerBuilder "github.com/lechitz/AionApi/pkg/logger"
-	"net/http"
-	"os/signal"
-	"sync"
-	"syscall"
-	"time"
 )
 
 func main() {

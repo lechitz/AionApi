@@ -1,11 +1,12 @@
 package user_test
 
 import (
+	"testing"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
-	"testing"
 )
 
 func TestGetUserByID_Success(t *testing.T) {

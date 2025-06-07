@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/kelseyhightower/envconfig"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
 	"github.com/lechitz/AionApi/adapters/secondary/security"

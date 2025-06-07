@@ -2,11 +2,12 @@ package validator
 
 import (
 	"errors"
+	"net/http"
+	"strconv"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
-	"net/http"
-	"strconv"
 )
 
 const (

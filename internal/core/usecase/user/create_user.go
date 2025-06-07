@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 
 	"github.com/lechitz/AionApi/internal/core/domain"

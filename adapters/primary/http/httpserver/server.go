@@ -2,9 +2,10 @@ package httpserver
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/lechitz/AionApi/internal/infra/bootstrap"
 	"github.com/lechitz/AionApi/internal/infra/config"
-	"net/http"
 )
 
 func NewHTTPServer(deps *bootstrap.AppDependencies, setting *config.Config) (*http.Server, error) {

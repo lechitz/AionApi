@@ -2,12 +2,13 @@ package db
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/lechitz/AionApi/adapters/secondary/db/postgres/constants"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/infra/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"time"
 )
 
 func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB, error) {

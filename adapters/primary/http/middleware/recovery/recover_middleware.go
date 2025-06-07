@@ -1,10 +1,11 @@
 package recovery
 
 import (
-	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"net/http"
 	"runtime/debug"
+
+	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
+	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
 func RecoverMiddleware(log logger.Logger) func(http.Handler) http.Handler {

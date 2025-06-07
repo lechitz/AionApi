@@ -2,9 +2,10 @@ package context
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/google/uuid"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/contextbuilder/constants"
-	"net/http"
 )
 
 func InjectRequestIDMiddleware(next http.Handler) http.Handler {
