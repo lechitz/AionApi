@@ -1,10 +1,15 @@
+// Package domain contains core business entities used throughout the application.
 package domain
 
+// TokenConfig holds configuration data related to token handling,
+// such as the secret key used for signing JWTs.
 type TokenConfig struct {
-	SecretKey string
+	SecretKey string // Secret key for signing/verifying tokens
 }
 
+// TokenDomain represents a token associated with a user in the system.
+// It includes the token string and the corresponding user ID.
 type TokenDomain struct {
-	UserID uint64
-	Token  string
+	UserID uint64 // ID of the user to whom the token belongs
+	Token  string // JWT or session token string
 }

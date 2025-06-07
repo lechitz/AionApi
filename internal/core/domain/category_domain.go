@@ -1,3 +1,4 @@
+// Package domain contains core business entities used throughout the application.
 package domain
 
 import "time"
@@ -12,6 +13,6 @@ type Category struct {
 	Color       string     // Color code (hex or name) used for UI representation
 	Icon        string     // Icon name or identifier for category visualization
 	CreatedAt   time.Time  // Timestamp of creation
-	UpdatedAt   time.Time  // Timestamp of last update
+	UpdatedAt   time.Time  // Timestamp of the last update
 	DeletedAt   *time.Time // Soft-delete marker (null if active)
 }
