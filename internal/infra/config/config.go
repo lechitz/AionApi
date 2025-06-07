@@ -1,8 +1,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/kelseyhightower/envconfig"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
 	"github.com/lechitz/AionApi/adapters/secondary/security"
@@ -12,20 +10,19 @@ import (
 
 func Load(logger logger.Logger) error {
 	if err := envconfig.Process(constants.Settings, &Setting); err != nil {
-		return fmt.Errorf(constants.ErrFailedToProcessEnvVars, err)
+		response.HandleCriticalError(logger, constants.ErrFailedToProcessEnvVars, err)
 	}
 
 	if Setting.Secret.Key == "" {
 		generated, err := security.GenerateJWTKey()
 		if err != nil {
 			response.HandleCriticalError(logger, constants.ErrGenerateSecretKey, err)
-			return err
 		}
 
 		Setting.Secret.Key = generated
 
 		logger.Warnf(constants.SecretKeyWasNotSet)
-		fmt.Printf(constants.SecretKeyFormat, Setting.Secret)
+		logger.Infof("JWT secret key successfully generated with length: %d", len(generated))
 	}
 
 	return nil
