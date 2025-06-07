@@ -47,11 +47,8 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
 
-	response.ResponseReturn(
-		w,
-		http.StatusOK,
-		response.ObjectResponse(loginUserResponse, constants.SuccessToLogin).Bytes(),
-	)
+	body := response.ObjectResponse(loginUserResponse, constants.SuccessToLogin, a.Logger)
+	response.ResponseReturn(w, http.StatusOK, body.Bytes(), a.Logger)
 }
 
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +84,8 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		constants.Token, tokenPreview,
 	)
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(nil, constants.SuccessToLogout).Bytes())
+	body := response.ObjectResponse(nil, constants.SuccessToLogout, a.Logger)
+	response.ResponseReturn(w, http.StatusOK, body.Bytes(), a.Logger)
 }
 
 func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {

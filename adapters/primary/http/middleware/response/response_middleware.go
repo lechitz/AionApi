@@ -9,15 +9,18 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
-func ResponseReturn(w http.ResponseWriter, statusCode int, body []byte) {
+func ResponseReturn(w http.ResponseWriter, statusCode int, body []byte, logger logger.Logger) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
+
 	if len(body) != 0 {
-		w.Write(body)
+		if _, err := w.Write(body); err != nil {
+			logger.Errorw("failed to write response body", "error", err)
+		}
 	}
 }
 
-func ObjectResponse(obj any, message string) *bytes.Buffer {
+func ObjectResponse(obj any, message string, logger logger.Logger) *bytes.Buffer {
 	response := struct {
 		Message string    `json:"message,omitempty"`
 		Result  any       `json:"result,omitempty"`
@@ -29,7 +32,10 @@ func ObjectResponse(obj any, message string) *bytes.Buffer {
 	}
 
 	body := new(bytes.Buffer)
-	json.NewEncoder(body).Encode(response)
+	if err := json.NewEncoder(body).Encode(response); err != nil {
+		logger.Errorw("failed to encode response object to JSON", "error", err)
+	}
+
 	return body
 }
 
@@ -40,15 +46,15 @@ func HandleError(w http.ResponseWriter, logger logger.Logger, status int, msg st
 			"error", err.Error(),
 			"status", status,
 		)
-		response := ObjectResponse(nil, msg+": "+err.Error())
-		ResponseReturn(w, status, response.Bytes())
+		response := ObjectResponse(nil, msg+": "+err.Error(), logger)
+		ResponseReturn(w, status, response.Bytes(), logger)
 	} else {
 		logger.Warnw("operation returned warning",
 			"message", msg,
 			"status", status,
 		)
-		response := ObjectResponse(nil, msg)
-		ResponseReturn(w, status, response.Bytes())
+		response := ObjectResponse(nil, msg, logger)
+		ResponseReturn(w, status, response.Bytes(), logger)
 	}
 }
 

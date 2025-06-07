@@ -49,7 +49,8 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var res dto.CreateUserResponse
 	_ = copier.Copy(&res, &user)
 
-	response.ResponseReturn(w, http.StatusCreated, response.ObjectResponse(res, constants.SuccessToCreateUser).Bytes())
+	body := response.ObjectResponse(res, constants.SuccessToCreateUser, u.Logger)
+	response.ResponseReturn(w, http.StatusCreated, body.Bytes(), u.Logger)
 }
 
 func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +65,8 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	var res []dto.GetUserResponse
 	_ = copier.Copy(&res, &users)
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(res, constants.SuccessToGetUsers).Bytes())
+	body := response.ObjectResponse(res, constants.SuccessToGetUsers, u.Logger)
+	response.ResponseReturn(w, http.StatusOK, body.Bytes(), u.Logger)
 }
 
 func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
@@ -90,7 +92,8 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		CreatedAt: user.CreatedAt,
 	}
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(res, constants.SuccessToGetUser).Bytes())
+	body := response.ObjectResponse(res, constants.SuccessToGetUser, u.Logger)
+	response.ResponseReturn(w, http.StatusOK, body.Bytes(), u.Logger)
 }
 
 func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -132,7 +135,8 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		Email:    &userUpdated.Email,
 	}
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(res, constants.SuccessToUpdateUser).Bytes())
+	body := response.ObjectResponse(res, constants.SuccessToUpdateUser, u.Logger)
+	response.ResponseReturn(w, http.StatusOK, body.Bytes(), u.Logger)
 }
 
 func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
@@ -161,7 +165,8 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	setAuthCookie(w, newToken, 0)
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(nil, constants.SuccessToUpdatePassword).Bytes())
+	body := response.ObjectResponse(nil, constants.SuccessToUpdatePassword, u.Logger)
+	response.ResponseReturn(w, http.StatusOK, body.Bytes(), u.Logger)
 }
 
 func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -180,11 +185,8 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	clearAuthCookie(w)
 
-	response.ResponseReturn(
-		w,
-		http.StatusNoContent,
-		response.ObjectResponse(nil, constants.SuccessUserSoftDeleted).Bytes(),
-	)
+	body := response.ObjectResponse(nil, constants.SuccessUserSoftDeleted, u.Logger)
+	response.ResponseReturn(w, http.StatusNoContent, body.Bytes(), u.Logger)
 }
 
 func (u *User) logAndHandleError(w http.ResponseWriter, status int, message string, err error) {

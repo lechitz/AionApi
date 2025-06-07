@@ -18,10 +18,10 @@ func NewGeneric(logger logger.Logger) *Generic {
 }
 
 func (h *Generic) HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	response.ResponseReturn(w, http.StatusOK, []byte(constants.MsgServiceIsHealthy))
+	response.ResponseReturn(w, http.StatusOK, []byte(constants.MsgServiceIsHealthy), h.Logger)
 }
 
 func (h *Generic) NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	response.ResponseReturn(w, http.StatusNotFound, []byte(constants.MsgResourceNotFound))
+	response.ResponseReturn(w, http.StatusNotFound, []byte(constants.MsgResourceNotFound), h.Logger)
 	h.Logger.Infow(constants.MsgResourceNotFound, "path", r.URL.Path)
 }
