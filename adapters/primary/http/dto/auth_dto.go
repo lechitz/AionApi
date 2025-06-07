@@ -14,6 +14,6 @@ type LoginUserResponse struct {
 
 // LogoutUserRequest represents the payload used to request a logout.
 type LogoutUserRequest struct {
-	UserID uint64 `json:"user_id"`
 	Token  string `json:"token"`
+	UserID uint64 `json:"user_id"`
 }
