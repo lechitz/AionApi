@@ -2,6 +2,7 @@ package graphqlserver
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
@@ -33,8 +34,9 @@ func NewGraphqlServer(deps *bootstrap.AppDependencies) (*http.Server, error) {
 	router.Post("/graphql", srv.ServeHTTP)
 
 	httpServer := &http.Server{
-		Addr:    ":" + config.Setting.ServerGraphql.Port,
-		Handler: router,
+		Addr:              ":" + config.Setting.ServerGraphql.Port,
+		Handler:           router,
+		ReadHeaderTimeout: 5 * time.Second,
 	}
 
 	return httpServer, nil
