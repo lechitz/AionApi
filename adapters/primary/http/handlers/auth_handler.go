@@ -47,7 +47,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
 
-	body := response.ObjectResponse(loginUserResponse, constants.SuccessToLogin, a.Logger)
+	body := response.ObjectResponse(loginUserResponse, constants.SuccessLogin, a.Logger)
 	response.ResponseReturn(w, http.StatusOK, body.Bytes(), a.Logger)
 }
 
@@ -79,12 +79,12 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	a.Logger.Infow(
-		constants.SuccessToLogout,
+		constants.SuccessLogout,
 		constants.UserID, userID,
 		constants.Token, tokenPreview,
 	)
 
-	body := response.ObjectResponse(nil, constants.SuccessToLogout, a.Logger)
+	body := response.ObjectResponse(nil, constants.SuccessLogout, a.Logger)
 	response.ResponseReturn(w, http.StatusOK, body.Bytes(), a.Logger)
 }
 

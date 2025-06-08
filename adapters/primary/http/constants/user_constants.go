@@ -1,13 +1,9 @@
 package constants
 
-// User Constants
+// UserID is the key used to identify a user in context or request scope.
+const UserID = "user_id"
 
-const (
-	UserID = "user_id"
-)
-
-// Error User Messages
-
+// Error messages returned by user operations.
 const (
 	ErrorToDecodeUserRequest            = "error to decode user request"
 	ErrorToCreateUser                   = "error to create user"
@@ -19,8 +15,7 @@ const (
 	ErrorUnauthorizedAccessMissingToken = "error unauthorized access missing token"
 )
 
-// Success User Messages
-
+// Success messages returned by user operations.
 const (
 	SuccessToCreateUser     = "user created successfully"
 	SuccessToGetUser        = "user get successfully"

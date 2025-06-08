@@ -1,13 +1,13 @@
 package constants
 
-// Generic Messages
+// Generic Messages.
 
 const (
 	MsgServiceIsHealthy = "Service is healthy"
 	MsgResourceNotFound = "Resource not found"
 )
 
-// Error Messages
+// Error Messages.
 
 const (
 	Error = "error"

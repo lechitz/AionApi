@@ -1,6 +1,6 @@
 package constants
 
-// Auth Constants
+// Auth constants used in cookie and session control.
 const (
 	Token     = "token"
 	Path      = "/"
@@ -8,21 +8,17 @@ const (
 	AuthToken = "auth_token"
 )
 
-// Error Auth Messages
-
+// Error messages used in the authentication flow.
 const (
-	ErrorToDecodeLoginRequest = "error to decode login request"
-	ErrorToLogin              = "error to login"
-
-	// ErrorToRetrieveToken is a log message and does not contain sensitive data.
-	ErrorToRetrieveToken  = "error to retrieve token"
-	ErrorToRetrieveUserID = "error to retrieve user id"
-	ErrorToLogout         = "error to logout"
+	ErrorToDecodeLoginRequest = "failed to decode login request payload"
+	ErrorToLogin              = "authentication process failed"
+	ErrorToRetrieveToken      = "unable to retrieve access reference"
+	ErrorToRetrieveUserID     = "failed to extract user ID from request context"
+	ErrorToLogout             = "error occurred during logout"
 )
 
-// Success Auth Messages
-
+// Success messages returned by authentication operations.
 const (
-	SuccessToLogin  = "success to login"
-	SuccessToLogout = "success to logout"
+	SuccessLogin  = "login successful"
+	SuccessLogout = "logout successful"
 )

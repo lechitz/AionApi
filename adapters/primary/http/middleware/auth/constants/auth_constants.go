@@ -1,6 +1,6 @@
 package constants
 
-// Error messages for the auth middleware
+// Error messages for the auth middleware.
 const (
 	ErrorUnauthorizedAccessMissingToken = "Unauthorized access: missing token"
 	ErrorUnauthorizedAccessInvalidToken = "Unauthorized access: invalid token"
