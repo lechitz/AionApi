@@ -8,7 +8,6 @@ import (
 )
 
 type UserDB struct {
-	ID        uint64         `gorm:"primaryKey;column:user_id"`
 	Name      string         `gorm:"column:name"`
 	Username  string         `gorm:"column:username"`
 	Email     string         `gorm:"column:email"`
@@ -16,6 +15,7 @@ type UserDB struct {
 	CreatedAt time.Time      `gorm:"column:created_at"`
 	UpdatedAt time.Time      `gorm:"column:updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`
+	ID        uint64         `gorm:"primaryKey;column:user_id"`
 }
 
 func (UserDB) TableName() string {

@@ -22,9 +22,9 @@ func ResponseReturn(w http.ResponseWriter, statusCode int, body []byte, logger l
 
 func ObjectResponse(obj any, message string, logger logger.Logger) *bytes.Buffer {
 	response := struct {
-		Message string    `json:"message,omitempty"`
-		Result  any       `json:"result,omitempty"`
 		Date    time.Time `json:"date,omitempty"`
+		Result  any       `json:"result,omitempty"`
+		Message string    `json:"message,omitempty"`
 	}{
 		Message: message,
 		Result:  obj,

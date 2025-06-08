@@ -5,12 +5,12 @@ import "time"
 var Setting Config
 
 type Config struct {
-	Application   Application
-	ServerHTTP    ServerHTTP
-	ServerGraphql ServerGraphql
 	DB            DBConfig
 	Cache         CacheConfig
 	Secret        Secret
+	Application   Application
+	ServerHTTP    ServerHTTP
+	ServerGraphql ServerGraphql
 }
 
 type DBConfig struct {
@@ -41,8 +41,8 @@ type ServerHTTP struct {
 }
 
 type Application struct {
-	ContextRequest time.Duration `envconfig:"CONTEXT_REQUEST"  default:"2.1s"`
 	Timeout        int           `envconfig:"SHUTDOWN_TIMEOUT" default:"5"`
+	ContextRequest time.Duration `envconfig:"CONTEXT_REQUEST"  default:"2.1s"`
 }
 
 type Secret struct {

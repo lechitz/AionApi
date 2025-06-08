@@ -14,10 +14,10 @@ import (
 )
 
 type RouteComposer struct {
-	BasePath       string
 	Router         portRouter.Router
 	logger         logger.Logger
 	authMiddleware *auth.MiddlewareAuth
+	BasePath       string
 }
 
 func NewHttpRouter(

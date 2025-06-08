@@ -10,6 +10,6 @@ type TokenConfig struct {
 // TokenDomain represents a token associated with a user in the system.
 // It includes the token string and the corresponding user ID.
 type TokenDomain struct {
-	UserID uint64 // ID of the user to whom the token belongs
 	Token  string // JWT or session token string
+	UserID uint64 // ID of the user to whom the token belongs
 }

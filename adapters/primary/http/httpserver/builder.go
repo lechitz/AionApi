@@ -11,8 +11,8 @@ import (
 )
 
 type RouterBuilder struct {
-	ContextPath string
 	Router      portRouter.Router
+	ContextPath string
 }
 
 func BuildRouterRoutes(
