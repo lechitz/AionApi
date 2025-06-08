@@ -23,7 +23,6 @@ func BuildRouterRoutes(
 	contextPath string,
 	adapter portRouter.Router,
 ) (portRouter.Router, error) {
-
 	adapter.Use(contextbuilder.InjectRequestIDMiddleware)
 
 	genericHandler := handlers.NewGeneric(logger)

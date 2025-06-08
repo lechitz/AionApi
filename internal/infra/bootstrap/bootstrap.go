@@ -32,7 +32,6 @@ type AppDependencies struct {
 }
 
 func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDependencies, func(), error) {
-
 	cacheConn, err := infraCache.NewCacheConnection(cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)

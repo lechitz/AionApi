@@ -12,7 +12,6 @@ type CategoryUpdater interface {
 }
 
 func (s *CategoryService) UpdateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
-
 	fieldsToUpdate := extractUpdateFields(category)
 
 	updatedCategory, err := s.CategoryRepository.UpdateCategory(ctx, category.ID, category.UserID, fieldsToUpdate)

@@ -74,7 +74,6 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 		Select("user_id, username, email, password, created_at").
 		Where("username = ?", username).
 		First(&userDB).Error; err != nil {
-
 		return domain.UserDomain{}, err
 	}
 

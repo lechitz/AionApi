@@ -27,7 +27,6 @@ func NewAuthMiddleware(tokenService cache.TokenRepositoryPort, logger logger.Log
 
 func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		tokenCookie, err := extractTokenFromCookie(r)
 		if err != nil {
 			a.logger.Warnw(constants.ErrorUnauthorizedAccessMissingToken, constants.Error, err.Error())

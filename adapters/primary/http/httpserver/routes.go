@@ -19,7 +19,6 @@ func (r *RouteComposer) AddUserRoutes(uh *handlers.User) func(portRouter.Router)
 			userGroup.Post("/create", uh.CreateUserHandler)
 
 			userGroup.Route("/", func(userProtected portRouter.Router) {
-
 				userProtected.Use(r.authMiddleware.Auth)
 
 				userProtected.Get("/all", uh.GetAllUsersHandler)
@@ -38,7 +37,6 @@ func (r *RouteComposer) AddAuthRoutes(ah *handlers.Auth) func(portRouter.Router)
 			authGroup.Post("/login", ah.LoginHandler)
 
 			authGroup.Route("/", func(authProtected portRouter.Router) {
-
 				authProtected.Use(r.authMiddleware.Auth)
 
 				authProtected.Post("/logout", ah.LogoutHandler)

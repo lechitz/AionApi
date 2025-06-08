@@ -46,7 +46,6 @@ func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain
 		Select("category_id, user_id, name, description, color_hex, icon, created_at, updated_at").
 		Where("category_id = ? AND user_id = ?", category.ID, category.UserID).
 		First(&categoryDB).Error; err != nil {
-
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return domain.Category{}, fmt.Errorf("category not found")
 		}
@@ -113,7 +112,6 @@ func (c CategoryRepository) UpdateCategory(
 }
 
 func (c CategoryRepository) SoftDeleteCategory(ctx context.Context, category domain.Category) error {
-
 	fields := map[string]interface{}{
 		constants.DeletedAt: time.Now().UTC(),
 		constants.UpdatedAt: time.Now().UTC(),
@@ -123,10 +121,8 @@ func (c CategoryRepository) SoftDeleteCategory(ctx context.Context, category dom
 		Model(&model.CategoryDB{}).
 		Where("category_id = ? AND user_id = ?", category.ID, category.UserID).
 		Updates(fields).Error; err != nil {
-
 		return err
 	}
 
 	return nil
-
 }
