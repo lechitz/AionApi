@@ -12,7 +12,7 @@ const (
 	ErrorToUpdateUser                   = "error to update user"
 	ErrorToSoftDeleteUser               = "error to soft delete user"
 	ErrorToParseUser                    = "error to parse user"
-	ErrorUnauthorizedAccessMissingToken = "error unauthorized access missing token"
+	ErrorUnauthorizedAccessMissingToken = "error unauthorized access missing token" // #nosec G101
 )
 
 // Success messages returned by user operations.

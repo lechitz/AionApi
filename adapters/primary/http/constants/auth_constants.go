@@ -12,7 +12,7 @@ const (
 const (
 	ErrorToDecodeLoginRequest = "failed to decode login request payload"
 	ErrorToLogin              = "authentication process failed"
-	ErrorToRetrieveToken      = "unable to retrieve access reference"
+	ErrorToRetrieveToken      = "unable to retrieve access reference" // #nosec G101
 	ErrorToRetrieveUserID     = "failed to extract user ID from request context"
 	ErrorToLogout             = "error occurred during logout"
 )

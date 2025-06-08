@@ -2,9 +2,9 @@ package constants
 
 // Error messages related to token operations.
 const (
-	ErrorToSaveToken              = "error saving access reference"
+	ErrorToSaveToken              = "error saving access reference" // #nosec G101
 	ErrorToUpdateToken            = "error updating access reference"
-	ErrorToDeleteToken            = "error deleting access reference"
+	ErrorToDeleteToken            = "error deleting access reference" // #nosec G101
 	ErrorToAssignToken            = "error assigning access reference"
 	ErrorInvalidToken             = "invalid access reference"
 	ErrorInvalidTokenClaims       = "invalid claims in reference"

@@ -3,7 +3,7 @@ package constants
 const (
 	ErrorToValidateCreateUser     = "error to validate create user"
 	ErrorToDeleteToken            = "error to delete token"
-	ErrorToHashPassword           = "error to hash password"
+	ErrorToHashPassword           = "error to hash password" // #nosec G101
 	ErrorToCreateUser             = "error to create user"
 	SuccessUserCreated            = "user created successfully"
 	ErrorToGetAllUsers            = "error to get all users"

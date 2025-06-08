@@ -13,7 +13,7 @@ func TestLogout_Success(t *testing.T) {
 	suite := setup.SetupAuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	token := "valid.token.value"
+	token := "valid.token.value" // #nosec G101
 	userID := uint64(1)
 
 	suite.TokenService.EXPECT().
@@ -49,7 +49,7 @@ func TestLogout_DeleteTokenFails(t *testing.T) {
 	suite := setup.SetupAuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	token := "valid.token.value"
+	token := "valid.token.value" // #nosec G101
 	userID := uint64(1)
 	tokenDomain := domain.TokenDomain{UserID: userID, Token: token}
 	expectedErr := errors.New("delete error")
