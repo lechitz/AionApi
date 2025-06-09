@@ -50,12 +50,12 @@ build-dev: clean-dev
 
 dev-up: dev-down
 	@echo "Starting Dev Environment..."
-	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres
-	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) up
+	export $$(cat .env.dev | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres
+	export $$(cat .env.dev | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up
 
 dev-down:
 	@echo "Stopping Dev Environment..."
-	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) down -v
+	export $$(cat .env.dev | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down -v
 
 dev: clean-dev build-dev dev-up
 
@@ -93,10 +93,10 @@ docker-build-prod: docker-clean-prod
 	docker build -t $(APPLICATION_NAME):prod .
 
 docker-compose-prod-up: docker-compose-prod-down
-	docker-compose -f $(COMPOSE_FILE_PROD) up
+	docker compose -f $(COMPOSE_FILE_PROD) up
 
 docker-compose-prod-down:
-	docker-compose -f $(COMPOSE_FILE_PROD) down -v
+	docker compose -f $(COMPOSE_FILE_PROD) down -v
 
 prod: docker-build-prod docker-compose-prod-up
 
