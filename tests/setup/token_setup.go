@@ -38,6 +38,6 @@ func TokenServiceTest(t *testing.T, secretKey string) *TokenServiceTestSuite {
 		Logger:       mockLog,
 		TokenStore:   mockTokenStore,
 		TokenService: tokenService,
-		Ctx:          context.Background(),
+		Ctx:          t.Context(),
 	}
 }
