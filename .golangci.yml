@@ -9,7 +9,7 @@ formatters:
       local-prefixes:
         - github.com/my/project
     golines:
-      max-len: 120
+      max-len: 150
   exclusions:
     warn-unused: true
     generated: strict

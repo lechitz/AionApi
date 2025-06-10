@@ -7,11 +7,7 @@ import (
 )
 
 type UserCreator interface {
-	CreateUser(
-		ctx context.Context,
-		user domain.UserDomain,
-		password string,
-	) (domain.UserDomain, error)
+	CreateUser(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, error)
 }
 
 type UserRetriever interface {
@@ -22,11 +18,7 @@ type UserRetriever interface {
 
 type UserUpdater interface {
 	UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error)
-	UpdateUserPassword(
-		ctx context.Context,
-		user domain.UserDomain,
-		oldPassword, newPassword string,
-	) (domain.UserDomain, string, error)
+	UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error)
 }
 
 type UserDeleter interface {
