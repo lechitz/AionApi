@@ -18,13 +18,6 @@ import (
 
 // NewGraphqlServer initializes and returns a new HTTP server
 // configured to handle GraphQL requests using Chi router.
-// Parameters:
-//   - deps: AppDependencies container with services and repos
-//   - cfg: Runtime configuration (includes HTTP port and secret key)
-//
-// Returns:
-//   - *http.Server: GraphQL server instance ready to be started
-//   - error: In case of setup failure
 func NewGraphqlServer(deps *bootstrap.AppDependencies, cfg config.Config) (*http.Server, error) {
 	router := chi.NewRouter()
 
