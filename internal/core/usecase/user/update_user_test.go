@@ -16,27 +16,27 @@ func TestUpdateUser_Success(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
-		ID:       setup.TestPerfectUser.ID,
+		ID:       setup.DefaultTestUser().ID,
 		Name:     "Felipe",
-		Username: setup.TestPerfectUser.Username,
-		Email:    setup.TestPerfectUser.Email,
+		Username: setup.DefaultTestUser().Username,
+		Email:    setup.DefaultTestUser().Email,
 	}
 
 	suite.UserRepository.EXPECT().
 		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
-		Return(setup.TestPerfectUser, nil)
+		Return(setup.DefaultTestUser(), nil)
 
 	result, err := suite.UserService.UpdateUser(suite.Ctx, input)
 
 	require.NoError(t, err)
-	require.Equal(t, setup.TestPerfectUser, result)
+	require.Equal(t, setup.DefaultTestUser(), result)
 }
 
 func TestUpdateUser_NoFieldsToUpdate(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{ID: setup.TestPerfectUser.ID}
+	input := domain.UserDomain{ID: setup.DefaultTestUser().ID}
 
 	result, err := suite.UserService.UpdateUser(suite.Ctx, input)
 
@@ -49,7 +49,7 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := setup.TestPerfectUser
+	input := setup.DefaultTestUser()
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 	hashedPassword := "hashedNewPassword"
@@ -57,10 +57,10 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, input.ID).
-		Return(setup.TestPerfectUser, nil)
+		Return(setup.DefaultTestUser(), nil)
 
 	suite.PasswordHasher.EXPECT().
-		ValidatePassword(setup.TestPerfectUser.Password, oldPassword).
+		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
 		Return(nil)
 
 	suite.PasswordHasher.EXPECT().
@@ -69,7 +69,7 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
-		Return(setup.TestPerfectUser, nil)
+		Return(setup.DefaultTestUser(), nil)
 
 	suite.TokenService.EXPECT().
 		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
@@ -87,7 +87,7 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 	)
 
 	require.NoError(t, err)
-	require.Equal(t, setup.TestPerfectUser, result)
+	require.Equal(t, setup.DefaultTestUser(), result)
 	require.Equal(t, expectedToken, token)
 }
 
@@ -95,7 +95,7 @@ func TestUpdateUserPassword_ErrorToGetUserByID(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := setup.TestPerfectUser
+	input := setup.DefaultTestUser()
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 
@@ -120,16 +120,16 @@ func TestUpdateUserPassword_ErrorToCompareHashAndPassword(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := setup.TestPerfectUser
+	input := setup.DefaultTestUser()
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, input.ID).
-		Return(setup.TestPerfectUser, nil)
+		Return(setup.DefaultTestUser(), nil)
 
 	suite.PasswordHasher.EXPECT().
-		ValidatePassword(setup.TestPerfectUser.Password, oldPassword).
+		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
 		Return(errors.New(constants.ErrorToCompareHashAndPassword))
 
 	result, token, err := suite.UserService.UpdateUserPassword(
@@ -149,16 +149,16 @@ func TestUpdateUserPassword_ErrorToHashPassword(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := setup.TestPerfectUser
+	input := setup.DefaultTestUser()
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, input.ID).
-		Return(setup.TestPerfectUser, nil)
+		Return(setup.DefaultTestUser(), nil)
 
 	suite.PasswordHasher.EXPECT().
-		ValidatePassword(setup.TestPerfectUser.Password, oldPassword).
+		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
 		Return(nil)
 
 	suite.PasswordHasher.EXPECT().
@@ -182,17 +182,17 @@ func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := setup.TestPerfectUser
+	input := setup.DefaultTestUser()
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 	hashedPassword := "hashedNewPassword"
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, input.ID).
-		Return(setup.TestPerfectUser, nil)
+		Return(setup.DefaultTestUser(), nil)
 
 	suite.PasswordHasher.EXPECT().
-		ValidatePassword(setup.TestPerfectUser.Password, oldPassword).
+		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
 		Return(nil)
 
 	suite.PasswordHasher.EXPECT().
@@ -220,17 +220,17 @@ func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := setup.TestPerfectUser
+	input := setup.DefaultTestUser()
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 	hashedPassword := "hashedNewPassword"
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, input.ID).
-		Return(setup.TestPerfectUser, nil)
+		Return(setup.DefaultTestUser(), nil)
 
 	suite.PasswordHasher.EXPECT().
-		ValidatePassword(setup.TestPerfectUser.Password, oldPassword).
+		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
 		Return(nil)
 
 	suite.PasswordHasher.EXPECT().
@@ -239,7 +239,7 @@ func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
-		Return(setup.TestPerfectUser, nil)
+		Return(setup.DefaultTestUser(), nil)
 
 	suite.TokenService.EXPECT().
 		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
@@ -263,10 +263,10 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
-		ID:       setup.TestPerfectUser.ID,
-		Name:     setup.TestPerfectUser.Name,
-		Username: setup.TestPerfectUser.Username,
-		Email:    setup.TestPerfectUser.Email,
+		ID:       setup.DefaultTestUser().ID,
+		Name:     setup.DefaultTestUser().Name,
+		Username: setup.DefaultTestUser().Username,
+		Email:    setup.DefaultTestUser().Email,
 	}
 
 	oldPassword := "oldPassword"
@@ -276,10 +276,10 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, input.ID).
-		Return(setup.TestPerfectUser, nil)
+		Return(setup.DefaultTestUser(), nil)
 
 	suite.PasswordHasher.EXPECT().
-		ValidatePassword(setup.TestPerfectUser.Password, oldPassword).
+		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
 		Return(nil)
 
 	suite.PasswordHasher.EXPECT().
@@ -288,7 +288,7 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
-		Return(setup.TestPerfectUser, nil)
+		Return(setup.DefaultTestUser(), nil)
 
 	suite.TokenService.EXPECT().
 		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).

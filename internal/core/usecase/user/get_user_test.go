@@ -14,7 +14,7 @@ func TestGetUserByID_Success(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	userID := uint64(1)
-	expectedUser := setup.TestPerfectUser
+	expectedUser := setup.DefaultTestUser()
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, userID).
@@ -30,7 +30,7 @@ func TestGetUserByID_Error(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	userID := setup.TestPerfectUser.ID
+	userID := setup.DefaultTestUser().ID
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, userID).
@@ -46,8 +46,8 @@ func TestGetUserByEmail_Success(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	userEmail := setup.TestPerfectUser.Email
-	expectedUser := setup.TestPerfectUser
+	userEmail := setup.DefaultTestUser().Email
+	expectedUser := setup.DefaultTestUser()
 
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(suite.Ctx, userEmail).
@@ -63,7 +63,7 @@ func TestGetUserByEmail_Error(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	userEmail := setup.TestPerfectUser.Email
+	userEmail := setup.DefaultTestUser().Email
 
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(suite.Ctx, userEmail).
@@ -79,8 +79,8 @@ func TestGetUserByUsername_Success(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	username := setup.TestPerfectUser.Username
-	expectedUser := setup.TestPerfectUser
+	username := setup.DefaultTestUser().Username
+	expectedUser := setup.DefaultTestUser()
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, username).
@@ -96,7 +96,7 @@ func TestGetUserByUsername_Error(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	username := setup.TestPerfectUser.Username
+	username := setup.DefaultTestUser().Username
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, username).
@@ -113,9 +113,9 @@ func TestGetAllUsers_Success(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	expectedUsers := []domain.UserDomain{
-		setup.TestPerfectUser,
-		setup.TestPerfectUser,
-		setup.TestPerfectUser,
+		setup.DefaultTestUser(),
+		setup.DefaultTestUser(),
+		setup.DefaultTestUser(),
 	}
 
 	suite.UserRepository.EXPECT().

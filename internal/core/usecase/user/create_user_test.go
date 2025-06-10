@@ -19,7 +19,7 @@ func TestCreateUser_Success(t *testing.T) {
 		Username: " lechitz ",
 		Email:    "  LECHITZ@example.com ",
 	}
-	password := setup.TestPerfectUser.Password
+	password := setup.DefaultTestUser().Password
 
 	normalized := domain.UserDomain{
 		Name:     "Felipe",
@@ -50,14 +50,14 @@ func TestCreateUser_ErrorToGetUserByUsername(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
-		Name:     setup.TestPerfectUser.Name,
-		Username: setup.TestPerfectUser.Username,
-		Email:    setup.TestPerfectUser.Email,
+		Name:     setup.DefaultTestUser().Name,
+		Username: setup.DefaultTestUser().Username,
+		Email:    setup.DefaultTestUser().Email,
 	}
-	password := setup.TestPerfectUser.Password
+	password := setup.DefaultTestUser().Password
 
 	suite.UserRepository.EXPECT().
-		GetUserByUsername(suite.Ctx, setup.TestPerfectUser.Username).
+		GetUserByUsername(suite.Ctx, setup.DefaultTestUser().Username).
 		Return(domain.UserDomain{ID: 1}, nil)
 
 	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
@@ -72,18 +72,18 @@ func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
-		Name:     setup.TestPerfectUser.Name,
-		Username: setup.TestPerfectUser.Username,
-		Email:    setup.TestPerfectUser.Email,
+		Name:     setup.DefaultTestUser().Name,
+		Username: setup.DefaultTestUser().Username,
+		Email:    setup.DefaultTestUser().Email,
 	}
-	password := setup.TestPerfectUser.Password
+	password := setup.DefaultTestUser().Password
 
 	suite.UserRepository.EXPECT().
-		GetUserByUsername(suite.Ctx, setup.TestPerfectUser.Username).
+		GetUserByUsername(suite.Ctx, setup.DefaultTestUser().Username).
 		Return(domain.UserDomain{}, nil)
 
 	suite.UserRepository.EXPECT().
-		GetUserByEmail(suite.Ctx, setup.TestPerfectUser.Email).
+		GetUserByEmail(suite.Ctx, setup.DefaultTestUser().Email).
 		Return(domain.UserDomain{ID: 1}, nil)
 
 	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
@@ -98,18 +98,18 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
-		Name:     setup.TestPerfectUser.Name,
-		Username: setup.TestPerfectUser.Username,
-		Email:    setup.TestPerfectUser.Email,
+		Name:     setup.DefaultTestUser().Name,
+		Username: setup.DefaultTestUser().Username,
+		Email:    setup.DefaultTestUser().Email,
 	}
-	password := setup.TestPerfectUser.Password
+	password := setup.DefaultTestUser().Password
 
 	suite.UserRepository.EXPECT().
-		GetUserByUsername(suite.Ctx, setup.TestPerfectUser.Username).
+		GetUserByUsername(suite.Ctx, setup.DefaultTestUser().Username).
 		Return(domain.UserDomain{}, nil)
 
 	suite.UserRepository.EXPECT().
-		GetUserByEmail(suite.Ctx, setup.TestPerfectUser.Email).
+		GetUserByEmail(suite.Ctx, setup.DefaultTestUser().Email).
 		Return(domain.UserDomain{}, nil)
 
 	suite.PasswordHasher.EXPECT().
@@ -128,18 +128,18 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
-		Name:     setup.TestPerfectUser.Name,
-		Username: setup.TestPerfectUser.Username,
-		Email:    setup.TestPerfectUser.Email,
+		Name:     setup.DefaultTestUser().Name,
+		Username: setup.DefaultTestUser().Username,
+		Email:    setup.DefaultTestUser().Email,
 	}
-	password := setup.TestPerfectUser.Password
+	password := setup.DefaultTestUser().Password
 
 	suite.UserRepository.EXPECT().
-		GetUserByUsername(suite.Ctx, setup.TestPerfectUser.Username).
+		GetUserByUsername(suite.Ctx, setup.DefaultTestUser().Username).
 		Return(domain.UserDomain{}, nil)
 
 	suite.UserRepository.EXPECT().
-		GetUserByEmail(suite.Ctx, setup.TestPerfectUser.Email).
+		GetUserByEmail(suite.Ctx, setup.DefaultTestUser().Email).
 		Return(domain.UserDomain{}, nil)
 
 	suite.PasswordHasher.EXPECT().

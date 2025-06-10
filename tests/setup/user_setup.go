@@ -49,14 +49,16 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 	}
 }
 
-// TestPerfectUser is a predefined instance of domain.UserDomain used for testing purposes, representing a perfect/valid user with complete and valid fields.
-var TestPerfectUser = domain.UserDomain{
-	ID:        1,
-	Name:      "Test User",
-	Username:  "testuser",
-	Email:     "user@example.com",
-	Password:  "password123",
-	CreatedAt: time.Now(),
-	UpdatedAt: time.Now(),
-	DeletedAt: nil,
+// DefaultTestUser is a predefined instance of domain.UserDomain used for testing purposes, representing a perfect/valid user with complete and valid fields.
+func DefaultTestUser() domain.UserDomain {
+	return domain.UserDomain{
+		ID:        1,
+		Name:      "Test User",
+		Username:  "testuser",
+		Email:     "user@example.com",
+		Password:  "password123",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		DeletedAt: nil,
+	}
 }
