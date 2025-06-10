@@ -18,8 +18,8 @@ help:
 	@echo "\033[1;34m🔵 Docker Compose Commands:\033[0m"
 	@echo "  \033[1;36mdev-up\033[0m     → Start development environment (resets DB)"
 	@echo "  \033[1;36mdev-down\033[0m   → Stop development and remove volumes"
-	@echo "  \033[1;36mdocker-compose-prod-up\033[0m    → Start production (keeps DB)"
-	@echo "  \033[1;36mdocker-compose-prod-down\033[0m  → Stop production environment"
+	@echo "  \033[1;36mdocker compose-prod-up\033[0m    → Start production (keeps DB)"
+	@echo "  \033[1;36mdocker compose-prod-down\033[0m  → Stop production environment"
 	@echo ""
 
 	@echo "\033[1;34m🔵 Docker Build Commands:\033[0m"
@@ -93,10 +93,10 @@ docker-build-prod: docker-clean-prod
 	docker build -t $(APPLICATION_NAME):prod .
 
 docker-compose-prod-up: docker-compose-prod-down
-	docker compose -f $(COMPOSE_FILE_PROD) up
+	docker-compose -f $(COMPOSE_FILE_PROD) up
 
 docker-compose-prod-down:
-	docker compose -f $(COMPOSE_FILE_PROD) down -v
+	docker-compose -f $(COMPOSE_FILE_PROD) down -v
 
 prod: docker-build-prod docker-compose-prod-up
 
