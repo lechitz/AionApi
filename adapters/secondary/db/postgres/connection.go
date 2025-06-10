@@ -76,8 +76,8 @@ func tryConnectingWithRetries(conString string, logger logger.Logger, maxRetries
 }
 
 // Close terminates the database connection and logs success or error messages using the provided logger.
-func Close(DB *gorm.DB, logger logger.Logger) {
-	sqlDB, err := DB.DB()
+func Close(db *gorm.DB, logger logger.Logger) {
+	sqlDB, err := db.DB()
 	if err != nil {
 		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, constants.Error, err.Error())
 		return
