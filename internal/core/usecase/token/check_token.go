@@ -3,7 +3,7 @@ package token
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/internal/core/domain"
@@ -17,19 +17,19 @@ func (s *Service) VerifyToken(ctx context.Context, token string) (uint64, string
 	})
 	if err != nil || parsedToken == nil || !parsedToken.Valid {
 		s.logger.Errorw(constants.ErrorInvalidToken, constants.Token, token, constants.Error, err)
-		return 0, "", fmt.Errorf(constants.ErrorInvalidToken)
+		return 0, "", errors.New(constants.ErrorInvalidToken)
 	}
 
 	claims, ok := parsedToken.Claims.(jwt.MapClaims)
 	if !ok {
 		s.logger.Errorw(constants.ErrorInvalidTokenClaims, constants.Token, token)
-		return 0, "", fmt.Errorf(constants.ErrorInvalidTokenClaims)
+		return 0, "", errors.New(constants.ErrorInvalidTokenClaims)
 	}
 
 	userIDFloat, ok := claims[constants.UserID].(float64)
 	if !ok {
 		s.logger.Errorw(constants.ErrorInvalidUserIDClaim, constants.Token, token)
-		return 0, "", fmt.Errorf(constants.ErrorInvalidUserIDClaim)
+		return 0, "", errors.New(constants.ErrorInvalidUserIDClaim)
 	}
 	userID := uint64(userIDFloat)
 
@@ -47,7 +47,7 @@ func (s *Service) VerifyToken(ctx context.Context, token string) (uint64, string
 			constants.UserID,
 			userID,
 		)
-		return 0, "", fmt.Errorf(constants.ErrorToRetrieveTokenFromCache)
+		return 0, "", errors.New(constants.ErrorToRetrieveTokenFromCache)
 	}
 
 	if cachedToken != token {
@@ -60,7 +60,7 @@ func (s *Service) VerifyToken(ctx context.Context, token string) (uint64, string
 			constants.TokenFromCache,
 			cachedToken,
 		)
-		return 0, "", fmt.Errorf(constants.ErrorTokenMismatch)
+		return 0, "", errors.New(constants.ErrorTokenMismatch)
 	}
 
 	s.logger.Infow(constants.SuccessTokenValidated, constants.UserID, userID)
