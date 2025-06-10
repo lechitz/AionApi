@@ -8,7 +8,7 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUpdateCategory_ErrorToUpdateCategory(t *testing.T) {
@@ -28,9 +28,9 @@ func TestUpdateCategory_ErrorToUpdateCategory(t *testing.T) {
 
 	categoryDB, err := suite.CategoryService.UpdateCategory(suite.Ctx, testdata.PerfectCategory)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, categoryDB)
-	assert.Equal(t, constants.FailedToUpdateCategory, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, categoryDB)
+	require.Equal(t, constants.FailedToUpdateCategory, err.Error())
 }
 
 func TestUpdateCategory_Success(t *testing.T) {
@@ -52,12 +52,11 @@ func TestUpdateCategory_Success(t *testing.T) {
 
 	categoryDB, err := suite.CategoryService.UpdateCategory(suite.Ctx, testdata.PerfectCategory)
 
-	assert.NoError(t, err)
-
-	assert.Equal(t, category.ID, categoryDB.ID)
-	assert.Equal(t, category.UserID, categoryDB.UserID)
-	assert.Equal(t, category.Name, categoryDB.Name)
-	assert.Equal(t, category.Description, categoryDB.Description)
-	assert.Equal(t, category.Color, categoryDB.Color)
-	assert.Equal(t, category.Icon, categoryDB.Icon)
+	require.NoError(t, err)
+	require.Equal(t, category.ID, categoryDB.ID)
+	require.Equal(t, category.UserID, categoryDB.UserID)
+	require.Equal(t, category.Name, categoryDB.Name)
+	require.Equal(t, category.Description, categoryDB.Description)
+	require.Equal(t, category.Color, categoryDB.Color)
+	require.Equal(t, category.Icon, categoryDB.Icon)
 }
