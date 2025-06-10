@@ -8,7 +8,7 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCreateCategory_ErrorToValidateCreateCategoryRequired_Name(t *testing.T) {
@@ -20,8 +20,8 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_Name(t *testing.T)
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, createdCategory)
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedLimit(t *testing.T) {
@@ -33,8 +33,8 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedL
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, createdCategory)
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
@@ -49,8 +49,8 @@ func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, createdCategory)
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
@@ -69,8 +69,8 @@ func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, createdCategory)
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_Success(t *testing.T) {
@@ -89,6 +89,6 @@ func TestCreateCategory_Success(t *testing.T) {
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
-	assert.NoError(t, err)
-	assert.Equal(t, category, createdCategory)
+	require.NoError(t, err)
+	require.Equal(t, category, createdCategory)
 }
