@@ -3,10 +3,12 @@ package auth
 
 import (
 	"context"
-	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth/constants"
 	"net/http"
 
+	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth/constants"
+
 	"github.com/golang-jwt/jwt/v5"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
@@ -94,6 +96,8 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	})
 }
 
+// extractTokenFromCookie extracts the token from the request cookie.
+// Returns the token string or an error if the token is not found or another issue occurs.
 func extractTokenFromCookie(r *http.Request) (string, error) {
 	cookie, err := r.Cookie(constants.AuthToken)
 	if err != nil {
