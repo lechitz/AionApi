@@ -12,28 +12,31 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/db"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
-	"github.com/lechitz/AionApi/internal/infra/bootstrap/constants"
 
 	portsHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	portsToken "github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
+	"github.com/lechitz/AionApi/internal/infra/bootstrap/constants"
 	"github.com/lechitz/AionApi/internal/infra/config"
 )
 
-// AppDependencies encapsulates all the core dependencies required for the application, including services, repositories, and logging utilities.
+// AppDependencies encapsulates all the core dependencies required for the application,
+// including services, repositories, logging utilities and the loaded configuration.
 type AppDependencies struct {
-	TokenRepository    portsToken.TokenRepositoryPort
-	TokenService       token.Usecase
-	AuthService        portsHttp.AuthService
-	UserService        portsHttp.UserService
-	CategoryService    graphql.CategoryService
-	CategoryRepository db.CategoryStore
-	Logger             logger.Logger
+	Logger             logger.Logger                  // interfaces são pointers internamente
+	TokenService       token.Usecase                  // pointer
+	TokenRepository    portsToken.TokenRepositoryPort // pointer
+	UserService        portsHttp.UserService          // pointer
+	AuthService        portsHttp.AuthService          // pointer
+	CategoryService    graphql.CategoryService        // pointer
+	CategoryRepository db.CategoryStore               // pointer
+	Config             config.Config                  // struct (não pointer)
 }
 
-// InitializeDependencies initializes and returns all core application dependencies, including repositories, services, and a cleanup function.
+// InitializeDependencies initializes and returns all core application dependencies,
+// including repositories, services, and a cleanup function.
 func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDependencies, func(), error) {
 	cacheConn, err := infraCache.NewCacheConnection(cfg.Cache, logger)
 	if err != nil {
@@ -81,6 +84,7 @@ func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDepend
 	}
 
 	return &AppDependencies{
+		Config:             cfg,
 		TokenRepository:    tokenRepository,
 		TokenService:       tokenService,
 		AuthService:        authService,

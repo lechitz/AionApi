@@ -1,3 +1,4 @@
+// Package config provides configuration management for the application.
 package config
 
 import (
@@ -8,45 +9,55 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/config/constants"
 )
 
-// setting holds the application-wide configuration after loading from environment.
-var setting Config
-
-// Get returns the loaded Config.
-func Get() Config {
-	return setting
+// Loader is responsible for reading environment configuration
+// and returning a fully populated Config object.
+// This struct helps avoid global state and improves testability.
+type Loader struct {
+	cfg Config
 }
 
-// Setting returns a copy of the loaded application configuration.
-func Setting() *Config {
-	return &setting
+// NewLoader returns a new instance of Loader.
+// This constructor enforces explicit configuration loading.
+func NewLoader() *Loader {
+	return &Loader{}
 }
 
-// Config holds all configuration sections for initializing the application.
-type Config struct {
-	DB            DBConfig
-	Cache         CacheConfig
-	Secret        Secret
-	ServerGraphql ServerGraphql
-	ServerHTTP    ServerHTTP
-	Application   Application
-}
-
-// Load loads configuration from environment into Setting.
-func Load(logger logger.Logger) error {
-	if err := envconfig.Process(constants.Settings, &setting); err != nil {
+// Load reads configuration from environment variables into Config.
+// It also generates a default JWT secret key if not explicitly set.
+// Parameters:
+//   - logger: application-wide logger used for logging critical failures.
+//
+// Returns:
+//   - Config: fully loaded configuration object
+//   - error: error occurred during loading or key generation
+func (l *Loader) Load(logger logger.Logger) (Config, error) {
+	if err := envconfig.Process(constants.Settings, &l.cfg); err != nil {
 		response.HandleCriticalError(logger, constants.ErrFailedToProcessEnvVars, err)
+		return Config{}, err
 	}
 
-	if setting.Secret.Key == "" {
+	if l.cfg.Secret.Key == "" {
 		generated, err := security.GenerateJWTKey()
 		if err != nil {
 			response.HandleCriticalError(logger, constants.ErrGenerateSecretKey, err)
+			return Config{}, err
 		}
 
-		setting.Secret.Key = generated
+		l.cfg.Secret.Key = generated
 		logger.Warnf(constants.SecretKeyWasNotSet)
 		logger.Infof("JWT secret key successfully generated with length: %d", len(generated))
 	}
 
-	return nil
+	return l.cfg, nil
+}
+
+// Config holds all configuration sections required to bootstrap the application.
+// This struct is populated through environment variable processing via envconfig.
+type Config struct {
+	DB            DBConfig      // Database-related configuration
+	Cache         CacheConfig   // Cache layer configuration
+	Secret        Secret        // Secret and security configuration
+	ServerGraphql ServerGraphql // GraphQL server-specific configuration
+	ServerHTTP    ServerHTTP    // HTTP server-specific configuration
+	Application   Application   // General application-level configuration
 }

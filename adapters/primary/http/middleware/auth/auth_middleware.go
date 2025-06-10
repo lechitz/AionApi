@@ -12,7 +12,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/infra/config"
 )
 
 // contextKey is a string type for context keys.
@@ -29,14 +28,20 @@ const tokenContextKey contextKey = "token"
 type MiddlewareAuth struct {
 	tokenService cache.TokenRepositoryPort
 	logger       logger.Logger
+	secretKey    string
 }
 
 // NewAuthMiddleware creates and initializes middleware for authentication.
 func NewAuthMiddleware(
 	tokenService cache.TokenRepositoryPort,
 	logger logger.Logger,
+	secretKey string,
 ) *MiddlewareAuth {
-	return &MiddlewareAuth{tokenService, logger}
+	return &MiddlewareAuth{
+		tokenService: tokenService,
+		logger:       logger,
+		secretKey:    secretKey,
+	}
 }
 
 // Auth validates JWT tokens and attaches user context.
@@ -54,7 +59,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 		}
 
 		parsedToken, err := jwt.Parse(tokenCookie, func(_ *jwt.Token) (interface{}, error) {
-			return []byte(config.Setting().Secret.Key), nil
+			return []byte(a.secretKey), nil
 		})
 		if err != nil || parsedToken == nil || !parsedToken.Valid {
 			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, constants.Error, err)

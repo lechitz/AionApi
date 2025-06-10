@@ -7,7 +7,6 @@ import (
 	"github.com/lechitz/AionApi/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
-	"github.com/lechitz/AionApi/internal/infra/config"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
 	"github.com/stretchr/testify/require"
@@ -36,10 +35,6 @@ func TestVerifyToken_Success(t *testing.T) {
 func TestCheck_InvalidToken(t *testing.T) {
 	suite := setup.TokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
-
-	// Use the Setting() getter to change the secret key in tests
-	cfg := config.Setting()
-	cfg.Secret.Key = constants.SecretKey
 
 	tokenString := "invalidToken"
 
@@ -73,9 +68,6 @@ func TestCheck_TokenMismatch(t *testing.T) {
 func TestCheck_ErrorToRetrieveTokenFromCache(t *testing.T) {
 	suite := setup.TokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
-
-	cfg := config.Setting()
-	cfg.Secret.Key = constants.SecretKey
 
 	userID := testdata.TestPerfectUser.ID
 
