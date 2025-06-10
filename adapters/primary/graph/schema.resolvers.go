@@ -1,3 +1,5 @@
+//go:build !codeanalysis
+
 // Package graph implements the GraphQL resolvers for the API.
 package graph
 

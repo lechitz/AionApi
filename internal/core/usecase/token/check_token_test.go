@@ -37,10 +37,13 @@ func TestCheck_InvalidToken(t *testing.T) {
 	suite := setup.TokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
 
-	config.Setting.Secret.Key = constants.SecretKey
+	// Use the Setting() getter to change the secret key in tests
+	cfg := config.Setting()
+	cfg.Secret.Key = constants.SecretKey
+
 	tokenString := "invalidToken"
 
-	_, _, err := suite.TokenService.VerifyToken(t.Context(), tokenString)
+	_, _, err := suite.TokenService.VerifyToken(suite.Ctx, tokenString)
 
 	require.Error(t, err)
 	require.Equal(t, constants.ErrorInvalidToken, err.Error())
@@ -71,7 +74,8 @@ func TestCheck_ErrorToRetrieveTokenFromCache(t *testing.T) {
 	suite := setup.TokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
 
-	config.Setting.Secret.Key = constants.SecretKey
+	cfg := config.Setting()
+	cfg.Secret.Key = constants.SecretKey
 
 	userID := testdata.TestPerfectUser.ID
 
