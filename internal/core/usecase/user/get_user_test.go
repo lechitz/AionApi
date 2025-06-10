@@ -5,7 +5,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/tests/setup"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )
 
@@ -14,7 +14,6 @@ func TestGetUserByID_Success(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	userID := uint64(1)
-
 	expectedUser := setup.TestPerfectUser
 
 	suite.UserRepository.EXPECT().
@@ -23,8 +22,8 @@ func TestGetUserByID_Success(t *testing.T) {
 
 	userDomain, err := suite.UserService.GetUserByID(suite.Ctx, userID)
 
-	assert.NoError(t, err)
-	assert.Equal(t, expectedUser, userDomain)
+	require.NoError(t, err)
+	require.Equal(t, expectedUser, userDomain)
 }
 
 func TestGetUserByID_Error(t *testing.T) {
@@ -39,8 +38,8 @@ func TestGetUserByID_Error(t *testing.T) {
 
 	userDomain, err := suite.UserService.GetUserByID(suite.Ctx, userID)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.UserDomain{}, userDomain)
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, userDomain)
 }
 
 func TestGetUserByEmail_Success(t *testing.T) {
@@ -48,7 +47,6 @@ func TestGetUserByEmail_Success(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	userEmail := setup.TestPerfectUser.Email
-
 	expectedUser := setup.TestPerfectUser
 
 	suite.UserRepository.EXPECT().
@@ -57,8 +55,8 @@ func TestGetUserByEmail_Success(t *testing.T) {
 
 	userDomain, err := suite.UserService.GetUserByEmail(suite.Ctx, userEmail)
 
-	assert.NoError(t, err)
-	assert.Equal(t, expectedUser, userDomain)
+	require.NoError(t, err)
+	require.Equal(t, expectedUser, userDomain)
 }
 
 func TestGetUserByEmail_Error(t *testing.T) {
@@ -73,8 +71,8 @@ func TestGetUserByEmail_Error(t *testing.T) {
 
 	userDomain, err := suite.UserService.GetUserByEmail(suite.Ctx, userEmail)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.UserDomain{}, userDomain)
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, userDomain)
 }
 
 func TestGetUserByUsername_Success(t *testing.T) {
@@ -82,7 +80,6 @@ func TestGetUserByUsername_Success(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	username := setup.TestPerfectUser.Username
-
 	expectedUser := setup.TestPerfectUser
 
 	suite.UserRepository.EXPECT().
@@ -91,8 +88,8 @@ func TestGetUserByUsername_Success(t *testing.T) {
 
 	userDomain, err := suite.UserService.GetUserByUsername(suite.Ctx, username)
 
-	assert.NoError(t, err)
-	assert.Equal(t, expectedUser, userDomain)
+	require.NoError(t, err)
+	require.Equal(t, expectedUser, userDomain)
 }
 
 func TestGetUserByUsername_Error(t *testing.T) {
@@ -107,8 +104,8 @@ func TestGetUserByUsername_Error(t *testing.T) {
 
 	userDomain, err := suite.UserService.GetUserByUsername(suite.Ctx, username)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.UserDomain{}, userDomain)
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, userDomain)
 }
 
 func TestGetAllUsers_Success(t *testing.T) {
@@ -127,8 +124,8 @@ func TestGetAllUsers_Success(t *testing.T) {
 
 	users, err := suite.UserService.GetAllUsers(suite.Ctx)
 
-	assert.NoError(t, err)
-	assert.Equal(t, expectedUsers, users)
+	require.NoError(t, err)
+	require.Equal(t, expectedUsers, users)
 }
 
 func TestGetAllUsers_Error(t *testing.T) {
@@ -141,6 +138,6 @@ func TestGetAllUsers_Error(t *testing.T) {
 
 	users, err := suite.UserService.GetAllUsers(suite.Ctx)
 
-	assert.Error(t, err)
-	assert.Nil(t, users)
+	require.Error(t, err)
+	require.Nil(t, users)
 }
