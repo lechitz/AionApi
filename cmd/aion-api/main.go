@@ -22,24 +22,26 @@ import (
 	loggerBuilder "github.com/lechitz/AionApi/pkg/logger"
 )
 
+// main initializes and runs the AionAPI application lifecycle.
 func main() {
-	logger := setupLogger()
-	cfg := loadConfig(logger)
-	appDeps, cleanup := initDependencies(cfg, logger)
+	logger, cleanup := loggerBuilder.NewZapLogger()
 	defer cleanup()
 
-	httpSrv := createHTTPServer(appDeps, &cfg, logger)
-	graphqlSrv := createGraphQLServer(appDeps, cfg, logger)
+	appLogger := loggerAdapter.NewZapLoggerAdapter(logger)
 
-	handleServers(httpSrv, graphqlSrv, cfg, logger)
+	cfg := loadConfig(appLogger)
+	appLogger.Infof("loaded config: %+v", cfg)
+
+	appDeps, cleanupDeps := initDependencies(cfg, appLogger)
+	defer cleanupDeps()
+
+	httpSrv := createHTTPServer(appDeps, &cfg, appLogger)
+	graphqlSrv := createGraphQLServer(appDeps, cfg, appLogger)
+
+	handleServers(httpSrv, graphqlSrv, cfg, appLogger)
 }
 
-func setupLogger() loggerPort.Logger {
-	loggerInstance, cleanup := loggerBuilder.NewZapLogger()
-	defer cleanup()
-	return loggerAdapter.NewZapLoggerAdapter(loggerInstance)
-}
-
+// loadConfig loads the environment configuration using envconfig, panicking on failure.
 func loadConfig(logger loggerPort.Logger) config.Config {
 	cfgLoader := config.NewLoader()
 	cfg, err := cfgLoader.Load(logger)
@@ -51,6 +53,7 @@ func loadConfig(logger loggerPort.Logger) config.Config {
 	return cfg
 }
 
+// initDependencies initializes services, repositories, and infrastructure connections.
 func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.AppDependencies, func()) {
 	appDeps, cleanup, err := bootstrap.InitializeDependencies(cfg, logger)
 	if err != nil {
@@ -61,6 +64,7 @@ func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.A
 	return appDeps, cleanup
 }
 
+// createHTTPServer builds the HTTP server using configuration and application dependencies.
 func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, logger loggerPort.Logger) *http.Server {
 	httpSrv, err := httpserver.NewHTTPServer(appDeps, cfg)
 	if err != nil {
@@ -75,6 +79,7 @@ func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, lo
 	return httpSrv
 }
 
+// createGraphQLServer builds the GraphQL server using configuration and application dependencies.
 func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, logger loggerPort.Logger) *http.Server {
 	graphqlSrv, err := graphqlserver.NewGraphqlServer(appDeps, cfg)
 	if err != nil {
@@ -85,6 +90,7 @@ func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, 
 	return graphqlSrv
 }
 
+// handleServers orchestrates concurrent HTTP and GraphQL server execution and graceful shutdown.
 func handleServers(httpSrv, graphqlSrv *http.Server, cfg config.Config, logger loggerPort.Logger) {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
@@ -93,6 +99,7 @@ func handleServers(httpSrv, graphqlSrv *http.Server, cfg config.Config, logger l
 	errChan := make(chan error, 2)
 	wg.Add(2)
 
+	// Start HTTP server
 	go func() {
 		defer wg.Done()
 		if err := httpSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -100,6 +107,7 @@ func handleServers(httpSrv, graphqlSrv *http.Server, cfg config.Config, logger l
 		}
 	}()
 
+	// Start a GraphQL server
 	go func() {
 		defer wg.Done()
 		if err := graphqlSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -107,6 +115,7 @@ func handleServers(httpSrv, graphqlSrv *http.Server, cfg config.Config, logger l
 		}
 	}()
 
+	// Handle shutdown or error event
 	select {
 	case err := <-errChan:
 		logger.Errorw("server error", "error", err.Error())

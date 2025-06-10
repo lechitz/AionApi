@@ -47,7 +47,7 @@ func NewGraphqlServer(deps *bootstrap.AppDependencies, cfg config.Config) (*http
 	srv.AddTransport(transport.POST{})
 
 	httpSrv := &http.Server{
-		Addr:              ":" + cfg.ServerHTTP.Port,
+		Addr:              ":" + cfg.ServerGraphql.Port,
 		Handler:           router,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
