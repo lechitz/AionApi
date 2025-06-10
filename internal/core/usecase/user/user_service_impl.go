@@ -1,3 +1,4 @@
+// Package user provides operations for managing user creation, retrieval, update, and deletion, as well as authentication and token management.
 package user
 
 import (

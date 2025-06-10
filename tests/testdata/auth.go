@@ -1,3 +1,4 @@
+// Package testdata contains test data used for testing purposes.
 package testdata
 
 import (
