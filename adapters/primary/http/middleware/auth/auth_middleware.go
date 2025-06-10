@@ -3,9 +3,8 @@ package auth
 
 import (
 	"context"
-	"net/http"
-
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth/constants"
+	"net/http"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/internal/core/domain"
@@ -14,25 +13,31 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/config"
 )
 
+// contextKey is a string type for context keys.
+// It is used to avoid typos when accessing context values.
+type contextKey string
+
+// userIDContextKey is the context key for user ID.
+const userIDContextKey contextKey = "user_id"
+
+// tokenContextKey is the context key for a user token.
+const tokenContextKey contextKey = "token"
+
 // MiddlewareAuth provides functionality for authentication in HTTP middleware.
-// It utilizes token services for validation and logging for operational insight.
 type MiddlewareAuth struct {
 	tokenService cache.TokenRepositoryPort
 	logger       logger.Logger
 }
 
-// NewAuthMiddleware creates and initializes a middleware for authentication using the provided token service and logger.
+// NewAuthMiddleware creates and initializes middleware for authentication.
 func NewAuthMiddleware(
 	tokenService cache.TokenRepositoryPort,
 	logger logger.Logger,
 ) *MiddlewareAuth {
-	return &MiddlewareAuth{
-		tokenService: tokenService,
-		logger:       logger,
-	}
+	return &MiddlewareAuth{tokenService, logger}
 }
 
-// Auth is an HTTP middleware that validates JWT tokens in incoming requests and attaches user context to the request if valid.
+// Auth validates JWT tokens and attaches user context.
 func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tokenCookie, err := extractTokenFromCookie(r)
@@ -68,16 +73,11 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
 			return
 		}
-
 		userID := uint64(userIDFloat)
 
-		tokenDomain := domain.TokenDomain{
-			UserID: userID,
-			Token:  tokenCookie,
-		}
+		tokenDomain := domain.TokenDomain{UserID: userID, Token: tokenCookie}
 
-		_, err = a.tokenService.Get(r.Context(), tokenDomain)
-		if err != nil {
+		if _, err := a.tokenService.Get(r.Context(), tokenDomain); err != nil {
 			a.logger.Warnw(
 				constants.ErrorUnauthorizedAccessInvalidToken,
 				constants.Error,
@@ -87,14 +87,13 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		newCtx := context.WithValue(r.Context(), constants.UserID, tokenDomain.UserID)
-		newCtx = context.WithValue(newCtx, constants.Token, tokenCookie)
+		newCtx := context.WithValue(r.Context(), userIDContextKey, tokenDomain.UserID)
+		newCtx = context.WithValue(newCtx, tokenContextKey, tokenCookie)
 
 		next.ServeHTTP(w, r.WithContext(newCtx))
 	})
 }
 
-// extractTokenFromCookie retrieves the auth token from the request cookie named AuthToken and returns it as a string, or an error if not present.
 func extractTokenFromCookie(r *http.Request) (string, error) {
 	cookie, err := r.Cookie(constants.AuthToken)
 	if err != nil {
