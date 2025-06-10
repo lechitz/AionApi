@@ -36,6 +36,6 @@ func CategoryServiceTest(t *testing.T) *CategoryServiceTestSuite {
 		Logger:             mockLog,
 		CategoryService:    categoryService,
 		CategoryRepository: mockCategoryRepository,
-		Ctx:                context.Background(),
+		Ctx:                t.Context(),
 	}
 }
