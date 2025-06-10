@@ -45,7 +45,13 @@ func (t *TokenRepository) Get(ctx context.Context, token domain.TokenDomain) (st
 		if errors.Is(err, redis.Nil) || err.Error() == "redis: nil" {
 			return "", fmt.Errorf("token not found for user ID %d", token.UserID)
 		}
-		t.logger.Errorw(constants.ErrorToGetTokenFromRedis, constants.Key, key, constants.Error, err)
+		t.logger.Errorw(
+			constants.ErrorToGetTokenFromRedis,
+			constants.Key,
+			key,
+			constants.Error,
+			err,
+		)
 		return "", err
 	}
 
@@ -57,7 +63,13 @@ func (t *TokenRepository) Update(ctx context.Context, token domain.TokenDomain) 
 	expiration := 24 * time.Hour
 
 	if err := t.cache.Set(ctx, key, token.Token, expiration).Err(); err != nil {
-		t.logger.Errorw(constants.ErrorToUpdateTokenInRedis, constants.Key, key, constants.Error, err)
+		t.logger.Errorw(
+			constants.ErrorToUpdateTokenInRedis,
+			constants.Key,
+			key,
+			constants.Error,
+			err,
+		)
 		return err
 	}
 
@@ -69,7 +81,13 @@ func (t *TokenRepository) Delete(ctx context.Context, token domain.TokenDomain) 
 	key := t.formatTokenKey(token.UserID)
 
 	if err := t.cache.Del(ctx, key).Err(); err != nil {
-		t.logger.Errorw(constants.ErrorToDeleteTokenFromRedis, constants.Key, key, constants.Error, err)
+		t.logger.Errorw(
+			constants.ErrorToDeleteTokenFromRedis,
+			constants.Key,
+			key,
+			constants.Error,
+			err,
+		)
 		return err
 	}
 

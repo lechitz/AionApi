@@ -12,7 +12,10 @@ type Creator interface {
 	CreateToken(ctx context.Context, token domain.TokenDomain) (string, error)
 }
 
-func (s *TokenService) CreateToken(ctx context.Context, tokenDomain domain.TokenDomain) (string, error) {
+func (s *TokenService) CreateToken(
+	ctx context.Context,
+	tokenDomain domain.TokenDomain,
+) (string, error) {
 	if _, err := s.tokenRepository.Get(ctx, tokenDomain); err == nil {
 		if err := s.tokenRepository.Delete(ctx, tokenDomain); err != nil {
 			s.logger.Errorw(constants.ErrorToDeleteToken, constants.Error, err.Error())

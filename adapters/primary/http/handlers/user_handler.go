@@ -101,7 +101,12 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
-		u.logAndHandleError(w, http.StatusUnauthorized, constants.ErrorUnauthorizedAccessMissingToken, nil)
+		u.logAndHandleError(
+			w,
+			http.StatusUnauthorized,
+			constants.ErrorUnauthorizedAccessMissingToken,
+			nil,
+		)
 		return
 	}
 
@@ -150,14 +155,24 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
-		u.logAndHandleError(w, http.StatusUnauthorized, constants.ErrorUnauthorizedAccessMissingToken, nil)
+		u.logAndHandleError(
+			w,
+			http.StatusUnauthorized,
+			constants.ErrorUnauthorizedAccessMissingToken,
+			nil,
+		)
 		return
 	}
 
 	clearAuthCookie(w)
 
 	userDomain := domain.UserDomain{ID: userID}
-	_, newToken, err := u.UserService.UpdateUserPassword(ctx, userDomain, req.Password, req.NewPassword)
+	_, newToken, err := u.UserService.UpdateUserPassword(
+		ctx,
+		userDomain,
+		req.Password,
+		req.NewPassword,
+	)
 	if err != nil {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToUpdateUser, err)
 		return
@@ -174,7 +189,12 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
-		u.logAndHandleError(w, http.StatusUnauthorized, constants.ErrorUnauthorizedAccessMissingToken, nil)
+		u.logAndHandleError(
+			w,
+			http.StatusUnauthorized,
+			constants.ErrorUnauthorizedAccessMissingToken,
+			nil,
+		)
 		return
 	}
 

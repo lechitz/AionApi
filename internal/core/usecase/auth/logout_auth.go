@@ -24,7 +24,13 @@ func (s *AuthService) Logout(ctx context.Context, token string) error {
 	}
 
 	if err := s.tokenService.Delete(ctx, tokenDomain); err != nil {
-		s.logger.Errorw(constants.ErrorToRevokeToken, constants.Error, err.Error(), constants.UserID, userID)
+		s.logger.Errorw(
+			constants.ErrorToRevokeToken,
+			constants.Error,
+			err.Error(),
+			constants.UserID,
+			userID,
+		)
 		return err
 	}
 

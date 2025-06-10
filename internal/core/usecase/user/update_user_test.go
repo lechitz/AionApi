@@ -79,7 +79,12 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 		Save(suite.Ctx, domain.TokenDomain{UserID: input.ID, Token: expectedToken}).
 		Return(nil)
 
-	result, token, err := suite.UserService.UpdateUserPassword(suite.Ctx, input, oldPassword, newPassword)
+	result, token, err := suite.UserService.UpdateUserPassword(
+		suite.Ctx,
+		input,
+		oldPassword,
+		newPassword,
+	)
 
 	assert.NoError(t, err)
 	assert.Equal(t, setup.TestPerfectUser, result)
@@ -98,7 +103,12 @@ func TestUpdateUserPassword_ErrorToGetUserByID(t *testing.T) {
 		GetUserByID(suite.Ctx, input.ID).
 		Return(domain.UserDomain{}, errors.New(constants.ErrorToGetUserByID))
 
-	result, token, err := suite.UserService.UpdateUserPassword(suite.Ctx, input, oldPassword, newPassword)
+	result, token, err := suite.UserService.UpdateUserPassword(
+		suite.Ctx,
+		input,
+		oldPassword,
+		newPassword,
+	)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, result)
@@ -122,7 +132,12 @@ func TestUpdateUserPassword_ErrorToCompareHashAndPassword(t *testing.T) {
 		ValidatePassword(setup.TestPerfectUser.Password, oldPassword).
 		Return(errors.New(constants.ErrorToCompareHashAndPassword))
 
-	result, token, err := suite.UserService.UpdateUserPassword(suite.Ctx, input, oldPassword, newPassword)
+	result, token, err := suite.UserService.UpdateUserPassword(
+		suite.Ctx,
+		input,
+		oldPassword,
+		newPassword,
+	)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, result)
@@ -150,7 +165,12 @@ func TestUpdateUserPassword_ErrorToHashPassword(t *testing.T) {
 		HashPassword(newPassword).
 		Return("", errors.New(constants.ErrorToHashPassword))
 
-	result, token, err := suite.UserService.UpdateUserPassword(suite.Ctx, input, oldPassword, newPassword)
+	result, token, err := suite.UserService.UpdateUserPassword(
+		suite.Ctx,
+		input,
+		oldPassword,
+		newPassword,
+	)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, result)
@@ -183,7 +203,12 @@ func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
 		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(domain.UserDomain{}, errors.New(constants.ErrorToUpdatePassword))
 
-	result, token, err := suite.UserService.UpdateUserPassword(suite.Ctx, input, oldPassword, newPassword)
+	result, token, err := suite.UserService.UpdateUserPassword(
+		suite.Ctx,
+		input,
+		oldPassword,
+		newPassword,
+	)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, result)
@@ -220,7 +245,12 @@ func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
 		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
 		Return("", errors.New(constants.ErrorToCreateToken))
 
-	result, token, err := suite.UserService.UpdateUserPassword(suite.Ctx, input, oldPassword, newPassword)
+	result, token, err := suite.UserService.UpdateUserPassword(
+		suite.Ctx,
+		input,
+		oldPassword,
+		newPassword,
+	)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, result)
@@ -271,7 +301,12 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 		Save(suite.Ctx, domain.TokenDomain{UserID: input.ID, Token: expectedToken}).
 		Return(errors.New(constants.ErrorToSaveToken))
 
-	result, token, err := suite.UserService.UpdateUserPassword(suite.Ctx, input, oldPassword, newPassword)
+	result, token, err := suite.UserService.UpdateUserPassword(
+		suite.Ctx,
+		input,
+		oldPassword,
+		newPassword,
+	)
 
 	assert.Error(t, err)
 	assert.Equal(t, domain.UserDomain{}, result)

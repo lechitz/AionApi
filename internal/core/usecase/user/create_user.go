@@ -10,7 +10,11 @@ import (
 )
 
 type UserCreator interface {
-	CreateUser(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, error)
+	CreateUser(
+		ctx context.Context,
+		user domain.UserDomain,
+		password string,
+	) (domain.UserDomain, error)
 }
 
 func (s *UserService) CreateUser(
@@ -30,7 +34,8 @@ func (s *UserService) CreateUser(
 		return domain.UserDomain{}, errors.New(constants.UsernameIsAlreadyInUse)
 	}
 
-	if existingByEmail, err := s.userRepository.GetUserByEmail(ctx, user.Email); err == nil && existingByEmail.ID != 0 {
+	if existingByEmail, err := s.userRepository.GetUserByEmail(ctx, user.Email); err == nil &&
+		existingByEmail.ID != 0 {
 		return domain.UserDomain{}, errors.New(constants.EmailIsAlreadyInUse)
 	}
 

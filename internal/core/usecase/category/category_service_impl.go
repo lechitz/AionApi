@@ -10,7 +10,10 @@ type CategoryService struct {
 	Logger             logger.Logger
 }
 
-func NewCategoryService(categoryRepository db.CategoryStore, logger logger.Logger) *CategoryService {
+func NewCategoryService(
+	categoryRepository db.CategoryStore,
+	logger logger.Logger,
+) *CategoryService {
 	return &CategoryService{
 		CategoryRepository: categoryRepository,
 		Logger:             logger,

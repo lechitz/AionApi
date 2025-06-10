@@ -51,7 +51,10 @@ func TestSoftDeleteCategory_Success(t *testing.T) {
 		SoftDeleteCategory(suite.Ctx, domain.Category{ID: testdata.PerfectCategory.ID}).
 		Return(nil)
 
-	err := suite.CategoryService.SoftDeleteCategory(suite.Ctx, domain.Category{ID: testdata.PerfectCategory.ID})
+	err := suite.CategoryService.SoftDeleteCategory(
+		suite.Ctx,
+		domain.Category{ID: testdata.PerfectCategory.ID},
+	)
 
 	assert.NoError(t, err)
 }

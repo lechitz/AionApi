@@ -19,7 +19,10 @@ type UserUpdater interface {
 	) (domain.UserDomain, string, error)
 }
 
-func (s *UserService) UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error) {
+func (s *UserService) UpdateUser(
+	ctx context.Context,
+	user domain.UserDomain,
+) (domain.UserDomain, error) {
 	updateFields := make(map[string]interface{})
 
 	if user.Name != "" {

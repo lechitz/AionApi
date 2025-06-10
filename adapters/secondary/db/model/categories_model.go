@@ -1,9 +1,10 @@
 package model
 
 import (
+	"time"
+
 	"github.com/lechitz/AionApi/adapters/secondary/db/constants"
 	"gorm.io/gorm"
-	"time"
 )
 
 type CategoryDB struct {

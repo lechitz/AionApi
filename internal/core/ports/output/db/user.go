@@ -18,7 +18,11 @@ type UserRetriever interface {
 }
 
 type UserUpdater interface {
-	UpdateUser(ctx context.Context, userID uint64, fields map[string]interface{}) (domain.UserDomain, error)
+	UpdateUser(
+		ctx context.Context,
+		userID uint64,
+		fields map[string]interface{},
+	) (domain.UserDomain, error)
 }
 
 type UserDeleter interface {

@@ -8,7 +8,11 @@ import (
 )
 
 type Authenticator interface {
-	Login(ctx context.Context, user domain.UserDomain, passwordReq string) (domain.UserDomain, string, error)
+	Login(
+		ctx context.Context,
+		user domain.UserDomain,
+		passwordReq string,
+	) (domain.UserDomain, string, error)
 }
 
 func (s *AuthService) Login(

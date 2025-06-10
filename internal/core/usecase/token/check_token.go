@@ -38,7 +38,13 @@ func (s *TokenService) VerifyToken(ctx context.Context, token string) (uint64, s
 
 	cachedToken, err := s.tokenRepository.Get(ctx, tokenDomain)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToRetrieveTokenFromCache, constants.Error, err.Error(), constants.UserID, userID)
+		s.logger.Errorw(
+			constants.ErrorToRetrieveTokenFromCache,
+			constants.Error,
+			err.Error(),
+			constants.UserID,
+			userID,
+		)
 		return 0, "", fmt.Errorf(constants.ErrorToRetrieveTokenFromCache)
 	}
 

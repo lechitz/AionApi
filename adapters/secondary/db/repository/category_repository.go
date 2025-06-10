@@ -26,20 +26,32 @@ func NewCategoryRepository(db *gorm.DB, logger logger.Logger) *CategoryRepositor
 	}
 }
 
-func (c CategoryRepository) CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (c CategoryRepository) CreateCategory(
+	ctx context.Context,
+	category domain.Category,
+) (domain.Category, error) {
 	categoryDB := mapper.CategoryToDB(category)
 
 	if err := c.db.WithContext(ctx).
 		Create(&categoryDB).Error; err != nil {
 		wrappedErr := fmt.Errorf("error creating category: %w", err)
-		c.logger.Errorw("error creating category", "category", category, "error", wrappedErr.Error())
+		c.logger.Errorw(
+			"error creating category",
+			"category",
+			category,
+			"error",
+			wrappedErr.Error(),
+		)
 		return domain.Category{}, wrappedErr
 	}
 
 	return mapper.CategoryFromDB(categoryDB), nil
 }
 
-func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (c CategoryRepository) GetCategoryByID(
+	ctx context.Context,
+	category domain.Category,
+) (domain.Category, error) {
 	var categoryDB model.CategoryDB
 
 	if err := c.db.WithContext(ctx).
@@ -55,7 +67,10 @@ func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain
 	return mapper.CategoryFromDB(categoryDB), nil
 }
 
-func (c CategoryRepository) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (c CategoryRepository) GetCategoryByName(
+	ctx context.Context,
+	category domain.Category,
+) (domain.Category, error) {
 	var categoryDB model.CategoryDB
 
 	if err := c.db.WithContext(ctx).
@@ -68,7 +83,10 @@ func (c CategoryRepository) GetCategoryByName(ctx context.Context, category doma
 	return mapper.CategoryFromDB(categoryDB), nil
 }
 
-func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
+func (c CategoryRepository) GetAllCategories(
+	ctx context.Context,
+	userID uint64,
+) ([]domain.Category, error) {
 	var categoriesDB []model.CategoryDB
 
 	if err := c.db.WithContext(ctx).
@@ -111,7 +129,10 @@ func (c CategoryRepository) UpdateCategory(
 	return mapper.CategoryFromDB(categoryDB), nil
 }
 
-func (c CategoryRepository) SoftDeleteCategory(ctx context.Context, category domain.Category) error {
+func (c CategoryRepository) SoftDeleteCategory(
+	ctx context.Context,
+	category domain.Category,
+) error {
 	fields := map[string]interface{}{
 		constants.DeletedAt: time.Now().UTC(),
 		constants.UpdatedAt: time.Now().UTC(),

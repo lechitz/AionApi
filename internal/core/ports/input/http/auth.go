@@ -7,7 +7,11 @@ import (
 )
 
 type Authenticator interface {
-	Login(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, string, error)
+	Login(
+		ctx context.Context,
+		user domain.UserDomain,
+		password string,
+	) (domain.UserDomain, string, error)
 }
 
 type SessionRevoker interface {

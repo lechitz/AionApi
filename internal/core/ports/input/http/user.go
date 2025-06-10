@@ -7,7 +7,11 @@ import (
 )
 
 type UserCreator interface {
-	CreateUser(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, error)
+	CreateUser(
+		ctx context.Context,
+		user domain.UserDomain,
+		password string,
+	) (domain.UserDomain, error)
 }
 
 type UserRetriever interface {

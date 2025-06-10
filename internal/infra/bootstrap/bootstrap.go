@@ -31,7 +31,10 @@ type AppDependencies struct {
 	Logger             logger.Logger
 }
 
-func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDependencies, func(), error) {
+func InitializeDependencies(
+	cfg config.Config,
+	logger logger.Logger,
+) (*AppDependencies, func(), error) {
 	cacheConn, err := infraCache.NewCacheConnection(cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)
@@ -49,7 +52,11 @@ func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDepend
 	passwordHasher := adapterSecurity.NewBcryptPasswordAdapter()
 
 	tokenRepository := adapterCache.NewTokenRepository(cacheConn, logger)
-	tokenService := token.NewTokenService(tokenRepository, logger, domain.TokenConfig{SecretKey: cfg.Secret.Key})
+	tokenService := token.NewTokenService(
+		tokenRepository,
+		logger,
+		domain.TokenConfig{SecretKey: cfg.Secret.Key},
+	)
 
 	userRepository := adapterDB.NewUserRepository(dbConn, logger)
 	userService := user.NewUserService(userRepository, tokenService, passwordHasher, logger)
@@ -57,7 +64,13 @@ func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDepend
 	categoryRepository := adapterDB.NewCategoryRepository(dbConn, logger)
 	categoryService := category.NewCategoryService(categoryRepository, logger)
 
-	authService := auth.NewAuthService(userRepository, tokenService, passwordHasher, logger, cfg.Secret.Key)
+	authService := auth.NewAuthService(
+		userRepository,
+		tokenService,
+		passwordHasher,
+		logger,
+		cfg.Secret.Key,
+	)
 
 	cleanup := func() {
 		infraDB.Close(dbConn, logger)

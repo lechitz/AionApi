@@ -11,12 +11,26 @@ type CategoryUpdater interface {
 	UpdateCategory(ctx context.Context, category domain.Category) (domain.Category, error)
 }
 
-func (s *CategoryService) UpdateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (s *CategoryService) UpdateCategory(
+	ctx context.Context,
+	category domain.Category,
+) (domain.Category, error) {
 	fieldsToUpdate := extractUpdateFields(category)
 
-	updatedCategory, err := s.CategoryRepository.UpdateCategory(ctx, category.ID, category.UserID, fieldsToUpdate)
+	updatedCategory, err := s.CategoryRepository.UpdateCategory(
+		ctx,
+		category.ID,
+		category.UserID,
+		fieldsToUpdate,
+	)
 	if err != nil {
-		s.Logger.Errorw(constants.FailedToUpdateCategory, constants.CategoryID, category.ID, constants.Error, err)
+		s.Logger.Errorw(
+			constants.FailedToUpdateCategory,
+			constants.CategoryID,
+			category.ID,
+			constants.Error,
+			err,
+		)
 		return domain.Category{}, err
 	}
 

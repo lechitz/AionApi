@@ -34,7 +34,10 @@ func (s *UserService) GetUserByEmail(ctx context.Context, email string) (domain.
 	return user, nil
 }
 
-func (s *UserService) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
+func (s *UserService) GetUserByUsername(
+	ctx context.Context,
+	username string,
+) (domain.UserDomain, error) {
 	userDB, err := s.userRepository.GetUserByUsername(ctx, username)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToGetUserByUserName, constants.Error, err.Error())

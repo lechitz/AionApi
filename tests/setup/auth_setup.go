@@ -32,7 +32,13 @@ func SetupAuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
-	authService := auth.NewAuthService(mockUserRepo, mockTokenUseCase, mockSecurityStore, mockLog, "supersecretkey")
+	authService := auth.NewAuthService(
+		mockUserRepo,
+		mockTokenUseCase,
+		mockSecurityStore,
+		mockLog,
+		"supersecretkey",
+	)
 
 	return &AuthServiceTestSuite{
 		Ctrl:           ctrl,

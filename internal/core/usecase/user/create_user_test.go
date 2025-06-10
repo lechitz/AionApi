@@ -29,8 +29,12 @@ func TestCreateUser_Success(t *testing.T) {
 		Password: "hashed123",
 	}
 
-	suite.UserRepository.EXPECT().GetUserByUsername(suite.Ctx, "lechitz").Return(domain.UserDomain{}, nil)
-	suite.UserRepository.EXPECT().GetUserByEmail(suite.Ctx, "lechitz@example.com").Return(domain.UserDomain{}, nil)
+	suite.UserRepository.EXPECT().
+		GetUserByUsername(suite.Ctx, "lechitz").
+		Return(domain.UserDomain{}, nil)
+	suite.UserRepository.EXPECT().
+		GetUserByEmail(suite.Ctx, "lechitz@example.com").
+		Return(domain.UserDomain{}, nil)
 	suite.PasswordHasher.EXPECT().HashPassword(password).Return("hashed123", nil)
 	suite.UserRepository.EXPECT().CreateUser(suite.Ctx, normalized).Return(normalized, nil)
 

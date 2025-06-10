@@ -20,7 +20,13 @@ func RecoverMiddleware(log logger.Logger) func(http.Handler) http.Handler {
 						"stack", string(debug.Stack()),
 					)
 
-					response.HandleError(w, log, http.StatusInternalServerError, "internal server error", nil)
+					response.HandleError(
+						w,
+						log,
+						http.StatusInternalServerError,
+						"internal server error",
+						nil,
+					)
 				}
 			}()
 			next.ServeHTTP(w, r)

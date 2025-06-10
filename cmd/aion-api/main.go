@@ -58,7 +58,11 @@ func main() {
 		logger.Errorw(constants.ErrStartGraphqlServer, constants.Error, err)
 		return
 	}
-	logger.Infow(constants.GraphqlServerStarted, constants.ContextPath, config.Setting.ServerHTTP.Context)
+	logger.Infow(
+		constants.GraphqlServerStarted,
+		constants.ContextPath,
+		config.Setting.ServerHTTP.Context,
+	)
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
@@ -70,14 +74,16 @@ func main() {
 
 	go func() {
 		defer wg.Done()
-		if err := newHTTPServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := newHTTPServer.ListenAndServe(); err != nil &&
+			!errors.Is(err, http.ErrServerClosed) {
 			errChan <- fmt.Errorf("failed to start HTTP server: %w", err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := graphqlServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := graphqlServer.ListenAndServe(); err != nil &&
+			!errors.Is(err, http.ErrServerClosed) {
 			errChan <- fmt.Errorf("failed to start GraphQL server: %w", err)
 		}
 	}()

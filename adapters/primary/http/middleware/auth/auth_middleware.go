@@ -18,7 +18,10 @@ type MiddlewareAuth struct {
 	logger       logger.Logger
 }
 
-func NewAuthMiddleware(tokenService cache.TokenRepositoryPort, logger logger.Logger) *MiddlewareAuth {
+func NewAuthMiddleware(
+	tokenService cache.TokenRepositoryPort,
+	logger logger.Logger,
+) *MiddlewareAuth {
 	return &MiddlewareAuth{
 		tokenService: tokenService,
 		logger:       logger,
@@ -29,7 +32,11 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tokenCookie, err := extractTokenFromCookie(r)
 		if err != nil {
-			a.logger.Warnw(constants.ErrorUnauthorizedAccessMissingToken, constants.Error, err.Error())
+			a.logger.Warnw(
+				constants.ErrorUnauthorizedAccessMissingToken,
+				constants.Error,
+				err.Error(),
+			)
 			http.Error(w, constants.ErrorUnauthorizedAccessMissingToken, http.StatusUnauthorized)
 			return
 		}
@@ -66,7 +73,11 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 
 		_, err = a.tokenService.Get(r.Context(), tokenDomain)
 		if err != nil {
-			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, constants.Error, err.Error())
+			a.logger.Warnw(
+				constants.ErrorUnauthorizedAccessInvalidToken,
+				constants.Error,
+				err.Error(),
+			)
 			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
 			return
 		}

@@ -12,7 +12,14 @@ import (
 )
 
 func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB, error) {
-	conString := fmt.Sprintf(constants.MsgFormatConString, cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
+	conString := fmt.Sprintf(
+		constants.MsgFormatConString,
+		cfg.Host,
+		cfg.Port,
+		cfg.User,
+		cfg.Password,
+		cfg.Name,
+	)
 
 	logger.Infow(
 		constants.MsgDBConnection,
@@ -44,7 +51,11 @@ func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB,
 	return db, nil
 }
 
-func tryConnectingWithRetries(conString string, logger logger.Logger, maxRetries int) (*gorm.DB, error) {
+func tryConnectingWithRetries(
+	conString string,
+	logger logger.Logger,
+	maxRetries int,
+) (*gorm.DB, error) {
 	var db *gorm.DB
 	var err error
 
