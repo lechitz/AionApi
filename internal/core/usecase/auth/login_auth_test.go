@@ -9,7 +9,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/tests/setup"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestLogin_Success(t *testing.T) {
@@ -33,9 +33,9 @@ func TestLogin_Success(t *testing.T) {
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "test123")
 
-	assert.NoError(t, err)
-	assert.Equal(t, mockUser, userOut)
-	assert.Equal(t, "token-string", tokenOut)
+	require.NoError(t, err)
+	require.Equal(t, mockUser, userOut)
+	require.Equal(t, "token-string", tokenOut)
 }
 
 func TestLogin_UserNotFound(t *testing.T) {
@@ -50,9 +50,9 @@ func TestLogin_UserNotFound(t *testing.T) {
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "123456")
 
-	assert.Error(t, err)
-	assert.Empty(t, userOut)
-	assert.Empty(t, tokenOut)
+	require.Error(t, err)
+	require.Empty(t, userOut)
+	require.Empty(t, tokenOut)
 }
 
 func TestLogin_WrongPassword(t *testing.T) {
@@ -72,10 +72,10 @@ func TestLogin_WrongPassword(t *testing.T) {
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "wrongpass")
 
-	assert.Error(t, err)
-	assert.Empty(t, userOut)
-	assert.Empty(t, tokenOut)
-	assert.Equal(t, constants.ErrorToCompareHashAndPassword, err.Error())
+	require.Error(t, err)
+	require.Empty(t, userOut)
+	require.Empty(t, tokenOut)
+	require.Equal(t, constants.ErrorToCompareHashAndPassword, err.Error())
 }
 
 func TestLogin_TokenCreationFails(t *testing.T) {
@@ -99,8 +99,8 @@ func TestLogin_TokenCreationFails(t *testing.T) {
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "123456")
 
-	assert.Error(t, err)
-	assert.Empty(t, userOut)
-	assert.Empty(t, tokenOut)
-	assert.Equal(t, constants.ErrorToCreateToken, err.Error())
+	require.Error(t, err)
+	require.Empty(t, userOut)
+	require.Empty(t, tokenOut)
+	require.Equal(t, constants.ErrorToCreateToken, err.Error())
 }
