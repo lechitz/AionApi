@@ -36,7 +36,7 @@ func NewGraphqlServer(deps *bootstrap.AppDependencies) (*http.Server, error) {
 	router.Post("/graphql", srv.ServeHTTP)
 
 	httpServer := &http.Server{
-		Addr:              ":" + config.Setting.ServerGraphql.Port,
+		Addr:              ":" + config.Setting().ServerHTTP.Port,
 		Handler:           router,
 		ReadHeaderTimeout: 5 * time.Second,
 	}

@@ -19,7 +19,7 @@ import (
 func (r *mutationResolver) CreateCategory(ctx context.Context, category model.DtoCreateCategory) (*model.Category, error) {
 	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
-		return nil, fmt.Errorf("userID not found in context")
+		return nil, errors.New("userID not found in context")
 	}
 
 	createCategory := domain.Category{
@@ -36,8 +36,8 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, category model.Dt
 	}
 
 	return &model.Category{
-		CategoryID:  fmt.Sprintf("%d", categoryDB.ID),
-		UserID:      fmt.Sprintf("%d", categoryDB.UserID),
+		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
+		UserID:      strconv.FormatUint(userID, 10),
 		Name:        categoryDB.Name,
 		Description: &categoryDB.Description,
 		ColorHex:    &categoryDB.Color,
@@ -47,19 +47,19 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, category model.Dt
 
 // CreateTag is the resolver for the createTag field.
 func (r *mutationResolver) CreateTag(_ context.Context, _ model.NewTag) (*model.Tags, error) {
-	panic(fmt.Errorf("not implemented: CreateTag - createTag"))
+	return nil, errors.New("not implemented")
 }
 
 // UpdateCategory is the resolver for the UpdateCategory field.
 func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.DtoUpdateCategory) (*model.Category, error) {
 	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
-		return nil, fmt.Errorf("userID not found in context")
+		return nil, errors.New("userID not found in context")
 	}
 
 	categoryIDUint, err := strconv.ParseUint(category.CategoryID, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("invalid category ID format")
+		return nil, errors.New("invalid category ID format")
 	}
 
 	updateCategory := domain.Category{
@@ -86,7 +86,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 	}
 
 	return &model.Category{
-		CategoryID:  fmt.Sprintf("%d", categoryDB.ID),
+		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
 		UserID:      fmt.Sprintf("%d", categoryDB.UserID),
 		Name:        categoryDB.Name,
 		Description: &categoryDB.Description,
@@ -99,7 +99,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category model.DtoDeleteCategory) (bool, error) {
 	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
-		return false, fmt.Errorf("userID not found in context")
+		return false, errors.New("userID not found in context")
 	}
 
 	categoryIDUint, err := strconv.ParseUint(category.CategoryID, 10, 64)
@@ -124,7 +124,7 @@ func (r *queryResolver) AllCategories(ctx context.Context) ([]*model.Category, e
 	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
 		r.Logger.Errorw("User ID not found in context", "error", "userID not found in context")
-		return nil, fmt.Errorf("userID not found in context")
+		return nil, errors.New("userID not found in context")
 	}
 
 	categoryDB, err := r.CategoryService.GetAllCategories(ctx, userID)
@@ -135,8 +135,8 @@ func (r *queryResolver) AllCategories(ctx context.Context) ([]*model.Category, e
 	categories := make([]*model.Category, len(categoryDB))
 	for i, category := range categoryDB {
 		categories[i] = &model.Category{
-			CategoryID:  fmt.Sprintf("%d", category.ID),
-			UserID:      fmt.Sprintf("%d", category.UserID),
+			CategoryID:  strconv.FormatUint(category.ID, 10),
+			UserID:      strconv.FormatUint(userID, 10),
 			Name:        category.Name,
 			Description: &category.Description,
 			ColorHex:    &category.Color,
@@ -152,12 +152,12 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
 		r.Logger.Errorw("User ID not found in context", "error", "userID not found in context")
-		return nil, fmt.Errorf("userID not found in context")
+		return nil, errors.New("userID not found in context")
 	}
 
 	categoryIDUint, err := strconv.ParseUint(categoryRequest.CategoryID, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("invalid category ID format")
+		return nil, errors.New("invalid category ID format")
 	}
 
 	category := domain.Category{
@@ -171,8 +171,8 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 	}
 
 	return &model.Category{
-		CategoryID:  fmt.Sprintf("%d", categoryDB.ID),
-		UserID:      fmt.Sprintf("%d", categoryDB.UserID),
+		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
+		UserID:      strconv.FormatUint(categoryDB.UserID, 10),
 		Name:        categoryDB.Name,
 		Description: &categoryDB.Description,
 		ColorHex:    &categoryDB.Color,
@@ -185,7 +185,7 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
 		r.Logger.Errorw("User ID not found in context", "error", "userID not found in context")
-		return nil, fmt.Errorf("userID not found in context")
+		return nil, errors.New("userID not found in context")
 	}
 
 	category := domain.Category{
@@ -211,6 +211,7 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 // GetAllTags is the resolver for the GetAllTags field.
 func (r *queryResolver) GetAllTags(_ context.Context) ([]*model.Tags, error) {
 	panic(fmt.Errorf("not implemented: GetAllTags - GetAllTags"))
+	return nil, nil
 }
 
 // GetTagByID is the resolver for the GetTagByID field.

@@ -33,14 +33,14 @@ func main() {
 	}
 	logger.Infow(constants.SuccessToLoadConfiguration)
 
-	appDependencies, cleanup, err := bootstrap.InitializeDependencies(config.Setting, logger)
+	appDependencies, cleanup, err := bootstrap.InitializeDependencies(*config.Setting(), logger)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrInitializeDependencies, err)
 		return
 	}
 	logger.Infow(constants.SuccessToInitializeDependencies)
 
-	newHTTPServer, err := httpserver.NewHTTPServer(appDependencies, &config.Setting)
+	newHTTPServer, err := httpserver.NewHTTPServer(appDependencies, config.Setting())
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
 		return
@@ -50,7 +50,7 @@ func main() {
 		constants.Port,
 		newHTTPServer.Addr,
 		constants.ContextPath,
-		config.Setting.ServerHTTP.Context,
+		config.Setting().ServerHTTP.Context,
 	)
 
 	graphqlServer, err := graphqlserver.NewGraphqlServer(appDependencies)
@@ -61,7 +61,7 @@ func main() {
 	logger.Infow(
 		constants.GraphqlServerStarted,
 		constants.ContextPath,
-		config.Setting.ServerHTTP.Context,
+		config.Setting().ServerHTTP.Context,
 	)
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -97,7 +97,7 @@ func main() {
 		logger.Infow(constants.MsgShutdownSignalReceived)
 	}
 
-	shutdownTimeout := time.Duration(config.Setting.Application.Timeout)
+	shutdownTimeout := time.Duration(config.Setting().Application.Timeout)
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 

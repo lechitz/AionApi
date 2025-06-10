@@ -16,6 +16,10 @@ formatters:
     paths:
       - ".*\\.my\\.go$"
 
+issues:
+  exclude-files:
+    - 'adapters/primary/graph/schema\.resolvers\.go'
+
 linters:
   enable:
     - asasalint

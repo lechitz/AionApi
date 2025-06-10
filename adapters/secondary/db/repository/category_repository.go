@@ -101,7 +101,11 @@ func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64)
 }
 
 // UpdateCategory updates a category in the database based on its ID and user ID, updating only fields specified in the updateFields map.
-func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, updateFields map[string]interface{}) (domain.Category, error) {
+func (c CategoryRepository) UpdateCategory(
+	ctx context.Context, categoryID uint64,
+	userID uint64,
+	updateFields map[string]interface{},
+) (domain.Category, error) {
 	delete(updateFields, constants.CreatedAt)
 
 	var categoryDB model.CategoryDB

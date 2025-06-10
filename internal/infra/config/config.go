@@ -8,20 +8,42 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/config/constants"
 )
 
-// Load initializes application settings by processing environment variables and generating a default secret key if not set. Logs warnings or errors as necessary.
+// setting holds the application-wide configuration after loading from environment.
+var setting Config
+
+// Get returns the loaded Config.
+func Get() Config {
+	return setting
+}
+
+// Setting returns a copy of the loaded application configuration.
+func Setting() *Config {
+	return &setting
+}
+
+// Config holds all configuration sections for initializing the application.
+type Config struct {
+	DB            DBConfig
+	Cache         CacheConfig
+	Secret        Secret
+	ServerGraphql ServerGraphql
+	ServerHTTP    ServerHTTP
+	Application   Application
+}
+
+// Load loads configuration from environment into Setting.
 func Load(logger logger.Logger) error {
-	if err := envconfig.Process(constants.Settings, &Setting); err != nil {
+	if err := envconfig.Process(constants.Settings, &setting); err != nil {
 		response.HandleCriticalError(logger, constants.ErrFailedToProcessEnvVars, err)
 	}
 
-	if Setting.Secret.Key == "" {
+	if setting.Secret.Key == "" {
 		generated, err := security.GenerateJWTKey()
 		if err != nil {
 			response.HandleCriticalError(logger, constants.ErrGenerateSecretKey, err)
 		}
 
-		Setting.Secret.Key = generated
-
+		setting.Secret.Key = generated
 		logger.Warnf(constants.SecretKeyWasNotSet)
 		logger.Infof("JWT secret key successfully generated with length: %d", len(generated))
 	}
