@@ -49,6 +49,6 @@ func AuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 		PasswordHasher: mockSecurityStore,
 		TokenService:   mockTokenUseCase,
 		AuthService:    authService,
-		Ctx:            context.Background(),
+		Ctx:            t.Context(),
 	}
 }
