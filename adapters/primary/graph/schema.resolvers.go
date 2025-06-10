@@ -30,7 +30,7 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, category model.Dt
 		Icon:        *category.Icon,
 	}
 
-	categoryDB, err := r.Resolver.CategoryService.CreateCategory(ctx, createCategory)
+	categoryDB, err := r.CategoryService.CreateCategory(ctx, createCategory)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 		updateCategory.Icon = *category.Icon
 	}
 
-	categoryDB, err := r.Resolver.CategoryService.UpdateCategory(ctx, updateCategory)
+	categoryDB, err := r.CategoryService.UpdateCategory(ctx, updateCategory)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 		UserID: userID,
 	}
 
-	if err := r.Resolver.CategoryService.SoftDeleteCategory(ctx, categoryDomain); err != nil {
+	if err := r.CategoryService.SoftDeleteCategory(ctx, categoryDomain); err != nil {
 		return false, err
 	}
 
@@ -127,7 +127,7 @@ func (r *queryResolver) AllCategories(ctx context.Context) ([]*model.Category, e
 		return nil, fmt.Errorf("userID not found in context")
 	}
 
-	categoryDB, err := r.Resolver.CategoryService.GetAllCategories(ctx, userID)
+	categoryDB, err := r.CategoryService.GetAllCategories(ctx, userID)
 	if err != nil {
 		return nil, errors.New("failed to fetch categories")
 	}
@@ -165,7 +165,7 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 		UserID: userID,
 	}
 
-	categoryDB, err := r.Resolver.CategoryService.GetCategoryByID(ctx, category)
+	categoryDB, err := r.CategoryService.GetCategoryByID(ctx, category)
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +193,7 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 		Name:   categoryRequest.Name,
 	}
 
-	categoryDB, err := r.Resolver.CategoryService.GetCategoryByName(ctx, category)
+	categoryDB, err := r.CategoryService.GetCategoryByName(ctx, category)
 	if err != nil {
 		return nil, err
 	}
