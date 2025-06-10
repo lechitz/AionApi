@@ -6,9 +6,9 @@ import "time"
 // DBConfig holds database connection configuration.
 type DBConfig struct {
 	Name     string `envconfig:"DB_NAME"     required:"true"`
-	Host     string `envconfig:"DB_HOST"     default:"localhost"`
-	Port     string `envconfig:"DB_PORT"     default:"5432"`
-	Type     string `envconfig:"DB_TYPE"     default:"postgres"`
+	Host     string `envconfig:"DB_HOST"                     default:"localhost"`
+	Port     string `envconfig:"DB_PORT"                     default:"5432"`
+	Type     string `envconfig:"DB_TYPE"                     default:"postgres"`
 	User     string `envconfig:"DB_USER"     required:"true"`
 	Password string `envconfig:"DB_PASSWORD" required:"true"`
 }
@@ -33,7 +33,7 @@ type ServerGraphql struct {
 
 // ServerHTTP holds HTTP server configuration.
 type ServerHTTP struct {
-	Port         string        `envconfig:"HTTP_PORT"          default:"5001" required:"true"`
+	Port         string        `envconfig:"HTTP_PORT"          default:"5001"     required:"true"`
 	Context      string        `envconfig:"HTTP_CONTEXT"       default:"aion-api"`
 	ReadTimeout  time.Duration `envconfig:"HTTP_READ_TIMEOUT"  default:"10s"`
 	WriteTimeout time.Duration `envconfig:"HTTP_WRITE_TIMEOUT" default:"10s"`
