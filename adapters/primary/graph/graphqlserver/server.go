@@ -8,6 +8,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/go-chi/chi/v5"
+
 	"github.com/lechitz/AionApi/adapters/primary/graph"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/recovery"
@@ -18,28 +19,24 @@ import (
 // NewGraphqlServer initializes and returns a new HTTP server configured for handling GraphQL requests.
 func NewGraphqlServer(deps *bootstrap.AppDependencies) (*http.Server, error) {
 	router := chi.NewRouter()
-
-	authMiddleware := auth.NewAuthMiddleware(deps.TokenRepository, deps.Logger)
-	router.Use(authMiddleware.Auth)
+	router.Use(auth.NewAuthMiddleware(deps.TokenRepository, deps.Logger).Auth)
 	router.Use(recovery.RecoverMiddleware(deps.Logger))
 
-	schema := graph.NewExecutableSchema(graph.Config{
-		Resolvers: &graph.Resolver{
-			CategoryService: deps.CategoryService,
-			Logger:          deps.Logger,
-		},
-	})
+	resolver := &graph.Resolver{
+		CategoryService: deps.CategoryService,
+		Logger:          deps.Logger,
+	}
 
-	srv := handler.New(schema)
+	srv := handler.New(
+		graph.NewExecutableSchema(graph.Config{Resolvers: resolver}),
+	)
 	srv.AddTransport(transport.POST{})
 
-	router.Post("/graphql", srv.ServeHTTP)
-
-	httpServer := &http.Server{
+	httpSrv := &http.Server{
 		Addr:              ":" + config.Setting().ServerHTTP.Port,
 		Handler:           router,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
-	return httpServer, nil
+	return httpSrv, nil
 }

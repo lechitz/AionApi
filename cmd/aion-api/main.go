@@ -33,35 +33,32 @@ func main() {
 	}
 	logger.Infow(constants.SuccessToLoadConfiguration)
 
-	appDependencies, cleanup, err := bootstrap.InitializeDependencies(*config.Setting(), logger)
+	appDeps, cleanup, err := bootstrap.InitializeDependencies(*config.Setting(), logger)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrInitializeDependencies, err)
 		return
 	}
 	logger.Infow(constants.SuccessToInitializeDependencies)
 
-	newHTTPServer, err := httpserver.NewHTTPServer(appDependencies, config.Setting())
+	newHTTPServer, err := httpserver.NewHTTPServer(appDeps, config.Setting())
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
 		return
 	}
 	logger.Infow(
 		constants.ServerHTTPStarted,
-		constants.Port,
-		newHTTPServer.Addr,
-		constants.ContextPath,
-		config.Setting().ServerHTTP.Context,
+		constants.Port, newHTTPServer.Addr,
+		constants.ContextPath, config.Setting().ServerHTTP.Context,
 	)
 
-	graphqlServer, err := graphqlserver.NewGraphqlServer(appDependencies)
+	graphqlServer, err := graphqlserver.NewGraphqlServer(appDeps)
 	if err != nil {
 		logger.Errorw(constants.ErrStartGraphqlServer, constants.Error, err)
 		return
 	}
 	logger.Infow(
 		constants.GraphqlServerStarted,
-		constants.ContextPath,
-		config.Setting().ServerHTTP.Context,
+		constants.ContextPath, config.Setting().ServerHTTP.Context,
 	)
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -69,21 +66,17 @@ func main() {
 
 	var wg sync.WaitGroup
 	wg.Add(2)
-
 	errChan := make(chan error, 2)
 
 	go func() {
 		defer wg.Done()
-		if err := newHTTPServer.ListenAndServe(); err != nil &&
-			!errors.Is(err, http.ErrServerClosed) {
+		if err := newHTTPServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			errChan <- fmt.Errorf("failed to start HTTP server: %w", err)
 		}
 	}()
-
 	go func() {
 		defer wg.Done()
-		if err := graphqlServer.ListenAndServe(); err != nil &&
-			!errors.Is(err, http.ErrServerClosed) {
+		if err := graphqlServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			errChan <- fmt.Errorf("failed to start GraphQL server: %w", err)
 		}
 	}()
@@ -101,15 +94,8 @@ func main() {
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 
-	if err := newHTTPServer.Shutdown(shutdownCtx); err != nil {
-		logger.Errorw(constants.ErrHTTPGracefulShutdown, constants.Error, err.Error())
-	} else {
-		logger.Infow(constants.MsgGracefulShutdownSuccess)
-	}
-
-	if err := graphqlServer.Shutdown(shutdownCtx); err != nil {
-		logger.Errorw(constants.ErrGraphqlGracefulShutdown, constants.Error, err)
-	}
+	_ = newHTTPServer.Shutdown(shutdownCtx)
+	_ = graphqlServer.Shutdown(shutdownCtx)
 
 	cleanup()
 	wg.Wait()
