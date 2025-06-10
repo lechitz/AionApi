@@ -30,18 +30,3 @@ const Token = "token"
 
 // UserID is the key used to identify a user.
 const UserID = "user_id"
-
-// Name is the key used for the user's name.
-const Name = "name"
-
-// Username is the key used for the user's username.
-const Username = "username"
-
-// Email is the key used for the user's email.
-const Email = "email"
-
-// Password is the key used for the user's password.
-const Password = "password"
-
-// UpdatedAt is the key used for the updated at timestamp.
-const UpdatedAt = "updated_at"

@@ -21,6 +21,3 @@ const ErrorToDeleteTokenFromRedis = "error to delete token from Redis"
 
 // SuccessToUpdateTokenInRedis indicates a successful update of a token in Redis.
 const SuccessToUpdateTokenInRedis = "success to update token in Redis"
-
-// SuccessToGetTokenFromRedis indicates successful retrieval of a token from Redis.
-const SuccessToGetTokenFromRedis = "success to get token from Redis"
