@@ -2,6 +2,7 @@
 package httpserver
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -15,10 +16,6 @@ import (
 )
 
 // RouteComposer is a structure for configuring routes, middlewares, and logging in the HTTP router.
-// Router is the HTTP router instance used to define and manage routes.
-// Logger handles logging information related to routing and middleware operations.
-// authMiddleware is used to implement authentication middleware for route protection.
-// BasePath represents the base route path for the application.// RouteComposer represents a structure to handle route compositions, middlewares, and logging in an HTTP router.
 type RouteComposer struct {
 	Router         portRouter.Router
 	logger         logger.Logger
@@ -59,11 +56,11 @@ func (r *RouteComposer) GetRouter() portRouter.Router {
 // normalizeContextPath ensures the given context path starts with '/' and is valid, according to application rules. Returns the normalized path or an error.
 func normalizeContextPath(raw string) (string, error) {
 	if raw == "" {
-		return "", fmt.Errorf(constants.ErrContextPathEmpty)
+		return "", errors.New(constants.ErrContextPathEmpty)
 	}
 
 	if strings.Contains(raw[1:], "/") {
-		return "", fmt.Errorf(constants.ErrContextPathSlash)
+		return "", errors.New(constants.ErrContextPathSlash)
 	}
 
 	if raw[0] != '/' {
