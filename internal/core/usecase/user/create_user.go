@@ -1,3 +1,4 @@
+// Package user contains use cases for managing users in the system.
 package user
 
 import (
@@ -9,7 +10,8 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
-type UserCreator interface {
+// Creator defines the interface for creating a new user in the system. It returns the created user or an error.
+type Creator interface {
 	CreateUser(
 		ctx context.Context,
 		user domain.UserDomain,
@@ -17,7 +19,8 @@ type UserCreator interface {
 	) (domain.UserDomain, error)
 }
 
-func (s *UserService) CreateUser(
+// CreateUser creates a new user with the given data and password, ensuring validations and unique constraints are met. Returns the created user or an error.
+func (s *Service) CreateUser(
 	ctx context.Context,
 	user domain.UserDomain,
 	password string,

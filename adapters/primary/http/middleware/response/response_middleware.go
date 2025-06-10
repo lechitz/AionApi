@@ -1,3 +1,4 @@
+// Package response provides common HTTP response handling functions and middleware.
 package response
 
 import (
@@ -9,7 +10,8 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
-func ResponseReturn(w http.ResponseWriter, statusCode int, body []byte, logger logger.Logger) {
+// Return sends an HTTP response with the specified status code and body, logging errors if writing the body fails.
+func Return(w http.ResponseWriter, statusCode int, body []byte, logger logger.Logger) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
@@ -20,6 +22,7 @@ func ResponseReturn(w http.ResponseWriter, statusCode int, body []byte, logger l
 	}
 }
 
+// ObjectResponse creates a JSON response with the given object, message, and current UTC date and returns it as a byte.Buffer.
 func ObjectResponse(obj any, message string, logger logger.Logger) *bytes.Buffer {
 	response := struct {
 		Date    time.Time `json:"date,omitempty"`
@@ -39,6 +42,7 @@ func ObjectResponse(obj any, message string, logger logger.Logger) *bytes.Buffer
 	return body
 }
 
+// HandleError logs the error or warning, creates a JSON response, and sends it with the specified status code to the HTTP client.
 func HandleError(w http.ResponseWriter, logger logger.Logger, status int, msg string, err error) {
 	if err != nil {
 		logger.Errorw("operation failed",
@@ -47,17 +51,18 @@ func HandleError(w http.ResponseWriter, logger logger.Logger, status int, msg st
 			"status", status,
 		)
 		response := ObjectResponse(nil, msg+": "+err.Error(), logger)
-		ResponseReturn(w, status, response.Bytes(), logger)
+		Return(w, status, response.Bytes(), logger)
 	} else {
 		logger.Warnw("operation returned warning",
 			"message", msg,
 			"status", status,
 		)
 		response := ObjectResponse(nil, msg, logger)
-		ResponseReturn(w, status, response.Bytes(), logger)
+		Return(w, status, response.Bytes(), logger)
 	}
 }
 
+// HandleCriticalError logs a critical error and message, and then panics with the error or message provided.
 func HandleCriticalError(logger logger.Logger, message string, err error) {
 	if err != nil {
 		logger.Errorw("critical failure",
@@ -65,10 +70,10 @@ func HandleCriticalError(logger logger.Logger, message string, err error) {
 			"error", err.Error(),
 		)
 		panic(err)
-	} else {
-		logger.Errorw("critical failure",
-			"message", message,
-		)
-		panic(message)
 	}
+
+	logger.Errorw("critical failure",
+		"message", message,
+	)
+	panic(message)
 }

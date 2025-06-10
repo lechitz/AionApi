@@ -1,3 +1,4 @@
+// Package auth provides functionality for authentication in HTTP middleware.
 package auth
 
 import (
@@ -13,11 +14,14 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/config"
 )
 
+// MiddlewareAuth provides functionality for authentication in HTTP middleware.
+// It utilizes token services for validation and logging for operational insight.
 type MiddlewareAuth struct {
 	tokenService cache.TokenRepositoryPort
 	logger       logger.Logger
 }
 
+// NewAuthMiddleware creates and initializes a middleware for authentication using the provided token service and logger.
 func NewAuthMiddleware(
 	tokenService cache.TokenRepositoryPort,
 	logger logger.Logger,
@@ -28,6 +32,7 @@ func NewAuthMiddleware(
 	}
 }
 
+// Auth is an HTTP middleware that validates JWT tokens in incoming requests and attaches user context to the request if valid.
 func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tokenCookie, err := extractTokenFromCookie(r)
@@ -41,7 +46,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		parsedToken, err := jwt.Parse(tokenCookie, func(token *jwt.Token) (interface{}, error) {
+		parsedToken, err := jwt.Parse(tokenCookie, func(_ *jwt.Token) (interface{}, error) {
 			return []byte(config.Setting.Secret.Key), nil
 		})
 		if err != nil || parsedToken == nil || !parsedToken.Valid {
@@ -89,6 +94,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	})
 }
 
+// extractTokenFromCookie retrieves the auth token from the request cookie named AuthToken and returns it as a string, or an error if not present.
 func extractTokenFromCookie(r *http.Request) (string, error) {
 	cookie, err := r.Cookie(constants.AuthToken)
 	if err != nil {

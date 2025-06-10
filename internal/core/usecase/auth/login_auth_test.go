@@ -13,7 +13,7 @@ import (
 )
 
 func TestLogin_Success(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	inputUser := domain.UserDomain{Username: "lechitz"}
@@ -39,7 +39,7 @@ func TestLogin_Success(t *testing.T) {
 }
 
 func TestLogin_UserNotFound(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	inputUser := domain.UserDomain{Username: "invalid_user"}
@@ -56,7 +56,7 @@ func TestLogin_UserNotFound(t *testing.T) {
 }
 
 func TestLogin_WrongPassword(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	inputUser := domain.UserDomain{Username: "lechitz"}
@@ -79,7 +79,7 @@ func TestLogin_WrongPassword(t *testing.T) {
 }
 
 func TestLogin_TokenCreationFails(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	inputUser := domain.UserDomain{Username: "lechitz"}

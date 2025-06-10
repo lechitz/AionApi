@@ -1,3 +1,4 @@
+// Package model The package model contains database models for the application.
 package model
 
 import (
@@ -7,6 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// CategoryDB represents the database model for a category entity with metadata and user association.
 type CategoryDB struct {
 	CreatedAt   time.Time      `gorm:"column:created_at"`
 	UpdatedAt   time.Time      `gorm:"column:updated_at"`
@@ -19,6 +21,7 @@ type CategoryDB struct {
 	UserID      uint64         `gorm:"column:user_id"`
 }
 
+// TableName specifies the database table name for the CategoryDB model.
 func (CategoryDB) TableName() string {
 	return constants.CategoryTable
 }

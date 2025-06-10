@@ -12,7 +12,7 @@ import (
 )
 
 func TestCreateUser_Success(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
@@ -45,7 +45,7 @@ func TestCreateUser_Success(t *testing.T) {
 }
 
 func TestCreateUser_ErrorToGetUserByUsername(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
@@ -67,7 +67,7 @@ func TestCreateUser_ErrorToGetUserByUsername(t *testing.T) {
 }
 
 func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
@@ -93,7 +93,7 @@ func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
 }
 
 func TestCreateUser_ErrorToHashPassword(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
@@ -123,7 +123,7 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 }
 
 func TestCreateUser_ErrorToCreateUser(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{

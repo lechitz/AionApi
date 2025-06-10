@@ -12,7 +12,7 @@ import (
 )
 
 func TestUpdateUser_Success(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{
@@ -33,7 +33,7 @@ func TestUpdateUser_Success(t *testing.T) {
 }
 
 func TestUpdateUser_NoFieldsToUpdate(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{ID: setup.TestPerfectUser.ID}
@@ -46,7 +46,7 @@ func TestUpdateUser_NoFieldsToUpdate(t *testing.T) {
 }
 
 func TestUpdateUserPassword_Success(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := setup.TestPerfectUser
@@ -92,7 +92,7 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 }
 
 func TestUpdateUserPassword_ErrorToGetUserByID(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := setup.TestPerfectUser
@@ -117,7 +117,7 @@ func TestUpdateUserPassword_ErrorToGetUserByID(t *testing.T) {
 }
 
 func TestUpdateUserPassword_ErrorToCompareHashAndPassword(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := setup.TestPerfectUser
@@ -146,7 +146,7 @@ func TestUpdateUserPassword_ErrorToCompareHashAndPassword(t *testing.T) {
 }
 
 func TestUpdateUserPassword_ErrorToHashPassword(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := setup.TestPerfectUser
@@ -179,7 +179,7 @@ func TestUpdateUserPassword_ErrorToHashPassword(t *testing.T) {
 }
 
 func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := setup.TestPerfectUser
@@ -217,7 +217,7 @@ func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
 }
 
 func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := setup.TestPerfectUser
@@ -259,7 +259,7 @@ func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
 }
 
 func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	input := domain.UserDomain{

@@ -5,17 +5,16 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
-type CategoryService struct {
-	CategoryRepository db.CategoryStore
-	Logger             logger.Logger
+// Service provides operations for managing categories including creation, retrieval, updates, and soft deletion, utilizing a repository and logger.
+type Service struct {
+	Repository db.CategoryStore
+	Logger     logger.Logger
 }
 
-func NewCategoryService(
-	categoryRepository db.CategoryStore,
-	logger logger.Logger,
-) *CategoryService {
-	return &CategoryService{
-		CategoryRepository: categoryRepository,
-		Logger:             logger,
+// NewCategoryService creates and returns a new instance of Service with the given repository and logger dependencies.
+func NewCategoryService(repository db.CategoryStore, logger logger.Logger) *Service {
+	return &Service{
+		Repository: repository,
+		Logger:     logger,
 	}
 }

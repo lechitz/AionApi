@@ -10,19 +10,16 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
-type UserUpdater interface {
+// Updater defines methods to update user information and change user passwords in the system.
+// UpdateUser updates a user's details in the system and returns the updated user or an error.
+// UpdateUserPassword changes a user's password, verifying the old password, and returns the updated user, a confirmation, or an error.
+type Updater interface {
 	UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error)
-	UpdateUserPassword(
-		ctx context.Context,
-		user domain.UserDomain,
-		oldPassword, newPassword string,
-	) (domain.UserDomain, string, error)
+	UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error)
 }
 
-func (s *UserService) UpdateUser(
-	ctx context.Context,
-	user domain.UserDomain,
-) (domain.UserDomain, error) {
+// UpdateUser updates an existing user's attributes based on the provided data. Returns the updated user or an error if the operation fails.
+func (s *Service) UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error) {
 	updateFields := make(map[string]interface{})
 
 	if user.Name != "" {
@@ -49,11 +46,8 @@ func (s *UserService) UpdateUser(
 	return updatedUser, nil
 }
 
-func (s *UserService) UpdateUserPassword(
-	ctx context.Context,
-	user domain.UserDomain,
-	oldPassword, newPassword string,
-) (domain.UserDomain, string, error) {
+// UpdateUserPassword updates a user's password after validating the old password and hashing the new password, then returns the updated user and a new token.
+func (s *Service) UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error) {
 	userDB, err := s.userRepository.GetUserByID(ctx, user.ID)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToGetUserByID, constants.Error, err.Error())

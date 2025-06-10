@@ -1,3 +1,4 @@
+// Package graph implements the GraphQL resolvers for the API.
 package graph
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
@@ -45,10 +46,7 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, category model.Dt
 }
 
 // CreateTag is the resolver for the createTag field.
-func (r *mutationResolver) CreateTag(
-	ctx context.Context,
-	input model.NewTag,
-) (*model.Tags, error) {
+func (r *mutationResolver) CreateTag(_ context.Context, _ model.NewTag) (*model.Tags, error) {
 	panic(fmt.Errorf("not implemented: CreateTag - createTag"))
 }
 
@@ -211,12 +209,12 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 }
 
 // GetAllTags is the resolver for the GetAllTags field.
-func (r *queryResolver) GetAllTags(ctx context.Context) ([]*model.Tags, error) {
+func (r *queryResolver) GetAllTags(_ context.Context) ([]*model.Tags, error) {
 	panic(fmt.Errorf("not implemented: GetAllTags - GetAllTags"))
 }
 
 // GetTagByID is the resolver for the GetTagByID field.
-func (r *queryResolver) GetTagByID(ctx context.Context, tagID string) (*model.Tags, error) {
+func (r *queryResolver) GetTagByID(_ context.Context, _ string) (*model.Tags, error) {
 	panic(fmt.Errorf("not implemented: GetTagByID - GetTagByID"))
 }
 
@@ -226,5 +224,10 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// mutationResolver serves as the GraphQL resolver implementation for mutation-related operations.
+// It embeds the Resolver to access shared services and utilities.
 type mutationResolver struct{ *Resolver }
+
+// queryResolver is a GraphQL type implementing the QueryResolver interface for handling query operations.
+// It embeds Resolver to access services and logging utilities.
 type queryResolver struct{ *Resolver }

@@ -1,3 +1,4 @@
+// Package db provides database connection and management functions.
 package db
 
 import (
@@ -11,6 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// NewDatabaseConnection initializes a database connection using the provided configuration and logger. Returns a Gorm DB instance or an error.
 func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB, error) {
 	conString := fmt.Sprintf(
 		constants.MsgFormatConString,
@@ -51,11 +53,12 @@ func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB,
 	return db, nil
 }
 
-func tryConnectingWithRetries(
-	conString string,
-	logger logger.Logger,
-	maxRetries int,
-) (*gorm.DB, error) {
+// tryConnectingWithRetries attempts to establish a database connection with retries.
+// conString is the connection string for the database.
+// logger logs information and warnings during connection attempts.
+// maxRetries specifies the maximum number of connection attempts.
+// Returns a Gorm DB instance on success or an error if all attempts fail.
+func tryConnectingWithRetries(conString string, logger logger.Logger, maxRetries int) (*gorm.DB, error) {
 	var db *gorm.DB
 	var err error
 
@@ -72,6 +75,7 @@ func tryConnectingWithRetries(
 	return nil, err
 }
 
+// Close terminates the database connection and logs success or error messages using the provided logger.
 func Close(DB *gorm.DB, logger logger.Logger) {
 	sqlDB, err := DB.DB()
 	if err != nil {

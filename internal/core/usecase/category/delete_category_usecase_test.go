@@ -12,7 +12,7 @@ import (
 )
 
 func TestSoftDeleteCategory_ErrorToGetCategoryByID(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	suite.CategoryRepository.EXPECT().
@@ -24,7 +24,7 @@ func TestSoftDeleteCategory_ErrorToGetCategoryByID(t *testing.T) {
 }
 
 func TestSoftDeleteCategory_ErrorToSoftDeleteCategory(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	suite.CategoryRepository.EXPECT().
@@ -40,7 +40,7 @@ func TestSoftDeleteCategory_ErrorToSoftDeleteCategory(t *testing.T) {
 }
 
 func TestSoftDeleteCategory_Success(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	suite.CategoryRepository.EXPECT().

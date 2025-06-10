@@ -1,3 +1,4 @@
+// Package auth provides operations for managing user authentication and token management.
 package auth
 
 import (
@@ -7,22 +8,24 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 )
 
-type AuthService struct {
+// Service provides authentication operations including login, logout, and user token management.
+type Service struct {
 	userRetriever  db.UserRetriever
-	tokenService   token.TokenUsecase
-	securityHasher security.SecurityStore
+	tokenService   token.Usecase
+	securityHasher security.Store
 	logger         logger.Logger
 	secretKey      string
 }
 
+// NewAuthService creates and returns a new instance of Service with dependencies for user retrieval, token management, and security operations.
 func NewAuthService(
 	userRetriever db.UserStore,
-	tokenService token.TokenUsecase,
-	securityHasher security.SecurityStore,
+	tokenService token.Usecase,
+	securityHasher security.Store,
 	logger logger.Logger,
 	secretKey string,
-) *AuthService {
-	return &AuthService{
+) *Service {
+	return &Service{
 		userRetriever:  userRetriever,
 		tokenService:   tokenService,
 		securityHasher: securityHasher,

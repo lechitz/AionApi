@@ -10,11 +10,15 @@ import (
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 )
 
+// RouterBuilder is a struct for building and configuring HTTP routers with middleware and route handlers.
+// Router holds the instance of a portRouter.Router interface for route management.
+// ContextPath defines the base path under which all routes will be nested.
 type RouterBuilder struct {
 	Router      portRouter.Router
 	ContextPath string
 }
 
+// BuildRouterRoutes sets up API routes, integrates middlewares, and returns the configured router with error (if any).
 func BuildRouterRoutes(
 	logger logger.Logger,
 	userService http.UserService,

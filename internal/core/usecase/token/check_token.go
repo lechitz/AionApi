@@ -1,3 +1,4 @@
+// Package token defines use cases for token-related operations.
 package token
 
 import (
@@ -9,8 +10,9 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
 )
 
-func (s *TokenService) VerifyToken(ctx context.Context, token string) (uint64, string, error) {
-	parsedToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+// VerifyToken validates the provided token, checks for a match in the cache, and returns the associated user ID and token or an error.
+func (s *Service) VerifyToken(ctx context.Context, token string) (uint64, string, error) {
+	parsedToken, err := jwt.Parse(token, func(_ *jwt.Token) (interface{}, error) {
 		return []byte(s.configToken.SecretKey), nil
 	})
 	if err != nil || parsedToken == nil || !parsedToken.Valid {

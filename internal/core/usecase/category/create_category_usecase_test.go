@@ -12,7 +12,7 @@ import (
 )
 
 func TestCreateCategory_ErrorToValidateCreateCategoryRequired_Name(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -25,7 +25,7 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_Name(t *testing.T)
 }
 
 func TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedLimit(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -38,7 +38,7 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedL
 }
 
 func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -54,7 +54,7 @@ func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
 }
 
 func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -74,7 +74,7 @@ func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
 }
 
 func TestCreateCategory_Success(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory

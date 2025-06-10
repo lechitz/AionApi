@@ -12,7 +12,7 @@ import (
 )
 
 func TestGetCategoryByID_InvalidCategoryID(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -29,7 +29,7 @@ func TestGetCategoryByID_InvalidCategoryID(t *testing.T) {
 }
 
 func TestGetCategoryByID_ErrorToGetCategoryByID(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -45,7 +45,7 @@ func TestGetCategoryByID_ErrorToGetCategoryByID(t *testing.T) {
 }
 
 func TestGetCategoryByID_ErrorToCreateCategory(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -62,7 +62,7 @@ func TestGetCategoryByID_ErrorToCreateCategory(t *testing.T) {
 }
 
 func TestGetCategoryByID_Success(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	suite.CategoryRepository.EXPECT().
@@ -77,7 +77,7 @@ func TestGetCategoryByID_Success(t *testing.T) {
 }
 
 func TestGetCategoryByName_InvalidCategoryName(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -94,7 +94,7 @@ func TestGetCategoryByName_InvalidCategoryName(t *testing.T) {
 }
 
 func TestGetCategoryByName_ErrorToGetCategoryByName(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -111,7 +111,7 @@ func TestGetCategoryByName_ErrorToGetCategoryByName(t *testing.T) {
 }
 
 func TestGetCategoryByName_Success(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -127,7 +127,7 @@ func TestGetCategoryByName_Success(t *testing.T) {
 }
 
 func TestGetAllCategories_ErrorToGetAllCategories(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	userID := testdata.TestPerfectUser.ID
@@ -144,7 +144,7 @@ func TestGetAllCategories_ErrorToGetAllCategories(t *testing.T) {
 }
 
 func TestGetAllCategories_Success(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	userID := testdata.TestPerfectUser.ID

@@ -1,3 +1,4 @@
+// Package httpserver provides functionality for configuring and managing HTTP routers.
 package httpserver
 
 import (
@@ -13,6 +14,11 @@ import (
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 )
 
+// RouteComposer is a structure for configuring routes, middlewares, and logging in the HTTP router.
+// Router is the HTTP router instance used to define and manage routes.
+// Logger handles logging information related to routing and middleware operations.
+// authMiddleware is used to implement authentication middleware for route protection.
+// BasePath represents the base route path for the application.// RouteComposer represents a structure to handle route compositions, middlewares, and logging in an HTTP router.
 type RouteComposer struct {
 	Router         portRouter.Router
 	logger         logger.Logger
@@ -20,7 +26,8 @@ type RouteComposer struct {
 	BasePath       string
 }
 
-func NewHttpRouter(
+// NewHTTPRouter creates and configures a new HTTP router with middleware and authentication.
+func NewHTTPRouter(
 	logger logger.Logger,
 	tokenRepository cache.TokenRepositoryPort,
 	contextPath string,
@@ -44,10 +51,12 @@ func NewHttpRouter(
 	}, nil
 }
 
+// GetRouter retrieves the current router instance used for managing HTTP routes.
 func (r *RouteComposer) GetRouter() portRouter.Router {
 	return r.Router
 }
 
+// normalizeContextPath ensures the given context path starts with '/' and is valid, according to application rules. Returns the normalized path or an error.
 func normalizeContextPath(raw string) (string, error) {
 	if raw == "" {
 		return "", fmt.Errorf(constants.ErrContextPathEmpty)

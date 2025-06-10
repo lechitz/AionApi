@@ -8,11 +8,13 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
 )
 
+// Creator defines a contract for generating tokens with the provided context and token domain.
 type Creator interface {
 	CreateToken(ctx context.Context, token domain.TokenDomain) (string, error)
 }
 
-func (s *TokenService) CreateToken(
+// CreateToken generates a new token for the provided user, saves it in the repository, and returns the signed token or an error.
+func (s *Service) CreateToken(
 	ctx context.Context,
 	tokenDomain domain.TokenDomain,
 ) (string, error) {

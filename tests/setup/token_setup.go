@@ -11,15 +11,17 @@ import (
 	mockToken "github.com/lechitz/AionApi/tests/mocks/token"
 )
 
+// TokenServiceTestSuite is a test suite for testing TokenService with mocked dependencies and utilities for test cases.// TokenServiceTestSuite is a struct for managing the dependencies needed to test the TokenService implementation.
 type TokenServiceTestSuite struct {
 	Ctrl         *gomock.Controller
 	Logger       *mockLogger.MockLogger
 	TokenStore   *mockToken.MockTokenRepositoryPort
-	TokenService token.TokenUsecase
+	TokenService token.Usecase
 	Ctx          context.Context
 }
 
-func SetupTokenServiceTest(t *testing.T, secretKey string) *TokenServiceTestSuite {
+// TokenServiceTest initializes a test suite for Service with mocked dependencies and a given secret key.
+func TokenServiceTest(t *testing.T, secretKey string) *TokenServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	mockLog := mockLogger.NewMockLogger(ctrl)

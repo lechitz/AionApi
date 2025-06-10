@@ -10,7 +10,7 @@ import (
 )
 
 func TestLogout_Success(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	token := "valid.token.value" // #nosec G101
@@ -30,7 +30,7 @@ func TestLogout_Success(t *testing.T) {
 }
 
 func TestLogout_CheckTokenFails(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	token := "invalid.token.value"
@@ -46,7 +46,7 @@ func TestLogout_CheckTokenFails(t *testing.T) {
 }
 
 func TestLogout_DeleteTokenFails(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	token := "valid.token.value" // #nosec G101

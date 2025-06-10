@@ -3,24 +3,44 @@ package constants
 // UserID is the key used to identify a user in context or request scope.
 const UserID = "user_id"
 
-// Error messages returned by user operations.
-const (
-	ErrorToDecodeUserRequest            = "error to decode user request"
-	ErrorToCreateUser                   = "error to create user"
-	ErrorToGetUser                      = "error to get user"
-	ErrorToGetUsers                     = "error to get users"
-	ErrorToUpdateUser                   = "error to update user"
-	ErrorToSoftDeleteUser               = "error to soft delete user"
-	ErrorToParseUser                    = "error to parse user"
-	ErrorUnauthorizedAccessMissingToken = "error unauthorized access missing token" // #nosec G101
-)
+// ErrorToDecodeUserRequest is returned when decoding a user request fails.
+const ErrorToDecodeUserRequest = "error to decode user request"
 
-// Success messages returned by user operations.
-const (
-	SuccessToCreateUser     = "user created successfully"
-	SuccessToGetUser        = "user get successfully"
-	SuccessToGetUsers       = "users get successfully"
-	SuccessToUpdateUser     = "user updated successfully"
-	SuccessToUpdatePassword = "password updated successfully"
-	SuccessUserSoftDeleted  = "user deleted successfully"
-)
+// ErrorToCreateUser is returned when user creation fails.
+const ErrorToCreateUser = "error to create user"
+
+// ErrorToGetUser is returned when getting a user fails.
+const ErrorToGetUser = "error to get user"
+
+// ErrorToGetUsers is returned when getting users fails.
+const ErrorToGetUsers = "error to get users"
+
+// ErrorToUpdateUser is returned when updating a user fails.
+const ErrorToUpdateUser = "error to update user"
+
+// ErrorToSoftDeleteUser is returned when soft deleting a user fails.
+const ErrorToSoftDeleteUser = "error to soft delete user"
+
+// ErrorToParseUser is returned when parsing a user fails.
+const ErrorToParseUser = "error to parse user"
+
+// ErrorUnauthorizedAccessMissingToken is returned when unauthorized access occurs due to a missing token.
+const ErrorUnauthorizedAccessMissingToken = "error unauthorized access missing token" // #nosec G101
+
+// SuccessToCreateUser indicates a successful user creation.
+const SuccessToCreateUser = "user created successfully"
+
+// SuccessToGetUser indicates a successful user retrieval.
+const SuccessToGetUser = "user get successfully"
+
+// SuccessToGetUsers indicates a successful users retrieval.
+const SuccessToGetUsers = "users get successfully"
+
+// SuccessToUpdateUser indicates a successful user update.
+const SuccessToUpdateUser = "user updated successfully"
+
+// SuccessToUpdatePassword indicates a successful password update.
+const SuccessToUpdatePassword = "password updated successfully"
+
+// SuccessUserSoftDeleted indicates a successful soft deletion of a user.
+const SuccessUserSoftDeleted = "user deleted successfully"

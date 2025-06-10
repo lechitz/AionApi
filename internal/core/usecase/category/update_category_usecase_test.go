@@ -12,7 +12,7 @@ import (
 )
 
 func TestUpdateCategory_ErrorToUpdateCategory(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	updateFields := map[string]interface{}{
@@ -34,7 +34,7 @@ func TestUpdateCategory_ErrorToUpdateCategory(t *testing.T) {
 }
 
 func TestUpdateCategory_Success(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory

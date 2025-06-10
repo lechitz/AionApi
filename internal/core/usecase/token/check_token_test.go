@@ -15,7 +15,7 @@ import (
 )
 
 func TestVerifyToken_Success(t *testing.T) {
-	suite := setup.SetupTokenServiceTest(t, constants.SecretKey)
+	suite := setup.TokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
 
 	userID := testdata.TestPerfectUser.ID
@@ -35,7 +35,7 @@ func TestVerifyToken_Success(t *testing.T) {
 }
 
 func TestCheck_InvalidToken(t *testing.T) {
-	suite := setup.SetupTokenServiceTest(t, constants.SecretKey)
+	suite := setup.TokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
 
 	config.Setting.Secret.Key = constants.SecretKey
@@ -48,7 +48,7 @@ func TestCheck_InvalidToken(t *testing.T) {
 }
 
 func TestCheck_TokenMismatch(t *testing.T) {
-	suite := setup.SetupTokenServiceTest(t, constants.SecretKey)
+	suite := setup.TokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
 
 	userID := uint64(1)
@@ -69,7 +69,7 @@ func TestCheck_TokenMismatch(t *testing.T) {
 }
 
 func TestCheck_ErrorToRetrieveTokenFromCache(t *testing.T) {
-	suite := setup.SetupTokenServiceTest(t, constants.SecretKey)
+	suite := setup.TokenServiceTest(t, constants.SecretKey)
 	defer suite.Ctrl.Finish()
 
 	secretKey := constants.SecretKey

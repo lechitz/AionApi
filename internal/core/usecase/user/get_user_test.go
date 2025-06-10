@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetUserByID_Success(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	userID := uint64(1)
@@ -28,7 +28,7 @@ func TestGetUserByID_Success(t *testing.T) {
 }
 
 func TestGetUserByID_Error(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	userID := setup.TestPerfectUser.ID
@@ -44,7 +44,7 @@ func TestGetUserByID_Error(t *testing.T) {
 }
 
 func TestGetUserByEmail_Success(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	userEmail := setup.TestPerfectUser.Email
@@ -62,7 +62,7 @@ func TestGetUserByEmail_Success(t *testing.T) {
 }
 
 func TestGetUserByEmail_Error(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	userEmail := setup.TestPerfectUser.Email
@@ -78,7 +78,7 @@ func TestGetUserByEmail_Error(t *testing.T) {
 }
 
 func TestGetUserByUsername_Success(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	username := setup.TestPerfectUser.Username
@@ -96,7 +96,7 @@ func TestGetUserByUsername_Success(t *testing.T) {
 }
 
 func TestGetUserByUsername_Error(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	username := setup.TestPerfectUser.Username
@@ -112,7 +112,7 @@ func TestGetUserByUsername_Error(t *testing.T) {
 }
 
 func TestGetAllUsers_Success(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	expectedUsers := []domain.UserDomain{
@@ -132,7 +132,7 @@ func TestGetAllUsers_Success(t *testing.T) {
 }
 
 func TestGetAllUsers_Error(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	suite.UserRepository.EXPECT().

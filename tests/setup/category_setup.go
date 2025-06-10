@@ -1,3 +1,4 @@
+// Package setup contains test setup utilities for testing Service.
 package setup
 
 import (
@@ -10,15 +11,17 @@ import (
 	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
 )
 
+// CategoryServiceTestSuite is a test suite structure for testing methods in the CategoryService, holding mock dependencies and context.
 type CategoryServiceTestSuite struct {
 	Ctrl               *gomock.Controller
 	Logger             *mockLogger.MockLogger
 	CategoryRepository *mockCategory.MockCategoryStore
-	CategoryService    *category.CategoryService
+	CategoryService    *category.Service
 	Ctx                context.Context
 }
 
-func SetupCategoryServiceTest(t *testing.T) *CategoryServiceTestSuite {
+// CategoryServiceTest initializes and returns a CategoryServiceTestSuite with mock dependencies for testing Service logic.
+func CategoryServiceTest(t *testing.T) *CategoryServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	mockCategoryRepository := mockCategory.NewMockCategoryStore(ctrl)

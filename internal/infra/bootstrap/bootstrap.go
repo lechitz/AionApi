@@ -1,3 +1,4 @@
+// Package bootstrap provides a set of utilities for initializing application dependencies and managing application lifecycle.
 package bootstrap
 
 import (
@@ -21,9 +22,10 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/config"
 )
 
+// AppDependencies encapsulates all the core dependencies required for the application, including services, repositories, and logging utilities.
 type AppDependencies struct {
 	TokenRepository    portsToken.TokenRepositoryPort
-	TokenService       token.TokenUsecase
+	TokenService       token.Usecase
 	AuthService        portsHttp.AuthService
 	UserService        portsHttp.UserService
 	CategoryService    graphql.CategoryService
@@ -31,10 +33,8 @@ type AppDependencies struct {
 	Logger             logger.Logger
 }
 
-func InitializeDependencies(
-	cfg config.Config,
-	logger logger.Logger,
-) (*AppDependencies, func(), error) {
+// InitializeDependencies initializes and returns all core application dependencies, including repositories, services, and a cleanup function.
+func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDependencies, func(), error) {
 	cacheConn, err := infraCache.NewCacheConnection(cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)

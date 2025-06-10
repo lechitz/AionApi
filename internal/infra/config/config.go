@@ -8,6 +8,7 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/config/constants"
 )
 
+// Load initializes application settings by processing environment variables and generating a default secret key if not set. Logs warnings or errors as necessary.
 func Load(logger logger.Logger) error {
 	if err := envconfig.Process(constants.Settings, &Setting); err != nil {
 		response.HandleCriticalError(logger, constants.ErrFailedToProcessEnvVars, err)

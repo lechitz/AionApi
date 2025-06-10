@@ -7,11 +7,13 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 )
 
+// SessionRevoker defines an interface for revoking user sessions through logout operations.
 type SessionRevoker interface {
 	Logout(ctx context.Context, token string) error
 }
 
-func (s *AuthService) Logout(ctx context.Context, token string) error {
+// Logout revokes a user's authentication token, effectively logging them out. Returns an error if token verification or deletion fails.
+func (s *Service) Logout(ctx context.Context, token string) error {
 	userID, _, err := s.tokenService.VerifyToken(ctx, token)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToCheckToken, constants.Error, err.Error())

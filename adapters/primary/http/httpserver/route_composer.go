@@ -5,8 +5,9 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/bootstrap"
 )
 
+// ComposeRouter initializes and configures an HTTP router based on application dependencies and context path.
 func ComposeRouter(deps *bootstrap.AppDependencies, contextPath string) (portRouter.Router, error) {
-	httpRouter, err := NewHttpRouter(deps.Logger, deps.TokenRepository, contextPath)
+	httpRouter, err := NewHTTPRouter(deps.Logger, deps.TokenRepository, contextPath)
 	if err != nil {
 		return nil, err
 	}

@@ -1,14 +1,10 @@
 package constants
 
-// Generic Messages.
+// MsgServiceIsHealthy indicates the application/service is running and healthy.
+const MsgServiceIsHealthy = "Service is healthy"
 
-const (
-	MsgServiceIsHealthy = "Service is healthy"
-	MsgResourceNotFound = "Resource not found"
-)
+// MsgResourceNotFound is returned when a requested resource is not found.
+const MsgResourceNotFound = "Resource not found"
 
-// Error Messages.
-
-const (
-	Error = "error"
-)
+// Error is a generic error message constant.
+const Error = "error"

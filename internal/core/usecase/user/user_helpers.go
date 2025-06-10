@@ -9,7 +9,8 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
 
-func (s *UserService) validateCreateUserRequired(user domain.UserDomain, password string) error {
+// validateCreateUserRequired validates required fields for creating a user and returns an error if any validation fails.
+func (s *Service) validateCreateUserRequired(user domain.UserDomain, password string) error {
 	if user.Name == "" {
 		return errors.New(constants.NameIsRequired)
 	}
@@ -28,7 +29,8 @@ func (s *UserService) validateCreateUserRequired(user domain.UserDomain, passwor
 	return nil
 }
 
-func (s *UserService) normalizeUserData(user *domain.UserDomain) domain.UserDomain {
+// normalizeUserData adjusts user fields by trimming spaces, converting email to lowercase, and ensuring data uniformity. Returns the normalized user.
+func (s *Service) normalizeUserData(user *domain.UserDomain) domain.UserDomain {
 	if user.Name != "" {
 		user.Name = strings.TrimSpace(user.Name)
 	}

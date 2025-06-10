@@ -1,3 +1,4 @@
+// Package graphqlserver implements a new HTTP server configured for handling GraphQL requests.
 package graphqlserver
 
 import (
@@ -14,6 +15,7 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/config"
 )
 
+// NewGraphqlServer initializes and returns a new HTTP server configured for handling GraphQL requests.
 func NewGraphqlServer(deps *bootstrap.AppDependencies) (*http.Server, error) {
 	router := chi.NewRouter()
 
