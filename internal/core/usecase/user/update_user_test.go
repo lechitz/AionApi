@@ -8,7 +8,7 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 	"github.com/lechitz/AionApi/tests/setup"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUpdateUser_Success(t *testing.T) {
@@ -28,8 +28,8 @@ func TestUpdateUser_Success(t *testing.T) {
 
 	result, err := suite.UserService.UpdateUser(suite.Ctx, input)
 
-	assert.NoError(t, err)
-	assert.Equal(t, setup.TestPerfectUser, result)
+	require.NoError(t, err)
+	require.Equal(t, setup.TestPerfectUser, result)
 }
 
 func TestUpdateUser_NoFieldsToUpdate(t *testing.T) {
@@ -40,9 +40,9 @@ func TestUpdateUser_NoFieldsToUpdate(t *testing.T) {
 
 	result, err := suite.UserService.UpdateUser(suite.Ctx, input)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.UserDomain{}, result)
-	assert.Equal(t, constants.ErrorNoFieldsToUpdate, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, result)
+	require.Equal(t, constants.ErrorNoFieldsToUpdate, err.Error())
 }
 
 func TestUpdateUserPassword_Success(t *testing.T) {
@@ -86,9 +86,9 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 		newPassword,
 	)
 
-	assert.NoError(t, err)
-	assert.Equal(t, setup.TestPerfectUser, result)
-	assert.Equal(t, expectedToken, token)
+	require.NoError(t, err)
+	require.Equal(t, setup.TestPerfectUser, result)
+	require.Equal(t, expectedToken, token)
 }
 
 func TestUpdateUserPassword_ErrorToGetUserByID(t *testing.T) {
@@ -110,10 +110,10 @@ func TestUpdateUserPassword_ErrorToGetUserByID(t *testing.T) {
 		newPassword,
 	)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.UserDomain{}, result)
-	assert.Empty(t, token)
-	assert.Equal(t, constants.ErrorToGetUserByID, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, result)
+	require.Empty(t, token)
+	require.Equal(t, constants.ErrorToGetUserByID, err.Error())
 }
 
 func TestUpdateUserPassword_ErrorToCompareHashAndPassword(t *testing.T) {
@@ -139,10 +139,10 @@ func TestUpdateUserPassword_ErrorToCompareHashAndPassword(t *testing.T) {
 		newPassword,
 	)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.UserDomain{}, result)
-	assert.Empty(t, token)
-	assert.Equal(t, constants.ErrorToCompareHashAndPassword, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, result)
+	require.Empty(t, token)
+	require.Equal(t, constants.ErrorToCompareHashAndPassword, err.Error())
 }
 
 func TestUpdateUserPassword_ErrorToHashPassword(t *testing.T) {
@@ -172,10 +172,10 @@ func TestUpdateUserPassword_ErrorToHashPassword(t *testing.T) {
 		newPassword,
 	)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.UserDomain{}, result)
-	assert.Empty(t, token)
-	assert.Equal(t, constants.ErrorToHashPassword, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, result)
+	require.Empty(t, token)
+	require.Equal(t, constants.ErrorToHashPassword, err.Error())
 }
 
 func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
@@ -210,10 +210,10 @@ func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
 		newPassword,
 	)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.UserDomain{}, result)
-	assert.Empty(t, token)
-	assert.Equal(t, constants.ErrorToUpdatePassword, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, result)
+	require.Empty(t, token)
+	require.Equal(t, constants.ErrorToUpdatePassword, err.Error())
 }
 
 func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
@@ -252,10 +252,10 @@ func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
 		newPassword,
 	)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.UserDomain{}, result)
-	assert.Empty(t, token)
-	assert.Equal(t, constants.ErrorToCreateToken, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, result)
+	require.Empty(t, token)
+	require.Equal(t, constants.ErrorToCreateToken, err.Error())
 }
 
 func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
@@ -287,11 +287,8 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 		Return(hashedPassword, nil)
 
 	suite.UserRepository.EXPECT().
-		UpdateUser(
-			suite.Ctx,
-			input.ID,
-			gomock.AssignableToTypeOf(map[string]interface{}{}),
-		).Return(setup.TestPerfectUser, nil)
+		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
+		Return(setup.TestPerfectUser, nil)
 
 	suite.TokenService.EXPECT().
 		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
@@ -308,8 +305,8 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 		newPassword,
 	)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.UserDomain{}, result)
-	assert.Empty(t, token)
-	assert.Equal(t, constants.ErrorToSaveToken, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, result)
+	require.Empty(t, token)
+	require.Equal(t, constants.ErrorToSaveToken, err.Error())
 }
