@@ -59,9 +59,9 @@ func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain
 		Where("category_id = ? AND user_id = ?", category.ID, category.UserID).
 		First(&categoryDB).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return domain.Category{}, fmt.Errorf("category not found")
+			return domain.Category{}, errors.New("category not found")
 		}
-		return domain.Category{}, fmt.Errorf("error getting category")
+		return domain.Category{}, errors.New("error getting category")
 	}
 
 	return mapper.CategoryFromDB(categoryDB), nil
