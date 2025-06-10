@@ -8,7 +8,7 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetCategoryByID_InvalidCategoryID(t *testing.T) {
@@ -23,9 +23,9 @@ func TestGetCategoryByID_InvalidCategoryID(t *testing.T) {
 
 	categoryDB, err := suite.CategoryService.GetCategoryByID(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, categoryDB)
-	assert.Equal(t, constants.CategoryIDIsRequired, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, categoryDB)
+	require.Equal(t, constants.CategoryIDIsRequired, err.Error())
 }
 
 func TestGetCategoryByID_ErrorToGetCategoryByID(t *testing.T) {
@@ -40,8 +40,8 @@ func TestGetCategoryByID_ErrorToGetCategoryByID(t *testing.T) {
 
 	_, err := suite.CategoryService.GetCategoryByID(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, constants.FailedToGetCategoryByID, err.Error())
+	require.Error(t, err)
+	require.Equal(t, constants.FailedToGetCategoryByID, err.Error())
 }
 
 func TestGetCategoryByID_ErrorToCreateCategory(t *testing.T) {
@@ -56,9 +56,9 @@ func TestGetCategoryByID_ErrorToCreateCategory(t *testing.T) {
 
 	categoryDB, err := suite.CategoryService.GetCategoryByID(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, categoryDB)
-	assert.Equal(t, constants.FailedToCreateCategory, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, categoryDB)
+	require.Equal(t, constants.FailedToCreateCategory, err.Error())
 }
 
 func TestGetCategoryByID_Success(t *testing.T) {
@@ -71,9 +71,9 @@ func TestGetCategoryByID_Success(t *testing.T) {
 
 	categoryDB, err := suite.CategoryService.GetCategoryByID(suite.Ctx, testdata.PerfectCategory)
 
-	assert.NoError(t, err)
-	assert.NotNil(t, categoryDB)
-	assert.Equal(t, testdata.PerfectCategory.ID, categoryDB.ID)
+	require.NoError(t, err)
+	require.NotNil(t, categoryDB)
+	require.Equal(t, testdata.PerfectCategory.ID, categoryDB.ID)
 }
 
 func TestGetCategoryByName_InvalidCategoryName(t *testing.T) {
@@ -88,9 +88,9 @@ func TestGetCategoryByName_InvalidCategoryName(t *testing.T) {
 
 	categoryDB, err := suite.CategoryService.GetCategoryByName(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, categoryDB)
-	assert.Equal(t, constants.CategoryNameIsRequired, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, categoryDB)
+	require.Equal(t, constants.CategoryNameIsRequired, err.Error())
 }
 
 func TestGetCategoryByName_ErrorToGetCategoryByName(t *testing.T) {
@@ -105,9 +105,9 @@ func TestGetCategoryByName_ErrorToGetCategoryByName(t *testing.T) {
 
 	categoryDB, err := suite.CategoryService.GetCategoryByName(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, categoryDB)
-	assert.Equal(t, constants.FailedToGetCategoryByName, err.Error())
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, categoryDB)
+	require.Equal(t, constants.FailedToGetCategoryByName, err.Error())
 }
 
 func TestGetCategoryByName_Success(t *testing.T) {
@@ -122,8 +122,9 @@ func TestGetCategoryByName_Success(t *testing.T) {
 
 	categoryDB, err := suite.CategoryService.GetCategoryByName(suite.Ctx, category)
 
-	assert.NoError(t, err)
-	assert.NotNil(t, domain.Category{}, categoryDB)
+	require.NoError(t, err)
+	require.NotNil(t, categoryDB)
+	require.Equal(t, testdata.PerfectCategory.ID, categoryDB.ID)
 }
 
 func TestGetAllCategories_ErrorToGetAllCategories(t *testing.T) {
@@ -138,9 +139,9 @@ func TestGetAllCategories_ErrorToGetAllCategories(t *testing.T) {
 
 	categories, err := suite.CategoryService.GetAllCategories(suite.Ctx, userID)
 
-	assert.Error(t, err)
-	assert.Nil(t, categories)
-	assert.Equal(t, constants.FailedToGetAllCategories, err.Error())
+	require.Error(t, err)
+	require.Nil(t, categories)
+	require.Equal(t, constants.FailedToGetAllCategories, err.Error())
 }
 
 func TestGetAllCategories_Success(t *testing.T) {
@@ -155,8 +156,8 @@ func TestGetAllCategories_Success(t *testing.T) {
 
 	categories, err := suite.CategoryService.GetAllCategories(suite.Ctx, userID)
 
-	assert.NoError(t, err)
-	assert.NotNil(t, categories)
-	assert.Len(t, categories, 1)
-	assert.Equal(t, testdata.PerfectCategory, categories[0])
+	require.NoError(t, err)
+	require.NotNil(t, categories)
+	require.Len(t, categories, 1)
+	require.Equal(t, testdata.PerfectCategory, categories[0])
 }
