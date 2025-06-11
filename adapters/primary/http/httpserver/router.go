@@ -1,7 +1,11 @@
+// Package httpserver provides functionality for configuring and managing HTTP routers.
 package httpserver
 
 import (
+	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/lechitz/AionApi/adapters/primary/http/httpserver/constants"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/recovery"
@@ -9,27 +13,41 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
-	"strings"
 )
 
+// RouteComposer is a structure for configuring routes, middlewares, and logging in the HTTP router.
 type RouteComposer struct {
-	BasePath       string
 	Router         portRouter.Router
 	logger         logger.Logger
 	authMiddleware *auth.MiddlewareAuth
+	BasePath       string
 }
 
-func NewHttpRouter(logger logger.Logger, tokenRepository cache.TokenRepositoryPort, contextPath string) (*RouteComposer, error) {
+// NewHTTPRouter creates and configures a new HTTP router with middleware and authentication.
+// Parameters:
+//   - logger: logger instance
+//   - tokenRepository: token repository interface
+//   - contextPath: base route path
+//   - secretKey: JWT secret key (newly added dependency)
+//
+// Returns:
+//   - *RouteComposer: configured route composer instance
+//   - error: in case of any setup failure
+func NewHTTPRouter(
+	logger logger.Logger,
+	tokenRepository cache.TokenRepositoryPort,
+	contextPath string,
+	secretKey string,
+) (*RouteComposer, error) {
 	normalizedPath, err := normalizeContextPath(contextPath)
 	if err != nil {
 		return nil, err
 	}
 
 	router := chi.NewRouter()
-
 	router.Use(recovery.RecoverMiddleware(logger))
 
-	authMiddleware := auth.NewAuthMiddleware(tokenRepository, logger)
+	authMiddleware := auth.NewAuthMiddleware(tokenRepository, logger, secretKey)
 
 	return &RouteComposer{
 		BasePath:       normalizedPath,
@@ -39,17 +57,20 @@ func NewHttpRouter(logger logger.Logger, tokenRepository cache.TokenRepositoryPo
 	}, nil
 }
 
+// GetRouter retrieves the current router instance used for managing HTTP routes.
 func (r *RouteComposer) GetRouter() portRouter.Router {
 	return r.Router
 }
 
+// normalizeContextPath ensures the given context path starts with '/' and is valid.
+// Returns the normalized path or an error.
 func normalizeContextPath(raw string) (string, error) {
 	if raw == "" {
-		return "", fmt.Errorf(constants.ErrContextPathEmpty)
+		return "", errors.New(constants.ErrContextPathEmpty)
 	}
 
 	if strings.Contains(raw[1:], "/") {
-		return "", fmt.Errorf(constants.ErrContextPathSlash)
+		return "", errors.New(constants.ErrContextPathSlash)
 	}
 
 	if raw[0] != '/' {

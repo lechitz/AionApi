@@ -1,14 +1,17 @@
+// Package domain contains core business entities used throughout the application.
 package domain
 
 import "time"
 
+// Tag represents a user-defined label associated with a specific category.
+// It is used to organize and classify tasks or habits in a personalized way.
 type Tag struct {
-	ID          uint64
-	UserID      uint64
-	CategoryID  uint64
-	Name        string
-	Description *string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   *time.Time
+	CreatedAt   time.Time  // Timestamp of creation
+	UpdatedAt   time.Time  // Timestamp of the last update
+	DeletedAt   *time.Time // Soft-delete marker (nil if active)
+	Description *string    // Optional description for additional context
+	Name        string     // Name of the tag (e.g., "Morning", "High Priority")
+	ID          uint64     // Unique identifier for the tag
+	UserID      uint64     // ID of the user who owns the tag
+	CategoryID  uint64     // ID of the category this tag belongs to
 }

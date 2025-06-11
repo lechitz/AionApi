@@ -1,3 +1,4 @@
+// Package cache provides a Redis client for caching data.
 package cache
 
 import (
@@ -10,15 +11,19 @@ import (
 	"github.com/lechitz/AionApi/internal/infra/config"
 )
 
+// FailedToConnectToRedis is a constant for logging errors when the Redis client fails to connect.
 const FailedToConnectToRedis = "failed to connect to Redis"
 
-type CacheClient interface {
+// Client is an interface for caching operations, allowing setting, getting, and managing cached data.
+type Client interface {
 	Ping(ctx context.Context) error
 	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error
 	Get(ctx context.Context, key string) (string, error)
 	Close() error
 }
 
+// NewCacheConnection initializes a new Redis client using the provided configuration and logger.
+// Returns the Redis client or an error if the connection fails.
 func NewCacheConnection(cfg config.CacheConfig, log logger.Logger) (*redis.Client, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,

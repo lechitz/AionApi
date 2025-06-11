@@ -1,12 +1,15 @@
+// Package category provides use-case implementations for managing categories.
 package category
 
 import (
 	"errors"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 )
 
-func (s *CategoryService) validateCreateCategoryRequired(category domain.Category) error {
+// validateCreateCategoryRequired validates required fields for creating a category and enforces constraints like name presence and field length limits.
+func (s *Service) validateCreateCategoryRequired(category domain.Category) error {
 	if category.Name == "" {
 		return errors.New(constants.CategoryNameIsRequired)
 	}

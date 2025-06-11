@@ -1,3 +1,4 @@
+// Package bootstrap provides a set of utilities for initializing application dependencies and managing application lifecycle.
 package bootstrap
 
 import (
@@ -11,28 +12,32 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/db"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
-	"github.com/lechitz/AionApi/internal/infra/bootstrap/constants"
 
 	portsHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	portsToken "github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
+	"github.com/lechitz/AionApi/internal/infra/bootstrap/constants"
 	"github.com/lechitz/AionApi/internal/infra/config"
 )
 
+// AppDependencies encapsulates all the core dependencies required for the application,
+// including services, repositories, logging utilities and the loaded configuration.
 type AppDependencies struct {
-	TokenRepository    portsToken.TokenRepositoryPort
-	TokenService       token.TokenUsecase
-	AuthService        portsHttp.AuthService
-	UserService        portsHttp.UserService
-	CategoryService    graphql.CategoryService
-	CategoryRepository db.CategoryStore
-	Logger             logger.Logger
+	Logger             logger.Logger                  // interfaces são pointers internamente
+	TokenService       token.Usecase                  // pointer
+	TokenRepository    portsToken.TokenRepositoryPort // pointer
+	UserService        portsHttp.UserService          // pointer
+	AuthService        portsHttp.AuthService          // pointer
+	CategoryService    graphql.CategoryService        // pointer
+	CategoryRepository db.CategoryStore               // pointer
+	Config             config.Config                  // struct (não pointer)
 }
 
+// InitializeDependencies initializes and returns all core application dependencies,
+// including repositories, services, and a cleanup function.
 func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDependencies, func(), error) {
-
 	cacheConn, err := infraCache.NewCacheConnection(cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)
@@ -50,7 +55,11 @@ func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDepend
 	passwordHasher := adapterSecurity.NewBcryptPasswordAdapter()
 
 	tokenRepository := adapterCache.NewTokenRepository(cacheConn, logger)
-	tokenService := token.NewTokenService(tokenRepository, logger, domain.TokenConfig{SecretKey: cfg.Secret.Key})
+	tokenService := token.NewTokenService(
+		tokenRepository,
+		logger,
+		domain.TokenConfig{SecretKey: cfg.Secret.Key},
+	)
 
 	userRepository := adapterDB.NewUserRepository(dbConn, logger)
 	userService := user.NewUserService(userRepository, tokenService, passwordHasher, logger)
@@ -58,7 +67,13 @@ func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDepend
 	categoryRepository := adapterDB.NewCategoryRepository(dbConn, logger)
 	categoryService := category.NewCategoryService(categoryRepository, logger)
 
-	authService := auth.NewAuthService(userRepository, tokenService, passwordHasher, logger, cfg.Secret.Key)
+	authService := auth.NewAuthService(
+		userRepository,
+		tokenService,
+		passwordHasher,
+		logger,
+		cfg.Secret.Key,
+	)
 
 	cleanup := func() {
 		infraDB.Close(dbConn, logger)
@@ -69,6 +84,7 @@ func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDepend
 	}
 
 	return &AppDependencies{
+		Config:             cfg,
 		TokenRepository:    tokenRepository,
 		TokenService:       tokenService,
 		AuthService:        authService,

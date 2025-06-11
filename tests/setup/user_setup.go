@@ -14,17 +14,19 @@ import (
 	mockUser "github.com/lechitz/AionApi/tests/mocks/user"
 )
 
+// UserServiceTestSuite is a test suite for testing the UserService and its dependencies.
 type UserServiceTestSuite struct {
 	Ctrl           *gomock.Controller
 	Logger         *mockLogger.MockLogger
 	UserRepository *mockUser.MockUserStore
 	PasswordHasher *mockSecurity.MockSecurityStore
 	TokenService   *mockToken.MockTokenUsecase
-	UserService    *user.UserService
+	UserService    *user.Service
 	Ctx            context.Context
 }
 
-func SetupUserServiceTest(t *testing.T) *UserServiceTestSuite {
+// UserServiceTest initializes and returns a UserServiceTestSuite with mocked dependencies to facilitate unit testing of the user service.
+func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	mockUserRepo := mockUser.NewMockUserStore(ctrl)
@@ -43,17 +45,20 @@ func SetupUserServiceTest(t *testing.T) *UserServiceTestSuite {
 		PasswordHasher: mockSecurityStore,
 		TokenService:   mockTokenUsecase,
 		UserService:    userService,
-		Ctx:            context.Background(),
+		Ctx:            t.Context(),
 	}
 }
 
-var TestPerfectUser = domain.UserDomain{
-	ID:        1,
-	Name:      "Test User",
-	Username:  "testuser",
-	Email:     "user@example.com",
-	Password:  "password123",
-	CreatedAt: time.Now(),
-	UpdatedAt: time.Now(),
-	DeletedAt: nil,
+// DefaultTestUser is a predefined instance of domain.UserDomain used for testing purposes, representing a perfect/valid user with complete and valid fields.
+func DefaultTestUser() domain.UserDomain {
+	return domain.UserDomain{
+		ID:        1,
+		Name:      "Test User",
+		Username:  "testuser",
+		Email:     "user@example.com",
+		Password:  "password123",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		DeletedAt: nil,
+	}
 }

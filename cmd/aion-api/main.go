@@ -1,80 +1,126 @@
+// Package main provides the main entry point for the application.
 package main
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/lechitz/AionApi/adapters/primary/graph/graphqlserver"
-	"github.com/lechitz/AionApi/adapters/primary/http/httpserver"
-	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
-	loggerAdapter "github.com/lechitz/AionApi/adapters/secondary/logger"
-	"github.com/lechitz/AionApi/cmd/aion-api/constants"
-	"github.com/lechitz/AionApi/internal/infra/bootstrap"
-	"github.com/lechitz/AionApi/internal/infra/config"
-	loggerBuilder "github.com/lechitz/AionApi/pkg/logger"
 	"net/http"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/lechitz/AionApi/adapters/primary/graph/graphqlserver"
+	"github.com/lechitz/AionApi/adapters/primary/http/httpserver"
+	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
+	loggerAdapter "github.com/lechitz/AionApi/adapters/secondary/logger"
+	"github.com/lechitz/AionApi/cmd/aion-api/constants"
+	loggerPort "github.com/lechitz/AionApi/internal/core/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/infra/bootstrap"
+	"github.com/lechitz/AionApi/internal/infra/config"
+	loggerBuilder "github.com/lechitz/AionApi/pkg/logger"
 )
 
+// main initializes and runs the AionAPI application lifecycle.
 func main() {
-	loggerInstance, loggerCleanup := loggerBuilder.NewZapLogger()
-	defer loggerCleanup()
-	logger := loggerAdapter.NewZapLoggerAdapter(loggerInstance)
+	logger, cleanup := loggerBuilder.NewZapLogger()
+	defer cleanup()
 
-	logger.Infow(constants.StartingApplication)
+	appLogger := loggerAdapter.NewZapLoggerAdapter(logger)
 
-	if err := config.Load(logger); err != nil {
+	cfg := loadConfig(appLogger)
+	appLogger.Infof("loaded config: %+v", cfg)
+
+	appDeps, cleanupDeps := initDependencies(cfg, appLogger)
+	defer cleanupDeps()
+
+	httpSrv := createHTTPServer(appDeps, &cfg, appLogger)
+	graphqlSrv := createGraphQLServer(appDeps, cfg, appLogger)
+
+	handleServers(httpSrv, graphqlSrv, cfg, appLogger)
+}
+
+// loadConfig loads the environment configuration using envconfig, panicking on failure.
+func loadConfig(logger loggerPort.Logger) config.Config {
+	cfgLoader := config.NewLoader()
+	cfg, err := cfgLoader.Load(logger)
+	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrToFailedLoadConfiguration, err)
-		return
+		panic(err)
 	}
 	logger.Infow(constants.SuccessToLoadConfiguration)
+	return cfg
+}
 
-	appDependencies, cleanup, err := bootstrap.InitializeDependencies(config.Setting, logger)
+// initDependencies initializes services, repositories, and infrastructure connections.
+func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.AppDependencies, func()) {
+	appDeps, cleanup, err := bootstrap.InitializeDependencies(cfg, logger)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrInitializeDependencies, err)
-		return
+		panic(err)
 	}
 	logger.Infow(constants.SuccessToInitializeDependencies)
+	return appDeps, cleanup
+}
 
-	newHTTPServer, err := httpserver.NewHTTPServer(appDependencies, &config.Setting)
+// createHTTPServer builds the HTTP server using configuration and application dependencies.
+func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, logger loggerPort.Logger) *http.Server {
+	httpSrv, err := httpserver.NewHTTPServer(appDeps, cfg)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
-		return
+		panic(err)
 	}
-	logger.Infow(constants.ServerHTTPStarted, constants.Port, newHTTPServer.Addr, constants.ContextPath, config.Setting.ServerHTTP.Context)
+	logger.Infow(
+		constants.ServerHTTPStarted,
+		constants.Port, httpSrv.Addr,
+		constants.ContextPath, cfg.ServerHTTP.Context,
+	)
+	return httpSrv
+}
 
-	graphqlServer, err := graphqlserver.NewGraphqlServer(appDependencies)
+// createGraphQLServer builds the GraphQL server using configuration and application dependencies.
+func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, logger loggerPort.Logger) *http.Server {
+	graphqlSrv, err := graphqlserver.NewGraphqlServer(appDeps, cfg)
 	if err != nil {
 		logger.Errorw(constants.ErrStartGraphqlServer, constants.Error, err)
-		return
+		panic(err)
 	}
-	logger.Infow(constants.GraphqlServerStarted, constants.ContextPath, config.Setting.ServerHTTP.Context)
+	logger.Infow(
+		constants.GraphqlServerStarted,
+		constants.Port, cfg.ServerGraphql.Port,
+		constants.ContextPath, "/graphql",
+	)
 
+	return graphqlSrv
+}
+
+// handleServers orchestrates concurrent HTTP and GraphQL server execution and graceful shutdown.
+func handleServers(httpSrv, graphqlSrv *http.Server, cfg config.Config, logger loggerPort.Logger) {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
 	var wg sync.WaitGroup
+	errChan := make(chan error, 2)
 	wg.Add(2)
 
-	errChan := make(chan error, 2)
-
+	// Start HTTP server
 	go func() {
 		defer wg.Done()
-		if err := newHTTPServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := httpSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			errChan <- fmt.Errorf("failed to start HTTP server: %w", err)
 		}
 	}()
 
+	// Start a GraphQL server
 	go func() {
 		defer wg.Done()
-		if err := graphqlServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := graphqlSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			errChan <- fmt.Errorf("failed to start GraphQL server: %w", err)
 		}
 	}()
 
+	// Handle shutdown or error event
 	select {
 	case err := <-errChan:
 		logger.Errorw("server error", "error", err.Error())
@@ -84,20 +130,12 @@ func main() {
 		logger.Infow(constants.MsgShutdownSignalReceived)
 	}
 
-	shutdownTimeout := time.Duration(config.Setting.Application.Timeout)
+	shutdownTimeout := time.Duration(cfg.Application.Timeout)
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 
-	if err := newHTTPServer.Shutdown(shutdownCtx); err != nil {
-		logger.Errorw(constants.ErrHTTPGracefulShutdown, constants.Error, err.Error())
-	} else {
-		logger.Infow(constants.MsgGracefulShutdownSuccess)
-	}
+	_ = httpSrv.Shutdown(shutdownCtx)
+	_ = graphqlSrv.Shutdown(shutdownCtx)
 
-	if err := graphqlServer.Shutdown(shutdownCtx); err != nil {
-		logger.Errorw(constants.ErrGraphqlGracefulShutdown, constants.Error, err)
-	}
-
-	cleanup()
 	wg.Wait()
 }

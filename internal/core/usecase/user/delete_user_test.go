@@ -2,8 +2,9 @@ package user_test
 
 import (
 	"errors"
-	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 	"testing"
+
+	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/tests/setup"
@@ -11,7 +12,7 @@ import (
 )
 
 func TestSoftDeleteUser_Success(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	userID := uint64(1)
@@ -30,7 +31,7 @@ func TestSoftDeleteUser_Success(t *testing.T) {
 }
 
 func TestSoftDeleteUser_ErrorToSoftDeleteUser(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	userID := uint64(1)
@@ -46,7 +47,7 @@ func TestSoftDeleteUser_ErrorToSoftDeleteUser(t *testing.T) {
 }
 
 func TestSoftDeleteUser_ErrorToDeleteToken(t *testing.T) {
-	suite := setup.SetupUserServiceTest(t)
+	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	userID := uint64(1)

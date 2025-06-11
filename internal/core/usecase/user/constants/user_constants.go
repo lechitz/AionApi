@@ -1,43 +1,111 @@
+// Package constants contains constants related to user operations.
 package constants
 
-const (
-	ErrorToValidateCreateUser     = "error to validate create user"
-	ErrorToDeleteToken            = "error to delete token"
-	ErrorToHashPassword           = "error to hash password"
-	ErrorToCreateUser             = "error to create user"
-	SuccessUserCreated            = "user created successfully"
-	ErrorToGetAllUsers            = "error to get all users"
-	ErrorToCompareHashAndPassword = "error to compare hash and password"
-	ErrorToCreateToken            = "error to create token"
-	ErrorToSaveToken              = "error to save token"
-	SuccessUsersRetrieved         = "users retrieved successfully"
-	ErrorToGetUserByID            = "error to get user by id"
-	SuccessUserRetrieved          = "user retrieved successfully"
-	ErrorToGetUserByUserName      = "error to get user by username"
-	ErrorToGetUserByEmail         = "error to get user by email"
-	ErrorNoFieldsToUpdate         = "no fields to update"
-	ErrorToUpdatePassword         = "error to update password"
-	ErrorToUpdateUser             = "error to update user"
-	SuccessPasswordUpdated        = "password updated successfully"
-	SuccessUserUpdated            = "user updated successfully"
-	ErrorToSoftDeleteUser         = "error to soft delete user"
-	SuccessUserSoftDeleted        = "user soft deleted successfully"
-	NameIsRequired                = "name is required"
-	UsernameIsRequired            = "username is required"
-	EmailIsRequired               = "email is required"
-	PasswordIsRequired            = "password is required"
-	InvalidEmail                  = "invalid email format"
-	UsernameIsAlreadyInUse        = "username is already in use"
-	EmailIsAlreadyInUse           = "email is already in use"
-)
+// ErrorToValidateCreateUser indicates an error during user creation validation.
+const ErrorToValidateCreateUser = "error to validate create user"
 
-const (
-	UserID    = "user_id"
-	Users     = "users"
-	Error     = "error"
-	Name      = "name"
-	Username  = "username"
-	Email     = "email"
-	Password  = "password"
-	UpdatedAt = "updated_at"
-)
+// ErrorToDeleteToken indicates an error when deleting a token.
+const ErrorToDeleteToken = "error to delete token"
+
+// ErrorToHashPassword indicates an error while hashing a password.
+// #nosec G101: This constant does not leak a real secret, just an error message.
+const ErrorToHashPassword = "error to hash password"
+
+// ErrorToCreateUser indicates an error when creating a user.
+const ErrorToCreateUser = "error to create user"
+
+// SuccessUserCreated indicates that the user was created successfully.
+const SuccessUserCreated = "user created successfully"
+
+// ErrorToGetAllUsers indicates an error when fetching all users.
+const ErrorToGetAllUsers = "error to get all users"
+
+// ErrorToCompareHashAndPassword indicates a password hash comparison failure.
+const ErrorToCompareHashAndPassword = "error to compare hash and password"
+
+// ErrorToCreateToken indicates an error when creating a token.
+const ErrorToCreateToken = "error to create token"
+
+// ErrorToSaveToken indicates an error when saving a token.
+const ErrorToSaveToken = "error to save token"
+
+// SuccessUsersRetrieved indicates users were successfully retrieved.
+const SuccessUsersRetrieved = "users retrieved successfully"
+
+// ErrorToGetUserByID indicates an error when fetching a user by ID.
+const ErrorToGetUserByID = "error to get user by id"
+
+// SuccessUserRetrieved indicates a user was successfully retrieved.
+const SuccessUserRetrieved = "user retrieved successfully"
+
+// ErrorToGetUserByUserName indicates an error when fetching a user by username.
+const ErrorToGetUserByUserName = "error to get user by username"
+
+// ErrorToGetUserByEmail indicates an error when fetching a user by email.
+const ErrorToGetUserByEmail = "error to get user by email"
+
+// ErrorNoFieldsToUpdate indicates there were no fields to update in the user.
+const ErrorNoFieldsToUpdate = "no fields to update"
+
+// ErrorToUpdatePassword indicates an error when updating the user password.
+const ErrorToUpdatePassword = "error to update password"
+
+// ErrorToUpdateUser indicates an error when updating the user.
+const ErrorToUpdateUser = "error to update user"
+
+// SuccessPasswordUpdated indicates the password was updated successfully.
+const SuccessPasswordUpdated = "password updated successfully"
+
+// SuccessUserUpdated indicates the user was updated successfully.
+const SuccessUserUpdated = "user updated successfully"
+
+// ErrorToSoftDeleteUser indicates an error when performing a soft delete on a user.
+const ErrorToSoftDeleteUser = "error to soft delete user"
+
+// SuccessUserSoftDeleted indicates a user was soft deleted successfully.
+const SuccessUserSoftDeleted = "user soft deleted successfully"
+
+// NameIsRequired indicates that the user's name is required.
+const NameIsRequired = "name is required"
+
+// UsernameIsRequired indicates that the user's username is required.
+const UsernameIsRequired = "username is required"
+
+// EmailIsRequired indicates that the user's email is required.
+const EmailIsRequired = "email is required"
+
+// PasswordIsRequired indicates that the user's password is required.
+const PasswordIsRequired = "password is required"
+
+// InvalidEmail indicates that the email format is invalid.
+const InvalidEmail = "invalid email format"
+
+// UsernameIsAlreadyInUse indicates the username is already taken.
+const UsernameIsAlreadyInUse = "username is already in use"
+
+// EmailIsAlreadyInUse indicates the email is already registered.
+const EmailIsAlreadyInUse = "email is already in use"
+
+// UserID is the key used for the user ID in requests or responses.
+const UserID = "user_id"
+
+// Users is the key used for users collections.
+const Users = "users"
+
+// Error is the key for error messages.
+const Error = "error"
+
+// Name is the key used for a user's name.
+const Name = "name"
+
+// Username is the key used for a user's username.
+const Username = "username"
+
+// Email is the key used for a user's email.
+const Email = "email"
+
+// Password is the key used for a user's password.
+const Password = "password"
+
+// UpdatedAt is the key used for the last update timestamp.
+const UpdatedAt = "updated_at"

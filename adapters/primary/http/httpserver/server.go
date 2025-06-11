@@ -2,11 +2,13 @@ package httpserver
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/lechitz/AionApi/internal/infra/bootstrap"
 	"github.com/lechitz/AionApi/internal/infra/config"
-	"net/http"
 )
 
+// NewHTTPServer creates and configures a new HTTP server using provided dependencies and configuration. Returns the server instance or an error.
 func NewHTTPServer(deps *bootstrap.AppDependencies, setting *config.Config) (*http.Server, error) {
 	router, err := ComposeRouter(deps, setting.ServerHTTP.Context)
 	if err != nil {

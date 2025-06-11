@@ -12,17 +12,19 @@ import (
 	mockUser "github.com/lechitz/AionApi/tests/mocks/user"
 )
 
+// AuthServiceTestSuite defines a test suite for AuthService, including mock services and dependencies for testing authentication components.
 type AuthServiceTestSuite struct {
 	Ctrl           *gomock.Controller
 	Logger         *mockLogger.MockLogger
 	UserRepository *mockUser.MockUserStore
 	PasswordHasher *mockSecurity.MockSecurityStore
 	TokenService   *mockToken.MockTokenUsecase
-	AuthService    *auth.AuthService
+	AuthService    *auth.Service
 	Ctx            context.Context
 }
 
-func SetupAuthServiceTest(t *testing.T) *AuthServiceTestSuite {
+// AuthServiceTest initializes and returns a test suite with mock dependencies for testing authentication services.
+func AuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	mockUserRepo := mockUser.NewMockUserStore(ctrl)
@@ -32,7 +34,13 @@ func SetupAuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
-	authService := auth.NewAuthService(mockUserRepo, mockTokenUseCase, mockSecurityStore, mockLog, "supersecretkey")
+	authService := auth.NewAuthService(
+		mockUserRepo,
+		mockTokenUseCase,
+		mockSecurityStore,
+		mockLog,
+		"supersecretkey",
+	)
 
 	return &AuthServiceTestSuite{
 		Ctrl:           ctrl,
@@ -41,6 +49,6 @@ func SetupAuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 		PasswordHasher: mockSecurityStore,
 		TokenService:   mockTokenUseCase,
 		AuthService:    authService,
-		Ctx:            context.Background(),
+		Ctx:            t.Context(),
 	}
 }

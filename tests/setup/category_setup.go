@@ -1,23 +1,27 @@
+// Package setup contains test setup utilities for testing Service.
 package setup
 
 import (
 	"context"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
 	mockCategory "github.com/lechitz/AionApi/tests/mocks/category"
 	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
-	"testing"
 )
 
+// CategoryServiceTestSuite is a test suite structure for testing methods in the CategoryService, holding mock dependencies and context.
 type CategoryServiceTestSuite struct {
 	Ctrl               *gomock.Controller
 	Logger             *mockLogger.MockLogger
 	CategoryRepository *mockCategory.MockCategoryStore
-	CategoryService    *category.CategoryService
+	CategoryService    *category.Service
 	Ctx                context.Context
 }
 
-func SetupCategoryServiceTest(t *testing.T) *CategoryServiceTestSuite {
+// CategoryServiceTest initializes and returns a CategoryServiceTestSuite with mock dependencies for testing Service logic.
+func CategoryServiceTest(t *testing.T) *CategoryServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	mockCategoryRepository := mockCategory.NewMockCategoryStore(ctrl)
@@ -32,6 +36,6 @@ func SetupCategoryServiceTest(t *testing.T) *CategoryServiceTestSuite {
 		Logger:             mockLog,
 		CategoryService:    categoryService,
 		CategoryRepository: mockCategoryRepository,
-		Ctx:                context.Background(),
+		Ctx:                t.Context(),
 	}
 }

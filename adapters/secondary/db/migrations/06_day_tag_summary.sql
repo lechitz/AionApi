@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS aion_api.day_tag_summary
     summary      TEXT,
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (day_id) REFERENCES aion_api.days (id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES aion_api.tags (id) ON DELETE CASCADE
-);
+    FOREIGN KEY (tag_id) REFERENCES aion_api.tags (tag_id) ON DELETE CASCADE
+    );

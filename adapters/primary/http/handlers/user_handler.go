@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+
 	"github.com/lechitz/AionApi/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
@@ -15,11 +16,14 @@ import (
 	"github.com/jinzhu/copier"
 )
 
+// User represents a handler for managing user-related operations and dependencies.
+// It combines user service functionality and logging capabilities.
 type User struct {
 	UserService inputHttp.UserService
 	Logger      logger.Logger
 }
 
+// NewUser initializes and returns a new User instance with provided user service and logger dependencies.
 func NewUser(userService inputHttp.UserService, logger logger.Logger) *User {
 	return &User{
 		UserService: userService,
@@ -27,6 +31,7 @@ func NewUser(userService inputHttp.UserService, logger logger.Logger) *User {
 	}
 }
 
+// CreateUserHandler handles HTTP requests to create a new user and returns appropriate HTTP responses.
 func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -48,9 +53,11 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var res dto.CreateUserResponse
 	_ = copier.Copy(&res, &user)
 
-	response.ResponseReturn(w, http.StatusCreated, response.ObjectResponse(res, constants.SuccessToCreateUser).Bytes())
+	body := response.ObjectResponse(res, constants.SuccessToCreateUser, u.Logger)
+	response.Return(w, http.StatusCreated, body.Bytes(), u.Logger)
 }
 
+// GetAllUsersHandler handles HTTP requests to retrieve all users and returns the data in the response.// GetAllUsersHandler handles HTTP GET requests to retrieve all users and returns the data as a response.
 func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -63,9 +70,11 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	var res []dto.GetUserResponse
 	_ = copier.Copy(&res, &users)
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(res, constants.SuccessToGetUsers).Bytes())
+	body := response.ObjectResponse(res, constants.SuccessToGetUsers, u.Logger)
+	response.Return(w, http.StatusOK, body.Bytes(), u.Logger)
 }
 
+// GetUserByIDHandler handles HTTP requests to retrieve a user by their ID and returns the user's data in the response.
 func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -89,15 +98,22 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		CreatedAt: user.CreatedAt,
 	}
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(res, constants.SuccessToGetUser).Bytes())
+	body := response.ObjectResponse(res, constants.SuccessToGetUser, u.Logger)
+	response.Return(w, http.StatusOK, body.Bytes(), u.Logger)
 }
 
+// UpdateUserHandler handles HTTP PUT requests to update an existing user's data based on the provided request payload.
 func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
-		u.logAndHandleError(w, http.StatusUnauthorized, constants.ErrorUnauthorizedAccessMissingToken, nil)
+		u.logAndHandleError(
+			w,
+			http.StatusUnauthorized,
+			constants.ErrorUnauthorizedAccessMissingToken,
+			nil,
+		)
 		return
 	}
 
@@ -131,9 +147,11 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		Email:    &userUpdated.Email,
 	}
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(res, constants.SuccessToUpdateUser).Bytes())
+	body := response.ObjectResponse(res, constants.SuccessToUpdateUser, u.Logger)
+	response.Return(w, http.StatusOK, body.Bytes(), u.Logger)
 }
 
+// UpdatePasswordHandler handles the HTTP request to update a user's password and refreshes their authentication token.
 func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -145,14 +163,24 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
-		u.logAndHandleError(w, http.StatusUnauthorized, constants.ErrorUnauthorizedAccessMissingToken, nil)
+		u.logAndHandleError(
+			w,
+			http.StatusUnauthorized,
+			constants.ErrorUnauthorizedAccessMissingToken,
+			nil,
+		)
 		return
 	}
 
 	clearAuthCookie(w)
 
 	userDomain := domain.UserDomain{ID: userID}
-	_, newToken, err := u.UserService.UpdateUserPassword(ctx, userDomain, req.Password, req.NewPassword)
+	_, newToken, err := u.UserService.UpdateUserPassword(
+		ctx,
+		userDomain,
+		req.Password,
+		req.NewPassword,
+	)
 	if err != nil {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToUpdateUser, err)
 		return
@@ -160,15 +188,23 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	setAuthCookie(w, newToken, 0)
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(nil, constants.SuccessToUpdatePassword).Bytes())
+	body := response.ObjectResponse(nil, constants.SuccessToUpdatePassword, u.Logger)
+	response.Return(w, http.StatusOK, body.Bytes(), u.Logger)
 }
 
+// SoftDeleteUserHandler handles the soft deletion of a user by ID extracted from the request context.
+// Responds with HTTP 204 on success or appropriate error response if the operation fails.
 func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
-		u.logAndHandleError(w, http.StatusUnauthorized, constants.ErrorUnauthorizedAccessMissingToken, nil)
+		u.logAndHandleError(
+			w,
+			http.StatusUnauthorized,
+			constants.ErrorUnauthorizedAccessMissingToken,
+			nil,
+		)
 		return
 	}
 
@@ -179,9 +215,11 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	clearAuthCookie(w)
 
-	response.ResponseReturn(w, http.StatusNoContent, response.ObjectResponse(nil, constants.SuccessUserSoftDeleted).Bytes())
+	body := response.ObjectResponse(nil, constants.SuccessUserSoftDeleted, u.Logger)
+	response.Return(w, http.StatusNoContent, body.Bytes(), u.Logger)
 }
 
+// logAndHandleError logs the error with a message and sends an HTTP error response to the client.
 func (u *User) logAndHandleError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
 		u.Logger.Errorw(message, constants.Error, err.Error())

@@ -1,3 +1,6 @@
+// Package graph The package graph provides the GraphQL resolver implementation.
+//
+//nolint:govet,revive, perfsprint,nolintlint
 package graph
 
 import (

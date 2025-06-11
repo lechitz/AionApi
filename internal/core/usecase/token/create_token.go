@@ -2,16 +2,22 @@ package token
 
 import (
 	"context"
+
 	"github.com/lechitz/AionApi/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
 )
 
+// Creator defines a contract for generating tokens with the provided context and token domain.
 type Creator interface {
 	CreateToken(ctx context.Context, token domain.TokenDomain) (string, error)
 }
 
-func (s *TokenService) CreateToken(ctx context.Context, tokenDomain domain.TokenDomain) (string, error) {
+// CreateToken generates a new token for the provided user, saves it in the repository, and returns the signed token or an error.
+func (s *Service) CreateToken(
+	ctx context.Context,
+	tokenDomain domain.TokenDomain,
+) (string, error) {
 	if _, err := s.tokenRepository.Get(ctx, tokenDomain); err == nil {
 		if err := s.tokenRepository.Delete(ctx, tokenDomain); err != nil {
 			s.logger.Errorw(constants.ErrorToDeleteToken, constants.Error, err.Error())

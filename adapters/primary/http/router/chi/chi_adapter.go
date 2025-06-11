@@ -1,3 +1,4 @@
+// Package chi provides a wrapper around the chi.Router to implement the portRouter.Router interface.
 package chi
 
 import (
@@ -7,50 +8,61 @@ import (
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 )
 
-type ChiRouter struct {
+// Router is a wrapper around the chi.Router to implement the portRouter.Router interface.
+type Router struct {
 	chi chi.Router
 }
 
+// NewRouter initializes and returns a new instance of portRouter.Router using a Router implementation.
 func NewRouter() portRouter.Router {
-	return &ChiRouter{chi: chi.NewRouter()}
+	return &Router{chi: chi.NewRouter()}
 }
 
-func (c *ChiRouter) Use(middleware func(http.Handler) http.Handler) {
+// Use adds a middleware function to the router's middleware stack.
+func (c *Router) Use(middleware func(http.Handler) http.Handler) {
 	c.chi.Use(middleware)
 }
 
-func (c *ChiRouter) Route(pattern string, fn func(r portRouter.Router)) {
+// Route defines a sub-router for a specific route pattern within the current router.
+func (c *Router) Route(pattern string, fn func(r portRouter.Router)) {
 	c.chi.Route(pattern, func(r chi.Router) {
-		fn(&ChiRouter{chi: r})
+		fn(&Router{chi: r})
 	})
 }
 
-func (c *ChiRouter) Get(path string, handler http.HandlerFunc) {
+// Get registers a route that matches GET HTTP method for the specified path.
+func (c *Router) Get(path string, handler http.HandlerFunc) {
 	c.chi.Get(path, handler)
 }
 
-func (c *ChiRouter) Post(path string, handler http.HandlerFunc) {
+// Post registers a route that matches the POST HTTP method for the specified path with the given handler.
+func (c *Router) Post(path string, handler http.HandlerFunc) {
 	c.chi.Post(path, handler)
 }
 
-func (c *ChiRouter) Put(path string, handler http.HandlerFunc) {
+// Put registers a route that matches the PUT HTTP method for the specified path with the provided handler function.
+func (c *Router) Put(path string, handler http.HandlerFunc) {
 	c.chi.Put(path, handler)
 }
 
-func (c *ChiRouter) Delete(path string, handler http.HandlerFunc) {
+// Delete registers a route that matches the DELETE HTTP method for the specified path with the provided handler function.
+func (c *Router) Delete(path string, handler http.HandlerFunc) {
 	c.chi.Delete(path, handler)
 }
 
-func (c *ChiRouter) Mount(pattern string, handler http.Handler) {
+// Mount attaches another HTTP handler to the specified URL pattern within the router.
+func (c *Router) Mount(pattern string, handler http.Handler) {
 	c.chi.Mount(pattern, handler)
 }
 
-func (c *ChiRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+// ServeHTTP delegates the HTTP request and response handling to the underlying chi.Router.
+func (c *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c.chi.ServeHTTP(w, r)
 }
 
-func (c *ChiRouter) Group(fn func(r portRouter.Router)) {
+// Group creates a new router group where shared middlewares or routes can be defined and applied.
+func (c *Router) Group(fn func(r portRouter.Router)) {
 	c.chi.Group(func(r chi.Router) {
-		fn(&ChiRouter{chi: r})
+		fn(&Router{chi: r})
 	})
 }

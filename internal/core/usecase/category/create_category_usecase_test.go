@@ -2,16 +2,17 @@ package category_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
-	"github.com/stretchr/testify/assert"
-	"testing"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCreateCategory_ErrorToValidateCreateCategoryRequired_Name(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -19,12 +20,12 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_Name(t *testing.T)
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, createdCategory)
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedLimit(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -32,12 +33,12 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedL
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, createdCategory)
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -48,12 +49,12 @@ func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, createdCategory)
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -68,12 +69,12 @@ func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
-	assert.Error(t, err)
-	assert.Equal(t, domain.Category{}, createdCategory)
+	require.Error(t, err)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_Success(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
@@ -88,6 +89,6 @@ func TestCreateCategory_Success(t *testing.T) {
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
-	assert.NoError(t, err)
-	assert.Equal(t, category, createdCategory)
+	require.NoError(t, err)
+	require.Equal(t, category, createdCategory)
 }

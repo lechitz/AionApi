@@ -2,17 +2,18 @@ package auth_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
-	"testing"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/tests/setup"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestLogin_Success(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	inputUser := domain.UserDomain{Username: "lechitz"}
@@ -32,13 +33,13 @@ func TestLogin_Success(t *testing.T) {
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "test123")
 
-	assert.NoError(t, err)
-	assert.Equal(t, mockUser, userOut)
-	assert.Equal(t, "token-string", tokenOut)
+	require.NoError(t, err)
+	require.Equal(t, mockUser, userOut)
+	require.Equal(t, "token-string", tokenOut)
 }
 
 func TestLogin_UserNotFound(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	inputUser := domain.UserDomain{Username: "invalid_user"}
@@ -49,13 +50,13 @@ func TestLogin_UserNotFound(t *testing.T) {
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "123456")
 
-	assert.Error(t, err)
-	assert.Empty(t, userOut)
-	assert.Empty(t, tokenOut)
+	require.Error(t, err)
+	require.Empty(t, userOut)
+	require.Empty(t, tokenOut)
 }
 
 func TestLogin_WrongPassword(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	inputUser := domain.UserDomain{Username: "lechitz"}
@@ -71,14 +72,14 @@ func TestLogin_WrongPassword(t *testing.T) {
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "wrongpass")
 
-	assert.Error(t, err)
-	assert.Empty(t, userOut)
-	assert.Empty(t, tokenOut)
-	assert.Equal(t, constants.ErrorToCompareHashAndPassword, err.Error())
+	require.Error(t, err)
+	require.Empty(t, userOut)
+	require.Empty(t, tokenOut)
+	require.Equal(t, constants.ErrorToCompareHashAndPassword, err.Error())
 }
 
 func TestLogin_TokenCreationFails(t *testing.T) {
-	suite := setup.SetupAuthServiceTest(t)
+	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	inputUser := domain.UserDomain{Username: "lechitz"}
@@ -98,8 +99,8 @@ func TestLogin_TokenCreationFails(t *testing.T) {
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "123456")
 
-	assert.Error(t, err)
-	assert.Empty(t, userOut)
-	assert.Empty(t, tokenOut)
-	assert.Equal(t, constants.ErrorToCreateToken, err.Error())
+	require.Error(t, err)
+	require.Empty(t, userOut)
+	require.Empty(t, tokenOut)
+	require.Equal(t, constants.ErrorToCreateToken, err.Error())
 }

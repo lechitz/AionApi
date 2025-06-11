@@ -2,7 +2,7 @@
 # Global Variables
 # ========================
 APPLICATION_NAME := aion-api
-PORT := 5001
+HTTP_PORT := 5001
 COMPOSE_FILE_DEV := docker-compose-dev.yaml
 COMPOSE_FILE_PROD := docker-compose-prod.yaml
 
@@ -18,8 +18,8 @@ help:
 	@echo "\033[1;34m🔵 Docker Compose Commands:\033[0m"
 	@echo "  \033[1;36mdev-up\033[0m     → Start development environment (resets DB)"
 	@echo "  \033[1;36mdev-down\033[0m   → Stop development and remove volumes"
-	@echo "  \033[1;36mdocker-compose-prod-up\033[0m    → Start production (keeps DB)"
-	@echo "  \033[1;36mdocker-compose-prod-down\033[0m  → Stop production environment"
+	@echo "  \033[1;36mdocker compose-prod-up\033[0m    → Start production (keeps DB)"
+	@echo "  \033[1;36mdocker compose-prod-down\033[0m  → Stop production environment"
 	@echo ""
 
 	@echo "\033[1;34m🔵 Docker Build Commands:\033[0m"
@@ -50,12 +50,12 @@ build-dev: clean-dev
 
 dev-up: dev-down
 	@echo "Starting Dev Environment..."
-	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres
-	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) up
+	export $$(cat .env.dev | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres
+	export $$(cat .env.dev | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up
 
 dev-down:
 	@echo "Stopping Dev Environment..."
-	export $$(cat .env.dev | grep -v '^#' | xargs) && docker-compose -f $(COMPOSE_FILE_DEV) down -v
+	export $$(cat .env.dev | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down -v
 
 dev: clean-dev build-dev dev-up
 

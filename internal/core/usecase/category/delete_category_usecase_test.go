@@ -2,16 +2,17 @@ package category_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestSoftDeleteCategory_ErrorToGetCategoryByID(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	suite.CategoryRepository.EXPECT().
@@ -23,7 +24,7 @@ func TestSoftDeleteCategory_ErrorToGetCategoryByID(t *testing.T) {
 }
 
 func TestSoftDeleteCategory_ErrorToSoftDeleteCategory(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	suite.CategoryRepository.EXPECT().
@@ -39,7 +40,7 @@ func TestSoftDeleteCategory_ErrorToSoftDeleteCategory(t *testing.T) {
 }
 
 func TestSoftDeleteCategory_Success(t *testing.T) {
-	suite := setup.SetupCategoryServiceTest(t)
+	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	suite.CategoryRepository.EXPECT().
@@ -50,7 +51,10 @@ func TestSoftDeleteCategory_Success(t *testing.T) {
 		SoftDeleteCategory(suite.Ctx, domain.Category{ID: testdata.PerfectCategory.ID}).
 		Return(nil)
 
-	err := suite.CategoryService.SoftDeleteCategory(suite.Ctx, domain.Category{ID: testdata.PerfectCategory.ID})
+	err := suite.CategoryService.SoftDeleteCategory(
+		suite.Ctx,
+		domain.Category{ID: testdata.PerfectCategory.ID},
+	)
 
 	assert.NoError(t, err)
 }

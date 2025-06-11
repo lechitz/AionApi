@@ -2,22 +2,27 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/lechitz/AionApi/internal/shared/contextutil"
+	"net/http"
+	"time"
+
 	"github.com/lechitz/AionApi/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
-	"net/http"
-	"time"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
+// Auth provides authentication handlers for login and logout functionalities.
+// Combines AuthService for logic and Logger for logging operations.
 type Auth struct {
 	AuthService inputHttp.AuthService
 	Logger      logger.Logger
 }
 
+// NewAuth initializes and returns a new Auth instance with AuthService and Logger dependencies.
 func NewAuth(authService inputHttp.AuthService, logger logger.Logger) *Auth {
 	return &Auth{
 		AuthService: authService,
@@ -25,6 +30,7 @@ func NewAuth(authService inputHttp.AuthService, logger logger.Logger) *Auth {
 	}
 }
 
+// LoginHandler handles the user login request, validates the credentials, and returns an authentication token.
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -46,19 +52,21 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(loginUserResponse, constants.SuccessToLogin).Bytes())
+	body := response.ObjectResponse(loginUserResponse, constants.SuccessLogin, a.Logger)
+	response.Return(w, http.StatusOK, body.Bytes(), a.Logger)
 }
 
+// LogoutHandler processes user logout requests by invalidating tokens, clearing cookies, logging the event, and returning a success response.
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := contextutil.GetUserID(ctx)
 	if !ok || userID == 0 {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveUserID, nil)
 		return
 	}
 
-	tokenString, ok := ctx.Value(constants.Token).(string)
+	tokenString, ok := contextutil.GetToken(ctx)
 	if !ok || tokenString == "" {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, nil)
 		return
@@ -77,14 +85,16 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	a.Logger.Infow(
-		constants.SuccessToLogout,
+		constants.SuccessLogout,
 		constants.UserID, userID,
 		constants.Token, tokenPreview,
 	)
 
-	response.ResponseReturn(w, http.StatusOK, response.ObjectResponse(nil, constants.SuccessToLogout).Bytes())
+	body := response.ObjectResponse(nil, constants.SuccessLogout, a.Logger)
+	response.Return(w, http.StatusOK, body.Bytes(), a.Logger)
 }
 
+// logAndRespondError logs an error message and sends an appropriate HTTP response with the specified status, message, and error details.
 func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
 		a.Logger.Errorw(message, constants.Error, err.Error())
@@ -94,6 +104,7 @@ func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message str
 	response.HandleError(w, a.Logger, status, message, err)
 }
 
+// setAuthCookie sets a secure HTTP-only authentication cookie with the given token and expiration configuration.
 func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     constants.AuthToken,
@@ -107,6 +118,7 @@ func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {
 	})
 }
 
+// clearAuthCookie invalidates the authentication cookie by setting its value to empty and expiration to a past timestamp.
 func clearAuthCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     constants.AuthToken,
