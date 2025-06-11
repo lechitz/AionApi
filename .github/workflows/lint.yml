@@ -53,7 +53,7 @@ jobs:
           golangci_lint_flags: "--config=.golangci.yml ./..."
           level: warning
           reporter: github-pr-review
-          fail_on_error: true
+          fail_level: error
 
       # Step 6: Run go vet (additional native analysis)
       - name: Run go vet
