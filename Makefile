@@ -2,7 +2,7 @@
 # Global Variables
 # ========================
 APPLICATION_NAME := aion-api
-PORT := 5001
+HTTP_PORT := 5001
 COMPOSE_FILE_DEV := docker-compose-dev.yaml
 COMPOSE_FILE_PROD := docker-compose-prod.yaml
 

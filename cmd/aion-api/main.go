@@ -86,7 +86,12 @@ func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, 
 		logger.Errorw(constants.ErrStartGraphqlServer, constants.Error, err)
 		panic(err)
 	}
-	logger.Infow(constants.GraphqlServerStarted, constants.ContextPath, cfg.ServerHTTP.Context)
+	logger.Infow(
+		constants.GraphqlServerStarted,
+		constants.Port, cfg.ServerGraphql.Port,
+		constants.ContextPath, "/graphql",
+	)
+
 	return graphqlSrv
 }
 

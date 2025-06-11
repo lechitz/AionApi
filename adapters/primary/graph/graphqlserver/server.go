@@ -2,9 +2,11 @@
 package graphqlserver
 
 import (
+	"context"
 	"net/http"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/go-chi/chi/v5"
@@ -38,6 +40,14 @@ func NewGraphqlServer(deps *bootstrap.AppDependencies, cfg config.Config) (*http
 		graph.NewExecutableSchema(graph.Config{Resolvers: resolver}),
 	)
 	srv.AddTransport(transport.POST{})
+
+	// Middleware to propagate context like userID from HTTP middleware to gqlgen resolvers
+	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+		// Reuse context from the HTTP layer (e.g., userID)
+		return next(ctx)
+	})
+
+	router.Handle("/graphql", srv)
 
 	httpSrv := &http.Server{
 		Addr:              ":" + cfg.ServerGraphql.Port,
