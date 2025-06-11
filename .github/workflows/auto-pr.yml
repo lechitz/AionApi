@@ -1,3 +1,9 @@
+# ---------------------------------------------------------------------
+# Auto-PR Workflow for AionAPI (Go)
+# Purpose: Automatically create Pull Requests when new branches are pushed.
+# Trigger: Push events to specific branch prefixes (e.g., feature/, bugfix/).
+# ---------------------------------------------------------------------
+
 name: Auto-PR Workflow
 
 on:
