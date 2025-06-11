@@ -1,3 +1,4 @@
+# .github/workflows/lint.yml
 # ---------------------------------------------------------------------
 # Lint Workflow for AionAPI (Go)
 # Purpose: Perform static code analysis using golangci-lint and govet.
@@ -22,19 +23,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Go with a version from go.mod
+      # Step 2: Set up Go using a version from go.mod
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
 
-      # Step 2.5: Clean Go module and build cache directories
-      - name: Clean Go module cache to prevent file conflicts
-        run: |
-          rm -rf ~/go/pkg/mod
-          rm -rf ~/.cache/go-build
+      # Step 3: Clean the module cache before using it (safe cleanup)
+      - name: Clean Go mod cache (safe)
+        run: go clean -modcache
 
-      # Step 3: Cache Go modules to speed up installs
+      # Step 4: Cache Go modules to speed up future builds
       - name: Cache Go modules
         uses: actions/cache@v4
         with:
@@ -45,12 +44,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      # Step 4: Install golangci-lint
+      # Step 5: Install golangci-lint
       - name: Install golangci-lint
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.56.2
 
-      # Step 5: Run golangci-lint with reviewdog for inline PR comments
+      # Step 6: Run golangci-lint via reviewdog for inline PR comments
       - name: Run golangci-lint via reviewdog
         uses: reviewdog/action-golangci-lint@v2
         with:
@@ -60,6 +59,6 @@ jobs:
           reporter: github-pr-review
           fail_level: error
 
-      # Step 6: Run go vet (additional native analysis)
+      # Step 7: Run go vet for additional static analysis
       - name: Run go vet
         run: go vet ./...
