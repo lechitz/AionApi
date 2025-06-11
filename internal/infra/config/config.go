@@ -3,8 +3,8 @@ package config
 
 import (
 	"github.com/kelseyhightower/envconfig"
-	"github.com/lechitz/AionApi/adapters/primary/http/middleware/response"
-	"github.com/lechitz/AionApi/adapters/secondary/security"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/infra/config/constants"
 )

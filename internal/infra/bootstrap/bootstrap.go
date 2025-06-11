@@ -2,11 +2,11 @@
 package bootstrap
 
 import (
-	adapterCache "github.com/lechitz/AionApi/adapters/secondary/cache"
-	infraCache "github.com/lechitz/AionApi/adapters/secondary/cache/tools/redis"
-	infraDB "github.com/lechitz/AionApi/adapters/secondary/db/postgres"
-	adapterDB "github.com/lechitz/AionApi/adapters/secondary/db/repository"
-	adapterSecurity "github.com/lechitz/AionApi/adapters/secondary/security"
+	adapterCache "github.com/lechitz/AionApi/internal/adapters/secondary/cache"
+	infraCache "github.com/lechitz/AionApi/internal/adapters/secondary/cache/tools/redis"
+	infraDB "github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
+	adapterSecurity "github.com/lechitz/AionApi/internal/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/input/graphql"
 	"github.com/lechitz/AionApi/internal/core/ports/output/db"
@@ -61,10 +61,10 @@ func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDepend
 		domain.TokenConfig{SecretKey: cfg.Secret.Key},
 	)
 
-	userRepository := adapterDB.NewUserRepository(dbConn, logger)
+	userRepository := repository.NewUserRepository(dbConn, logger)
 	userService := user.NewUserService(userRepository, tokenService, passwordHasher, logger)
 
-	categoryRepository := adapterDB.NewCategoryRepository(dbConn, logger)
+	categoryRepository := repository.NewCategoryRepository(dbConn, logger)
 	categoryService := category.NewCategoryService(categoryRepository, logger)
 
 	authService := auth.NewAuthService(
