@@ -2,9 +2,9 @@ package token_test
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
 	"testing"
 
-	"github.com/lechitz/AionApi/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
 	"github.com/lechitz/AionApi/tests/setup"

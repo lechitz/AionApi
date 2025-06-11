@@ -1,0 +1,59 @@
+// Package graphqlserver implements a new HTTP server configured for handling GraphQL requests.
+package graphqlserver
+
+import (
+	"context"
+	"github.com/lechitz/AionApi/internal/adapters/primary/graph"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recovery"
+	"net/http"
+	"time"
+
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/go-chi/chi/v5"
+
+	"github.com/lechitz/AionApi/internal/infra/bootstrap"
+	"github.com/lechitz/AionApi/internal/infra/config"
+)
+
+// NewGraphqlServer initializes and returns a new HTTP server
+// configured to handle GraphQL requests using Chi router.
+func NewGraphqlServer(deps *bootstrap.AppDependencies, cfg config.Config) (*http.Server, error) {
+	router := chi.NewRouter()
+
+	router.Use(auth.NewAuthMiddleware(
+		deps.TokenRepository,
+		deps.Logger,
+		cfg.Secret.Key,
+	).Auth)
+
+	router.Use(recovery.RecoverMiddleware(deps.Logger))
+
+	resolver := &graph.Resolver{
+		CategoryService: deps.CategoryService,
+		Logger:          deps.Logger,
+	}
+
+	srv := handler.New(
+		graph.NewExecutableSchema(graph.Config{Resolvers: resolver}),
+	)
+	srv.AddTransport(transport.POST{})
+
+	// Middleware to propagate context like userID from HTTP middleware to gqlgen resolvers
+	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+		// Reuse context from the HTTP layer (e.g., userID)
+		return next(ctx)
+	})
+
+	router.Handle("/graphql", srv)
+
+	httpSrv := &http.Server{
+		Addr:              ":" + cfg.ServerGraphql.Port,
+		Handler:           router,
+		ReadHeaderTimeout: 5 * time.Second,
+	}
+
+	return httpSrv, nil
+}
