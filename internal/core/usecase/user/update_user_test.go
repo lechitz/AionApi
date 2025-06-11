@@ -22,14 +22,16 @@ func TestUpdateUser_Success(t *testing.T) {
 		Email:    setup.DefaultTestUser().Email,
 	}
 
+	expected := setup.DefaultTestUser()
+
 	suite.UserRepository.EXPECT().
 		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
-		Return(setup.DefaultTestUser(), nil)
+		Return(expected, nil)
 
 	result, err := suite.UserService.UpdateUser(suite.Ctx, input)
 
 	require.NoError(t, err)
-	require.Equal(t, setup.DefaultTestUser(), result)
+	require.Equal(t, expected, result)
 }
 
 func TestUpdateUser_NoFieldsToUpdate(t *testing.T) {
@@ -50,6 +52,8 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	input := setup.DefaultTestUser()
+	expectedUser := input
+	expectedUser.Password = "password123"
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 	hashedPassword := "hashedNewPassword"
@@ -57,10 +61,10 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, input.ID).
-		Return(setup.DefaultTestUser(), nil)
+		Return(expectedUser, nil)
 
 	suite.PasswordHasher.EXPECT().
-		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
+		ValidatePassword(expectedUser.Password, oldPassword).
 		Return(nil)
 
 	suite.PasswordHasher.EXPECT().
@@ -69,7 +73,7 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
-		Return(setup.DefaultTestUser(), nil)
+		Return(expectedUser, nil)
 
 	suite.TokenService.EXPECT().
 		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
@@ -87,7 +91,7 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 	)
 
 	require.NoError(t, err)
-	require.Equal(t, setup.DefaultTestUser(), result)
+	require.Equal(t, expectedUser, result)
 	require.Equal(t, expectedToken, token)
 }
 

@@ -3,9 +3,10 @@ package validator
 
 import (
 	"errors"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 	"net/http"
 	"strconv"
+
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"

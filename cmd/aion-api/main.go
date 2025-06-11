@@ -5,15 +5,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/lechitz/AionApi/internal/adapters/primary/graph/graphqlserver"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
-	loggerAdapter "github.com/lechitz/AionApi/internal/adapters/secondary/logger"
 	"net/http"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/lechitz/AionApi/internal/adapters/primary/graph/graphqlserver"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
+	loggerAdapter "github.com/lechitz/AionApi/internal/adapters/secondary/logger"
 
 	"github.com/lechitz/AionApi/cmd/aion-api/constants"
 	loggerPort "github.com/lechitz/AionApi/internal/core/ports/output/logger"
@@ -30,7 +31,6 @@ func main() {
 	appLogger := loggerAdapter.NewZapLoggerAdapter(logger)
 
 	cfg := loadConfig(appLogger)
-	appLogger.Infof("loaded config: %+v", cfg)
 
 	appDeps, cleanupDeps := initDependencies(cfg, appLogger)
 	defer cleanupDeps()
@@ -50,6 +50,7 @@ func loadConfig(logger loggerPort.Logger) config.Config {
 		panic(err)
 	}
 	logger.Infow(constants.SuccessToLoadConfiguration)
+	logger.Infof("loaded config: %+v", cfg)
 	return cfg
 }
 

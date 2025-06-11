@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
+	"time"
+
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
-	"net/http"
-	"time"
 
 	"github.com/lechitz/AionApi/internal/shared/contextutil"
 

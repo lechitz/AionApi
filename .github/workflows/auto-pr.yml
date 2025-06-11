@@ -40,4 +40,4 @@ jobs:
             **Linked Issue**: Resolves #${{ github.event.head_commit.message }}
           labels: |
             auto-pr
-            ${{ github.ref_name }}
+            ${{ github.ref_name%%/* }}

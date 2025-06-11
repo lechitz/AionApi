@@ -3,8 +3,9 @@ package auth
 
 import (
 	"context"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"
 	"net/http"
+
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"
 
 	"github.com/lechitz/AionApi/internal/shared/contextutil"
 

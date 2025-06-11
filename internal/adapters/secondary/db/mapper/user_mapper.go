@@ -1,8 +1,9 @@
 package mapper
 
 import (
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 	"time"
+
+	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 
 	"gorm.io/gorm"
 

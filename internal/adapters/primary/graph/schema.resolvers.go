@@ -11,8 +11,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
 	"strconv"
+
+	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
 
 	"github.com/lechitz/AionApi/internal/shared/contextutil"
 

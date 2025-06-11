@@ -1,0 +1,60 @@
+# .github/workflows/lint.yml
+# ---------------------------------------------------------------------
+# Lint Workflow for AionAPI (Go)
+# Purpose: Perform static code analysis using golangci-lint and govet.
+#          Uses reviewdog to add inline comments directly to Pull Requests.
+# Trigger: Runs on every push to PRs targeting the 'main' branch.
+# ---------------------------------------------------------------------
+
+name: Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Golang Lint and Vet
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the source code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Go with version from go.mod
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      # Step 3: Cache Go modules to speed up installs
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      # Step 4: Install golangci-lint
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.56.2
+
+      # Step 5: Run golangci-lint with reviewdog for inline PR comments
+      - name: Run golangci-lint via reviewdog
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          golangci_lint_flags: "--config=.golangci.yml ./..."
+          level: warning
+          reporter: github-pr-review
+          fail_on_error: true
+
+      # Step 6: Run go vet (additional native analysis)
+      - name: Run go vet
+        run: go vet ./...

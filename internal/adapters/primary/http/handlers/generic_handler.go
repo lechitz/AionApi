@@ -2,9 +2,10 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
-	"net/http"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )

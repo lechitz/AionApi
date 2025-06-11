@@ -8,10 +8,11 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
 	"strconv"
 	"sync"
 	"sync/atomic"
+
+	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
