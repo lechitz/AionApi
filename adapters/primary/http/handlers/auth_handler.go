@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/lechitz/AionApi/internal/shared/contextutil"
 	"net/http"
 	"time"
 
@@ -59,13 +60,13 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := contextutil.GetUserID(ctx)
 	if !ok || userID == 0 {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveUserID, nil)
 		return
 	}
 
-	tokenString, ok := ctx.Value(constants.Token).(string)
+	tokenString, ok := contextutil.GetToken(ctx)
 	if !ok || tokenString == "" {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, nil)
 		return

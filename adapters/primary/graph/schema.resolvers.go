@@ -11,6 +11,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/internal/shared/contextutil"
 	"strconv"
 
 	"github.com/lechitz/AionApi/adapters/primary/graph/model"
@@ -19,7 +20,7 @@ import (
 
 // CreateCategory is the resolver for the createCategory field.
 func (r *mutationResolver) CreateCategory(ctx context.Context, category model.DtoCreateCategory) (*model.Category, error) {
-	userID, ok := ctx.Value("user_id").(uint64)
+	userID, ok := contextutil.GetUserID(ctx)
 	if !ok {
 		return nil, errors.New("userID not found in context")
 	}
@@ -54,7 +55,7 @@ func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*
 
 // UpdateCategory is the resolver for the UpdateCategory field.
 func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.DtoUpdateCategory) (*model.Category, error) {
-	userID, ok := ctx.Value("user_id").(uint64)
+	userID, ok := contextutil.GetUserID(ctx)
 	if !ok {
 		return nil, errors.New("userID not found in context")
 	}
@@ -99,7 +100,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 
 // SoftDeleteCategory is the resolver for the SoftDeleteCategory field.
 func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category model.DtoDeleteCategory) (bool, error) {
-	userID, ok := ctx.Value("user_id").(uint64)
+	userID, ok := contextutil.GetUserID(ctx)
 	if !ok {
 		return false, errors.New("userID not found in context")
 	}
@@ -123,7 +124,7 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 
 // AllCategories is the resolver for the AllCategories field.
 func (r *queryResolver) AllCategories(ctx context.Context) ([]*model.Category, error) {
-	userID, ok := ctx.Value("user_id").(uint64)
+	userID, ok := contextutil.GetUserID(ctx)
 	if !ok {
 		r.Logger.Errorw("User ID not found in context", "error", "userID not found in context")
 		return nil, errors.New("userID not found in context")
@@ -151,7 +152,7 @@ func (r *queryResolver) AllCategories(ctx context.Context) ([]*model.Category, e
 
 // GetCategoryByID is the resolver for the GetCategoryByID field.
 func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest model.DtoGetCategoryByID) (*model.Category, error) {
-	userID, ok := ctx.Value("user_id").(uint64)
+	userID, ok := contextutil.GetUserID(ctx)
 	if !ok {
 		r.Logger.Errorw("User ID not found in context", "error", "userID not found in context")
 		return nil, errors.New("userID not found in context")
@@ -184,7 +185,7 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 
 // GetCategoryByName is the resolver for the GetCategoryByName field.
 func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error) {
-	userID, ok := ctx.Value("user_id").(uint64)
+	userID, ok := contextutil.GetUserID(ctx)
 	if !ok {
 		r.Logger.Errorw("User ID not found in context", "error", "userID not found in context")
 		return nil, errors.New("userID not found in context")

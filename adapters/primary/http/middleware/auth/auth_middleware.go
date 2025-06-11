@@ -3,6 +3,7 @@ package auth
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/shared/contextutil"
 	"net/http"
 
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth/constants"
@@ -94,8 +95,9 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		newCtx := context.WithValue(r.Context(), userIDContextKey, tokenDomain.UserID)
-		newCtx = context.WithValue(newCtx, tokenContextKey, tokenCookie)
+		newCtx := context.WithValue(r.Context(), contextutil.UserIDKey, tokenDomain.UserID)
+
+		context.WithValue(newCtx, contextutil.TokenKey, tokenCookie)
 
 		next.ServeHTTP(w, r.WithContext(newCtx))
 	})
