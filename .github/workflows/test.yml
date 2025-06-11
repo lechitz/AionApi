@@ -1,0 +1,63 @@
+# ---------------------------------------------------------------------
+# Test Workflow for AionAPI (Go)
+# Purpose: Run unit tests with race detection and proper caching.
+# Trigger: Pull Requests targeting the 'main' branch.
+# ---------------------------------------------------------------------
+
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Go from go.mod
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      # Step 3: Clean mod cache (avoids tar conflicts with GORM)
+      - name: Clean Go mod cache
+        run: |
+          go clean -modcache
+          rm -rf ~/go/pkg/mod/gorm.io || true
+
+      # Step 4: Ensure cache directories exist
+      - name: Ensure cache dirs
+        run: |
+          mkdir -p ~/.cache/go-build
+          mkdir -p ~/go/pkg/mod
+
+      # Step 5: Cache Goes build artifacts
+      - name: Cache Go build
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/go-build
+          key: ${{ runner.os }}-test-gobuild-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-test-gobuild-
+
+      # Step 6: Cache Go modules
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-test-gomod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-test-gomod-
+
+      # Step 7: Run tests with race detector
+      - name: Run tests
+        run: |
+          go test -v -race ./...
