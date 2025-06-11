@@ -216,7 +216,6 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 // GetAllTags is the resolver for the GetAllTags field.
 func (r *queryResolver) GetAllTags(ctx context.Context) ([]*model.Tags, error) {
 	panic(fmt.Errorf("not implemented: GetAllTags - GetAllTags"))
-	return nil, nil
 }
 
 // GetTagByID is the resolver for the GetTagByID field.
