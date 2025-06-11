@@ -3,8 +3,9 @@ package auth
 
 import (
 	"context"
-	"github.com/lechitz/AionApi/internal/shared/contextutil"
 	"net/http"
+
+	"github.com/lechitz/AionApi/internal/shared/contextutil"
 
 	"github.com/lechitz/AionApi/adapters/primary/http/middleware/auth/constants"
 
@@ -14,16 +15,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
-
-// contextKey is a string type for context keys.
-// It is used to avoid typos when accessing context values.
-type contextKey string
-
-// userIDContextKey is the context key for user ID.
-const userIDContextKey contextKey = "user_id"
-
-// tokenContextKey is the context key for a user token.
-const tokenContextKey contextKey = "token"
 
 // MiddlewareAuth provides functionality for authentication in HTTP middleware.
 type MiddlewareAuth struct {
@@ -97,7 +88,9 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 
 		newCtx := context.WithValue(r.Context(), contextutil.UserIDKey, tokenDomain.UserID)
 
-		context.WithValue(newCtx, contextutil.TokenKey, tokenCookie)
+		ctx := context.WithValue(newCtx, contextutil.TokenKey, tokenCookie)
+
+		a.logger.Infow("auth context: ", ctx)
 
 		next.ServeHTTP(w, r.WithContext(newCtx))
 	})
