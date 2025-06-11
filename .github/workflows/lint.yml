@@ -15,41 +15,41 @@ on:
 
 jobs:
   lint:
-    name: Golang Lint and Vet
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Check out the source code
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # Step 2: Set up Go using a version from go.mod
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
 
-      # Step 3: Clean the module cache before using it (safe cleanup)
-      - name: Clean Go mod cache (safe)
+      - name: Clean Go mod cache
         run: go clean -modcache
 
-      # Step 4: Cache Go modules to speed up future builds
-      - name: Cache Go modules
+      - name: Fix cache permissions
+        run: |
+          chmod -R 0755 ~/.cache/go-build ~/go/pkg/mod
+
+      - name: Cache Go build cache
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          path: ~/.cache/go-build
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-go-
+            ${{ runner.os }}-go-build-
 
-      # Step 5: Install golangci-lint
+      - name: Cache golangci-lint cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/golangci-lint
+          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-golangci-lint-
+
       - name: Install golangci-lint
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.56.2
+        run: curl -sSfL https://... | sh -s -- -b $(go env GOPATH)/bin v1.56.2
 
-      # Step 6: Run golangci-lint via reviewdog for inline PR comments
       - name: Run golangci-lint via reviewdog
         uses: reviewdog/action-golangci-lint@v2
         with:
@@ -59,6 +59,5 @@ jobs:
           reporter: github-pr-review
           fail_level: error
 
-      # Step 7: Run go vet for additional static analysis
       - name: Run go vet
         run: go vet ./...
