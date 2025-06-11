@@ -7,10 +7,11 @@ import (
 
 type contextKey string
 
-const (
-	UserIDKey contextKey = "user_id"
-	TokenKey  contextKey = "token"
-)
+// UserIDKey is the key for the user ID in the context.
+const UserIDKey contextKey = "user_id"
+
+// TokenKey is the key for the authentication token in the context.
+const TokenKey contextKey = "token"
 
 // GetUserID retrieves the user ID from the context, if available.
 func GetUserID(ctx context.Context) (uint64, bool) {

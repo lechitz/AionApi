@@ -33,7 +33,7 @@ type ServerGraphql struct {
 
 // ServerHTTP holds HTTP server configuration.
 type ServerHTTP struct {
-	Port         string        `envconfig:"HTTP_PORT"               default:"5001"     required:"true"`
+	Port         string        `envconfig:"HTTP_PORT"          default:"5001"     required:"true"`
 	Context      string        `envconfig:"HTTP_CONTEXT"       default:"aion-api"`
 	ReadTimeout  time.Duration `envconfig:"HTTP_READ_TIMEOUT"  default:"10s"`
 	WriteTimeout time.Duration `envconfig:"HTTP_WRITE_TIMEOUT" default:"10s"`
