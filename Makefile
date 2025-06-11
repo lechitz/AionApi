@@ -212,32 +212,39 @@ mocks:
 	@echo "→ TokenStore"
 	mockgen -source=internal/core/ports/output/cache/token.go \
 		-destination=tests/mocks/token/mock_token_store.go \
-		-package=tokenmocks
+		-package=tokenmocks \
+		-mock_names=Store=MockTokenStore
 
 	@echo "→ TokenUsecase"
 	mockgen -source=internal/core/usecase/token/token_usecase.go \
 		-destination=tests/mocks/token/mock_token_usecase.go \
-		-package=tokenmocks TokenUsecase
+		-package=tokenmocks \
+		-mock_names=Usecase=MockTokenUsecase
 
 	@echo "→ UserStore"
 	mockgen -source=internal/core/ports/output/db/user.go \
 		-destination=tests/mocks/user/mock_user_store.go \
-		-package=usermocks
+		-package=usermocks \
+		-mock_names=UserStore=MockUserStore
 
 	@echo "→ CategoryStore"
 	mockgen -source=internal/core/ports/output/db/category.go \
 		-destination=tests/mocks/category/mock_category_store.go \
-		-package=categorymocks
+		-package=categorymocks \
+		-mock_names=CategoryStore=MockCategoryStore
 
 	@echo "→ SecurityStore"
 	mockgen -source=internal/core/ports/output/security/hasher.go \
 		-destination=tests/mocks/security/mock_security_store.go \
-		-package=securitymocks
+		-package=securitymocks \
+		-mock_names=Store=MockSecurityStore
 
 	@echo "→ Logger"
 	mockgen -source=internal/core/ports/output/logger/logger.go \
 		-destination=tests/mocks/logger/mock_logger.go \
-		-package=loggermocks
+		-package=loggermocks \
+		-mock_names=Logger=MockLogger
 
 	@echo "✅ All mocks generated successfully."
+
 

@@ -4,12 +4,12 @@ import (
 	"context"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
 	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
 	mockSecurity "github.com/lechitz/AionApi/tests/mocks/security"
 	mockToken "github.com/lechitz/AionApi/tests/mocks/token"
 	mockUser "github.com/lechitz/AionApi/tests/mocks/user"
+	"go.uber.org/mock/gomock"
 )
 
 // AuthServiceTestSuite defines a test suite for AuthService, including mock services and dependencies for testing authentication components.
