@@ -3,8 +3,9 @@ package contextbuilder
 
 import (
 	"context"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/contextbuilder/constants"
 	"net/http"
+
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/contextbuilder/constants"
 
 	"github.com/google/uuid"
 )

@@ -4,11 +4,12 @@ package httpserver
 import (
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recovery"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/router/chi"
-	"strings"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"

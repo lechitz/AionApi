@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
 	mockToken "github.com/lechitz/AionApi/tests/mocks/token"
+	"go.uber.org/mock/gomock"
 )
 
 // TokenServiceTestSuite is a test suite for testing TokenService with mocked dependencies and utilities for test cases.// TokenServiceTestSuite is a struct for managing the dependencies needed to test the TokenService implementation.

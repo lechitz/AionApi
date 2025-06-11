@@ -5,10 +5,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
-	"time"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"

@@ -1,0 +1,79 @@
+# ---------------------------------------------------------------------
+# Lint Workflow for AionAPI (Go)
+# Purpose: Perform static code analysis using golangci-lint and govet.
+# Trigger: Runs on every PR targeting the 'main' branch.
+# ---------------------------------------------------------------------
+
+name: Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Golang Lint and Vet
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Go
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      # Step 3: Clean the modcache to avoid tar file conflicts
+      - name: Clean Go mod cache
+        run: |
+          go clean -modcache
+          rm -rf ~/go/pkg/mod/gorm.io || true
+
+      # Step 4: Create expected cache directories (if missing)
+      - name: Ensure cache dirs exist
+        run: |
+          mkdir -p ~/.cache/go-build
+          mkdir -p ~/go/pkg/mod
+          mkdir -p ~/.cache/golangci-lint
+
+      # Step 5: Cache Goes build artifacts
+      - name: Cache Go build
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/go-build
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-build-
+
+      # Step 6: Cache golangci-lint cache
+      - name: Cache golangci-lint
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/golangci-lint
+          key: ${{ runner.os }}-golangci-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-golangci-
+
+      # Step 7: Install golangci-lint
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | \
+          sh -s -- -b $(go env GOPATH)/bin v1.56.2
+
+      # Step 8: Run golangci-lint with reviewdog
+      - name: Run golangci-lint via reviewdog
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          golangci_lint_flags: "--config=.golangci.yml ./..."
+          level: warning
+          reporter: github-pr-review
+          fail_level: error
+
+      # Step 9: Run native go vet
+      - name: Run go vet
+        run: go vet ./...

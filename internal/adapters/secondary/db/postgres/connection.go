@@ -3,8 +3,9 @@ package db
 
 import (
 	"fmt"
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres/constants"
 	"time"
+
+	"github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres/constants"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/infra/config"

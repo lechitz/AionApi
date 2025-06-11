@@ -2,6 +2,7 @@ package token
 
 import (
 	"context"
+
 	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
 
 	"github.com/lechitz/AionApi/internal/core/domain"

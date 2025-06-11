@@ -1,8 +1,8 @@
 package setup
 
 import (
-	"github.com/golang/mock/gomock"
 	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
+	"go.uber.org/mock/gomock"
 )
 
 // ExpectLoggerDefaultBehavior sets up default expectations for Infow, Errorw, Warnw, and Debugw calls on the mockLogger.MockLogger instance.

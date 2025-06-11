@@ -5,10 +5,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
 	mockCategory "github.com/lechitz/AionApi/tests/mocks/category"
 	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
+	"go.uber.org/mock/gomock"
 )
 
 // CategoryServiceTestSuite is a test suite structure for testing methods in the CategoryService, holding mock dependencies and context.

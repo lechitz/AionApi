@@ -3,11 +3,12 @@ package graphqlserver
 
 import (
 	"context"
+	"net/http"
+	"time"
+
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recovery"
-	"net/http"
-	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
