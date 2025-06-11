@@ -28,9 +28,11 @@ jobs:
         with:
           go-version-file: go.mod
 
-      # Step 2.5: Clean conflicting cached modules (avoid tar error)
-      - name: Clean Go mod cache (prevent tar errors)
-        run: rm -rf ~/go/pkg/mod/gorm.io
+      # Step 2.5: Clean Go module and build cache directories
+      - name: Clean Go module cache to prevent file conflicts
+        run: |
+          rm -rf ~/go/pkg/mod
+          rm -rf ~/.cache/go-build
 
       # Step 3: Cache Go modules to speed up installs
       - name: Cache Go modules
