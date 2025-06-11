@@ -19,11 +19,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the source code
+      # Step 1: Check out the source code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Go with version from go.mod
+      # Step 2: Set up Go with a version from go.mod
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
