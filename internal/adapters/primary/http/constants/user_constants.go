@@ -27,7 +27,7 @@ const UserID = "user_id"
 // Username is the key used to identify a user's username in context or request scope.
 const Username = "username"
 
-// Email is the key used to identify a user's email in context or request scope.'
+// Email is the key used to identify a user's email in context or request scope.
 const Email = "email"
 
 // ErrorToDecodeUserRequest is returned when decoding a user request fails.
