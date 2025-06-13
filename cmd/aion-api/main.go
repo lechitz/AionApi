@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os/signal"
 	"sync"
@@ -13,7 +12,9 @@ import (
 	"time"
 
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.32.0"
@@ -35,7 +36,10 @@ func main() {
 
 	cfg := loadConfig(logger)
 
-	cleanupTracer := initTracer(cfg)
+	cleanupMetrics := initOtelMetrics(cfg, logger)
+	defer cleanupMetrics()
+
+	cleanupTracer := initTracer(cfg, logger)
 	defer cleanupTracer()
 
 	appDeps, cleanupDeps := initDependencies(cfg, logger)
@@ -60,13 +64,39 @@ func loadConfig(logger loggerPort.Logger) config.Config {
 	return cfg
 }
 
-func initTracer(cfg config.Config) func() {
+func initOtelMetrics(cfg config.Config, logger loggerPort.Logger) func() {
+	exporter, err := otlpmetrichttp.New(context.Background(),
+		otlpmetrichttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint), // "otel-collector:4318" para docker, "localhost:4318" para local
+		otlpmetrichttp.WithInsecure(),
+	)
+	if err != nil {
+		logger.Errorw("failed to initialize OTLP metric exporter", "error", err)
+		panic(err)
+	}
+	provider := metric.NewMeterProvider(
+		metric.WithReader(metric.NewPeriodicReader(exporter)),
+		metric.WithResource(resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceNameKey.String(cfg.Observability.OtelServiceName),
+			semconv.ServiceVersionKey.String(cfg.Observability.OtelServiceVersion),
+		)),
+	)
+	otel.SetMeterProvider(provider)
+
+	return func() {
+		_ = provider.Shutdown(context.Background())
+	}
+}
+
+// initTracer initializes the OpenTelemetry tracer using the provided configuration.
+// It returns a cleanup function that shuts down the tracer provider and any associated resources.
+func initTracer(cfg config.Config, logger loggerPort.Logger) func() {
 	exporter, err := otlptracehttp.New(context.Background(),
 		otlptracehttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
 		otlptracehttp.WithInsecure(),
 	)
 	if err != nil {
-		log.Fatal(err)
+		logger.Errorw("failed to initialize OTLP exporter", "error", err)
 	}
 
 	resources := resource.NewWithAttributes(
@@ -83,16 +113,13 @@ func initTracer(cfg config.Config) func() {
 
 	return func() {
 		if err := traceProvider.Shutdown(context.Background()); err != nil {
-			log.Fatal(err)
+			logger.Errorw("failed to shutdown tracer provider", "error", err)
 		}
 	}
 }
 
 // initDependencies initializes services, repositories, and infrastructure connections.
-func initDependencies(
-	cfg config.Config,
-	logger loggerPort.Logger,
-) (*bootstrap.AppDependencies, func()) {
+func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.AppDependencies, func()) {
 	appDeps, cleanup, err := bootstrap.InitializeDependencies(cfg, logger)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrInitializeDependencies, err)
@@ -103,11 +130,7 @@ func initDependencies(
 }
 
 // createHTTPServer builds the HTTP server using configuration and application dependencies.
-func createHTTPServer(
-	appDeps *bootstrap.AppDependencies,
-	cfg *config.Config,
-	logger loggerPort.Logger,
-) *http.Server {
+func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, logger loggerPort.Logger) *http.Server {
 	httpSrv, err := httpserver.NewHTTPServer(appDeps, cfg)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
@@ -122,11 +145,7 @@ func createHTTPServer(
 }
 
 // createGraphQLServer builds the GraphQL server using configuration and application dependencies.
-func createGraphQLServer(
-	appDeps *bootstrap.AppDependencies,
-	cfg config.Config,
-	logger loggerPort.Logger,
-) *http.Server {
+func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, logger loggerPort.Logger) *http.Server {
 	graphqlSrv, err := graphqlserver.NewGraphqlServer(appDeps, cfg)
 	if err != nil {
 		logger.Errorw(constants.ErrStartGraphqlServer, constants.Error, err)

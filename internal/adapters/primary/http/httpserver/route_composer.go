@@ -1,3 +1,4 @@
+// Package httpserver provides functionality for configuring and managing HTTP routers.
 package httpserver
 
 import (

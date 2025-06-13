@@ -42,9 +42,22 @@ services:
     ports:
       - "4318:4318"       # OTLP HTTP (AionAPI envia para esse)
       - "55681:55681"     # OTLP gRPC (opcional, legado)
+      - "9888:9888"     # Expondo /metrics para Prometheus scrape (ajustado aqui)
     networks:
       - rede_local
     restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus-dev
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - rede_local
+    depends_on:
+      - otel-collector
 
   aion-api:
     image: aion-api:dev

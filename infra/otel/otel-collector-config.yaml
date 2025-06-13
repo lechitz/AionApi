@@ -4,6 +4,8 @@ receivers:
       http:
 
 exporters:
+  prometheus:
+    endpoint: "0.0.0.0:9888"
   logging:
     verbosity: detailed
 
@@ -12,3 +14,6 @@ service:
     traces:
       receivers: [otlp]
       exporters: [logging]
+    metrics:
+      receivers: [otlp]
+      exporters: [prometheus, logging]
