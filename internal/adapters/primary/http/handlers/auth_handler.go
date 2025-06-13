@@ -3,7 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
+
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
@@ -33,7 +37,8 @@ func NewAuth(authService inputHttp.AuthService, logger logger.Logger) *Auth {
 
 // LoginHandler handles the user login request, validates the credentials, and returns an authentication token.
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, span := otel.Tracer("AionApi/AuthHandler").Start(r.Context(), "LoginHandler")
+	defer span.End()
 
 	var loginReq dto.LoginUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
@@ -52,6 +57,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	setAuthCookie(w, token, 0)
 
 	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
+	span.SetAttributes(attribute.String("username", userDB.Username))
 
 	body := response.ObjectResponse(loginUserResponse, constants.SuccessLogin, a.Logger)
 	response.Return(w, http.StatusOK, body.Bytes(), a.Logger)
@@ -59,7 +65,8 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 // LogoutHandler processes user logout requests by invalidating tokens, clearing cookies, logging the event, and returning a success response.
 func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, span := otel.Tracer("AionApi/AuthHandler").Start(r.Context(), "LogoutHandler")
+	defer span.End()
 
 	userID, ok := contextutil.GetUserID(ctx)
 	if !ok || userID == 0 {
@@ -84,6 +91,11 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	if len(tokenString) >= 10 {
 		tokenPreview = tokenString[:10] + "..."
 	}
+
+	span.SetAttributes(
+		attribute.String("user_id", strconv.FormatUint(userID, 10)),
+		attribute.String("token_preview", tokenPreview),
+	)
 
 	a.Logger.Infow(
 		constants.SuccessLogout,

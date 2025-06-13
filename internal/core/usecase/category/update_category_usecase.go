@@ -13,7 +13,10 @@ type Updater interface {
 }
 
 // UpdateCategory updates an existing category in the system with provided fields and logs the operation outcome. Returns the updated category or an error.
-func (s *Service) UpdateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (s *Service) UpdateCategory(
+	ctx context.Context,
+	category domain.Category,
+) (domain.Category, error) {
 	fieldsToUpdate := extractUpdateFields(category)
 
 	updatedCategory, err := s.Repository.UpdateCategory(

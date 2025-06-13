@@ -24,7 +24,12 @@ type CategoryRetriver interface {
 
 // CategoryUpdater defines an interface for updating a category's attributes in a given context based on the provided category ID and user ID.
 type CategoryUpdater interface {
-	UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, fields map[string]interface{}) (domain.Category, error)
+	UpdateCategory(
+		ctx context.Context,
+		categoryID uint64,
+		userID uint64,
+		fields map[string]interface{},
+	) (domain.Category, error)
 }
 
 // CategoryDeleter defines an interface for handling the soft deletion of categories within a contextual operation.

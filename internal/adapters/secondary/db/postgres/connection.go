@@ -59,7 +59,11 @@ func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB,
 // logger logs information and warnings during connection attempts.
 // maxRetries specifies the maximum number of connection attempts.
 // Returns a Gorm DB instance on success or an error if all attempts fail.
-func tryConnectingWithRetries(conString string, logger logger.Logger, maxRetries int) (*gorm.DB, error) {
+func tryConnectingWithRetries(
+	conString string,
+	logger logger.Logger,
+	maxRetries int,
+) (*gorm.DB, error) {
 	var db *gorm.DB
 	var err error
 

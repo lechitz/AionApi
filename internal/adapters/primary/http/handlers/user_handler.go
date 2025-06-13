@@ -3,6 +3,8 @@ package handlers
 import (
 	"encoding/json"
 
+	"go.opentelemetry.io/otel"
+
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
@@ -34,7 +36,8 @@ func NewUser(userService inputHttp.UserService, logger logger.Logger) *User {
 
 // CreateUserHandler handles HTTP requests to create a new user and returns appropriate HTTP responses.
 func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, span := otel.Tracer("AionApi/UserHandler").Start(r.Context(), "CreateUserHandler")
+	defer span.End()
 
 	var req dto.CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -60,7 +63,8 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 // GetAllUsersHandler handles HTTP requests to retrieve all users and returns the data in the response.// GetAllUsersHandler handles HTTP GET requests to retrieve all users and returns the data as a response.
 func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, span := otel.Tracer("AionApi/UserHandler").Start(r.Context(), "GetAllUsersHandler")
+	defer span.End()
 
 	users, err := u.UserService.GetAllUsers(ctx)
 	if err != nil {
@@ -77,7 +81,8 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 // GetUserByIDHandler handles HTTP requests to retrieve a user by their ID and returns the user's data in the response.
 func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, span := otel.Tracer("AionApi/UserHandler").Start(r.Context(), "GetUserByIDHandler")
+	defer span.End()
 
 	userID, err := validator.ParseUserIDParam(w, r, u.Logger)
 	if err != nil {
@@ -105,7 +110,8 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 
 // UpdateUserHandler handles HTTP PUT requests to update an existing user's data based on the provided request payload.
 func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, span := otel.Tracer("AionApi/UserHandler").Start(r.Context(), "UpdateUserHandler")
+	defer span.End()
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
@@ -154,7 +160,8 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 // UpdatePasswordHandler handles the HTTP request to update a user's password and refreshes their authentication token.
 func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, span := otel.Tracer("AionApi/UserHandler").Start(r.Context(), "UpdatePasswordHandler")
+	defer span.End()
 
 	var req dto.UpdatePasswordUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -196,7 +203,8 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 // SoftDeleteUserHandler handles the soft deletion of a user by ID extracted from the request context.
 // Responds with HTTP 204 on success or appropriate error response if the operation fails.
 func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, span := otel.Tracer("AionApi/UserHandler").Start(r.Context(), "SoftDeleteUserHandler")
+	defer span.End()
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {

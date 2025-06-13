@@ -14,7 +14,11 @@ type Service struct {
 }
 
 // NewTokenService initializes a Service with a token repository, logger, and token configuration for managing token operations.
-func NewTokenService(tokenRepo cache.TokenRepositoryPort, logger logger.Logger, config domain.TokenConfig) *Service {
+func NewTokenService(
+	tokenRepo cache.TokenRepositoryPort,
+	logger logger.Logger,
+	config domain.TokenConfig,
+) *Service {
 	return &Service{
 		tokenRepository: tokenRepo,
 		logger:          logger,
