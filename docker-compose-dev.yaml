@@ -33,6 +33,19 @@ services:
       timeout: 5s
       retries: 5
 
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.101.0
+    container_name: otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./infra/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - "4318:4318"       # OTLP HTTP (AionAPI envia para esse)
+      - "55681:55681"     # OTLP gRPC (opcional, legado)
+    networks:
+      - rede_local
+    restart: unless-stopped
+
   aion-api:
     image: aion-api:dev
     build:
@@ -49,6 +62,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      otel-collector:
+        condition: service_started
     networks:
       - rede_local
     restart: unless-stopped

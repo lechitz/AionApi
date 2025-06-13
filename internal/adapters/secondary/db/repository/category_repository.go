@@ -32,7 +32,10 @@ func NewCategoryRepository(db *gorm.DB, logger logger.Logger) *CategoryRepositor
 }
 
 // CreateCategory creates a new category in the database and returns the created category or an error if the operation fails.
-func (c CategoryRepository) CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (c CategoryRepository) CreateCategory(
+	ctx context.Context,
+	category domain.Category,
+) (domain.Category, error) {
 	categoryDB := mapper.CategoryToDB(category)
 
 	if err := c.db.WithContext(ctx).
@@ -52,7 +55,10 @@ func (c CategoryRepository) CreateCategory(ctx context.Context, category domain.
 }
 
 // GetCategoryByID retrieves a category by its ID and user ID from the database and returns it as a domain.Category or an error if not found.
-func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (c CategoryRepository) GetCategoryByID(
+	ctx context.Context,
+	category domain.Category,
+) (domain.Category, error) {
 	var categoryDB model.CategoryDB
 
 	if err := c.db.WithContext(ctx).
@@ -69,7 +75,10 @@ func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain
 }
 
 // GetCategoryByName retrieves a category by its name and user ID from the database and returns it as a domain.Category or an error if not found.
-func (c CategoryRepository) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (c CategoryRepository) GetCategoryByName(
+	ctx context.Context,
+	category domain.Category,
+) (domain.Category, error) {
 	var categoryDB model.CategoryDB
 
 	if err := c.db.WithContext(ctx).
@@ -83,7 +92,10 @@ func (c CategoryRepository) GetCategoryByName(ctx context.Context, category doma
 }
 
 // GetAllCategories retrieves all categories associated with a specific user defined by the userID. Returns a slice of domain.Category or an error.
-func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
+func (c CategoryRepository) GetAllCategories(
+	ctx context.Context,
+	userID uint64,
+) ([]domain.Category, error) {
 	var categoriesDB []model.CategoryDB
 
 	if err := c.db.WithContext(ctx).
@@ -127,7 +139,10 @@ func (c CategoryRepository) UpdateCategory(
 }
 
 // SoftDeleteCategory updates the DeletedAt and UpdatedAt fields to mark a category as soft-deleted based on category ID and user ID.
-func (c CategoryRepository) SoftDeleteCategory(ctx context.Context, category domain.Category) error {
+func (c CategoryRepository) SoftDeleteCategory(
+	ctx context.Context,
+	category domain.Category,
+) error {
 	fields := map[string]interface{}{
 		constants.DeletedAt: time.Now().UTC(),
 		constants.UpdatedAt: time.Now().UTC(),

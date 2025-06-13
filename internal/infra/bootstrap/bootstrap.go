@@ -37,7 +37,10 @@ type AppDependencies struct {
 
 // InitializeDependencies initializes and returns all core application dependencies,
 // including repositories, services, and a cleanup function.
-func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDependencies, func(), error) {
+func InitializeDependencies(
+	cfg config.Config,
+	logger logger.Logger,
+) (*AppDependencies, func(), error) {
 	cacheConn, err := infraCache.NewCacheConnection(cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)

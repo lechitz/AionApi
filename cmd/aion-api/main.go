@@ -5,18 +5,23 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
 
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/sdk/resource"
+	"go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.32.0"
+
+	"github.com/lechitz/AionApi/cmd/aion-api/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/graphqlserver"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
-	loggerAdapter "github.com/lechitz/AionApi/internal/adapters/secondary/logger"
-
-	"github.com/lechitz/AionApi/cmd/aion-api/constants"
 	loggerPort "github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/infra/bootstrap"
 	"github.com/lechitz/AionApi/internal/infra/config"
@@ -25,20 +30,21 @@ import (
 
 // main initializes and runs the AionAPI application lifecycle.
 func main() {
-	logger, cleanup := loggerBuilder.NewZapLogger()
-	defer cleanup()
+	logger, cleanupLogger := loggerBuilder.NewZapLogger()
+	defer cleanupLogger()
 
-	appLogger := loggerAdapter.NewZapLoggerAdapter(logger)
+	cfg := loadConfig(logger)
 
-	cfg := loadConfig(appLogger)
+	cleanupTracer := initTracer(cfg)
+	defer cleanupTracer()
 
-	appDeps, cleanupDeps := initDependencies(cfg, appLogger)
+	appDeps, cleanupDeps := initDependencies(cfg, logger)
 	defer cleanupDeps()
 
-	httpSrv := createHTTPServer(appDeps, &cfg, appLogger)
-	graphqlSrv := createGraphQLServer(appDeps, cfg, appLogger)
+	httpSrv := createHTTPServer(appDeps, &cfg, logger)
+	graphqlSrv := createGraphQLServer(appDeps, cfg, logger)
 
-	handleServers(httpSrv, graphqlSrv, cfg, appLogger)
+	handleServers(httpSrv, graphqlSrv, cfg, logger)
 }
 
 // loadConfig loads the environment configuration using envconfig, panicking on failure.
@@ -54,8 +60,39 @@ func loadConfig(logger loggerPort.Logger) config.Config {
 	return cfg
 }
 
+func initTracer(cfg config.Config) func() {
+	exporter, err := otlptracehttp.New(context.Background(),
+		otlptracehttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
+		otlptracehttp.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	resources := resource.NewWithAttributes(
+		semconv.SchemaURL,
+		semconv.ServiceNameKey.String(cfg.Observability.OtelServiceName),
+		semconv.ServiceVersionKey.String(cfg.Observability.OtelServiceVersion),
+	)
+
+	traceProvider := trace.NewTracerProvider(
+		trace.WithBatcher(exporter),
+		trace.WithResource(resources),
+	)
+	otel.SetTracerProvider(traceProvider)
+
+	return func() {
+		if err := traceProvider.Shutdown(context.Background()); err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
 // initDependencies initializes services, repositories, and infrastructure connections.
-func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.AppDependencies, func()) {
+func initDependencies(
+	cfg config.Config,
+	logger loggerPort.Logger,
+) (*bootstrap.AppDependencies, func()) {
 	appDeps, cleanup, err := bootstrap.InitializeDependencies(cfg, logger)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrInitializeDependencies, err)
@@ -66,7 +103,11 @@ func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.A
 }
 
 // createHTTPServer builds the HTTP server using configuration and application dependencies.
-func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, logger loggerPort.Logger) *http.Server {
+func createHTTPServer(
+	appDeps *bootstrap.AppDependencies,
+	cfg *config.Config,
+	logger loggerPort.Logger,
+) *http.Server {
 	httpSrv, err := httpserver.NewHTTPServer(appDeps, cfg)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
@@ -81,7 +122,11 @@ func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, lo
 }
 
 // createGraphQLServer builds the GraphQL server using configuration and application dependencies.
-func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, logger loggerPort.Logger) *http.Server {
+func createGraphQLServer(
+	appDeps *bootstrap.AppDependencies,
+	cfg config.Config,
+	logger loggerPort.Logger,
+) *http.Server {
 	graphqlSrv, err := graphqlserver.NewGraphqlServer(appDeps, cfg)
 	if err != nil {
 		logger.Errorw(constants.ErrStartGraphqlServer, constants.Error, err)

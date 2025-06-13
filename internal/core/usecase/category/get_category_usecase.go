@@ -18,7 +18,10 @@ type Retriever interface {
 
 // GetCategoryByID retrieves a category by its ID from the database and returns it.
 // Returns an error if the ID is invalid or if the retrieval fails.
-func (s *Service) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (s *Service) GetCategoryByID(
+	ctx context.Context,
+	category domain.Category,
+) (domain.Category, error) {
 	if category.ID == 0 {
 		s.Logger.Errorw(constants.CategoryIDIsRequired, constants.CategoryID, category.ID)
 		return domain.Category{}, errors.New(constants.CategoryIDIsRequired)
@@ -41,7 +44,10 @@ func (s *Service) GetCategoryByID(ctx context.Context, category domain.Category)
 
 // GetCategoryByName retrieves a category by its name from the database and returns it.
 // Returns an error if the name is empty or if the retrieval fails.
-func (s *Service) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (s *Service) GetCategoryByName(
+	ctx context.Context,
+	category domain.Category,
+) (domain.Category, error) {
 	if category.Name == "" {
 		s.Logger.Errorw(constants.CategoryNameIsRequired, constants.CategoryName, category.Name)
 		return domain.Category{}, errors.New(constants.CategoryNameIsRequired)

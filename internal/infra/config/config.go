@@ -54,10 +54,11 @@ func (l *Loader) Load(logger logger.Logger) (Config, error) {
 // Config holds all configuration sections required to bootstrap the application.
 // This struct is populated through environment variable processing via envconfig.
 type Config struct {
-	DB            DBConfig      // Database-related configuration
-	Cache         CacheConfig   // Cache layer configuration
-	Secret        Secret        // Secret and security configuration
-	ServerGraphql ServerGraphql // GraphQL server-specific configuration
-	ServerHTTP    ServerHTTP    // HTTP server-specific configuration
-	Application   Application   // General application-level configuration
+	Observability ObservabilityConfig // Só strings
+	DB            DBConfig            // Só strings
+	Cache         CacheConfig         // Strings e ints
+	Secret        Secret              // Só string
+	ServerGraphql ServerGraphql       // Só string
+	ServerHTTP    ServerHTTP          // Strings e durations
+	Application   Application         // duration e int
 }

@@ -3,6 +3,13 @@ package config
 
 import "time"
 
+// ObservabilityConfig holds all observability-related configuration.
+type ObservabilityConfig struct {
+	OtelExporterOTLPEndpoint string `envconfig:"OTEL_EXPORTER_OTLP_ENDPOINT" default:"otel-collector:4318"`
+	OtelServiceName          string `envconfig:"OTEL_SERVICE_NAME"           default:"AionApi"`
+	OtelServiceVersion       string `envconfig:"OTEL_SERVICE_VERSION"        default:"0.1.0"`
+}
+
 // DBConfig holds database connection configuration.
 type DBConfig struct {
 	Name     string `envconfig:"DB_NAME"     required:"true"`
@@ -41,6 +48,6 @@ type ServerHTTP struct {
 
 // Application holds general application-related configuration.
 type Application struct {
-	Timeout        int           `envconfig:"SHUTDOWN_TIMEOUT" default:"5"`
 	ContextRequest time.Duration `envconfig:"CONTEXT_REQUEST"  default:"2.1s"`
+	Timeout        int           `envconfig:"SHUTDOWN_TIMEOUT" default:"5"`
 }

@@ -8,7 +8,11 @@ import (
 
 // UserCreator defines a method to create a new user with the given details and return the created user or an error.
 type UserCreator interface {
-	CreateUser(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, error)
+	CreateUser(
+		ctx context.Context,
+		user domain.UserDomain,
+		password string,
+	) (domain.UserDomain, error)
 }
 
 // UserRetriever defines methods to retrieve user information from a data source.
@@ -26,7 +30,11 @@ type UserRetriever interface {
 // UpdateUserPassword updates the user's password and returns the updated user, a result message, or an error.
 type UserUpdater interface {
 	UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error)
-	UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error)
+	UpdateUserPassword(
+		ctx context.Context,
+		user domain.UserDomain,
+		oldPassword, newPassword string,
+	) (domain.UserDomain, string, error)
 }
 
 // UserDeleter provides a method to perform a soft delete operation on a user by their unique identifier.

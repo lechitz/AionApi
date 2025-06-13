@@ -28,7 +28,10 @@ func NewUserRepository(db *gorm.DB, logger logger.Logger) *UserRepository {
 }
 
 // CreateUser adds a new user to the database, mapping the provided domain object and returning the created user or an error if the operation fails.
-func (up UserRepository) CreateUser(ctx context.Context, userDomain domain.UserDomain) (domain.UserDomain, error) {
+func (up UserRepository) CreateUser(
+	ctx context.Context,
+	userDomain domain.UserDomain,
+) (domain.UserDomain, error) {
 	userDB := mapper.UserToDB(userDomain)
 
 	if err := up.db.WithContext(ctx).
@@ -59,7 +62,10 @@ func (up UserRepository) GetAllUsers(ctx context.Context) ([]domain.UserDomain, 
 }
 
 // GetUserByID retrieves a user from the database by their unique user ID and returns the user in domain object format or an error.
-func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain.UserDomain, error) {
+func (up UserRepository) GetUserByID(
+	ctx context.Context,
+	userID uint64,
+) (domain.UserDomain, error) {
 	var userDB model.UserDB
 
 	if err := up.db.WithContext(ctx).
@@ -73,7 +79,10 @@ func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain
 }
 
 // GetUserByUsername retrieves a user from the database using their unique username. Returns a domain.UserDomain or an error if the user is not found.
-func (up UserRepository) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
+func (up UserRepository) GetUserByUsername(
+	ctx context.Context,
+	username string,
+) (domain.UserDomain, error) {
 	var userDB model.UserDB
 
 	if err := up.db.WithContext(ctx).
@@ -87,7 +96,10 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 }
 
 // GetUserByEmail retrieves a user by their email address from the database and returns a domain.UserDomain or an error if not found.
-func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
+func (up UserRepository) GetUserByEmail(
+	ctx context.Context,
+	email string,
+) (domain.UserDomain, error) {
 	var userDB model.UserDB
 
 	if err := up.db.WithContext(ctx).
@@ -101,7 +113,11 @@ func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (doma
 }
 
 // UpdateUser updates specified fields for a user by their ID and returns the updated user or an error if the operation fails.
-func (up UserRepository) UpdateUser(ctx context.Context, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
+func (up UserRepository) UpdateUser(
+	ctx context.Context,
+	userID uint64,
+	fields map[string]interface{},
+) (domain.UserDomain, error) {
 	delete(fields, constants.CreatedAt)
 
 	if err := up.db.WithContext(ctx).
