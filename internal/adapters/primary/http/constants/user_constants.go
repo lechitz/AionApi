@@ -1,7 +1,34 @@
 package constants
 
+// TracerUserHandler is the name of the tracer for user operations.
+const TracerUserHandler = "AionApi/UserHandler"
+
+// TracerCreateUserHandler is the name of the tracer for user creation operations.
+const TracerCreateUserHandler = "CreateUserHandler"
+
+// TracerGetAllUsersHandler is the name of the tracer for user retrieval operations.
+const TracerGetAllUsersHandler = "GetAllUsersHandler"
+
+// TracerGetUserByIDHandler is the name of the tracer for user retrieval operations by ID.
+const TracerGetUserByIDHandler = "GetUserByIDHandler"
+
+// TracerUpdateUserHandler is the name of the tracer for user update operations.
+const TracerUpdateUserHandler = "UpdateUserHandler"
+
+// TracerUpdatePasswordHandler is the name of the tracer for password update operations.
+const TracerUpdatePasswordHandler = "UpdatePasswordHandler"
+
+// TracerSoftDeleteUserHandler is the name of the tracer for user soft deletion operations.
+const TracerSoftDeleteUserHandler = "SoftDeleteUserHandler"
+
 // UserID is the key used to identify a user in context or request scope.
 const UserID = "user_id"
+
+// Username is the key used to identify a user's username in context or request scope.
+const Username = "username"
+
+// Email is the key used to identify a user's email in context or request scope.'
+const Email = "email"
 
 // ErrorToDecodeUserRequest is returned when decoding a user request fails.
 const ErrorToDecodeUserRequest = "error to decode user request"
