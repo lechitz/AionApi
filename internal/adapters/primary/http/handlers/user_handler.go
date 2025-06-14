@@ -47,7 +47,8 @@ func NewUser(userService inputHttp.UserService, logger logger.Logger) *User {
 // The username and email must be unique.
 // The username and email must not be empty.
 func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx, span := otel.Tracer(constants.TracerUserHandler).Start(r.Context(), constants.TracerCreateUserHandler)
+	ctx, span := otel.Tracer(constants.TracerUserHandler).
+		Start(r.Context(), constants.TracerCreateUserHandler)
 	defer span.End()
 
 	span.AddEvent("decoding request")
@@ -86,7 +87,8 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 // GetAllUsersHandler handles HTTP requests to retrieve all users and returns the data in the response.// GetAllUsersHandler handles HTTP GET requests to retrieve all users and returns the data as a response.
 func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
-	ctx, span := otel.Tracer(constants.TracerUserHandler).Start(r.Context(), constants.TracerGetAllUsersHandler)
+	ctx, span := otel.Tracer(constants.TracerUserHandler).
+		Start(r.Context(), constants.TracerGetAllUsersHandler)
 	defer span.End()
 
 	span.AddEvent("calling UserService.GetAllUsers")
@@ -109,7 +111,8 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 // GetUserByIDHandler handles HTTP requests to retrieve a user by their ID and returns the user's data in the response.
 func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
-	ctx, span := otel.Tracer(constants.TracerCreateUserHandler).Start(r.Context(), constants.TracerGetUserByIDHandler)
+	ctx, span := otel.Tracer(constants.TracerCreateUserHandler).
+		Start(r.Context(), constants.TracerGetUserByIDHandler)
 	defer span.End()
 
 	userID, err := validator.ParseUserIDParam(w, r, u.Logger)
@@ -145,7 +148,8 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 
 // UpdateUserHandler handles HTTP PUT requests to update an existing user's data based on the provided request payload.
 func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx, span := otel.Tracer(constants.TracerUserHandler).Start(r.Context(), constants.TracerUpdateUserHandler)
+	ctx, span := otel.Tracer(constants.TracerUserHandler).
+		Start(r.Context(), constants.TracerUpdateUserHandler)
 	defer span.End()
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
@@ -205,7 +209,8 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 // UpdatePasswordHandler handles the HTTP request to update a user's password and refreshes their authentication token.
 func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
-	ctx, span := otel.Tracer(constants.TracerUserHandler).Start(r.Context(), constants.TracerUpdatePasswordHandler)
+	ctx, span := otel.Tracer(constants.TracerUserHandler).
+		Start(r.Context(), constants.TracerUpdatePasswordHandler)
 	defer span.End()
 
 	var req dto.UpdatePasswordUserRequest
@@ -256,7 +261,8 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 // SoftDeleteUserHandler handles the soft deletion of a user by ID extracted from the request context.
 // Responds with HTTP 204 on success or appropriate error response if the operation fails.
 func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx, span := otel.Tracer(constants.TracerUserHandler).Start(r.Context(), constants.TracerSoftDeleteUserHandler)
+	ctx, span := otel.Tracer(constants.TracerUserHandler).
+		Start(r.Context(), constants.TracerSoftDeleteUserHandler)
 	defer span.End()
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)

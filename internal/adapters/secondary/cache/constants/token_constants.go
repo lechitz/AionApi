@@ -7,6 +7,9 @@ const Key = "key"
 // Error is a generic error string used as a key or placeholder.
 const Error = "error"
 
+// UserID is the key used to store the user ID.
+const UserID = "user_id"
+
 // ErrorToSaveTokenToRedis indicates a failure to save a token in Redis.
 const ErrorToSaveTokenToRedis = "error to save token to Redis"
 
