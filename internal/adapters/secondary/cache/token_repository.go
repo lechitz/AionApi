@@ -5,17 +5,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants"
-
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/redis/go-redis/v9"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // TokenRepository provides methods to interact with a Redis-based token storage.
-// It uses a Redis client for cache operations and a logger for logging activities.
 type TokenRepository struct {
 	cache  *redis.Client
 	logger logger.Logger
@@ -31,26 +34,46 @@ func NewTokenRepository(cache *redis.Client, logger logger.Logger) *TokenReposit
 
 // Save stores a token in the Redis cache with a 24-hour expiration time and logs errors if the operation fails.
 func (t *TokenRepository) Save(ctx context.Context, token domain.TokenDomain) error {
+	tr := otel.Tracer("AionApi/RedisAdapter")
+	ctx, span := tr.Start(ctx, "TokenRepository.Save", trace.WithAttributes(
+		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
+		attribute.String("operation", "save"),
+	))
+	defer span.End()
+
 	key := t.formatTokenKey(token.UserID)
 	expiration := 24 * time.Hour
 
 	if err := t.cache.Set(ctx, key, token.Token, expiration).Err(); err != nil {
+		span.SetStatus(codes.Error, err.Error())
+		span.RecordError(err)
 		t.logger.Errorw(constants.ErrorToSaveTokenToRedis, constants.Key, key, constants.Error, err)
 		return err
 	}
 
+	span.SetStatus(codes.Ok, "token saved successfully")
 	return nil
 }
 
 // Get retrieves a token associated with a user ID from the Redis cache or returns an error if the token is not found or another issue occurs.
 func (t *TokenRepository) Get(ctx context.Context, token domain.TokenDomain) (string, error) {
+	tr := otel.Tracer("AionApi/RedisAdapter")
+	ctx, span := tr.Start(ctx, "TokenRepository.Get", trace.WithAttributes(
+		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
+		attribute.String("operation", "get"),
+	))
+	defer span.End()
+
 	key := t.formatTokenKey(token.UserID)
 
 	value, err := t.cache.Get(ctx, key).Result()
 	if err != nil {
+		span.RecordError(err)
 		if errors.Is(err, redis.Nil) || err.Error() == "redis: nil" {
+			span.SetStatus(codes.Error, "token not found")
 			return "", fmt.Errorf("token not found for user ID %d", token.UserID)
 		}
+		span.SetStatus(codes.Error, err.Error())
 		t.logger.Errorw(
 			constants.ErrorToGetTokenFromRedis,
 			constants.Key,
@@ -61,15 +84,25 @@ func (t *TokenRepository) Get(ctx context.Context, token domain.TokenDomain) (st
 		return "", err
 	}
 
+	span.SetStatus(codes.Ok, "token retrieved successfully")
 	return value, nil
 }
 
 // Update updates an existing token in the Redis cache with a 24-hour expiration and logs success or failure.
 func (t *TokenRepository) Update(ctx context.Context, token domain.TokenDomain) error {
+	tr := otel.Tracer("AionApi/RedisAdapter")
+	ctx, span := tr.Start(ctx, "TokenRepository.Update", trace.WithAttributes(
+		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
+		attribute.String("operation", "update"),
+	))
+	defer span.End()
+
 	key := t.formatTokenKey(token.UserID)
 	expiration := 24 * time.Hour
 
 	if err := t.cache.Set(ctx, key, token.Token, expiration).Err(); err != nil {
+		span.SetStatus(codes.Error, err.Error())
+		span.RecordError(err)
 		t.logger.Errorw(
 			constants.ErrorToUpdateTokenInRedis,
 			constants.Key,
@@ -80,15 +113,25 @@ func (t *TokenRepository) Update(ctx context.Context, token domain.TokenDomain) 
 		return err
 	}
 
+	span.SetStatus(codes.Ok, "token updated successfully")
 	t.logger.Infow(constants.SuccessToUpdateTokenInRedis, constants.Key, key)
 	return nil
 }
 
 // Delete removes a token associated with a user ID from the Redis cache and logs any errors if the operation fails.
 func (t *TokenRepository) Delete(ctx context.Context, token domain.TokenDomain) error {
+	tr := otel.Tracer("AionApi/RedisAdapter")
+	ctx, span := tr.Start(ctx, "TokenRepository.Delete", trace.WithAttributes(
+		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
+		attribute.String("operation", "delete"),
+	))
+	defer span.End()
+
 	key := t.formatTokenKey(token.UserID)
 
 	if err := t.cache.Del(ctx, key).Err(); err != nil {
+		span.SetStatus(codes.Error, err.Error())
+		span.RecordError(err)
 		t.logger.Errorw(
 			constants.ErrorToDeleteTokenFromRedis,
 			constants.Key,
@@ -99,6 +142,7 @@ func (t *TokenRepository) Delete(ctx context.Context, token domain.TokenDomain) 
 		return err
 	}
 
+	span.SetStatus(codes.Ok, "token deleted successfully")
 	return nil
 }
 

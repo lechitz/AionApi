@@ -65,8 +65,11 @@ func loadConfig(logger loggerPort.Logger) config.Config {
 }
 
 func initOtelMetrics(cfg config.Config, logger loggerPort.Logger) func() {
-	exporter, err := otlpmetrichttp.New(context.Background(),
-		otlpmetrichttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint), // "otel-collector:4318" para docker, "localhost:4318" para local
+	exporter, err := otlpmetrichttp.New(
+		context.Background(),
+		otlpmetrichttp.WithEndpoint(
+			cfg.Observability.OtelExporterOTLPEndpoint,
+		), // "otel-collector:4318" para docker, "localhost:4318" para local
 		otlpmetrichttp.WithInsecure(),
 	)
 	if err != nil {
@@ -91,7 +94,8 @@ func initOtelMetrics(cfg config.Config, logger loggerPort.Logger) func() {
 // initTracer initializes the OpenTelemetry tracer using the provided configuration.
 // It returns a cleanup function that shuts down the tracer provider and any associated resources.
 func initTracer(cfg config.Config, logger loggerPort.Logger) func() {
-	exporter, err := otlptracehttp.New(context.Background(),
+	exporter, err := otlptracehttp.New(
+		context.Background(),
 		otlptracehttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
 		otlptracehttp.WithInsecure(),
 	)
@@ -119,7 +123,10 @@ func initTracer(cfg config.Config, logger loggerPort.Logger) func() {
 }
 
 // initDependencies initializes services, repositories, and infrastructure connections.
-func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.AppDependencies, func()) {
+func initDependencies(
+	cfg config.Config,
+	logger loggerPort.Logger,
+) (*bootstrap.AppDependencies, func()) {
 	appDeps, cleanup, err := bootstrap.InitializeDependencies(cfg, logger)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrInitializeDependencies, err)
@@ -130,7 +137,11 @@ func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.A
 }
 
 // createHTTPServer builds the HTTP server using configuration and application dependencies.
-func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, logger loggerPort.Logger) *http.Server {
+func createHTTPServer(
+	appDeps *bootstrap.AppDependencies,
+	cfg *config.Config,
+	logger loggerPort.Logger,
+) *http.Server {
 	httpSrv, err := httpserver.NewHTTPServer(appDeps, cfg)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
@@ -145,7 +156,11 @@ func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, lo
 }
 
 // createGraphQLServer builds the GraphQL server using configuration and application dependencies.
-func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, logger loggerPort.Logger) *http.Server {
+func createGraphQLServer(
+	appDeps *bootstrap.AppDependencies,
+	cfg config.Config,
+	logger loggerPort.Logger,
+) *http.Server {
 	graphqlSrv, err := graphqlserver.NewGraphqlServer(appDeps, cfg)
 	if err != nil {
 		logger.Errorw(constants.ErrStartGraphqlServer, constants.Error, err)

@@ -2,18 +2,23 @@ receivers:
   otlp:
     protocols:
       http:
+      grpc:
 
 exporters:
   prometheus:
     endpoint: "0.0.0.0:9888"
   logging:
     verbosity: detailed
+  otlp:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [logging]
+      exporters: [otlp, logging]
     metrics:
       receivers: [otlp]
       exporters: [prometheus, logging]
