@@ -78,6 +78,16 @@ services:
     depends_on:
       - prometheus
 
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    container_name: jaeger-dev
+    restart: unless-stopped
+    ports:
+      - "16686:16686"   # UI Web
+      - "9411:9411"     # Zipkin ingest!
+    networks:
+      - rede_local
+
   aion-api:
     image: aion-api:dev
     build:

@@ -91,7 +91,8 @@ func initOtelMetrics(cfg config.Config, logger loggerPort.Logger) func() {
 // initTracer initializes the OpenTelemetry tracer using the provided configuration.
 // It returns a cleanup function that shuts down the tracer provider and any associated resources.
 func initTracer(cfg config.Config, logger loggerPort.Logger) func() {
-	exporter, err := otlptracehttp.New(context.Background(),
+	exporter, err := otlptracehttp.New(
+		context.Background(),
 		otlptracehttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
 		otlptracehttp.WithInsecure(),
 	)
