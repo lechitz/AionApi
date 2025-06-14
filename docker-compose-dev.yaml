@@ -15,7 +15,7 @@ services:
     networks:
       - rede_local
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -40,9 +40,9 @@ services:
     volumes:
       - ./infra/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
     ports:
-      - "4318:4318"       # OTLP HTTP (AionAPI envia para esse)
-      - "55681:55681"     # OTLP gRPC (opcional, legado)
-      - "9888:9888"     # Expondo /metrics para Prometheus scrape (ajustado aqui)
+      - "4318:4318"   # OTLP HTTP
+      - "55681:55681" # OTLP gRPC
+      - "9888:9888"   # /metrics Prometheus scrape
     networks:
       - rede_local
     restart: unless-stopped
@@ -58,6 +58,25 @@ services:
       - rede_local
     depends_on:
       - otel-collector
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=aion
+      - GF_SECURITY_ADMIN_PASSWORD=aion
+    volumes:
+      - ./infra/observability/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./infra/observability/grafana/provisioning:/etc/grafana/provisioning/dashboards
+      - ./infra/observability/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - grafana-data:/var/lib/grafana
+    networks:
+      - rede_local
+    depends_on:
+      - prometheus
 
   aion-api:
     image: aion-api:dev
@@ -86,3 +105,4 @@ networks:
 
 volumes:
   postgres-data-dev:
+  grafana-data:
