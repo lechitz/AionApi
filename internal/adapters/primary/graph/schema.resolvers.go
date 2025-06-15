@@ -357,7 +357,7 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 	}
 	if categoryDB.Name == "" {
 		span.SetStatus(codes.Ok, "category not found (normal)")
-		return nil, nil
+		return nil, errors.New("category not found")
 	}
 
 	span.SetStatus(codes.Ok, "category fetched successfully")

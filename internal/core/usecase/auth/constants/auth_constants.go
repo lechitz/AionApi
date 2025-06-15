@@ -8,7 +8,7 @@ const Error = "error"
 const Username = "username"
 
 // ErrorToCompareHashAndPassword indicates an invalid password was provided.
-const ErrorToCompareHashAndPassword = "invalid password provided"
+const ErrorToCompareHashAndPassword = "invalid credentials" // #nosec G101
 
 // ErrorToCreateToken indicates failure to create a token.
 const ErrorToCreateToken = "error to create token"
@@ -26,7 +26,7 @@ const ErrorToGetUserByUserName = "error to get user by username"
 const UserNotFoundOrInvalidCredentials = "user not found or invalid credentials"
 
 // InvalidCredentials indicates the provided credentials are invalid.
-const InvalidCredentials = "invalid credentials"
+const InvalidCredentials = "invalid credentials" // #nosec G101
 
 // SuccessToLogin indicates the user has logged in successfully.
 const SuccessToLogin = "user logged in successfully"

@@ -72,8 +72,9 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenString := ctx.Value(constants.Token).(string)
-	if tokenString == "" {
+	tokenVal := ctx.Value(constants.Token)
+	tokenString, ok := tokenVal.(string)
+	if !ok || tokenString == "" {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, nil)
 		return
 	}

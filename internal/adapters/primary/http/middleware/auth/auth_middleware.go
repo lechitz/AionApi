@@ -78,7 +78,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		userIDFloat, ok := claims[constants.UserID].(float64)
+		userIDFloat, ok := claims[constants.UserIDKey].(float64)
 		if !ok {
 			span.SetStatus(codes.Error, "missing userID")
 			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken)
@@ -105,8 +105,8 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 		span.SetStatus(codes.Ok, "authenticated")
 		span.SetAttributes(attribute.String("auth.status", "authenticated"))
 
-		newCtx := context.WithValue(ctx, constants.UserID, tokenDomain.UserID)
-		newCtx = context.WithValue(newCtx, constants.Token, tokenCookie)
+		newCtx := context.WithValue(ctx, constants.UserIDCtxKey, tokenDomain.UserID)
+		newCtx = context.WithValue(newCtx, constants.TokenCtxKey, tokenCookie)
 
 		a.logger.Infow("auth context: ", newCtx)
 
