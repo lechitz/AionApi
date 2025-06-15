@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -15,14 +18,23 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
+  "id": 1,
   "links": [],
   "panels": [
     {
-      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
       "id": 101,
       "options": {
-        "code": { "language": "plaintext", "showLineNumbers": false, "showMiniMap": false },
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
         "content": "<div style=\"font-size:2.7rem;font-weight:bold;text-align:center;padding:12px 0;letter-spacing:2px;color:#ff9800;\">AionAPI — HTTP Request Analytics</div>",
         "mode": "html"
       },
@@ -30,10 +42,39 @@
       "type": "text"
     },
     {
-      "gridPos": { "h": 7, "w": 24, "x": 0, "y": 3 },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 3
+      },
       "id": 102,
       "options": {
-        "code": { "language": "plaintext", "showLineNumbers": false, "showMiniMap": false },
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Overview\n\nMonitors **AionAPI HTTP requests** in real time: response time, status code, CRUD breakdown, and errors.\n\n_Built with Prometheus, Grafana, Tempo & OTEL._\n\n**Key Features:**\n- Live CRUD & status tracking (POST, GET, PUT, DELETE)\n- Min/avg/max response time\n- Tracing & error detection\n- Path analytics (see table below)\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.4.2",
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 3
+      },
+      "id": 501,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
         "content": "# Overview\n\nMonitors **AionAPI HTTP requests** in real time: response time, status code, CRUD breakdown, and errors.\n\n_Built with Prometheus, Grafana, Tempo & OTEL._\n\n**Key Features:**\n- Live CRUD & status tracking (POST, GET, PUT, DELETE)\n- Min/avg/max response time\n- Tracing & error detection\n- Path analytics (see table below)\n",
         "mode": "markdown"
       },
@@ -42,264 +83,521 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 10 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
       "id": 200,
       "panels": [],
       "title": "Request Overview",
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 80 }] },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
           "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 6, "x": 0, "y": 11 },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 11
+      },
       "id": 301,
       "options": {
         "displayMode": "gradient",
         "maxVizHeight": 300,
         "minVizHeight": 16,
         "minVizWidth": 8,
-        "orientation": "horizontal",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "namePlacement": "left",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "showUnfilled": true,
         "sizing": "auto",
-        "text": { "titleSize": 18, "valueSize": 18 },
+        "text": {
+          "titleSize": 22,
+          "valueSize": 60
+        },
         "valueMode": "color"
       },
       "pluginVersion": "10.4.2",
       "targets": [
-        { "expr": "sum by (http_response_status_code) (http_server_request_duration_seconds_count{http_request_method=\"POST\"})", "format": "time_series", "legendFormat": "POST {{http_response_status_code}}", "refId": "A" }
+        {
+          "expr": "sum by (http_response_status_code) (http_server_request_duration_seconds_count{http_request_method=\"POST\"})",
+          "format": "time_series",
+          "legendFormat": "POST {{http_response_status_code}}",
+          "refId": "A"
+        }
       ],
       "title": "POST - Status Codes",
       "type": "bargauge"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 80 }] },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
           "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 6, "x": 6, "y": 11 },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 11
+      },
       "id": 302,
       "options": {
         "displayMode": "gradient",
         "maxVizHeight": 300,
         "minVizHeight": 16,
         "minVizWidth": 8,
-        "orientation": "horizontal",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "namePlacement": "left",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "showUnfilled": true,
         "sizing": "auto",
-        "text": { "titleSize": 18, "valueSize": 18 },
+        "text": {
+          "titleSize": 22,
+          "valueSize": 60
+        },
         "valueMode": "color"
       },
       "pluginVersion": "10.4.2",
       "targets": [
-        { "expr": "sum by (http_response_status_code) (http_server_request_duration_seconds_count{http_request_method=\"GET\"})", "format": "time_series", "legendFormat": "GET {{http_response_status_code}}", "refId": "A" }
+        {
+          "expr": "sum by (http_response_status_code) (http_server_request_duration_seconds_count{http_request_method=\"GET\"})",
+          "format": "time_series",
+          "legendFormat": "GET {{http_response_status_code}}",
+          "refId": "A"
+        }
       ],
       "title": "GET - Status Codes",
       "type": "bargauge"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 80 }] },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
           "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 11 },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 11
+      },
       "id": 303,
       "options": {
         "displayMode": "gradient",
         "maxVizHeight": 300,
         "minVizHeight": 16,
         "minVizWidth": 8,
-        "orientation": "horizontal",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "namePlacement": "left",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "showUnfilled": true,
         "sizing": "auto",
-        "text": { "titleSize": 18, "valueSize": 18 },
+        "text": {
+          "titleSize": 22,
+          "valueSize": 60
+        },
         "valueMode": "color"
       },
       "pluginVersion": "10.4.2",
       "targets": [
-        { "expr": "sum by (http_response_status_code) (http_server_request_duration_seconds_count{http_request_method=\"PUT\"})", "format": "time_series", "legendFormat": "PUT {{http_response_status_code}}", "refId": "A" }
+        {
+          "expr": "sum by (http_response_status_code) (http_server_request_duration_seconds_count{http_request_method=\"PUT\"})",
+          "format": "time_series",
+          "legendFormat": "PUT {{http_response_status_code}}",
+          "refId": "A"
+        }
       ],
       "title": "PUT - Status Codes",
       "type": "bargauge"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 80 }] },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
           "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 11 },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 11
+      },
       "id": 304,
       "options": {
         "displayMode": "gradient",
         "maxVizHeight": 300,
         "minVizHeight": 16,
         "minVizWidth": 8,
-        "orientation": "horizontal",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "namePlacement": "left",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "showUnfilled": true,
         "sizing": "auto",
-        "text": { "titleSize": 18, "valueSize": 18 },
+        "text": {
+          "titleSize": 22,
+          "valueSize": 60
+        },
         "valueMode": "color"
       },
       "pluginVersion": "10.4.2",
       "targets": [
-        { "expr": "sum by (http_response_status_code) (http_server_request_duration_seconds_count{http_request_method=\"DELETE\"})", "format": "time_series", "legendFormat": "DELETE {{http_response_status_code}}", "refId": "A" }
+        {
+          "expr": "sum by (http_response_status_code) (http_server_request_duration_seconds_count{http_request_method=\"DELETE\"})",
+          "format": "time_series",
+          "legendFormat": "DELETE {{http_response_status_code}}",
+          "refId": "A"
+        }
       ],
       "title": "DELETE - Status Codes",
       "type": "bargauge"
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 19 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
       "id": 210,
       "panels": [],
       "title": "Performance & Response Time",
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
+          "color": {
+            "mode": "palette-classic"
+          },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 500 }] },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 500
+              }
+            ]
+          },
           "unit": "ms"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 20 },
+      "gridPos": {
+        "h": 8,
+        "w": 3,
+        "x": 0,
+        "y": 20
+      },
       "id": 401,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
-        "reduceOptions": { "calcs": ["mean"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
         "showPercentChange": false,
-        "text": { "titleSize": 16, "valueSize": 22 },
+        "text": {
+          "titleSize": 16,
+          "valueSize": 22
+        },
         "textMode": "auto",
         "wideLayout": true
       },
       "pluginVersion": "10.4.2",
       "targets": [
-        { "expr": "avg(rate(http_server_request_duration_seconds_sum[5m])) by (http_request_method) * 1000", "format": "time_series", "legendFormat": "Avg {{http_request_method}}", "refId": "A" }
+        {
+          "expr": "avg(rate(http_server_request_duration_seconds_sum[5m])) by (http_request_method) * 1000",
+          "format": "time_series",
+          "legendFormat": "Avg {{http_request_method}}",
+          "refId": "A"
+        }
       ],
       "title": "Tempo Médio (ms) por Método",
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
+          "color": {
+            "mode": "palette-classic"
+          },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1000 }] },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1000
+              }
+            ]
+          },
           "unit": "ms"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 20 },
+      "gridPos": {
+        "h": 8,
+        "w": 3,
+        "x": 3,
+        "y": 20
+      },
       "id": 402,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
-        "reduceOptions": { "calcs": ["max"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "",
+          "values": false
+        },
         "showPercentChange": false,
-        "text": { "titleSize": 16, "valueSize": 22 },
+        "text": {
+          "titleSize": 16,
+          "valueSize": 22
+        },
         "textMode": "auto",
         "wideLayout": true
       },
       "pluginVersion": "10.4.2",
       "targets": [
-        { "expr": "max(rate(http_server_request_duration_seconds_sum[5m])) by (http_request_method) * 1000", "format": "time_series", "legendFormat": "Max {{http_request_method}}", "refId": "A" }
+        {
+          "expr": "max(rate(http_server_request_duration_seconds_sum[5m])) by (http_request_method) * 1000",
+          "format": "time_series",
+          "legendFormat": "Max {{http_request_method}}",
+          "refId": "A"
+        }
       ],
       "title": "Tempo Máximo (ms) por Método",
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 250 }] },
-          "unit": "ms"
-        },
-        "overrides": []
+      "gridPos": {
+        "h": 8,
+        "w": 18,
+        "x": 6,
+        "y": 20
       },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 20 },
-      "id": 403,
+      "id": 502,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": { "calcs": ["min"], "fields": "", "values": false },
-        "showPercentChange": false,
-        "text": { "titleSize": 16, "valueSize": 22 },
-        "textMode": "auto",
-        "wideLayout": true
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Overview\n\nMonitors **AionAPI HTTP requests** in real time: response time, status code, CRUD breakdown, and errors.\n\n_Built with Prometheus, Grafana, Tempo & OTEL._\n\n**Key Features:**\n- Live CRUD & status tracking (POST, GET, PUT, DELETE)\n- Min/avg/max response time\n- Tracing & error detection\n- Path analytics (see table below)\n",
+        "mode": "markdown"
       },
       "pluginVersion": "10.4.2",
-      "targets": [
-        { "expr": "min(rate(http_server_request_duration_seconds_sum[5m])) by (http_request_method) * 1000", "format": "time_series", "legendFormat": "Min {{http_request_method}}", "refId": "A" }
-      ],
-      "title": "Tempo Mínimo (ms) por Método",
-      "type": "stat"
+      "type": "text"
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 28 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
       "id": 220,
       "panels": [],
       "title": "Detalhes (Table por Status/Path)",
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 80 }] }
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
         },
         "overrides": []
       },
-      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 29 },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
       "id": 500,
       "options": {
         "cellHeight": "sm",
-        "footer": { "countRows": true, "fields": "", "reducer": ["sum"], "show": false },
+        "footer": {
+          "countRows": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true
       },
       "pluginVersion": "10.4.2",
@@ -317,9 +615,20 @@
   ],
   "refresh": "5s",
   "schemaVersion": 39,
-  "tags": [ "AionAPI", "CRUD", "HTTP", "OTEL", "Prometheus" ],
-  "templating": { "list": [] },
-  "time": { "from": "now-1h", "to": "now" },
+  "tags": [
+    "AionAPI",
+    "CRUD",
+    "HTTP",
+    "OTEL",
+    "Prometheus"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
   "timepicker": {},
   "timezone": "browser",
   "title": "AionAPI - HTTP Analytics (Pro)",
