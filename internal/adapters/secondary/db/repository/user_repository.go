@@ -113,7 +113,7 @@ func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain
 
 // GetUserByUsername retrieves a user from the database using their unique username. Returns a domain.UserDomain or an error if the user is not found.
 //
-//nolint:dupl // TODO(lembrete): Refactor duplication with GetUserByEmail/GetUserByUsername when business logic diverges or for greater DRY. Prioritizing explicitness and speed for now.
+//nolint:dupl // TODO: Refactor duplication with GetUserByEmail / GetUserByUsername when business logic diverges or for greater DRY. Prioritizing explicitness and speed for now.
 func (up UserRepository) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByUsername", trace.WithAttributes(
@@ -146,7 +146,7 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 
 // GetUserByEmail retrieves a user by their email address from the database and returns a domain.UserDomain or nil if not found.
 //
-//nolint:dupl // TODO(lembrete): See above comment.
+//nolint:dupl // TODO:" Refactor duplication with GetUserByEmail / GetUserByUsername when business logic diverges or for greater DRY. Prioritizing explicitness and speed for now.
 func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByEmail", trace.WithAttributes(
