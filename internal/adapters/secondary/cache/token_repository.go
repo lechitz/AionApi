@@ -34,8 +34,8 @@ func NewTokenRepository(cache *redis.Client, logger logger.Logger) *TokenReposit
 
 // Save stores a token in the Redis cache with a 24-hour expiration time and logs errors if the operation fails.
 func (t *TokenRepository) Save(ctx context.Context, token domain.TokenDomain) error {
-	tr := otel.Tracer("AionApi/RedisAdapter")
-	ctx, span := tr.Start(ctx, "TokenRepository.Save", trace.WithAttributes(
+	tr := otel.Tracer("TokenRepository")
+	ctx, span := tr.Start(ctx, "Save", trace.WithAttributes(
 		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "save"),
 	))
@@ -57,8 +57,8 @@ func (t *TokenRepository) Save(ctx context.Context, token domain.TokenDomain) er
 
 // Get retrieves a token associated with a user ID from the Redis cache or returns an error if the token is not found or another issue occurs.
 func (t *TokenRepository) Get(ctx context.Context, token domain.TokenDomain) (string, error) {
-	tr := otel.Tracer("AionApi/RedisAdapter")
-	ctx, span := tr.Start(ctx, "TokenRepository.Get", trace.WithAttributes(
+	tr := otel.Tracer("TokenRepository")
+	ctx, span := tr.Start(ctx, "Get", trace.WithAttributes(
 		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "get"),
 	))
@@ -68,12 +68,13 @@ func (t *TokenRepository) Get(ctx context.Context, token domain.TokenDomain) (st
 
 	value, err := t.cache.Get(ctx, key).Result()
 	if err != nil {
-		span.RecordError(err)
 		if errors.Is(err, redis.Nil) || err.Error() == "redis: nil" {
-			span.SetStatus(codes.Error, "token not found")
-			return "", fmt.Errorf("token not found for user ID %d", token.UserID)
+			span.SetStatus(codes.Ok, "token not found (business as usual)")
+			return "", nil
 		}
+
 		span.SetStatus(codes.Error, err.Error())
+		span.RecordError(err)
 		t.logger.Errorw(
 			constants.ErrorToGetTokenFromRedis,
 			constants.Key,
@@ -90,8 +91,8 @@ func (t *TokenRepository) Get(ctx context.Context, token domain.TokenDomain) (st
 
 // Update updates an existing token in the Redis cache with a 24-hour expiration and logs success or failure.
 func (t *TokenRepository) Update(ctx context.Context, token domain.TokenDomain) error {
-	tr := otel.Tracer("AionApi/RedisAdapter")
-	ctx, span := tr.Start(ctx, "TokenRepository.Update", trace.WithAttributes(
+	tr := otel.Tracer("TokenRepository")
+	ctx, span := tr.Start(ctx, "Update", trace.WithAttributes(
 		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "update"),
 	))
@@ -120,8 +121,8 @@ func (t *TokenRepository) Update(ctx context.Context, token domain.TokenDomain) 
 
 // Delete removes a token associated with a user ID from the Redis cache and logs any errors if the operation fails.
 func (t *TokenRepository) Delete(ctx context.Context, token domain.TokenDomain) error {
-	tr := otel.Tracer("AionApi/RedisAdapter")
-	ctx, span := tr.Start(ctx, "TokenRepository.Delete", trace.WithAttributes(
+	tr := otel.Tracer("TokenRepository")
+	ctx, span := tr.Start(ctx, "Delete", trace.WithAttributes(
 		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "delete"),
 	))

@@ -12,19 +12,11 @@ import (
 
 // Creator defines the interface for creating a new user in the system. It returns the created user or an error.
 type Creator interface {
-	CreateUser(
-		ctx context.Context,
-		user domain.UserDomain,
-		password string,
-	) (domain.UserDomain, error)
+	CreateUser(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, error)
 }
 
 // CreateUser creates a new user with the given data and password, ensuring validations and unique constraints are met. Returns the created user or an error.
-func (s *Service) CreateUser(
-	ctx context.Context,
-	user domain.UserDomain,
-	password string,
-) (domain.UserDomain, error) {
+func (s *Service) CreateUser(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, error) {
 	user = s.normalizeUserData(&user)
 
 	if err := s.validateCreateUserRequired(user, password); err != nil {
@@ -32,13 +24,23 @@ func (s *Service) CreateUser(
 		return domain.UserDomain{}, errors.New(constants.ErrorToValidateCreateUser)
 	}
 
-	if existingByUsername, err := s.userRepository.GetUserByUsername(ctx, user.Username); err == nil &&
-		existingByUsername.ID != 0 {
+	existingByUsername, err := s.userRepository.GetUserByUsername(ctx, user.Username)
+	if err != nil {
+		s.logger.Errorw("DB error while checking username", "error", err)
+		return domain.UserDomain{}, errors.New(constants.ErrorToCreateUser)
+	}
+
+	if existingByUsername.ID != 0 {
 		return domain.UserDomain{}, errors.New(constants.UsernameIsAlreadyInUse)
 	}
 
-	if existingByEmail, err := s.userRepository.GetUserByEmail(ctx, user.Email); err == nil &&
-		existingByEmail.ID != 0 {
+	existingByEmail, err := s.userRepository.GetUserByEmail(ctx, user.Email)
+	if err != nil {
+		s.logger.Errorw("DB error while checking email", "error", err)
+		return domain.UserDomain{}, errors.New(constants.ErrorToCreateUser)
+	}
+
+	if existingByEmail.ID != 0 {
 		return domain.UserDomain{}, errors.New(constants.EmailIsAlreadyInUse)
 	}
 

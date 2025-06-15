@@ -36,8 +36,8 @@ services:
   aion-api:
     image: aion-api:prod
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../../..
+      dockerfile: ../../../Dockerfile
     container_name: aion-api-prod
     env_file:
       - .env.prod

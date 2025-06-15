@@ -16,7 +16,6 @@ import (
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/contextutil"
 )
 
 // traceAttributesFromCategory creates a slice of attributes from the given category.
@@ -37,10 +36,7 @@ func traceAttributesFromCategory(category model.DtoCreateCategory) []attribute.K
 }
 
 // CreateCategory is the resolver for the createCategory field.
-func (r *mutationResolver) CreateCategory(
-	ctx context.Context,
-	category model.DtoCreateCategory,
-) (*model.Category, error) {
+func (r *mutationResolver) CreateCategory(ctx context.Context, category model.DtoCreateCategory) (*model.Category, error) {
 	tracer := otel.Tracer("AionApi/GraphQL/Category")
 	ctx, span := tracer.Start(ctx, "CreateCategoryResolver")
 	defer span.End()
@@ -50,7 +46,7 @@ func (r *mutationResolver) CreateCategory(
 		trace.WithAttributes(traceAttributesFromCategory(category)...),
 	)
 
-	userID, ok := contextutil.GetUserID(ctx)
+	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
 		err := errors.New("userID not found in context")
 		span.RecordError(err)
@@ -109,7 +105,7 @@ func (r *mutationResolver) UpdateCategory(
 		trace.WithAttributes(attribute.String("input_category_id", category.CategoryID)),
 	)
 
-	userID, ok := contextutil.GetUserID(ctx)
+	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
 		err := errors.New("userID not found in context")
 		span.RecordError(err)
@@ -182,7 +178,7 @@ func (r *mutationResolver) SoftDeleteCategory(
 		trace.WithAttributes(attribute.String("input_category_id", category.CategoryID)),
 	)
 
-	userID, ok := contextutil.GetUserID(ctx)
+	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
 		err := errors.New("userID not found in context")
 		span.RecordError(err)
@@ -230,7 +226,7 @@ func (r *queryResolver) AllCategories(ctx context.Context) ([]*model.Category, e
 		"start allCategories query",
 	)
 
-	userID, ok := contextutil.GetUserID(ctx)
+	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
 		err := errors.New("userID not found in context")
 		span.RecordError(err)
@@ -278,7 +274,7 @@ func (r *queryResolver) GetCategoryByID(
 		trace.WithAttributes(attribute.String("input_category_id", categoryRequest.CategoryID)),
 	)
 
-	userID, ok := contextutil.GetUserID(ctx)
+	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
 		err := errors.New("userID not found in context")
 		span.RecordError(err)
@@ -325,10 +321,7 @@ func (r *queryResolver) GetCategoryByID(
 }
 
 // GetCategoryByName is the resolver for the getCategoryByName field.
-func (r *queryResolver) GetCategoryByName(
-	ctx context.Context,
-	categoryRequest model.DtoGetCategoryByName,
-) (*model.Category, error) {
+func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error) {
 	tracer := otel.Tracer("AionApi/GraphQL/Category")
 	ctx, span := tracer.Start(ctx, "GetCategoryByNameResolver")
 	defer span.End()
@@ -338,7 +331,7 @@ func (r *queryResolver) GetCategoryByName(
 		trace.WithAttributes(attribute.String("input_category_name", categoryRequest.Name)),
 	)
 
-	userID, ok := contextutil.GetUserID(ctx)
+	userID, ok := ctx.Value("user_id").(uint64)
 	if !ok {
 		err := errors.New("userID not found in context")
 		span.RecordError(err)
@@ -359,8 +352,12 @@ func (r *queryResolver) GetCategoryByName(
 	categoryDB, err := r.CategoryService.GetCategoryByName(ctx, category)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, "category not found")
+		span.SetStatus(codes.Error, "error getting category by name")
 		return nil, err
+	}
+	if categoryDB.Name == "" {
+		span.SetStatus(codes.Ok, "category not found (normal)")
+		return nil, nil
 	}
 
 	span.SetStatus(codes.Ok, "category fetched successfully")
