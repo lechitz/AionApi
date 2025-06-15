@@ -239,12 +239,7 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	userDomain := domain.UserDomain{ID: userID}
 	span.AddEvent("calling UserService.UpdateUserPassword")
-	_, newToken, err := u.UserService.UpdateUserPassword(
-		ctx,
-		userDomain,
-		req.Password,
-		req.NewPassword,
-	)
+	_, newToken, err := u.UserService.UpdateUserPassword(ctx, userDomain, req.Password, req.NewPassword)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
