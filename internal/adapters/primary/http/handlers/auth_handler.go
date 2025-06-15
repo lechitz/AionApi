@@ -13,8 +13,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 
-	"github.com/lechitz/AionApi/internal/shared/contextutil"
-
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
@@ -68,13 +66,14 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer("AionApi/AuthHandler").Start(r.Context(), "LogoutHandler")
 	defer span.End()
 
-	userID, ok := contextutil.GetUserID(ctx)
+	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok || userID == 0 {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveUserID, nil)
 		return
 	}
 
-	tokenString, ok := contextutil.GetToken(ctx)
+	tokenVal := ctx.Value(constants.Token)
+	tokenString, ok := tokenVal.(string)
 	if !ok || tokenString == "" {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, nil)
 		return

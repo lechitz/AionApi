@@ -11,8 +11,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/shared/contextutil"
-
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -80,7 +78,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		userIDFloat, ok := claims[constants.UserID].(float64)
+		userIDFloat, ok := claims[constants.UserIDKey].(float64)
 		if !ok {
 			span.SetStatus(codes.Error, "missing userID")
 			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken)
@@ -107,8 +105,8 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 		span.SetStatus(codes.Ok, "authenticated")
 		span.SetAttributes(attribute.String("auth.status", "authenticated"))
 
-		newCtx := context.WithValue(ctx, contextutil.UserIDKey, tokenDomain.UserID)
-		newCtx = context.WithValue(newCtx, contextutil.TokenKey, tokenCookie)
+		newCtx := context.WithValue(ctx, constants.UserIDCtxKey, tokenDomain.UserID)
+		newCtx = context.WithValue(newCtx, constants.TokenCtxKey, tokenCookie)
 
 		a.logger.Infow("auth context: ", newCtx)
 

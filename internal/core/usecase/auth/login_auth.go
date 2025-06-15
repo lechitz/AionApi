@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
@@ -17,7 +18,8 @@ type Authenticator interface {
 	) (domain.UserDomain, string, error)
 }
 
-// Login authenticates a user by validating credentials and generates a new token if valid. Returns the user data, token, and error if any occurs.
+// Login authenticates a user by validating credentials and generates a new token if valid.
+// Returns the user data, token, and error if any occurs.
 func (s *Service) Login(ctx context.Context, user domain.UserDomain, passwordReq string) (domain.UserDomain, string, error) {
 	userDB, err := s.userRetriever.GetUserByUsername(ctx, user.Username)
 	if err != nil {
@@ -25,9 +27,14 @@ func (s *Service) Login(ctx context.Context, user domain.UserDomain, passwordReq
 		return domain.UserDomain{}, "", err
 	}
 
+	if userDB.ID == 0 {
+		s.logger.Warnw(constants.UserNotFoundOrInvalidCredentials, constants.Username, user.Username)
+		return domain.UserDomain{}, "", errors.New(constants.UserNotFoundOrInvalidCredentials)
+	}
+
 	if err := s.securityHasher.ValidatePassword(userDB.Password, passwordReq); err != nil {
-		s.logger.Errorw(constants.ErrorToCompareHashAndPassword, constants.Error, err.Error())
-		return domain.UserDomain{}, "", err
+		s.logger.Warnw(constants.ErrorToCompareHashAndPassword, constants.Username, user.Username)
+		return domain.UserDomain{}, "", errors.New(constants.InvalidCredentials)
 	}
 
 	tokenDomain := domain.TokenDomain{UserID: userDB.ID}

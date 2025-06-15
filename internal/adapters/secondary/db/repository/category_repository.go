@@ -38,15 +38,12 @@ func NewCategoryRepository(db *gorm.DB, logger logger.Logger) *CategoryRepositor
 }
 
 // CreateCategory creates a new category in the database and returns the created category or an error if the operation fails.
-func (c CategoryRepository) CreateCategory(
-	ctx context.Context,
-	category domain.Category,
-) (domain.Category, error) {
-	tr := otel.Tracer("AionApi/CategoryRepository")
-	ctx, span := tr.Start(ctx, "CategoryRepository.CreateCategory", trace.WithAttributes(
-		attribute.String("user_id", strconv.FormatUint(category.UserID, 10)),
+func (c CategoryRepository) CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
+	tr := otel.Tracer("CategoryRepository")
+	ctx, span := tr.Start(ctx, "CreateCategory", trace.WithAttributes(
+		attribute.String(constants.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(constants.CategoryName, category.Name),
 		attribute.String("operation", "create"),
-		attribute.String("category_name", category.Name),
 	))
 	defer span.End()
 
@@ -71,14 +68,11 @@ func (c CategoryRepository) CreateCategory(
 }
 
 // GetCategoryByID retrieves a category by its ID and user ID from the database and returns it as a domain.Category or an error if not found.
-func (c CategoryRepository) GetCategoryByID(
-	ctx context.Context,
-	category domain.Category,
-) (domain.Category, error) {
-	tr := otel.Tracer("AionApi/CategoryRepository")
-	ctx, span := tr.Start(ctx, "CategoryRepository.GetCategoryByID", trace.WithAttributes(
-		attribute.String("user_id", strconv.FormatUint(category.UserID, 10)),
-		attribute.String("category_id", strconv.FormatUint(category.ID, 10)),
+func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
+	tr := otel.Tracer("CategoryRepository")
+	ctx, span := tr.Start(ctx, "GetCategoryByID", trace.WithAttributes(
+		attribute.String(constants.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(constants.CategoryID, strconv.FormatUint(category.ID, 10)),
 		attribute.String("operation", "get_by_id"),
 	))
 	defer span.End()
@@ -104,12 +98,9 @@ func (c CategoryRepository) GetCategoryByID(
 }
 
 // GetCategoryByName retrieves a category by its name and user ID from the database and returns it as a domain.Category or an error if not found.
-func (c CategoryRepository) GetCategoryByName(
-	ctx context.Context,
-	category domain.Category,
-) (domain.Category, error) {
-	tr := otel.Tracer("AionApi/CategoryRepository")
-	ctx, span := tr.Start(ctx, "CategoryRepository.GetCategoryByName", trace.WithAttributes(
+func (c CategoryRepository) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
+	tr := otel.Tracer("CategoryRepository")
+	ctx, span := tr.Start(ctx, "GetCategoryByName", trace.WithAttributes(
 		attribute.String("user_id", strconv.FormatUint(category.UserID, 10)),
 		attribute.String("category_name", category.Name),
 		attribute.String("operation", "get_by_name"),
@@ -117,28 +108,30 @@ func (c CategoryRepository) GetCategoryByName(
 	defer span.End()
 
 	var categoryDB model.CategoryDB
+	err := c.db.WithContext(ctx).
+		Where("user_id = ? AND name = ?", category.UserID, category.Name).
+		First(&categoryDB).Error
 
-	if err := c.db.WithContext(ctx).
-		Select("category_id, user_id, name, description, color_hex, icon, created_at, updated_at").
-		Where("name = ? AND user_id = ?", category.Name, category.UserID).
-		First(&categoryDB).Error; err != nil {
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			span.SetStatus(codes.Ok, "category not found (normal case)")
+			return domain.Category{}, nil
+		}
+
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 		return domain.Category{}, err
 	}
 
-	span.SetStatus(codes.Ok, "category retrieved by name successfully")
+	span.SetStatus(codes.Ok, "category fetched successfully")
 	return mapper.CategoryFromDB(categoryDB), nil
 }
 
 // GetAllCategories retrieves all categories associated with a specific user defined by the userID. Returns a slice of domain.Category or an error.
-func (c CategoryRepository) GetAllCategories(
-	ctx context.Context,
-	userID uint64,
-) ([]domain.Category, error) {
-	tr := otel.Tracer("AionApi/CategoryRepository")
-	ctx, span := tr.Start(ctx, "CategoryRepository.GetAllCategories", trace.WithAttributes(
-		attribute.String("user_id", strconv.FormatUint(userID, 10)),
+func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
+	tr := otel.Tracer("CategoryRepository")
+	ctx, span := tr.Start(ctx, "GetAllCategories", trace.WithAttributes(
+		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String("operation", "get_all"),
 	))
 	defer span.End()
@@ -164,16 +157,11 @@ func (c CategoryRepository) GetAllCategories(
 }
 
 // UpdateCategory updates a category in the database based on its ID and user ID, updating only fields specified in the updateFields map.
-func (c CategoryRepository) UpdateCategory(
-	ctx context.Context,
-	categoryID uint64,
-	userID uint64,
-	updateFields map[string]interface{},
-) (domain.Category, error) {
-	tr := otel.Tracer("AionApi/CategoryRepository")
-	ctx, span := tr.Start(ctx, "CategoryRepository.UpdateCategory", trace.WithAttributes(
-		attribute.String("user_id", strconv.FormatUint(userID, 10)),
-		attribute.String("category_id", strconv.FormatUint(categoryID, 10)),
+func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, updateFields map[string]interface{}) (domain.Category, error) {
+	tr := otel.Tracer("CategoryRepository")
+	ctx, span := tr.Start(ctx, "UpdateCategory", trace.WithAttributes(
+		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(constants.CategoryID, strconv.FormatUint(categoryID, 10)),
 		attribute.String("operation", "update"),
 	))
 	defer span.End()
@@ -207,10 +195,10 @@ func (c CategoryRepository) SoftDeleteCategory(
 	ctx context.Context,
 	category domain.Category,
 ) error {
-	tr := otel.Tracer("AionApi/CategoryRepository")
-	ctx, span := tr.Start(ctx, "CategoryRepository.SoftDeleteCategory", trace.WithAttributes(
-		attribute.String("user_id", strconv.FormatUint(category.UserID, 10)),
-		attribute.String("category_id", strconv.FormatUint(category.ID, 10)),
+	tr := otel.Tracer("CategoryRepository")
+	ctx, span := tr.Start(ctx, "SoftDeleteCategory", trace.WithAttributes(
+		attribute.String(constants.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(constants.CategoryID, strconv.FormatUint(category.ID, 10)),
 		attribute.String("operation", "soft_delete"),
 	))
 	defer span.End()

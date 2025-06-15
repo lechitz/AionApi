@@ -11,3 +11,6 @@ const UpdatedAt = "updated_at"
 
 // DeletedAt is the column name for the soft deletion timestamp.
 const DeletedAt = "deleted_at"
+
+// UserID is the column name for the user ID.
+const UserID = "user_id"

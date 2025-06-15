@@ -11,6 +11,11 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
 jobs:
   lint:
     name: Golang Lint and Vet
@@ -40,7 +45,7 @@ jobs:
           mkdir -p ~/go/pkg/mod
           mkdir -p ~/.cache/golangci-lint
 
-      # Step 5: Cache Goes build artifacts
+      # Step 5: Cache Go build artifacts
       - name: Cache Go build
         uses: actions/cache@v4
         with:
