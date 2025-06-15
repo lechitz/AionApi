@@ -91,7 +91,6 @@ func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByID", trace.WithAttributes(
 		attribute.String("user_id", strconv.FormatUint(userID, 10)),
-		attribute.String("operation", "get_by_id"),
 	))
 	defer span.End()
 
@@ -103,14 +102,18 @@ func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain
 		First(&userDB).Error; err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
+
 		return domain.UserDomain{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user retrieved by id successfully")
+
 	return mapper.UserFromDB(userDB), nil
 }
 
 // GetUserByUsername retrieves a user from the database using their unique username. Returns a domain.UserDomain or an error if the user is not found.
+//
+//nolint:dupl // TODO(lembrete): Refactor duplication with GetUserByEmail/GetUserByUsername when business logic diverges or for greater DRY. Prioritizing explicitness and speed for now.
 func (up UserRepository) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByUsername", trace.WithAttributes(
@@ -142,6 +145,8 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 }
 
 // GetUserByEmail retrieves a user by their email address from the database and returns a domain.UserDomain or nil if not found.
+//
+//nolint:dupl // TODO(lembrete): See above comment.
 func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByEmail", trace.WithAttributes(
@@ -193,6 +198,7 @@ func (up UserRepository) UpdateUser(ctx context.Context, userID uint64, fields m
 	}
 
 	span.SetStatus(codes.Ok, "user updated successfully")
+
 	return up.GetUserByID(ctx, userID)
 }
 
@@ -220,5 +226,6 @@ func (up UserRepository) SoftDeleteUser(ctx context.Context, userID uint64) erro
 	}
 
 	span.SetStatus(codes.Ok, "user soft deleted successfully")
+
 	return nil
 }
