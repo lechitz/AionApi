@@ -9,6 +9,6 @@ import (
 var TestPerfectToken = domain.TokenDomain{
 	UserID: 1,
 	Token:  "token_abc123",
-	//CreatedAt: time.Now(),
-	//ExpiresAt: time.Now().Add(24 * time.Hour),
+	// CreatedAt: time.Now(),
+	// ExpiresAt: time.Now().Add(24 * time.Hour),
 }

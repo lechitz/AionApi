@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"net/http"
 	"strconv"
 
 	"go.opentelemetry.io/otel/attribute"
@@ -17,8 +18,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
-
-	"net/http"
 
 	"github.com/jinzhu/copier"
 )

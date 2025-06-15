@@ -111,7 +111,6 @@ func (c CategoryRepository) GetCategoryByName(ctx context.Context, category doma
 	err := c.db.WithContext(ctx).
 		Where("user_id = ? AND name = ?", category.UserID, category.Name).
 		First(&categoryDB).Error
-
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, "category not found (normal case)")
@@ -157,7 +156,12 @@ func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64)
 }
 
 // UpdateCategory updates a category in the database based on its ID and user ID, updating only fields specified in the updateFields map.
-func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, updateFields map[string]interface{}) (domain.Category, error) {
+func (c CategoryRepository) UpdateCategory(
+	ctx context.Context,
+	categoryID uint64,
+	userID uint64,
+	updateFields map[string]interface{},
+) (domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "UpdateCategory", trace.WithAttributes(
 		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),

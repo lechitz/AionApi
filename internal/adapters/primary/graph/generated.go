@@ -12,10 +12,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
-
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -427,7 +426,7 @@ func (ec *executionContext) field_Mutation_CreateCategory_argsCategory(
 ) (model.DtoCreateCategory, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
 	if tmp, ok := rawArgs["category"]; ok {
-		return ec.unmarshalNDtoCreateCategory2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoCreateCategory(ctx, tmp)
+		return ec.unmarshalNDtoCreateCategory2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoCreateCategory(ctx, tmp)
 	}
 
 	var zeroVal model.DtoCreateCategory
@@ -450,7 +449,7 @@ func (ec *executionContext) field_Mutation_CreateTag_argsInput(
 ) (model.NewTag, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNNewTag2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐNewTag(ctx, tmp)
+		return ec.unmarshalNNewTag2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐNewTag(ctx, tmp)
 	}
 
 	var zeroVal model.NewTag
@@ -473,7 +472,7 @@ func (ec *executionContext) field_Mutation_SoftDeleteCategory_argsCategory(
 ) (model.DtoDeleteCategory, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
 	if tmp, ok := rawArgs["category"]; ok {
-		return ec.unmarshalNDtoDeleteCategory2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoDeleteCategory(ctx, tmp)
+		return ec.unmarshalNDtoDeleteCategory2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoDeleteCategory(ctx, tmp)
 	}
 
 	var zeroVal model.DtoDeleteCategory
@@ -496,7 +495,7 @@ func (ec *executionContext) field_Mutation_UpdateCategory_argsCategory(
 ) (model.DtoUpdateCategory, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
 	if tmp, ok := rawArgs["category"]; ok {
-		return ec.unmarshalNDtoUpdateCategory2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoUpdateCategory(ctx, tmp)
+		return ec.unmarshalNDtoUpdateCategory2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoUpdateCategory(ctx, tmp)
 	}
 
 	var zeroVal model.DtoUpdateCategory
@@ -519,7 +518,7 @@ func (ec *executionContext) field_Query_GetCategoryByID_argsCategoryRequest(
 ) (model.DtoGetCategoryByID, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryRequest"))
 	if tmp, ok := rawArgs["categoryRequest"]; ok {
-		return ec.unmarshalNDtoGetCategoryByID2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoGetCategoryByID(ctx, tmp)
+		return ec.unmarshalNDtoGetCategoryByID2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoGetCategoryByID(ctx, tmp)
 	}
 
 	var zeroVal model.DtoGetCategoryByID
@@ -542,7 +541,7 @@ func (ec *executionContext) field_Query_GetCategoryByName_argsCategoryRequest(
 ) (model.DtoGetCategoryByName, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryRequest"))
 	if tmp, ok := rawArgs["categoryRequest"]; ok {
-		return ec.unmarshalNDtoGetCategoryByName2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoGetCategoryByName(ctx, tmp)
+		return ec.unmarshalNDtoGetCategoryByName2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoGetCategoryByName(ctx, tmp)
 	}
 
 	var zeroVal model.DtoGetCategoryByName
@@ -978,7 +977,7 @@ func (ec *executionContext) _Mutation_CreateCategory(ctx context.Context, field 
 	}
 	res := resTmp.(*model.Category)
 	fc.Result = res
-	return ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
+	return ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_CreateCategory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1047,7 +1046,7 @@ func (ec *executionContext) _Mutation_CreateTag(ctx context.Context, field graph
 	}
 	res := resTmp.(*model.Tags)
 	fc.Result = res
-	return ec.marshalNTags2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx, field.Selections, res)
+	return ec.marshalNTags2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_CreateTag(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1112,7 +1111,7 @@ func (ec *executionContext) _Mutation_UpdateCategory(ctx context.Context, field 
 	}
 	res := resTmp.(*model.Category)
 	fc.Result = res
-	return ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
+	return ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_UpdateCategory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1236,7 +1235,7 @@ func (ec *executionContext) _Query_AllCategories(ctx context.Context, field grap
 	}
 	res := resTmp.([]*model.Category)
 	fc.Result = res
-	return ec.marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategoryᚄ(ctx, field.Selections, res)
+	return ec.marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategoryᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_AllCategories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1291,7 +1290,7 @@ func (ec *executionContext) _Query_GetCategoryByID(ctx context.Context, field gr
 	}
 	res := resTmp.(*model.Category)
 	fc.Result = res
-	return ec.marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
+	return ec.marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_GetCategoryByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1357,7 +1356,7 @@ func (ec *executionContext) _Query_GetCategoryByName(ctx context.Context, field 
 	}
 	res := resTmp.(*model.Category)
 	fc.Result = res
-	return ec.marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
+	return ec.marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_GetCategoryByName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1423,7 +1422,7 @@ func (ec *executionContext) _Query_GetAllTags(ctx context.Context, field graphql
 	}
 	res := resTmp.([]*model.Tags)
 	fc.Result = res
-	return ec.marshalOTags2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx, field.Selections, res)
+	return ec.marshalOTags2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_GetAllTags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1474,7 +1473,7 @@ func (ec *executionContext) _Query_GetTagByID(ctx context.Context, field graphql
 	}
 	res := resTmp.(*model.Tags)
 	fc.Result = res
-	return ec.marshalOTags2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx, field.Selections, res)
+	return ec.marshalOTags2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_GetTagByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1758,7 +1757,7 @@ func (ec *executionContext) _Tags_category_id(ctx context.Context, field graphql
 	}
 	res := resTmp.(*model.Category)
 	fc.Result = res
-	return ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
+	return ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Tags_category_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4688,11 +4687,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCategory2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v model.Category) graphql.Marshaler {
+func (ec *executionContext) marshalNCategory2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v model.Category) graphql.Marshaler {
 	return ec._Category(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Category) graphql.Marshaler {
+func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Category) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4716,7 +4715,7 @@ func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAion
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, sel, v[i])
+			ret[i] = ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4736,7 +4735,7 @@ func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAion
 	return ret
 }
 
-func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
+func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4746,27 +4745,27 @@ func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApi
 	return ec._Category(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNDtoCreateCategory2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoCreateCategory(ctx context.Context, v any) (model.DtoCreateCategory, error) {
+func (ec *executionContext) unmarshalNDtoCreateCategory2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoCreateCategory(ctx context.Context, v any) (model.DtoCreateCategory, error) {
 	res, err := ec.unmarshalInputDtoCreateCategory(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNDtoDeleteCategory2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoDeleteCategory(ctx context.Context, v any) (model.DtoDeleteCategory, error) {
+func (ec *executionContext) unmarshalNDtoDeleteCategory2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoDeleteCategory(ctx context.Context, v any) (model.DtoDeleteCategory, error) {
 	res, err := ec.unmarshalInputDtoDeleteCategory(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNDtoGetCategoryByID2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoGetCategoryByID(ctx context.Context, v any) (model.DtoGetCategoryByID, error) {
+func (ec *executionContext) unmarshalNDtoGetCategoryByID2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoGetCategoryByID(ctx context.Context, v any) (model.DtoGetCategoryByID, error) {
 	res, err := ec.unmarshalInputDtoGetCategoryByID(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNDtoGetCategoryByName2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoGetCategoryByName(ctx context.Context, v any) (model.DtoGetCategoryByName, error) {
+func (ec *executionContext) unmarshalNDtoGetCategoryByName2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoGetCategoryByName(ctx context.Context, v any) (model.DtoGetCategoryByName, error) {
 	res, err := ec.unmarshalInputDtoGetCategoryByName(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNDtoUpdateCategory2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoUpdateCategory(ctx context.Context, v any) (model.DtoUpdateCategory, error) {
+func (ec *executionContext) unmarshalNDtoUpdateCategory2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐDtoUpdateCategory(ctx context.Context, v any) (model.DtoUpdateCategory, error) {
 	res, err := ec.unmarshalInputDtoUpdateCategory(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -4787,7 +4786,7 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) unmarshalNNewTag2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐNewTag(ctx context.Context, v any) (model.NewTag, error) {
+func (ec *executionContext) unmarshalNNewTag2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐNewTag(ctx context.Context, v any) (model.NewTag, error) {
 	res, err := ec.unmarshalInputNewTag(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -4808,11 +4807,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNTags2githubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx context.Context, sel ast.SelectionSet, v model.Tags) graphql.Marshaler {
+func (ec *executionContext) marshalNTags2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx context.Context, sel ast.SelectionSet, v model.Tags) graphql.Marshaler {
 	return ec._Tags(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTags2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx context.Context, sel ast.SelectionSet, v *model.Tags) graphql.Marshaler {
+func (ec *executionContext) marshalNTags2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx context.Context, sel ast.SelectionSet, v *model.Tags) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -5105,7 +5104,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
+func (ec *executionContext) marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5130,7 +5129,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOTags2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx context.Context, sel ast.SelectionSet, v []*model.Tags) graphql.Marshaler {
+func (ec *executionContext) marshalOTags2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx context.Context, sel ast.SelectionSet, v []*model.Tags) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5157,7 +5156,7 @@ func (ec *executionContext) marshalOTags2ᚕᚖgithubᚗcomᚋlechitzᚋAionApi�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOTags2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx, sel, v[i])
+			ret[i] = ec.marshalOTags2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5171,7 +5170,7 @@ func (ec *executionContext) marshalOTags2ᚕᚖgithubᚗcomᚋlechitzᚋAionApi�
 	return ret
 }
 
-func (ec *executionContext) marshalOTags2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx context.Context, sel ast.SelectionSet, v *model.Tags) graphql.Marshaler {
+func (ec *executionContext) marshalOTags2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐTags(ctx context.Context, sel ast.SelectionSet, v *model.Tags) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

@@ -128,7 +128,6 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 		Select("user_id, username, email, password, created_at").
 		Where("username = ?", username).
 		First(&userDB).Error
-
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, "user not found (business as usual)")
@@ -161,7 +160,6 @@ func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (doma
 		Select("user_id, email, created_at").
 		Where("email = ?", email).
 		First(&userDB).Error
-
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, "user not found (business as usual)")
@@ -178,7 +176,11 @@ func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (doma
 }
 
 // UpdateUser updates specified fields for a user by their ID and returns the updated user or an error if the operation fails.
-func (up UserRepository) UpdateUser(ctx context.Context, userID uint64, fields map[string]interface{}) (domain.UserDomain, error) {
+func (up UserRepository) UpdateUser(
+	ctx context.Context,
+	userID uint64,
+	fields map[string]interface{},
+) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "UpdateUser", trace.WithAttributes(
 		attribute.String("user_id", strconv.FormatUint(userID, 10)),
