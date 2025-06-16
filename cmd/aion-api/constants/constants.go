@@ -1,9 +1,6 @@
 // Package constants contains constants used throughout the application.
 package constants
 
-// StartingApplication is a constant string used to indicate the application is starting its initialization process.
-const StartingApplication = "starting application"
-
 // SuccessToLoadConfiguration is a constant string indicating that the configuration has been successfully loaded.
 const SuccessToLoadConfiguration = "configuration loaded successfully"
 
