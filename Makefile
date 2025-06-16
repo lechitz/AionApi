@@ -22,15 +22,15 @@ MIGRATE_BIN := $(shell command -v migrate 2> /dev/null)
 
 help:
 	@echo ""
-	@echo "\033[48;5;235;33m====================================================================================\033[0m"
-	@echo "\033[48;5;235;33m                              AION API - CLI COMMANDS                               \033[0m"
-	@echo "\033[48;5;235;33m====================================================================================\033[0m"
+	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
+	@echo "\033[48;5;235;33m┃                                            \033[1mAION API - CLI COMMANDS                                               ┃\033[0m"
+	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
 	@echo ""
-	@echo "\033[48;5;235;33m🔶 ┃ TOOLING ┃\033[0m"
+	@echo "\033[48;5;235;33m🔶 ┃ \033[1mTOOLING ┃\033[0m"
 	@echo ""
 	@echo "    \033[1;37mtools-install        \033[0m    →  Install all development tools (goimports, golines, gofumpt, golangci-lint)"
 	@echo ""
-	@echo "\033[48;5;235;33m🔶 ┃ DOCKER ENVIRONMENT COMMANDS ┃\033[0m"
+	@echo "\033[48;5;235;33m🔶 ┃ \033[1mDOCKER ENVIRONMENT COMMANDS ┃\033[0m"
 	@echo ""
 	@echo "  \033[1;39m- [DEV]\033[0m"
 	@echo "    \033[1;37mbuild-dev          \033[0m      →  Build the development Docker image"
@@ -47,32 +47,33 @@ help:
 	@echo "  \033[1;39m- [GENERAL]\033[0m"
 	@echo "    \033[1;37mdocker-clean-all    \033[0m     →  Remove ALL Docker containers, volumes, and images"
 	@echo ""
-	@echo "\033[48;5;235;33m🔶 ┃ CODE GENERATION ┃\033[0m"
+	@echo "\033[48;5;235;33m🔶 ┃ \033[1mCODE GENERATION ┃\033[0m"
 	@echo ""
 	@echo "    \033[1;37mgraphql             \033[0m     →  Generate GraphQL files with gqlgen"
 	@echo "    \033[1;37mmocks               \033[0m     →  Generate all GoMock mocks"
 	@echo ""
-	@echo "\033[48;5;235;33m🔶 ┃ CODE QUALITY ┃\033[0m"
+	@echo "\033[48;5;235;33m🔶 ┃ \033[1mCODE QUALITY ┃\033[0m"
 	@echo ""
 	@echo "    \033[1;37mformat               \033[0m    →  Format Go code using goimports/golines/gofumpt"
 	@echo "    \033[1;37mlint                 \033[0m    →  Run golangci-lint (static code analysis)"
 	@echo "    \033[1;37mlint-fix             \033[0m    →  Run golangci-lint with --fix (auto-fix where possible)"
 	@echo "    \033[1;37mverify               \033[0m    →  Run full pre-commit pipeline (format, mocks, lint, tests, coverage, codegen)"
 	@echo ""
-	@echo "\033[48;5;235;33m🔶 ┃ MIGRATIONS ┃\033[0m"
+	@echo "\033[48;5;235;33m🔶 ┃ \033[1mMIGRATIONS ┃\033[0m"
 	@echo ""
 	@echo "    \033[1;37mmigrate-up           \033[0m    →  Run all migrations (up)"
 	@echo "    \033[1;37mmigrate-down         \033[0m    →  Rollback the last migration"
 	@echo "    \033[1;37mmigrate-force VERSION=X\033[0m  →  Force DB to specific version"
 	@echo "    \033[1;37mmigrate-new          \033[0m    →  Create new migration (with prompt)"
 	@echo ""
-	@echo "\033[48;5;235;33m🔶 ┃ TESTING ┃\033[0m"
+	@echo "\033[48;5;235;33m🔶 ┃ \033[1mTESTING ┃\033[0m"
 	@echo ""
 	@echo "    \033[1;37mtest                 \033[0m    →  Run unit tests"
 	@echo "    \033[1;37mtest-cover           \033[0m    →  Run tests with coverage report (excludes mocks)"
 	@echo "    \033[1;37mtest-html-report     \033[0m    →  Generate HTML test report (requires go-test-html-report)"
 	@echo ""
-	@echo "\033[48;5;235;33m====================================================================================\033[0m"
+	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
+
 	@echo ""
 
 # ============================================================
@@ -80,12 +81,12 @@ help:
 # ============================================================
 
 tools-install:
-	@echo "📦 Installing development tools..."
+	@echo "Installing development tools..."
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/segmentio/golines@latest
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	@echo "✅ Tools installed successfully."
+	@echo "✅  Tools installed successfully."
 
 # ============================================================
 #                DOCKER ENVIRONMENT TARGETS
@@ -184,7 +185,7 @@ mocks:
 		-destination=tests/mocks/logger/mock_logger.go \
 		-package=loggermocks \
 		-mock_names=Logger=MockLogger
-	@echo "✅ All mocks generated successfully."
+	@echo "✅  All mocks generated successfully."
 
 # ============================================================
 #                		 CODE QUALITY
@@ -193,21 +194,21 @@ mocks:
 .PHONY: format lint lint-fix verify
 
 format:
-	@echo "🎨 Running goimports..."
+	@echo "Running goimports..."
 	goimports -w .
-	@echo "🖊️  Running golines..."
+	@echo "Running golines..."
 	golines --max-len=170 --base-formatter=gofumpt -w .
 
 lint: format
-	@echo "🔎 Running golangci-lint check..."
+	@echo "Running golangci-lint check..."
 	golangci-lint run --config=.golangci.yml ./...
 
 lint-fix:
-	@echo "🔧 Running golangci-lint with --fix..."
+	@echo "Running golangci-lint with --fix..."
 	golangci-lint run --fix --config=.golangci.yml ./...
 
 verify: mocks graphql lint test test-cover test-ci test-clean
-	@echo "✅ Verify passed successfully!"
+	@echo "✅  Verify passed successfully!"
 
 # ============================================================
 #                         MIGRATIONS
@@ -224,7 +225,7 @@ migrate-up:
 		echo "❌ MIGRATION_DB is not set. Use 'export MIGRATION_DB=...';"; \
 		exit 1; \
 	fi
-	@echo "🔄 Running all migrations (up)..."
+	@echo "Running all migrations (up)..."
 	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(MIGRATION_DB)" up
 
 migrate-down:
@@ -260,7 +261,7 @@ migrate-new:
 		echo "❌ 'migrate' CLI not found. Please install it: https://github.com/golang-migrate/migrate/tree/master/cmd/migrate"; \
 		exit 1; \
 	fi
-	@read -p "🆕 Enter migration name: " name; \
+	@read -p "Enter migration name: " name; \
 	if [ -z "$$name" ]; then \
 		echo "❌ Migration name is required"; \
 		exit 1; \
@@ -274,7 +275,7 @@ migrate-new:
 .PHONY: test test-cover test-html-report test-ci test-clean
 
 test:
-	@echo "📦 Running unit tests..."
+	@echo "Running unit tests..."
 	go test ./... -v
 
 test-cover:
@@ -287,9 +288,9 @@ test-cover:
 	go tool cover -html=coverage.out
 
 test-html-report:
-	@echo "🧪 Running tests and generating JSON output..."
+	@echo "Running tests and generating JSON output..."
 	go test ./... -json > docs/coverage/report.json
-	@echo "📄 Generating HTML report..."
+	@echo "Generating HTML report..."
 	go-test-html-report -f docs/coverage/report.json -o docs/coverage/
 	@echo "✅ HTML report generated at: docs/coverage/report.html"
 
