@@ -59,8 +59,8 @@ func loadConfig(logger loggerPort.Logger) config.Config {
 		response.HandleCriticalError(logger, constants.ErrToFailedLoadConfiguration, err)
 		panic(err)
 	}
+	logger.Infof(constants.LoadedConfig, cfg)
 	logger.Infow(constants.SuccessToLoadConfiguration)
-	logger.Infof("loaded config: %+v", cfg)
 	return cfg
 }
 
@@ -69,11 +69,11 @@ func initOtelMetrics(cfg config.Config, logger loggerPort.Logger) func() {
 		context.Background(),
 		otlpmetrichttp.WithEndpoint(
 			cfg.Observability.OtelExporterOTLPEndpoint,
-		), // "otel-collector:4318" para docker, "localhost:4318" para local
+		),
 		otlpmetrichttp.WithInsecure(),
 	)
 	if err != nil {
-		logger.Errorw("failed to initialize OTLP metric exporter", "error", err)
+		logger.Errorw(constants.ErrFailedToInitializeOTLPMetricsExporter, constants.Error, err)
 		panic(err)
 	}
 	provider := metric.NewMeterProvider(
@@ -100,7 +100,7 @@ func initTracer(cfg config.Config, logger loggerPort.Logger) func() {
 		otlptracehttp.WithInsecure(),
 	)
 	if err != nil {
-		logger.Errorw("failed to initialize OTLP exporter", "error", err)
+		logger.Errorw(constants.ErrInitializeOTPL, constants.Error, err)
 	}
 
 	resources := resource.NewWithAttributes(
@@ -117,16 +117,13 @@ func initTracer(cfg config.Config, logger loggerPort.Logger) func() {
 
 	return func() {
 		if err := traceProvider.Shutdown(context.Background()); err != nil {
-			logger.Errorw("failed to shutdown tracer provider", "error", err)
+			logger.Errorw(constants.ErrFailedToShutdownTracerProvider, constants.Error, err)
 		}
 	}
 }
 
 // initDependencies initializes services, repositories, and infrastructure connections.
-func initDependencies(
-	cfg config.Config,
-	logger loggerPort.Logger,
-) (*bootstrap.AppDependencies, func()) {
+func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.AppDependencies, func()) {
 	appDeps, cleanup, err := bootstrap.InitializeDependencies(cfg, logger)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrInitializeDependencies, err)
@@ -137,11 +134,7 @@ func initDependencies(
 }
 
 // createHTTPServer builds the HTTP server using configuration and application dependencies.
-func createHTTPServer(
-	appDeps *bootstrap.AppDependencies,
-	cfg *config.Config,
-	logger loggerPort.Logger,
-) *http.Server {
+func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, logger loggerPort.Logger) *http.Server {
 	httpSrv, err := httpserver.NewHTTPServer(appDeps, cfg)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
@@ -156,11 +149,7 @@ func createHTTPServer(
 }
 
 // createGraphQLServer builds the GraphQL server using configuration and application dependencies.
-func createGraphQLServer(
-	appDeps *bootstrap.AppDependencies,
-	cfg config.Config,
-	logger loggerPort.Logger,
-) *http.Server {
+func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, logger loggerPort.Logger) *http.Server {
 	graphqlSrv, err := graphqlserver.NewGraphqlServer(appDeps, cfg)
 	if err != nil {
 		logger.Errorw(constants.ErrStartGraphqlServer, constants.Error, err)
@@ -169,7 +158,7 @@ func createGraphQLServer(
 	logger.Infow(
 		constants.GraphqlServerStarted,
 		constants.Port, cfg.ServerGraphql.Port,
-		constants.ContextPath, "/graphql",
+		constants.ContextPath, constants.GraphQLPath,
 	)
 
 	return graphqlSrv
@@ -188,7 +177,7 @@ func handleServers(httpSrv, graphqlSrv *http.Server, cfg config.Config, logger l
 	go func() {
 		defer wg.Done()
 		if err := httpSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			errChan <- fmt.Errorf("failed to start HTTP server: %w", err)
+			errChan <- fmt.Errorf(constants.ErrFailedToStartHTTPServer, err)
 		}
 	}()
 
@@ -196,14 +185,14 @@ func handleServers(httpSrv, graphqlSrv *http.Server, cfg config.Config, logger l
 	go func() {
 		defer wg.Done()
 		if err := graphqlSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			errChan <- fmt.Errorf("failed to start GraphQL server: %w", err)
+			errChan <- fmt.Errorf(constants.ErrFailedToStartGraphqlServer, err)
 		}
 	}()
 
 	// Handle shutdown or error event
 	select {
 	case err := <-errChan:
-		logger.Errorw("server error", "error", err.Error())
+		logger.Errorw("server error", constants.Error, err.Error())
 		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
 		stop()
 	case <-ctx.Done():
