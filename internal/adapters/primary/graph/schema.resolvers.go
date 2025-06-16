@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 	"errors"
+	"github.com/lechitz/AionApi/internal/adapters/primary/graph/constants"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
@@ -19,18 +20,18 @@ import (
 
 // CreateCategory is the resolver for the createCategory field.
 func (r *mutationResolver) CreateCategory(ctx context.Context, category model.DtoCreateCategory) (*model.Category, error) {
-	tracer := otel.Tracer("AionApi/GraphQL/Category")
-	ctx, span := tracer.Start(ctx, "CreateCategoryResolver")
+	tracer := otel.Tracer(constants.SpanTracerCategory)
+	ctx, span := tracer.Start(ctx, constants.SpanStartCreateCategory)
 	defer span.End()
 
 	span.AddEvent(
-		"start createCategory mutation",
+		constants.SpanEventCreateCategory,
 		trace.WithAttributes(TraceAttributesFromCategory(category)...),
 	)
 
-	userID, ok := ctx.Value("user_id").(uint64)
+	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
-		err := errors.New("userID not found in context")
+		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
 		return nil, err
@@ -52,11 +53,11 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, category model.Dt
 	}
 
 	span.SetAttributes(
-		attribute.String("category_name", categoryDB.Name),
-		attribute.String("user_id", strconv.FormatUint(categoryDB.UserID, 10)),
-		attribute.String("category_id", strconv.FormatUint(categoryDB.ID, 10)),
+		attribute.String(constants.CategoryName, categoryDB.Name),
+		attribute.String(constants.UserID, strconv.FormatUint(categoryDB.UserID, 10)),
+		attribute.String(constants.CategoryID, strconv.FormatUint(categoryDB.ID, 10)),
 	)
-	span.SetStatus(codes.Ok, "category created successfully")
+	span.SetStatus(codes.Ok, constants.SuccessCategoryCreated)
 
 	return &model.Category{
 		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
@@ -77,7 +78,7 @@ func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*
 
 // UpdateCategory is the resolver for the updateCategory field.
 func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.DtoUpdateCategory) (*model.Category, error) {
-	tracer := otel.Tracer("AionApi/GraphQL/Category")
+	tracer := otel.Tracer(constants.SpanTracerCategory)
 	ctx, span := tracer.Start(ctx, "UpdateCategoryResolver")
 	defer span.End()
 
@@ -86,9 +87,9 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 		trace.WithAttributes(attribute.String("input_category_id", category.CategoryID)),
 	)
 
-	userID, ok := ctx.Value("user_id").(uint64)
+	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
-		err := errors.New("userID not found in context")
+		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
 		return nil, err
@@ -102,8 +103,8 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 	}
 
 	span.SetAttributes(
-		attribute.String("user_id", strconv.FormatUint(userID, 10)),
-		attribute.String("category_id", category.CategoryID),
+		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(constants.CategoryID, category.CategoryID),
 		attribute.String("operation", "update"),
 	)
 
@@ -133,7 +134,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 	}
 
 	span.SetAttributes(attribute.String("updated_name", categoryDB.Name))
-	span.SetStatus(codes.Ok, "category updated successfully")
+	span.SetStatus(codes.Ok, constants.SuccessCategoryUpdated)
 
 	return &model.Category{
 		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
@@ -147,7 +148,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 
 // SoftDeleteCategory is the resolver for the softDeleteCategory field.
 func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category model.DtoDeleteCategory) (bool, error) {
-	tracer := otel.Tracer("AionApi/GraphQL/Category")
+	tracer := otel.Tracer(constants.SpanTracerCategory)
 	ctx, span := tracer.Start(ctx, "SoftDeleteCategoryResolver")
 	defer span.End()
 
@@ -156,9 +157,9 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 		trace.WithAttributes(attribute.String("input_category_id", category.CategoryID)),
 	)
 
-	userID, ok := ctx.Value("user_id").(uint64)
+	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
-		err := errors.New("userID not found in context")
+		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
 		return false, err
@@ -172,8 +173,8 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 	}
 
 	span.SetAttributes(
-		attribute.String("user_id", strconv.FormatUint(userID, 10)),
-		attribute.String("category_id", category.CategoryID),
+		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(constants.CategoryID, category.CategoryID),
 		attribute.String("operation", "soft_delete"),
 	)
 
@@ -188,7 +189,7 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 		return false, err
 	}
 
-	span.SetStatus(codes.Ok, "soft delete successful")
+	span.SetStatus(codes.Ok, constants.SuccessCategorySoftDeleted)
 	return true, nil
 }
 
@@ -293,26 +294,26 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 
 // GetCategoryByName is the resolver for the getCategoryByName field.
 func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error) {
-	tracer := otel.Tracer("AionApi/GraphQL/Category")
+	tracer := otel.Tracer(constants.SpanTracerCategory)
 	ctx, span := tracer.Start(ctx, "GetCategoryByNameResolver")
 	defer span.End()
 
 	span.AddEvent(
-		"start getCategoryByName query",
+		constants.SpanGetCategoryByName,
 		trace.WithAttributes(attribute.String("input_category_name", categoryRequest.Name)),
 	)
 
-	userID, ok := ctx.Value("user_id").(uint64)
+	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
-		err := errors.New("userID not found in context")
+		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
-		r.Logger.Errorw("User ID not found in context", "error", err.Error())
+		r.Logger.Errorw(constants.ErrUserIDNotFound, constants.Error, err.Error())
 		return nil, err
 	}
 	span.SetAttributes(
-		attribute.String("user_id", strconv.FormatUint(userID, 10)),
-		attribute.String("category_name", categoryRequest.Name),
+		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(constants.CategoryName, categoryRequest.Name),
 	)
 
 	category := domain.Category{
@@ -323,18 +324,18 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 	categoryDB, err := r.CategoryService.GetCategoryByName(ctx, category)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, "error getting category by name")
+		span.SetStatus(codes.Error, constants.ErrCategoryByNameNotFound)
 		return nil, err
 	}
 	if categoryDB.Name == "" {
-		span.SetStatus(codes.Ok, "category not found (normal)")
-		return nil, errors.New("category not found")
+		span.SetStatus(codes.Ok, constants.ErrCategoryNotFound)
+		return nil, errors.New(constants.ErrCategoryNotFound)
 	}
 
-	span.SetStatus(codes.Ok, "category fetched successfully")
+	span.SetStatus(codes.Ok, constants.FetchedCategory)
 	span.SetAttributes(
-		attribute.String("category_id", strconv.FormatUint(categoryDB.ID, 10)),
-		attribute.String("category_color", categoryDB.Color),
+		attribute.String(constants.CategoryID, strconv.FormatUint(categoryDB.ID, 10)),
+		attribute.String(constants.CategoryColor, categoryDB.Color),
 	)
 
 	return &model.Category{
