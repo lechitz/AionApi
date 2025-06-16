@@ -52,6 +52,7 @@ const Port = "port"
 // ContextPath is a constant string representing the base path used for contextual application configuration or routing.
 const ContextPath = "contextPath"
 
+// GraphQLPath is a constant string representing the path used for GraphQL requests.
 const GraphQLPath = "/graphql"
 
 // Error is a constant string representing a generic error identifier or key for logging and error handling purposes.
