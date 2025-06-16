@@ -76,6 +76,13 @@ help:
 	@echo "    \033[1;37m migrate-new          \033[0m    →  Create new migration (with prompt)"
 	@echo ""
 	@echo ""
+	@echo " 🔶 \033[48;5;235;33m┃ \033[1mSEEDS ┃\033[0m"
+	@echo ""
+	@echo "    \033[1;37m seed-users           \033[0m    →  Run unit tests"
+	@echo "    \033[1;37m seed-categories      \033[0m    →  Run tests with coverage report (excludes mocks)"
+	@echo "    \033[1;37m seed-all             \033[0m    →  Generate HTML test report (requires go-test-html-report)"
+	@echo ""
+	@echo ""
 	@echo " 🔶 \033[48;5;235;33m┃ \033[1mTESTING ┃\033[0m"
 	@echo ""
 	@echo "    \033[1;37m test                 \033[0m    →  Run unit tests"
@@ -96,7 +103,9 @@ tools-install:
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/segmentio/golines@latest
 	go install golang.org/x/tools/cmd/goimports@latest
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+	go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+	go install github.com/99designs/gqlgen@latest
 	@echo "✅  Tools installed successfully."
 
 # ============================================================
@@ -278,6 +287,26 @@ migrate-new:
 		exit 1; \
 	fi; \
 	$(MIGRATE_BIN) create -ext sql -dir "$(MIGRATION_PATH)" "$$name"
+
+# ============================================================
+#                          SEEDS
+# ============================================================
+.PHONY: seed-users seed-categories seed-all
+
+POSTGRES_CONTAINER := postgres-dev
+POSTGRES_USER := aion
+POSTGRES_DB := aionapi
+
+seed-users:
+	@echo "Seeding users..."
+	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) < infra/db/seeds/user.sql
+
+seed-categories:
+	@echo "Seeding categories..."
+	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) < infra/db/seeds/category.sql
+
+seed-all: seed-users seed-categories
+	@echo "✅ All seeds applied."
 
 # ============================================================
 #                         TESTING
