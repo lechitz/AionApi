@@ -35,7 +35,7 @@ func NewTokenRepository(cache *redis.Client, logger logger.Logger) *TokenReposit
 // Save stores a token in the Redis cache with a 24-hour expiration time and logs errors if the operation fails.
 func (t *TokenRepository) Save(ctx context.Context, token domain.TokenDomain) error {
 	tr := otel.Tracer("TokenRepository")
-	ctx, span := tr.Start(ctx, "Save", trace.WithAttributes(
+	ctx, span := tr.Start(ctx, "Save Token", trace.WithAttributes(
 		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "save"),
 	))
@@ -58,7 +58,7 @@ func (t *TokenRepository) Save(ctx context.Context, token domain.TokenDomain) er
 // Get retrieves a token associated with a user ID from the Redis cache or returns an error if the token is not found or another issue occurs.
 func (t *TokenRepository) Get(ctx context.Context, token domain.TokenDomain) (string, error) {
 	tr := otel.Tracer("TokenRepository")
-	ctx, span := tr.Start(ctx, "Get", trace.WithAttributes(
+	ctx, span := tr.Start(ctx, "Get Token", trace.WithAttributes(
 		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "get"),
 	))
@@ -92,7 +92,7 @@ func (t *TokenRepository) Get(ctx context.Context, token domain.TokenDomain) (st
 // Update updates an existing token in the Redis cache with a 24-hour expiration and logs success or failure.
 func (t *TokenRepository) Update(ctx context.Context, token domain.TokenDomain) error {
 	tr := otel.Tracer("TokenRepository")
-	ctx, span := tr.Start(ctx, "Update", trace.WithAttributes(
+	ctx, span := tr.Start(ctx, "Update Token", trace.WithAttributes(
 		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "update"),
 	))
@@ -122,7 +122,7 @@ func (t *TokenRepository) Update(ctx context.Context, token domain.TokenDomain) 
 // Delete removes a token associated with a user ID from the Redis cache and logs any errors if the operation fails.
 func (t *TokenRepository) Delete(ctx context.Context, token domain.TokenDomain) error {
 	tr := otel.Tracer("TokenRepository")
-	ctx, span := tr.Start(ctx, "Delete", trace.WithAttributes(
+	ctx, span := tr.Start(ctx, "Delete Token", trace.WithAttributes(
 		attribute.String(constants.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "delete"),
 	))

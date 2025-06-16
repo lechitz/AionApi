@@ -40,8 +40,8 @@ func NewAuthMiddleware(
 // Auth validates JWT tokens and attaches user context.
 func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tr := otel.Tracer("AionApi/Middleware")
-		ctx, span := tr.Start(r.Context(), "AuthMiddleware")
+		tr := otel.Tracer("MiddlewareAuth")
+		ctx, span := tr.Start(r.Context(), "Auth")
 		defer span.End()
 
 		tokenCookie, err := extractTokenFromCookie(r)
@@ -105,8 +105,8 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 		span.SetStatus(codes.Ok, "authenticated")
 		span.SetAttributes(attribute.String("auth.status", "authenticated"))
 
-		newCtx := context.WithValue(ctx, constants.UserIDCtxKey, tokenDomain.UserID)
-		newCtx = context.WithValue(newCtx, constants.TokenCtxKey, tokenCookie)
+		newCtx := context.WithValue(ctx, constants.UserIDKey, tokenDomain.UserID)
+		newCtx = context.WithValue(newCtx, constants.TokenKey, tokenCookie)
 
 		a.logger.Infow("auth context: ", newCtx)
 
