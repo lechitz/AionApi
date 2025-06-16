@@ -34,12 +34,7 @@ type RouteComposer struct {
 // Returns:
 //   - *RouteComposer: configured route composer instance
 //   - error: in case of any setup failure
-func NewHTTPRouter(
-	logger logger.Logger,
-	tokenRepository cache.TokenRepositoryPort,
-	contextPath string,
-	secretKey string,
-) (*RouteComposer, error) {
+func NewHTTPRouter(logger logger.Logger, tokenRepository cache.TokenRepositoryPort, contextPath string, secretKey string) (*RouteComposer, error) {
 	normalizedPath, err := normalizeContextPath(contextPath)
 	if err != nil {
 		return nil, err
