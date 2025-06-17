@@ -86,7 +86,7 @@ type MutationResolver interface {
 	SoftDeleteCategory(ctx context.Context, category model.DtoDeleteCategory) (bool, error)
 }
 type QueryResolver interface {
-	AllCategories(ctx context.Context) ([]*model.Category, error)
+	GetAllCategories(ctx context.Context) ([]*model.Category, error)
 	GetCategoryByID(ctx context.Context, categoryRequest model.DtoGetCategoryByID) (*model.Category, error)
 	GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error)
 	GetAllTags(ctx context.Context) ([]*model.Tags, error)
@@ -202,7 +202,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.UpdateCategory(childComplexity, args["category"].(model.DtoUpdateCategory)), true
 
-	case "Query.AllCategories":
+	case "Query.GetAllCategories":
 		if e.complexity.Query.AllCategories == nil {
 			break
 		}
@@ -1221,7 +1221,7 @@ func (ec *executionContext) _Query_AllCategories(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().AllCategories(rctx)
+		return ec.resolvers.Query().GetAllCategories(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4156,7 +4156,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "AllCategories":
+		case "GetAllCategories":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
