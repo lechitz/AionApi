@@ -7,9 +7,9 @@ package graph
 import (
 	"context"
 	"errors"
-	"github.com/lechitz/AionApi/internal/adapters/primary/graph/constants"
 	"strconv"
 
+	"github.com/lechitz/AionApi/internal/adapters/primary/graph/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"go.opentelemetry.io/otel"
@@ -67,159 +67,11 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, category model.Dt
 	}, nil
 }
 
-// GetCategoryByID is the resolver for the getCategoryByID field.
-func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest model.DtoGetCategoryByID) (*model.Category, error) {
-	tracer := otel.Tracer(constants.SpanTracerCategory)
-	ctx, span := tracer.Start(ctx, constants.SpanStartGetCategoryByID)
-	defer span.End()
-
-	span.AddEvent(constants.SpanGetCategoryByID, trace.WithAttributes(attribute.String(constants.CategoryID, categoryRequest.CategoryID)))
-
-	userID, ok := ctx.Value(constants.UserID).(uint64)
-	if !ok {
-		err := errors.New(constants.ErrUserIDNotFound)
-		span.RecordError(err)
-		span.SetStatus(codes.Error, err.Error())
-		r.Logger.Errorw(constants.ErrUserIDNotFound, constants.Error, err.Error())
-		return nil, err
-	}
-
-	span.SetAttributes(attribute.String(constants.UserID, strconv.FormatUint(userID, 10)))
-
-	categoryIDUint, err := strconv.ParseUint(categoryRequest.CategoryID, 10, 64)
-	if err != nil {
-		span.RecordError(err)
-		span.SetStatus(codes.Error, constants.InvalidCategoryID)
-		return nil, errors.New(constants.InvalidCategoryID)
-	}
-
-	span.SetAttributes(attribute.String(constants.CategoryID, categoryRequest.CategoryID))
-
-	category := domain.Category{
-		ID:     categoryIDUint,
-		UserID: userID,
-	}
-
-	categoryDB, err := r.CategoryService.GetCategoryByID(ctx, category)
-	if err != nil {
-		span.RecordError(err)
-		span.SetStatus(codes.Error, constants.ErrCategoryNotFound)
-		return nil, err
-	}
-
-	span.SetStatus(codes.Ok, constants.SuccessCategoryFetch)
-	span.SetAttributes(
-		attribute.String(constants.CategoryName, categoryDB.Name),
-		attribute.String(constants.CategoryColor, categoryDB.Color),
-	)
-
-	return &model.Category{
-		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
-		UserID:      strconv.FormatUint(categoryDB.UserID, 10),
-		Name:        categoryDB.Name,
-		Description: &categoryDB.Description,
-		ColorHex:    &categoryDB.Color,
-		Icon:        &categoryDB.Icon,
-	}, nil
-}
-
-// GetCategoryByName is the resolver for the getCategoryByName field.
-func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error) {
-	tracer := otel.Tracer(constants.SpanTracerCategory)
-	ctx, span := tracer.Start(ctx, constants.SpanStartGetCategoryByName)
-	defer span.End()
-
-	span.AddEvent(constants.SpanGetCategoryByName, trace.WithAttributes(attribute.String(constants.CategoryName, categoryRequest.Name)))
-
-	userID, ok := ctx.Value(constants.UserID).(uint64)
-	if !ok {
-		err := errors.New(constants.ErrUserIDNotFound)
-		span.RecordError(err)
-		span.SetStatus(codes.Error, err.Error())
-		r.Logger.Errorw(constants.ErrUserIDNotFound, constants.Error, err.Error())
-		return nil, err
-	}
-
-	span.SetAttributes(
-		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String(constants.CategoryName, categoryRequest.Name),
-	)
-
-	category := domain.Category{
-		UserID: userID,
-		Name:   categoryRequest.Name,
-	}
-
-	categoryDB, err := r.CategoryService.GetCategoryByName(ctx, category)
-	if err != nil {
-		span.RecordError(err)
-		span.SetStatus(codes.Error, constants.ErrCategoryByNameNotFound)
-		return nil, err
-	}
-
-	if categoryDB.Name == "" {
-		span.SetStatus(codes.Ok, constants.ErrCategoryNotFound)
-		return nil, errors.New(constants.ErrCategoryNotFound)
-	}
-
-	span.SetStatus(codes.Ok, constants.SuccessCategoryFetch)
-	span.SetAttributes(
-		attribute.String(constants.CategoryID, strconv.FormatUint(categoryDB.ID, 10)),
-		attribute.String(constants.CategoryColor, categoryDB.Color),
-	)
-
-	return &model.Category{
-		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
-		UserID:      strconv.FormatUint(categoryDB.UserID, 10),
-		Name:        categoryDB.Name,
-		Description: &categoryDB.Description,
-		ColorHex:    &categoryDB.Color,
-		Icon:        &categoryDB.Icon,
-	}, nil
-}
-
-// GetAllCategories is the resolver for the allCategories field.
-func (r *queryResolver) GetAllCategories(ctx context.Context) ([]*model.Category, error) {
-	tracer := otel.Tracer(constants.SpanTracerCategory)
-	ctx, span := tracer.Start(ctx, constants.SpanStartAllGetCategories)
-	defer span.End()
-
-	span.AddEvent(constants.SpanGetAllCategories)
-
-	userID, ok := ctx.Value(constants.UserID).(uint64)
-	if !ok {
-		err := errors.New(constants.ErrUserIDNotFound)
-		span.RecordError(err)
-		span.SetStatus(codes.Error, err.Error())
-		r.Logger.Errorw(constants.ErrUserIDNotFound, constants.Error, err.Error())
-		return nil, err
-	}
-
-	span.SetAttributes(attribute.String(constants.UserID, strconv.FormatUint(userID, 10)))
-
-	categoryDB, err := r.CategoryService.GetAllCategories(ctx, userID)
-	if err != nil {
-		span.RecordError(err)
-		span.SetStatus(codes.Error, constants.ErrAllCategoriesNotFound)
-		return nil, errors.New(constants.ErrAllCategoriesNotFound)
-	}
-
-	categories := make([]*model.Category, len(categoryDB))
-	for i, category := range categoryDB {
-		categories[i] = &model.Category{
-			CategoryID:  strconv.FormatUint(category.ID, 10),
-			UserID:      strconv.FormatUint(userID, 10),
-			Name:        category.Name,
-			Description: &category.Description,
-			ColorHex:    &category.Color,
-			Icon:        &category.Icon,
-		}
-	}
-
-	span.SetAttributes(attribute.Int(constants.CategoriesCount, len(categories)))
-	span.SetStatus(codes.Ok, constants.SuccessAllCategoriesFetch)
-
-	return categories, nil
+// CreateTag is the resolver for the CreateTag field.
+func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*model.Tags, error) {
+	_ = ctx
+	_ = input
+	return nil, errors.New("not implemented")
 }
 
 // UpdateCategory is the resolver for the updateCategory field.
@@ -228,7 +80,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 	ctx, span := tracer.Start(ctx, constants.SpanStartUpdateCategory)
 	defer span.End()
 
-	span.AddEvent(constants.SpanUpdateCategory, trace.WithAttributes(attribute.String(constants.CategoryID, category.CategoryID)))
+	span.AddEvent(constants.SpanEventUpdateCategory, trace.WithAttributes(attribute.String(constants.CategoryID, category.CategoryID)))
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
@@ -294,10 +146,7 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 	ctx, span := tracer.Start(ctx, constants.SpanStartSoftDeleteCategory)
 	defer span.End()
 
-	span.AddEvent(
-		"start softDeleteCategory mutation",
-		trace.WithAttributes(attribute.String("input_category_id", category.CategoryID)),
-	)
+	span.AddEvent(constants.SpanEventSoftDeleteCategory, trace.WithAttributes(attribute.String(constants.CategoryID, category.CategoryID)))
 
 	userID, ok := ctx.Value(constants.UserID).(uint64)
 	if !ok {
@@ -311,13 +160,12 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
-		return false, errors.New("invalid category ID format")
+		return false, errors.New(constants.InvalidCategoryID)
 	}
 
 	span.SetAttributes(
 		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(constants.CategoryID, category.CategoryID),
-		attribute.String("operation", "soft_delete"),
 	)
 
 	categoryDomain := domain.Category{
@@ -335,20 +183,159 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 	return true, nil
 }
 
-//============================================================================================
+// GetAllCategories is the resolver for the allCategories field.
+func (r *queryResolver) GetAllCategories(ctx context.Context) ([]*model.Category, error) {
+	tracer := otel.Tracer(constants.SpanTracerCategory)
+	ctx, span := tracer.Start(ctx, constants.SpanStartAllGetCategories)
+	defer span.End()
 
-// CreateTag is the resolver for the CreateTag field.
-func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*model.Tags, error) {
-	_ = ctx
-	_ = input
-	return nil, errors.New("not implemented")
+	span.AddEvent(constants.SpanEventGetAllCategories)
+
+	userID, ok := ctx.Value(constants.UserID).(uint64)
+	if !ok {
+		err := errors.New(constants.ErrUserIDNotFound)
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		r.Logger.Errorw(constants.ErrUserIDNotFound, constants.Error, err.Error())
+		return nil, err
+	}
+
+	span.SetAttributes(attribute.String(constants.UserID, strconv.FormatUint(userID, 10)))
+
+	categoryDB, err := r.CategoryService.GetAllCategories(ctx, userID)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, constants.ErrAllCategoriesNotFound)
+		return nil, errors.New(constants.ErrAllCategoriesNotFound)
+	}
+
+	categories := make([]*model.Category, len(categoryDB))
+	for i, category := range categoryDB {
+		categories[i] = &model.Category{
+			CategoryID:  strconv.FormatUint(category.ID, 10),
+			UserID:      strconv.FormatUint(userID, 10),
+			Name:        category.Name,
+			Description: &category.Description,
+			ColorHex:    &category.Color,
+			Icon:        &category.Icon,
+		}
+	}
+
+	span.SetAttributes(attribute.Int(constants.CategoriesCount, len(categories)))
+	span.SetStatus(codes.Ok, constants.SuccessAllCategoriesFetch)
+
+	return categories, nil
 }
 
-// GetTagByID is the resolver for the GetTagByID field.
-func (r *queryResolver) GetTagByID(ctx context.Context, tagID string) (*model.Tags, error) {
-	_ = ctx
-	_ = tagID
-	return nil, errors.New("not implemented: GetTagByID")
+// GetCategoryByID is the resolver for the getCategoryByID field.
+func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest model.DtoGetCategoryByID) (*model.Category, error) {
+	tracer := otel.Tracer(constants.SpanTracerCategory)
+	ctx, span := tracer.Start(ctx, constants.SpanStartGetCategoryByID)
+	defer span.End()
+
+	span.AddEvent(constants.SpanEventGetCategoryByID, trace.WithAttributes(attribute.String(constants.CategoryID, categoryRequest.CategoryID)))
+
+	userID, ok := ctx.Value(constants.UserID).(uint64)
+	if !ok {
+		err := errors.New(constants.ErrUserIDNotFound)
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		r.Logger.Errorw(constants.ErrUserIDNotFound, constants.Error, err.Error())
+		return nil, err
+	}
+
+	span.SetAttributes(attribute.String(constants.UserID, strconv.FormatUint(userID, 10)))
+
+	categoryIDUint, err := strconv.ParseUint(categoryRequest.CategoryID, 10, 64)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, constants.InvalidCategoryID)
+		return nil, errors.New(constants.InvalidCategoryID)
+	}
+
+	span.SetAttributes(attribute.String(constants.CategoryID, categoryRequest.CategoryID))
+
+	category := domain.Category{
+		ID:     categoryIDUint,
+		UserID: userID,
+	}
+
+	categoryDB, err := r.CategoryService.GetCategoryByID(ctx, category)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, constants.ErrCategoryNotFound)
+		return nil, err
+	}
+
+	span.SetStatus(codes.Ok, constants.SuccessCategoryFetch)
+	span.SetAttributes(
+		attribute.String(constants.CategoryName, categoryDB.Name),
+		attribute.String(constants.CategoryColor, categoryDB.Color),
+	)
+
+	return &model.Category{
+		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
+		UserID:      strconv.FormatUint(categoryDB.UserID, 10),
+		Name:        categoryDB.Name,
+		Description: &categoryDB.Description,
+		ColorHex:    &categoryDB.Color,
+		Icon:        &categoryDB.Icon,
+	}, nil
+}
+
+// GetCategoryByName is the resolver for the getCategoryByName field.
+func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error) {
+	tracer := otel.Tracer(constants.SpanTracerCategory)
+	ctx, span := tracer.Start(ctx, constants.SpanStartGetCategoryByName)
+	defer span.End()
+
+	span.AddEvent(constants.SpanEventGetCategoryByName, trace.WithAttributes(attribute.String(constants.CategoryName, categoryRequest.Name)))
+
+	userID, ok := ctx.Value(constants.UserID).(uint64)
+	if !ok {
+		err := errors.New(constants.ErrUserIDNotFound)
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		r.Logger.Errorw(constants.ErrUserIDNotFound, constants.Error, err.Error())
+		return nil, err
+	}
+
+	span.SetAttributes(
+		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(constants.CategoryName, categoryRequest.Name),
+	)
+
+	category := domain.Category{
+		UserID: userID,
+		Name:   categoryRequest.Name,
+	}
+
+	categoryDB, err := r.CategoryService.GetCategoryByName(ctx, category)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, constants.ErrCategoryByNameNotFound)
+		return nil, err
+	}
+
+	if categoryDB.Name == "" {
+		span.SetStatus(codes.Ok, constants.ErrCategoryNotFound)
+		return nil, errors.New(constants.ErrCategoryNotFound)
+	}
+
+	span.SetStatus(codes.Ok, constants.SuccessCategoryFetch)
+	span.SetAttributes(
+		attribute.String(constants.CategoryID, strconv.FormatUint(categoryDB.ID, 10)),
+		attribute.String(constants.CategoryColor, categoryDB.Color),
+	)
+
+	return &model.Category{
+		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
+		UserID:      strconv.FormatUint(categoryDB.UserID, 10),
+		Name:        categoryDB.Name,
+		Description: &categoryDB.Description,
+		ColorHex:    &categoryDB.Color,
+		Icon:        &categoryDB.Icon,
+	}, nil
 }
 
 // GetAllTags is the resolver for the GetAllTags field.
@@ -357,7 +344,12 @@ func (r *queryResolver) GetAllTags(ctx context.Context) ([]*model.Tags, error) {
 	return nil, errors.New("not implemented: GetAllTags - GetAllTags")
 }
 
-//============================================================================================
+// GetTagByID is the resolver for the GetTagByID field.
+func (r *queryResolver) GetTagByID(ctx context.Context, tagID string) (*model.Tags, error) {
+	_ = ctx
+	_ = tagID
+	return nil, errors.New("not implemented: GetTagByID")
+}
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }

@@ -48,7 +48,7 @@ input NewTag {
 }
 
 type Query {
-    AllCategories: [Category!]!
+    GetAllCategories: [Category!]!
     GetCategoryByID(categoryRequest: DtoGetCategoryByID!): Category
     GetCategoryByName(categoryRequest: DtoGetCategoryByName!): Category
     GetAllTags: [Tags]
