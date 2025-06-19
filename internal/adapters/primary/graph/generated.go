@@ -64,7 +64,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AllCategories     func(childComplexity int) int
+		GetAllCategories  func(childComplexity int) int
 		GetAllTags        func(childComplexity int) int
 		GetCategoryByID   func(childComplexity int, categoryRequest model.DtoGetCategoryByID) int
 		GetCategoryByName func(childComplexity int, categoryRequest model.DtoGetCategoryByName) int
@@ -203,11 +203,11 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		return e.complexity.Mutation.UpdateCategory(childComplexity, args["category"].(model.DtoUpdateCategory)), true
 
 	case "Query.GetAllCategories":
-		if e.complexity.Query.AllCategories == nil {
+		if e.complexity.Query.GetAllCategories == nil {
 			break
 		}
 
-		return e.complexity.Query.AllCategories(childComplexity), true
+		return e.complexity.Query.GetAllCategories(childComplexity), true
 
 	case "Query.GetAllTags":
 		if e.complexity.Query.GetAllTags == nil {
@@ -1207,8 +1207,8 @@ func (ec *executionContext) fieldContext_Mutation_SoftDeleteCategory(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_AllCategories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_AllCategories(ctx, field)
+func (ec *executionContext) _Query_GetAllCategories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_GetAllCategories(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1238,7 +1238,7 @@ func (ec *executionContext) _Query_AllCategories(ctx context.Context, field grap
 	return ec.marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadaptersᚋprimaryᚋgraphᚋmodelᚐCategoryᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_AllCategories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_GetAllCategories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -4165,7 +4165,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_AllCategories(ctx, field)
+				res = ec._Query_GetAllCategories(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
