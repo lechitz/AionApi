@@ -99,11 +99,7 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		attribute.String("token_preview", tokenPreview),
 	)
 
-	a.Logger.Infow(
-		constants.SuccessLogout,
-		def.CtxUserID, userID,
-		def.CtxToken, tokenPreview,
-	)
+	a.Logger.Infow(constants.SuccessLogout, def.CtxUserID, userID, def.CtxToken, tokenPreview)
 
 	body := response.ObjectResponse(nil, constants.SuccessLogout, a.Logger)
 	response.Return(w, http.StatusOK, body.Bytes(), a.Logger)
@@ -112,7 +108,7 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 // logAndRespondError logs an error message and sends an appropriate HTTP response with the specified status, message, and error details.
 func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
-		a.Logger.Errorw(message, constants.Error, err.Error())
+		a.Logger.Errorw(message, def.Error, err.Error())
 	} else {
 		a.Logger.Errorw(message)
 	}
