@@ -16,12 +16,7 @@ import (
 //   - portRouter.Router: the configured router
 //   - error: any error encountered during setup
 func ComposeRouter(deps *bootstrap.AppDependencies, contextPath string) (portRouter.Router, error) {
-	httpRouter, err := NewHTTPRouter(
-		deps.Logger,
-		deps.TokenRepository,
-		contextPath,
-		deps.Config.Secret.Key,
-	)
+	httpRouter, err := NewHTTPRouter(deps.Logger, deps.TokenRepository, contextPath, deps.Config.Secret.Key)
 	if err != nil {
 		return nil, err
 	}

@@ -1,12 +1,6 @@
 // Package constants contains constants related to authentication operations.
 package constants
 
-// Error is a generic error message.
-const Error = "error"
-
-// Username is the key used for usernames in authentication operations.
-const Username = "username"
-
 // ErrorToCompareHashAndPassword indicates an invalid password was provided.
 const ErrorToCompareHashAndPassword = "invalid credentials" // #nosec G101
 
@@ -33,9 +27,3 @@ const SuccessToLogin = "user logged in successfully"
 
 // SuccessUserLoggedOut indicates the user has logged out successfully.
 const SuccessUserLoggedOut = "user logged out successfully"
-
-// Token is the key used for tokens in authentication operations.
-const Token = "token"
-
-// UserID is the key used to identify a user.
-const UserID = "user_id"

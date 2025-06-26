@@ -25,11 +25,7 @@ import (
 func NewGraphqlServer(deps *bootstrap.AppDependencies, cfg config.Config) (*http.Server, error) {
 	router := chi.NewRouter()
 
-	router.Use(auth.NewAuthMiddleware(
-		deps.TokenRepository,
-		deps.Logger,
-		cfg.Secret.Key,
-	).Auth)
+	router.Use(auth.NewAuthMiddleware(deps.TokenRepository, deps.Logger, cfg.Secret.Key).Auth)
 
 	router.Use(recovery.RecoverMiddleware(deps.Logger))
 

@@ -2,11 +2,11 @@
 package testdata
 
 import (
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
 )
 
 // TestPerfectLoginInputUser is a predefined instance of UserDomain representing a user with valid login credentials for testing purposes.
-var TestPerfectLoginInputUser = domain.UserDomain{
+var TestPerfectLoginInputUser = entity.UserDomain{
 	Username: "testuser",
 	Password: "password123",
 }

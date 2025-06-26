@@ -4,7 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
+
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
 	mockToken "github.com/lechitz/AionApi/tests/mocks/token"
@@ -29,7 +30,7 @@ func TokenServiceTest(t *testing.T, secretKey string) *TokenServiceTestSuite {
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
-	tokenService := token.NewTokenService(mockTokenStore, mockLog, domain.TokenConfig{
+	tokenService := token.NewTokenService(mockTokenStore, mockLog, entity.TokenConfig{
 		SecretKey: secretKey,
 	})
 

@@ -15,48 +15,106 @@ MIGRATION_DB   ?= $(DB_URL)
 MIGRATE_BIN := $(shell command -v migrate 2> /dev/null)
 
 # ============================================================
-#                       HELP SECTION
+#                HELP & TOOLING SECTION
 # ============================================================
 
-.PHONY: help
+.PHONY: help tools-install
+
 help:
 	@echo ""
-	@echo "\033[1;33m\033[1mAionApi - Developer CLI Help\033[0m"
 	@echo ""
-	@echo "\033[1;33m- Docker Compose Commands:\033[0m"
-	@echo "  \033[1;36mbuild-dev\033[0m        → Build dev image"
-	@echo "  \033[1;36mdev-up\033[0m           → Start dev environment (resets DB)"
-	@echo "  \033[1;36mdev-down\033[0m         → Stop dev and remove volumes"
-	@echo "  \033[1;36mclean-dev\033[0m        → Clean dev containers, volumes, images"
+	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
+	@echo "\033[48;5;235;33m┃                                            \033[1mAION API - CLI COMMANDS                                               ┃\033[0m"
+	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
 	@echo ""
-	@echo "  \033[1;36mbuild-prod\033[0m       → Build prod image"
-	@echo "  \033[1;36mprod-up\033[0m          → Start prod environment"
-	@echo "  \033[1;36mprod-down\033[0m        → Stop prod and remove volumes"
-	@echo "  \033[1;36mclean-prod\033[0m       → Clean prod containers, volumes, images"
 	@echo ""
-	@echo "  \033[1;36mdocker-clean-all\033[0m → Remove ALL containers, volumes, images"
+	@echo " 🔶 \033[48;5;235;33m┃ \033[1mTOOLING ┃\033[0m"
 	@echo ""
-	@echo "\033[1;33m- Testing:\033[0m"
-	@echo "  \033[1;36mtest\033[0m             → Run unit tests"
-	@echo "  \033[1;36mtest-cover\033[0m       → Coverage (exclui mocks)"
-	@echo "  \033[1;36mtest-html-report\033[0m → HTML report (requires go-test-html-report)"
+	@echo "    \033[0m tools-install        \033[1;37m    →  Install all development tools (goimports, golines, gofumpt, golangci-lint)"
 	@echo ""
-	@echo "\033[1;33m- Migrations (via migrate CLI):\033[0m"
-	@echo "  \033[1;36mmigrate-up\033[0m       → Executa todas as migrations (up)"
-	@echo "  \033[1;36mmigrate-down\033[0m     → Rollback última migration"
-	@echo "  \033[1;36mmigrate-force VERSION=X\033[0m → Força DB para versão X"
-	@echo "  \033[1;36mmigrate-new\033[0m      → Cria nova migration (prompt)"
 	@echo ""
-	@echo "\033[1;33m- Codegen:\033[0m"
-	@echo "  \033[1;36mgraphql\033[0m          → Gera arquivos GraphQL via gqlgen"
-	@echo "  \033[1;36mmocks\033[0m            → Gera todos os mocks GoMock"
+	@echo " 🔶 \033[48;5;235;33m┃ \033[1mDOCKER ENVIRONMENT COMMANDS ┃\033[0m"
+	@echo ""
+	@echo "  \033[1;37m- [DEV]\033[0m"
+	@echo ""
+	@echo "    \033[0m build-dev          \033[1;37m      →  Build the development Docker image"
+	@echo "    \033[0m dev-up             \033[1;37m      →  Start the development environment (resets DB)"
+	@echo "    \033[0m dev-down           \033[1;37m      →  Stop and remove dev environment containers/volumes"
+	@echo "    \033[0m clean-dev          \033[1;37m      →  Clean all dev containers, volumes, and images"
+	@echo ""
+	@echo "  \033[1;37m- [PROD]\033[0m"
+	@echo ""
+	@echo "    \033[0m build-prod         \033[1;37m      →  Build the production Docker image"
+	@echo "    \033[0m prod-up            \033[1;37m      →  Start the production environment"
+	@echo "    \033[0m prod-down          \033[1;37m      →  Stop and remove prod environment containers/volumes"
+	@echo "    \033[0m clean-prod         \033[1;37m      →  Clean all prod containers, volumes, and images"
+	@echo ""
+	@echo "  \033[1;37m- [GENERAL]\033[0m"
+	@echo ""
+	@echo "    \033[0m docker-clean-all    \033[1;37m     →  Remove ALL Docker containers, volumes, and images"
+	@echo ""
+	@echo ""
+	@echo " 🔶 \033[48;5;235;33m┃ \033[1mCODE GENERATION ┃\033[0m"
+	@echo ""
+	@echo "    \033[0m graphql             \033[1;37m     →  Generate GraphQL files with gqlgen"
+	@echo "    \033[0m mocks               \033[1;37m     →  Generate all GoMock mocks"
+	@echo ""
+	@echo ""
+	@echo " 🔶 \033[48;5;235;33m┃ \033[1mCODE QUALITY ┃\033[0m"
+	@echo ""
+	@echo "    \033[0m format               \033[1;37m    →  Format Go code using goimports/golines/gofumpt"
+	@echo "    \033[0m lint                 \033[1;37m    →  Run golangci-lint (static code analysis)"
+	@echo "    \033[0m lint-fix             \033[1;37m    →  Run golangci-lint with --fix (auto-fix where possible)"
+	@echo "    \033[0m verify               \033[1;37m    →  Run full pre-commit pipeline (format, mocks, lint, tests, coverage, codegen)"
+	@echo ""
+	@echo ""
+	@echo " 🔶 \033[48;5;235;33m┃ \033[1mMIGRATIONS ┃\033[0m"
+	@echo ""
+	@echo "    \033[0m migrate-up           \033[1;37m    →  Run all migrations (up)"
+	@echo "    \033[0m migrate-down         \033[1;37m    →  Rollback the last migration"
+	@echo "    \033[0m migrate-force VERSION=\033[1;32mX \033[1;37m →  Force DB to specific version"
+	@echo "    \033[0m migrate-new          \033[1;37m    →  Create new migration (with prompt)"
+	@echo ""
+	@echo ""
+	@echo " 🔶 \033[48;5;235;33m┃ \033[1mSEEDS ┃\033[0m"
+	@echo ""
+	@echo "    \033[0m seed-users           \033[1;37m    →  Run unit tests"
+	@echo "    \033[0m seed-categories      \033[1;37m    →  Run tests with coverage report (excludes mocks)"
+	@echo "    \033[0m seed-all             \033[1;37m    →  Generate HTML test report (requires go-test-html-report)"
+	@echo ""
+	@echo ""
+	@echo " 🔶 \033[48;5;235;33m┃ \033[1mTESTING ┃\033[0m"
+	@echo ""
+	@echo "    \033[0m test                 \033[1;37m    →  Run unit tests"
+	@echo "    \033[0m test-cover           \033[1;37m    →  Run tests with coverage report (excludes mocks)"
+	@echo "    \033[0m test-html-report     \033[1;37m    →  Generate HTML test report (requires go-test-html-report)"
+	@echo ""
+	@echo ""
+	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
+
 	@echo ""
 
 # ============================================================
-#                DOCKER DEV ENVIRONMENT TARGETS
+#                		   TOOLING
+# ============================================================
+
+tools-install:
+	@echo "Installing development tools..."
+	go install mvdan.cc/gofumpt@latest
+	go install github.com/segmentio/golines@latest
+	go install golang.org/x/tools/cmd/goimports@latest
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+	go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+	go install github.com/99designs/gqlgen@latest
+	@echo "✅  Tools installed successfully."
+
+# ============================================================
+#                DOCKER ENVIRONMENT TARGETS
 # ============================================================
 
 .PHONY: build-dev dev-up dev-down dev clean-dev
+.PHONY: build-prod prod-up prod-down prod clean-prod
+.PHONY: docker-clean-all
 
 build-dev: clean-dev
 	@echo "\033[1;36m[BUILD-DEV]\033[0m Building DEV image..."
@@ -79,12 +137,6 @@ clean-dev:
 	@docker volume ls --filter "name=dev" -q | xargs -r docker volume rm
 	@docker images --filter "reference=$(APPLICATION_NAME):dev" -q | xargs -r docker rmi -f
 
-# ============================================================
-#                DOCKER PROD ENVIRONMENT TARGETS
-# ============================================================
-
-.PHONY: build-prod prod-up prod-down prod clean-prod
-
 build-prod: clean-prod
 	@echo "\033[1;36m[BUILD-PROD]\033[0m Building PROD image..."
 	docker build -t $(APPLICATION_NAME):prod .
@@ -105,16 +157,156 @@ clean-prod:
 	@docker volume ls --filter "name=prod" -q | xargs -r docker volume rm
 	@docker images --filter "reference=*prod*" -q | xargs -r docker rmi -f
 
-# ============================================================
-#                GENERAL DOCKER CLEANUP TARGET
-# ============================================================
-
-.PHONY: docker-clean-all
 docker-clean-all:
 	@echo "\033[1;33m[CLEAN-ALL]\033[0m Removing ALL containers, volumes, images..."
 	@docker ps -a -q | xargs -r docker rm -f
 	@docker volume ls -q | xargs -r docker volume rm
 	@docker images -a -q | xargs -r docker rmi -f
+
+# ============================================================
+#              		    CODE GENERATION
+# ============================================================
+
+.PHONY: graphql mocks
+
+graphql:
+	cd internal/adapters/primary/graph && go run github.com/99designs/gqlgen generate
+
+mocks:
+	@echo "Generating mocks for output ports and usecases..."
+	@mkdir -p tests/mocks/token tests/mocks/user tests/mocks/security tests/mocks/logger tests/mocks/category
+	@echo "→ TokenStore"
+	mockgen -source=internal/core/ports/output/cache/token_output.go \
+		-destination=tests/mocks/token/mock_token_store.go \
+		-package=tokenmocks \
+		-mock_names=Store=MockTokenStore
+	@echo "→ TokenUsecase"
+	mockgen -source=internal/core/usecase/token/token_usecase.go \
+		-destination=tests/mocks/token/mock_token_usecase.go \
+		-package=tokenmocks \
+		-mock_names=Usecase=MockTokenUsecase
+	@echo "→ UserStore"
+	mockgen -source=internal/core/ports/output/db/user_output.go \
+		-destination=tests/mocks/user/mock_user_store.go \
+		-package=usermocks \
+		-mock_names=UserStore=MockUserStore
+	@echo "→ CategoryStore"
+	mockgen -source=internal/core/ports/output/db/category_output.go \
+		-destination=tests/mocks/category/mock_category_store.go \
+		-package=categorymocks \
+		-mock_names=CategoryStore=MockCategoryStore
+	@echo "→ SecurityStore"
+	mockgen -source=internal/core/ports/output/security/hasher_output.go \
+		-destination=tests/mocks/security/mock_security_store.go \
+		-package=securitymocks \
+		-mock_names=Store=MockSecurityStore
+	@echo "→ Logger"
+	mockgen -source=internal/core/ports/output/logger/logger_output.go \
+		-destination=tests/mocks/logger/mock_logger.go \
+		-package=loggermocks \
+		-mock_names=Logger=MockLogger
+	@echo "✅  All mocks generated successfully."
+
+# ============================================================
+#                		 CODE QUALITY
+# ============================================================
+
+.PHONY: format lint lint-fix verify
+
+format:
+	@echo "Running goimports..."
+	goimports -w .
+	@echo "Running golines..."
+	golines --max-len=170 --base-formatter=gofumpt -w .
+
+lint: format
+	@echo "Running golangci-lint check..."
+	golangci-lint run --config=.golangci.yml ./...
+
+lint-fix:
+	@echo "Running golangci-lint with --fix..."
+	golangci-lint run --fix --config=.golangci.yml ./...
+
+verify: mocks graphql lint test test-cover test-ci test-clean
+	@echo "✅  Verify passed successfully!"
+
+# ============================================================
+#                         MIGRATIONS
+# ============================================================
+
+.PHONY: migrate-up migrate-down migrate-force migrate-new
+
+migrate-up:
+	@if [ -z "$(MIGRATE_BIN)" ]; then \
+		echo "❌ 'migrate' CLI not found. Please install it: https://github.com/golang-migrate/migrate/tree/master/cmd/migrate"; \
+		exit 1; \
+	fi
+	@if [ -z "$(MIGRATION_DB)" ]; then \
+		echo "❌ MIGRATION_DB is not set. Use 'export MIGRATION_DB=...';"; \
+		exit 1; \
+	fi
+	@echo "Running all migrations (up)..."
+	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(MIGRATION_DB)" up
+
+migrate-down:
+	@if [ -z "$(MIGRATE_BIN)" ]; then \
+		echo "❌ 'migrate' CLI not found. Please install it: https://github.com/golang-migrate/migrate/tree/master/cmd/migrate"; \
+		exit 1; \
+	fi
+	@if [ -z "$(MIGRATION_DB)" ]; then \
+		echo "❌ MIGRATION_DB is not set. Use 'export MIGRATION_DB=...';"; \
+		exit 1; \
+	fi
+	@echo "↩️  Rolling back the last migration (1 step)..."
+	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(MIGRATION_DB)" down 1
+
+migrate-force:
+	@if [ -z "$(VERSION)" ]; then \
+		echo "❌ VERSION not provided. Use 'make migrate-force VERSION=X'"; \
+		exit 1; \
+	fi
+	@if [ -z "$(MIGRATE_BIN)" ]; then \
+		echo "❌ 'migrate' CLI not found. Please install it: https://github.com/golang-migrate/migrate/tree/master/cmd/migrate"; \
+		exit 1; \
+	fi
+	@if [ -z "$(MIGRATION_DB)" ]; then \
+		echo "❌ MIGRATION_DB is not set. Use 'export MIGRATION_DB=...';"; \
+		exit 1; \
+	fi
+	@echo "🚨 Forcing DB schema version to $(VERSION)..."
+	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(MIGRATION_DB)" force "$(VERSION)"
+
+migrate-new:
+	@if [ -z "$(MIGRATE_BIN)" ]; then \
+		echo "❌ 'migrate' CLI not found. Please install it: https://github.com/golang-migrate/migrate/tree/master/cmd/migrate"; \
+		exit 1; \
+	fi
+	@read -p "Enter migration name: " name; \
+	if [ -z "$$name" ]; then \
+		echo "❌ Migration name is required"; \
+		exit 1; \
+	fi; \
+	$(MIGRATE_BIN) create -ext sql -dir "$(MIGRATION_PATH)" "$$name"
+
+# ============================================================
+#                          SEEDS
+# ============================================================
+.PHONY: seed-users seed-categories seed-all
+
+POSTGRES_CONTAINER := postgres-dev
+POSTGRES_USER := aion
+POSTGRES_DB := aionapi
+
+seed-users:
+	@echo "Seeding users..."
+	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) < infra/db/seeds/user.sql
+
+seed-categories:
+	@echo "Seeding categories..."
+	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) < infra/db/seeds/category.sql
+
+seed-all: seed-users seed-categories
+	@echo "✅ All seeds applied."
 
 # ============================================================
 #                         TESTING
@@ -123,7 +315,7 @@ docker-clean-all:
 .PHONY: test test-cover test-html-report test-ci test-clean
 
 test:
-	@echo "📦 Running unit tests..."
+	@echo "Running unit tests..."
 	go test ./... -v
 
 test-cover:
@@ -136,9 +328,9 @@ test-cover:
 	go tool cover -html=coverage.out
 
 test-html-report:
-	@echo "🧪 Running tests and generating JSON output..."
+	@echo "Running tests and generating JSON output..."
 	go test ./... -json > docs/coverage/report.json
-	@echo "📄 Generating HTML report..."
+	@echo "Generating HTML report..."
 	go-test-html-report -f docs/coverage/report.json -o docs/coverage/
 	@echo "✅ HTML report generated at: docs/coverage/report.html"
 
@@ -151,108 +343,15 @@ test-clean:
 	@rm -f coverage.out coverage_tmp.out
 
 # ============================================================
-#                    GRAPHQL CODEGEN
+#                 CONSOLIDATED .PHONY TARGETS
 # ============================================================
 
-.PHONY: graphql
-
-graphql:
-	cd internal/adapters/primary/graph && go run github.com/99designs/gqlgen generate
-
-# ============================================================
-#                   MOCKS GENERATION (GOMOCK)
-# ============================================================
-
-.PHONY: mocks
-mocks:
-	@echo "Generating mocks for output ports and usecases..."
-	@mkdir -p tests/mocks/token tests/mocks/user tests/mocks/security tests/mocks/logger tests/mocks/category
-
-	@echo "→ TokenStore"
-	mockgen -source=internal/core/ports/output/cache/token.go \
-		-destination=tests/mocks/token/mock_token_store.go \
-		-package=tokenmocks \
-		-mock_names=Store=MockTokenStore
-
-	@echo "→ TokenUsecase"
-	mockgen -source=internal/core/usecase/token/token_usecase.go \
-		-destination=tests/mocks/token/mock_token_usecase.go \
-		-package=tokenmocks \
-		-mock_names=Usecase=MockTokenUsecase
-
-	@echo "→ UserStore"
-	mockgen -source=internal/core/ports/output/db/user.go \
-		-destination=tests/mocks/user/mock_user_store.go \
-		-package=usermocks \
-		-mock_names=UserStore=MockUserStore
-
-	@echo "→ CategoryStore"
-	mockgen -source=internal/core/ports/output/db/category.go \
-		-destination=tests/mocks/category/mock_category_store.go \
-		-package=categorymocks \
-		-mock_names=CategoryStore=MockCategoryStore
-
-	@echo "→ SecurityStore"
-	mockgen -source=internal/core/ports/output/security/hasher.go \
-		-destination=tests/mocks/security/mock_security_store.go \
-		-package=securitymocks \
-		-mock_names=Store=MockSecurityStore
-
-	@echo "→ Logger"
-	mockgen -source=internal/core/ports/output/logger/logger.go \
-		-destination=tests/mocks/logger/mock_logger.go \
-		-package=loggermocks \
-		-mock_names=Logger=MockLogger
-
-	@echo "✅ All mocks generated successfully."
-
-# ============================================================
-#                        MIGRATIONS
-# ============================================================
-
-.PHONY: migrate-up migrate-down migrate-force migrate-new
-
-migrate-up:
-	@if [ -z "$(MIGRATE_BIN)" ]; then \
-		echo "❌ 'migrate' CLI not found. Please install: https://github.com/golang-migrate/migrate/tree/master/cmd/migrate"; \
-		exit 1; \
-	fi
-	@if [ -z "$(MIGRATION_DB)" ]; then \
-		echo "❌ MIGRATION_DB is not set. Use 'export DB_URL=...' or adjust the Makefile."; \
-		exit 1; \
-	fi
-	@echo "🔄 Running all migrations (up)..."
-	@$(MIGRATE_BIN) -path $(MIGRATION_PATH) -database "$(MIGRATION_DB)" up
-
-migrate-down:
-	@if [ -z "$(MIGRATE_BIN)" ]; then \
-		echo "❌ 'migrate' CLI not found. Please install: https://github.com/golang-migrate/migrate/tree/master/cmd/migrate"; \
-		exit 1; \
-	fi
-	@if [ -z "$(MIGRATION_DB)" ]; then \
-		echo "❌ MIGRATION_DB is not set. Use 'export DB_URL=...' or adjust the Makefile."; \
-		exit 1; \
-	fi
-	@echo "↩️  Rolling back the last migration (down)..."
-	@$(MIGRATE_BIN) -path $(MIGRATION_PATH) -database "$(MIGRATION_DB)" down 1
-
-migrate-force:
-	@if [ -z "$(VERSION)" ]; then \
-		echo "❌ Please provide VERSION=X to force (e.g., make migrate-force VERSION=2)"; \
-		exit 1; \
-	fi
-	@if [ -z "$(MIGRATE_BIN)" ]; then \
-		echo "❌ 'migrate' CLI not found. Please install: https://github.com/golang-migrate/migrate/tree/master/cmd/migrate"; \
-		exit 1; \
-	fi
-	@if [ -z "$(MIGRATION_DB)" ]; then \
-		echo "❌ MIGRATION_DB is not set. Use 'export DB_URL=...' or adjust the Makefile."; \
-		exit 1; \
-	fi
-	@echo "🚨 Forcing DB schema version to $(VERSION)..."
-	@$(MIGRATE_BIN) -path $(MIGRATION_PATH) -database "$(MIGRATION_DB)" force $(VERSION)
-
-migrate-new:
-	@read -p "Enter migration name: " name; \
-	if [ -z "$$name" ]; then echo "Migration name is required."; exit 1; fi; \
-	migrate create -ext sql -dir $(MIGRATION_PATH) $$name
+.PHONY: \
+	help tools-install \
+	build-dev dev-up dev-down dev clean-dev \
+	build-prod prod-up prod-down prod clean-prod \
+	docker-clean-all \
+	graphql mocks \
+	format lint lint-fix verify \
+	test test-cover test-html-report test-ci test-clean \
+	migrate-up migrate-down migrate-force migrate-new

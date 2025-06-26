@@ -4,7 +4,7 @@ package http
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
 )
 
 // Authenticator defines methods for authenticating users and generating access tokens.
@@ -12,9 +12,9 @@ import (
 type Authenticator interface {
 	Login(
 		ctx context.Context,
-		user domain.UserDomain,
+		user entity.UserDomain,
 		password string,
-	) (domain.UserDomain, string, error)
+	) (entity.UserDomain, string, error)
 }
 
 // SessionRevoker provides a method to invalidate user sessions by revoking tokens.

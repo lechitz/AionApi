@@ -13,7 +13,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	domain "github.com/lechitz/AionApi/internal/core/domain"
+	entity "github.com/lechitz/AionApi/internal/core/domain/entity"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -42,7 +42,7 @@ func (m *MockTokenUsecase) EXPECT() *MockTokenUsecaseMockRecorder {
 }
 
 // CreateToken mocks base method.
-func (m *MockTokenUsecase) CreateToken(ctx context.Context, token domain.TokenDomain) (string, error) {
+func (m *MockTokenUsecase) CreateToken(ctx context.Context, token entity.TokenDomain) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateToken", ctx, token)
 	ret0, _ := ret[0].(string)
@@ -57,7 +57,7 @@ func (mr *MockTokenUsecaseMockRecorder) CreateToken(ctx, token any) *gomock.Call
 }
 
 // Delete mocks base method.
-func (m *MockTokenUsecase) Delete(ctx context.Context, token domain.TokenDomain) error {
+func (m *MockTokenUsecase) Delete(ctx context.Context, token entity.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -71,7 +71,7 @@ func (mr *MockTokenUsecaseMockRecorder) Delete(ctx, token any) *gomock.Call {
 }
 
 // Save mocks base method.
-func (m *MockTokenUsecase) Save(ctx context.Context, token domain.TokenDomain) error {
+func (m *MockTokenUsecase) Save(ctx context.Context, token entity.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -85,7 +85,7 @@ func (mr *MockTokenUsecaseMockRecorder) Save(ctx, token any) *gomock.Call {
 }
 
 // Update mocks base method.
-func (m *MockTokenUsecase) Update(ctx context.Context, token domain.TokenDomain) error {
+func (m *MockTokenUsecase) Update(ctx context.Context, token entity.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", ctx, token)
 	ret0, _ := ret[0].(error)

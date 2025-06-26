@@ -4,13 +4,14 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
+
 	"github.com/badoux/checkmail"
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
 
 // validateCreateUserRequired validates required fields for creating a user and returns an error if any validation fails.
-func (s *Service) validateCreateUserRequired(user domain.UserDomain, password string) error {
+func (s *Service) validateCreateUserRequired(user entity.UserDomain, password string) error {
 	if user.Name == "" {
 		return errors.New(constants.NameIsRequired)
 	}
@@ -30,7 +31,7 @@ func (s *Service) validateCreateUserRequired(user domain.UserDomain, password st
 }
 
 // normalizeUserData adjusts user fields by trimming spaces, converting email to lowercase, and ensuring data uniformity. Returns the normalized user.
-func (s *Service) normalizeUserData(user *domain.UserDomain) domain.UserDomain {
+func (s *Service) normalizeUserData(user *entity.UserDomain) entity.UserDomain {
 	if user.Name != "" {
 		user.Name = strings.TrimSpace(user.Name)
 	}

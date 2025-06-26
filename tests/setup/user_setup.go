@@ -5,7 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
+
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
 	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
 	securitymocks "github.com/lechitz/AionApi/tests/mocks/security"
@@ -50,8 +51,8 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 }
 
 // DefaultTestUser is a predefined instance of domain.UserDomain used for testing purposes, representing a perfect/valid user with complete and valid fields.
-func DefaultTestUser() domain.UserDomain {
-	return domain.UserDomain{
+func DefaultTestUser() entity.UserDomain {
+	return entity.UserDomain{
 		ID:        1,
 		Name:      "Test User",
 		Username:  "testuser",

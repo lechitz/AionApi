@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
+
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 
@@ -13,7 +15,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
@@ -44,7 +45,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDomain := domain.UserDomain{Username: loginReq.Username}
+	userDomain := entity.UserDomain{Username: loginReq.Username}
 
 	userDB, token, err := a.AuthService.Login(ctx, userDomain, loginReq.Password)
 	if err != nil {

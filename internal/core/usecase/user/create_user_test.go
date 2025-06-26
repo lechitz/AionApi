@@ -4,7 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
+
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
@@ -14,14 +15,14 @@ func TestCreateUser_Success(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := entity.UserDomain{
 		Name:     "  Felipe  ",
 		Username: " lechitz ",
 		Email:    "  LECHITZ@example.com ",
 	}
 	password := setup.DefaultTestUser().Password
 
-	normalized := domain.UserDomain{
+	normalized := entity.UserDomain{
 		Name:     "Felipe",
 		Username: "lechitz",
 		Email:    "lechitz@example.com",
@@ -30,10 +31,10 @@ func TestCreateUser_Success(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, "lechitz").
-		Return(domain.UserDomain{}, nil)
+		Return(entity.UserDomain{}, nil)
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(suite.Ctx, "lechitz@example.com").
-		Return(domain.UserDomain{}, nil)
+		Return(entity.UserDomain{}, nil)
 	suite.PasswordHasher.EXPECT().
 		HashPassword(password).Return("hashed123", nil)
 	suite.UserRepository.EXPECT().
@@ -49,7 +50,7 @@ func TestCreateUser_ErrorToGetUserByUsername(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := entity.UserDomain{
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
@@ -58,12 +59,12 @@ func TestCreateUser_ErrorToGetUserByUsername(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, setup.DefaultTestUser().Username).
-		Return(domain.UserDomain{ID: 1}, nil)
+		Return(entity.UserDomain{ID: 1}, nil)
 
 	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, entity.UserDomain{}, createdUser)
 	require.Equal(t, constants.UsernameIsAlreadyInUse, err.Error())
 }
 
@@ -71,7 +72,7 @@ func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := entity.UserDomain{
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
@@ -80,16 +81,16 @@ func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, setup.DefaultTestUser().Username).
-		Return(domain.UserDomain{}, nil)
+		Return(entity.UserDomain{}, nil)
 
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(suite.Ctx, setup.DefaultTestUser().Email).
-		Return(domain.UserDomain{ID: 1}, nil)
+		Return(entity.UserDomain{ID: 1}, nil)
 
 	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, entity.UserDomain{}, createdUser)
 	require.Equal(t, constants.EmailIsAlreadyInUse, err.Error())
 }
 
@@ -97,7 +98,7 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := entity.UserDomain{
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
@@ -106,11 +107,11 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, setup.DefaultTestUser().Username).
-		Return(domain.UserDomain{}, nil)
+		Return(entity.UserDomain{}, nil)
 
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(suite.Ctx, setup.DefaultTestUser().Email).
-		Return(domain.UserDomain{}, nil)
+		Return(entity.UserDomain{}, nil)
 
 	suite.PasswordHasher.EXPECT().
 		HashPassword(password).
@@ -119,7 +120,7 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, entity.UserDomain{}, createdUser)
 	require.Equal(t, constants.ErrorToHashPassword, err.Error())
 }
 
@@ -127,7 +128,7 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := entity.UserDomain{
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
@@ -136,11 +137,11 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, setup.DefaultTestUser().Username).
-		Return(domain.UserDomain{}, nil)
+		Return(entity.UserDomain{}, nil)
 
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(suite.Ctx, setup.DefaultTestUser().Email).
-		Return(domain.UserDomain{}, nil)
+		Return(entity.UserDomain{}, nil)
 
 	suite.PasswordHasher.EXPECT().
 		HashPassword(password).
@@ -151,11 +152,11 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		CreateUser(suite.Ctx, expectedUser).
-		Return(domain.UserDomain{}, errors.New(constants.ErrorToCreateUser))
+		Return(entity.UserDomain{}, errors.New(constants.ErrorToCreateUser))
 
 	createdUser, err := suite.UserService.CreateUser(suite.Ctx, input, password)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, entity.UserDomain{}, createdUser)
 	require.Equal(t, constants.ErrorToCreateUser, err.Error())
 }

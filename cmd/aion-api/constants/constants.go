@@ -1,17 +1,32 @@
 // Package constants contains constants used throughout the application.
 package constants
 
-// StartingApplication is a constant string used to indicate the application is starting its initialization process.
-const StartingApplication = "starting application"
-
 // SuccessToLoadConfiguration is a constant string indicating that the configuration has been successfully loaded.
 const SuccessToLoadConfiguration = "configuration loaded successfully"
 
 // SuccessToInitializeDependencies is a constant string indicating successful initialization of application dependencies.
 const SuccessToInitializeDependencies = "dependencies initialized successfully"
 
+// LoadedConfig is a constant string used to indicate the application has successfully loaded its configuration.
+const LoadedConfig = "loaded config: %+v"
+
 // ErrToFailedLoadConfiguration is a constant string representing an error message for failure in loading configuration.
 const ErrToFailedLoadConfiguration = "failed to load configuration"
+
+// ErrFailedToInitializeOTLPMetricsExporter is a constant string used to indicate a failure to initialize the OTLP metrics exporter.
+const ErrFailedToInitializeOTLPMetricsExporter = "failed to initialize OTLP metric exporter"
+
+// ErrInitializeOTPL is a constant string used to indicate a failure to initialize the OTLP exporter.
+const ErrInitializeOTPL = "failed to initialize OTLP exporter"
+
+// ErrFailedToShutdownTracerProvider is a constant string used to indicate a failure to shut down the tracer provider.
+const ErrFailedToShutdownTracerProvider = "failed to shutdown tracer provider"
+
+// ErrFailedToStartHTTPServer is a constant string used to indicate a failure to start the HTTP server.
+const ErrFailedToStartHTTPServer = "failed to start HTTP server: %w"
+
+// ErrFailedToStartGraphqlServer is a constant string used to indicate a failure to start the GraphQL server.
+const ErrFailedToStartGraphqlServer = "failed to start GraphQL server: %w"
 
 // ErrInitializeDependencies is a constant string representing an error message when dependencies fail to initialize.
 const ErrInitializeDependencies = "failed to initialize dependencies"
@@ -31,20 +46,14 @@ const GraphqlServerStarted = "graphql server started"
 // MsgShutdownSignalReceived is a constant string logged when the application receives a shutdown signal to start graceful shutdown procedures.
 const MsgShutdownSignalReceived = "shutdown signal received, attempting graceful shutdown"
 
-// ErrHTTPGracefulShutdown is a constant string representing an error that occurs during the HTTP server's graceful shutdown process.
-const ErrHTTPGracefulShutdown = "error during graceful shutdown"
-
-// ErrGraphqlGracefulShutdown is a constant string representing an error message during the graceful shutdown of the GraphQL server.
-const ErrGraphqlGracefulShutdown = "error during graphql server graceful shutdown"
-
-// MsgGracefulShutdownSuccess indicates that the server has been successfully shut down in a graceful manner.
-const MsgGracefulShutdownSuccess = "server shutdown gracefully"
-
 // Port represents the key used to define or identify a port configuration parameter.
 const Port = "port"
 
 // ContextPath is a constant string representing the base path used for contextual application configuration or routing.
 const ContextPath = "contextPath"
+
+// GraphQLPath is a constant string representing the path used for GraphQL requests.
+const GraphQLPath = "/graphql"
 
 // Error is a constant string representing a generic error identifier or key for logging and error handling purposes.
 const Error = "error"

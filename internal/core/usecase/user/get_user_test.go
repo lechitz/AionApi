@@ -3,7 +3,8 @@ package user_test
 import (
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
+
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
@@ -34,12 +35,12 @@ func TestGetUserByID_Error(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, userID).
-		Return(domain.UserDomain{}, gorm.ErrRecordNotFound)
+		Return(entity.UserDomain{}, gorm.ErrRecordNotFound)
 
 	userDomain, err := suite.UserService.GetUserByID(suite.Ctx, userID)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, userDomain)
+	require.Equal(t, entity.UserDomain{}, userDomain)
 }
 
 func TestGetUserByEmail_Success(t *testing.T) {
@@ -67,12 +68,12 @@ func TestGetUserByEmail_Error(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(suite.Ctx, userEmail).
-		Return(domain.UserDomain{}, gorm.ErrRecordNotFound)
+		Return(entity.UserDomain{}, gorm.ErrRecordNotFound)
 
 	userDomain, err := suite.UserService.GetUserByEmail(suite.Ctx, userEmail)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, userDomain)
+	require.Equal(t, entity.UserDomain{}, userDomain)
 }
 
 func TestGetUserByUsername_Success(t *testing.T) {
@@ -100,19 +101,19 @@ func TestGetUserByUsername_Error(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, username).
-		Return(domain.UserDomain{}, gorm.ErrRecordNotFound)
+		Return(entity.UserDomain{}, gorm.ErrRecordNotFound)
 
 	userDomain, err := suite.UserService.GetUserByUsername(suite.Ctx, username)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, userDomain)
+	require.Equal(t, entity.UserDomain{}, userDomain)
 }
 
 func TestGetAllUsers_Success(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	expectedUsers := []domain.UserDomain{
+	expectedUsers := []entity.UserDomain{
 		setup.DefaultTestUser(),
 		setup.DefaultTestUser(),
 		setup.DefaultTestUser(),
