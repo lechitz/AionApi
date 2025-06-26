@@ -30,64 +30,64 @@ help:
 	@echo ""
 	@echo " 🔶 \033[48;5;235;33m┃ \033[1mTOOLING ┃\033[0m"
 	@echo ""
-	@echo "    \033[1;37m tools-install        \033[0m    →  Install all development tools (goimports, golines, gofumpt, golangci-lint)"
+	@echo "    \033[0m tools-install        \033[1;37m    →  Install all development tools (goimports, golines, gofumpt, golangci-lint)"
 	@echo ""
 	@echo ""
 	@echo " 🔶 \033[48;5;235;33m┃ \033[1mDOCKER ENVIRONMENT COMMANDS ┃\033[0m"
 	@echo ""
-	@echo "  \033[1;39m- [DEV]\033[0m"
+	@echo "  \033[1;37m- [DEV]\033[0m"
 	@echo ""
-	@echo "    \033[1;37m build-dev          \033[0m      →  Build the development Docker image"
-	@echo "    \033[1;37m dev-up             \033[0m      →  Start the development environment (resets DB)"
-	@echo "    \033[1;37m dev-down           \033[0m      →  Stop and remove dev environment containers/volumes"
-	@echo "    \033[1;37m clean-dev          \033[0m      →  Clean all dev containers, volumes, and images"
+	@echo "    \033[0m build-dev          \033[1;37m      →  Build the development Docker image"
+	@echo "    \033[0m dev-up             \033[1;37m      →  Start the development environment (resets DB)"
+	@echo "    \033[0m dev-down           \033[1;37m      →  Stop and remove dev environment containers/volumes"
+	@echo "    \033[0m clean-dev          \033[1;37m      →  Clean all dev containers, volumes, and images"
 	@echo ""
-	@echo "  \033[1;39m- [PROD]\033[0m"
+	@echo "  \033[1;37m- [PROD]\033[0m"
 	@echo ""
-	@echo "    \033[1;37m build-prod         \033[0m      →  Build the production Docker image"
-	@echo "    \033[1;37m prod-up            \033[0m      →  Start the production environment"
-	@echo "    \033[1;37m prod-down          \033[0m      →  Stop and remove prod environment containers/volumes"
-	@echo "    \033[1;37m clean-prod         \033[0m      →  Clean all prod containers, volumes, and images"
+	@echo "    \033[0m build-prod         \033[1;37m      →  Build the production Docker image"
+	@echo "    \033[0m prod-up            \033[1;37m      →  Start the production environment"
+	@echo "    \033[0m prod-down          \033[1;37m      →  Stop and remove prod environment containers/volumes"
+	@echo "    \033[0m clean-prod         \033[1;37m      →  Clean all prod containers, volumes, and images"
 	@echo ""
-	@echo "  \033[1;39m- [GENERAL]\033[0m"
+	@echo "  \033[1;37m- [GENERAL]\033[0m"
 	@echo ""
-	@echo "    \033[1;37m docker-clean-all    \033[0m     →  Remove ALL Docker containers, volumes, and images"
+	@echo "    \033[0m docker-clean-all    \033[1;37m     →  Remove ALL Docker containers, volumes, and images"
 	@echo ""
 	@echo ""
 	@echo " 🔶 \033[48;5;235;33m┃ \033[1mCODE GENERATION ┃\033[0m"
 	@echo ""
-	@echo "    \033[1;37m graphql             \033[0m     →  Generate GraphQL files with gqlgen"
-	@echo "    \033[1;37m mocks               \033[0m     →  Generate all GoMock mocks"
+	@echo "    \033[0m graphql             \033[1;37m     →  Generate GraphQL files with gqlgen"
+	@echo "    \033[0m mocks               \033[1;37m     →  Generate all GoMock mocks"
 	@echo ""
 	@echo ""
 	@echo " 🔶 \033[48;5;235;33m┃ \033[1mCODE QUALITY ┃\033[0m"
 	@echo ""
-	@echo "    \033[1;37m format               \033[0m    →  Format Go code using goimports/golines/gofumpt"
-	@echo "    \033[1;37m lint                 \033[0m    →  Run golangci-lint (static code analysis)"
-	@echo "    \033[1;37m lint-fix             \033[0m    →  Run golangci-lint with --fix (auto-fix where possible)"
-	@echo "    \033[1;37m verify               \033[0m    →  Run full pre-commit pipeline (format, mocks, lint, tests, coverage, codegen)"
+	@echo "    \033[0m format               \033[1;37m    →  Format Go code using goimports/golines/gofumpt"
+	@echo "    \033[0m lint                 \033[1;37m    →  Run golangci-lint (static code analysis)"
+	@echo "    \033[0m lint-fix             \033[1;37m    →  Run golangci-lint with --fix (auto-fix where possible)"
+	@echo "    \033[0m verify               \033[1;37m    →  Run full pre-commit pipeline (format, mocks, lint, tests, coverage, codegen)"
 	@echo ""
 	@echo ""
 	@echo " 🔶 \033[48;5;235;33m┃ \033[1mMIGRATIONS ┃\033[0m"
 	@echo ""
-	@echo "    \033[1;37m migrate-up           \033[0m    →  Run all migrations (up)"
-	@echo "    \033[1;37m migrate-down         \033[0m    →  Rollback the last migration"
-	@echo "    \033[1;37m migrate-force VERSION=X\033[0m  →  Force DB to specific version"
-	@echo "    \033[1;37m migrate-new          \033[0m    →  Create new migration (with prompt)"
+	@echo "    \033[0m migrate-up           \033[1;37m    →  Run all migrations (up)"
+	@echo "    \033[0m migrate-down         \033[1;37m    →  Rollback the last migration"
+	@echo "    \033[0m migrate-force VERSION=\033[1;32mX \033[1;37m →  Force DB to specific version"
+	@echo "    \033[0m migrate-new          \033[1;37m    →  Create new migration (with prompt)"
 	@echo ""
 	@echo ""
 	@echo " 🔶 \033[48;5;235;33m┃ \033[1mSEEDS ┃\033[0m"
 	@echo ""
-	@echo "    \033[1;37m seed-users           \033[0m    →  Run unit tests"
-	@echo "    \033[1;37m seed-categories      \033[0m    →  Run tests with coverage report (excludes mocks)"
-	@echo "    \033[1;37m seed-all             \033[0m    →  Generate HTML test report (requires go-test-html-report)"
+	@echo "    \033[0m seed-users           \033[1;37m    →  Run unit tests"
+	@echo "    \033[0m seed-categories      \033[1;37m    →  Run tests with coverage report (excludes mocks)"
+	@echo "    \033[0m seed-all             \033[1;37m    →  Generate HTML test report (requires go-test-html-report)"
 	@echo ""
 	@echo ""
 	@echo " 🔶 \033[48;5;235;33m┃ \033[1mTESTING ┃\033[0m"
 	@echo ""
-	@echo "    \033[1;37m test                 \033[0m    →  Run unit tests"
-	@echo "    \033[1;37m test-cover           \033[0m    →  Run tests with coverage report (excludes mocks)"
-	@echo "    \033[1;37m test-html-report     \033[0m    →  Generate HTML test report (requires go-test-html-report)"
+	@echo "    \033[0m test                 \033[1;37m    →  Run unit tests"
+	@echo "    \033[0m test-cover           \033[1;37m    →  Run tests with coverage report (excludes mocks)"
+	@echo "    \033[0m test-html-report     \033[1;37m    →  Generate HTML test report (requires go-test-html-report)"
 	@echo ""
 	@echo ""
 	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
@@ -176,7 +176,7 @@ mocks:
 	@echo "Generating mocks for output ports and usecases..."
 	@mkdir -p tests/mocks/token tests/mocks/user tests/mocks/security tests/mocks/logger tests/mocks/category
 	@echo "→ TokenStore"
-	mockgen -source=internal/core/ports/output/cache/token.go \
+	mockgen -source=internal/core/ports/output/cache/token_output.go \
 		-destination=tests/mocks/token/mock_token_store.go \
 		-package=tokenmocks \
 		-mock_names=Store=MockTokenStore
@@ -186,22 +186,22 @@ mocks:
 		-package=tokenmocks \
 		-mock_names=Usecase=MockTokenUsecase
 	@echo "→ UserStore"
-	mockgen -source=internal/core/ports/output/db/user.go \
+	mockgen -source=internal/core/ports/output/db/user_output.go \
 		-destination=tests/mocks/user/mock_user_store.go \
 		-package=usermocks \
 		-mock_names=UserStore=MockUserStore
 	@echo "→ CategoryStore"
-	mockgen -source=internal/core/ports/output/db/category.go \
+	mockgen -source=internal/core/ports/output/db/category_output.go \
 		-destination=tests/mocks/category/mock_category_store.go \
 		-package=categorymocks \
 		-mock_names=CategoryStore=MockCategoryStore
 	@echo "→ SecurityStore"
-	mockgen -source=internal/core/ports/output/security/hasher.go \
+	mockgen -source=internal/core/ports/output/security/hasher_output.go \
 		-destination=tests/mocks/security/mock_security_store.go \
 		-package=securitymocks \
 		-mock_names=Store=MockSecurityStore
 	@echo "→ Logger"
-	mockgen -source=internal/core/ports/output/logger/logger.go \
+	mockgen -source=internal/core/ports/output/logger/logger_output.go \
 		-destination=tests/mocks/logger/mock_logger.go \
 		-package=loggermocks \
 		-mock_names=Logger=MockLogger
