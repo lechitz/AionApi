@@ -7,7 +7,7 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/def"
-	"github.com/lechitz/AionApi/internal/infra/config/constants"
+	"github.com/lechitz/AionApi/internal/platform/config/constants"
 )
 
 // Loader is responsible for reading environment configuration

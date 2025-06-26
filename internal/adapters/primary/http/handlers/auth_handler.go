@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/lechitz/AionApi/internal/def"
+
 	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"go.opentelemetry.io/otel"
@@ -67,13 +69,13 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer("AionApi/AuthHandler").Start(r.Context(), "LogoutHandler")
 	defer span.End()
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok || userID == 0 {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveUserID, nil)
 		return
 	}
 
-	tokenVal := ctx.Value(constants.Token)
+	tokenVal := ctx.Value(def.CtxToken)
 	tokenString, ok := tokenVal.(string)
 	if !ok || tokenString == "" {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, nil)
@@ -93,15 +95,11 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	span.SetAttributes(
-		attribute.String("user_id", strconv.FormatUint(userID, 10)),
+		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String("token_preview", tokenPreview),
 	)
 
-	a.Logger.Infow(
-		constants.SuccessLogout,
-		constants.UserID, userID,
-		constants.Token, tokenPreview,
-	)
+	a.Logger.Infow(constants.SuccessLogout, def.CtxUserID, userID, def.CtxToken, tokenPreview)
 
 	body := response.ObjectResponse(nil, constants.SuccessLogout, a.Logger)
 	response.Return(w, http.StatusOK, body.Bytes(), a.Logger)
@@ -110,7 +108,7 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 // logAndRespondError logs an error message and sends an appropriate HTTP response with the specified status, message, and error details.
 func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
-		a.Logger.Errorw(message, constants.Error, err.Error())
+		a.Logger.Errorw(message, def.Error, err.Error())
 	} else {
 		a.Logger.Errorw(message)
 	}

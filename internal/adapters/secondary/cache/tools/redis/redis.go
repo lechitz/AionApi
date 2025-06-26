@@ -8,7 +8,7 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/infra/config"
+	"github.com/lechitz/AionApi/internal/platform/config"
 )
 
 // FailedToConnectToRedis is a constant for logging errors when the Redis client fails to connect.

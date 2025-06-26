@@ -16,8 +16,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
-	"github.com/lechitz/AionApi/internal/infra/bootstrap"
-	"github.com/lechitz/AionApi/internal/infra/config"
+	"github.com/lechitz/AionApi/internal/platform/bootstrap"
+	"github.com/lechitz/AionApi/internal/platform/config"
 )
 
 // NewGraphqlServer initializes and returns a new HTTP server

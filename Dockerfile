@@ -15,7 +15,7 @@ WORKDIR /app
 
 COPY --from=builder /app/aion-api .
 
-COPY infra/scripts/entrypoint.sh .
+COPY infrastructure/scripts/entrypoint.sh .
 
 RUN chmod +x ./entrypoint.sh
 
