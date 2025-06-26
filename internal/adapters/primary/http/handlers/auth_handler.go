@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/lechitz/AionApi/internal/def"
 	"net/http"
 	"strconv"
 	"time"
@@ -67,13 +68,13 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer("AionApi/AuthHandler").Start(r.Context(), "LogoutHandler")
 	defer span.End()
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok || userID == 0 {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveUserID, nil)
 		return
 	}
 
-	tokenVal := ctx.Value(constants.Token)
+	tokenVal := ctx.Value(def.CtxToken)
 	tokenString, ok := tokenVal.(string)
 	if !ok || tokenString == "" {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, nil)
@@ -93,14 +94,14 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	span.SetAttributes(
-		attribute.String("user_id", strconv.FormatUint(userID, 10)),
+		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String("token_preview", tokenPreview),
 	)
 
 	a.Logger.Infow(
 		constants.SuccessLogout,
-		constants.UserID, userID,
-		constants.Token, tokenPreview,
+		def.CtxUserID, userID,
+		def.CtxToken, tokenPreview,
 	)
 
 	body := response.ObjectResponse(nil, constants.SuccessLogout, a.Logger)
