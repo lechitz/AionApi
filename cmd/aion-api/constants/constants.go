@@ -46,14 +46,5 @@ const GraphqlServerStarted = "graphql server started"
 // MsgShutdownSignalReceived is a constant string logged when the application receives a shutdown signal to start graceful shutdown procedures.
 const MsgShutdownSignalReceived = "shutdown signal received, attempting graceful shutdown"
 
-// Port represents the key used to define or identify a port configuration parameter.
-const Port = "port"
-
-// ContextPath is a constant string representing the base path used for contextual application configuration or routing.
-const ContextPath = "contextPath"
-
-// GraphQLPath is a constant string representing the path used for GraphQL requests.
-const GraphQLPath = "/graphql"
-
-// Error is a constant string representing a generic error identifier or key for logging and error handling purposes.
-const Error = "error"
+// MsgUnexpectedServerFailure is a constant string used to indicate an unexpected failure in starting one of the application servers.
+const MsgUnexpectedServerFailure = "unexpected failure while starting one of the application servers (HTTP or GraphQL)"
