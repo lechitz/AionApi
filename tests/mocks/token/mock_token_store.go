@@ -13,7 +13,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
+	entity "github.com/lechitz/AionApi/internal/core/domain/entity"
 	gomock "go.uber.org/mock/gomock"
 )
 
