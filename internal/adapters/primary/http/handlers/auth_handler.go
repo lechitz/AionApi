@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/lechitz/AionApi/internal/def"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/lechitz/AionApi/internal/def"
 
 	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
