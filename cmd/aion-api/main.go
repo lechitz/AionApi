@@ -122,7 +122,7 @@ func initTracer(cfg config.Config, logger loggerPort.Logger) func() {
 
 	return func() {
 		if err := traceProvider.Shutdown(context.Background()); err != nil {
-			logger.Errorw(constants.ErrFailedToShutdownTracerProvider, constants.Error, err)
+			logger.Errorw(constants.ErrFailedToShutdownTracerProvider, def.Error, err)
 		}
 	}
 }
@@ -194,8 +194,8 @@ func handleServers(httpSrv, graphqlSrv *http.Server, cfg config.Config, logger l
 	// Handle shutdown or error event
 	select {
 	case err := <-errChan:
-		logger.Errorw("server error", def.Error, err.Error())
-		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
+		logger.Errorw(constants.MsgUnexpectedServerFailure, def.Error, err.Error())
+		response.HandleCriticalError(logger, constants.MsgUnexpectedServerFailure, err)
 		stop()
 	case <-ctx.Done():
 		logger.Infow(constants.MsgShutdownSignalReceived)
