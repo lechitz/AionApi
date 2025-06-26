@@ -18,8 +18,8 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
-	"github.com/lechitz/AionApi/internal/infra/bootstrap/constants"
-	"github.com/lechitz/AionApi/internal/infra/config"
+	"github.com/lechitz/AionApi/internal/platform/bootstrap/constants"
+	"github.com/lechitz/AionApi/internal/platform/config"
 )
 
 // AppDependencies encapsulates all the core dependencies required for the application,

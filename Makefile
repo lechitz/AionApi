@@ -3,14 +3,14 @@
 # ============================================================
 
 APPLICATION_NAME := aion-api
-COMPOSE_FILE_DEV := infra/docker/dev/docker-compose-dev.yaml
-ENV_FILE_DEV     := infra/docker/dev/.env.dev
-COMPOSE_FILE_PROD := infra/docker/prod/docker-compose-prod.yaml
-ENV_FILE_PROD    := infra/docker/prod/.env.prod
+COMPOSE_FILE_DEV := infrastructure/docker/dev/docker-compose-dev.yaml
+ENV_FILE_DEV     := infrastructure/docker/dev/.env.dev
+COMPOSE_FILE_PROD := infrastructure/docker/prod/docker-compose-prod.yaml
+ENV_FILE_PROD    := infrastructure/docker/prod/.env.prod
 COVERAGE_DIR = tests/coverage
 
 # --- MIGRATION CONFIG ---
-MIGRATION_PATH := infra/db/migrations
+MIGRATION_PATH := infrastructure/db/migrations
 MIGRATION_DB   ?= $(DB_URL)
 MIGRATE_BIN := $(shell command -v migrate 2> /dev/null)
 

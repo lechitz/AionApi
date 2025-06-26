@@ -26,8 +26,8 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 	loggerPort "github.com/lechitz/AionApi/internal/core/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/infra/bootstrap"
-	"github.com/lechitz/AionApi/internal/infra/config"
+	"github.com/lechitz/AionApi/internal/platform/bootstrap"
+	"github.com/lechitz/AionApi/internal/platform/config"
 	loggerBuilder "github.com/lechitz/AionApi/pkg/logger"
 )
 

@@ -3,7 +3,7 @@ package httpserver
 
 import (
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
-	"github.com/lechitz/AionApi/internal/infra/bootstrap"
+	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 )
 
 // ComposeRouter initializes and configures an HTTP router

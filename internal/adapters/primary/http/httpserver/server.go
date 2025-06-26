@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/infra/bootstrap"
-	"github.com/lechitz/AionApi/internal/infra/config"
+	"github.com/lechitz/AionApi/internal/platform/bootstrap"
+	"github.com/lechitz/AionApi/internal/platform/config"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
