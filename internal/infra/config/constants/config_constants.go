@@ -1,9 +1,6 @@
 // Package constants contains constants used throughout the application.
 package constants
 
-// Settings hold the key name for application configuration settings.
-const Settings = "setting"
-
 // ErrFailedToProcessEnvVars is returned when environment variables cannot be processed.
 const ErrFailedToProcessEnvVars = "failed to process environment variables: %v"
 

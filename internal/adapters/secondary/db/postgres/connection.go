@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lechitz/AionApi/internal/def"
+
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres/constants"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
@@ -28,7 +30,7 @@ func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB,
 		constants.MsgDBConnection,
 		constants.Host,
 		cfg.Host,
-		constants.Port,
+		def.Port,
 		cfg.Port,
 		constants.DBName,
 		cfg.Name,
@@ -36,18 +38,18 @@ func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB,
 
 	db, err := tryConnectingWithRetries(conString, logger, 3)
 	if err != nil {
-		logger.Errorw(constants.ErrorToStartDB, constants.Error, err.Error())
+		logger.Errorw(constants.ErrorToStartDB, def.Error, err.Error())
 		return nil, err
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, constants.Error, err.Error())
+		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, def.Error, err.Error())
 		return nil, err
 	}
 
 	if err := sqlDB.Ping(); err != nil {
-		logger.Errorw(constants.FailedToPingDB, constants.Error, err.Error())
+		logger.Errorw(constants.FailedToPingDB, def.Error, err.Error())
 		return nil, err
 	}
 
@@ -73,7 +75,7 @@ func tryConnectingWithRetries(
 		if err == nil {
 			return db, nil
 		}
-		logger.Warnw(constants.ErrDBConnectionAttempt, constants.Error, err.Error())
+		logger.Warnw(constants.ErrDBConnectionAttempt, def.Error, err.Error())
 		time.Sleep(3 * time.Second)
 	}
 
@@ -84,12 +86,12 @@ func tryConnectingWithRetries(
 func Close(db *gorm.DB, logger logger.Logger) {
 	sqlDB, err := db.DB()
 	if err != nil {
-		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, constants.Error, err.Error())
+		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, def.Error, err.Error())
 		return
 	}
 
 	if err := sqlDB.Close(); err != nil {
-		logger.Errorw(constants.ErrorToCloseDB, constants.Error, err.Error())
+		logger.Errorw(constants.ErrorToCloseDB, def.Error, err.Error())
 	} else {
 		logger.Infow(constants.MsgPostgresConnectionClosed)
 	}

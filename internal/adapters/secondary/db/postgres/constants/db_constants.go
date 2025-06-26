@@ -28,17 +28,11 @@ const ErrDBConnectionAttempt = "connection attempt failed"
 // MsgPostgresConnectionClosed indicates that the PostgreSQL connection was closed successfully.
 const MsgPostgresConnectionClosed = "Database connection closed successfully"
 
-// Port is the key for the database port value.
-const Port = "port"
-
 // DBName is the key for the database name value.
 const DBName = "dbname"
 
 // Host is the key for the database host value.
 const Host = "host"
 
-// Error is the key for error messages in database context.
-const Error = "error"
-
-// Try is a generic key for "try" attempts in database context.
+// Try is a generic key for "try" attempts in a database context.
 const Try = "try"

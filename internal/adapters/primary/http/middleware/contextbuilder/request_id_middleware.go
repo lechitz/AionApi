@@ -5,7 +5,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/contextbuilder/constants"
+	"github.com/lechitz/AionApi/internal/def"
 
 	"github.com/google/uuid"
 )
@@ -21,7 +21,7 @@ func InjectRequestIDMiddleware(next http.Handler) http.Handler {
 		reqID := uuid.New().String()
 		ctx := context.WithValue(r.Context(), ctxKeyRequestID{}, reqID)
 		r = r.WithContext(ctx)
-		w.Header().Set(constants.XRequestID, reqID)
+		w.Header().Set(def.XRequestID, reqID)
 		next.ServeHTTP(w, r)
 	})
 }

@@ -3,22 +3,22 @@ package db
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
 )
 
 // UserCreator defines an interface for creating a new user in the system.
 // It requires a context and a user domain object as input and returns the created user or an error.
 type UserCreator interface {
-	CreateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error)
+	CreateUser(ctx context.Context, user entity.UserDomain) (entity.UserDomain, error)
 }
 
 // UserRetriever defines methods for retrieving user data by various identifiers.
 // It supports operations for fetching all users, or by ID, username, or email.
 type UserRetriever interface {
-	GetAllUsers(ctx context.Context) ([]domain.UserDomain, error)
-	GetUserByID(ctx context.Context, ID uint64) (domain.UserDomain, error)
-	GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error)
-	GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error)
+	GetAllUsers(ctx context.Context) ([]entity.UserDomain, error)
+	GetUserByID(ctx context.Context, ID uint64) (entity.UserDomain, error)
+	GetUserByUsername(ctx context.Context, username string) (entity.UserDomain, error)
+	GetUserByEmail(ctx context.Context, email string) (entity.UserDomain, error)
 }
 
 // UserUpdater defines an interface for updating user information in the system.
@@ -28,7 +28,7 @@ type UserUpdater interface {
 		ctx context.Context,
 		userID uint64,
 		fields map[string]interface{},
-	) (domain.UserDomain, error)
+	) (entity.UserDomain, error)
 }
 
 // UserDeleter defines an interface for handling user deletion within the system.

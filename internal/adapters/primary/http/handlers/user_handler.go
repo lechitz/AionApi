@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
+	"github.com/lechitz/AionApi/internal/def"
+
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 
@@ -15,7 +18,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/utils/validator"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 
@@ -63,7 +65,7 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		attribute.String(constants.Email, req.Email),
 	)
 
-	var userDomain domain.UserDomain
+	var userDomain entity.UserDomain
 	_ = copier.Copy(&userDomain, &req)
 
 	span.AddEvent("calling UserService.CreateUser")
@@ -151,7 +153,7 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		Start(r.Context(), constants.TracerUpdateUserHandler)
 	defer span.End()
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok {
 		span.RecordError(errMissingUserID())
 		span.SetStatus(codes.Error, "missing user id in context")
@@ -173,7 +175,7 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDomain := domain.UserDomain{ID: userID}
+	userDomain := entity.UserDomain{ID: userID}
 	if req.Name != nil {
 		userDomain.Name = *req.Name
 	}
@@ -236,7 +238,7 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	clearAuthCookie(w)
 
-	userDomain := domain.UserDomain{ID: userID}
+	userDomain := entity.UserDomain{ID: userID}
 	span.AddEvent("calling UserService.UpdateUserPassword")
 	_, newToken, err := u.UserService.UpdateUserPassword(ctx, userDomain, req.Password, req.NewPassword)
 	if err != nil {
@@ -259,7 +261,7 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		Start(r.Context(), constants.TracerSoftDeleteUserHandler)
 	defer span.End()
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok {
 		span.RecordError(errMissingUserID())
 		span.SetStatus(codes.Error, "missing user id in context")

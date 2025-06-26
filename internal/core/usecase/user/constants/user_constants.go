@@ -62,7 +62,7 @@ const SuccessUserUpdated = "user updated successfully"
 // ErrorToSoftDeleteUser indicates an error when performing a soft delete on a user.
 const ErrorToSoftDeleteUser = "error to soft delete user"
 
-// SuccessUserSoftDeleted indicates a user was soft deleted successfully.
+// SuccessUserSoftDeleted indicates a user was softly deleted successfully.
 const SuccessUserSoftDeleted = "user soft deleted successfully"
 
 // NameIsRequired indicates that the user's name is required.
@@ -85,15 +85,6 @@ const UsernameIsAlreadyInUse = "username is already in use"
 
 // EmailIsAlreadyInUse indicates the email is already registered.
 const EmailIsAlreadyInUse = "email is already in use"
-
-// UserID is the key used for the user ID in requests or responses.
-const UserID = "user_id"
-
-// Users is the key used for users collections.
-const Users = "users"
-
-// Error is the key for error messages.
-const Error = "error"
 
 // Name is the key used for a user's name.
 const Name = "name"

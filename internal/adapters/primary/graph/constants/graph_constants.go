@@ -1,6 +1,9 @@
 // Package constants contains constants used throughout the application.
 package constants
 
+// TracerCategory is the name of the tracer category for GraphQL.
+const TracerCategory = "GraphQL/TracerCategory"
+
 // UserID is the key for the user ID in context or responses.
 const UserID = "user_id"
 
@@ -15,9 +18,6 @@ const CategoryColor = "category_color"
 
 // CategoriesCount is the key for the number of categories in context or responses.
 const CategoriesCount = "categories_count"
-
-// Error is the key for error messages in context.
-const Error = "error"
 
 // ErrUserIDNotFound is the error message when the user ID is not found in the context.
 const ErrUserIDNotFound = "user id not found in context"
@@ -48,9 +48,6 @@ const SuccessCategoryUpdated = "category updated successfully"
 
 // SuccessCategorySoftDeleted is the success message when the category is soft deleted.
 const SuccessCategorySoftDeleted = "category soft deleted successfully"
-
-// SpanTracerCategory is the name of the tracer category for GraphQL.
-const SpanTracerCategory = "GraphQL/Category"
 
 // SpanStartCreateCategory is the name of the span for the CreateCategory mutation.
 const SpanStartCreateCategory = "CreateCategory"

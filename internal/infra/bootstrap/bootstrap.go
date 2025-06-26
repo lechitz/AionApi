@@ -7,7 +7,7 @@ import (
 	infraDB "github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
 	adapterSecurity "github.com/lechitz/AionApi/internal/adapters/secondary/security"
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/core/ports/input/graphql"
 	"github.com/lechitz/AionApi/internal/core/ports/output/db"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
@@ -25,7 +25,7 @@ import (
 // AppDependencies encapsulates all the core dependencies required for the application,
 // including services, repositories, logging utilities and the loaded configuration.
 type AppDependencies struct {
-	Logger             logger.Logger                  // interfaces são pointers internamente
+	Logger             logger.Logger                  // pointer
 	TokenService       token.Usecase                  // pointer
 	TokenRepository    portsToken.TokenRepositoryPort // pointer
 	UserService        portsHttp.UserService          // pointer
@@ -61,7 +61,7 @@ func InitializeDependencies(
 	tokenService := token.NewTokenService(
 		tokenRepository,
 		logger,
-		domain.TokenConfig{SecretKey: cfg.Secret.Key},
+		entity.TokenConfig{SecretKey: cfg.Secret.Key},
 	)
 
 	userRepository := repository.NewUserRepository(dbConn, logger)

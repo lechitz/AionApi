@@ -11,7 +11,8 @@ import (
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain/entity"
+	"github.com/lechitz/AionApi/internal/def"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -20,13 +21,13 @@ import (
 
 // CreateCategory is the resolver for the createCategory field.
 func (r *mutationResolver) CreateCategory(ctx context.Context, category model.DtoCreateCategory) (*model.Category, error) {
-	tracer := otel.Tracer(constants.SpanTracerCategory)
+	tracer := otel.Tracer(constants.TracerCategory)
 	ctx, span := tracer.Start(ctx, constants.SpanStartCreateCategory)
 	defer span.End()
 
 	span.AddEvent(constants.SpanEventCreateCategory, trace.WithAttributes(TraceAttributesFromCategory(category)...))
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
@@ -34,7 +35,7 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, category model.Dt
 		return nil, err
 	}
 
-	createCategory := domain.Category{
+	createCategory := entity.Category{
 		UserID:      userID,
 		Name:        category.Name,
 		Description: *category.Description,
@@ -76,13 +77,13 @@ func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*
 
 // UpdateCategory is the resolver for the updateCategory field.
 func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.DtoUpdateCategory) (*model.Category, error) {
-	tracer := otel.Tracer(constants.SpanTracerCategory)
+	tracer := otel.Tracer(constants.TracerCategory)
 	ctx, span := tracer.Start(ctx, constants.SpanStartUpdateCategory)
 	defer span.End()
 
 	span.AddEvent(constants.SpanEventUpdateCategory, trace.WithAttributes(attribute.String(constants.CategoryID, category.CategoryID)))
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
@@ -102,7 +103,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 		attribute.String(constants.CategoryID, category.CategoryID),
 	)
 
-	updateCategory := domain.Category{
+	updateCategory := entity.Category{
 		ID:     categoryIDUint,
 		UserID: userID,
 	}
@@ -142,13 +143,13 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 
 // SoftDeleteCategory is the resolver for the softDeleteCategory field.
 func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category model.DtoDeleteCategory) (bool, error) {
-	tracer := otel.Tracer(constants.SpanTracerCategory)
+	tracer := otel.Tracer(constants.TracerCategory)
 	ctx, span := tracer.Start(ctx, constants.SpanStartSoftDeleteCategory)
 	defer span.End()
 
 	span.AddEvent(constants.SpanEventSoftDeleteCategory, trace.WithAttributes(attribute.String(constants.CategoryID, category.CategoryID)))
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
@@ -168,7 +169,7 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 		attribute.String(constants.CategoryID, category.CategoryID),
 	)
 
-	categoryDomain := domain.Category{
+	categoryDomain := entity.Category{
 		ID:     categoryIDUint,
 		UserID: userID,
 	}
@@ -185,18 +186,18 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 
 // GetAllCategories is the resolver for the allCategories field.
 func (r *queryResolver) GetAllCategories(ctx context.Context) ([]*model.Category, error) {
-	tracer := otel.Tracer(constants.SpanTracerCategory)
+	tracer := otel.Tracer(constants.TracerCategory)
 	ctx, span := tracer.Start(ctx, constants.SpanStartAllGetCategories)
 	defer span.End()
 
 	span.AddEvent(constants.SpanEventGetAllCategories)
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
-		r.Logger.Errorw(constants.ErrUserIDNotFound, constants.Error, err.Error())
+		r.Logger.Errorw(constants.ErrUserIDNotFound, def.Error, err.Error())
 		return nil, err
 	}
 
@@ -229,18 +230,18 @@ func (r *queryResolver) GetAllCategories(ctx context.Context) ([]*model.Category
 
 // GetCategoryByID is the resolver for the getCategoryByID field.
 func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest model.DtoGetCategoryByID) (*model.Category, error) {
-	tracer := otel.Tracer(constants.SpanTracerCategory)
+	tracer := otel.Tracer(constants.TracerCategory)
 	ctx, span := tracer.Start(ctx, constants.SpanStartGetCategoryByID)
 	defer span.End()
 
 	span.AddEvent(constants.SpanEventGetCategoryByID, trace.WithAttributes(attribute.String(constants.CategoryID, categoryRequest.CategoryID)))
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
-		r.Logger.Errorw(constants.ErrUserIDNotFound, constants.Error, err.Error())
+		r.Logger.Errorw(constants.ErrUserIDNotFound, def.Error, err.Error())
 		return nil, err
 	}
 
@@ -255,7 +256,7 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 
 	span.SetAttributes(attribute.String(constants.CategoryID, categoryRequest.CategoryID))
 
-	category := domain.Category{
+	category := entity.Category{
 		ID:     categoryIDUint,
 		UserID: userID,
 	}
@@ -285,18 +286,18 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 
 // GetCategoryByName is the resolver for the getCategoryByName field.
 func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest model.DtoGetCategoryByName) (*model.Category, error) {
-	tracer := otel.Tracer(constants.SpanTracerCategory)
+	tracer := otel.Tracer(constants.TracerCategory)
 	ctx, span := tracer.Start(ctx, constants.SpanStartGetCategoryByName)
 	defer span.End()
 
 	span.AddEvent(constants.SpanEventGetCategoryByName, trace.WithAttributes(attribute.String(constants.CategoryName, categoryRequest.Name)))
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
-		r.Logger.Errorw(constants.ErrUserIDNotFound, constants.Error, err.Error())
+		r.Logger.Errorw(constants.ErrUserIDNotFound, def.Error, err.Error())
 		return nil, err
 	}
 
@@ -305,7 +306,7 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 		attribute.String(constants.CategoryName, categoryRequest.Name),
 	)
 
-	category := domain.Category{
+	category := entity.Category{
 		UserID: userID,
 		Name:   categoryRequest.Name,
 	}
