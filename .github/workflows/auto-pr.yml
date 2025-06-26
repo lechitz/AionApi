@@ -40,7 +40,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          base: dev
+          base: main
           title: "Auto PR - ${{ github.ref_name }}"
           body: |
             ## Aion - Pull Request Description
