@@ -18,13 +18,7 @@ type Service struct {
 }
 
 // NewAuthService creates and returns a new instance of Service with dependencies for user retrieval, token management, and security operations.
-func NewAuthService(
-	userRetriever db.UserStore,
-	tokenService token.Usecase,
-	securityHasher security.Store,
-	logger logger.Logger,
-	secretKey string,
-) *Service {
+func NewAuthService(userRetriever db.UserStore, tokenService token.Usecase, securityHasher security.Store, logger logger.Logger, secretKey string) *Service {
 	return &Service{
 		userRetriever:  userRetriever,
 		tokenService:   tokenService,
