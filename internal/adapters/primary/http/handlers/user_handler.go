@@ -222,7 +222,7 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
+	userID, ok := ctx.Value(def.CtxUserID).(uint64)
 	if !ok {
 		span.RecordError(errMissingUserID())
 		span.SetStatus(codes.Error, "missing user id in context")

@@ -12,9 +12,9 @@ import (
 )
 
 // Creator defines a contract for generating tokens with the provided context and token domain.
-type Creator interface {
-	CreateToken(ctx context.Context, token entity.TokenDomain) (string, error)
-}
+// type Creator interface {
+//	CreateToken(ctx context.Context, token entity.TokenDomain) (string, error)
+// }
 
 // CreateToken generates a new token for the provided user, saves it in the repository, and returns the signed token or an error.
 func (s *Service) CreateToken(ctx context.Context, tokenDomain entity.TokenDomain) (string, error) {

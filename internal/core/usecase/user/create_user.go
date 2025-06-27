@@ -11,11 +11,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
 
-// Creator defines the interface for creating a new user in the system. It returns the created user or an error.
-type Creator interface {
-	CreateUser(ctx context.Context, user entity.UserDomain, password string) (entity.UserDomain, error)
-}
-
 // CreateUser creates a new user with the given data and password, ensuring validations and unique constraints are met. Returns the created user or an error.
 func (s *Service) CreateUser(ctx context.Context, user entity.UserDomain, password string) (entity.UserDomain, error) {
 	user = s.normalizeUserData(&user)

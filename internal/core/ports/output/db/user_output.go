@@ -24,11 +24,7 @@ type UserRetriever interface {
 // UserUpdater defines an interface for updating user information in the system.
 // It accepts a context, user ID, and a map of fields to update, returning the updated user or an error.
 type UserUpdater interface {
-	UpdateUser(
-		ctx context.Context,
-		userID uint64,
-		fields map[string]interface{},
-	) (entity.UserDomain, error)
+	UpdateUser(ctx context.Context, userID uint64, fields map[string]interface{}) (entity.UserDomain, error)
 }
 
 // UserDeleter defines an interface for handling user deletion within the system.

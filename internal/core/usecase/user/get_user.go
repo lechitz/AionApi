@@ -9,18 +9,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
 
-// Retriever is an interface for retrieving user data from the system.
-// GetUserByID fetches a user by their unique identifier and returns the corresponding domain.UserDomain.
-// GetUserByEmail retrieves a user by their email address and returns the associated domain.UserDomain.
-// GetUserByUsername fetches a user by their username and returns the related domain.UserDomain.
-// GetAllUsers retrieves all users available in the system and returns a slice of domain.UserDomain.
-type Retriever interface {
-	GetUserByID(ctx context.Context, userID uint64) (entity.UserDomain, error)
-	GetUserByEmail(ctx context.Context, email string) (entity.UserDomain, error)
-	GetUserByUsername(ctx context.Context, username string) (entity.UserDomain, error)
-	GetAllUsers(ctx context.Context) ([]entity.UserDomain, error)
-}
-
 // GetUserByID retrieves a user by their unique ID from the database. Returns the user or an error if the operation fails.
 func (s *Service) GetUserByID(ctx context.Context, userID uint64) (entity.UserDomain, error) {
 	user, err := s.userRepository.GetUserByID(ctx, userID)

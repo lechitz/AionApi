@@ -10,12 +10,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 )
 
-// Authenticator defines an interface for handling user authentication operations.
-// Login validates user credentials and returns user details with a session token.
-type Authenticator interface {
-	Login(ctx context.Context, user entity.UserDomain, passwordReq string) (entity.UserDomain, string, error)
-}
-
 // Login authenticates a user by validating credentials and generates a new token if valid.
 // Returns the user data, token, and error if any occurs.
 func (s *Service) Login(ctx context.Context, user entity.UserDomain, passwordReq string) (entity.UserDomain, string, error) {

@@ -12,14 +12,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
 
-// Updater defines methods to update user information and change user passwords in the system.
-// UpdateUser updates a user's details in the system and returns the updated user or an error.
-// UpdateUserPassword changes a user's password, verifying the old password, and returns the updated user, a confirmation, or an error.
-type Updater interface {
-	UpdateUser(ctx context.Context, user entity.UserDomain) (entity.UserDomain, error)
-	UpdateUserPassword(ctx context.Context, user entity.UserDomain, oldPassword, newPassword string) (entity.UserDomain, string, error)
-}
-
 // UpdateUser updates an existing user's attributes based on the provided data. Returns the updated user or an error if the operation fails.
 func (s *Service) UpdateUser(ctx context.Context, user entity.UserDomain) (entity.UserDomain, error) {
 	updateFields := make(map[string]interface{})
