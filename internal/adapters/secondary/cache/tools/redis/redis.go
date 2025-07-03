@@ -24,12 +24,12 @@ type Client interface {
 
 // NewCacheConnection initializes a new Redis client using the provided configuration and logger.
 // Returns the Redis client or an error if the connection fails.
-func NewCacheConnection(cfg config.CacheConfig, log logger.Logger) (*redis.Client, error) {
+func NewCacheConnection(cacheCfg config.CacheConfig, log logger.Logger) (*redis.Client, error) {
 	client := redis.NewClient(&redis.Options{
-		Addr:     cfg.Addr,
-		Password: cfg.Password,
-		DB:       cfg.DB,
-		PoolSize: cfg.PoolSize,
+		Addr:     cacheCfg.Addr,
+		Password: cacheCfg.Password,
+		DB:       cacheCfg.DB,
+		PoolSize: cacheCfg.PoolSize,
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
