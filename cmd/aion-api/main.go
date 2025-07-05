@@ -5,12 +5,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/lechitz/AionApi/pkg/observability"
 	"net/http"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/lechitz/AionApi/pkg/observability"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 

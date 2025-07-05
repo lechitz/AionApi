@@ -19,21 +19,19 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/config"
 )
 
-// AppDependencies encapsulates all the core dependencies required for the application,
-// including services, repositories, logging utilities and the loaded configuration.
+// AppDependencies encapsulates all the core dependencies required for the application.
 type AppDependencies struct {
-	Logger             output.Logger              // pointer
-	TokenService       token.Usecase              // pointer
-	TokenRepository    output.TokenRepositoryPort // pointer
-	UserService        input.UserService          // pointer
-	AuthService        input.AuthService          // pointer
-	CategoryService    input.CategoryService      // pointer
-	CategoryRepository output.CategoryStore       // pointer
-	Config             config.Config              // struct (não pointer)
+	Logger             output.Logger
+	TokenService       token.Usecase
+	TokenRepository    output.TokenRepositoryPort
+	UserService        input.UserService
+	AuthService        input.AuthService
+	CategoryService    input.CategoryService
+	CategoryRepository output.CategoryStore
+	Config             config.Config
 }
 
-// InitializeDependencies initializes and returns all core application dependencies,
-// including repositories, services, and a cleanup function.
+// InitializeDependencies initializes and returns all core application dependencies.
 func InitializeDependencies(cfg config.Config, logger output.Logger) (*AppDependencies, func(), error) {
 	cacheConn, err := infraCache.NewCacheConnection(cfg.Cache, logger)
 	if err != nil {

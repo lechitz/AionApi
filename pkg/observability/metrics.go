@@ -1,3 +1,4 @@
+// Package observability provides utilities for instrumenting and exporting application metrics using OpenTelemetry.
 package observability
 
 import (
