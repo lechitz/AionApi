@@ -1,4 +1,4 @@
-// Package http defines interfaces for user authentication and session management.
+// Package input http defines interfaces for user authentication and session management.
 package input
 
 import (

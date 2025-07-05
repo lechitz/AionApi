@@ -1,3 +1,4 @@
+// Package input user defines interfaces for user management and authentication.
 package input
 
 import (
