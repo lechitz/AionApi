@@ -2,10 +2,11 @@ package setup
 
 import (
 	"context"
-	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/tests/mocks"
 	"testing"
 	"time"
+
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/tests/mocks"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
 	"go.uber.org/mock/gomock"

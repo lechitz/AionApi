@@ -3,8 +3,9 @@ package db
 
 import (
 	"fmt"
-	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"time"
+
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/def"
 

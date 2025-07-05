@@ -3,8 +3,9 @@ package cache
 
 import (
 	"context"
-	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"time"
+
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/redis/go-redis/v9"
 

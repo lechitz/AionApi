@@ -2,8 +2,9 @@
 package chi
 
 import (
-	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
+
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/go-chi/chi/v5"
 )

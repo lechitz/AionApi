@@ -7,11 +7,11 @@ package graph
 import (
 	"context"
 	"errors"
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/def"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"

@@ -11,9 +11,9 @@ package mocks
 
 import (
 	context "context"
-	"github.com/lechitz/AionApi/internal/core/domain"
 	reflect "reflect"
 
+	domain "github.com/lechitz/AionApi/internal/core/domain"
 	gomock "go.uber.org/mock/gomock"
 )
 

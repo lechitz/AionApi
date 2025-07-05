@@ -4,9 +4,10 @@ package response
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"time"
+
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 )
 
 // Return sends an HTTP response with the specified status code and body, logging errors if writing the body fails.

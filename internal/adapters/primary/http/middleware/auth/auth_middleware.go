@@ -3,10 +3,11 @@ package auth
 
 import (
 	"context"
-	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"strconv"
+
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/def"
 

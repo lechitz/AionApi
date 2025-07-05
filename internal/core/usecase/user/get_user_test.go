@@ -1,8 +1,9 @@
 package user_test
 
 import (
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"testing"
+
+	"github.com/lechitz/AionApi/internal/core/domain"
 
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"

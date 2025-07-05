@@ -3,9 +3,10 @@
 package recovery
 
 import (
-	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"runtime/debug"
+
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 )

@@ -2,8 +2,9 @@ package auth_test
 
 import (
 	"errors"
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"testing"
+
+	"github.com/lechitz/AionApi/internal/core/domain"
 
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"

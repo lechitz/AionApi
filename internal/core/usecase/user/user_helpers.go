@@ -2,8 +2,9 @@ package user
 
 import (
 	"errors"
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"strings"
+
+	"github.com/lechitz/AionApi/internal/core/domain"
 
 	"github.com/badoux/checkmail"
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"

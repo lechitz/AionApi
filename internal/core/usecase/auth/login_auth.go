@@ -4,6 +4,7 @@ package auth
 import (
 	"context"
 	"errors"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 
 	"github.com/lechitz/AionApi/internal/def"

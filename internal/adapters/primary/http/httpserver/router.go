@@ -4,8 +4,9 @@ package httpserver
 import (
 	"errors"
 	"fmt"
-	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"strings"
+
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"

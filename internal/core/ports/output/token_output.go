@@ -3,6 +3,7 @@ package output
 
 import (
 	"context"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
