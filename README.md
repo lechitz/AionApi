@@ -1,5 +1,7 @@
 # AionApi
 
+_This repository is part of an ongoing study and development project. Many features are still being built and tested, so expect frequent changes as new tools and patterns are explored._
+
 ## Aion: Empowering you to take control of your time, habits, and aspirations
 
 > _Aion is an innovative habit management system designed to help you organize, track, and analyze your daily routine for improved physical, mental, and emotional well-being. It combines cutting-edge technology with a user-centered approach to make your productivity and self-improvement journey seamless and insightful._
@@ -9,427 +11,148 @@
 ## **Table of Contents**
 
 - [Overview](#overview)
-- [Current and Upcoming Features](#Current-and-Upcoming-Features)
+- [Current and Upcoming Features](#current-and-upcoming-features)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Development](#development)
 - [Docker Integration](#docker-integration)
 - [API Endpoints](#api-endpoints)
-    - [User Management](#user-management)
-    - [Authentication](#authentication)
+    - [REST Endpoints](#rest-endpoints)
+    - [GraphQL Operations](#graphql-operations)
 - [License](#license)
 
 ---
 
-## **Overview**
+## Overview
 
-The Aion API is a RESTful backend solution designed to empower developers to build productivity applications with robust user and activity management features. Built with **Go**, powered by **PostgreSQL**, and based on the **Ports & Adapters architecture** for scalability and maintainability.
+AionAPI is a backend service written in **Go** that exposes both REST and GraphQL endpoints. It relies on **PostgreSQL** for persistent storage and **Redis** for caching. The project follows the **Ports & Adapters (Hexagonal)** architecture, enabling clear separation between domain logic and external technologies. Observability is handled with **OpenTelemetry**, **Jaeger**, **Prometheus**, and **Grafana**, while structured logging is powered by **Zap**.
+
+**Technology Stack**
+
+- Go 1.24
+- chi HTTP router and gqlgen for GraphQL
+- GORM ORM for PostgreSQL
+- Redis cache
+- Docker & Docker Compose
+- OpenTelemetry with Jaeger tracing and Prometheus metrics
+- Grafana dashboards
+- zap for structured logging
 
 ---
 
-## **Current and Upcoming Features**
+## Current and Upcoming Features
 
-- **Streamlined Habit Management:** Organize and track your habits effortlessly.
-- **Data-Driven Insights:** Visualize your progress and analyze behavior patterns.
-- **Modern Integrations:** Sync with tools and platforms for extended usability.
-- **Developer-Friendly API:** Clear, scalable, and extensible endpoints for all your needs.
+- **Streamlined Habit Management** — organize and track your habits effortlessly.
+- **Data-Driven Insights** — visualize your progress and analyze behavior patterns.
+- **Modern Integrations** — sync with tools and platforms for extended usability.
+- **Developer-Friendly API** — clean, extensible endpoints for all your needs.
 
 ---
 
-## **Installation**
+## Installation
 
-1. **Clone the repository:**
+### Prerequisites
+
+- [Go](https://go.dev/doc/install) 1.24 or newer
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/) (for containerized development)
+
+### Steps
+
+1. **Clone the repository**
    ```bash
    git clone https://github.com/lechitz/AionApi.git
    cd AionApi
    ```
-
-2. **Install dependencies:**
+2. **Install development tools** (optional)
+   ```bash
+   make tools-install
+   ```
+3. **Download Go dependencies**
    ```bash
    go mod tidy
    ```
 
 ---
 
-## **Configuration**
+## Configuration
 
-1. **Set up environment variables:**
+1. **Copy the example environment file**
    ```bash
-   cp .env.example .env
+   cp infrastructure/docker/example/.env.example infrastructure/docker/dev/.env.dev
    ```
-
-2. **Update the `.env` file** with your database credentials and configurations:
-
-<div style="text-align: center;">
-
-| Variable         | Description                     |
-|------------------|---------------------------------|
-| `SERVER_CONTEXT` | Path for the server context     |
-| `PORT`           | The port the server will run on |
-| `DB_USER`        | Database username               |
-| `DB_PASSWORD`    | Database password               |
-| `DB_NAME`        | Database name                   |
-| `DB_HOST`        | Database host address           |
-| `DB_PORT`        | Database port                   |
-| `DB_TYPE`        | Database type                   |
-| `SECRET_KEY`     | Secret key for JWT              |
-
-</div>
-
-3. **Set up the database:**
-    - Create a new database in PostgreSQL.
-    - Connect to the database by configuring the connection settings in the `.env` file.
-    - Run all migration files located in `infra/db/migrations`.
-
-4. **Generate JWT Secret Key (optional):**
-    - Use the `GenerateJWTKey()` function to produce a random 64-byte secret key (base64-encoded).
-    - Run the key generator:
-      ```bash
-      go run pkg/utils/generate_jwt_key.go
-      ```
-    - Copy the generated key into your `.env` file under `SECRET_KEY`.
+2. **Edit `.env.dev`** with values that match your local setup.
+3. **Run database migrations** (optional)
+   ```bash
+   make migrate-up
+   ```
+4. **Start the development environment**
+   ```bash
+   make dev-up
+   ```
 
 ---
 
-## **Development**
+## Development
 
-### **Folder Structure**
+The project is organized as follows:
 
-The Aion API adopts the Ports and Adapters Architecture (Hexagonal Architecture) to ensure flexibility, scalability, and testability. Below is an overview of the folder structure:
-
-<div style="text-align: center;">
-
-| Directory       | Description                                                 |
-|-----------------|-------------------------------------------------------------|
-| `adapters`      | Contains input/output adapters for external communications. |
-| `cmd`           | Main application entry point.                               |
-| `config`        | Environment variables and configurations.                   |
-| `infra`         | Infrastructure setup including database connections.        |
-| `internal`      | Core business logic and domain entities.                    |
-| `pkg`           | Shared utilities and helper functions.                      |
-| `ports`         | Input/output interfaces for the application.                |
-
-</div>
-
-
-
-The Aion API is organized following the **Ports and Adapters Architecture (Hexagonal Architecture)** to promote clear separation between the core business logic and external systems. Here is the folder structure:
-
-<details>
-<summary>
-Complete Folder Structure
-</summary>
-
-```plaintext
-.
-├── adapters
-│   ├── input
-│   │   └── http
-│   │       ├── dto
-│   │       ├── handlers
-│   │       └── server
-
-│   └── output
-│       ├── cache
-│       │   └── redis
-│       └── db
-│           └── postgres
-├── app
-│   ├── bootstrap
-│   ├── config
-│   ├── logger
-│   ├── logs
-│   └── middlewares
-│       └── auth
-├── cmd
-│   └── aion-api
-│       └── main.go
-├── core
-│   ├── domain
-│   │   ├── entities
-│   │   ├── events
-│   │   └── exceptions
-│   ├── msg
-│   └── service
-├── infra
-│   ├── cache
-│   ├── db
-│   │   ├── migrations
-│   │   ├── postgres
-│   │   │   └── migrations
-│   ├── messaging
-│   ├── observability
-├── pkg
-│   ├── contextkeys
-│   ├── errors
-│   └── utils
-├── ports
-│   ├── input
-│   │   └── http
-│   └── output
-│       ├── cache
-│       └── db
-├── .env
-├── .env.example
-├── .gitignore
-├── docker-compose-dev.yaml
-├── docker-compose-prod.yaml
-├── Dockerfile
-├── go.mod
-├── LICENSE
-├── Makefile
-└──  README.md
+```text
+cmd/            - application entry point
+infrastructure/ - migrations, docker files, observability
+internal/       - domain logic and adapters
+makefiles/      - grouped Make targets
+pkg/            - shared utilities (zap logger, helpers)
+tests/          - coverage, mocks, setup, testdata
 ```
 
-</details>
+Run `make help` to see all available commands. Frequently used ones include:
+
+```bash
+make format    # format Go code
+make lint      # run static analysis
+make test      # execute unit tests
+make verify    # run full pipeline before committing
+```
 
 ---
 
-## **Docker Integration**
+## Docker Integration
 
-### **Prerequisites**
+Docker compose files for development and production live under `infrastructure/docker`. The main targets are:
 
- 1. Install **Docker**. Follow the [official Docker documentation](https://docs.docker.com/get-docker/) for installation instructions.
- 2. **Docker Compose** is required to manage multi-container setups. You can install it by following the [official installation](https://docs.docker.com/compose/) guide.
- 3. Verify the installations:
-      - Run the following commands:
-
-        ```bash
-          docker --version
-          docker-compose --version   
-         ```
-
-### **Running the Project with Docker**
+```bash
+make build-dev   # build development image
+make dev-up      # start development environment (includes Postgres, Redis, Jaeger, Prometheus, Grafana)
+make dev-down    # stop and remove development containers
+make build-prod  # build production image
+make prod-up     # start production environment
+make prod-down   # stop production containers
+```
 
 ---
 
-<details>
-<summary> 
- The development environment setup
-</summary>
+## API Endpoints
 
-1. **Build the development image:**
-   ```bash
-   make docker-build-dev
-   ```
+The API exposes REST endpoints for user management, authentication, and health checks, along with GraphQL operations for categories and tags.
 
-2. **Start the development environment:**
-   ```bash
-   make docker-compose-dev-up
-   ```
+### REST Endpoints
+- `GET  /aion-api/health-check/` — service status
+- `POST /aion-api/user/create` — create a new user
+- `GET  /aion-api/user/all` — list users
+- `GET  /aion-api/user/{user_id}` — retrieve a user by ID
+- `PUT  /aion-api/user/` — update user data
+- `PUT  /aion-api/user/password` — update the logged user's password
+- `DELETE /aion-api/user/` — soft delete the logged user
+- `POST /aion-api/auth/login` — obtain a JWT token
+- `POST /aion-api/auth/logout` — invalidate the user session
 
-3. **Stop the development environment:**
-   ```bash
-   make docker-compose-dev-down
-   ```
-</details>
-
-----
-
-<details>
-<summary> 
- The production environment setup
-</summary>
-
-1. **Build the production image:**
-   ```bash
-   make docker-build-prod
-   ```
-
-2. **Start the production environment:**
-   ```bash
-   make docker-compose-prod-up
-   ```
-
-3. **Stop the production environment:**
-   ```bash
-   make docker-compose-prod-down
-   ```
-
-</details>
+### GraphQL Operations
+Endpoint: `/graphql`
+- Queries: `GetAllCategories`, `GetCategoryByID`, `GetCategoryByName`, `GetAllTags`, `GetTagByID`
+- Mutations: `CreateCategory`, `CreateTag`, `UpdateCategory`, `SoftDeleteCategory`
 
 ---
 
-## **API Endpoints**
+## License
 
-### **User Management**
-
-<details>
-<summary> 
- The user management endpoints here
-</summary>
-
-#### **Create User**
-
-- **Method:** `POST`
-- **Endpoint:** `localhost:5001/aion-api/user/create`
-- **Request Body:**
-
-  ```json
-  {
-    "name": "John Doe",
-    "username": "johndoe",
-    "email": "johndoe@example.com",
-    "password": "securePassword123"
-  }
-  ```
-- **Response:**
-
-  ```json
-  {
-    "message": "user created successfully",
-    "result": {
-        "id": 1,
-        "name": "John Doe",
-        "username": "johndoe",
-        "email": "johndoe@example.com"
-    },
-    "date": "2025-01-07T15:41:50.803251738Z"
-  }
-  ```
-
-#### **Get All Users**
-
-- **Method:** `GET`
-- **Endpoint:** `localhost:5001/aion-api/user/all`
-- **Response:**
-
-  ```json
-  {
-    "message": "users get successfully",
-    "result": [
-        {
-            "id": 1,
-            "name": "John Doe",
-            "username": "johndoe",
-            "email": "johndoe@example.com",
-            "created_at": "2025-01-07T15:41:50.800147Z"
-        },
-        {
-            "id": 2,
-            "name": "Alice Smith",
-            "username": "alicesmith",
-            "email": "alice.smith@example.com",
-            "created_at": "2025-01-07T15:56:32.174753Z"
-        }
-    ],
-    "date": "2025-01-07T15:56:35.028477172Z"
-  }
-  ```
-
-#### **Get User by ID**
-
-- **Method:** `GET`
-- **Endpoint:** `localhost:5001/aion-api/user/{id}`
-- **Response:**
-
-  ```json
-  {
-    "message": "user get successfully",
-    "result": [
-        {
-            "id": 1,
-            "name": "John Doe",
-            "username": "johndoe",
-            "email": "johndoe@example.com",
-            "created_at": "2025-01-07T15:41:50.800147Z"
-        }
-    ],
-    "date": "2025-01-07T15:59:05.406681717Z"
-  }
-  ```
-
-#### **Update User**
-
-- **Method:** `PUT`
-- **Endpoint:** `localhost:5001/aion-api/user/{id}`
-- **Request Body:**
-
-  ```json
-  {
-      "name": "Mark Taylor",
-      "username": "markt89",
-      "email": "mark.taylor@example.com"
-  }
-  ```
-- **Response:**
-
-  ```json
-  {
-    "message": "user updated successfully",
-    "result": {
-        "id": 2,
-        "name": "Mark Taylor",
-        "username": "markt89",
-        "email": "mark.taylor@example.com",
-        "updated_at": "2025-01-07T16:01:47.919084Z"
-    },
-    "date": "2025-01-07T16:01:47.929188372Z"
-  }
-  ```
-
-#### **Soft Delete User**
-
-- **Method:** `DELETE`
-- **Endpoint:** `localhost:5001/aion-api/user/{id}`
-- **Response:**
-
-  ```json
-  {
-    "message": "user deleted successfully",
-    "date": "2025-01-07T16:03:12.929188372Z"
-  }
-  ```
-
-</details>
-
-### **Authentication**
-
-<details>
-<summary> 
- The authentication endpoints here
-</summary>
-
-#### **Login**
-
-- **Method:** `POST`
-- **Endpoint:** `localhost:5001/aion-api/login`
-- **Request Body:**
-
-  ```json
-  {
-      "username": "johndoe",
-      "password": "securePassword123"
-  }
-  ```
-- **Response:**
-
-  ```json
-  {
-    "message": "success to login",
-    "result": {
-        "username": "johndoe",
-        "token": "eyJhbUHaiHL9AS6IkpXVCJ9.eyJhdXRob3JKAPkSVnS"
-    },
-    "date": "2025-01-07T15:50:48.751092612Z"
-  }
-  
-#### **Logout**
-
-- **Method:** `POST`
-- **Endpoint:** `localhost:5001/aion-api/logout`
-- **Response:**
-
-  ```json
-  {
-    "message": "success to logout",
-    "date": "2025-01-07T15:52:12.751092612Z"
-  }
-  ```
-</details>
-
----
-
-## **License**
-
-- This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
