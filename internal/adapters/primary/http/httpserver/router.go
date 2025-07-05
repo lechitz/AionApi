@@ -11,13 +11,11 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recovery"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/router/chi"
-
-	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 )
 
 // RouteComposer is a structure for configuring routes, middlewares, and logging in the HTTP router.
 type RouteComposer struct {
-	Router         portRouter.Router
+	Router         output.Router
 	logger         output.Logger
 	authMiddleware *auth.MiddlewareAuth
 	BasePath       string
@@ -53,7 +51,7 @@ func NewHTTPRouter(logger output.Logger, tokenRepository output.TokenRepositoryP
 }
 
 // GetRouter retrieves the current router instance used for managing HTTP routes.
-func (r *RouteComposer) GetRouter() portRouter.Router {
+func (r *RouteComposer) GetRouter() output.Router {
 	return r.Router
 }
 

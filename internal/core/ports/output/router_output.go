@@ -1,5 +1,5 @@
-// Package router defines an interface for managing HTTP routes.
-package router
+// Package output router defines an interface for managing HTTP routes.
+package output
 
 import "net/http"
 

@@ -2,7 +2,7 @@
 package httpserver
 
 import (
-	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 )
 
@@ -13,9 +13,9 @@ import (
 //   - contextPath: base prefix for all HTTP routes
 //
 // Returns:
-//   - portRouter.Router: the configured router
+//   - output.Router: the configured router
 //   - error: any error encountered during setup
-func ComposeRouter(deps *bootstrap.AppDependencies, contextPath string) (portRouter.Router, error) {
+func ComposeRouter(deps *bootstrap.AppDependencies, contextPath string) (output.Router, error) {
 	httpRouter, err := NewHTTPRouter(deps.Logger, deps.TokenRepository, contextPath, deps.Config.Secret.Key)
 	if err != nil {
 		return nil, err

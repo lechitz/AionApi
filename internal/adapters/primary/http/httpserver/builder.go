@@ -7,13 +7,12 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/contextbuilder"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
-	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 )
 
 // RouterBuilder is a struct for building and configuring HTTP routers
 // with middleware and route handlers.
 type RouterBuilder struct {
-	Router      portRouter.Router
+	Router      output.Router
 	ContextPath string
 }
 
@@ -36,9 +35,9 @@ func BuildRouterRoutes(
 	authService input.AuthService,
 	tokenRepo output.TokenRepositoryPort,
 	contextPath string,
-	adapter portRouter.Router,
+	adapter output.Router,
 	secretKey string,
-) (portRouter.Router, error) {
+) (output.Router, error) {
 	adapter.Use(contextbuilder.InjectRequestIDMiddleware)
 
 	genericHandler := handlers.NewGeneric(logger)
@@ -54,7 +53,7 @@ func BuildRouterRoutes(
 		authMiddleware: authMiddleware,
 	}
 
-	adapter.Route(contextPath, func(rt portRouter.Router) {
+	adapter.Route(contextPath, func(rt output.Router) {
 		rt.Group(r.AddHealthCheckRoutes(genericHandler))
 		rt.Group(r.AddUserRoutes(userHandler))
 		rt.Group(r.AddAuthRoutes(authHandler))
