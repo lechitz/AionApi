@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"net/http"
 	"strconv"
 
@@ -18,7 +19,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/utils/validator"
 
-	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 
 	"github.com/jinzhu/copier"
@@ -27,12 +27,12 @@ import (
 // User represents a handler for managing user-related operations and dependencies.
 // It combines user service functionality and logging capabilities.
 type User struct {
-	UserService inputHttp.UserService
+	UserService input.UserService
 	Logger      logger.Logger
 }
 
 // NewUser initializes and returns a new User instance with provided user service and logger dependencies.
-func NewUser(userService inputHttp.UserService, logger logger.Logger) *User {
+func NewUser(userService input.UserService, logger logger.Logger) *User {
 	return &User{
 		UserService: userService,
 		Logger:      logger,

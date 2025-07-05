@@ -13,7 +13,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
 
-	portsHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	portsToken "github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
@@ -28,7 +27,7 @@ type AppDependencies struct {
 	Logger             logger.Logger                  // pointer
 	TokenService       token.Usecase                  // pointer
 	TokenRepository    portsToken.TokenRepositoryPort // pointer
-	UserService        portsHttp.UserService          // pointer
+	UserService        input.UserService              // pointer
 	AuthService        input.AuthService              // pointer
 	CategoryService    input.CategoryService          // pointer
 	CategoryRepository db.CategoryStore               // pointer
