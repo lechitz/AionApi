@@ -1,5 +1,5 @@
-// Package security provides interfaces for password hashing and validation.
-package security
+// Package output security provides interfaces for password hashing and validation.
+package output
 
 // Store defines methods for password hashing and validation.
 // It provides mechanisms to securely hash and compare passwords.
