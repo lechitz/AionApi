@@ -6,7 +6,7 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/contextbuilder"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
-	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 )
@@ -35,7 +35,7 @@ func BuildRouterRoutes(
 	logger logger.Logger,
 	userService input.UserService,
 	authService input.AuthService,
-	tokenRepo cache.TokenRepositoryPort,
+	tokenRepo output.TokenRepositoryPort,
 	contextPath string,
 	adapter portRouter.Router,
 	secretKey string,

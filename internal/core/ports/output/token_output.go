@@ -1,5 +1,5 @@
-// Package cache defines interfaces for token-related operations.
-package cache
+// Package output token defines interfaces for token-related operations.
+package output
 
 import (
 	"context"

@@ -9,11 +9,11 @@ import (
 	adapterSecurity "github.com/lechitz/AionApi/internal/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/core/ports/output/db"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
 
-	portsToken "github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
@@ -24,14 +24,14 @@ import (
 // AppDependencies encapsulates all the core dependencies required for the application,
 // including services, repositories, logging utilities and the loaded configuration.
 type AppDependencies struct {
-	Logger             logger.Logger                  // pointer
-	TokenService       token.Usecase                  // pointer
-	TokenRepository    portsToken.TokenRepositoryPort // pointer
-	UserService        input.UserService              // pointer
-	AuthService        input.AuthService              // pointer
-	CategoryService    input.CategoryService          // pointer
-	CategoryRepository db.CategoryStore               // pointer
-	Config             config.Config                  // struct (não pointer)
+	Logger             logger.Logger              // pointer
+	TokenService       token.Usecase              // pointer
+	TokenRepository    output.TokenRepositoryPort // pointer
+	UserService        input.UserService          // pointer
+	AuthService        input.AuthService          // pointer
+	CategoryService    input.CategoryService      // pointer
+	CategoryRepository db.CategoryStore           // pointer
+	Config             config.Config              // struct (não pointer)
 }
 
 // InitializeDependencies initializes and returns all core application dependencies,

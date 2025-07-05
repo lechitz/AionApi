@@ -4,6 +4,7 @@ package httpserver
 import (
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"strings"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver/constants"
@@ -11,7 +12,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recovery"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/router/chi"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 )
@@ -34,7 +34,7 @@ type RouteComposer struct {
 // Returns:
 //   - *RouteComposer: configured route composer instance
 //   - error: in case of any setup failure
-func NewHTTPRouter(logger logger.Logger, tokenRepository cache.TokenRepositoryPort, contextPath string, secretKey string) (*RouteComposer, error) {
+func NewHTTPRouter(logger logger.Logger, tokenRepository output.TokenRepositoryPort, contextPath string, secretKey string) (*RouteComposer, error) {
 	normalizedPath, err := normalizeContextPath(contextPath)
 	if err != nil {
 		return nil, err

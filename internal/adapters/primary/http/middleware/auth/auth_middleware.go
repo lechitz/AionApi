@@ -3,6 +3,7 @@ package auth
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"strconv"
 
@@ -11,7 +12,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"
-	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -21,14 +21,14 @@ import (
 // MiddlewareAuth provides authentication middleware functionality.
 // Combines TokenService for token verification and Logger for logging operations.
 type MiddlewareAuth struct {
-	tokenService cache.TokenRepositoryPort
+	tokenService output.TokenRepositoryPort
 	logger       logger.Logger
 	secretKey    string
 }
 
 // NewAuthMiddleware creates and initializes middleware for authentication.
 func NewAuthMiddleware(
-	tokenService cache.TokenRepositoryPort,
+	tokenService output.TokenRepositoryPort,
 	logger logger.Logger,
 	secretKey string,
 ) *MiddlewareAuth {
