@@ -1,5 +1,5 @@
 // Package http defines interfaces for user authentication and session management.
-package http
+package input
 
 import (
 	"context"
@@ -8,18 +8,14 @@ import (
 )
 
 // Authenticator defines methods for authenticating users and generating access tokens.
-// Login validates user credentials and returns the user, token, and any error encountered.
 type Authenticator interface {
-	Login(
-		ctx context.Context,
-		user entity.UserDomain,
-		password string,
-	) (entity.UserDomain, string, error)
+	// Login validates user credentials and returns the user, token, and any error encountered.
+	Login(ctx context.Context, user entity.UserDomain, password string) (entity.UserDomain, string, error)
 }
 
 // SessionRevoker provides a method to invalidate user sessions by revoking tokens.
-// Logout revokes a session based on the supplied token and context, returning an error if unsuccessful.
 type SessionRevoker interface {
+	// Logout revokes a session based on the supplied token and context, returning an error if unsuccessful.
 	Logout(ctx context.Context, token string) error
 }
 

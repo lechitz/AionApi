@@ -29,7 +29,7 @@ type AppDependencies struct {
 	TokenService       token.Usecase                  // pointer
 	TokenRepository    portsToken.TokenRepositoryPort // pointer
 	UserService        portsHttp.UserService          // pointer
-	AuthService        portsHttp.AuthService          // pointer
+	AuthService        input.AuthService              // pointer
 	CategoryService    input.CategoryService          // pointer
 	CategoryRepository db.CategoryStore               // pointer
 	Config             config.Config                  // struct (não pointer)

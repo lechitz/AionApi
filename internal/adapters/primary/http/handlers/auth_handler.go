@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input"
 	"net/http"
 	"strconv"
 	"time"
@@ -17,7 +18,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 
-	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
