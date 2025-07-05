@@ -7,7 +7,6 @@ import (
 	infraDB "github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
 	adapterSecurity "github.com/lechitz/AionApi/internal/adapters/secondary/security"
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
@@ -19,16 +18,13 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/config"
 )
 
-// AppDependencies encapsulates all the core dependencies required for the application.
+// AppDependencies bundles the services and adapters used throughout the application.
 type AppDependencies struct {
-	Logger             output.Logger
-	TokenService       token.Usecase
-	TokenRepository    output.TokenRepositoryPort
-	UserService        input.UserService
-	AuthService        input.AuthService
-	CategoryService    input.CategoryService
-	CategoryRepository output.CategoryStore
-	Config             config.Config
+	Logger          output.Logger              // application logger
+	TokenRepository output.TokenRepositoryPort // cache repository for tokens
+	AuthService     input.AuthService          // authentication service
+	UserService     input.UserService          // user use case service
+	CategoryService input.CategoryService      // category use case service
 }
 
 // InitializeDependencies initializes and returns all core application dependencies.
@@ -50,11 +46,7 @@ func InitializeDependencies(cfg config.Config, logger output.Logger) (*AppDepend
 	passwordHasher := adapterSecurity.NewBcryptPasswordAdapter()
 
 	tokenRepository := adapterCache.NewTokenRepository(cacheConn, logger)
-	tokenService := token.NewTokenService(
-		tokenRepository,
-		logger,
-		domain.TokenConfig{SecretKey: cfg.Secret.Key},
-	)
+	tokenService := token.NewTokenService(tokenRepository, logger, cfg.Secret.Key)
 
 	userRepository := repository.NewUserRepository(dbConn, logger)
 	userService := user.NewUserService(userRepository, tokenService, passwordHasher, logger)
@@ -73,13 +65,10 @@ func InitializeDependencies(cfg config.Config, logger output.Logger) (*AppDepend
 	}
 
 	return &AppDependencies{
-		Config:             cfg,
-		TokenRepository:    tokenRepository,
-		TokenService:       tokenService,
-		AuthService:        authService,
-		UserService:        userService,
-		CategoryRepository: categoryRepository,
-		CategoryService:    categoryService,
-		Logger:             logger,
+		TokenRepository: tokenRepository,
+		UserService:     userService,
+		AuthService:     authService,
+		CategoryService: categoryService,
+		Logger:          logger,
 	}, cleanup, nil
 }

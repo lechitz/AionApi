@@ -4,8 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
-
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/mock/gomock"
@@ -29,9 +27,7 @@ func TokenServiceTest(t *testing.T, secretKey string) *TokenServiceTestSuite {
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
-	tokenService := token.NewTokenService(mockTokenStore, mockLog, domain.TokenConfig{
-		SecretKey: secretKey,
-	})
+	tokenService := token.NewTokenService(mockTokenStore, mockLog, secretKey)
 
 	return &TokenServiceTestSuite{
 		Ctrl:         ctrl,

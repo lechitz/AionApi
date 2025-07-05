@@ -21,7 +21,7 @@ func (s *Service) CreateToken(ctx context.Context, tokenDomain domain.TokenDomai
 		}
 	}
 
-	signedToken, err := security.GenerateToken(tokenDomain.UserID, s.configToken.SecretKey)
+	signedToken, err := security.GenerateToken(tokenDomain.UserID, s.SecretKey)
 	if err != nil {
 		s.logger.Errorw(constants.ErrorToAssignToken, def.Error, err.Error())
 		return "", err

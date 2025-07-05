@@ -1,7 +1,6 @@
 package token
 
 import (
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 )
 
@@ -9,14 +8,14 @@ import (
 type Service struct {
 	tokenRepository output.TokenRepositoryPort
 	logger          output.Logger
-	configToken     domain.TokenConfig
+	secretKey       string
 }
 
 // NewTokenService initializes a Service with a token repository, logger, and token configuration for managing token operations.
-func NewTokenService(tokenRepo output.TokenRepositoryPort, logger output.Logger, config domain.TokenConfig) *Service {
+func NewTokenService(tokenRepo output.TokenRepositoryPort, logger output.Logger, secretKey string) *Service {
 	return &Service{
 		tokenRepository: tokenRepo,
 		logger:          logger,
-		configToken:     config,
+		secretKey:       secretKey,
 	}
 }

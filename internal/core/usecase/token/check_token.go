@@ -16,7 +16,7 @@ import (
 // VerifyToken validates the provided token, checks for a match in the cache, and returns the associated user ID and token or an error.
 func (s *Service) VerifyToken(ctx context.Context, token string) (uint64, string, error) {
 	parsedToken, err := jwt.Parse(token, func(_ *jwt.Token) (interface{}, error) {
-		return []byte(s.configToken.SecretKey), nil
+		return []byte(s.SecretKey), nil
 	})
 	if err != nil || parsedToken == nil || !parsedToken.Valid {
 		s.logger.Errorw(constants.ErrorInvalidToken, def.CtxToken, token, def.Error, err)

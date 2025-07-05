@@ -15,8 +15,11 @@ import (
 // Returns:
 //   - output.Router: the configured router
 //   - error: any error encountered during setup
-func ComposeRouter(deps *bootstrap.AppDependencies, contextPath string) (output.Router, error) {
-	httpRouter, err := NewHTTPRouter(deps.Logger, deps.TokenRepository, contextPath, deps.Config.Secret.Key)
+//
+// ComposeRouter initializes and configures an HTTP router.
+// The secretKey parameter is used to configure authentication middleware.
+func ComposeRouter(deps *bootstrap.AppDependencies, contextPath, secretKey string) (output.Router, error) {
+	httpRouter, err := NewHTTPRouter(deps.Logger, deps.TokenRepository, contextPath, secretKey)
 	if err != nil {
 		return nil, err
 	}
@@ -28,6 +31,6 @@ func ComposeRouter(deps *bootstrap.AppDependencies, contextPath string) (output.
 		deps.TokenRepository,
 		httpRouter.BasePath,
 		httpRouter.GetRouter(),
-		deps.Config.Secret.Key,
+		secretKey,
 	)
 }
