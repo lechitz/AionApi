@@ -3,7 +3,6 @@ package observability
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/cmd/aion-api/constants"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/def"
 	"github.com/lechitz/AionApi/internal/platform/config"
@@ -15,6 +14,12 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.32.0"
 )
 
+// ErrInitializeOTPL is a constant string used to indicate a failure to initialize the OTLP exporter.
+const ErrInitializeOTPL = "failed to initialize OTLP exporter"
+
+// ErrFailedToShutdownTracerProvider is a constant string used to indicate a failure to shut down the tracer provider.
+const ErrFailedToShutdownTracerProvider = "failed to shutdown tracer provider"
+
 // InitTracer initializes the OpenTelemetry tracer using the provided configuration.
 // It returns a cleanup function that shuts down the tracer provider and any associated resources.
 func InitTracer(cfg config.Config, logger output.Logger) func() {
@@ -24,7 +29,7 @@ func InitTracer(cfg config.Config, logger output.Logger) func() {
 		otlptracehttp.WithInsecure(),
 	)
 	if err != nil {
-		logger.Errorw(constants.ErrInitializeOTPL, def.Error, err)
+		logger.Errorw(ErrInitializeOTPL, def.Error, err)
 	}
 
 	resources := resource.NewWithAttributes(
@@ -41,7 +46,7 @@ func InitTracer(cfg config.Config, logger output.Logger) func() {
 
 	return func() {
 		if err := traceProvider.Shutdown(context.Background()); err != nil {
-			logger.Errorw(constants.ErrFailedToShutdownTracerProvider, def.Error, err)
+			logger.Errorw(ErrFailedToShutdownTracerProvider, def.Error, err)
 		}
 	}
 }

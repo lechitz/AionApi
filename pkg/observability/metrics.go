@@ -3,7 +3,6 @@ package observability
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/cmd/aion-api/constants"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/def"
 	"github.com/lechitz/AionApi/internal/platform/config"
@@ -15,6 +14,9 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.32.0"
 )
 
+// ErrFailedToInitializeOTLPMetricsExporter is a constant string used to indicate a failure to initialize the OTLP metrics exporter.
+const ErrFailedToInitializeOTLPMetricsExporter = "failed to initialize OTLP metric exporter"
+
 // InitOtelMetrics initializes the OpenTelemetry metrics provider using the given configuration.
 // It returns a cleanup function to gracefully shut down the provider.
 func InitOtelMetrics(cfg config.Config, logger output.Logger) func() {
@@ -24,7 +26,7 @@ func InitOtelMetrics(cfg config.Config, logger output.Logger) func() {
 		otlpmetrichttp.WithInsecure(),
 	)
 	if err != nil {
-		logger.Errorw(constants.ErrFailedToInitializeOTLPMetricsExporter, def.Error, err)
+		logger.Errorw(ErrFailedToInitializeOTLPMetricsExporter, def.Error, err)
 		panic(err)
 	}
 

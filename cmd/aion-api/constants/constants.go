@@ -13,15 +13,6 @@ const LoadedConfig = "loaded config: %+v"
 // ErrToFailedLoadConfiguration is a constant string representing an error message for failure in loading configuration.
 const ErrToFailedLoadConfiguration = "failed to load configuration"
 
-// ErrFailedToInitializeOTLPMetricsExporter is a constant string used to indicate a failure to initialize the OTLP metrics exporter.
-const ErrFailedToInitializeOTLPMetricsExporter = "failed to initialize OTLP metric exporter"
-
-// ErrInitializeOTPL is a constant string used to indicate a failure to initialize the OTLP exporter.
-const ErrInitializeOTPL = "failed to initialize OTLP exporter"
-
-// ErrFailedToShutdownTracerProvider is a constant string used to indicate a failure to shut down the tracer provider.
-const ErrFailedToShutdownTracerProvider = "failed to shutdown tracer provider"
-
 // ErrFailedToStartHTTPServer is a constant string used to indicate a failure to start the HTTP server.
 const ErrFailedToStartHTTPServer = "failed to start HTTP server: %w"
 
