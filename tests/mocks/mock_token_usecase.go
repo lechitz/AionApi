@@ -7,7 +7,7 @@
 //
 
 // Package tokenmocks is a generated GoMock package.
-package tokenmocks
+package mocks
 
 import (
 	context "context"

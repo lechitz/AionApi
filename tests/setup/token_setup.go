@@ -7,16 +7,15 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
-	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
-	mockToken "github.com/lechitz/AionApi/tests/mocks/token"
+	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 
 // TokenServiceTestSuite is a test suite for testing TokenService with mocked dependencies and utilities for test cases.// TokenServiceTestSuite is a struct for managing the dependencies needed to test the TokenService implementation.
 type TokenServiceTestSuite struct {
 	Ctrl         *gomock.Controller
-	Logger       *mockLogger.MockLogger
-	TokenStore   *mockToken.MockTokenRepositoryPort
+	Logger       *mocks.MockLogger
+	TokenStore   *mocks.MockTokenRepositoryPort
 	TokenService token.Usecase
 	Ctx          context.Context
 }
@@ -25,8 +24,8 @@ type TokenServiceTestSuite struct {
 func TokenServiceTest(t *testing.T, secretKey string) *TokenServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	mockLog := mockLogger.NewMockLogger(ctrl)
-	mockTokenStore := mockToken.NewMockTokenRepositoryPort(ctrl)
+	mockLog := mocks.NewMockLogger(ctrl)
+	mockTokenStore := mocks.NewMockTokenRepositoryPort(ctrl)
 
 	ExpectLoggerDefaultBehavior(mockLog)
 

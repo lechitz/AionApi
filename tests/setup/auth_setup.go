@@ -5,20 +5,17 @@ import (
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
-	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
-	mockSecurity "github.com/lechitz/AionApi/tests/mocks/security"
-	mockToken "github.com/lechitz/AionApi/tests/mocks/token"
-	mockUser "github.com/lechitz/AionApi/tests/mocks/user"
+	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 
 // AuthServiceTestSuite defines a test suite for AuthService, including mock services and dependencies for testing authentication components.
 type AuthServiceTestSuite struct {
 	Ctrl           *gomock.Controller
-	Logger         *mockLogger.MockLogger
-	UserRepository *mockUser.MockUserStore
-	PasswordHasher *mockSecurity.MockSecurityStore
-	TokenService   *mockToken.MockTokenUsecase
+	Logger         *mocks.MockLogger
+	UserRepository *mocks.MockUserStore
+	PasswordHasher *mocks.MockSecurityStore
+	TokenService   *mocks.MockTokenUsecase
 	AuthService    *auth.Service
 	Ctx            context.Context
 }
@@ -27,10 +24,10 @@ type AuthServiceTestSuite struct {
 func AuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	mockUserRepo := mockUser.NewMockUserStore(ctrl)
-	mockSecurityStore := mockSecurity.NewMockSecurityStore(ctrl)
-	mockTokenUseCase := mockToken.NewMockTokenUsecase(ctrl)
-	mockLog := mockLogger.NewMockLogger(ctrl)
+	mockUserRepo := mocks.NewMockUserStore(ctrl)
+	mockSecurityStore := mocks.NewMockSecurityStore(ctrl)
+	mockTokenUseCase := mocks.NewMockTokenUsecase(ctrl)
+	mockLog := mocks.NewMockLogger(ctrl)
 
 	ExpectLoggerDefaultBehavior(mockLog)
 

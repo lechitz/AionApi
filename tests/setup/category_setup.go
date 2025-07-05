@@ -6,16 +6,15 @@ import (
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
-	mockCategory "github.com/lechitz/AionApi/tests/mocks/category"
-	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
+	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 
 // CategoryServiceTestSuite is a test suite structure for testing methods in the CategoryService, holding mock dependencies and context.
 type CategoryServiceTestSuite struct {
 	Ctrl               *gomock.Controller
-	Logger             *mockLogger.MockLogger
-	CategoryRepository *mockCategory.MockCategoryStore
+	Logger             *mocks.MockLogger
+	CategoryRepository *mocks.MockCategoryStore
 	CategoryService    *category.Service
 	Ctx                context.Context
 }
@@ -24,8 +23,8 @@ type CategoryServiceTestSuite struct {
 func CategoryServiceTest(t *testing.T) *CategoryServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	mockCategoryRepository := mockCategory.NewMockCategoryStore(ctrl)
-	mockLog := mockLogger.NewMockLogger(ctrl)
+	mockCategoryRepository := mocks.NewMockCategoryStore(ctrl)
+	mockLog := mocks.NewMockLogger(ctrl)
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
