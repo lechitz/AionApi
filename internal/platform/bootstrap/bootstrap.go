@@ -1,4 +1,4 @@
-// Package bootstrap provides a set of utilities for initializing application dependencies and managing application lifecycle.
+// Package bootstrap provides a set of utilities for initializing application dependencies and managing the application lifecycle.
 package bootstrap
 
 import (

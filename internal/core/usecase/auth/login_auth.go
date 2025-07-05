@@ -1,3 +1,4 @@
+// Package auth contains use cases for authenticating users and generating tokens.
 package auth
 
 import (
