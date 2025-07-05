@@ -1,5 +1,5 @@
-// Package db defines interfaces for managing categories in the system.
-package db
+// Package output db defines interfaces for managing categories in the system.
+package output
 
 import (
 	"context"

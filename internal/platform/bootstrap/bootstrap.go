@@ -10,7 +10,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
-	"github.com/lechitz/AionApi/internal/core/ports/output/db"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
 
@@ -30,7 +29,7 @@ type AppDependencies struct {
 	UserService        input.UserService          // pointer
 	AuthService        input.AuthService          // pointer
 	CategoryService    input.CategoryService      // pointer
-	CategoryRepository db.CategoryStore           // pointer
+	CategoryRepository output.CategoryStore       // pointer
 	Config             config.Config              // struct (não pointer)
 }
 
