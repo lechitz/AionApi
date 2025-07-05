@@ -10,7 +10,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/auth"
@@ -23,7 +22,7 @@ import (
 // AppDependencies encapsulates all the core dependencies required for the application,
 // including services, repositories, logging utilities and the loaded configuration.
 type AppDependencies struct {
-	Logger             logger.Logger              // pointer
+	Logger             output.Logger              // pointer
 	TokenService       token.Usecase              // pointer
 	TokenRepository    output.TokenRepositoryPort // pointer
 	UserService        input.UserService          // pointer
@@ -35,7 +34,7 @@ type AppDependencies struct {
 
 // InitializeDependencies initializes and returns all core application dependencies,
 // including repositories, services, and a cleanup function.
-func InitializeDependencies(cfg config.Config, logger logger.Logger) (*AppDependencies, func(), error) {
+func InitializeDependencies(cfg config.Config, logger output.Logger) (*AppDependencies, func(), error) {
 	cacheConn, err := infraCache.NewCacheConnection(cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)

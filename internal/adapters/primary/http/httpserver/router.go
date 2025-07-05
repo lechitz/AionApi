@@ -12,14 +12,13 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recovery"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/router/chi"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 )
 
 // RouteComposer is a structure for configuring routes, middlewares, and logging in the HTTP router.
 type RouteComposer struct {
 	Router         portRouter.Router
-	logger         logger.Logger
+	logger         output.Logger
 	authMiddleware *auth.MiddlewareAuth
 	BasePath       string
 }
@@ -34,7 +33,7 @@ type RouteComposer struct {
 // Returns:
 //   - *RouteComposer: configured route composer instance
 //   - error: in case of any setup failure
-func NewHTTPRouter(logger logger.Logger, tokenRepository output.TokenRepositoryPort, contextPath string, secretKey string) (*RouteComposer, error) {
+func NewHTTPRouter(logger output.Logger, tokenRepository output.TokenRepositoryPort, contextPath string, secretKey string) (*RouteComposer, error) {
 	normalizedPath, err := normalizeContextPath(contextPath)
 	if err != nil {
 		return nil, err

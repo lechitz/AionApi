@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"strconv"
 
@@ -19,8 +20,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/utils/validator"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
-
 	"github.com/jinzhu/copier"
 )
 
@@ -28,11 +27,11 @@ import (
 // It combines user service functionality and logging capabilities.
 type User struct {
 	UserService input.UserService
-	Logger      logger.Logger
+	Logger      output.Logger
 }
 
 // NewUser initializes and returns a new User instance with provided user service and logger dependencies.
-func NewUser(userService input.UserService, logger logger.Logger) *User {
+func NewUser(userService input.UserService, logger output.Logger) *User {
 	return &User{
 		UserService: userService,
 		Logger:      logger,

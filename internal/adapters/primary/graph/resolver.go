@@ -5,10 +5,10 @@ package graph
 
 import (
 	"github.com/lechitz/AionApi/internal/core/ports/input"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 )
 
 type Resolver struct {
 	CategoryService input.CategoryService
-	Logger          logger.Logger
+	Logger          output.Logger
 }

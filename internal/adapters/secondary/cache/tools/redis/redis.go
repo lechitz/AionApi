@@ -3,11 +3,11 @@ package cache
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/platform/config"
 )
 
@@ -24,7 +24,7 @@ type Client interface {
 
 // NewCacheConnection initializes a new Redis client using the provided configuration and logger.
 // Returns the Redis client or an error if the connection fails.
-func NewCacheConnection(cacheCfg config.CacheConfig, log logger.Logger) (*redis.Client, error) {
+func NewCacheConnection(cacheCfg config.CacheConfig, log output.Logger) (*redis.Client, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     cacheCfg.Addr,
 		Password: cacheCfg.Password,

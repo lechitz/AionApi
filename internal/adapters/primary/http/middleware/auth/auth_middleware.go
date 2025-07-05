@@ -12,7 +12,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -22,14 +21,14 @@ import (
 // Combines TokenService for token verification and Logger for logging operations.
 type MiddlewareAuth struct {
 	tokenService output.TokenRepositoryPort
-	logger       logger.Logger
+	logger       output.Logger
 	secretKey    string
 }
 
 // NewAuthMiddleware creates and initializes middleware for authentication.
 func NewAuthMiddleware(
 	tokenService output.TokenRepositoryPort,
-	logger logger.Logger,
+	logger output.Logger,
 	secretKey string,
 ) *MiddlewareAuth {
 	return &MiddlewareAuth{

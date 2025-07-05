@@ -3,7 +3,6 @@ package auth
 
 import (
 	"github.com/lechitz/AionApi/internal/core/ports/output"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/core/ports/output/security"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 )
@@ -13,12 +12,12 @@ type Service struct {
 	userRetriever  output.UserRetriever
 	tokenService   token.Usecase
 	securityHasher security.Store
-	logger         logger.Logger
+	logger         output.Logger
 	secretKey      string
 }
 
 // NewAuthService creates and returns a new instance of Service with dependencies for user retrieval, token management, and security operations.
-func NewAuthService(userRetriever output.UserStore, tokenService token.Usecase, securityHasher security.Store, logger logger.Logger, secretKey string) *Service {
+func NewAuthService(userRetriever output.UserStore, tokenService token.Usecase, securityHasher security.Store, logger output.Logger, secretKey string) *Service {
 	return &Service{
 		userRetriever:  userRetriever,
 		tokenService:   tokenService,

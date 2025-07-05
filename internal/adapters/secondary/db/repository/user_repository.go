@@ -4,6 +4,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"strconv"
 	"time"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"gorm.io/gorm"
 
 	"go.opentelemetry.io/otel"
@@ -25,11 +25,11 @@ import (
 // UserRepository handles interactions with the user database, providing methods for CRUD operations and user retrieval.
 type UserRepository struct {
 	db     *gorm.DB
-	logger logger.Logger
+	logger output.Logger
 }
 
 // NewUserRepository initializes a new UserRepository with the provided database connection and logger.
-func NewUserRepository(db *gorm.DB, logger logger.Logger) *UserRepository {
+func NewUserRepository(db *gorm.DB, logger output.Logger) *UserRepository {
 	return &UserRepository{
 		db:     db,
 		logger: logger,

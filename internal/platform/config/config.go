@@ -5,7 +5,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/def"
 	"github.com/lechitz/AionApi/internal/platform/config/constants"
 )
@@ -31,7 +31,7 @@ func NewLoader() *Loader {
 // Returns:
 //   - Config: fully loaded configuration object
 //   - error: error occurred during loading or key generation
-func (l *Loader) Load(logger logger.Logger) (Config, error) {
+func (l *Loader) Load(logger output.Logger) (Config, error) {
 	if err := envconfig.Process(def.Setting, &l.cfg); err != nil {
 		response.HandleCriticalError(logger, constants.ErrFailedToProcessEnvVars, err)
 		return Config{}, err

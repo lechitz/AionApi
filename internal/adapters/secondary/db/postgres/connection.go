@@ -3,20 +3,20 @@ package db
 
 import (
 	"fmt"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"time"
 
 	"github.com/lechitz/AionApi/internal/def"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres/constants"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 // NewDatabaseConnection initializes a database connection using the provided configuration and logger. Returns a Gorm DB instance or an error.
-func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB, error) {
+func NewDatabaseConnection(cfg config.DBConfig, logger output.Logger) (*gorm.DB, error) {
 	conString := fmt.Sprintf(
 		constants.MsgFormatConString,
 		cfg.Host,
@@ -63,7 +63,7 @@ func NewDatabaseConnection(cfg config.DBConfig, logger logger.Logger) (*gorm.DB,
 // Returns a Gorm DB instance on success or an error if all attempts fail.
 func tryConnectingWithRetries(
 	conString string,
-	logger logger.Logger,
+	logger output.Logger,
 	maxRetries int,
 ) (*gorm.DB, error) {
 	var db *gorm.DB
@@ -83,7 +83,7 @@ func tryConnectingWithRetries(
 }
 
 // Close terminates the database connection and logs success or error messages using the provided logger.
-func Close(db *gorm.DB, logger logger.Logger) {
+func Close(db *gorm.DB, logger output.Logger) {
 	sqlDB, err := db.DB()
 	if err != nil {
 		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, def.Error, err.Error())

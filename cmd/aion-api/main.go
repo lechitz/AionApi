@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"os/signal"
 	"sync"
@@ -25,7 +26,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/graphqlserver"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
-	loggerPort "github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	loggerBuilder "github.com/lechitz/AionApi/pkg/logger"
@@ -54,7 +54,7 @@ func main() {
 }
 
 // loadConfig loads the environment configuration using envconfig, panicking on failure.
-func loadConfig(logger loggerPort.Logger) config.Config {
+func loadConfig(logger output.Logger) config.Config {
 	cfgLoader := config.NewLoader()
 	cfg, err := cfgLoader.Load(logger)
 	if err != nil {
@@ -68,7 +68,7 @@ func loadConfig(logger loggerPort.Logger) config.Config {
 	return cfg
 }
 
-func initOtelMetrics(cfg config.Config, logger loggerPort.Logger) func() {
+func initOtelMetrics(cfg config.Config, logger output.Logger) func() {
 	exporter, err := otlpmetrichttp.New(
 		context.Background(),
 		otlpmetrichttp.WithEndpoint(
@@ -98,7 +98,7 @@ func initOtelMetrics(cfg config.Config, logger loggerPort.Logger) func() {
 
 // initTracer initializes the OpenTelemetry tracer using the provided configuration.
 // It returns a cleanup function that shuts down the tracer provider and any associated resources.
-func initTracer(cfg config.Config, logger loggerPort.Logger) func() {
+func initTracer(cfg config.Config, logger output.Logger) func() {
 	exporter, err := otlptracehttp.New(
 		context.Background(),
 		otlptracehttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
@@ -128,7 +128,7 @@ func initTracer(cfg config.Config, logger loggerPort.Logger) func() {
 }
 
 // initDependencies initializes services, repositories, and infrastructure connections.
-func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.AppDependencies, func()) {
+func initDependencies(cfg config.Config, logger output.Logger) (*bootstrap.AppDependencies, func()) {
 	appDeps, cleanup, err := bootstrap.InitializeDependencies(cfg, logger)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrInitializeDependencies, err)
@@ -141,7 +141,7 @@ func initDependencies(cfg config.Config, logger loggerPort.Logger) (*bootstrap.A
 }
 
 // createHTTPServer builds the HTTP server using configuration and application dependencies.
-func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, logger loggerPort.Logger) *http.Server {
+func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, logger output.Logger) *http.Server {
 	httpSrv, err := httpserver.NewHTTPServer(appDeps, cfg)
 	if err != nil {
 		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err)
@@ -154,7 +154,7 @@ func createHTTPServer(appDeps *bootstrap.AppDependencies, cfg *config.Config, lo
 }
 
 // createGraphQLServer builds the GraphQL server using configuration and application dependencies.
-func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, logger loggerPort.Logger) *http.Server {
+func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, logger output.Logger) *http.Server {
 	graphqlSrv, err := graphqlserver.NewGraphqlServer(appDeps, cfg)
 	if err != nil {
 		logger.Errorw(constants.ErrStartGraphqlServer, def.Error, err)
@@ -167,7 +167,7 @@ func createGraphQLServer(appDeps *bootstrap.AppDependencies, cfg config.Config, 
 }
 
 // handleServers orchestrates concurrent HTTP and GraphQL server execution and graceful shutdown.
-func handleServers(httpSrv, graphqlSrv *http.Server, cfg config.Config, logger loggerPort.Logger) {
+func handleServers(httpSrv, graphqlSrv *http.Server, cfg config.Config, logger output.Logger) {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 

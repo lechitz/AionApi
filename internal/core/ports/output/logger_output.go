@@ -1,5 +1,5 @@
-// Package logger provides an interface for structured and leveled logging within applications.
-package logger
+// Package output logger provides an interface for structured and leveled logging within applications.
+package output
 
 // Logger is an interface for structured and leveled logging within applications.
 // Infof logs informational messages with a formatted string.

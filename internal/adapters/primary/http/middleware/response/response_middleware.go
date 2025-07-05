@@ -4,14 +4,13 @@ package response
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"time"
-
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
 // Return sends an HTTP response with the specified status code and body, logging errors if writing the body fails.
-func Return(w http.ResponseWriter, statusCode int, body []byte, logger logger.Logger) {
+func Return(w http.ResponseWriter, statusCode int, body []byte, logger output.Logger) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
@@ -23,7 +22,7 @@ func Return(w http.ResponseWriter, statusCode int, body []byte, logger logger.Lo
 }
 
 // ObjectResponse creates a JSON response with the given object, message, and current UTC date and returns it as a byte.Buffer.
-func ObjectResponse(obj any, message string, logger logger.Logger) *bytes.Buffer {
+func ObjectResponse(obj any, message string, logger output.Logger) *bytes.Buffer {
 	response := struct {
 		Date    time.Time `json:"date,omitempty"`
 		Result  any       `json:"result,omitempty"`
@@ -43,7 +42,7 @@ func ObjectResponse(obj any, message string, logger logger.Logger) *bytes.Buffer
 }
 
 // HandleError logs the error or warning, creates a JSON response, and sends it with the specified status code to the HTTP client.
-func HandleError(w http.ResponseWriter, logger logger.Logger, status int, msg string, err error) {
+func HandleError(w http.ResponseWriter, logger output.Logger, status int, msg string, err error) {
 	if err != nil {
 		logger.Errorw("operation failed",
 			"message", msg,
@@ -63,7 +62,7 @@ func HandleError(w http.ResponseWriter, logger logger.Logger, status int, msg st
 }
 
 // HandleCriticalError logs a critical error and message, and then panics with the error or message provided.
-func HandleCriticalError(logger logger.Logger, message string, err error) {
+func HandleCriticalError(logger output.Logger, message string, err error) {
 	if err != nil {
 		logger.Errorw("critical failure",
 			"message", message,

@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"strconv"
 	"time"
@@ -17,19 +18,17 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
-
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
 // Auth provides authentication handlers for login and logout functionalities.
 // Combines AuthService for logic and Logger for logging operations.
 type Auth struct {
 	AuthService inputHttp.AuthService
-	Logger      logger.Logger
+	Logger      output.Logger
 }
 
 // NewAuth initializes and returns a new Auth instance with AuthService and Logger dependencies.
-func NewAuth(authService inputHttp.AuthService, logger logger.Logger) *Auth {
+func NewAuth(authService inputHttp.AuthService, logger output.Logger) *Auth {
 	return &Auth{
 		AuthService: authService,
 		Logger:      logger,

@@ -3,16 +3,15 @@
 package recovery
 
 import (
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"runtime/debug"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
-
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
 // RecoverMiddleware is a middleware that recovers from panics, logs the error, and returns an internal server error response.
-func RecoverMiddleware(log logger.Logger) func(http.Handler) http.Handler {
+func RecoverMiddleware(log output.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			defer func() {

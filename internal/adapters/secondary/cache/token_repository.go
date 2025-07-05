@@ -5,13 +5,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"strconv"
 	"time"
 
 	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/cache/constants"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/redis/go-redis/v9"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -22,11 +22,11 @@ import (
 // TokenRepository provides methods to interact with a Redis-based token storage.
 type TokenRepository struct {
 	cache  *redis.Client
-	logger logger.Logger
+	logger output.Logger
 }
 
 // NewTokenRepository creates and returns a new instance of TokenRepository with the provided Redis client and logger.
-func NewTokenRepository(cache *redis.Client, logger logger.Logger) *TokenRepository {
+func NewTokenRepository(cache *redis.Client, logger output.Logger) *TokenRepository {
 	return &TokenRepository{
 		cache:  cache,
 		logger: logger,

@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"strconv"
 	"time"
 
@@ -14,7 +15,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"gorm.io/gorm"
 
 	"go.opentelemetry.io/otel"
@@ -27,11 +27,11 @@ import (
 // It uses gorm.DB for ORM and logger.Logger for logging operations.
 type CategoryRepository struct {
 	db     *gorm.DB
-	logger logger.Logger
+	logger output.Logger
 }
 
 // NewCategoryRepository creates a new instance of CategoryRepository with a given gorm.DB and logger.
-func NewCategoryRepository(db *gorm.DB, logger logger.Logger) *CategoryRepository {
+func NewCategoryRepository(db *gorm.DB, logger output.Logger) *CategoryRepository {
 	return &CategoryRepository{
 		db:     db,
 		logger: logger,

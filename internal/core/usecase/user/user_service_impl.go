@@ -3,7 +3,6 @@ package user
 
 import (
 	"github.com/lechitz/AionApi/internal/core/ports/output"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/core/ports/output/security"
 	"github.com/lechitz/AionApi/internal/core/usecase/token"
 )
@@ -13,11 +12,11 @@ type Service struct {
 	userRepository output.UserStore
 	tokenService   token.Usecase
 	securityHasher security.Store
-	logger         logger.Logger
+	logger         output.Logger
 }
 
 // NewUserService creates and returns a new Service instance with the provided dependencies for handling user-related operations.
-func NewUserService(userRepo output.UserStore, tokenService token.Usecase, securityHasher security.Store, logger logger.Logger) *Service {
+func NewUserService(userRepo output.UserStore, tokenService token.Usecase, securityHasher security.Store, logger output.Logger) *Service {
 	return &Service{
 		userRepository: userRepo,
 		tokenService:   tokenService,

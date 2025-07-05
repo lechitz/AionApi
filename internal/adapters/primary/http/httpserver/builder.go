@@ -7,7 +7,6 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/contextbuilder"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 )
 
@@ -32,7 +31,7 @@ type RouterBuilder struct {
 //   - portRouter.Router: configured router with routes and middleware
 //   - error: any error encountered during setup
 func BuildRouterRoutes(
-	logger logger.Logger,
+	logger output.Logger,
 	userService input.UserService,
 	authService input.AuthService,
 	tokenRepo output.TokenRepositoryPort,
