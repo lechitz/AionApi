@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/pkg/observability"
 	"net/http"
 	"os/signal"
 	"sync"
@@ -14,14 +15,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/def"
-
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
-	"go.opentelemetry.io/otel/sdk/metric"
-	"go.opentelemetry.io/otel/sdk/resource"
-	"go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.32.0"
 
 	"github.com/lechitz/AionApi/cmd/aion-api/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/graphqlserver"
@@ -39,10 +32,10 @@ func main() {
 
 	cfg := loadConfig(logger)
 
-	cleanupMetrics := initOtelMetrics(cfg, logger)
+	cleanupMetrics := observability.InitOtelMetrics(cfg, logger)
 	defer cleanupMetrics()
 
-	cleanupTracer := initTracer(cfg, logger)
+	cleanupTracer := observability.InitTracer(cfg, logger)
 	defer cleanupTracer()
 
 	appDeps, cleanupDeps := initDependencies(cfg, logger)
@@ -67,65 +60,6 @@ func loadConfig(logger output.Logger) config.Config {
 	logger.Infow(constants.SuccessToLoadConfiguration)
 
 	return cfg
-}
-
-func initOtelMetrics(cfg config.Config, logger output.Logger) func() {
-	exporter, err := otlpmetrichttp.New(
-		context.Background(),
-		otlpmetrichttp.WithEndpoint(
-			cfg.Observability.OtelExporterOTLPEndpoint,
-		),
-		otlpmetrichttp.WithInsecure(),
-	)
-	if err != nil {
-		logger.Errorw(constants.ErrFailedToInitializeOTLPMetricsExporter, def.Error, err)
-		panic(err)
-	}
-
-	provider := metric.NewMeterProvider(
-		metric.WithReader(metric.NewPeriodicReader(exporter)),
-		metric.WithResource(resource.NewWithAttributes(
-			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(cfg.Observability.OtelServiceName),
-			semconv.ServiceVersionKey.String(cfg.Observability.OtelServiceVersion),
-		)),
-	)
-	otel.SetMeterProvider(provider)
-
-	return func() {
-		_ = provider.Shutdown(context.Background())
-	}
-}
-
-// initTracer initializes the OpenTelemetry tracer using the provided configuration.
-// It returns a cleanup function that shuts down the tracer provider and any associated resources.
-func initTracer(cfg config.Config, logger output.Logger) func() {
-	exporter, err := otlptracehttp.New(
-		context.Background(),
-		otlptracehttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
-		otlptracehttp.WithInsecure(),
-	)
-	if err != nil {
-		logger.Errorw(constants.ErrInitializeOTPL, def.Error, err)
-	}
-
-	resources := resource.NewWithAttributes(
-		semconv.SchemaURL,
-		semconv.ServiceNameKey.String(cfg.Observability.OtelServiceName),
-		semconv.ServiceVersionKey.String(cfg.Observability.OtelServiceVersion),
-	)
-
-	traceProvider := trace.NewTracerProvider(
-		trace.WithBatcher(exporter),
-		trace.WithResource(resources),
-	)
-	otel.SetTracerProvider(traceProvider)
-
-	return func() {
-		if err := traceProvider.Shutdown(context.Background()); err != nil {
-			logger.Errorw(constants.ErrFailedToShutdownTracerProvider, def.Error, err)
-		}
-	}
 }
 
 // initDependencies initializes services, repositories, and infrastructure connections.
