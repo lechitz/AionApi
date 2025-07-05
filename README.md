@@ -12,10 +12,10 @@ _This repository is part of an ongoing study and development project. Many featu
 
 - [Overview](#overview)
 - [Current and Upcoming Features](#current-and-upcoming-features)
+- [Project Management](#project-management)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Development](#development)
-- [Docker Integration](#docker-integration)
 - [API Endpoints](#api-endpoints)
     - [REST Endpoints](#rest-endpoints)
     - [GraphQL Operations](#graphql-operations)
@@ -46,6 +46,12 @@ AionAPI is a backend service written in **Go** that exposes both REST and GraphQ
 - **Data-Driven Insights** — visualize your progress and analyze behavior patterns.
 - **Modern Integrations** — sync with tools and platforms for extended usability.
 - **Developer-Friendly API** — clean, extensible endpoints for all your needs.
+
+---
+
+## Project Management
+
+This repository is organized using a public [GitHub Projects board](https://github.com/users/lechitz/projects/1) where tasks, issues, and epics are tracked. The board provides visibility into ongoing work and completed milestones, keeping development structured and transparent.
 
 ---
 
@@ -81,13 +87,15 @@ AionAPI is a backend service written in **Go** that exposes both REST and GraphQ
    cp infrastructure/docker/example/.env.example infrastructure/docker/dev/.env.dev
    ```
 2. **Edit `.env.dev`** with values that match your local setup.
-3. **Run database migrations** (optional)
+
+
+3. **Start the development environment**
+   ```bash
+   make dev
+   ```
+4. **Run database migrations** (optional)
    ```bash
    make migrate-up
-   ```
-4. **Start the development environment**
-   ```bash
-   make dev-up
    ```
 
 ---
@@ -98,11 +106,10 @@ The project is organized as follows:
 
 ```text
 cmd/            - application entry point
-infrastructure/ - migrations, docker files, observability
 internal/       - domain logic and adapters
-makefiles/      - grouped Make targets
+infrastructure/ - migrations, docker files, observability
 pkg/            - shared utilities (zap logger, helpers)
-tests/          - coverage, mocks, setup, testdata
+makefiles/      - grouped Make targets
 ```
 
 Run `make help` to see all available commands. Frequently used ones include:
@@ -111,22 +118,9 @@ Run `make help` to see all available commands. Frequently used ones include:
 make format    # format Go code
 make lint      # run static analysis
 make test      # execute unit tests
+make dev-up    # start the development environment
+make dev-down  # stop and remove dev containers
 make verify    # run full pipeline before committing
-```
-
----
-
-## Docker Integration
-
-Docker compose files for development and production live under `infrastructure/docker`. The main targets are:
-
-```bash
-make build-dev   # build development image
-make dev-up      # start development environment (includes Postgres, Redis, Jaeger, Prometheus, Grafana)
-make dev-down    # stop and remove development containers
-make build-prod  # build production image
-make prod-up     # start production environment
-make prod-down   # stop production containers
 ```
 
 ---
