@@ -14,7 +14,7 @@ import (
 
 // CreateUser creates a new user with the given data and password, ensuring validations and unique constraints are met. Returns the created user or an error.
 func (s *Service) CreateUser(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, error) {
-	user = s.normalizeUserData(&user)
+	s.normalizeUserData(&user)
 
 	if err := s.validateCreateUserRequired(user, password); err != nil {
 		s.logger.Errorw(constants.ErrorToValidateCreateUser, def.Error, err.Error())
