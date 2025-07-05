@@ -26,7 +26,7 @@ bin/
 # Tests and coverage reports
 coverage.out
 coverage_tmp.out
-docs/coverage/
+coverage.html
 
 # Others
 node_modules/
