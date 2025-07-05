@@ -1,5 +1,5 @@
 // Package graphql defines a contract for interacting with category-related operations.
-package graphql
+package input
 
 import (
 	"context"

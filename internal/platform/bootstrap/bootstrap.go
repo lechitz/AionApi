@@ -8,7 +8,7 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
 	adapterSecurity "github.com/lechitz/AionApi/internal/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/domain/entity"
-	"github.com/lechitz/AionApi/internal/core/ports/input/graphql"
+	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output/db"
 	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
@@ -30,7 +30,7 @@ type AppDependencies struct {
 	TokenRepository    portsToken.TokenRepositoryPort // pointer
 	UserService        portsHttp.UserService          // pointer
 	AuthService        portsHttp.AuthService          // pointer
-	CategoryService    graphql.CategoryService        // pointer
+	CategoryService    input.CategoryService          // pointer
 	CategoryRepository db.CategoryStore               // pointer
 	Config             config.Config                  // struct (não pointer)
 }
