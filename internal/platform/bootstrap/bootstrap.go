@@ -62,13 +62,7 @@ func InitializeDependencies(cfg config.Config, logger output.Logger) (*AppDepend
 	categoryRepository := repository.NewCategoryRepository(dbConn, logger)
 	categoryService := category.NewCategoryService(categoryRepository, logger)
 
-	authService := auth.NewAuthService(
-		userRepository,
-		tokenService,
-		passwordHasher,
-		logger,
-		cfg.Secret.Key,
-	)
+	authService := auth.NewAuthService(userRepository, tokenService, passwordHasher, logger, cfg.Secret.Key)
 
 	cleanup := func() {
 		infraDB.Close(dbConn, logger)
