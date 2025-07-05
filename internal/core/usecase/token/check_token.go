@@ -4,8 +4,8 @@ package token
 import (
 	"context"
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/def"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -35,7 +35,7 @@ func (s *Service) VerifyToken(ctx context.Context, token string) (uint64, string
 	}
 	userID := uint64(userIDFloat)
 
-	tokenDomain := entity.TokenDomain{
+	tokenDomain := domain.TokenDomain{
 		UserID: userID,
 		Token:  token,
 	}

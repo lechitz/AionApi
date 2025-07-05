@@ -2,11 +2,11 @@
 package testdata
 
 import (
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
+	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
 // TestPerfectToken is a predefined TokenDomain instance used for testing purposes, representing a valid token associated with a user.
-var TestPerfectToken = entity.TokenDomain{
+var TestPerfectToken = domain.TokenDomain{
 	UserID: 1,
 	Token:  "token_abc123",
 	// CreatedAt: time.Now(),

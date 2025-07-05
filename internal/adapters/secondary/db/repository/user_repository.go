@@ -4,11 +4,10 @@ package repository
 import (
 	"context"
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"strconv"
 	"time"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/mapper"
@@ -37,7 +36,7 @@ func NewUserRepository(db *gorm.DB, logger output.Logger) *UserRepository {
 }
 
 // CreateUser adds a new user to the database, mapping the provided domain object and returning the created user or an error if the operation fails.
-func (up UserRepository) CreateUser(ctx context.Context, userDomain entity.UserDomain) (entity.UserDomain, error) {
+func (up UserRepository) CreateUser(ctx context.Context, userDomain domain.UserDomain) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "CreateUser", trace.WithAttributes(
 		attribute.String("username", userDomain.Username),
@@ -52,7 +51,7 @@ func (up UserRepository) CreateUser(ctx context.Context, userDomain entity.UserD
 		Create(&userDB).Error; err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return entity.UserDomain{}, err
+		return domain.UserDomain{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user created successfully")
@@ -60,7 +59,7 @@ func (up UserRepository) CreateUser(ctx context.Context, userDomain entity.UserD
 }
 
 // GetAllUsers retrieves all active users from the database and maps them to the domain.UserDomain format. Returns a slice of users or an error.
-func (up UserRepository) GetAllUsers(ctx context.Context) ([]entity.UserDomain, error) {
+func (up UserRepository) GetAllUsers(ctx context.Context) ([]domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetAllUsers", trace.WithAttributes(
 		attribute.String("operation", "get_all"),
@@ -68,7 +67,7 @@ func (up UserRepository) GetAllUsers(ctx context.Context) ([]entity.UserDomain, 
 	defer span.End()
 
 	var usersDB []model.UserDB
-	var usersDomain []entity.UserDomain
+	var usersDomain []domain.UserDomain
 
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
@@ -88,7 +87,7 @@ func (up UserRepository) GetAllUsers(ctx context.Context) ([]entity.UserDomain, 
 }
 
 // GetUserByID retrieves a user from the database by their unique user ID and returns the user in domain object format or an error.
-func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (entity.UserDomain, error) {
+func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByID", trace.WithAttributes(
 		attribute.String("user_id", strconv.FormatUint(userID, 10)),
@@ -104,7 +103,7 @@ func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (entity
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 
-		return entity.UserDomain{}, err
+		return domain.UserDomain{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user retrieved by id successfully")
@@ -115,7 +114,7 @@ func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (entity
 // GetUserByUsername retrieves a user from the database using their unique username. Returns a domain.UserDomain or an error if the user is not found.
 //
 //nolint:dupl // TODO: Refactor duplication with GetUserByEmail / GetUserByUsername when business logic diverges or for greater DRY. Prioritizing explicitness and speed for now.
-func (up UserRepository) GetUserByUsername(ctx context.Context, username string) (entity.UserDomain, error) {
+func (up UserRepository) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByUsername", trace.WithAttributes(
 		attribute.String("username", username),
@@ -132,12 +131,12 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, "user not found (business as usual)")
-			return entity.UserDomain{}, nil
+			return domain.UserDomain{}, nil
 		}
 
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return entity.UserDomain{}, err
+		return domain.UserDomain{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user retrieved by username successfully")
@@ -147,7 +146,7 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 // GetUserByEmail retrieves a user by their email address from the database and returns a domain.UserDomain or nil if not found.
 //
 //nolint:dupl // TODO:" Refactor duplication with GetUserByEmail / GetUserByUsername when business logic diverges or for greater DRY. Prioritizing explicitness and speed for now.
-func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (entity.UserDomain, error) {
+func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByEmail", trace.WithAttributes(
 		attribute.String("email", email),
@@ -164,12 +163,12 @@ func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (enti
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, "user not found (business as usual)")
-			return entity.UserDomain{}, nil
+			return domain.UserDomain{}, nil
 		}
 
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return entity.UserDomain{}, err
+		return domain.UserDomain{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user retrieved by email successfully")
@@ -181,7 +180,7 @@ func (up UserRepository) UpdateUser(
 	ctx context.Context,
 	userID uint64,
 	fields map[string]interface{},
-) (entity.UserDomain, error) {
+) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "UpdateUser", trace.WithAttributes(
 		attribute.String("user_id", strconv.FormatUint(userID, 10)),
@@ -197,7 +196,7 @@ func (up UserRepository) UpdateUser(
 		Updates(fields).Error; err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return entity.UserDomain{}, err
+		return domain.UserDomain{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user updated successfully")

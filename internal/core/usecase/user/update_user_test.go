@@ -2,9 +2,8 @@ package user_test
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"testing"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 	"github.com/lechitz/AionApi/tests/setup"
@@ -16,7 +15,7 @@ func TestUpdateUser_Success(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := entity.UserDomain{
+	input := domain.UserDomain{
 		ID:       setup.DefaultTestUser().ID,
 		Name:     "Felipe",
 		Username: setup.DefaultTestUser().Username,
@@ -39,12 +38,12 @@ func TestUpdateUser_NoFieldsToUpdate(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := entity.UserDomain{ID: setup.DefaultTestUser().ID}
+	input := domain.UserDomain{ID: setup.DefaultTestUser().ID}
 
 	result, err := suite.UserService.UpdateUser(suite.Ctx, input)
 
 	require.Error(t, err)
-	require.Equal(t, entity.UserDomain{}, result)
+	require.Equal(t, domain.UserDomain{}, result)
 	require.Equal(t, constants.ErrorNoFieldsToUpdate, err.Error())
 }
 
@@ -77,11 +76,11 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 		Return(expectedUser, nil)
 
 	suite.TokenService.EXPECT().
-		CreateToken(suite.Ctx, entity.TokenDomain{UserID: input.ID}).
+		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
 		Return(expectedToken, nil)
 
 	suite.TokenService.EXPECT().
-		Save(suite.Ctx, entity.TokenDomain{UserID: input.ID, Token: expectedToken}).
+		Save(suite.Ctx, domain.TokenDomain{UserID: input.ID, Token: expectedToken}).
 		Return(nil)
 
 	result, token, err := suite.UserService.UpdateUserPassword(
@@ -106,7 +105,7 @@ func TestUpdateUserPassword_ErrorToGetUserByID(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, input.ID).
-		Return(entity.UserDomain{}, errors.New(constants.ErrorToGetUserByID))
+		Return(domain.UserDomain{}, errors.New(constants.ErrorToGetUserByID))
 
 	result, token, err := suite.UserService.UpdateUserPassword(
 		suite.Ctx,
@@ -116,7 +115,7 @@ func TestUpdateUserPassword_ErrorToGetUserByID(t *testing.T) {
 	)
 
 	require.Error(t, err)
-	require.Equal(t, entity.UserDomain{}, result)
+	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
 	require.Equal(t, constants.ErrorToGetUserByID, err.Error())
 }
@@ -145,7 +144,7 @@ func TestUpdateUserPassword_ErrorToCompareHashAndPassword(t *testing.T) {
 	)
 
 	require.Error(t, err)
-	require.Equal(t, entity.UserDomain{}, result)
+	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
 	require.Equal(t, constants.ErrorToCompareHashAndPassword, err.Error())
 }
@@ -178,7 +177,7 @@ func TestUpdateUserPassword_ErrorToHashPassword(t *testing.T) {
 	)
 
 	require.Error(t, err)
-	require.Equal(t, entity.UserDomain{}, result)
+	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
 	require.Equal(t, constants.ErrorToHashPassword, err.Error())
 }
@@ -206,7 +205,7 @@ func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
-		Return(entity.UserDomain{}, errors.New(constants.ErrorToUpdatePassword))
+		Return(domain.UserDomain{}, errors.New(constants.ErrorToUpdatePassword))
 
 	result, token, err := suite.UserService.UpdateUserPassword(
 		suite.Ctx,
@@ -216,7 +215,7 @@ func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
 	)
 
 	require.Error(t, err)
-	require.Equal(t, entity.UserDomain{}, result)
+	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
 	require.Equal(t, constants.ErrorToUpdatePassword, err.Error())
 }
@@ -247,7 +246,7 @@ func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
 		Return(setup.DefaultTestUser(), nil)
 
 	suite.TokenService.EXPECT().
-		CreateToken(suite.Ctx, entity.TokenDomain{UserID: input.ID}).
+		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
 		Return("", errors.New(constants.ErrorToCreateToken))
 
 	result, token, err := suite.UserService.UpdateUserPassword(
@@ -258,7 +257,7 @@ func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
 	)
 
 	require.Error(t, err)
-	require.Equal(t, entity.UserDomain{}, result)
+	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
 	require.Equal(t, constants.ErrorToCreateToken, err.Error())
 }
@@ -267,7 +266,7 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := entity.UserDomain{
+	input := domain.UserDomain{
 		ID:       setup.DefaultTestUser().ID,
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
@@ -296,11 +295,11 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 		Return(setup.DefaultTestUser(), nil)
 
 	suite.TokenService.EXPECT().
-		CreateToken(suite.Ctx, entity.TokenDomain{UserID: input.ID}).
+		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
 		Return(expectedToken, nil)
 
 	suite.TokenService.EXPECT().
-		Save(suite.Ctx, entity.TokenDomain{UserID: input.ID, Token: expectedToken}).
+		Save(suite.Ctx, domain.TokenDomain{UserID: input.ID, Token: expectedToken}).
 		Return(errors.New(constants.ErrorToSaveToken))
 
 	result, token, err := suite.UserService.UpdateUserPassword(
@@ -311,7 +310,7 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 	)
 
 	require.Error(t, err)
-	require.Equal(t, entity.UserDomain{}, result)
+	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
 	require.Equal(t, constants.ErrorToSaveToken, err.Error())
 }

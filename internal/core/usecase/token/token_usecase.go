@@ -2,8 +2,7 @@ package token
 
 import (
 	"context"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
+	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
 // Usecase defines operations for handling token creation, verification, deletion, and persistence.
@@ -13,9 +12,9 @@ import (
 // Update modifies an existing token's details in the system.
 // Save persists a new token into the system.
 type Usecase interface {
-	CreateToken(ctx context.Context, token entity.TokenDomain) (string, error)
+	CreateToken(ctx context.Context, token domain.TokenDomain) (string, error)
 	VerifyToken(ctx context.Context, token string) (uint64, string, error)
-	Delete(ctx context.Context, token entity.TokenDomain) error
-	Update(ctx context.Context, token entity.TokenDomain) error
-	Save(ctx context.Context, token entity.TokenDomain) error
+	Delete(ctx context.Context, token domain.TokenDomain) error
+	Update(ctx context.Context, token domain.TokenDomain) error
+	Save(ctx context.Context, token domain.TokenDomain) error
 }

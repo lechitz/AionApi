@@ -2,9 +2,8 @@ package user_test
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"testing"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 
@@ -23,7 +22,7 @@ func TestSoftDeleteUser_Success(t *testing.T) {
 		Return(nil)
 
 	suite.TokenService.EXPECT().
-		Delete(suite.Ctx, entity.TokenDomain{UserID: userID}).
+		Delete(suite.Ctx, domain.TokenDomain{UserID: userID}).
 		Return(nil)
 
 	err := suite.UserService.SoftDeleteUser(suite.Ctx, userID)
@@ -59,7 +58,7 @@ func TestSoftDeleteUser_ErrorToDeleteToken(t *testing.T) {
 		Return(nil)
 
 	suite.TokenService.EXPECT().
-		Delete(suite.Ctx, entity.TokenDomain{UserID: userID}).
+		Delete(suite.Ctx, domain.TokenDomain{UserID: userID}).
 		Return(expectedErr)
 
 	err := suite.UserService.SoftDeleteUser(suite.Ctx, userID)

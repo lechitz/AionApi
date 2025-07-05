@@ -2,8 +2,8 @@ package user
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/core/domain"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/def"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
@@ -16,7 +16,7 @@ func (s *Service) SoftDeleteUser(ctx context.Context, userID uint64) error {
 		return err
 	}
 
-	tokenDomain := entity.TokenDomain{UserID: userID}
+	tokenDomain := domain.TokenDomain{UserID: userID}
 	if err := s.tokenService.Delete(ctx, tokenDomain); err != nil {
 		s.logger.Errorw(constants.ErrorToDeleteToken, def.Error, err.Error())
 		return err

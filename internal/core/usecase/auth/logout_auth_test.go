@@ -2,9 +2,8 @@ package auth_test
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"testing"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"
@@ -22,7 +21,7 @@ func TestLogout_Success(t *testing.T) {
 		Return(userID, token, nil)
 
 	suite.TokenService.EXPECT().
-		Delete(suite.Ctx, entity.TokenDomain{UserID: userID, Token: token}).
+		Delete(suite.Ctx, domain.TokenDomain{UserID: userID, Token: token}).
 		Return(nil)
 
 	err := suite.AuthService.Logout(suite.Ctx, token)
@@ -52,7 +51,7 @@ func TestLogout_DeleteTokenFails(t *testing.T) {
 
 	token := "valid.token.value" // #nosec G101
 	userID := uint64(1)
-	tokenDomain := entity.TokenDomain{UserID: userID, Token: token}
+	tokenDomain := domain.TokenDomain{UserID: userID, Token: token}
 	expectedErr := errors.New("delete error")
 
 	suite.TokenService.EXPECT().

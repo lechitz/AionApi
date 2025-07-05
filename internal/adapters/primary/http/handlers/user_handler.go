@@ -2,12 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/def"
 
 	"go.opentelemetry.io/otel/attribute"
@@ -64,7 +64,7 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		attribute.String(constants.Email, req.Email),
 	)
 
-	var userDomain entity.UserDomain
+	var userDomain domain.UserDomain
 	_ = copier.Copy(&userDomain, &req)
 
 	span.AddEvent("calling UserService.CreateUser")
@@ -174,7 +174,7 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDomain := entity.UserDomain{ID: userID}
+	userDomain := domain.UserDomain{ID: userID}
 	if req.Name != nil {
 		userDomain.Name = *req.Name
 	}
@@ -237,7 +237,7 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	clearAuthCookie(w)
 
-	userDomain := entity.UserDomain{ID: userID}
+	userDomain := domain.UserDomain{ID: userID}
 	span.AddEvent("calling UserService.UpdateUserPassword")
 	_, newToken, err := u.UserService.UpdateUserPassword(ctx, userDomain, req.Password, req.NewPassword)
 	if err != nil {

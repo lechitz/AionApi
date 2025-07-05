@@ -2,9 +2,8 @@ package token_test
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"testing"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
 
@@ -24,7 +23,7 @@ func TestVerifyToken_Success(t *testing.T) {
 	require.NoError(t, err)
 
 	suite.TokenStore.EXPECT().
-		Get(suite.Ctx, entity.TokenDomain{UserID: userID, Token: tokenString}).
+		Get(suite.Ctx, domain.TokenDomain{UserID: userID, Token: tokenString}).
 		Return(tokenString, nil)
 
 	parsedUserID, parsedToken, err := suite.TokenService.VerifyToken(suite.Ctx, tokenString)
@@ -58,7 +57,7 @@ func TestCheck_TokenMismatch(t *testing.T) {
 	cachedToken := "differentToken"
 
 	suite.TokenStore.EXPECT().
-		Get(suite.Ctx, entity.TokenDomain{UserID: userID, Token: tokenString}).
+		Get(suite.Ctx, domain.TokenDomain{UserID: userID, Token: tokenString}).
 		Return(cachedToken, nil)
 
 	_, _, err = suite.TokenService.VerifyToken(suite.Ctx, tokenString)
@@ -77,7 +76,7 @@ func TestCheck_ErrorToRetrieveTokenFromCache(t *testing.T) {
 	require.NoError(t, err)
 
 	suite.TokenStore.EXPECT().
-		Get(suite.Ctx, entity.TokenDomain{UserID: userID, Token: tokenString}).
+		Get(suite.Ctx, domain.TokenDomain{UserID: userID, Token: tokenString}).
 		Return("", errors.New(constants.ErrorToRetrieveTokenFromCache))
 
 	_, _, err = suite.TokenService.VerifyToken(suite.Ctx, tokenString)

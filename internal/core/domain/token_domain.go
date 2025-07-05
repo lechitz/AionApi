@@ -1,5 +1,5 @@
-// Package entity contains core business entities used throughout the application.
-package entity
+// Package domain contains core business entities used throughout the application.
+package domain
 
 // TokenConfig holds configuration data related to token handling,
 // such as the secret key used for signing JWTs.

@@ -2,9 +2,8 @@ package category_test
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"testing"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 	"github.com/lechitz/AionApi/tests/setup"
@@ -18,7 +17,7 @@ func TestSoftDeleteCategory_ErrorToGetCategoryByID(t *testing.T) {
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByID(suite.Ctx, testdata.PerfectCategory).
-		Return(entity.Category{}, errors.New(constants.FailedToGetCategoryByID))
+		Return(domain.Category{}, errors.New(constants.FailedToGetCategoryByID))
 
 	err := suite.CategoryService.SoftDeleteCategory(suite.Ctx, testdata.PerfectCategory)
 	assert.EqualError(t, err, constants.FailedToGetCategoryByID)
@@ -30,10 +29,10 @@ func TestSoftDeleteCategory_ErrorToSoftDeleteCategory(t *testing.T) {
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByID(suite.Ctx, testdata.PerfectCategory).
-		Return(entity.Category{ID: testdata.PerfectCategory.ID}, nil)
+		Return(domain.Category{ID: testdata.PerfectCategory.ID}, nil)
 
 	suite.CategoryRepository.EXPECT().
-		SoftDeleteCategory(suite.Ctx, entity.Category{ID: testdata.PerfectCategory.ID}).
+		SoftDeleteCategory(suite.Ctx, domain.Category{ID: testdata.PerfectCategory.ID}).
 		Return(errors.New(constants.FailedToSoftDeleteCategory))
 
 	err := suite.CategoryService.SoftDeleteCategory(suite.Ctx, testdata.PerfectCategory)
@@ -45,16 +44,16 @@ func TestSoftDeleteCategory_Success(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	suite.CategoryRepository.EXPECT().
-		GetCategoryByID(suite.Ctx, entity.Category{ID: testdata.PerfectCategory.ID}).
-		Return(entity.Category{ID: testdata.PerfectCategory.ID}, nil)
+		GetCategoryByID(suite.Ctx, domain.Category{ID: testdata.PerfectCategory.ID}).
+		Return(domain.Category{ID: testdata.PerfectCategory.ID}, nil)
 
 	suite.CategoryRepository.EXPECT().
-		SoftDeleteCategory(suite.Ctx, entity.Category{ID: testdata.PerfectCategory.ID}).
+		SoftDeleteCategory(suite.Ctx, domain.Category{ID: testdata.PerfectCategory.ID}).
 		Return(nil)
 
 	err := suite.CategoryService.SoftDeleteCategory(
 		suite.Ctx,
-		entity.Category{ID: testdata.PerfectCategory.ID},
+		domain.Category{ID: testdata.PerfectCategory.ID},
 	)
 
 	assert.NoError(t, err)

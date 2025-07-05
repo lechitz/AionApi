@@ -2,11 +2,10 @@ package setup
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/tests/mocks"
 	"testing"
 	"time"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
 	"go.uber.org/mock/gomock"
@@ -48,8 +47,8 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 }
 
 // DefaultTestUser is a predefined instance of domain.UserDomain used for testing purposes, representing a perfect/valid user with complete and valid fields.
-func DefaultTestUser() entity.UserDomain {
-	return entity.UserDomain{
+func DefaultTestUser() domain.UserDomain {
+	return domain.UserDomain{
 		ID:        1,
 		Name:      "Test User",
 		Username:  "testuser",

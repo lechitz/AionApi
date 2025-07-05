@@ -7,11 +7,11 @@ package graph
 import (
 	"context"
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/def"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -35,7 +35,7 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, category model.Dt
 		return nil, err
 	}
 
-	createCategory := entity.Category{
+	createCategory := domain.Category{
 		UserID:      userID,
 		Name:        category.Name,
 		Description: *category.Description,
@@ -103,7 +103,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 		attribute.String(constants.CategoryID, category.CategoryID),
 	)
 
-	updateCategory := entity.Category{
+	updateCategory := domain.Category{
 		ID:     categoryIDUint,
 		UserID: userID,
 	}
@@ -169,7 +169,7 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 		attribute.String(constants.CategoryID, category.CategoryID),
 	)
 
-	categoryDomain := entity.Category{
+	categoryDomain := domain.Category{
 		ID:     categoryIDUint,
 		UserID: userID,
 	}
@@ -256,7 +256,7 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 
 	span.SetAttributes(attribute.String(constants.CategoryID, categoryRequest.CategoryID))
 
-	category := entity.Category{
+	category := domain.Category{
 		ID:     categoryIDUint,
 		UserID: userID,
 	}
@@ -306,7 +306,7 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 		attribute.String(constants.CategoryName, categoryRequest.Name),
 	)
 
-	category := entity.Category{
+	category := domain.Category{
 		UserID: userID,
 		Name:   categoryRequest.Name,
 	}

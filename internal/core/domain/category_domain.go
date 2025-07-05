@@ -1,5 +1,5 @@
-// Package entity contains core business entities used throughout the application.
-package entity
+// Package domain contains core business entities used throughout the application.
+package domain
 
 import "time"
 

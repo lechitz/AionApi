@@ -19,10 +19,10 @@ test-cover:
 
 test-html-report:
 	@echo "Running tests and generating JSON output..."
-	go test ./... -json > docs/coverage/report.json
+	go test ./... -json > tests/coverage/report.json
 	@echo "Generating HTML report..."
-	go-test-html-report -f docs/coverage/report.json -o docs/coverage/
-	@echo "✅ HTML report generated at: docs/coverage/report.html"
+	test-html-report -f ../tests/coverage/report.json -o ../tests/coverage/
+	@echo "✅ HTML report generated at: tests/coverage/report.html"
 
 test-ci:
 	@echo "Running CI tests with coverage output..."

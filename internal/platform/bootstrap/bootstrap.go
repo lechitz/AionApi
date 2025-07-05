@@ -7,7 +7,7 @@ import (
 	infraDB "github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
 	adapterSecurity "github.com/lechitz/AionApi/internal/adapters/secondary/security"
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
@@ -55,7 +55,7 @@ func InitializeDependencies(cfg config.Config, logger output.Logger) (*AppDepend
 	tokenService := token.NewTokenService(
 		tokenRepository,
 		logger,
-		entity.TokenConfig{SecretKey: cfg.Secret.Key},
+		domain.TokenConfig{SecretKey: cfg.Secret.Key},
 	)
 
 	userRepository := repository.NewUserRepository(dbConn, logger)

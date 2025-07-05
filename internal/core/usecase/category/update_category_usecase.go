@@ -2,8 +2,8 @@ package category
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/core/domain"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/def"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
@@ -11,17 +11,17 @@ import (
 
 // Updater defines an interface for updating an existing category in the system.
 type Updater interface {
-	UpdateCategory(ctx context.Context, category entity.Category) (entity.Category, error)
+	UpdateCategory(ctx context.Context, category domain.Category) (domain.Category, error)
 }
 
 // UpdateCategory updates an existing category in the system with provided fields and logs the operation outcome. Returns the updated category or an error.
-func (s *Service) UpdateCategory(ctx context.Context, category entity.Category) (entity.Category, error) {
+func (s *Service) UpdateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
 	fieldsToUpdate := extractUpdateFields(category)
 
 	updatedCategory, err := s.Repository.UpdateCategory(ctx, category.ID, category.UserID, fieldsToUpdate)
 	if err != nil {
 		s.Logger.Errorw(constants.FailedToUpdateCategory, def.CtxCategoryID, category.ID, def.Error, err)
-		return entity.Category{}, err
+		return domain.Category{}, err
 	}
 
 	s.Logger.Infow(constants.SuccessfullyUpdatedCategory, def.CtxCategoryID, updatedCategory.ID)
@@ -30,7 +30,7 @@ func (s *Service) UpdateCategory(ctx context.Context, category entity.Category) 
 }
 
 // extractUpdateFields constructs a map of non-empty category fields for updating.
-func extractUpdateFields(category entity.Category) map[string]interface{} {
+func extractUpdateFields(category domain.Category) map[string]interface{} {
 	updateFields := make(map[string]interface{})
 
 	if category.Name != "" {

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
@@ -9,8 +10,6 @@ import (
 	"time"
 
 	"github.com/lechitz/AionApi/internal/def"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -46,7 +45,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDomain := entity.UserDomain{Username: loginReq.Username}
+	userDomain := domain.UserDomain{Username: loginReq.Username}
 
 	userDB, token, err := a.AuthService.Login(ctx, userDomain, loginReq.Password)
 	if err != nil {

@@ -2,9 +2,8 @@ package category_test
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"testing"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 	"github.com/lechitz/AionApi/tests/setup"
@@ -25,12 +24,12 @@ func TestUpdateCategory_ErrorToUpdateCategory(t *testing.T) {
 
 	suite.CategoryRepository.EXPECT().
 		UpdateCategory(suite.Ctx, testdata.PerfectCategory.ID, testdata.PerfectCategory.UserID, updateFields).
-		Return(entity.Category{}, errors.New(constants.FailedToUpdateCategory))
+		Return(domain.Category{}, errors.New(constants.FailedToUpdateCategory))
 
 	categoryDB, err := suite.CategoryService.UpdateCategory(suite.Ctx, testdata.PerfectCategory)
 
 	require.Error(t, err)
-	require.Equal(t, entity.Category{}, categoryDB)
+	require.Equal(t, domain.Category{}, categoryDB)
 	require.Equal(t, constants.FailedToUpdateCategory, err.Error())
 }
 

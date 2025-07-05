@@ -11,9 +11,9 @@ package mocks
 
 import (
 	context "context"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	reflect "reflect"
 
-	entity "github.com/lechitz/AionApi/internal/core/domain/entity"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -42,10 +42,10 @@ func (m *MockCategoryCreator) EXPECT() *MockCategoryCreatorMockRecorder {
 }
 
 // CreateCategory mocks base method.
-func (m *MockCategoryCreator) CreateCategory(ctx context.Context, category entity.Category) (entity.Category, error) {
+func (m *MockCategoryCreator) CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateCategory", ctx, category)
-	ret0, _ := ret[0].(entity.Category)
+	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -81,10 +81,10 @@ func (m *MockCategoryRetriver) EXPECT() *MockCategoryRetriverMockRecorder {
 }
 
 // GetAllCategories mocks base method.
-func (m *MockCategoryRetriver) GetAllCategories(ctx context.Context, userID uint64) ([]entity.Category, error) {
+func (m *MockCategoryRetriver) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllCategories", ctx, userID)
-	ret0, _ := ret[0].([]entity.Category)
+	ret0, _ := ret[0].([]domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -96,10 +96,10 @@ func (mr *MockCategoryRetriverMockRecorder) GetAllCategories(ctx, userID any) *g
 }
 
 // GetCategoryByID mocks base method.
-func (m *MockCategoryRetriver) GetCategoryByID(ctx context.Context, category entity.Category) (entity.Category, error) {
+func (m *MockCategoryRetriver) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCategoryByID", ctx, category)
-	ret0, _ := ret[0].(entity.Category)
+	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -111,10 +111,10 @@ func (mr *MockCategoryRetriverMockRecorder) GetCategoryByID(ctx, category any) *
 }
 
 // GetCategoryByName mocks base method.
-func (m *MockCategoryRetriver) GetCategoryByName(ctx context.Context, category entity.Category) (entity.Category, error) {
+func (m *MockCategoryRetriver) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCategoryByName", ctx, category)
-	ret0, _ := ret[0].(entity.Category)
+	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -150,10 +150,10 @@ func (m *MockCategoryUpdater) EXPECT() *MockCategoryUpdaterMockRecorder {
 }
 
 // UpdateCategory mocks base method.
-func (m *MockCategoryUpdater) UpdateCategory(ctx context.Context, categoryID, userID uint64, fields map[string]any) (entity.Category, error) {
+func (m *MockCategoryUpdater) UpdateCategory(ctx context.Context, categoryID, userID uint64, fields map[string]any) (domain.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateCategory", ctx, categoryID, userID, fields)
-	ret0, _ := ret[0].(entity.Category)
+	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -189,7 +189,7 @@ func (m *MockCategoryDeleter) EXPECT() *MockCategoryDeleterMockRecorder {
 }
 
 // SoftDeleteCategory mocks base method.
-func (m *MockCategoryDeleter) SoftDeleteCategory(ctx context.Context, category entity.Category) error {
+func (m *MockCategoryDeleter) SoftDeleteCategory(ctx context.Context, category domain.Category) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SoftDeleteCategory", ctx, category)
 	ret0, _ := ret[0].(error)
@@ -227,10 +227,10 @@ func (m *MockCategoryStore) EXPECT() *MockCategoryStoreMockRecorder {
 }
 
 // CreateCategory mocks base method.
-func (m *MockCategoryStore) CreateCategory(ctx context.Context, category entity.Category) (entity.Category, error) {
+func (m *MockCategoryStore) CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateCategory", ctx, category)
-	ret0, _ := ret[0].(entity.Category)
+	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -242,10 +242,10 @@ func (mr *MockCategoryStoreMockRecorder) CreateCategory(ctx, category any) *gomo
 }
 
 // GetAllCategories mocks base method.
-func (m *MockCategoryStore) GetAllCategories(ctx context.Context, userID uint64) ([]entity.Category, error) {
+func (m *MockCategoryStore) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllCategories", ctx, userID)
-	ret0, _ := ret[0].([]entity.Category)
+	ret0, _ := ret[0].([]domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -257,10 +257,10 @@ func (mr *MockCategoryStoreMockRecorder) GetAllCategories(ctx, userID any) *gomo
 }
 
 // GetCategoryByID mocks base method.
-func (m *MockCategoryStore) GetCategoryByID(ctx context.Context, category entity.Category) (entity.Category, error) {
+func (m *MockCategoryStore) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCategoryByID", ctx, category)
-	ret0, _ := ret[0].(entity.Category)
+	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -272,10 +272,10 @@ func (mr *MockCategoryStoreMockRecorder) GetCategoryByID(ctx, category any) *gom
 }
 
 // GetCategoryByName mocks base method.
-func (m *MockCategoryStore) GetCategoryByName(ctx context.Context, category entity.Category) (entity.Category, error) {
+func (m *MockCategoryStore) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCategoryByName", ctx, category)
-	ret0, _ := ret[0].(entity.Category)
+	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -287,7 +287,7 @@ func (mr *MockCategoryStoreMockRecorder) GetCategoryByName(ctx, category any) *g
 }
 
 // SoftDeleteCategory mocks base method.
-func (m *MockCategoryStore) SoftDeleteCategory(ctx context.Context, category entity.Category) error {
+func (m *MockCategoryStore) SoftDeleteCategory(ctx context.Context, category domain.Category) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SoftDeleteCategory", ctx, category)
 	ret0, _ := ret[0].(error)
@@ -301,10 +301,10 @@ func (mr *MockCategoryStoreMockRecorder) SoftDeleteCategory(ctx, category any) *
 }
 
 // UpdateCategory mocks base method.
-func (m *MockCategoryStore) UpdateCategory(ctx context.Context, categoryID, userID uint64, fields map[string]any) (entity.Category, error) {
+func (m *MockCategoryStore) UpdateCategory(ctx context.Context, categoryID, userID uint64, fields map[string]any) (domain.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateCategory", ctx, categoryID, userID, fields)
-	ret0, _ := ret[0].(entity.Category)
+	ret0, _ := ret[0].(domain.Category)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

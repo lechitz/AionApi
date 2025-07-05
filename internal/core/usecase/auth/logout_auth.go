@@ -2,8 +2,8 @@ package auth
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/core/domain"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/def"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
@@ -17,7 +17,7 @@ func (s *Service) Logout(ctx context.Context, token string) error {
 		return err
 	}
 
-	tokenDomain := entity.TokenDomain{
+	tokenDomain := domain.TokenDomain{
 		UserID: userID,
 		Token:  token,
 	}

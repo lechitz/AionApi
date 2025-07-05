@@ -3,11 +3,11 @@ package auth
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"net/http"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 	"github.com/lechitz/AionApi/internal/def"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -91,7 +91,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 		userID := uint64(userIDFloat)
 		span.SetAttributes(attribute.String("auth.userID", strconv.FormatUint(userID, 10)))
 
-		tokenDomain := entity.TokenDomain{UserID: userID, Token: tokenCookie}
+		tokenDomain := domain.TokenDomain{UserID: userID, Token: tokenCookie}
 
 		if _, err := a.tokenService.Get(ctx, tokenDomain); err != nil {
 			span.SetStatus(codes.Error, "token not found in cache")

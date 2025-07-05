@@ -2,9 +2,8 @@ package auth_test
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"testing"
-
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 	"go.uber.org/mock/gomock"
@@ -17,8 +16,8 @@ func TestLogin_Success(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := entity.UserDomain{Username: "lechitz"}
-	mockUser := entity.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
+	inputUser := domain.UserDomain{Username: "lechitz"}
+	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, "lechitz").
@@ -29,7 +28,7 @@ func TestLogin_Success(t *testing.T) {
 		Return(nil)
 
 	suite.TokenService.EXPECT().
-		CreateToken(suite.Ctx, gomock.AssignableToTypeOf(entity.TokenDomain{UserID: 1})).
+		CreateToken(suite.Ctx, gomock.AssignableToTypeOf(domain.TokenDomain{UserID: 1})).
 		Return("token-string", nil)
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "test123")
@@ -43,11 +42,11 @@ func TestLogin_UserNotFound(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := entity.UserDomain{Username: "invalid_user"}
+	inputUser := domain.UserDomain{Username: "invalid_user"}
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, "invalid_user").
-		Return(entity.UserDomain{}, errors.New("not found"))
+		Return(domain.UserDomain{}, errors.New("not found"))
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "123456")
 
@@ -60,8 +59,8 @@ func TestLogin_WrongPassword(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := entity.UserDomain{Username: "lechitz"}
-	mockUser := entity.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
+	inputUser := domain.UserDomain{Username: "lechitz"}
+	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, "lechitz").
@@ -83,8 +82,8 @@ func TestLogin_TokenCreationFails(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := entity.UserDomain{Username: "lechitz"}
-	mockUser := entity.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
+	inputUser := domain.UserDomain{Username: "lechitz"}
+	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(suite.Ctx, "lechitz").
