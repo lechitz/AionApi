@@ -5,29 +5,31 @@
 .PHONY: test test-cover test-html-report test-ci test-clean
 
 test:
-	@echo "Running unit tests..."
-	go test ./... -v
+	@echo "Running unit tests with race detector..."
+	go test ./... -v -race
 
+# Run tests with coverage, filter mocks, and generate HTML coverage report
 test-cover:
 	@echo "Running tests with coverage report..."
-	go test ./... -coverprofile=coverage_tmp.out -v
+	go test ./... -race -coverprofile=coverage_tmp.out -v
 	@echo "Filtering out mock files from coverage..."
-	cat coverage_tmp.out | grep -v "Mock" > coverage.out
+	grep -v "Mock" coverage_tmp.out > coverage.out
 	@rm -f coverage_tmp.out
 	@echo "Generating HTML coverage report..."
-	go tool cover -html=coverage.out
+	go tool cover -html=coverage.out -o coverage.html
 
+# Generate JUnit XML test report via gotestsum
 test-html-report:
-	@echo "Running tests and generating JSON output..."
-	go test ./... -json > tests/coverage/report.json
-	@echo "Generating HTML report..."
-	test-html-report -f ../tests/coverage/report.json -o ../tests/coverage/
-	@echo "✅ HTML report generated at: tests/coverage/report.html"
+	@echo "Running tests and generating JUnit XML report..."
+	gotestsum --junitfile tests/coverage/junit-report.xml -- -race ./...
+	@echo "✅ JUnit report generated at tests/coverage/junit-report.xml"
 
+# CI target: tests with coverage but no HTML UI
 test-ci:
 	@echo "Running CI tests with coverage output..."
-	go test ./... -coverprofile=coverage.out -v
+	go test ./... -race -coverprofile=coverage.out -v
 
+# Cleanup coverage artifacts and test reports
 test-clean:
-	@echo "Cleaning up coverage reports..."
-	@rm -f coverage.out coverage_tmp.out
+	@echo "Cleaning up coverage reports and test artifacts..."
+	rm -f coverage.out coverage_tmp.out coverage.html tests/coverage/junit-report.xml
