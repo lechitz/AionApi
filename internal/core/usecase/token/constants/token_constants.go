@@ -13,11 +13,11 @@ const ErrorToAssignToken = "error assigning access reference"
 // ErrorInvalidToken indicates the token is invalid.
 const ErrorInvalidToken = "invalid access reference"
 
-// ErrorInvalidTokenClaims indicates invalid claimskeys in the token reference.
-const ErrorInvalidTokenClaims = "invalid claimskeys in reference"
+// ErrorInvalidTokenClaims indicates invalid claims in the token reference.
+const ErrorInvalidTokenClaims = "invalid claims in reference"
 
-// ErrorInvalidUserIDClaim indicates the user ID in claimskeys is invalid.
-const ErrorInvalidUserIDClaim = "invalid userID in claimskeys"
+// ErrorInvalidUserIDClaim indicates the user ID in claims is invalid.
+const ErrorInvalidUserIDClaim = "invalid userID in claims"
 
 // ErrorToRetrieveTokenFromCache indicates an error retrieving the access reference from cache.
 const ErrorToRetrieveTokenFromCache = "error retrieving access reference from cache"
