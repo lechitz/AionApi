@@ -12,6 +12,7 @@
 *.out
 coverage.html
 report.json
+junit-report.xml
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
