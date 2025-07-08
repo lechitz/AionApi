@@ -198,10 +198,11 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	span.SetStatus(codes.Ok, "User updated")
 
 	res := dto.UpdateUserResponse{
-		ID:       userUpdated.ID,
-		Name:     &userUpdated.Name,
-		Username: &userUpdated.Username,
-		Email:    &userUpdated.Email,
+		ID:        userUpdated.ID,
+		Name:      &userUpdated.Name,
+		Username:  &userUpdated.Username,
+		Email:     &userUpdated.Email,
+		UpdatedAt: userUpdated.UpdatedAt,
 	}
 
 	body := response.ObjectResponse(res, constants.SuccessToUpdateUser, u.Logger)
