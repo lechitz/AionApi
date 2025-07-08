@@ -31,7 +31,7 @@ func (c *Router) Route(pattern string, fn func(r output.Router)) {
 	})
 }
 
-// Get registers a route that matches GET HTTP method for the specified path.
+// Get registers a route that matches the GET HTTP method for the specified path.
 func (c *Router) Get(path string, handler http.HandlerFunc) {
 	c.chi.Get(path, handler)
 }

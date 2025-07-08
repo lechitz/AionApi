@@ -15,6 +15,8 @@ func (s *Service) validateCreateCategoryRequired(category domain.Category) error
 		return errors.New(constants.CategoryNameIsRequired)
 	}
 
+	// TODO: avaliar o uso de variáveis para valores.
+
 	if category.Description != "" && len(category.Description) > 200 {
 		return errors.New(constants.CategoryDescriptionIsTooLong)
 	}
