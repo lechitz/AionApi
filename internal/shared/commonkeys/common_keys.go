@@ -26,7 +26,7 @@ const UserID = "user_id"
 const Category = "category"
 
 // CategoryName is a constant string representing the key used to define or identify a category name configuration parameter.
-const CategoryName = "category_name"
+const CategoryName = "name"
 
 // CategoryID is a constant string representing the key used to define or identify a category ID configuration parameter.
 const CategoryID = "category_id"
@@ -38,13 +38,13 @@ const UsersCount = "users_count"
 const CategoriesCount = "categories_count"
 
 // CategoryColor is a constant string representing the key used to define or identify a category color configuration parameter.
-const CategoryColor = "category_color"
+const CategoryColor = "color_hex"
 
 // CategoryIcon is a constant string representing the key used to define or identify a category icon configuration parameter.
-const CategoryIcon = "category_icon"
+const CategoryIcon = "icon"
 
 // CategoryDescription is a constant string representing the key used to define or identify a category description configuration parameter.
-const CategoryDescription = "category_description"
+const CategoryDescription = "description"
 
 // Users is a constant string representing the key used to define or identify a user's configuration parameter.
 const Users = "users"
