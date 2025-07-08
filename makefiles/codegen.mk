@@ -5,7 +5,11 @@
 .PHONY: graphql mocks
 
 graphql:
-	cd internal/adapters/primary/graph && go run github.com/99designs/gqlgen generate
+	@echo "Generating GraphQL code with gqlgen..."
+	cd internal/adapters/primary/graph && \
+	go run github.com/99designs/gqlgen generate
+	@go mod tidy
+	@echo "✅  GraphQL code generated successfully."
 
 mocks:
 	@echo "Generating mocks for output ports and usecases..."
@@ -15,6 +19,11 @@ mocks:
 	  -destination=tests/mocks/mock_token_store.go \
 	  -package=mocks \
 	  -mock_names=Store=MockTokenStore
+	@echo "→ TokenUsecase"
+	mockgen -source=internal/core/ports/input/token_input.go \
+      -destination=tests/mocks/mock_token_usecase.go \
+      -package=mocks \
+      -mock_names=TokenService=MockTokenUsecase
 	@echo "→ UserStore"
 	mockgen -source=internal/core/ports/output/user_output.go \
 	  -destination=tests/mocks/mock_user_store.go \
