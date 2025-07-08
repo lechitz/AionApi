@@ -13,9 +13,6 @@ type UserCreator interface {
 }
 
 // UserRetriever defines methods to retrieve user information from a data source.
-// GetAllUsers fetches all users.
-// GetUserByID retrieves a user by their unique identifier.
-// GetUserByUsername retrieves a user by their unique username.
 type UserRetriever interface {
 	GetAllUsers(ctx context.Context) ([]domain.UserDomain, error)
 	GetUserByID(ctx context.Context, id uint64) (domain.UserDomain, error)
@@ -23,8 +20,6 @@ type UserRetriever interface {
 }
 
 // UserUpdater defines methods for updating user information and user passwords in the system.
-// UpdateUser updates user details in the data source and returns the updated user or an error.
-// UpdateUserPassword updates the user's password and returns the updated user, a result message, or an error.
 type UserUpdater interface {
 	UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error)
 	UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error)

@@ -8,16 +8,11 @@ import (
 )
 
 // CategoryCreator defines a contract for creating a new category within the system.
-// It encapsulates logic to persist category data and ensure consistency.
-// CreateCategory creates a category with given metadata and returns it or an error.
 type CategoryCreator interface {
 	CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error)
 }
 
 // CategoryRetriver defines methods for retrieving category data based on criteria or user associations.
-// GetCategoryByID retrieves a specific category by its ID.
-// GetCategoryByName retrieves a specific category by its name.
-// GetAllCategories retrieves all categories associated with a specific user ID.
 type CategoryRetriver interface {
 	GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error)
 	GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error)
@@ -25,7 +20,6 @@ type CategoryRetriver interface {
 }
 
 // CategoryUpdater defines a contract for updating an existing category within the system.
-// UpdateCategory updates category metadata and returns the updated domain or an error.
 type CategoryUpdater interface {
 	UpdateCategory(ctx context.Context, category domain.Category) (domain.Category, error)
 }

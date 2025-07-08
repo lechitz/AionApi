@@ -13,9 +13,6 @@ type CategoryCreator interface {
 }
 
 // CategoryRetriver defines methods for retrieving category details or multiple categories for a specific user.
-// GetCategoryByID fetches a single category by its unique identifier asynchronously.
-// GetCategoryByName retrieves a category based on its name from the system.
-// GetAllCategories returns a list of all categories associated with a specific user ID.
 type CategoryRetriver interface {
 	GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error)
 	GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error)
@@ -24,12 +21,7 @@ type CategoryRetriver interface {
 
 // CategoryUpdater defines an interface for updating a category's attributes in a given context based on the provided category ID and user ID.
 type CategoryUpdater interface {
-	UpdateCategory(
-		ctx context.Context,
-		categoryID uint64,
-		userID uint64,
-		fields map[string]interface{},
-	) (domain.Category, error)
+	UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, fields map[string]interface{}) (domain.Category, error)
 }
 
 // CategoryDeleter defines an interface for handling the soft deletion of categories within a contextual operation.
