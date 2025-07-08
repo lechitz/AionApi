@@ -13,8 +13,8 @@ import (
 type AuthServiceTestSuite struct {
 	Ctrl           *gomock.Controller
 	Logger         *mocks.MockLogger
-	UserRepository *mocks.MockUserStore
-	PasswordHasher *mocks.MockSecurityStore
+	UserRetriever  *mocks.MockUserRetriever
+	PasswordHasher *mocks.MockHasherStore
 	TokenService   *mocks.MockTokenUsecase
 	AuthService    *auth.Service
 	Ctx            context.Context
@@ -24,27 +24,26 @@ type AuthServiceTestSuite struct {
 func AuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	mockUserRepo := mocks.NewMockUserStore(ctrl)
-	mockSecurityStore := mocks.NewMockSecurityStore(ctrl)
-	mockTokenUseCase := mocks.NewMockTokenUsecase(ctrl)
+	mockUserRetriever := mocks.NewMockUserRetriever(ctrl)
+	mockSecurityStore := mocks.NewMockHasherStore(ctrl)
+	mockTokenUsecase := mocks.NewMockTokenUsecase(ctrl)
 	mockLog := mocks.NewMockLogger(ctrl)
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
 	authService := auth.NewAuthService(
-		mockUserRepo,
-		mockTokenUseCase,
+		mockUserRetriever,
+		mockTokenUsecase,
 		mockSecurityStore,
 		mockLog,
-		"supersecretkey",
 	)
 
 	return &AuthServiceTestSuite{
 		Ctrl:           ctrl,
 		Logger:         mockLog,
-		UserRepository: mockUserRepo,
+		UserRetriever:  mockUserRetriever,
 		PasswordHasher: mockSecurityStore,
-		TokenService:   mockTokenUseCase,
+		TokenService:   mockTokenUsecase,
 		AuthService:    authService,
 		Ctx:            t.Context(),
 	}

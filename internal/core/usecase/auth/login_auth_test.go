@@ -20,7 +20,7 @@ func TestLogin_Success(t *testing.T) {
 	inputUser := domain.UserDomain{Username: "lechitz"}
 	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
 
-	suite.UserRepository.EXPECT().
+	suite.UserRetriever.EXPECT().
 		GetUserByUsername(suite.Ctx, "lechitz").
 		Return(mockUser, nil)
 
@@ -45,7 +45,7 @@ func TestLogin_UserNotFound(t *testing.T) {
 
 	inputUser := domain.UserDomain{Username: "invalid_user"}
 
-	suite.UserRepository.EXPECT().
+	suite.UserRetriever.EXPECT().
 		GetUserByUsername(suite.Ctx, "invalid_user").
 		Return(domain.UserDomain{}, errors.New("not found"))
 
@@ -63,7 +63,7 @@ func TestLogin_WrongPassword(t *testing.T) {
 	inputUser := domain.UserDomain{Username: "lechitz"}
 	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
 
-	suite.UserRepository.EXPECT().
+	suite.UserRetriever.EXPECT().
 		GetUserByUsername(suite.Ctx, "lechitz").
 		Return(mockUser, nil)
 
@@ -86,7 +86,7 @@ func TestLogin_TokenCreationFails(t *testing.T) {
 	inputUser := domain.UserDomain{Username: "lechitz"}
 	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
 
-	suite.UserRepository.EXPECT().
+	suite.UserRetriever.EXPECT().
 		GetUserByUsername(suite.Ctx, "lechitz").
 		Return(mockUser, nil)
 

@@ -2,10 +2,10 @@ package token
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-
-	"github.com/lechitz/AionApi/internal/def"
+	"github.com/lechitz/AionApi/internal/shared/common"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
 
@@ -16,24 +16,25 @@ import (
 func (s *Service) CreateToken(ctx context.Context, tokenDomain domain.TokenDomain) (string, error) {
 	if _, err := s.tokenRepository.Get(ctx, tokenDomain); err == nil {
 		if err := s.tokenRepository.Delete(ctx, tokenDomain); err != nil {
-			s.logger.Errorw(constants.ErrorToDeleteToken, def.Error, err.Error())
+			s.logger.Errorw(constants.ErrorToDeleteToken, common.Error, err.Error())
 			return "", err
 		}
 	}
 
-	signedToken, err := security.GenerateToken(tokenDomain.UserID, s.SecretKey)
+	signedToken, err := security.GenerateToken(tokenDomain.UserID, s.secretKey)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToAssignToken, def.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToAssignToken, common.Error, err.Error())
 		return "", err
 	}
 
 	tokenDomain.Token = signedToken
 
-	if err := s.tokenRepository.Save(ctx, tokenDomain); err != nil {
-		s.logger.Errorw(constants.ErrorToSaveToken, def.Error, err.Error())
+	err = s.tokenRepository.Save(ctx, tokenDomain)
+	if err != nil {
+		s.logger.Errorw(constants.ErrorToSaveToken, common.Error, err.Error())
 		return "", err
 	}
 
-	s.logger.Infow(constants.SuccessTokenCreated, def.CtxUserID, tokenDomain.UserID)
+	s.logger.Infow(constants.SuccessTokenCreated, common.UserID, strconv.FormatUint(tokenDomain.UserID, 10))
 	return signedToken, nil
 }

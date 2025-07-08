@@ -4,30 +4,29 @@ package auth
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-
-	"github.com/lechitz/AionApi/internal/def"
+	"github.com/lechitz/AionApi/internal/shared/common"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 )
 
 // Login authenticates a user by validating credentials and generates a new token if valid.
-// Returns the user data, token, and error if any occurs.
 func (s *Service) Login(ctx context.Context, user domain.UserDomain, passwordReq string) (domain.UserDomain, string, error) {
 	userDB, err := s.userRetriever.GetUserByUsername(ctx, user.Username)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToGetUserByUserName, def.Error, err.Error())
-		return domain.UserDomain{}, "", err
+		s.logger.Errorw(constants.ErrorToGetUserByUserName, common.Error, err.Error())
+		return domain.UserDomain{}, "", errors.New(constants.ErrorToGetUserByUserName)
 	}
 
 	if userDB.ID == 0 {
-		s.logger.Warnw(constants.UserNotFoundOrInvalidCredentials, def.CtxUsername, user.Username)
+		s.logger.Warnw(constants.UserNotFoundOrInvalidCredentials, common.Username, user.Username)
 		return domain.UserDomain{}, "", errors.New(constants.UserNotFoundOrInvalidCredentials)
 	}
 
 	if err := s.securityHasher.ValidatePassword(userDB.Password, passwordReq); err != nil {
-		s.logger.Warnw(constants.ErrorToCompareHashAndPassword, def.CtxUsername, user.Username)
+		s.logger.Warnw(constants.ErrorToCompareHashAndPassword, common.Username, user.Username)
 		return domain.UserDomain{}, "", errors.New(constants.InvalidCredentials)
 	}
 
@@ -35,11 +34,11 @@ func (s *Service) Login(ctx context.Context, user domain.UserDomain, passwordReq
 
 	newToken, err := s.tokenService.CreateToken(ctx, tokenDomain)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToCreateToken, def.Error, err.Error())
-		return domain.UserDomain{}, "", err
+		s.logger.Errorw(constants.ErrorToCreateToken, common.Error, err.Error())
+		return domain.UserDomain{}, "", errors.New(constants.ErrorToCreateToken)
 	}
 
-	s.logger.Infow(constants.SuccessToLogin, def.CtxUserID, userDB.ID, def.CtxToken, newToken)
+	s.logger.Infow(constants.SuccessToLogin, common.UserID, strconv.FormatUint(userDB.ID, 10), common.Token, newToken)
 
 	return userDB, newToken, nil
 }

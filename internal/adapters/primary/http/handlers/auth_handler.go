@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"time"
+
+	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/ctxkeys"
+	"github.com/lechitz/AionApi/internal/shared/httputils"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
-
-	"github.com/lechitz/AionApi/internal/def"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -19,6 +20,10 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 )
+
+// TODO: Separar os Handlers e o construtor.. achar um nome bom pro arquivo de NewUser !
+
+// TODO: Melhorar as msgs de Span, Ajustar os erros e logs para ficarem completos !
 
 // Auth provides authentication handlers for login and logout functionalities.
 // Combines AuthService for logic and Logger for logging operations.
@@ -54,10 +59,10 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	setAuthCookie(w, token, 0)
+	httputils.SetAuthCookie(w, token, 0)
 
 	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
-	span.SetAttributes(attribute.String("username", userDB.Username))
+	span.SetAttributes(attribute.String(common.Username, userDB.Username))
 
 	body := response.ObjectResponse(loginUserResponse, constants.SuccessLogin, a.Logger)
 	response.Return(w, http.StatusOK, body.Bytes(), a.Logger)
@@ -68,13 +73,13 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer("AionApi/AuthHandler").Start(r.Context(), "LogoutHandler")
 	defer span.End()
 
-	userID, ok := ctx.Value(def.CtxUserID).(uint64)
+	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveUserID, nil)
 		return
 	}
 
-	tokenVal := ctx.Value(def.CtxToken)
+	tokenVal := ctx.Value(ctxkeys.Token)
 	tokenString, ok := tokenVal.(string)
 	if !ok || tokenString == "" {
 		a.logAndRespondError(w, http.StatusUnauthorized, constants.ErrorToRetrieveToken, nil)
@@ -86,7 +91,7 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	clearAuthCookie(w)
+	httputils.ClearAuthCookie(w)
 
 	tokenPreview := ""
 	if len(tokenString) >= 10 {
@@ -94,50 +99,24 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	span.SetAttributes(
-		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String("token_preview", tokenPreview),
+		attribute.String(common.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(common.TokenPreview, tokenPreview),
 	)
 
-	a.Logger.Infow(constants.SuccessLogout, def.CtxUserID, userID, def.CtxToken, tokenPreview)
+	a.Logger.Infow(constants.SuccessLogout, common.UserID, strconv.FormatUint(userID, 10), common.Token, tokenPreview)
 
 	body := response.ObjectResponse(nil, constants.SuccessLogout, a.Logger)
 	response.Return(w, http.StatusOK, body.Bytes(), a.Logger)
 }
 
+// TODO: deveria melhorar algo nessa parte ?
+
 // logAndRespondError logs an error message and sends an appropriate HTTP response with the specified status, message, and error details.
 func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
-		a.Logger.Errorw(message, def.Error, err.Error())
+		a.Logger.Errorw(message, common.Error, err.Error())
 	} else {
 		a.Logger.Errorw(message)
 	}
 	response.HandleError(w, a.Logger, status, message, err)
-}
-
-// setAuthCookie sets a secure HTTP-only authentication cookie with the given token and expiration configuration.
-func setAuthCookie(w http.ResponseWriter, token string, maxAge int) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     constants.AuthToken,
-		Value:    token,
-		Path:     constants.Path,
-		Domain:   constants.Domain,
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
-		MaxAge:   maxAge,
-	})
-}
-
-// clearAuthCookie invalidates the authentication cookie by setting its value to empty and expiration to a past timestamp.
-func clearAuthCookie(w http.ResponseWriter) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     constants.AuthToken,
-		Value:    "",
-		Path:     constants.Path,
-		MaxAge:   -1,
-		Expires:  time.Unix(0, 0),
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
-	})
 }
