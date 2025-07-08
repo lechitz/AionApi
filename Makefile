@@ -8,7 +8,6 @@ ENV_FILE_DEV     := infrastructure/docker/dev/.env.dev
 COMPOSE_FILE_PROD := infrastructure/docker/prod/docker-compose-prod.yaml
 ENV_FILE_PROD    := infrastructure/docker/prod/.env.prod
 COVERAGE_DIR = tests/coverage
-ROOT_DIR := $(shell git rev-parse --show-toplevel 2>/dev/null || pwd)
 
 
 # --- MIGRATION CONFIG ---
