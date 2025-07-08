@@ -67,10 +67,10 @@ jobs:
         run: |
           gotestsum --junitfile tests/coverage/junit-report.xml -- -race ./...
 
-      # Step 9: Upload JUnit report as an artifact
+      # Step 9: Upload a JUnit report as an artifact
       - name: Upload JUnit report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: junit-report
           path: tests/coverage/junit-report.xml
