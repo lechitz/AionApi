@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/platform/observability"
 
@@ -128,7 +128,7 @@ func buildServer(appCtx context.Context, serverConfig ServerConfig, logger outpu
 		ReadTimeout:  serverConfig.Timeouts.Read,
 		WriteTimeout: serverConfig.Timeouts.Write,
 	}
-	logger.Infow(fmt.Sprintf("%s server started", serverConfig.Name), common.Port, serverConfig.Addr)
+	logger.Infow(fmt.Sprintf("%s server started", serverConfig.Name), commonkeys.Port, serverConfig.Addr)
 	return srv
 }
 
@@ -181,7 +181,7 @@ func handleServers(appCtx context.Context, servers []*http.Server, cfg *config.C
 
 	select {
 	case err := <-errChan:
-		logger.Errorw(constants.MsgUnexpectedServerFailure, common.Error, err.Error())
+		logger.Errorw(constants.MsgUnexpectedServerFailure, commonkeys.Error, err.Error())
 		response.HandleCriticalError(logger, constants.MsgUnexpectedServerFailure, err) // TODO: AJUSTAR ERRO.
 		stop()
 	case <-appCtx.Done():

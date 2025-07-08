@@ -9,7 +9,7 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/claimskeys"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
@@ -21,19 +21,19 @@ func (s *Service) GetToken(ctx context.Context, token string) (uint64, string, e
 		return []byte(s.secretKey), nil
 	})
 	if err != nil || parsedToken == nil || !parsedToken.Valid {
-		s.logger.Errorw(constants.ErrorInvalidToken, common.Token, token[0:10]+"...", common.Error, err)
+		s.logger.Errorw(constants.ErrorInvalidToken, commonkeys.Token, token[0:10]+"...", commonkeys.Error, err)
 		return 0, "", errors.New(constants.ErrorInvalidToken)
 	}
 
 	claims, ok := parsedToken.Claims.(jwt.MapClaims)
 	if !ok {
-		s.logger.Errorw(constants.ErrorInvalidTokenClaims, common.Token, token)
+		s.logger.Errorw(constants.ErrorInvalidTokenClaims, commonkeys.Token, token)
 		return 0, "", errors.New(constants.ErrorInvalidTokenClaims)
 	}
 
 	userIDFloat, ok := claims[claimskeys.UserID].(float64)
 	if !ok {
-		s.logger.Errorw(constants.ErrorInvalidUserIDClaim, common.Token, token)
+		s.logger.Errorw(constants.ErrorInvalidUserIDClaim, commonkeys.Token, token)
 		return 0, "", errors.New(constants.ErrorInvalidUserIDClaim)
 	}
 	userID := uint64(userIDFloat)
@@ -45,14 +45,14 @@ func (s *Service) GetToken(ctx context.Context, token string) (uint64, string, e
 
 	cachedToken, err := s.tokenRepository.Get(ctx, tokenDomain)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToRetrieveTokenFromCache, common.Error, err.Error(), common.UserID, strconv.FormatUint(userID, 10))
+		s.logger.Errorw(constants.ErrorToRetrieveTokenFromCache, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(userID, 10))
 		return 0, "", errors.New(constants.ErrorToRetrieveTokenFromCache)
 	}
 
 	if cachedToken != token {
 		s.logger.Errorw(
 			constants.ErrorTokenMismatch,
-			common.UserID,
+			commonkeys.UserID,
 			strconv.FormatUint(userID, 10),
 			constants.TokenFromCookie, // TODO: Ajustar pkg.
 			token,
@@ -62,6 +62,6 @@ func (s *Service) GetToken(ctx context.Context, token string) (uint64, string, e
 		return 0, "", errors.New(constants.ErrorTokenMismatch)
 	}
 
-	s.logger.Infow(constants.SuccessTokenValidated, common.UserID, strconv.FormatUint(userID, 10))
+	s.logger.Infow(constants.SuccessTokenValidated, commonkeys.UserID, strconv.FormatUint(userID, 10))
 	return userID, cachedToken, nil
 }

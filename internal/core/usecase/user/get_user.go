@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
@@ -14,11 +14,11 @@ import (
 func (s *Service) GetUserByID(ctx context.Context, userID uint64) (domain.UserDomain, error) {
 	user, err := s.userStore.GetUserByID(ctx, userID)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToGetUserByID, common.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToGetUserByID, commonkeys.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 
-	s.logger.Infow(constants.SuccessUserRetrieved, common.UserID, strconv.FormatUint(user.ID, 10))
+	s.logger.Infow(constants.SuccessUserRetrieved, commonkeys.UserID, strconv.FormatUint(user.ID, 10))
 
 	return user, nil
 }
@@ -27,11 +27,11 @@ func (s *Service) GetUserByID(ctx context.Context, userID uint64) (domain.UserDo
 func (s *Service) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
 	user, err := s.userStore.GetUserByEmail(ctx, email)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToGetUserByEmail, common.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToGetUserByEmail, commonkeys.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 
-	s.logger.Infow(constants.SuccessUserRetrieved, common.UserID, strconv.FormatUint(user.ID, 10))
+	s.logger.Infow(constants.SuccessUserRetrieved, commonkeys.UserID, strconv.FormatUint(user.ID, 10))
 
 	return user, nil
 }
@@ -40,11 +40,11 @@ func (s *Service) GetUserByEmail(ctx context.Context, email string) (domain.User
 func (s *Service) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
 	userDB, err := s.userStore.GetUserByUsername(ctx, username)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToGetUserByUserName, common.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToGetUserByUserName, commonkeys.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 
-	s.logger.Infow(constants.SuccessUserRetrieved, common.Username, userDB.Name)
+	s.logger.Infow(constants.SuccessUserRetrieved, commonkeys.Username, userDB.Name)
 
 	return userDB, nil
 }
@@ -53,11 +53,11 @@ func (s *Service) GetUserByUsername(ctx context.Context, username string) (domai
 func (s *Service) GetAllUsers(ctx context.Context) ([]domain.UserDomain, error) {
 	users, err := s.userStore.GetAllUsers(ctx)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToGetAllUsers, common.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToGetAllUsers, commonkeys.Error, err.Error())
 		return nil, err
 	}
 
-	s.logger.Infow(constants.SuccessUsersRetrieved, common.Users, strconv.Itoa(len(users)))
+	s.logger.Infow(constants.SuccessUsersRetrieved, commonkeys.Users, strconv.Itoa(len(users)))
 
 	return users, nil
 }

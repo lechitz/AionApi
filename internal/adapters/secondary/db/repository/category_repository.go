@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
@@ -44,8 +44,8 @@ func NewCategoryRepository(db *gorm.DB, logger output.Logger) *CategoryRepositor
 func (c CategoryRepository) CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "CreateCategory", trace.WithAttributes(
-		attribute.String(common.UserID, strconv.FormatUint(category.UserID, 10)),
-		attribute.String(common.CategoryName, category.Name),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(commonkeys.CategoryName, category.Name),
 		attribute.String("operation", "create"),
 	))
 	defer span.End()
@@ -56,7 +56,7 @@ func (c CategoryRepository) CreateCategory(ctx context.Context, category domain.
 		wrappedErr := fmt.Errorf("error creating category: %w", err)
 		span.SetStatus(codes.Error, wrappedErr.Error())
 		span.RecordError(wrappedErr)
-		c.logger.Errorw("error creating category", common.Category, category, common.Error, wrappedErr.Error())
+		c.logger.Errorw("error creating category", commonkeys.Category, category, commonkeys.Error, wrappedErr.Error())
 		return domain.Category{}, wrappedErr
 	}
 
@@ -68,8 +68,8 @@ func (c CategoryRepository) CreateCategory(ctx context.Context, category domain.
 func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "GetCategoryByID", trace.WithAttributes(
-		attribute.String(common.UserID, strconv.FormatUint(category.UserID, 10)),
-		attribute.String(common.CategoryID, strconv.FormatUint(category.ID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(commonkeys.CategoryID, strconv.FormatUint(category.ID, 10)),
 		attribute.String("operation", "get_by_id"),
 	))
 	defer span.End()
@@ -98,8 +98,8 @@ func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain
 func (c CategoryRepository) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "GetCategoryByName", trace.WithAttributes(
-		attribute.String(common.UserID, strconv.FormatUint(category.UserID, 10)),
-		attribute.String(common.CategoryName, category.Name),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(commonkeys.CategoryName, category.Name),
 		attribute.String("operation", "get_by_name"),
 	))
 	defer span.End()
@@ -127,7 +127,7 @@ func (c CategoryRepository) GetCategoryByName(ctx context.Context, category doma
 func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "GetAllCategories", trace.WithAttributes(
-		attribute.String(common.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String("operation", "get_all"),
 	))
 	defer span.End()
@@ -158,8 +158,8 @@ func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64)
 func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, updateFields map[string]interface{}) (domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "UpdateCategory", trace.WithAttributes(
-		attribute.String(common.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String(common.CategoryID, strconv.FormatUint(categoryID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryID, 10)),
 		attribute.String("operation", "update"),
 	))
 	defer span.End()
@@ -195,8 +195,8 @@ func (c CategoryRepository) SoftDeleteCategory(
 ) error {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "SoftDeleteCategory", trace.WithAttributes(
-		attribute.String(common.UserID, strconv.FormatUint(category.UserID, 10)),
-		attribute.String(common.CategoryID, strconv.FormatUint(category.ID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(commonkeys.CategoryID, strconv.FormatUint(category.ID, 10)),
 		attribute.String("operation", "soft_delete"),
 	))
 	defer span.End()

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/cache/token/constants"
 	"github.com/lechitz/AionApi/internal/core/domain"
@@ -39,7 +39,7 @@ func NewTokenRepository(cache output.Cache, logger output.Logger) *Repository {
 func (t *Repository) Save(ctx context.Context, token domain.TokenDomain) error {
 	tr := otel.Tracer("Repository")
 	ctx, span := tr.Start(ctx, "Save Token", trace.WithAttributes(
-		attribute.String(common.UserID, strconv.FormatUint(token.UserID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "save"),
 	))
 	defer span.End()
@@ -53,7 +53,7 @@ func (t *Repository) Save(ctx context.Context, token domain.TokenDomain) error {
 
 		// TODO: ajustar o uso de TokenUser no logger.
 
-		t.logger.Errorw(constants.ErrorToSaveTokenToRedis, common.TokenUser, key, common.Error, err)
+		t.logger.Errorw(constants.ErrorToSaveTokenToRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
 		return err
 	}
 
@@ -65,7 +65,7 @@ func (t *Repository) Save(ctx context.Context, token domain.TokenDomain) error {
 func (t *Repository) Get(ctx context.Context, token domain.TokenDomain) (string, error) {
 	tr := otel.Tracer("Repository")
 	ctx, span := tr.Start(ctx, "Get Token", trace.WithAttributes(
-		attribute.String(common.UserID, strconv.FormatUint(token.UserID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "get"),
 	))
 	defer span.End()
@@ -84,7 +84,7 @@ func (t *Repository) Get(ctx context.Context, token domain.TokenDomain) (string,
 
 		// TODO: ajustar o uso de TokenUser no logger.
 
-		t.logger.Errorw(constants.ErrorToGetTokenFromRedis, common.TokenUser, key, constants.Error, err)
+		t.logger.Errorw(constants.ErrorToGetTokenFromRedis, commonkeys.TokenUser, key, constants.Error, err)
 		return "", err
 	}
 
@@ -96,7 +96,7 @@ func (t *Repository) Get(ctx context.Context, token domain.TokenDomain) (string,
 func (t *Repository) Delete(ctx context.Context, token domain.TokenDomain) error {
 	tr := otel.Tracer("Repository")
 	ctx, span := tr.Start(ctx, "Delete Token", trace.WithAttributes(
-		attribute.String(common.UserID, strconv.FormatUint(token.UserID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(token.UserID, 10)),
 		attribute.String("operation", "delete"),
 	))
 	defer span.End()
@@ -109,7 +109,7 @@ func (t *Repository) Delete(ctx context.Context, token domain.TokenDomain) error
 
 		// TODO: ajustar o uso de TokenUser no logger.
 
-		t.logger.Errorw(constants.ErrorToDeleteTokenFromRedis, common.TokenUser, key, constants.Error, err)
+		t.logger.Errorw(constants.ErrorToDeleteTokenFromRedis, commonkeys.TokenUser, key, constants.Error, err)
 		return err
 	}
 

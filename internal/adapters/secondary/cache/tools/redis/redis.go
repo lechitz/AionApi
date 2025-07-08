@@ -6,7 +6,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/config"
@@ -55,7 +55,7 @@ func NewCacheConnection(appCtx context.Context, cfg config.CacheConfig, log outp
 	defer cancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {
-		log.Errorw("failed to connect to Redis", common.Error, err)
+		log.Errorw("failed to connect to Redis", commonkeys.Error, err)
 		return nil, err
 	}
 

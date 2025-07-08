@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/config"
@@ -35,7 +35,7 @@ func InitOtelMetrics(cfg *config.Config, logger output.Logger) func() {
 		if err == nil {
 			opts = append(opts, otlpmetrichttp.WithTimeout(timeout))
 		} else {
-			logger.Warnw("Invalid OTEL exporter timeout, using default", common.Error, err) // TODO: AJUSTAR ERRO.
+			logger.Warnw("Invalid OTEL exporter timeout, using default", commonkeys.Error, err) // TODO: AJUSTAR ERRO.
 		}
 	}
 
@@ -50,7 +50,7 @@ func InitOtelMetrics(cfg *config.Config, logger output.Logger) func() {
 
 	exporter, err := otlpmetrichttp.New(context.Background(), opts...)
 	if err != nil {
-		logger.Errorw(ErrFailedToInitializeOTLPMetricsExporter, common.Error, err)
+		logger.Errorw(ErrFailedToInitializeOTLPMetricsExporter, commonkeys.Error, err)
 		panic(err)
 	}
 
@@ -67,7 +67,7 @@ func InitOtelMetrics(cfg *config.Config, logger output.Logger) func() {
 
 	return func() {
 		if err := provider.Shutdown(context.Background()); err != nil {
-			logger.Errorw("failed to shutdown OTEL metrics provider", common.Error, err) // TODO: AJUSTAR ERRO
+			logger.Errorw("failed to shutdown OTEL metrics provider", commonkeys.Error, err) // TODO: AJUSTAR ERRO
 		}
 	}
 }

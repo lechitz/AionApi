@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/httputils"
 
@@ -62,7 +62,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	httputils.SetAuthCookie(w, token, 0)
 
 	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
-	span.SetAttributes(attribute.String(common.Username, userDB.Username))
+	span.SetAttributes(attribute.String(commonkeys.Username, userDB.Username))
 
 	body := response.ObjectResponse(loginUserResponse, constants.SuccessLogin, a.Logger)
 	response.Return(w, http.StatusOK, body.Bytes(), a.Logger)
@@ -99,11 +99,11 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	span.SetAttributes(
-		attribute.String(common.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String(common.TokenPreview, tokenPreview),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(commonkeys.TokenPreview, tokenPreview),
 	)
 
-	a.Logger.Infow(constants.SuccessLogout, common.UserID, strconv.FormatUint(userID, 10), common.Token, tokenPreview)
+	a.Logger.Infow(constants.SuccessLogout, commonkeys.UserID, strconv.FormatUint(userID, 10), commonkeys.Token, tokenPreview)
 
 	body := response.ObjectResponse(nil, constants.SuccessLogout, a.Logger)
 	response.Return(w, http.StatusOK, body.Bytes(), a.Logger)
@@ -114,7 +114,7 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 // logAndRespondError logs an error message and sends an appropriate HTTP response with the specified status, message, and error details.
 func (a *Auth) logAndRespondError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
-		a.Logger.Errorw(message, common.Error, err.Error())
+		a.Logger.Errorw(message, commonkeys.Error, err.Error())
 	} else {
 		a.Logger.Errorw(message)
 	}

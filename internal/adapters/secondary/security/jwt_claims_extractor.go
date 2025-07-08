@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/shared/ctxkeys"
 
@@ -58,7 +58,7 @@ func (j *JWTClaimsExtractor) ExtractFromContext(ctx context.Context) (map[string
 // ExtractTokenFromCookie extracts the token from the request cookie.
 // Returns the token string or an error if the token is not found or another issue occurs.
 func ExtractTokenFromCookie(r *http.Request) (string, error) {
-	cookie, err := r.Cookie(common.AuthToken)
+	cookie, err := r.Cookie(commonkeys.AuthToken)
 	if err != nil {
 		return "", err
 	}

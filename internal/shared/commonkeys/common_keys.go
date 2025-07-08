@@ -1,5 +1,5 @@
-// Package common contains common constants used throughout the application.
-package common
+// Package commonkeys contains constants used throughout the application.
+package commonkeys
 
 // Error is a constant string representing a generic error identifier or key for logging and error handling purposes.
 const Error = "error"

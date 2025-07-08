@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 )
@@ -19,7 +19,7 @@ func Return(w http.ResponseWriter, statusCode int, body []byte, logger output.Lo
 
 	if len(body) != 0 {
 		if _, err := w.Write(body); err != nil {
-			logger.Errorw("failed to write response body", common.Error, err)
+			logger.Errorw("failed to write response body", commonkeys.Error, err)
 		}
 	}
 }
@@ -38,7 +38,7 @@ func ObjectResponse(obj any, message string, logger output.Logger) *bytes.Buffer
 
 	body := new(bytes.Buffer)
 	if err := json.NewEncoder(body).Encode(response); err != nil {
-		logger.Errorw("failed to encode response object to JSON", common.Error, err)
+		logger.Errorw("failed to encode response object to JSON", commonkeys.Error, err)
 	}
 
 	return body
@@ -49,7 +49,7 @@ func ObjectResponse(obj any, message string, logger output.Logger) *bytes.Buffer
 // HandleError logs the error or warning, creates a JSON response, and sends it with the specified status code to the HTTP client.
 func HandleError(w http.ResponseWriter, logger output.Logger, status int, msg string, err error) {
 	if err != nil {
-		logger.Errorw("operation failed", "message", msg, common.Error, err.Error(), "status", status)
+		logger.Errorw("operation failed", "message", msg, commonkeys.Error, err.Error(), "status", status)
 		response := ObjectResponse(nil, msg+": "+err.Error(), logger)
 		Return(w, status, response.Bytes(), logger)
 	} else {
@@ -62,7 +62,7 @@ func HandleError(w http.ResponseWriter, logger output.Logger, status int, msg st
 // HandleCriticalError logs a critical error and message, and then panics with the error or message provided.
 func HandleCriticalError(logger output.Logger, message string, err error) {
 	if err != nil {
-		logger.Errorw("critical failure", "message", message, common.Error, err.Error())
+		logger.Errorw("critical failure", "message", message, commonkeys.Error, err.Error())
 		panic(err)
 	}
 

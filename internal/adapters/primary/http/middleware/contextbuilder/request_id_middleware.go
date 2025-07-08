@@ -5,7 +5,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/google/uuid"
 )
@@ -19,7 +19,7 @@ func InjectRequestIDMiddleware(next http.Handler) http.Handler {
 		reqID := uuid.New().String()
 		ctx := context.WithValue(r.Context(), ctxKeyRequestID{}, reqID)
 		r = r.WithContext(ctx)
-		w.Header().Set(common.XRequestID, reqID)
+		w.Header().Set(commonkeys.XRequestID, reqID)
 		next.ServeHTTP(w, r)
 	})
 }

@@ -8,7 +8,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/shared/contextutils"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/ctxkeys"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
@@ -49,7 +49,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 		if err != nil {
 			span.SetStatus(codes.Error, "missing or invalid token")
 			span.SetAttributes(attribute.String("auth.error", err.Error()))
-			a.logger.Warnw(constants.ErrorUnauthorizedAccessMissingToken, common.Error, err.Error())
+			a.logger.Warnw(constants.ErrorUnauthorizedAccessMissingToken, commonkeys.Error, err.Error())
 			http.Error(w, constants.ErrorUnauthorizedAccessMissingToken, http.StatusUnauthorized)
 			return
 		}
@@ -72,7 +72,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			if err != nil {
 				span.SetStatus(codes.Error, "token missing in context and cookie")
 				span.SetAttributes(attribute.String("auth.error", err.Error()))
-				a.logger.Warnw(constants.ErrorUnauthorizedAccessMissingToken, common.Error, err.Error())
+				a.logger.Warnw(constants.ErrorUnauthorizedAccessMissingToken, commonkeys.Error, err.Error())
 				http.Error(w, constants.ErrorUnauthorizedAccessMissingToken, http.StatusUnauthorized)
 				return
 			}
@@ -83,7 +83,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 		if _, err := a.tokenService.Get(ctx, tokenDomain); err != nil {
 			span.SetStatus(codes.Error, "token not found in cache")
 			span.SetAttributes(attribute.String("auth.error", err.Error()))
-			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, common.Error, err.Error())
+			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, commonkeys.Error, err.Error())
 			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
 			return
 		}
@@ -93,7 +93,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 
 		newCtx = context.WithValue(newCtx, ctxkeys.Token, tokenDomain.Token)
 
-		a.logger.Infow("auth context set", common.UserID, strconv.FormatUint(userID, 10))
+		a.logger.Infow("auth context set", commonkeys.UserID, strconv.FormatUint(userID, 10))
 
 		next.ServeHTTP(w, r.WithContext(newCtx))
 	})

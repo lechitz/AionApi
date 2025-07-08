@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 )
@@ -14,13 +14,13 @@ import (
 // GetCategoryByID retrieves a category by its ID from the database and returns it.
 func (s *Service) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
 	if category.ID == 0 {
-		s.Logger.Errorw(constants.CategoryIDIsRequired, common.CategoryID, strconv.FormatUint(category.ID, 10))
+		s.Logger.Errorw(constants.CategoryIDIsRequired, commonkeys.CategoryID, strconv.FormatUint(category.ID, 10))
 		return domain.Category{}, errors.New(constants.CategoryIDIsRequired)
 	}
 
 	categoryDB, err := s.CategoryRepository.GetCategoryByID(ctx, category)
 	if err != nil {
-		s.Logger.Errorw(constants.FailedToGetCategoryByID, common.CategoryID, strconv.FormatUint(category.ID, 10), common.Error, err.Error())
+		s.Logger.Errorw(constants.FailedToGetCategoryByID, commonkeys.CategoryID, strconv.FormatUint(category.ID, 10), commonkeys.Error, err.Error())
 		return domain.Category{}, errors.New(constants.FailedToGetCategoryByID)
 	}
 
@@ -30,13 +30,13 @@ func (s *Service) GetCategoryByID(ctx context.Context, category domain.Category)
 // GetCategoryByName retrieves a category by its name from the database and returns it.
 func (s *Service) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
 	if category.Name == "" {
-		s.Logger.Errorw(constants.CategoryNameIsRequired, common.CategoryName, category.Name)
+		s.Logger.Errorw(constants.CategoryNameIsRequired, commonkeys.CategoryName, category.Name)
 		return domain.Category{}, errors.New(constants.CategoryNameIsRequired)
 	}
 
 	categoryDB, err := s.CategoryRepository.GetCategoryByName(ctx, category)
 	if err != nil {
-		s.Logger.Errorw(constants.FailedToGetCategoryByName, common.CategoryName, category.Name, common.Error, err)
+		s.Logger.Errorw(constants.FailedToGetCategoryByName, commonkeys.CategoryName, category.Name, commonkeys.Error, err)
 		return domain.Category{}, err
 	}
 
@@ -47,7 +47,7 @@ func (s *Service) GetCategoryByName(ctx context.Context, category domain.Categor
 func (s *Service) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
 	categories, err := s.CategoryRepository.GetAllCategories(ctx, userID)
 	if err != nil {
-		s.Logger.Errorw(constants.FailedToGetAllCategories, common.Error, err)
+		s.Logger.Errorw(constants.FailedToGetAllCategories, commonkeys.Error, err)
 		return nil, err
 	}
 

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
@@ -26,7 +26,7 @@ const userIDRequired = "user ID is required"
 
 // ParseUserIDParam extracts and validates the user ID parameter from the URL, parses it into uint64, and handles any parsing errors.
 func ParseUserIDParam(w http.ResponseWriter, r *http.Request, log output.Logger) (uint64, error) {
-	userIDParam := chi.URLParam(r, common.UserID)
+	userIDParam := chi.URLParam(r, commonkeys.UserID)
 
 	if userIDParam == "" {
 		err := errors.New(userIDRequired)

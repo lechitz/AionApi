@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 )
@@ -21,11 +21,11 @@ func (s *Service) UpdateCategory(ctx context.Context, category domain.Category) 
 
 	updatedCategory, err := s.CategoryRepository.UpdateCategory(ctx, category.ID, category.UserID, fieldsToUpdate)
 	if err != nil {
-		s.Logger.Errorw(constants.FailedToUpdateCategory, common.CategoryID, strconv.FormatUint(category.ID, 10), common.Error, err)
+		s.Logger.Errorw(constants.FailedToUpdateCategory, commonkeys.CategoryID, strconv.FormatUint(category.ID, 10), commonkeys.Error, err)
 		return domain.Category{}, err
 	}
 
-	s.Logger.Infow(constants.SuccessfullyUpdatedCategory, common.CategoryID, strconv.FormatUint(updatedCategory.ID, 10))
+	s.Logger.Infow(constants.SuccessfullyUpdatedCategory, commonkeys.CategoryID, strconv.FormatUint(updatedCategory.ID, 10))
 
 	return updatedCategory, nil
 }
@@ -35,16 +35,16 @@ func extractUpdateFields(category domain.Category) map[string]interface{} {
 	updateFields := make(map[string]interface{})
 
 	if category.Name != "" {
-		updateFields[common.CategoryName] = category.Name
+		updateFields[commonkeys.CategoryName] = category.Name
 	}
 	if category.Description != "" {
-		updateFields[common.CategoryDescription] = category.Description
+		updateFields[commonkeys.CategoryDescription] = category.Description
 	}
 	if category.Color != "" {
-		updateFields[common.CategoryColor] = category.Color
+		updateFields[commonkeys.CategoryColor] = category.Color
 	}
 	if category.Icon != "" {
-		updateFields[common.CategoryIcon] = category.Icon
+		updateFields[commonkeys.CategoryIcon] = category.Icon
 	}
 
 	return updateFields

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/config"
@@ -38,7 +38,7 @@ func InitTracer(cfg *config.Config, logger output.Logger) func() {
 		if err == nil {
 			opts = append(opts, otlptracehttp.WithTimeout(timeout))
 		} else {
-			logger.Warnw("Invalid OTEL exporter timeout, using default", common.Error, err)
+			logger.Warnw("Invalid OTEL exporter timeout, using default", commonkeys.Error, err)
 		}
 	}
 
@@ -53,7 +53,7 @@ func InitTracer(cfg *config.Config, logger output.Logger) func() {
 
 	exporter, err := otlptracehttp.New(context.Background(), opts...)
 	if err != nil {
-		logger.Errorw(ErrInitializeOTPL, common.Error, err)
+		logger.Errorw(ErrInitializeOTPL, commonkeys.Error, err)
 		panic(err)
 	}
 
@@ -72,7 +72,7 @@ func InitTracer(cfg *config.Config, logger output.Logger) func() {
 
 	return func() {
 		if err := traceProvider.Shutdown(context.Background()); err != nil {
-			logger.Errorw(ErrFailedToShutdownTracerProvider, common.Error, err)
+			logger.Errorw(ErrFailedToShutdownTracerProvider, commonkeys.Error, err)
 		}
 	}
 }

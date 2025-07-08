@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 )
@@ -15,7 +15,7 @@ import (
 func (s *Service) Logout(ctx context.Context, token string) error {
 	userID, _, err := s.tokenService.GetToken(ctx, token)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToCheckToken, common.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToCheckToken, commonkeys.Error, err.Error())
 		return fmt.Errorf("%s: %w", constants.ErrorToCheckToken, err)
 	}
 
@@ -25,11 +25,11 @@ func (s *Service) Logout(ctx context.Context, token string) error {
 	}
 
 	if err := s.tokenService.Delete(ctx, tokenDomain); err != nil {
-		s.logger.Errorw(constants.ErrorToRevokeToken, common.Error, err.Error(), common.UserID, strconv.FormatUint(userID, 10))
+		s.logger.Errorw(constants.ErrorToRevokeToken, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(userID, 10))
 		return fmt.Errorf("%s: %w", constants.ErrorToRevokeToken, err)
 	}
 
-	s.logger.Infow(constants.SuccessUserLoggedOut, common.UserID, strconv.FormatUint(userID, 10))
+	s.logger.Infow(constants.SuccessUserLoggedOut, commonkeys.UserID, strconv.FormatUint(userID, 10))
 
 	return nil
 }

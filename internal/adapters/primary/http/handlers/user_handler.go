@@ -7,7 +7,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/shared/httputils"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/shared/ctxkeys"
 
@@ -61,8 +61,8 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	span.SetAttributes(
-		attribute.String(common.Username, req.Username),
-		attribute.String(common.Email, req.Email),
+		attribute.String(commonkeys.Username, req.Username),
+		attribute.String(commonkeys.Email, req.Email),
 	)
 
 	var userDomain domain.UserDomain
@@ -76,7 +76,7 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToCreateUser, err)
 		return
 	}
-	span.SetAttributes(attribute.String(common.UserID, strconv.FormatUint(user.ID, 10)))
+	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(user.ID, 10)))
 	span.SetStatus(codes.Ok, "User created")
 
 	var res dto.CreateUserResponse
@@ -100,7 +100,7 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToGetUsers, err)
 		return
 	}
-	span.SetAttributes(attribute.Int(common.UsersCount, len(users)))
+	span.SetAttributes(attribute.Int(commonkeys.UsersCount, len(users)))
 	span.SetStatus(codes.Ok, "Users retrieved")
 
 	var res []dto.GetUserResponse
@@ -123,7 +123,7 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusBadRequest, constants.ErrorToParseUser, err)
 		return
 	}
-	span.SetAttributes(attribute.String(common.UserID, strconv.FormatUint(userID, 10)))
+	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
 	user, err := u.UserService.GetUserByID(ctx, userID)
 	if err != nil {
@@ -132,7 +132,7 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToGetUser, err)
 		return
 	}
-	span.SetAttributes(attribute.String(common.Username, user.Username))
+	span.SetAttributes(attribute.String(commonkeys.Username, user.Username))
 	span.SetStatus(codes.Ok, "User retrieved")
 
 	res := dto.GetUserResponse{
@@ -165,7 +165,7 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	span.SetAttributes(attribute.String(common.UserID, strconv.FormatUint(userID, 10)))
+	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
 	var req dto.UpdateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -234,7 +234,7 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	span.SetAttributes(attribute.String(common.UserID, strconv.FormatUint(userID, 10)))
+	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
 	httputils.ClearAuthCookie(w)
 
@@ -273,7 +273,7 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	span.SetAttributes(attribute.String(common.UserID, strconv.FormatUint(userID, 10)))
+	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
 	span.AddEvent("calling UserService.SoftDeleteUser")
 	if err := u.UserService.SoftDeleteUser(ctx, userID); err != nil {
@@ -306,7 +306,7 @@ func (e *MissingUserIDError) Error() string {
 // logAndHandleError logs the error with a message and sends an HTTP error response to the client.
 func (u *User) logAndHandleError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
-		u.Logger.Errorw(message, common.Error, err.Error())
+		u.Logger.Errorw(message, commonkeys.Error, err.Error())
 	} else {
 		u.Logger.Errorw(message)
 	}

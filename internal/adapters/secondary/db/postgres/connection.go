@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
@@ -23,22 +23,22 @@ func NewDatabaseConnection(appCtx context.Context, cfg config.DBConfig, logger o
 
 	// TODO: avaliar variáveis abaixo.
 
-	logger.Infow(constants.MsgDBConnection, constants.Host, cfg.Host, common.Port, cfg.Port, constants.DBName, cfg.Name)
+	logger.Infow(constants.MsgDBConnection, constants.Host, cfg.Host, commonkeys.Port, cfg.Port, constants.DBName, cfg.Name)
 
 	db, err := tryConnectingWithRetries(conString, logger, 3)
 	if err != nil {
-		logger.Errorw(constants.ErrorToStartDB, common.Error, err.Error())
+		logger.Errorw(constants.ErrorToStartDB, commonkeys.Error, err.Error())
 		return nil, err
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, common.Error, err.Error())
+		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, commonkeys.Error, err.Error())
 		return nil, err
 	}
 
 	if err := sqlDB.PingContext(appCtx); err != nil {
-		logger.Errorw(constants.FailedToPingDB, common.Error, err.Error())
+		logger.Errorw(constants.FailedToPingDB, commonkeys.Error, err.Error())
 		return nil, err
 	}
 
@@ -61,12 +61,12 @@ func tryConnectingWithRetries(conString string, logger output.Logger, maxRetries
 	var err error
 
 	for tryConnect := 1; tryConnect <= maxRetries; tryConnect++ {
-		logger.Infow(constants.MsgTryingStartsDB, constants.Try, tryConnect) // TODO: avaliar se vale apena passar pra o Try para common.
+		logger.Infow(constants.MsgTryingStartsDB, constants.Try, tryConnect) // TODO: avaliar se vale apena passar pra o Try para commonkeys.
 		db, err = gorm.Open(postgres.Open(conString), &gorm.Config{})
 		if err == nil {
 			return db, nil
 		}
-		logger.Warnw(constants.ErrDBConnectionAttempt, common.Error, err.Error())
+		logger.Warnw(constants.ErrDBConnectionAttempt, commonkeys.Error, err.Error())
 		time.Sleep(3 * time.Second) // TODO: avaliar se vale apena ir para variáveis de ambiente.
 	}
 
@@ -77,12 +77,12 @@ func tryConnectingWithRetries(conString string, logger output.Logger, maxRetries
 func Close(db *gorm.DB, logger output.Logger) {
 	sqlDB, err := db.DB()
 	if err != nil {
-		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, common.Error, err.Error())
+		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, commonkeys.Error, err.Error())
 		return
 	}
 
 	if err := sqlDB.Close(); err != nil {
-		logger.Errorw(constants.ErrorToCloseDB, common.Error, err.Error())
+		logger.Errorw(constants.ErrorToCloseDB, commonkeys.Error, err.Error())
 	} else {
 		logger.Infow(constants.MsgPostgresConnectionClosed)
 	}

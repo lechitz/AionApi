@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 
@@ -19,10 +19,10 @@ func TestUpdateCategory_ErrorToUpdateCategory(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	updateFields := map[string]interface{}{
-		common.CategoryName:        testdata.PerfectCategory.Name,
-		common.CategoryDescription: testdata.PerfectCategory.Description,
-		common.CategoryColor:       testdata.PerfectCategory.Color,
-		common.CategoryIcon:        testdata.PerfectCategory.Icon,
+		commonkeys.CategoryName:        testdata.PerfectCategory.Name,
+		commonkeys.CategoryDescription: testdata.PerfectCategory.Description,
+		commonkeys.CategoryColor:       testdata.PerfectCategory.Color,
+		commonkeys.CategoryIcon:        testdata.PerfectCategory.Icon,
 	}
 
 	suite.CategoryRepository.EXPECT().
@@ -43,10 +43,10 @@ func TestUpdateCategory_Success(t *testing.T) {
 	category := testdata.PerfectCategory
 
 	updateFields := map[string]interface{}{
-		common.CategoryName:        testdata.PerfectCategory.Name,
-		common.CategoryDescription: testdata.PerfectCategory.Description,
-		common.CategoryColor:       testdata.PerfectCategory.Color,
-		common.CategoryIcon:        testdata.PerfectCategory.Icon,
+		commonkeys.CategoryName:        testdata.PerfectCategory.Name,
+		commonkeys.CategoryDescription: testdata.PerfectCategory.Description,
+		commonkeys.CategoryColor:       testdata.PerfectCategory.Color,
+		commonkeys.CategoryIcon:        testdata.PerfectCategory.Icon,
 	}
 
 	suite.CategoryRepository.EXPECT().

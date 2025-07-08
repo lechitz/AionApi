@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/common"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
@@ -27,7 +27,7 @@ func NewLoader() *Loader {
 
 // Load reads configuration from environment variables into Config.
 func (l *Loader) Load(logger output.Logger) (*Config, error) {
-	if err := envconfig.Process(common.Setting, &l.cfg); err != nil {
+	if err := envconfig.Process(commonkeys.Setting, &l.cfg); err != nil {
 		response.HandleCriticalError(logger, constants.ErrFailedToProcessEnvVars, err) // TODO: AJUSTAR ERRO
 		return nil, err
 	}
