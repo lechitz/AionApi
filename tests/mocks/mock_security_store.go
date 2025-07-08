@@ -15,32 +15,32 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-// MockSecurityStore is a mock of Store interface.
-type MockSecurityStore struct {
+// MockHasherStore is a mock of HasherStore interface.
+type MockHasherStore struct {
 	ctrl     *gomock.Controller
-	recorder *MockSecurityStoreMockRecorder
+	recorder *MockHasherStoreMockRecorder
 	isgomock struct{}
 }
 
-// MockSecurityStoreMockRecorder is the mock recorder for MockSecurityStore.
-type MockSecurityStoreMockRecorder struct {
-	mock *MockSecurityStore
+// MockHasherStoreMockRecorder is the mock recorder for MockHasherStore.
+type MockHasherStoreMockRecorder struct {
+	mock *MockHasherStore
 }
 
-// NewMockSecurityStore creates a new mock instance.
-func NewMockSecurityStore(ctrl *gomock.Controller) *MockSecurityStore {
-	mock := &MockSecurityStore{ctrl: ctrl}
-	mock.recorder = &MockSecurityStoreMockRecorder{mock}
+// NewMockHasherStore creates a new mock instance.
+func NewMockHasherStore(ctrl *gomock.Controller) *MockHasherStore {
+	mock := &MockHasherStore{ctrl: ctrl}
+	mock.recorder = &MockHasherStoreMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockSecurityStore) EXPECT() *MockSecurityStoreMockRecorder {
+func (m *MockHasherStore) EXPECT() *MockHasherStoreMockRecorder {
 	return m.recorder
 }
 
 // HashPassword mocks base method.
-func (m *MockSecurityStore) HashPassword(plain string) (string, error) {
+func (m *MockHasherStore) HashPassword(plain string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HashPassword", plain)
 	ret0, _ := ret[0].(string)
@@ -49,13 +49,13 @@ func (m *MockSecurityStore) HashPassword(plain string) (string, error) {
 }
 
 // HashPassword indicates an expected call of HashPassword.
-func (mr *MockSecurityStoreMockRecorder) HashPassword(plain any) *gomock.Call {
+func (mr *MockHasherStoreMockRecorder) HashPassword(plain any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashPassword", reflect.TypeOf((*MockSecurityStore)(nil).HashPassword), plain)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashPassword", reflect.TypeOf((*MockHasherStore)(nil).HashPassword), plain)
 }
 
 // ValidatePassword mocks base method.
-func (m *MockSecurityStore) ValidatePassword(hashed, plain string) error {
+func (m *MockHasherStore) ValidatePassword(hashed, plain string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ValidatePassword", hashed, plain)
 	ret0, _ := ret[0].(error)
@@ -63,7 +63,7 @@ func (m *MockSecurityStore) ValidatePassword(hashed, plain string) error {
 }
 
 // ValidatePassword indicates an expected call of ValidatePassword.
-func (mr *MockSecurityStoreMockRecorder) ValidatePassword(hashed, plain any) *gomock.Call {
+func (mr *MockHasherStoreMockRecorder) ValidatePassword(hashed, plain any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidatePassword", reflect.TypeOf((*MockSecurityStore)(nil).ValidatePassword), hashed, plain)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidatePassword", reflect.TypeOf((*MockHasherStore)(nil).ValidatePassword), hashed, plain)
 }

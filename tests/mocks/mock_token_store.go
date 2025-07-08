@@ -11,49 +11,49 @@ package mocks
 
 import (
 	context "context"
+	http "net/http"
 	reflect "reflect"
 
 	domain "github.com/lechitz/AionApi/internal/core/domain"
 	gomock "go.uber.org/mock/gomock"
 )
 
-// MockCreator is a mock of Creator interface.
-type MockCreator struct {
+// MockTokenSaver is a mock of TokenSaver interface.
+type MockTokenSaver struct {
 	ctrl     *gomock.Controller
-	recorder *MockCreatorMockRecorder
+	recorder *MockTokenSaverMockRecorder
 	isgomock struct{}
 }
 
-// MockCreatorMockRecorder is the mock recorder for MockCreator.
-type MockCreatorMockRecorder struct {
-	mock *MockCreator
+// MockTokenSaverMockRecorder is the mock recorder for MockTokenSaver.
+type MockTokenSaverMockRecorder struct {
+	mock *MockTokenSaver
 }
 
-// NewMockCreator creates a new mock instance.
-func NewMockCreator(ctrl *gomock.Controller) *MockCreator {
-	mock := &MockCreator{ctrl: ctrl}
-	mock.recorder = &MockCreatorMockRecorder{mock}
+// NewMockTokenSaver creates a new mock instance.
+func NewMockTokenSaver(ctrl *gomock.Controller) *MockTokenSaver {
+	mock := &MockTokenSaver{ctrl: ctrl}
+	mock.recorder = &MockTokenSaverMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockCreator) EXPECT() *MockCreatorMockRecorder {
+func (m *MockTokenSaver) EXPECT() *MockTokenSaverMockRecorder {
 	return m.recorder
 }
 
-// CreateToken mocks base method.
-func (m *MockCreator) CreateToken(ctx context.Context, token domain.TokenDomain) (string, error) {
+// Save mocks base method.
+func (m *MockTokenSaver) Save(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateToken", ctx, token)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret := m.ctrl.Call(m, "Save", ctx, token)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-// CreateToken indicates an expected call of CreateToken.
-func (mr *MockCreatorMockRecorder) CreateToken(ctx, token any) *gomock.Call {
+// Save indicates an expected call of Save.
+func (mr *MockTokenSaverMockRecorder) Save(ctx, token any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateToken", reflect.TypeOf((*MockCreator)(nil).CreateToken), ctx, token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockTokenSaver)(nil).Save), ctx, token)
 }
 
 // MockTokenChecker is a mock of TokenChecker interface.
@@ -95,82 +95,6 @@ func (mr *MockTokenCheckerMockRecorder) Get(ctx, token any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockTokenChecker)(nil).Get), ctx, token)
 }
 
-// MockTokenSaver is a mock of TokenSaver interface.
-type MockTokenSaver struct {
-	ctrl     *gomock.Controller
-	recorder *MockTokenSaverMockRecorder
-	isgomock struct{}
-}
-
-// MockTokenSaverMockRecorder is the mock recorder for MockTokenSaver.
-type MockTokenSaverMockRecorder struct {
-	mock *MockTokenSaver
-}
-
-// NewMockTokenSaver creates a new mock instance.
-func NewMockTokenSaver(ctrl *gomock.Controller) *MockTokenSaver {
-	mock := &MockTokenSaver{ctrl: ctrl}
-	mock.recorder = &MockTokenSaverMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockTokenSaver) EXPECT() *MockTokenSaverMockRecorder {
-	return m.recorder
-}
-
-// Save mocks base method.
-func (m *MockTokenSaver) Save(ctx context.Context, token domain.TokenDomain) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Save", ctx, token)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Save indicates an expected call of Save.
-func (mr *MockTokenSaverMockRecorder) Save(ctx, token any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockTokenSaver)(nil).Save), ctx, token)
-}
-
-// MockTokenUpdater is a mock of TokenUpdater interface.
-type MockTokenUpdater struct {
-	ctrl     *gomock.Controller
-	recorder *MockTokenUpdaterMockRecorder
-	isgomock struct{}
-}
-
-// MockTokenUpdaterMockRecorder is the mock recorder for MockTokenUpdater.
-type MockTokenUpdaterMockRecorder struct {
-	mock *MockTokenUpdater
-}
-
-// NewMockTokenUpdater creates a new mock instance.
-func NewMockTokenUpdater(ctrl *gomock.Controller) *MockTokenUpdater {
-	mock := &MockTokenUpdater{ctrl: ctrl}
-	mock.recorder = &MockTokenUpdaterMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockTokenUpdater) EXPECT() *MockTokenUpdaterMockRecorder {
-	return m.recorder
-}
-
-// Update mocks base method.
-func (m *MockTokenUpdater) Update(ctx context.Context, token domain.TokenDomain) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", ctx, token)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Update indicates an expected call of Update.
-func (mr *MockTokenUpdaterMockRecorder) Update(ctx, token any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockTokenUpdater)(nil).Update), ctx, token)
-}
-
 // MockTokenDeleter is a mock of TokenDeleter interface.
 type MockTokenDeleter struct {
 	ctrl     *gomock.Controller
@@ -209,72 +133,86 @@ func (mr *MockTokenDeleterMockRecorder) Delete(ctx, token any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTokenDeleter)(nil).Delete), ctx, token)
 }
 
-// MockTokenVerify is a mock of TokenVerify interface.
-type MockTokenVerify struct {
+// MockTokenClaimsExtractor is a mock of TokenClaimsExtractor interface.
+type MockTokenClaimsExtractor struct {
 	ctrl     *gomock.Controller
-	recorder *MockTokenVerifyMockRecorder
+	recorder *MockTokenClaimsExtractorMockRecorder
 	isgomock struct{}
 }
 
-// MockTokenVerifyMockRecorder is the mock recorder for MockTokenVerify.
-type MockTokenVerifyMockRecorder struct {
-	mock *MockTokenVerify
+// MockTokenClaimsExtractorMockRecorder is the mock recorder for MockTokenClaimsExtractor.
+type MockTokenClaimsExtractorMockRecorder struct {
+	mock *MockTokenClaimsExtractor
 }
 
-// NewMockTokenVerify creates a new mock instance.
-func NewMockTokenVerify(ctrl *gomock.Controller) *MockTokenVerify {
-	mock := &MockTokenVerify{ctrl: ctrl}
-	mock.recorder = &MockTokenVerifyMockRecorder{mock}
+// NewMockTokenClaimsExtractor creates a new mock instance.
+func NewMockTokenClaimsExtractor(ctrl *gomock.Controller) *MockTokenClaimsExtractor {
+	mock := &MockTokenClaimsExtractor{ctrl: ctrl}
+	mock.recorder = &MockTokenClaimsExtractorMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockTokenVerify) EXPECT() *MockTokenVerifyMockRecorder {
+func (m *MockTokenClaimsExtractor) EXPECT() *MockTokenClaimsExtractorMockRecorder {
 	return m.recorder
 }
 
-// VerifyToken mocks base method.
-func (m *MockTokenVerify) VerifyToken(ctx context.Context, token string) (uint64, string, error) {
+// ExtractFromContext mocks base method.
+func (m *MockTokenClaimsExtractor) ExtractFromContext(ctx context.Context) (map[string]any, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "VerifyToken", ctx, token)
-	ret0, _ := ret[0].(uint64)
-	ret1, _ := ret[1].(string)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret := m.ctrl.Call(m, "ExtractFromContext", ctx)
+	ret0, _ := ret[0].(map[string]any)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// VerifyToken indicates an expected call of VerifyToken.
-func (mr *MockTokenVerifyMockRecorder) VerifyToken(ctx, token any) *gomock.Call {
+// ExtractFromContext indicates an expected call of ExtractFromContext.
+func (mr *MockTokenClaimsExtractorMockRecorder) ExtractFromContext(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VerifyToken", reflect.TypeOf((*MockTokenVerify)(nil).VerifyToken), ctx, token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExtractFromContext", reflect.TypeOf((*MockTokenClaimsExtractor)(nil).ExtractFromContext), ctx)
 }
 
-// MockTokenRepositoryPort is a mock of TokenRepositoryPort interface.
-type MockTokenRepositoryPort struct {
+// ExtractFromRequest mocks base method.
+func (m *MockTokenClaimsExtractor) ExtractFromRequest(r *http.Request) (map[string]any, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExtractFromRequest", r)
+	ret0, _ := ret[0].(map[string]any)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ExtractFromRequest indicates an expected call of ExtractFromRequest.
+func (mr *MockTokenClaimsExtractorMockRecorder) ExtractFromRequest(r any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExtractFromRequest", reflect.TypeOf((*MockTokenClaimsExtractor)(nil).ExtractFromRequest), r)
+}
+
+// MockTokenStore is a mock of TokenStore interface.
+type MockTokenStore struct {
 	ctrl     *gomock.Controller
-	recorder *MockTokenRepositoryPortMockRecorder
+	recorder *MockTokenStoreMockRecorder
 	isgomock struct{}
 }
 
-// MockTokenRepositoryPortMockRecorder is the mock recorder for MockTokenRepositoryPort.
-type MockTokenRepositoryPortMockRecorder struct {
-	mock *MockTokenRepositoryPort
+// MockTokenStoreMockRecorder is the mock recorder for MockTokenStore.
+type MockTokenStoreMockRecorder struct {
+	mock *MockTokenStore
 }
 
-// NewMockTokenRepositoryPort creates a new mock instance.
-func NewMockTokenRepositoryPort(ctrl *gomock.Controller) *MockTokenRepositoryPort {
-	mock := &MockTokenRepositoryPort{ctrl: ctrl}
-	mock.recorder = &MockTokenRepositoryPortMockRecorder{mock}
+// NewMockTokenStore creates a new mock instance.
+func NewMockTokenStore(ctrl *gomock.Controller) *MockTokenStore {
+	mock := &MockTokenStore{ctrl: ctrl}
+	mock.recorder = &MockTokenStoreMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockTokenRepositoryPort) EXPECT() *MockTokenRepositoryPortMockRecorder {
+func (m *MockTokenStore) EXPECT() *MockTokenStoreMockRecorder {
 	return m.recorder
 }
 
 // Delete mocks base method.
-func (m *MockTokenRepositoryPort) Delete(ctx context.Context, token domain.TokenDomain) error {
+func (m *MockTokenStore) Delete(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -282,13 +220,13 @@ func (m *MockTokenRepositoryPort) Delete(ctx context.Context, token domain.Token
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockTokenRepositoryPortMockRecorder) Delete(ctx, token any) *gomock.Call {
+func (mr *MockTokenStoreMockRecorder) Delete(ctx, token any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTokenRepositoryPort)(nil).Delete), ctx, token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTokenStore)(nil).Delete), ctx, token)
 }
 
 // Get mocks base method.
-func (m *MockTokenRepositoryPort) Get(ctx context.Context, token domain.TokenDomain) (string, error) {
+func (m *MockTokenStore) Get(ctx context.Context, token domain.TokenDomain) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, token)
 	ret0, _ := ret[0].(string)
@@ -297,13 +235,13 @@ func (m *MockTokenRepositoryPort) Get(ctx context.Context, token domain.TokenDom
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockTokenRepositoryPortMockRecorder) Get(ctx, token any) *gomock.Call {
+func (mr *MockTokenStoreMockRecorder) Get(ctx, token any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockTokenRepositoryPort)(nil).Get), ctx, token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockTokenStore)(nil).Get), ctx, token)
 }
 
 // Save mocks base method.
-func (m *MockTokenRepositoryPort) Save(ctx context.Context, token domain.TokenDomain) error {
+func (m *MockTokenStore) Save(ctx context.Context, token domain.TokenDomain) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", ctx, token)
 	ret0, _ := ret[0].(error)
@@ -311,21 +249,7 @@ func (m *MockTokenRepositoryPort) Save(ctx context.Context, token domain.TokenDo
 }
 
 // Save indicates an expected call of Save.
-func (mr *MockTokenRepositoryPortMockRecorder) Save(ctx, token any) *gomock.Call {
+func (mr *MockTokenStoreMockRecorder) Save(ctx, token any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockTokenRepositoryPort)(nil).Save), ctx, token)
-}
-
-// Update mocks base method.
-func (m *MockTokenRepositoryPort) Update(ctx context.Context, token domain.TokenDomain) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", ctx, token)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Update indicates an expected call of Update.
-func (mr *MockTokenRepositoryPortMockRecorder) Update(ctx, token any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockTokenRepositoryPort)(nil).Update), ctx, token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockTokenStore)(nil).Save), ctx, token)
 }
