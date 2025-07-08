@@ -49,11 +49,7 @@ const CategoryColorIsTooLong = "category color cannot exceed 7 characters"
 // CategoryIconIsTooLong indicates the category icon is too long.
 const CategoryIconIsTooLong = "category icon cannot exceed 50 characters"
 
-// Error is a generic error message.
-const Error = "error"
-
-// CategoryID is the key for category ID in context or responses.
-const CategoryID = "category_id"
+// TODO: separar o que foi de pra commonkeys
 
 // CategoryName is the key for category name in context or responses.
 const CategoryName = "name"
@@ -66,6 +62,3 @@ const CategoryColor = "color_hex"
 
 // CategoryIcon is the key for category icon in context or responses.
 const CategoryIcon = "icon"
-
-// Category is the key for category objects in context or responses.
-const Category = "category"

@@ -6,10 +6,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+
+	"github.com/lechitz/AionApi/internal/core/ports/output"
+
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
 // missingUserIDParam indicates the error message when the user_id URL parameter is absent.
@@ -21,12 +24,9 @@ const errorParsingUserID = "error parsing user ID"
 // userIDRequired indicates the error message when user_id must be provided.
 const userIDRequired = "user ID is required"
 
-// UserID is the name of the URL parameter key for user identification.
-const UserID = "user_id"
-
 // ParseUserIDParam extracts and validates the user ID parameter from the URL, parses it into uint64, and handles any parsing errors.
-func ParseUserIDParam(w http.ResponseWriter, r *http.Request, log logger.Logger) (uint64, error) {
-	userIDParam := chi.URLParam(r, UserID)
+func ParseUserIDParam(w http.ResponseWriter, r *http.Request, log output.Logger) (uint64, error) {
+	userIDParam := chi.URLParam(r, commonkeys.UserID)
 
 	if userIDParam == "" {
 		err := errors.New(userIDRequired)

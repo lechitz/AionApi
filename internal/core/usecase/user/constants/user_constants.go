@@ -86,6 +86,8 @@ const UsernameIsAlreadyInUse = "username is already in use"
 // EmailIsAlreadyInUse indicates the email is already registered.
 const EmailIsAlreadyInUse = "email is already in use"
 
+// TODO: Avaliar se as const abaixo podem ir para "commonkeys" que não seja ContextKeys !
+
 // Name is the key used for a user's name.
 const Name = "name"
 

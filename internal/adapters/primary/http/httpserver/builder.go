@@ -5,48 +5,33 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/contextbuilder"
-	"github.com/lechitz/AionApi/internal/core/ports/input/http"
-	"github.com/lechitz/AionApi/internal/core/ports/output/cache"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
-	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
+	"github.com/lechitz/AionApi/internal/core/ports/input"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 )
 
-// RouterBuilder is a struct for building and configuring HTTP routers
-// with middleware and route handlers.
+// RouterBuilder is a struct for building and configuring HTTP routers with middleware and route handlers.
 type RouterBuilder struct {
-	Router      portRouter.Router
+	Router      output.Router
 	ContextPath string
 }
 
-// BuildRouterRoutes sets up API routes, integrates middlewares,
-// and returns the configured router with any error encountered.
-// Parameters:
-//   - logger: logging adapter
-//   - userService: handles user-related use cases
-//   - authService: handles authentication use cases
-//   - tokenRepo: token cache storage interface
-//   - contextPath: base path for route nesting
-//   - adapter: router implementation
-//
-// Returns:
-//   - portRouter.Router: configured router with routes and middleware
-//   - error: any error encountered during setup
+// BuildRouterRoutes sets up API routes, integrates middlewares.
 func BuildRouterRoutes(
-	logger logger.Logger,
-	userService http.UserService,
-	authService http.AuthService,
-	tokenRepo cache.TokenRepositoryPort,
+	logger output.Logger,
+	userService input.UserService,
+	authService input.AuthService,
+	tokenRepository output.TokenStore,
 	contextPath string,
-	adapter portRouter.Router,
-	secretKey string,
-) (portRouter.Router, error) {
+	adapter output.Router,
+	tokenClaimsExtractor output.TokenClaimsExtractor,
+) (output.Router, error) {
 	adapter.Use(contextbuilder.InjectRequestIDMiddleware)
 
 	genericHandler := handlers.NewGeneric(logger)
 	userHandler := handlers.NewUser(userService, logger)
 	authHandler := handlers.NewAuth(authService, logger)
 
-	authMiddleware := auth.NewAuthMiddleware(tokenRepo, logger, secretKey)
+	authMiddleware := auth.NewAuthMiddleware(tokenRepository, logger, tokenClaimsExtractor)
 
 	r := &RouteComposer{
 		BasePath:       contextPath,
@@ -55,7 +40,7 @@ func BuildRouterRoutes(
 		authMiddleware: authMiddleware,
 	}
 
-	adapter.Route(contextPath, func(rt portRouter.Router) {
+	adapter.Route(contextPath, func(rt output.Router) {
 		rt.Group(r.AddHealthCheckRoutes(genericHandler))
 		rt.Group(r.AddUserRoutes(userHandler))
 		rt.Group(r.AddAuthRoutes(authHandler))

@@ -1,30 +1,49 @@
-// Package cache provides a Redis client for caching data.
-package cache
+// Package redis provides a Redis cache implementation.
+package redis
 
 import (
 	"context"
+	"errors"
 	"time"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/redis/go-redis/v9"
 )
 
-// FailedToConnectToRedis is a constant for logging errors when the Redis client fails to connect.
-const FailedToConnectToRedis = "failed to connect to Redis"
-
-// Client is an interface for caching operations, allowing setting, getting, and managing cached data.
-type Client interface {
-	Ping(ctx context.Context) error
-	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error
-	Get(ctx context.Context, key string) (string, error)
-	Close() error
+type redisClient struct {
+	client *redis.Client
 }
 
-// NewCacheConnection initializes a new Redis client using the provided configuration and logger.
-// Returns the Redis client or an error if the connection fails.
-func NewCacheConnection(cfg config.CacheConfig, log logger.Logger) (*redis.Client, error) {
+func (r *redisClient) Ping(ctx context.Context) error {
+	return r.client.Ping(ctx).Err()
+}
+
+func (r *redisClient) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
+	return r.client.Set(ctx, key, value, expiration).Err()
+}
+
+func (r *redisClient) Get(ctx context.Context, key string) (string, error) {
+	result, err := r.client.Get(ctx, key).Result()
+	if errors.Is(err, redis.Nil) {
+		return "", output.ErrNil
+	}
+	return result, err
+}
+
+func (r *redisClient) Del(ctx context.Context, key string) error {
+	_, err := r.client.Del(ctx, key).Result()
+	return err
+}
+
+func (r *redisClient) Close() error {
+	return r.client.Close()
+}
+
+// NewCacheConnection initializes a new Redis cache connection.
+func NewCacheConnection(appCtx context.Context, cfg config.CacheConfig, log output.Logger) (output.Cache, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,
 		Password: cfg.Password,
@@ -32,13 +51,13 @@ func NewCacheConnection(cfg config.CacheConfig, log logger.Logger) (*redis.Clien
 		PoolSize: cfg.PoolSize,
 	})
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(appCtx, 5*time.Second) // TODO: ajustar pra uma variavel de ambiente
 	defer cancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {
-		log.Errorw(FailedToConnectToRedis, "error", err)
+		log.Errorw("failed to connect to Redis", commonkeys.Error, err)
 		return nil, err
 	}
 
-	return client, nil
+	return &redisClient{client: client}, nil
 }

@@ -9,6 +9,7 @@ COMPOSE_FILE_PROD := infrastructure/docker/prod/docker-compose-prod.yaml
 ENV_FILE_PROD    := infrastructure/docker/prod/.env.prod
 COVERAGE_DIR = tests/coverage
 
+
 # --- MIGRATION CONFIG ---
 MIGRATION_PATH := infrastructure/db/migrations
 MIGRATION_DB   ?= $(DB_URL)
@@ -17,6 +18,8 @@ MIGRATE_BIN := $(shell command -v migrate 2> /dev/null)
 # ============================================================
 #                HELP & TOOLING SECTION
 # ============================================================
+
+include makefiles/*.mk
 
 .PHONY: help tools-install
 
@@ -78,9 +81,9 @@ help:
 	@echo ""
 	@echo " 🔶 \033[48;5;235;33m┃ \033[1mSEEDS ┃\033[0m"
 	@echo ""
-	@echo "    \033[0m seed-users           \033[1;37m    →  Run unit tests"
-	@echo "    \033[0m seed-categories      \033[1;37m    →  Run tests with coverage report (excludes mocks)"
-	@echo "    \033[0m seed-all             \033[1;37m    →  Generate HTML test report (requires go-test-html-report)"
+	@echo "    \033[0m seed-users           \033[1;37m    →  Seed the users table"
+	@echo "    \033[0m seed-categories      \033[1;37m    →  Seed the categories table"
+	@echo "    \033[0m seed-all             \033[1;37m    →  Run all seed scripts"
 	@echo ""
 	@echo ""
 	@echo " 🔶 \033[48;5;235;33m┃ \033[1mTESTING ┃\033[0m"
@@ -93,8 +96,6 @@ help:
 	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
 
 	@echo ""
-
-include makefiles/*.mk
 
 # ============================================================
 #                 CONSOLIDATED .PHONY TARGETS

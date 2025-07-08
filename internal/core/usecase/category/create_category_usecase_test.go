@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
+	"github.com/lechitz/AionApi/internal/core/domain"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 	"github.com/lechitz/AionApi/tests/setup"
@@ -22,7 +22,7 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_Name(t *testing.T)
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
 	require.Error(t, err)
-	require.Equal(t, entity.Category{}, createdCategory)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedLimit(t *testing.T) {
@@ -35,7 +35,7 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedL
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
 	require.Error(t, err)
-	require.Equal(t, entity.Category{}, createdCategory)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
@@ -51,7 +51,7 @@ func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
 	require.Error(t, err)
-	require.Equal(t, entity.Category{}, createdCategory)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
@@ -62,16 +62,16 @@ func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByName(suite.Ctx, category).
-		Return(entity.Category{}, nil)
+		Return(domain.Category{}, nil)
 
 	suite.CategoryRepository.EXPECT().
 		CreateCategory(suite.Ctx, category).
-		Return(entity.Category{}, errors.New(constants.CategoryAlreadyExists))
+		Return(domain.Category{}, errors.New(constants.CategoryAlreadyExists))
 
 	createdCategory, err := suite.CategoryService.CreateCategory(suite.Ctx, category)
 
 	require.Error(t, err)
-	require.Equal(t, entity.Category{}, createdCategory)
+	require.Equal(t, domain.Category{}, createdCategory)
 }
 
 func TestCreateCategory_Success(t *testing.T) {
@@ -82,7 +82,7 @@ func TestCreateCategory_Success(t *testing.T) {
 
 	suite.CategoryRepository.EXPECT().
 		GetCategoryByName(suite.Ctx, category).
-		Return(entity.Category{}, nil)
+		Return(domain.Category{}, nil)
 
 	suite.CategoryRepository.EXPECT().
 		CreateCategory(suite.Ctx, category).

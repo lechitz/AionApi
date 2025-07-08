@@ -13,20 +13,8 @@ const LoadedConfig = "loaded config: %+v"
 // ErrToFailedLoadConfiguration is a constant string representing an error message for failure in loading configuration.
 const ErrToFailedLoadConfiguration = "failed to load configuration"
 
-// ErrFailedToInitializeOTLPMetricsExporter is a constant string used to indicate a failure to initialize the OTLP metrics exporter.
-const ErrFailedToInitializeOTLPMetricsExporter = "failed to initialize OTLP metric exporter"
-
-// ErrInitializeOTPL is a constant string used to indicate a failure to initialize the OTLP exporter.
-const ErrInitializeOTPL = "failed to initialize OTLP exporter"
-
-// ErrFailedToShutdownTracerProvider is a constant string used to indicate a failure to shut down the tracer provider.
-const ErrFailedToShutdownTracerProvider = "failed to shutdown tracer provider"
-
-// ErrFailedToStartHTTPServer is a constant string used to indicate a failure to start the HTTP server.
-const ErrFailedToStartHTTPServer = "failed to start HTTP server: %w"
-
-// ErrFailedToStartGraphqlServer is a constant string used to indicate a failure to start the GraphQL server.
-const ErrFailedToStartGraphqlServer = "failed to start GraphQL server: %w"
+// ErrInvalidConfiguration is a constant string used to indicate an invalid configuration.
+const ErrInvalidConfiguration = "invalid configuration"
 
 // ErrInitializeDependencies is a constant string representing an error message when dependencies fail to initialize.
 const ErrInitializeDependencies = "failed to initialize dependencies"
@@ -36,12 +24,6 @@ const ErrStartHTTPServer = "failed to start server"
 
 // ErrStartGraphqlServer is a constant string used to denote a failure in starting the GraphQL server.
 const ErrStartGraphqlServer = "failed to start graphql server"
-
-// ServerHTTPStarted is a constant string indicating that the HTTP server has started successfully.
-const ServerHTTPStarted = "server http started"
-
-// GraphqlServerStarted is a constant string that indicates the GraphQL server has started.
-const GraphqlServerStarted = "graphql server started"
 
 // MsgShutdownSignalReceived is a constant string logged when the application receives a shutdown signal to start graceful shutdown procedures.
 const MsgShutdownSignalReceived = "shutdown signal received, attempting graceful shutdown"

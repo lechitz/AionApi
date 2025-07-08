@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------
 # Lint Workflow for AionAPI (Go)
-# Purpose: Perform static code analysis using golangci-lint and govet.
+# Purpose: Perform static code analysis using golangci-lint, fieldalignment, and govet.
 # Trigger: Runs on every PR targeting the 'main' branch.
 # ---------------------------------------------------------------------
 
@@ -63,13 +63,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-golangci-
 
-      # Step 7: Install golangci-lint
-      - name: Install golangci-lint
+      # Step 7: Install lint tools
+      - name: Install lint tools
         run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | \
-          sh -s -- -b $(go env GOPATH)/bin v1.56.2
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.56.2
+          go install golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest
 
-      # Step 8: Run golangci-lint with reviewdog
+      # Step 8: Run golangci-lint via reviewdog
       - name: Run golangci-lint via reviewdog
         uses: reviewdog/action-golangci-lint@v2
         with:
@@ -79,6 +79,10 @@ jobs:
           reporter: github-pr-review
           fail_level: error
 
-      # Step 9: Run native go vet
+      # Step 9: Run fieldalignment for struct optimization alerts
+      - name: Run fieldalignment
+        run: fieldalignment ./internal/platform/config
+
+      # Step 10: Run native go vet
       - name: Run go vet
         run: go vet ./...

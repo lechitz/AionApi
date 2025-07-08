@@ -2,31 +2,29 @@
 package user
 
 import (
-	"github.com/lechitz/AionApi/internal/core/ports/output/db"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/core/ports/output/security"
-	"github.com/lechitz/AionApi/internal/core/usecase/token"
+	"github.com/lechitz/AionApi/internal/core/ports/input"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 )
 
 // Service provides an abstraction for user management, including creating, retrieving, updating, and deleting users, plus authentication handling.
 type Service struct {
-	userRepository db.UserStore
-	tokenService   token.Usecase
-	securityHasher security.Store
-	logger         logger.Logger
+	userStore    output.UserStore
+	tokenService input.TokenService
+	hashStore    output.HasherStore
+	logger       output.Logger
 }
 
 // NewUserService creates and returns a new Service instance with the provided dependencies for handling user-related operations.
 func NewUserService(
-	userRepo db.UserStore,
-	tokenService token.Usecase,
-	securityHasher security.Store,
-	logger logger.Logger,
+	userStore output.UserStore,
+	tokenService input.TokenService,
+	hashStore output.HasherStore,
+	logger output.Logger,
 ) *Service {
 	return &Service{
-		userRepository: userRepo,
-		tokenService:   tokenService,
-		securityHasher: securityHasher,
-		logger:         logger,
+		userStore:    userStore,
+		tokenService: tokenService,
+		hashStore:    hashStore,
+		logger:       logger,
 	}
 }

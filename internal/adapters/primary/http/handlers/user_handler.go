@@ -5,8 +5,15 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
-	"github.com/lechitz/AionApi/internal/def"
+	"github.com/lechitz/AionApi/internal/shared/httputils"
+
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+
+	"github.com/lechitz/AionApi/internal/shared/ctxkeys"
+
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/ports/input"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -18,21 +25,21 @@ import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/utils/validator"
 
-	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input/http"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
-
 	"github.com/jinzhu/copier"
 )
 
+// TODO: Separar os Handlers e o construtor.. achar um nome bom pro arquivo de NewUser !
+
+// TODO: Melhorar as msgs de Span, Ajustar os erros e logs para ficarem completos !
+
 // User represents a handler for managing user-related operations and dependencies.
-// It combines user service functionality and logging capabilities.
 type User struct {
-	UserService inputHttp.UserService
-	Logger      logger.Logger
+	UserService input.UserService
+	Logger      output.Logger
 }
 
 // NewUser initializes and returns a new User instance with provided user service and logger dependencies.
-func NewUser(userService inputHttp.UserService, logger logger.Logger) *User {
+func NewUser(userService input.UserService, logger output.Logger) *User {
 	return &User{
 		UserService: userService,
 		Logger:      logger,
@@ -40,13 +47,6 @@ func NewUser(userService inputHttp.UserService, logger logger.Logger) *User {
 }
 
 // CreateUserHandler handles HTTP POST requests to create a new user based on the provided request payload.
-// It returns a response with the newly created user's data on success or an appropriate error response on failure.
-// The request payload must contain the following fields: username, email, password.
-// The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.
-// The username must be at least 3 characters long and contain only alphanumeric characters.
-// The email must be a valid email address.
-// The username and email must be unique.
-// The username and email must not be empty.
 func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(constants.TracerUserHandler).
 		Start(r.Context(), constants.TracerCreateUserHandler)
@@ -61,11 +61,11 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	span.SetAttributes(
-		attribute.String(constants.Username, req.Username),
-		attribute.String(constants.Email, req.Email),
+		attribute.String(commonkeys.Username, req.Username),
+		attribute.String(commonkeys.Email, req.Email),
 	)
 
-	var userDomain entity.UserDomain
+	var userDomain domain.UserDomain
 	_ = copier.Copy(&userDomain, &req)
 
 	span.AddEvent("calling UserService.CreateUser")
@@ -76,7 +76,7 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToCreateUser, err)
 		return
 	}
-	span.SetAttributes(attribute.String(constants.UserID, strconv.FormatUint(user.ID, 10)))
+	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(user.ID, 10)))
 	span.SetStatus(codes.Ok, "User created")
 
 	var res dto.CreateUserResponse
@@ -86,7 +86,7 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	response.Return(w, http.StatusCreated, body.Bytes(), u.Logger)
 }
 
-// GetAllUsersHandler handles HTTP requests to retrieve all users and returns the data in the response.// GetAllUsersHandler handles HTTP GET requests to retrieve all users and returns the data as a response.
+// GetAllUsersHandler handles HTTP requests to retrieve all users and returns the data in the response.
 func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(constants.TracerUserHandler).
 		Start(r.Context(), constants.TracerGetAllUsersHandler)
@@ -100,7 +100,7 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToGetUsers, err)
 		return
 	}
-	span.SetAttributes(attribute.Int("users_count", len(users)))
+	span.SetAttributes(attribute.Int(commonkeys.UsersCount, len(users)))
 	span.SetStatus(codes.Ok, "Users retrieved")
 
 	var res []dto.GetUserResponse
@@ -123,7 +123,7 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusBadRequest, constants.ErrorToParseUser, err)
 		return
 	}
-	span.SetAttributes(attribute.String(constants.UserID, strconv.FormatUint(userID, 10)))
+	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
 	user, err := u.UserService.GetUserByID(ctx, userID)
 	if err != nil {
@@ -132,7 +132,7 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToGetUser, err)
 		return
 	}
-	span.SetAttributes(attribute.String(constants.Username, user.Username))
+	span.SetAttributes(attribute.String(commonkeys.Username, user.Username))
 	span.SetStatus(codes.Ok, "User retrieved")
 
 	res := dto.GetUserResponse{
@@ -153,8 +153,8 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		Start(r.Context(), constants.TracerUpdateUserHandler)
 	defer span.End()
 
-	userID, ok := ctx.Value(def.CtxUserID).(uint64)
-	if !ok {
+	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
+	if !ok || userID == 0 {
 		span.RecordError(errMissingUserID())
 		span.SetStatus(codes.Error, "missing user id in context")
 		u.logAndHandleError(
@@ -165,7 +165,7 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	span.SetAttributes(attribute.String(constants.UserID, strconv.FormatUint(userID, 10)))
+	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
 	var req dto.UpdateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -175,7 +175,7 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDomain := entity.UserDomain{ID: userID}
+	userDomain := domain.UserDomain{ID: userID}
 	if req.Name != nil {
 		userDomain.Name = *req.Name
 	}
@@ -198,10 +198,11 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	span.SetStatus(codes.Ok, "User updated")
 
 	res := dto.UpdateUserResponse{
-		ID:       userUpdated.ID,
-		Name:     &userUpdated.Name,
-		Username: &userUpdated.Username,
-		Email:    &userUpdated.Email,
+		ID:        userUpdated.ID,
+		Name:      &userUpdated.Name,
+		Username:  &userUpdated.Username,
+		Email:     &userUpdated.Email,
+		UpdatedAt: userUpdated.UpdatedAt,
 	}
 
 	body := response.ObjectResponse(res, constants.SuccessToUpdateUser, u.Logger)
@@ -222,8 +223,8 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, ok := ctx.Value(constants.UserID).(uint64)
-	if !ok {
+	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
+	if !ok || userID == 0 {
 		span.RecordError(errMissingUserID())
 		span.SetStatus(codes.Error, "missing user id in context")
 		u.logAndHandleError(
@@ -234,11 +235,11 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	span.SetAttributes(attribute.String(constants.UserID, strconv.FormatUint(userID, 10)))
+	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
-	clearAuthCookie(w)
+	httputils.ClearAuthCookie(w)
 
-	userDomain := entity.UserDomain{ID: userID}
+	userDomain := domain.UserDomain{ID: userID}
 	span.AddEvent("calling UserService.UpdateUserPassword")
 	_, newToken, err := u.UserService.UpdateUserPassword(ctx, userDomain, req.Password, req.NewPassword)
 	if err != nil {
@@ -247,7 +248,8 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToUpdateUser, err)
 		return
 	}
-	setAuthCookie(w, newToken, 0)
+
+	httputils.SetAuthCookie(w, newToken, 0)
 	span.SetStatus(codes.Ok, "Password updated")
 
 	body := response.ObjectResponse(nil, constants.SuccessToUpdatePassword, u.Logger)
@@ -255,14 +257,13 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // SoftDeleteUserHandler handles the soft deletion of a user by ID extracted from the request context.
-// Responds with HTTP 204 on success or appropriate error response if the operation fails.
 func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(constants.TracerUserHandler).
 		Start(r.Context(), constants.TracerSoftDeleteUserHandler)
 	defer span.End()
 
-	userID, ok := ctx.Value(def.CtxUserID).(uint64)
-	if !ok {
+	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
+	if !ok || userID == 0 {
 		span.RecordError(errMissingUserID())
 		span.SetStatus(codes.Error, "missing user id in context")
 		u.logAndHandleError(
@@ -273,7 +274,7 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	span.SetAttributes(attribute.String(constants.UserID, strconv.FormatUint(userID, 10)))
+	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
 	span.AddEvent("calling UserService.SoftDeleteUser")
 	if err := u.UserService.SoftDeleteUser(ctx, userID); err != nil {
@@ -282,12 +283,14 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToSoftDeleteUser, err)
 		return
 	}
-	clearAuthCookie(w)
+	httputils.ClearAuthCookie(w)
 	span.SetStatus(codes.Ok, "User soft deleted")
 
 	body := response.ObjectResponse(nil, constants.SuccessUserSoftDeleted, u.Logger)
 	response.Return(w, http.StatusNoContent, body.Bytes(), u.Logger)
 }
+
+// TODO: entender essa parte abaixo de errorMissing, se deveria estar aqui..
 
 // errMissingUserID returns an error indicating that the user ID is missing from the request context.
 func errMissingUserID() error {
@@ -304,7 +307,7 @@ func (e *MissingUserIDError) Error() string {
 // logAndHandleError logs the error with a message and sends an HTTP error response to the client.
 func (u *User) logAndHandleError(w http.ResponseWriter, status int, message string, err error) {
 	if err != nil {
-		u.Logger.Errorw(message, constants.Error, err.Error())
+		u.Logger.Errorw(message, commonkeys.Error, err.Error())
 	} else {
 		u.Logger.Errorw(message)
 	}

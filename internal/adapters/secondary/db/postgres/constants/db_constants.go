@@ -28,6 +28,8 @@ const ErrDBConnectionAttempt = "connection attempt failed"
 // MsgPostgresConnectionClosed indicates that the PostgreSQL connection was closed successfully.
 const MsgPostgresConnectionClosed = "Database connection closed successfully"
 
+// TODO: Avaliar pra onde vai as const abaixo !
+
 // DBName is the key for the database name value.
 const DBName = "dbname"
 

@@ -5,7 +5,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/def"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/google/uuid"
 )
@@ -14,14 +14,12 @@ import (
 type ctxKeyRequestID struct{}
 
 // InjectRequestIDMiddleware injects a request ID into the HTTP request context and sets the X-Request-ID header.
-// It is used to track requests across multiple services and to correlate logs and metrics.
-// It is recommended to use this middleware as early as possible in the middleware chain.
 func InjectRequestIDMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		reqID := uuid.New().String()
 		ctx := context.WithValue(r.Context(), ctxKeyRequestID{}, reqID)
 		r = r.WithContext(ctx)
-		w.Header().Set(def.XRequestID, reqID)
+		w.Header().Set(commonkeys.XRequestID, reqID)
 		next.ServeHTTP(w, r)
 	})
 }

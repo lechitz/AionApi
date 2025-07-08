@@ -4,7 +4,7 @@ package mapper
 import (
 	"time"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
+	"github.com/lechitz/AionApi/internal/core/domain"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 
@@ -12,13 +12,13 @@ import (
 )
 
 // CategoryFromDB maps a model.CategoryDB object to a domain.Category object for further use in the application.
-func CategoryFromDB(category model.CategoryDB) entity.Category {
+func CategoryFromDB(category model.CategoryDB) domain.Category {
 	var deletedAt *time.Time
 	if category.DeletedAt.Valid {
 		deletedAt = &category.DeletedAt.Time
 	}
 
-	return entity.Category{
+	return domain.Category{
 		ID:          category.ID,
 		UserID:      category.UserID,
 		Name:        category.Name,
@@ -32,7 +32,7 @@ func CategoryFromDB(category model.CategoryDB) entity.Category {
 }
 
 // CategoryToDB maps a domain.Category object to a model.CategoryDB object for database operations.
-func CategoryToDB(category entity.Category) model.CategoryDB {
+func CategoryToDB(category domain.Category) model.CategoryDB {
 	var deleted gorm.DeletedAt
 	if category.DeletedAt != nil {
 		deleted.Time = *category.DeletedAt

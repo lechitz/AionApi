@@ -4,11 +4,11 @@
 package graph
 
 import (
-	"github.com/lechitz/AionApi/internal/core/ports/input/graphql"
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/core/ports/input"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 )
 
 type Resolver struct {
-	CategoryService graphql.CategoryService
-	Logger          logger.Logger
+	CategoryService input.CategoryService
+	Logger          output.Logger
 }

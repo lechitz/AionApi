@@ -5,23 +5,20 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/tests/mocks"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/user"
-	mockLogger "github.com/lechitz/AionApi/tests/mocks/logger"
-	securitymocks "github.com/lechitz/AionApi/tests/mocks/security"
-	tokenmocks "github.com/lechitz/AionApi/tests/mocks/token"
-	mockUser "github.com/lechitz/AionApi/tests/mocks/user"
 	"go.uber.org/mock/gomock"
 )
 
 // UserServiceTestSuite is a test suite for testing the UserService and its dependencies.
 type UserServiceTestSuite struct {
 	Ctrl           *gomock.Controller
-	Logger         *mockLogger.MockLogger
-	UserRepository *mockUser.MockUserStore
-	PasswordHasher *securitymocks.MockSecurityStore
-	TokenService   *tokenmocks.MockTokenUsecase
+	Logger         *mocks.MockLogger
+	UserRepository *mocks.MockUserStore
+	PasswordHasher *mocks.MockHasherStore
+	TokenService   *mocks.MockTokenUsecase
 	UserService    *user.Service
 	Ctx            context.Context
 }
@@ -30,29 +27,34 @@ type UserServiceTestSuite struct {
 func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	mockUserRepo := mockUser.NewMockUserStore(ctrl)
-	mockSecurityStore := securitymocks.NewMockSecurityStore(ctrl)
-	mockTokenUseCase := tokenmocks.NewMockTokenUsecase(ctrl)
-	mockLog := mockLogger.NewMockLogger(ctrl)
+	mockUserStore := mocks.NewMockUserStore(ctrl)
+	mockSecurityStore := mocks.NewMockHasherStore(ctrl)
+	mockTokenUsecase := mocks.NewMockTokenUsecase(ctrl)
+	mockLog := mocks.NewMockLogger(ctrl)
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
-	userService := user.NewUserService(mockUserRepo, mockTokenUseCase, mockSecurityStore, mockLog)
+	userService := user.NewUserService(
+		mockUserStore,
+		mockTokenUsecase,
+		mockSecurityStore,
+		mockLog,
+	)
 
 	return &UserServiceTestSuite{
 		Ctrl:           ctrl,
 		Logger:         mockLog,
-		UserRepository: mockUserRepo,
+		UserRepository: mockUserStore,
 		PasswordHasher: mockSecurityStore,
-		TokenService:   mockTokenUseCase,
+		TokenService:   mockTokenUsecase,
 		UserService:    userService,
 		Ctx:            t.Context(),
 	}
 }
 
 // DefaultTestUser is a predefined instance of domain.UserDomain used for testing purposes, representing a perfect/valid user with complete and valid fields.
-func DefaultTestUser() entity.UserDomain {
-	return entity.UserDomain{
+func DefaultTestUser() domain.UserDomain {
+	return domain.UserDomain{
 		ID:        1,
 		Name:      "Test User",
 		Username:  "testuser",

@@ -1,9 +1,6 @@
 // Package constants contains constants used throughout the application.
 package constants
 
-// Token is the key for authentication tokens used in cookies and sessions.
-const Token = "token"
-
 // Path defines the default path used for cookies.
 const Path = "/"
 

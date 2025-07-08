@@ -4,19 +4,19 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/lechitz/AionApi/internal/core/ports/output"
+
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
-
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 )
 
 // Generic represents a type that provides common handlers for HTTP requests with logging capabilities.
 type Generic struct {
-	Logger logger.Logger
+	Logger output.Logger
 }
 
 // NewGeneric initializes and returns a new Generic instance with the provided logger dependency.
-func NewGeneric(logger logger.Logger) *Generic {
+func NewGeneric(logger output.Logger) *Generic {
 	return &Generic{Logger: logger}
 }
 

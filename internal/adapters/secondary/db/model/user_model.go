@@ -21,6 +21,8 @@ type UserDB struct {
 	ID        uint64         `gorm:"primaryKey;column:user_id"`
 }
 
+// TODO: ajustar arquivos de model para criar um dbkeys ?.
+
 // TableName specifies the custom database table name for the UserDB model.
 func (UserDB) TableName() string {
 	return constants.TableUsers

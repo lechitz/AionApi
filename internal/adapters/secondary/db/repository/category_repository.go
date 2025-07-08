@@ -8,13 +8,15 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output/logger"
 	"gorm.io/gorm"
 
 	"go.opentelemetry.io/otel"
@@ -27,11 +29,11 @@ import (
 // It uses gorm.DB for ORM and logger.Logger for logging operations.
 type CategoryRepository struct {
 	db     *gorm.DB
-	logger logger.Logger
+	logger output.Logger
 }
 
 // NewCategoryRepository creates a new instance of CategoryRepository with a given gorm.DB and logger.
-func NewCategoryRepository(db *gorm.DB, logger logger.Logger) *CategoryRepository {
+func NewCategoryRepository(db *gorm.DB, logger output.Logger) *CategoryRepository {
 	return &CategoryRepository{
 		db:     db,
 		logger: logger,
@@ -39,11 +41,11 @@ func NewCategoryRepository(db *gorm.DB, logger logger.Logger) *CategoryRepositor
 }
 
 // CreateCategory creates a new category in the database and returns the created category or an error if the operation fails.
-func (c CategoryRepository) CreateCategory(ctx context.Context, category entity.Category) (entity.Category, error) {
+func (c CategoryRepository) CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "CreateCategory", trace.WithAttributes(
-		attribute.String(constants.UserID, strconv.FormatUint(category.UserID, 10)),
-		attribute.String(constants.CategoryName, category.Name),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(commonkeys.CategoryName, category.Name),
 		attribute.String("operation", "create"),
 	))
 	defer span.End()
@@ -54,14 +56,8 @@ func (c CategoryRepository) CreateCategory(ctx context.Context, category entity.
 		wrappedErr := fmt.Errorf("error creating category: %w", err)
 		span.SetStatus(codes.Error, wrappedErr.Error())
 		span.RecordError(wrappedErr)
-		c.logger.Errorw(
-			"error creating category",
-			"category",
-			category,
-			"error",
-			wrappedErr.Error(),
-		)
-		return entity.Category{}, wrappedErr
+		c.logger.Errorw("error creating category", commonkeys.Category, category, commonkeys.Error, wrappedErr.Error())
+		return domain.Category{}, wrappedErr
 	}
 
 	span.SetStatus(codes.Ok, "category created successfully")
@@ -69,11 +65,11 @@ func (c CategoryRepository) CreateCategory(ctx context.Context, category entity.
 }
 
 // GetCategoryByID retrieves a category by its ID and user ID from the database and returns it as a domain.Category or an error if not found.
-func (c CategoryRepository) GetCategoryByID(ctx context.Context, category entity.Category) (entity.Category, error) {
+func (c CategoryRepository) GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "GetCategoryByID", trace.WithAttributes(
-		attribute.String(constants.UserID, strconv.FormatUint(category.UserID, 10)),
-		attribute.String(constants.CategoryID, strconv.FormatUint(category.ID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(commonkeys.CategoryID, strconv.FormatUint(category.ID, 10)),
 		attribute.String("operation", "get_by_id"),
 	))
 	defer span.End()
@@ -87,11 +83,11 @@ func (c CategoryRepository) GetCategoryByID(ctx context.Context, category entity
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Error, "category not found")
 			span.RecordError(errors.New("category not found"))
-			return entity.Category{}, errors.New("category not found")
+			return domain.Category{}, errors.New("category not found")
 		}
 		span.SetStatus(codes.Error, "error getting category")
 		span.RecordError(err)
-		return entity.Category{}, errors.New("error getting category")
+		return domain.Category{}, errors.New("error getting category")
 	}
 
 	span.SetStatus(codes.Ok, "category retrieved by id successfully")
@@ -99,11 +95,11 @@ func (c CategoryRepository) GetCategoryByID(ctx context.Context, category entity
 }
 
 // GetCategoryByName retrieves a category by its name and user ID from the database and returns it as a domain.Category or an error if not found.
-func (c CategoryRepository) GetCategoryByName(ctx context.Context, category entity.Category) (entity.Category, error) {
+func (c CategoryRepository) GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "GetCategoryByName", trace.WithAttributes(
-		attribute.String("user_id", strconv.FormatUint(category.UserID, 10)),
-		attribute.String("category_name", category.Name),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(commonkeys.CategoryName, category.Name),
 		attribute.String("operation", "get_by_name"),
 	))
 	defer span.End()
@@ -115,12 +111,12 @@ func (c CategoryRepository) GetCategoryByName(ctx context.Context, category enti
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, "category not found (normal case)")
-			return entity.Category{}, nil
+			return domain.Category{}, nil
 		}
 
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return entity.Category{}, err
+		return domain.Category{}, err
 	}
 
 	span.SetStatus(codes.Ok, "category fetched successfully")
@@ -128,10 +124,10 @@ func (c CategoryRepository) GetCategoryByName(ctx context.Context, category enti
 }
 
 // GetAllCategories retrieves all categories associated with a specific user defined by the userID. Returns a slice of domain.Category or an error.
-func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64) ([]entity.Category, error) {
+func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "GetAllCategories", trace.WithAttributes(
-		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String("operation", "get_all"),
 	))
 	defer span.End()
@@ -147,7 +143,7 @@ func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64)
 		return nil, err
 	}
 
-	categories := make([]entity.Category, len(categoriesDB))
+	categories := make([]domain.Category, len(categoriesDB))
 	for i, categoryDB := range categoriesDB {
 		categories[i] = mapper.CategoryFromDB(categoryDB)
 	}
@@ -156,17 +152,14 @@ func (c CategoryRepository) GetAllCategories(ctx context.Context, userID uint64)
 	return categories, nil
 }
 
+// TODO: Verificar uma maneira melhor de parametro ao invés da interface string/interface.
+
 // UpdateCategory updates a category in the database based on its ID and user ID, updating only fields specified in the updateFields map.
-func (c CategoryRepository) UpdateCategory(
-	ctx context.Context,
-	categoryID uint64,
-	userID uint64,
-	updateFields map[string]interface{},
-) (entity.Category, error) {
+func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, updateFields map[string]interface{}) (domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "UpdateCategory", trace.WithAttributes(
-		attribute.String(constants.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String(constants.CategoryID, strconv.FormatUint(categoryID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryID, 10)),
 		attribute.String("operation", "update"),
 	))
 	defer span.End()
@@ -180,7 +173,7 @@ func (c CategoryRepository) UpdateCategory(
 		Updates(updateFields).Error; err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return entity.Category{}, err
+		return domain.Category{}, err
 	}
 
 	if err := c.db.WithContext(ctx).
@@ -188,7 +181,7 @@ func (c CategoryRepository) UpdateCategory(
 		First(&categoryDB).Error; err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return entity.Category{}, err
+		return domain.Category{}, err
 	}
 
 	span.SetStatus(codes.Ok, "category updated successfully")
@@ -198,12 +191,12 @@ func (c CategoryRepository) UpdateCategory(
 // SoftDeleteCategory updates the DeletedAt and UpdatedAt fields to mark a category as soft-deleted based on category ID and user ID.
 func (c CategoryRepository) SoftDeleteCategory(
 	ctx context.Context,
-	category entity.Category,
+	category domain.Category,
 ) error {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "SoftDeleteCategory", trace.WithAttributes(
-		attribute.String(constants.UserID, strconv.FormatUint(category.UserID, 10)),
-		attribute.String(constants.CategoryID, strconv.FormatUint(category.ID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(category.UserID, 10)),
+		attribute.String(commonkeys.CategoryID, strconv.FormatUint(category.ID, 10)),
 		attribute.String("operation", "soft_delete"),
 	))
 	defer span.End()

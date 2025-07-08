@@ -3,32 +3,28 @@ package category
 import (
 	"context"
 	"errors"
+	"strconv"
 
-	"github.com/lechitz/AionApi/internal/core/domain/entity"
-	"github.com/lechitz/AionApi/internal/def"
+	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 )
 
-// Deleter defines the contract for deleting a category with a soft-delete mechanism.
-type Deleter interface {
-	SoftDeleteCategory(ctx context.Context, category entity.Category) error
-}
-
 // SoftDeleteCategory performs a soft delete operation on a category, marking it as inactive instead of permanently removing it from the database.
-func (s *Service) SoftDeleteCategory(ctx context.Context, category entity.Category) error {
-	categoryDB, err := s.Repository.GetCategoryByID(ctx, category)
+func (s *Service) SoftDeleteCategory(ctx context.Context, category domain.Category) error {
+	categoryDB, err := s.CategoryRepository.GetCategoryByID(ctx, category)
 	if err != nil {
-		s.Logger.Errorw(constants.FailedToGetCategoryByID, def.CtxCategoryID, category.ID, def.Error, err)
+		s.Logger.Errorw(constants.FailedToGetCategoryByID, commonkeys.CategoryID, strconv.FormatUint(category.ID, 10), commonkeys.Error, err)
 		return errors.New(constants.FailedToGetCategoryByID)
 	}
 
-	if err := s.Repository.SoftDeleteCategory(ctx, categoryDB); err != nil {
-		s.Logger.Errorw(constants.FailedToSoftDeleteCategory, def.CtxCategoryID, category.ID, def.Error, err)
+	if err := s.CategoryRepository.SoftDeleteCategory(ctx, categoryDB); err != nil {
+		s.Logger.Errorw(constants.FailedToSoftDeleteCategory, commonkeys.CategoryID, strconv.FormatUint(category.ID, 10), commonkeys.Error, err)
 		return errors.New(constants.FailedToSoftDeleteCategory)
 	}
 
-	s.Logger.Infow(constants.SuccessfullySoftDeletedCategory, def.CtxCategoryID, category.ID)
+	s.Logger.Infow(constants.SuccessfullySoftDeletedCategory, commonkeys.CategoryID, strconv.FormatUint(category.ID, 10))
 
 	return nil
 }

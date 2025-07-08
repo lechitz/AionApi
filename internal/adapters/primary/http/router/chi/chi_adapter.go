@@ -1,20 +1,21 @@
-// Package chi provides a wrapper around the chi.Router to implement the portRouter.Router interface.
+// Package chi provides a wrapper around the chi.Router to implement the output.Router interface.
 package chi
 
 import (
 	"net/http"
 
+	"github.com/lechitz/AionApi/internal/core/ports/output"
+
 	"github.com/go-chi/chi/v5"
-	portRouter "github.com/lechitz/AionApi/internal/core/ports/output/router"
 )
 
-// Router is a wrapper around the chi.Router to implement the portRouter.Router interface.
+// Router is a wrapper around the chi.Router to implement the output.Router interface.
 type Router struct {
 	chi chi.Router
 }
 
-// NewRouter initializes and returns a new instance of portRouter.Router using a Router implementation.
-func NewRouter() portRouter.Router {
+// NewRouter initializes and returns a new instance of output.Router using a Router implementation.
+func NewRouter() output.Router {
 	return &Router{chi: chi.NewRouter()}
 }
 
@@ -24,13 +25,13 @@ func (c *Router) Use(middleware func(http.Handler) http.Handler) {
 }
 
 // Route defines a sub-router for a specific route pattern within the current router.
-func (c *Router) Route(pattern string, fn func(r portRouter.Router)) {
+func (c *Router) Route(pattern string, fn func(r output.Router)) {
 	c.chi.Route(pattern, func(r chi.Router) {
 		fn(&Router{chi: r})
 	})
 }
 
-// Get registers a route that matches GET HTTP method for the specified path.
+// Get registers a route that matches the GET HTTP method for the specified path.
 func (c *Router) Get(path string, handler http.HandlerFunc) {
 	c.chi.Get(path, handler)
 }
@@ -61,7 +62,7 @@ func (c *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // Group creates a new router group where shared middlewares or routes can be defined and applied.
-func (c *Router) Group(fn func(r portRouter.Router)) {
+func (c *Router) Group(fn func(r output.Router)) {
 	c.chi.Group(func(r chi.Router) {
 		fn(&Router{chi: r})
 	})

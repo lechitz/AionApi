@@ -4,9 +4,6 @@ package constants
 // ErrorToSaveToken indicates an error saving the access reference.
 const ErrorToSaveToken = "error saving access reference" // #nosec G101
 
-// ErrorToUpdateToken indicates an error updating the access reference.
-const ErrorToUpdateToken = "error updating access reference"
-
 // ErrorToDeleteToken indicates an error deleting the access reference.
 const ErrorToDeleteToken = "error deleting access reference" // #nosec G101
 
@@ -34,14 +31,10 @@ const SuccessTokenCreated = "access reference created successfully"
 // SuccessTokenValidated indicates the access reference was validated successfully.
 const SuccessTokenValidated = "access reference validated successfully"
 
-// SuccessTokenUpdated indicates the access reference was updated successfully.
-const SuccessTokenUpdated = "access reference updated successfully"
-
 // SuccessTokenDeleted indicates the access reference was deleted successfully.
 const SuccessTokenDeleted = "access reference deleted successfully"
 
-// Token is the key for the token value in contexts and cookies.
-const Token = "token"
+// TODO: verificar onde as Const abaixo devem ir !
 
 // TokenFromCookie is the key for a token retrieved from cookies.
 const TokenFromCookie = "TokenFromCookie"
@@ -51,9 +44,3 @@ const TokenFromCache = "TokenFromCache"
 
 // SecretKey is the key for secrets used in token operations.
 const SecretKey = "secret"
-
-// Error is the key for generic error messages.
-const Error = "error"
-
-// UserID is the key for user ID values in contexts and payloads.
-const UserID = "user_id"

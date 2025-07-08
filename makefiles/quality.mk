@@ -18,5 +18,5 @@ lint-fix:
 	@echo "Running golangci-lint with --fix..."
 	golangci-lint run --fix --config=.golangci.yml ./...
 
-verify: mocks graphql lint test test-cover test-ci test-clean
+verify: graphql mocks lint test test-cover test-ci test-clean
 	@echo "✅  Verify passed successfully!"
