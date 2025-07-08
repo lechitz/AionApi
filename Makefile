@@ -8,6 +8,8 @@ ENV_FILE_DEV     := infrastructure/docker/dev/.env.dev
 COMPOSE_FILE_PROD := infrastructure/docker/prod/docker-compose-prod.yaml
 ENV_FILE_PROD    := infrastructure/docker/prod/.env.prod
 COVERAGE_DIR = tests/coverage
+ROOT_DIR := $(shell git rev-parse --show-toplevel 2>/dev/null || pwd)
+
 
 # --- MIGRATION CONFIG ---
 MIGRATION_PATH := infrastructure/db/migrations
@@ -17,6 +19,8 @@ MIGRATE_BIN := $(shell command -v migrate 2> /dev/null)
 # ============================================================
 #                HELP & TOOLING SECTION
 # ============================================================
+
+include makefiles/*.mk
 
 .PHONY: help tools-install
 
@@ -93,8 +97,6 @@ help:
 	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
 
 	@echo ""
-
-include makefiles/*.mk
 
 # ============================================================
 #                 CONSOLIDATED .PHONY TARGETS
