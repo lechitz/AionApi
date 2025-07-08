@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/lechitz/AionApi/internal/shared/common"
+
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
@@ -22,12 +24,9 @@ const errorParsingUserID = "error parsing user ID"
 // userIDRequired indicates the error message when user_id must be provided.
 const userIDRequired = "user ID is required"
 
-// UserID is the name of the URL parameter key for user identification.
-const UserID = "user_id"
-
 // ParseUserIDParam extracts and validates the user ID parameter from the URL, parses it into uint64, and handles any parsing errors.
 func ParseUserIDParam(w http.ResponseWriter, r *http.Request, log output.Logger) (uint64, error) {
-	userIDParam := chi.URLParam(r, UserID)
+	userIDParam := chi.URLParam(r, common.UserID)
 
 	if userIDParam == "" {
 		err := errors.New(userIDRequired)

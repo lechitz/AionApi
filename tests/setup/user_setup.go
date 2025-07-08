@@ -17,7 +17,7 @@ type UserServiceTestSuite struct {
 	Ctrl           *gomock.Controller
 	Logger         *mocks.MockLogger
 	UserRepository *mocks.MockUserStore
-	PasswordHasher *mocks.MockSecurityStore
+	PasswordHasher *mocks.MockHasherStore
 	TokenService   *mocks.MockTokenUsecase
 	UserService    *user.Service
 	Ctx            context.Context
@@ -27,21 +27,26 @@ type UserServiceTestSuite struct {
 func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	mockUserRepo := mocks.NewMockUserStore(ctrl)
-	mockSecurityStore := mocks.NewMockSecurityStore(ctrl)
-	mockTokenUseCase := mocks.NewMockTokenUsecase(ctrl)
+	mockUserStore := mocks.NewMockUserStore(ctrl)
+	mockSecurityStore := mocks.NewMockHasherStore(ctrl)
+	mockTokenUsecase := mocks.NewMockTokenUsecase(ctrl)
 	mockLog := mocks.NewMockLogger(ctrl)
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
-	userService := user.NewUserService(mockUserRepo, mockTokenUseCase, mockSecurityStore, mockLog)
+	userService := user.NewUserService(
+		mockUserStore,
+		mockTokenUsecase,
+		mockSecurityStore,
+		mockLog,
+	)
 
 	return &UserServiceTestSuite{
 		Ctrl:           ctrl,
 		Logger:         mockLog,
-		UserRepository: mockUserRepo,
+		UserRepository: mockUserStore,
 		PasswordHasher: mockSecurityStore,
-		TokenService:   mockTokenUseCase,
+		TokenService:   mockTokenUsecase,
 		UserService:    userService,
 		Ctx:            t.Context(),
 	}

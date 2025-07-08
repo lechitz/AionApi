@@ -77,12 +77,8 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 		Return(expectedUser, nil)
 
 	suite.TokenService.EXPECT().
-		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
+		CreateToken(suite.Ctx, gomock.AssignableToTypeOf(domain.TokenDomain{})).
 		Return(expectedToken, nil)
-
-	suite.TokenService.EXPECT().
-		Save(suite.Ctx, domain.TokenDomain{UserID: input.ID, Token: expectedToken}).
-		Return(nil)
 
 	result, token, err := suite.UserService.UpdateUserPassword(
 		suite.Ctx,
@@ -118,7 +114,7 @@ func TestUpdateUserPassword_ErrorToGetUserByID(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
-	require.Equal(t, constants.ErrorToGetUserByID, err.Error())
+	require.Contains(t, err.Error(), constants.ErrorToGetUserByID)
 }
 
 func TestUpdateUserPassword_ErrorToCompareHashAndPassword(t *testing.T) {
@@ -147,7 +143,7 @@ func TestUpdateUserPassword_ErrorToCompareHashAndPassword(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
-	require.Equal(t, constants.ErrorToCompareHashAndPassword, err.Error())
+	require.Contains(t, err.Error(), constants.ErrorToCompareHashAndPassword)
 }
 
 func TestUpdateUserPassword_ErrorToHashPassword(t *testing.T) {
@@ -180,7 +176,7 @@ func TestUpdateUserPassword_ErrorToHashPassword(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
-	require.Equal(t, constants.ErrorToHashPassword, err.Error())
+	require.Contains(t, err.Error(), constants.ErrorToHashPassword)
 }
 
 func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
@@ -218,7 +214,7 @@ func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
-	require.Equal(t, constants.ErrorToUpdatePassword, err.Error())
+	require.Contains(t, err.Error(), constants.ErrorToUpdatePassword)
 }
 
 func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
@@ -260,7 +256,7 @@ func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
-	require.Equal(t, constants.ErrorToCreateToken, err.Error())
+	require.Contains(t, err.Error(), constants.ErrorToCreateToken)
 }
 
 func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
@@ -277,7 +273,6 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 	hashedPassword := "hashedNewPassword"
-	expectedToken := "newToken"
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(suite.Ctx, input.ID).
@@ -297,11 +292,7 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 
 	suite.TokenService.EXPECT().
 		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
-		Return(expectedToken, nil)
-
-	suite.TokenService.EXPECT().
-		Save(suite.Ctx, domain.TokenDomain{UserID: input.ID, Token: expectedToken}).
-		Return(errors.New(constants.ErrorToSaveToken))
+		Return("", errors.New(constants.ErrorToSaveToken))
 
 	result, token, err := suite.UserService.UpdateUserPassword(
 		suite.Ctx,
@@ -313,5 +304,5 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 	require.Error(t, err)
 	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
-	require.Equal(t, constants.ErrorToSaveToken, err.Error())
+	require.Contains(t, err.Error(), constants.ErrorToSaveToken)
 }

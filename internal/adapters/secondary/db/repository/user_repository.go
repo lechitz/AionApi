@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/lechitz/AionApi/internal/shared/common"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
@@ -40,8 +42,8 @@ func NewUserRepository(db *gorm.DB, logger output.Logger) *UserRepository {
 func (up UserRepository) CreateUser(ctx context.Context, userDomain domain.UserDomain) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "CreateUser", trace.WithAttributes(
-		attribute.String("username", userDomain.Username),
-		attribute.String("email", userDomain.Email),
+		attribute.String(common.Username, userDomain.Username),
+		attribute.String(common.Email, userDomain.Email),
 		attribute.String("operation", "create"),
 	))
 	defer span.End()
@@ -91,7 +93,7 @@ func (up UserRepository) GetAllUsers(ctx context.Context) ([]domain.UserDomain, 
 func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByID", trace.WithAttributes(
-		attribute.String("user_id", strconv.FormatUint(userID, 10)),
+		attribute.String(common.UserID, strconv.FormatUint(userID, 10)),
 	))
 	defer span.End()
 
@@ -118,7 +120,7 @@ func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain
 func (up UserRepository) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByUsername", trace.WithAttributes(
-		attribute.String("username", username),
+		attribute.String(common.Username, username),
 		attribute.String("operation", "get_by_username"),
 	))
 	defer span.End()
@@ -150,7 +152,7 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByEmail", trace.WithAttributes(
-		attribute.String("email", email),
+		attribute.String(common.Email, email),
 		attribute.String("operation", "get_by_email"),
 	))
 	defer span.End()
@@ -184,7 +186,7 @@ func (up UserRepository) UpdateUser(
 ) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "UpdateUser", trace.WithAttributes(
-		attribute.String("user_id", strconv.FormatUint(userID, 10)),
+		attribute.String(common.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String("operation", "update"),
 	))
 	defer span.End()
@@ -209,7 +211,7 @@ func (up UserRepository) UpdateUser(
 func (up UserRepository) SoftDeleteUser(ctx context.Context, userID uint64) error {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "SoftDeleteUser", trace.WithAttributes(
-		attribute.String("user_id", strconv.FormatUint(userID, 10)),
+		attribute.String(common.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String("operation", "soft_delete"),
 	))
 	defer span.End()

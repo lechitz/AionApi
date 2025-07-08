@@ -4,10 +4,10 @@ package user
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-
-	"github.com/lechitz/AionApi/internal/def"
+	"github.com/lechitz/AionApi/internal/shared/common"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
@@ -17,13 +17,13 @@ func (s *Service) CreateUser(ctx context.Context, user domain.UserDomain, passwo
 	s.normalizeUserData(&user)
 
 	if err := s.validateCreateUserRequired(user, password); err != nil {
-		s.logger.Errorw(constants.ErrorToValidateCreateUser, def.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToValidateCreateUser, common.Error, err.Error())
 		return domain.UserDomain{}, errors.New(constants.ErrorToValidateCreateUser)
 	}
 
-	existingByUsername, err := s.userRepository.GetUserByUsername(ctx, user.Username)
+	existingByUsername, err := s.userStore.GetUserByUsername(ctx, user.Username)
 	if err != nil {
-		s.logger.Errorw("DB error while checking username", def.Error, err)
+		s.logger.Errorw("DB error while checking username", common.Error, err.Error())
 		return domain.UserDomain{}, errors.New(constants.ErrorToCreateUser)
 	}
 
@@ -31,9 +31,9 @@ func (s *Service) CreateUser(ctx context.Context, user domain.UserDomain, passwo
 		return domain.UserDomain{}, errors.New(constants.UsernameIsAlreadyInUse)
 	}
 
-	existingByEmail, err := s.userRepository.GetUserByEmail(ctx, user.Email)
+	existingByEmail, err := s.userStore.GetUserByEmail(ctx, user.Email)
 	if err != nil {
-		s.logger.Errorw("DB error while checking email", def.Error, err)
+		s.logger.Errorw("DB error while checking email", common.Error, err.Error())
 		return domain.UserDomain{}, errors.New(constants.ErrorToCreateUser)
 	}
 
@@ -41,21 +41,21 @@ func (s *Service) CreateUser(ctx context.Context, user domain.UserDomain, passwo
 		return domain.UserDomain{}, errors.New(constants.EmailIsAlreadyInUse)
 	}
 
-	hashedPassword, err := s.securityHasher.HashPassword(password)
+	hashedPassword, err := s.hashStore.HashPassword(password)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToHashPassword, def.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToHashPassword, common.Error, err.Error())
 		return domain.UserDomain{}, errors.New(constants.ErrorToHashPassword)
 	}
 
 	user.Password = hashedPassword
 
-	userDB, err := s.userRepository.CreateUser(ctx, user)
+	userDB, err := s.userStore.CreateUser(ctx, user)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToCreateUser, def.Error, err.Error())
+		s.logger.Errorw(constants.ErrorToCreateUser, common.Error, err.Error())
 		return domain.UserDomain{}, err
 	}
 
-	s.logger.Infow(constants.SuccessUserCreated, def.CtxUserID, userDB.ID)
+	s.logger.Infow(constants.SuccessUserCreated, common.UserID, strconv.FormatUint(userDB.ID, 10))
 
 	return userDB, nil
 }

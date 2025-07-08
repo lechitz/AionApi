@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="54" failures="0" errors="0" time="1.429823">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/cmd/aion-api" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/cmd/aion-api/constants" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/graph" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/graph/constants" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/graph/graphqlserver" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/graph/model" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/constants" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/dto" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/handlers" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver/constants" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth/constants" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/contextbuilder" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recovery" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/router/chi" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/primary/http/utils/validator" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/secondary/cache/token" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/secondary/cache/token/constants" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/secondary/cache/tools/redis" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/secondary/db/constants" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/secondary/db/mapper" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/secondary/db/model" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres/constants" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/secondary/db/repository" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/adapters/secondary/security" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/core/domain" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/core/ports/input" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/core/ports/output" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="7" failures="0" time="1.010000" name="github.com/lechitz/AionApi/internal/core/usecase/auth" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/auth" name="TestLogin_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/auth" name="TestLogin_UserNotFound" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/auth" name="TestLogin_WrongPassword" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/auth" name="TestLogin_TokenCreationFails" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/auth" name="TestLogout_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/auth" name="TestLogout_CheckTokenFails" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/auth" name="TestLogout_DeleteTokenFails" time="0.000000"></testcase>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/core/usecase/auth/constants" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="18" failures="0" time="1.012000" name="github.com/lechitz/AionApi/internal/core/usecase/category" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestCreateCategory_ErrorToValidateCreateCategoryRequired_Name" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedLimit" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestCreateCategory_ErrorToGetCategoryByName" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestCreateCategory_ErrorToCreateCategory" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestCreateCategory_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestSoftDeleteCategory_ErrorToGetCategoryByID" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestSoftDeleteCategory_ErrorToSoftDeleteCategory" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestSoftDeleteCategory_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestGetCategoryByID_InvalidCategoryID" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestGetCategoryByID_ErrorToGetCategoryByID" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestGetCategoryByID_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestGetCategoryByName_InvalidCategoryName" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestGetCategoryByName_ErrorToGetCategoryByName" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestGetCategoryByName_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestGetAllCategories_ErrorToGetAllCategories" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestGetAllCategories_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestUpdateCategory_ErrorToUpdateCategory" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/category" name="TestUpdateCategory_Success" time="0.000000"></testcase>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/core/usecase/category/constants" timestamp="2025-07-08T00:59:17-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="4" failures="0" time="1.012000" name="github.com/lechitz/AionApi/internal/core/usecase/token" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/token" name="TestVerifyToken_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/token" name="TestCheck_InvalidToken" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/token" name="TestCheck_TokenMismatch" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/token" name="TestCheck_ErrorToRetrieveTokenFromCache" time="0.000000"></testcase>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/core/usecase/token/constants" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="25" failures="0" time="1.018000" name="github.com/lechitz/AionApi/internal/core/usecase/user" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestCreateUser_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestCreateUser_ErrorToGetUserByUsername" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestCreateUser_ErrorToGetUserByEmail" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestCreateUser_ErrorToHashPassword" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestCreateUser_ErrorToCreateUser" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestSoftDeleteUser_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestSoftDeleteUser_ErrorToSoftDeleteUser" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestSoftDeleteUser_ErrorToDeleteToken" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestGetUserByID_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestGetUserByID_Error" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestGetUserByEmail_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestGetUserByEmail_Error" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestGetUserByUsername_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestGetUserByUsername_Error" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestGetAllUsers_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestGetAllUsers_Error" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestUpdateUser_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestUpdateUser_NoFieldsToUpdate" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestUpdateUserPassword_Success" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestUpdateUserPassword_ErrorToGetUserByID" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestUpdateUserPassword_ErrorToCompareHashAndPassword" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestUpdateUserPassword_ErrorToHashPassword" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestUpdateUserPassword_ErrorToUpdatePassword" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestUpdateUserPassword_ErrorToCreateToken" time="0.000000"></testcase>
+		<testcase classname="github.com/lechitz/AionApi/internal/core/usecase/user" name="TestUpdateUserPassword_ErrorToSaveToken" time="0.000000"></testcase>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/core/usecase/user/constants" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/platform/bootstrap" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/platform/bootstrap/constants" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/platform/config" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/platform/config/constants" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/platform/observability" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/shared/claimskeys" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/shared/common" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/shared/contextutils" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/shared/ctxkeys" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/internal/shared/httputils" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/pkg/logger" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/tests/mocks" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/lechitz/AionApi/tests/setup" timestamp="2025-07-08T00:59:18-03:00">
+		<properties>
+			<property name="go.version" value="go1.24.2 linux/amd64"></property>
+		</properties>
+	</testsuite>
+</testsuites>

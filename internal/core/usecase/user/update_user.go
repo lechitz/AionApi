@@ -4,11 +4,12 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-
-	"github.com/lechitz/AionApi/internal/def"
+	"github.com/lechitz/AionApi/internal/shared/common"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
@@ -18,15 +19,15 @@ func (s *Service) UpdateUser(ctx context.Context, user domain.UserDomain) (domai
 	updateFields := make(map[string]interface{})
 
 	if user.Name != "" {
-		updateFields[constants.Name] = user.Name
+		updateFields[common.Name] = user.Name
 	}
 
 	if user.Username != "" {
-		updateFields[constants.Username] = user.Username
+		updateFields[common.Username] = user.Username
 	}
 
 	if user.Email != "" {
-		updateFields[constants.Email] = user.Email
+		updateFields[common.Email] = user.Email
 	}
 
 	if len(updateFields) == 0 {
@@ -35,63 +36,64 @@ func (s *Service) UpdateUser(ctx context.Context, user domain.UserDomain) (domai
 
 	updateFields[constants.UpdatedAt] = time.Now().UTC()
 
-	updatedUser, err := s.userRepository.UpdateUser(ctx, user.ID, updateFields)
+	updatedUser, err := s.userStore.UpdateUser(ctx, user.ID, updateFields)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToUpdateUser, def.Error, err.Error())
-		return domain.UserDomain{}, err
+		s.logger.Errorw(constants.ErrorToUpdateUser, common.Error, err.Error())
+		return domain.UserDomain{}, fmt.Errorf("%s: %w", constants.ErrorToUpdateUser, err)
 	}
 
-	s.logger.Infow(constants.SuccessUserUpdated, def.CtxUserID, updatedUser.ID)
+	s.logger.Infow(constants.SuccessUserUpdated,
+		common.UserID, strconv.FormatUint(updatedUser.ID, 10),
+		"updated_fields", updateFields, // TODO: avaliar o uso de magic strings.
+	)
 
 	return updatedUser, nil
 }
 
 // UpdateUserPassword updates a user's password after validating the old password and hashing the new password, then returns the updated user and a new token.
 func (s *Service) UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error) {
-	userDB, err := s.userRepository.GetUserByID(ctx, user.ID)
+	userDB, err := s.userStore.GetUserByID(ctx, user.ID)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToGetUserByID, def.Error, err.Error())
-		return domain.UserDomain{}, "", err
+		s.logger.Errorw(constants.ErrorToGetUserByID, common.Error, err.Error(), common.UserID, strconv.FormatUint(user.ID, 10))
+
+		return domain.UserDomain{}, "", fmt.Errorf("%s: %w", constants.ErrorToGetUserByID, err)
 	}
 
-	if err := s.securityHasher.ValidatePassword(userDB.Password, oldPassword); err != nil {
-		s.logger.Errorw(constants.ErrorToCompareHashAndPassword, def.Error, err.Error())
-		return domain.UserDomain{}, "", err
+	if err := s.hashStore.ValidatePassword(userDB.Password, oldPassword); err != nil {
+		s.logger.Errorw(constants.ErrorToCompareHashAndPassword, common.Error, err.Error(), common.UserID, strconv.FormatUint(user.ID, 10))
+
+		return domain.UserDomain{}, "", fmt.Errorf("%s: %w", constants.ErrorToCompareHashAndPassword, err)
 	}
 
-	hashedPassword, err := s.securityHasher.HashPassword(newPassword)
+	hashedPassword, err := s.hashStore.HashPassword(newPassword)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToHashPassword, def.Error, err.Error())
-		return domain.UserDomain{}, "", err
+		s.logger.Errorw(constants.ErrorToHashPassword, common.Error, err.Error(), common.UserID, strconv.FormatUint(user.ID, 10))
+
+		return domain.UserDomain{}, "", fmt.Errorf("%s: %w", constants.ErrorToHashPassword, err)
 	}
 
 	fields := map[string]interface{}{
-		constants.Password:  hashedPassword,
-		constants.UpdatedAt: time.Now().UTC(),
+		common.Password:  hashedPassword,
+		common.UpdatedAt: time.Now().UTC(),
 	}
 
-	updatedUser, err := s.userRepository.UpdateUser(ctx, user.ID, fields)
+	updatedUser, err := s.userStore.UpdateUser(ctx, user.ID, fields)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToUpdatePassword, def.Error, err.Error())
-		return domain.UserDomain{}, "", err
+		s.logger.Errorw(constants.ErrorToUpdatePassword, common.Error, err.Error(), common.UserID, strconv.FormatUint(user.ID, 10))
+
+		return domain.UserDomain{}, "", fmt.Errorf("%s: %w", constants.ErrorToUpdatePassword, err)
 	}
 
 	tokenDomain := domain.TokenDomain{UserID: user.ID}
 
 	token, err := s.tokenService.CreateToken(ctx, tokenDomain)
 	if err != nil {
-		s.logger.Errorw(constants.ErrorToCreateToken, def.Error, err.Error())
-		return domain.UserDomain{}, "", err
+		s.logger.Errorw(constants.ErrorToCreateToken, common.Error, err.Error(), common.UserID, strconv.FormatUint(user.ID, 10))
+
+		return domain.UserDomain{}, "", fmt.Errorf("%s: %w", constants.ErrorToCreateToken, err)
 	}
 
-	tokenDomain.Token = token
-
-	if err := s.tokenService.Save(ctx, tokenDomain); err != nil {
-		s.logger.Errorw(constants.ErrorToSaveToken, def.Error, err.Error())
-		return domain.UserDomain{}, "", errors.New(constants.ErrorToSaveToken)
-	}
-
-	s.logger.Infow(constants.SuccessPasswordUpdated, def.CtxUserID, updatedUser.ID)
+	s.logger.Infow(constants.SuccessPasswordUpdated, common.UserID, strconv.FormatUint(updatedUser.ID, 10))
 
 	return updatedUser, token, nil
 }
