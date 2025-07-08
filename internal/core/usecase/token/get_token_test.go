@@ -4,6 +4,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/lechitz/AionApi/internal/platform/config"
+
 	"github.com/lechitz/AionApi/internal/core/domain"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
@@ -15,7 +17,7 @@ import (
 )
 
 func TestVerifyToken_Success(t *testing.T) {
-	suite := setup.TokenServiceTest(t, constants.SecretKey)
+	suite := setup.TokenServiceTest(t, config.Secret{Key: "secret"})
 	defer suite.Ctrl.Finish()
 
 	userID := testdata.TestPerfectUser.ID
@@ -27,7 +29,7 @@ func TestVerifyToken_Success(t *testing.T) {
 		Get(suite.Ctx, domain.TokenDomain{UserID: userID, Token: tokenString}).
 		Return(tokenString, nil)
 
-	parsedUserID, parsedToken, err := suite.TokenService.VerifyToken(suite.Ctx, tokenString)
+	parsedUserID, parsedToken, err := suite.TokenService.GetToken(suite.Ctx, tokenString)
 
 	require.NoError(t, err)
 	require.Equal(t, userID, parsedUserID)
@@ -35,19 +37,19 @@ func TestVerifyToken_Success(t *testing.T) {
 }
 
 func TestCheck_InvalidToken(t *testing.T) {
-	suite := setup.TokenServiceTest(t, constants.SecretKey)
+	suite := setup.TokenServiceTest(t, config.Secret{Key: "secret"})
 	defer suite.Ctrl.Finish()
 
 	tokenString := "invalidToken"
 
-	_, _, err := suite.TokenService.VerifyToken(suite.Ctx, tokenString)
+	_, _, err := suite.TokenService.GetToken(suite.Ctx, tokenString)
 
 	require.Error(t, err)
 	require.Equal(t, constants.ErrorInvalidToken, err.Error())
 }
 
 func TestCheck_TokenMismatch(t *testing.T) {
-	suite := setup.TokenServiceTest(t, constants.SecretKey)
+	suite := setup.TokenServiceTest(t, config.Secret{Key: "secret"})
 	defer suite.Ctrl.Finish()
 
 	userID := uint64(1)
@@ -61,14 +63,14 @@ func TestCheck_TokenMismatch(t *testing.T) {
 		Get(suite.Ctx, domain.TokenDomain{UserID: userID, Token: tokenString}).
 		Return(cachedToken, nil)
 
-	_, _, err = suite.TokenService.VerifyToken(suite.Ctx, tokenString)
+	_, _, err = suite.TokenService.GetToken(suite.Ctx, tokenString)
 
 	require.Error(t, err)
 	require.Equal(t, constants.ErrorTokenMismatch, err.Error())
 }
 
 func TestCheck_ErrorToRetrieveTokenFromCache(t *testing.T) {
-	suite := setup.TokenServiceTest(t, constants.SecretKey)
+	suite := setup.TokenServiceTest(t, config.Secret{Key: "secret"})
 	defer suite.Ctrl.Finish()
 
 	userID := testdata.TestPerfectUser.ID
@@ -80,7 +82,7 @@ func TestCheck_ErrorToRetrieveTokenFromCache(t *testing.T) {
 		Get(suite.Ctx, domain.TokenDomain{UserID: userID, Token: tokenString}).
 		Return("", errors.New(constants.ErrorToRetrieveTokenFromCache))
 
-	_, _, err = suite.TokenService.VerifyToken(suite.Ctx, tokenString)
+	_, _, err = suite.TokenService.GetToken(suite.Ctx, tokenString)
 
 	require.Error(t, err)
 	require.Equal(t, constants.ErrorToRetrieveTokenFromCache, err.Error())
