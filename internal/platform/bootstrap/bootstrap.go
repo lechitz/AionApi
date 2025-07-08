@@ -2,7 +2,9 @@
 package bootstrap
 
 import (
-	adapterCache "github.com/lechitz/AionApi/internal/adapters/secondary/cache"
+	"context"
+
+	adapterCachetoken "github.com/lechitz/AionApi/internal/adapters/secondary/cache/token"
 	infraCache "github.com/lechitz/AionApi/internal/adapters/secondary/cache/tools/redis"
 	infraDB "github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
@@ -20,55 +22,67 @@ import (
 
 // AppDependencies bundles the services and adapters used throughout the application.
 type AppDependencies struct {
-	Logger          output.Logger              // application logger
-	TokenRepository output.TokenRepositoryPort // cache repository for tokens
-	AuthService     input.AuthService          // authentication service
-	UserService     input.UserService          // user use case service
-	CategoryService input.CategoryService      // category use case service
+	AuthService          input.AuthService
+	UserService          input.UserService
+	CategoryService      input.CategoryService
+	TokenService         input.TokenService
+	TokenClaimsExtractor output.TokenClaimsExtractor
+	TokenRepository      output.TokenStore
+	Logger               output.Logger
 }
 
 // InitializeDependencies initializes and returns all core application dependencies.
-func InitializeDependencies(cfg config.Config, logger output.Logger) (*AppDependencies, func(), error) {
-	cacheConn, err := infraCache.NewCacheConnection(cfg.Cache, logger)
+func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger output.Logger) (*AppDependencies, func(), error) {
+	cacheClient, err := infraCache.NewCacheConnection(appCtx, cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)
 		return nil, nil, err
 	}
-	logger.Infow(constants.MsgCacheConnected, constants.FieldAddr, cfg.Cache.Addr)
+	logger.Infow(constants.MsgCacheConnected, constants.FieldAddr, cfg.Cache.Addr) // TODO: verificar se não possuo outra var já.
 
-	dbConn, err := infraDB.NewDatabaseConnection(cfg.DB, logger)
+	dbConn, err := infraDB.NewDatabaseConnection(appCtx, cfg.DB, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToDatabase, err)
 		return nil, nil, err
 	}
 	logger.Infow(constants.MsgPostgresConnected)
 
+	// Security Hasher
 	passwordHasher := adapterSecurity.NewBcryptPasswordAdapter()
 
-	tokenRepository := adapterCache.NewTokenRepository(cacheConn, logger)
-	tokenService := token.NewTokenService(tokenRepository, logger, cfg.Secret.Key)
+	// Token Extractor
+	tokenClaimsExtractor := adapterSecurity.NewJWTClaimsExtractor(cfg.Secret.Key)
 
+	// Token
+	tokenRepository := adapterCachetoken.NewTokenRepository(cacheClient, logger)
+	tokenService := token.NewTokenService(tokenRepository, logger, cfg.Secret)
+
+	// User
 	userRepository := repository.NewUserRepository(dbConn, logger)
 	userService := user.NewUserService(userRepository, tokenService, passwordHasher, logger)
 
+	// Category
 	categoryRepository := repository.NewCategoryRepository(dbConn, logger)
 	categoryService := category.NewCategoryService(categoryRepository, logger)
 
-	authService := auth.NewAuthService(userRepository, tokenService, passwordHasher, logger, cfg.Secret.Key)
+	// Auth
+	authService := auth.NewAuthService(userRepository, tokenService, passwordHasher, logger)
 
-	cleanup := func() {
+	cleanupResources := func() {
 		infraDB.Close(dbConn, logger)
 
-		if err := cacheConn.Close(); err != nil {
+		if err := cacheClient.Close(); err != nil {
 			logger.Errorf("%s: %v", constants.ErrCloseCacheConnection, err)
 		}
 	}
 
 	return &AppDependencies{
-		TokenRepository: tokenRepository,
-		UserService:     userService,
-		AuthService:     authService,
-		CategoryService: categoryService,
-		Logger:          logger,
-	}, cleanup, nil
+		UserService:          userService,
+		AuthService:          authService,
+		CategoryService:      categoryService,
+		TokenService:         tokenService,
+		TokenClaimsExtractor: tokenClaimsExtractor,
+		TokenRepository:      tokenRepository,
+		Logger:               logger,
+	}, cleanupResources, nil
 }

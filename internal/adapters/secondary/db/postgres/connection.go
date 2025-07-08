@@ -2,12 +2,13 @@
 package db
 
 import (
+	"context"
 	"fmt"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output"
+	"github.com/lechitz/AionApi/internal/shared/common"
 
-	"github.com/lechitz/AionApi/internal/def"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres/constants"
 
@@ -17,67 +18,56 @@ import (
 )
 
 // NewDatabaseConnection initializes a database connection using the provided configuration and logger. Returns a Gorm DB instance or an error.
-func NewDatabaseConnection(cfg config.DBConfig, logger output.Logger) (*gorm.DB, error) {
-	conString := fmt.Sprintf(
-		constants.MsgFormatConString,
-		cfg.Host,
-		cfg.Port,
-		cfg.User,
-		cfg.Password,
-		cfg.Name,
-	)
+func NewDatabaseConnection(appCtx context.Context, cfg config.DBConfig, logger output.Logger) (*gorm.DB, error) {
+	conString := fmt.Sprintf(constants.MsgFormatConString, cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
 
-	logger.Infow(
-		constants.MsgDBConnection,
-		constants.Host,
-		cfg.Host,
-		def.Port,
-		cfg.Port,
-		constants.DBName,
-		cfg.Name,
-	)
+	// TODO: avaliar variáveis abaixo.
+
+	logger.Infow(constants.MsgDBConnection, constants.Host, cfg.Host, common.Port, cfg.Port, constants.DBName, cfg.Name)
 
 	db, err := tryConnectingWithRetries(conString, logger, 3)
 	if err != nil {
-		logger.Errorw(constants.ErrorToStartDB, def.Error, err.Error())
+		logger.Errorw(constants.ErrorToStartDB, common.Error, err.Error())
 		return nil, err
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, def.Error, err.Error())
+		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, common.Error, err.Error())
 		return nil, err
 	}
 
-	if err := sqlDB.Ping(); err != nil {
-		logger.Errorw(constants.FailedToPingDB, def.Error, err.Error())
+	if err := sqlDB.PingContext(appCtx); err != nil {
+		logger.Errorw(constants.FailedToPingDB, common.Error, err.Error())
 		return nil, err
+	}
+
+	sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
+
+	if cfg.MaxIdleConns > 0 {
+		sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+	}
+
+	if cfg.ConnMaxLifetime > 0 {
+		sqlDB.SetConnMaxLifetime(time.Duration(cfg.ConnMaxLifetime) * time.Minute) // TODO: avaliar se vale apena passar pra time.Duration.
 	}
 
 	return db, nil
 }
 
 // tryConnectingWithRetries attempts to establish a database connection with retries.
-// conString is the connection string for the database.
-// logger logs information and warnings during connection attempts.
-// maxRetries specifies the maximum number of connection attempts.
-// Returns a Gorm DB instance on success or an error if all attempts fail.
-func tryConnectingWithRetries(
-	conString string,
-	logger output.Logger,
-	maxRetries int,
-) (*gorm.DB, error) {
+func tryConnectingWithRetries(conString string, logger output.Logger, maxRetries int) (*gorm.DB, error) {
 	var db *gorm.DB
 	var err error
 
 	for tryConnect := 1; tryConnect <= maxRetries; tryConnect++ {
-		logger.Infow(constants.MsgTryingStartsDB, constants.Try, tryConnect)
+		logger.Infow(constants.MsgTryingStartsDB, constants.Try, tryConnect) // TODO: avaliar se vale apena passar pra o Try para common.
 		db, err = gorm.Open(postgres.Open(conString), &gorm.Config{})
 		if err == nil {
 			return db, nil
 		}
-		logger.Warnw(constants.ErrDBConnectionAttempt, def.Error, err.Error())
-		time.Sleep(3 * time.Second)
+		logger.Warnw(constants.ErrDBConnectionAttempt, common.Error, err.Error())
+		time.Sleep(3 * time.Second) // TODO: avaliar se vale apena ir para variáveis de ambiente.
 	}
 
 	return nil, err
@@ -87,12 +77,12 @@ func tryConnectingWithRetries(
 func Close(db *gorm.DB, logger output.Logger) {
 	sqlDB, err := db.DB()
 	if err != nil {
-		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, def.Error, err.Error())
+		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, common.Error, err.Error())
 		return
 	}
 
 	if err := sqlDB.Close(); err != nil {
-		logger.Errorw(constants.ErrorToCloseDB, def.Error, err.Error())
+		logger.Errorw(constants.ErrorToCloseDB, common.Error, err.Error())
 	} else {
 		logger.Infow(constants.MsgPostgresConnectionClosed)
 	}

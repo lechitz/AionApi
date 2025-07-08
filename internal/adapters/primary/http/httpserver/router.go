@@ -23,16 +23,12 @@ type RouteComposer struct {
 }
 
 // NewHTTPRouter creates and configures a new HTTP router with middleware and authentication.
-// Parameters:
-//   - logger: logger instance
-//   - tokenRepository: token repository interface
-//   - contextPath: base route path
-//   - secretKey: JWT secret key (newly added dependency)
-//
-// Returns:
-//   - *RouteComposer: configured route composer instance
-//   - error: in case of any setup failure
-func NewHTTPRouter(logger output.Logger, tokenRepository output.TokenRepositoryPort, contextPath string, secretKey string) (*RouteComposer, error) {
+func NewHTTPRouter(
+	logger output.Logger,
+	tokenRepository output.TokenStore,
+	contextPath string,
+	tokenClaimsExtractor output.TokenClaimsExtractor,
+) (*RouteComposer, error) {
 	normalizedPath, err := normalizeContextPath(contextPath)
 	if err != nil {
 		return nil, err
@@ -41,7 +37,11 @@ func NewHTTPRouter(logger output.Logger, tokenRepository output.TokenRepositoryP
 	router := chi.NewRouter()
 	router.Use(recovery.RecoverMiddleware(logger))
 
-	authMiddleware := auth.NewAuthMiddleware(tokenRepository, logger, secretKey)
+	authMiddleware := auth.NewAuthMiddleware(
+		tokenRepository,
+		logger,
+		tokenClaimsExtractor,
+	)
 
 	return &RouteComposer{
 		BasePath:       normalizedPath,
@@ -57,7 +57,6 @@ func (r *RouteComposer) GetRouter() output.Router {
 }
 
 // normalizeContextPath ensures the given context path starts with '/' and is valid.
-// Returns the normalized path or an error.
 func normalizeContextPath(raw string) (string, error) {
 	if raw == "" {
 		return "", errors.New(constants.ErrContextPathEmpty)
