@@ -44,6 +44,3 @@ const TokenFromCache = "TokenFromCache"
 
 // SecretKey is the key for secrets used in token operations.
 const SecretKey = "secret"
-
-// UserID is the key for user ID values in contexts and payloads.
-const UserID = "user_id"
