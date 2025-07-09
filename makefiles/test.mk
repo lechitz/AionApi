@@ -4,6 +4,7 @@
 
 .PHONY: test test-cover test-html-report test-ci test-clean
 
+# Execute unit tests
 test:
 	@echo "Running unit tests with race detector..."
 	go test ./... -v -race
