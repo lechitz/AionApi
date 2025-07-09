@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/lechitz/AionApi/internal/platform/config"
+
 	"github.com/lechitz/AionApi/internal/shared/httputils"
 
 	"github.com/lechitz/AionApi/internal/shared/commonkeys"
@@ -36,12 +38,14 @@ import (
 type User struct {
 	UserService input.UserService
 	Logger      output.Logger
+	Config      *config.Config
 }
 
-// NewUser initializes and returns a new User instance with provided user service and logger dependencies.
-func NewUser(userService input.UserService, logger output.Logger) *User {
+// NewUser initializes and returns a new User instance with provided user service and zap dependencies.
+func NewUser(userService input.UserService, cfg *config.Config, logger output.Logger) *User {
 	return &User{
 		UserService: userService,
+		Config:      cfg,
 		Logger:      logger,
 	}
 }
@@ -52,7 +56,7 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		Start(r.Context(), constants.TracerCreateUserHandler)
 	defer span.End()
 
-	span.AddEvent("decoding request")
+	span.AddEvent("decoding request") // TODO: ajustar magic string.
 	var req dto.CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		span.RecordError(err)
@@ -62,13 +66,13 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	span.SetAttributes(
 		attribute.String(commonkeys.Username, req.Username),
-		attribute.String(commonkeys.Email, req.Email),
+		attribute.String(commonkeys.UserEmail, req.Email),
 	)
 
 	var userDomain domain.UserDomain
 	_ = copier.Copy(&userDomain, &req)
 
-	span.AddEvent("calling UserService.CreateUser")
+	span.AddEvent("calling UserService.CreateUser") // TODO: ajustar magic string.
 	user, err := u.UserService.CreateUser(ctx, userDomain, req.Password)
 	if err != nil {
 		span.RecordError(err)
@@ -77,7 +81,7 @@ func (u *User) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(user.ID, 10)))
-	span.SetStatus(codes.Ok, "User created")
+	span.SetStatus(codes.Ok, "User created") // TODO: ajustar magic string.
 
 	var res dto.CreateUserResponse
 	_ = copier.Copy(&res, &user)
@@ -92,7 +96,7 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 		Start(r.Context(), constants.TracerGetAllUsersHandler)
 	defer span.End()
 
-	span.AddEvent("calling UserService.GetAllUsers")
+	span.AddEvent("calling UserService.GetAllUsers") // TODO: ajustar magic string.
 	users, err := u.UserService.GetAllUsers(ctx)
 	if err != nil {
 		span.RecordError(err)
@@ -101,7 +105,7 @@ func (u *User) GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	span.SetAttributes(attribute.Int(commonkeys.UsersCount, len(users)))
-	span.SetStatus(codes.Ok, "Users retrieved")
+	span.SetStatus(codes.Ok, "Users retrieved") // TODO: ajustar magic string.
 
 	var res []dto.GetUserResponse
 	_ = copier.Copy(&res, &users)
@@ -133,7 +137,7 @@ func (u *User) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	span.SetAttributes(attribute.String(commonkeys.Username, user.Username))
-	span.SetStatus(codes.Ok, "User retrieved")
+	span.SetStatus(codes.Ok, "User retrieved") // TODO: ajustar magic string.
 
 	res := dto.GetUserResponse{
 		ID:        user.ID,
@@ -156,7 +160,7 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
 		span.RecordError(errMissingUserID())
-		span.SetStatus(codes.Error, "missing user id in context")
+		span.SetStatus(codes.Error, "missing user id in context") // TODO: ajustar magic string.
 		u.logAndHandleError(
 			w,
 			http.StatusUnauthorized,
@@ -186,7 +190,7 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		userDomain.Email = *req.Email
 	}
 
-	span.AddEvent("calling UserService.UpdateUser")
+	span.AddEvent("calling UserService.UpdateUser") // TODO: ajustar magic string.
 	userUpdated, err := u.UserService.UpdateUser(ctx, userDomain)
 	if err != nil {
 		span.RecordError(err)
@@ -194,8 +198,8 @@ func (u *User) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToUpdateUser, err)
 		return
 	}
-	span.SetAttributes(attribute.String("updated_username", userUpdated.Username))
-	span.SetStatus(codes.Ok, "User updated")
+	span.SetAttributes(attribute.String("updated_username", userUpdated.Username)) // TODO: ajustar magic string.
+	span.SetStatus(codes.Ok, "User updated")                                       // TODO: ajustar magic string.
 
 	res := dto.UpdateUserResponse{
 		ID:        userUpdated.ID,
@@ -226,7 +230,7 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
 		span.RecordError(errMissingUserID())
-		span.SetStatus(codes.Error, "missing user id in context")
+		span.SetStatus(codes.Error, "missing user id in context") // TODO: ajustar magic string.
 		u.logAndHandleError(
 			w,
 			http.StatusUnauthorized,
@@ -237,10 +241,10 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
-	httputils.ClearAuthCookie(w)
+	httputils.ClearAuthCookie(w, u.Config.Cookie)
 
 	userDomain := domain.UserDomain{ID: userID}
-	span.AddEvent("calling UserService.UpdateUserPassword")
+	span.AddEvent("calling UserService.UpdateUserPassword") // TODO: ajustar magic string.
 	_, newToken, err := u.UserService.UpdateUserPassword(ctx, userDomain, req.Password, req.NewPassword)
 	if err != nil {
 		span.RecordError(err)
@@ -249,8 +253,8 @@ func (u *User) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputils.SetAuthCookie(w, newToken, 0)
-	span.SetStatus(codes.Ok, "Password updated")
+	httputils.SetAuthCookie(w, newToken, u.Config.Cookie)
+	span.SetStatus(codes.Ok, "UserPassword updated") // TODO: ajustar magic string.
 
 	body := response.ObjectResponse(nil, constants.SuccessToUpdatePassword, u.Logger)
 	response.Return(w, http.StatusOK, body.Bytes(), u.Logger)
@@ -265,7 +269,7 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
 		span.RecordError(errMissingUserID())
-		span.SetStatus(codes.Error, "missing user id in context")
+		span.SetStatus(codes.Error, "missing user id in context") // TODO: ajustar magic string.
 		u.logAndHandleError(
 			w,
 			http.StatusUnauthorized,
@@ -276,15 +280,15 @@ func (u *User) SoftDeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
-	span.AddEvent("calling UserService.SoftDeleteUser")
+	span.AddEvent("calling UserService.SoftDeleteUser") // TODO: ajustar magic string.
 	if err := u.UserService.SoftDeleteUser(ctx, userID); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
 		u.logAndHandleError(w, http.StatusInternalServerError, constants.ErrorToSoftDeleteUser, err)
 		return
 	}
-	httputils.ClearAuthCookie(w)
-	span.SetStatus(codes.Ok, "User soft deleted")
+	httputils.ClearAuthCookie(w, u.Config.Cookie)
+	span.SetStatus(codes.Ok, "User soft deleted") // TODO: ajustar magic string.
 
 	body := response.ObjectResponse(nil, constants.SuccessUserSoftDeleted, u.Logger)
 	response.Return(w, http.StatusNoContent, body.Bytes(), u.Logger)
@@ -302,7 +306,7 @@ type MissingUserIDError struct{}
 
 func (e *MissingUserIDError) Error() string {
 	return "userID missing from context"
-}
+} // TODO: ajustar magic string.
 
 // logAndHandleError logs the error with a message and sends an HTTP error response to the client.
 func (u *User) logAndHandleError(w http.ResponseWriter, status int, message string, err error) {
