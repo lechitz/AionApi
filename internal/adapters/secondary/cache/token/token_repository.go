@@ -3,7 +3,6 @@ package token
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -51,7 +50,7 @@ func (t *Repository) Save(ctx context.Context, token domain.TokenDomain) error {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 
-		// TODO: ajustar o uso de TokenUser no logger.
+		// TODO: ajustar o uso de TokenUser no zap.
 
 		t.logger.Errorw(constants.ErrorToSaveTokenToRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
 		return err
@@ -74,18 +73,15 @@ func (t *Repository) Get(ctx context.Context, token domain.TokenDomain) (string,
 
 	value, err := t.cache.Get(ctx, key)
 	if err != nil {
-		if errors.Is(err, output.ErrNil) {
-			span.SetStatus(codes.Ok, "token not found (business as usual)")
-			return "", nil
-		}
-
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-
-		// TODO: ajustar o uso de TokenUser no logger.
-
-		t.logger.Errorw(constants.ErrorToGetTokenFromRedis, commonkeys.TokenUser, key, constants.Error, err)
+		t.logger.Errorw(constants.ErrorToGetTokenFromRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
 		return "", err
+	}
+
+	if value == "" {
+		span.SetStatus(codes.Ok, "token not found (business as usual)")
+		return "", nil
 	}
 
 	span.SetStatus(codes.Ok, "token retrieved successfully")
@@ -107,9 +103,9 @@ func (t *Repository) Delete(ctx context.Context, token domain.TokenDomain) error
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 
-		// TODO: ajustar o uso de TokenUser no logger.
+		// TODO: ajustar o uso de TokenUser no zap.
 
-		t.logger.Errorw(constants.ErrorToDeleteTokenFromRedis, commonkeys.TokenUser, key, constants.Error, err)
+		t.logger.Errorw(constants.ErrorToDeleteTokenFromRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
 		return err
 	}
 
