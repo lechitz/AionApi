@@ -19,9 +19,9 @@ MIGRATE_BIN := $(shell command -v migrate 2> /dev/null)
 #                HELP & TOOLING SECTION
 # ============================================================
 
-include makefiles/*.mk
+.PHONY: all help tools-install
 
-.PHONY: help tools-install
+all: help
 
 help:
 	@echo ""
@@ -100,6 +100,8 @@ help:
 # ============================================================
 #                 CONSOLIDATED .PHONY TARGETS
 # ============================================================
+
+include makefiles/*.mk
 
 .PHONY: \
 	help tools-install \
