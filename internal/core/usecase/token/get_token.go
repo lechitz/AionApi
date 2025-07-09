@@ -54,9 +54,9 @@ func (s *Service) GetToken(ctx context.Context, token string) (uint64, string, e
 			constants.ErrorTokenMismatch,
 			commonkeys.UserID,
 			strconv.FormatUint(userID, 10),
-			constants.TokenFromCookie, // TODO: Ajustar pkg.
+			commonkeys.TokenFromCookie,
 			token,
-			constants.TokenFromCache, // TODO: Ajustar pkg.
+			commonkeys.TokenFromCache,
 			cachedToken,
 		)
 		return 0, "", errors.New(constants.ErrorTokenMismatch)

@@ -6,43 +6,26 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
-
-	"github.com/lechitz/AionApi/internal/platform/observability"
-
-	"github.com/lechitz/AionApi/internal/core/ports/output"
-
 	"github.com/lechitz/AionApi/cmd/aion-api/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/graphqlserver"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 	"github.com/lechitz/AionApi/internal/platform/config"
-	loggerBuilder "github.com/lechitz/AionApi/pkg/logger"
+	"github.com/lechitz/AionApi/internal/platform/observability"
+	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/pkg/zap"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
-// TODO:mover para as Configs.
-type ServerConfig struct {
-	Handler  http.Handler
-	Name     string
-	Addr     string
-	Timeouts Timeouts
-}
-
-// TODO:mover para as Configs.
-type Timeouts struct {
-	Read  time.Duration
-	Write time.Duration
-}
-
 func main() {
-	logger, cleanupLogger := loggerBuilder.NewZapLogger()
+	logger, cleanupLogger := zap.NewLogger()
 	defer cleanupLogger()
 
 	cfg := loadConfig(logger)
@@ -60,112 +43,103 @@ func main() {
 	defer cleanupDeps()
 
 	servers := buildAllServers(appCtx, appDeps, cfg, logger)
-
 	handleServers(appCtx, servers, cfg, logger, stopApp)
 }
 
-// loadConfig loads the application configuration from the given path.
 func loadConfig(logger output.Logger) *config.Config {
-	cfgLoader := config.NewLoader()
-	cfg, err := cfgLoader.Load(logger)
+	loader := config.NewLoader()
+	cfg, err := loader.Load(logger)
 	if err != nil {
-		response.HandleCriticalError(logger, constants.ErrToFailedLoadConfiguration, err) // TODO: AJUSTAR ERRO.
-		panic(err)
+		logger.Errorw(constants.ErrToFailedLoadConfiguration, commonkeys.Error, err.Error())
+		os.Exit(1)
 	}
-
 	if err := cfg.Validate(); err != nil {
-		response.HandleCriticalError(logger, constants.ErrInvalidConfiguration, err) // TODO: AJUSTAR ERRO.
-		panic(err)
+		logger.Errorw(constants.ErrInvalidConfiguration, commonkeys.Error, err.Error())
+		os.Exit(1)
 	}
 
-	logger.Infof(constants.LoadedConfig, cfg)
-	logger.Infow(constants.SuccessToLoadConfiguration)
-
+	logger.Infow(
+		constants.SuccessToLoadConfiguration,
+		commonkeys.APIName,
+		cfg.General.Name,
+		commonkeys.AppEnv,
+		cfg.General.Env,
+		commonkeys.AppVersion,
+		cfg.General.Version,
+	)
 	return cfg
 }
 
-// initDependencies initializes the application dependencies using the given configuration.
-func initDependencies(appCtx context.Context, cfg *config.Config, logger output.Logger) (*bootstrap.AppDependencies, func()) {
-	appDeps, cleanupResources, err := bootstrap.InitializeDependencies(appCtx, cfg, logger)
+func initDependencies(ctx context.Context, cfg *config.Config, logger output.Logger) (*bootstrap.AppDependencies, func()) {
+	deps, cleanup, err := bootstrap.InitializeDependencies(ctx, cfg, logger)
 	if err != nil {
-		response.HandleCriticalError(logger, constants.ErrInitializeDependencies, err) // TODO: AJUSTAR ERRO.
-		panic(err)
+		logger.Errorw(constants.ErrInitializeDependencies, commonkeys.Error, err.Error())
+		os.Exit(1)
 	}
-
 	logger.Infow(constants.SuccessToInitializeDependencies)
-
-	return appDeps, cleanupResources
+	return deps, cleanup
 }
 
-// setupHTTPHandler configures the HTTP router with middlewares, instrumentation and handlers.
-func setupHTTPHandler(appDeps *bootstrap.AppDependencies, cfg *config.Config, logger output.Logger) http.Handler {
-	router, err := httpserver.ComposeRouter(appDeps, cfg.ServerHTTP.Context)
+func setupHTTPHandler(deps *bootstrap.AppDependencies, cfg *config.Config, logger output.Logger) http.Handler {
+	router, err := httpserver.ComposeRouter(deps, cfg)
 	if err != nil {
-		response.HandleCriticalError(logger, constants.ErrStartHTTPServer, err) // TODO: AJUSTAR ERRO.
-		panic(err)
+		logger.Errorw(constants.ErrStartHTTPServer, commonkeys.Error, err.Error())
+		os.Exit(1)
 	}
-
-	return otelhttp.NewHandler(router, cfg.Observability.OtelServiceName+"-REST")
+	return otelhttp.NewHandler(router, fmt.Sprintf("%s-REST", cfg.Observability.OtelServiceName))
 }
 
-// setupGraphQLHandler configures the GraphQL router with middlewares and handlers.
-func setupGraphQLHandler(appDeps *bootstrap.AppDependencies, cfg *config.Config, logger output.Logger) http.Handler {
-	handlerGraphQL, err := graphqlserver.NewGraphqlHandler(appDeps, cfg)
+func setupGraphQLHandler(deps *bootstrap.AppDependencies, cfg *config.Config, logger output.Logger) http.Handler {
+	handler, err := graphqlserver.NewGraphqlHandler(deps, cfg)
 	if err != nil {
-		response.HandleCriticalError(logger, constants.ErrStartGraphqlServer, err) // TODO: AJUSTAR ERRO.
-		panic(err)
+		logger.Errorw(constants.ErrStartGraphqlServer, commonkeys.Error, err.Error())
+		os.Exit(1)
 	}
-
-	return handlerGraphQL
+	return otelhttp.NewHandler(handler, fmt.Sprintf("%s-GraphQL", cfg.Observability.OtelServiceName))
 }
 
-// buildServer builds a new HTTP server with the given configuration.
-func buildServer(appCtx context.Context, serverConfig ServerConfig, logger output.Logger) *http.Server {
+func buildServer(ctx context.Context, name, host, port string, handler http.Handler, readTimeout, writeTimeout time.Duration, logger output.Logger) *http.Server {
+	addr := net.JoinHostPort(host, port)
+
 	srv := &http.Server{
-		Addr:         serverConfig.Addr,
-		BaseContext:  func(_ net.Listener) context.Context { return appCtx },
-		Handler:      serverConfig.Handler,
-		ReadTimeout:  serverConfig.Timeouts.Read,
-		WriteTimeout: serverConfig.Timeouts.Write,
+		Addr:         addr,
+		BaseContext:  func(_ net.Listener) context.Context { return ctx },
+		Handler:      handler,
+		ReadTimeout:  readTimeout,
+		WriteTimeout: writeTimeout,
 	}
-	logger.Infow(fmt.Sprintf("%s server started", serverConfig.Name), commonkeys.Port, serverConfig.Addr)
+
+	logger.Infow(fmt.Sprintf(constants.ServerStartFmt, name), commonkeys.ServerHTTPName, name, commonkeys.ServerHTTPAddr, addr)
+
 	return srv
 }
 
-// buildAllServers builds all HTTP servers using the given configuration.
-func buildAllServers(appCtx context.Context, appDeps *bootstrap.AppDependencies, cfg *config.Config, logger output.Logger) []*http.Server {
-	serversConfig := []ServerConfig{
-		{
-			Name:    "HTTP", // TODO: Adicionar a Common.
-			Addr:    fmt.Sprintf(":%s", cfg.ServerHTTP.Port),
-			Handler: setupHTTPHandler(appDeps, cfg, logger),
-			Timeouts: Timeouts{
-				Read:  cfg.ServerHTTP.ReadTimeout,
-				Write: cfg.ServerHTTP.WriteTimeout,
-			},
-		},
-		{
-			Name:    "GraphQL", // TODO: Adicionar a Common.
-			Addr:    fmt.Sprintf(":%s", cfg.ServerGraphql.Port),
-			Handler: setupGraphQLHandler(appDeps, cfg, logger),
-			Timeouts: Timeouts{
-				Read:  cfg.ServerGraphql.ReadTimeout,
-				Write: cfg.ServerGraphql.WriteTimeout,
-			},
-		},
+func buildAllServers(ctx context.Context, deps *bootstrap.AppDependencies, cfg *config.Config, logger output.Logger) []*http.Server {
+	return []*http.Server{
+		buildServer(
+			ctx,
+			cfg.ServerHTTP.Name,
+			cfg.ServerHTTP.Host,
+			cfg.ServerHTTP.Port,
+			setupHTTPHandler(deps, cfg, logger),
+			cfg.ServerHTTP.ReadTimeout,
+			cfg.ServerHTTP.WriteTimeout,
+			logger,
+		),
+		buildServer(
+			ctx,
+			cfg.ServerGraphql.Name,
+			cfg.ServerGraphql.Host,
+			cfg.ServerGraphql.Port,
+			setupGraphQLHandler(deps, cfg, logger),
+			cfg.ServerGraphql.ReadTimeout,
+			cfg.ServerGraphql.WriteTimeout,
+			logger,
+		),
 	}
-
-	var servers []*http.Server
-	for _, sc := range serversConfig {
-		srv := buildServer(appCtx, sc, logger)
-		servers = append(servers, srv)
-	}
-
-	return servers
 }
 
-// handleServers starts the given HTTP servers and handles.
-func handleServers(appCtx context.Context, servers []*http.Server, cfg *config.Config, logger output.Logger, stop context.CancelFunc) {
+func handleServers(ctx context.Context, servers []*http.Server, cfg *config.Config, logger output.Logger, stop context.CancelFunc) {
 	var wg sync.WaitGroup
 	errChan := make(chan error, len(servers))
 
@@ -174,7 +148,7 @@ func handleServers(appCtx context.Context, servers []*http.Server, cfg *config.C
 		go func(s *http.Server) {
 			defer wg.Done()
 			if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-				errChan <- fmt.Errorf("failed to start server on %s: %w", s.Addr, err) // TODO: AJUSTAR ERRO.
+				errChan <- fmt.Errorf(constants.ServerFailureFmt, s.Addr, err)
 			}
 		}(srv)
 	}
@@ -182,19 +156,26 @@ func handleServers(appCtx context.Context, servers []*http.Server, cfg *config.C
 	select {
 	case err := <-errChan:
 		logger.Errorw(constants.MsgUnexpectedServerFailure, commonkeys.Error, err.Error())
-		response.HandleCriticalError(logger, constants.MsgUnexpectedServerFailure, err) // TODO: AJUSTAR ERRO.
 		stop()
-	case <-appCtx.Done():
+	case <-ctx.Done():
 		logger.Infow(constants.MsgShutdownSignalReceived)
 	}
 
-	shutdownTimeout := cfg.Application.Timeout
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+	shutdownServers(servers, cfg.Application.Timeout, logger)
+	wg.Wait()
+}
+
+func shutdownServers(servers []*http.Server, timeout time.Duration, logger output.Logger) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	for _, srv := range servers {
-		_ = srv.Shutdown(shutdownCtx)
+		if err := srv.Shutdown(ctx); err != nil {
+			logger.Errorw(
+				fmt.Sprintf(constants.ShutdownFailureFmt, srv.Addr, err),
+				commonkeys.ServerHTTPAddr, srv.Addr,
+				commonkeys.Error, err.Error(),
+			)
+		}
 	}
-
-	wg.Wait()
 }

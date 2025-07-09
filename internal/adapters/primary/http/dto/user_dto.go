@@ -1,9 +1,11 @@
-// Package dto contains Data Transfer Objects used by the HTTP layer.
+// Package dto contains Data Transfer Objects used by the HTTP layer.//TODO: ajustar magic string.
 package dto
 
 import (
 	"time"
 )
+
+// TODO: Analisar o impacto ao retirar a lib time do domain, aqui vai precisar ser ajustado.
 
 // CreateUserRequest represents the data required to create a new user in the system.
 type CreateUserRequest struct {

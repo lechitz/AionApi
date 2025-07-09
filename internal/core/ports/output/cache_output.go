@@ -3,12 +3,8 @@ package output
 
 import (
 	"context"
-	"errors"
 	"time"
 )
-
-// ErrNil is an error returned when a cache key does not exist.
-var ErrNil = errors.New("cache: key does not exist")
 
 // Cache is an abstraction for a cache service.
 type Cache interface {

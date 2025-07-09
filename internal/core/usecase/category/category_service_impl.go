@@ -4,7 +4,7 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 )
 
-// Service provides operations for managing categories including creation, retrieval, updates, and soft deletion, utilizing a repository and logger.
+// Service provides operations for managing categories including creation, retrieval, updates, and soft deletion, using a repository and logger.
 type Service struct {
 	CategoryRepository output.CategoryStore
 	Logger             output.Logger

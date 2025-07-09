@@ -105,11 +105,16 @@ This repository is organized using a public [GitHub Projects board](https://gith
 The project is organized as follows:
 
 ```text
+github/         - GitHub Actions workflows and issue templates
 cmd/            - application entry point
-internal/       - domain logic and adapters
-infrastructure/ - migrations, docker files, observability
-pkg/            - shared utilities (zap logger, helpers)
-makefiles/      - grouped Make targets
+infrastructure/ - migrations, docker files, observability configs
+internal/       - domain logic, use cases, ports, and adapters
+makefiles/      - grouped Make targets for builds, codegen, testing
+pkg/            - shared utilities
+tests/          - test data, mocks, and testing utilities
+Dockerfile      - Docker build instructions for the API
+Makefile        - main Makefile orchestrating tasks
+.golangci.yml   - static analysis and linter configuration
 ```
 
 Run `make help` to see all available commands. Frequently used ones include:
@@ -117,9 +122,9 @@ Run `make help` to see all available commands. Frequently used ones include:
 ```bash
 make format    # format Go code
 make lint      # run static analysis
-make test      # execute unit tests
 make dev-up    # start the development environment
 make dev-down  # stop and remove dev containers
+make dev       # builds and runs the dev environment
 make verify    # run full pipeline before committing
 ```
 
