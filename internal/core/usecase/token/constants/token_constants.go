@@ -5,7 +5,7 @@ package constants
 const ErrorToSaveToken = "error saving access reference" // #nosec G101
 
 // ErrorToGetToken indicates an error retrieving the access reference.
-const ErrorToGetToken = "failed to retrieve token from cache"
+const ErrorToGetToken = "failed to retrieve token from cache" // #nosec G101
 
 // ErrorToDeleteToken indicates an error deleting the access reference.
 const ErrorToDeleteToken = "error deleting access reference" // #nosec G101
