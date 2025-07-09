@@ -12,7 +12,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 
@@ -43,7 +42,7 @@ func (up UserRepository) CreateUser(ctx context.Context, userDomain domain.UserD
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "CreateUser", trace.WithAttributes(
 		attribute.String(commonkeys.Username, userDomain.Username),
-		attribute.String(commonkeys.Email, userDomain.Email),
+		attribute.String(commonkeys.UserEmail, userDomain.Email),
 		attribute.String("operation", "create"),
 	))
 	defer span.End()
@@ -152,7 +151,7 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByEmail", trace.WithAttributes(
-		attribute.String(commonkeys.Email, email),
+		attribute.String(commonkeys.UserEmail, email),
 		attribute.String("operation", "get_by_email"),
 	))
 	defer span.End()
@@ -191,7 +190,7 @@ func (up UserRepository) UpdateUser(
 	))
 	defer span.End()
 
-	delete(fields, constants.CreatedAt)
+	delete(fields, commonkeys.CreatedAt)
 
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
@@ -207,7 +206,7 @@ func (up UserRepository) UpdateUser(
 	return up.GetUserByID(ctx, userID)
 }
 
-// SoftDeleteUser marks a user as deleted by updating the DeletedAt and UpdatedAt fields for the specified userID. Returns an error if the update fails.
+// SoftDeleteUser marks a user as deleted by updating the DeletedAt and UserUpdatedAt fields for the specified userID. Returns an error if the update fails.
 func (up UserRepository) SoftDeleteUser(ctx context.Context, userID uint64) error {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "SoftDeleteUser", trace.WithAttributes(
@@ -217,8 +216,8 @@ func (up UserRepository) SoftDeleteUser(ctx context.Context, userID uint64) erro
 	defer span.End()
 
 	fields := map[string]interface{}{
-		constants.DeletedAt: time.Now().UTC(),
-		constants.UpdatedAt: time.Now().UTC(),
+		commonkeys.DeletedAt: time.Now().UTC(),
+		commonkeys.UpdatedAt: time.Now().UTC(),
 	}
 
 	if err := up.db.WithContext(ctx).

@@ -22,7 +22,7 @@ func TestVerifyToken_Success(t *testing.T) {
 
 	userID := testdata.TestPerfectUser.ID
 
-	tokenString, err := security.GenerateToken(userID, constants.SecretKey)
+	tokenString, err := security.GenerateToken(userID, testdata.SecretKey)
 	require.NoError(t, err)
 
 	suite.TokenStore.EXPECT().
@@ -54,7 +54,7 @@ func TestCheck_TokenMismatch(t *testing.T) {
 
 	userID := uint64(1)
 
-	tokenString, err := security.GenerateToken(userID, constants.SecretKey)
+	tokenString, err := security.GenerateToken(userID, testdata.SecretKey)
 	require.NoError(t, err)
 
 	cachedToken := "differentToken"
@@ -75,7 +75,7 @@ func TestCheck_ErrorToRetrieveTokenFromCache(t *testing.T) {
 
 	userID := testdata.TestPerfectUser.ID
 
-	tokenString, err := security.GenerateToken(userID, constants.SecretKey)
+	tokenString, err := security.GenerateToken(userID, testdata.SecretKey)
 	require.NoError(t, err)
 
 	suite.TokenStore.EXPECT().

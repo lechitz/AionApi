@@ -8,8 +8,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// TODO: analisar o impacto ao retirar a lib time do domain.
+
 // UserDB represents the database model for storing user information.
-// It includes fields for user details, timestamps, and soft deletion.
 type UserDB struct {
 	Name      string         `gorm:"column:name"`
 	Username  string         `gorm:"column:username"`
@@ -20,8 +21,6 @@ type UserDB struct {
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`
 	ID        uint64         `gorm:"primaryKey;column:user_id"`
 }
-
-// TODO: ajustar arquivos de model para criar um dbkeys ?.
 
 // TableName specifies the custom database table name for the UserDB model.
 func (UserDB) TableName() string {

@@ -27,7 +27,7 @@ func (s *Service) UpdateUser(ctx context.Context, user domain.UserDomain) (domai
 	}
 
 	if user.Email != "" {
-		updateFields[commonkeys.Email] = user.Email
+		updateFields[commonkeys.UserEmail] = user.Email
 	}
 
 	if len(updateFields) == 0 {
@@ -42,10 +42,7 @@ func (s *Service) UpdateUser(ctx context.Context, user domain.UserDomain) (domai
 		return domain.UserDomain{}, fmt.Errorf("%s: %w", constants.ErrorToUpdateUser, err)
 	}
 
-	s.logger.Infow(constants.SuccessUserUpdated,
-		commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10),
-		"updated_fields", updateFields, // TODO: avaliar o uso de magic strings.
-	)
+	s.logger.Infow(constants.SuccessUserUpdated, commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10), commonkeys.UserUpdatedFields, updateFields)
 
 	return updatedUser, nil
 }
@@ -73,8 +70,8 @@ func (s *Service) UpdateUserPassword(ctx context.Context, user domain.UserDomain
 	}
 
 	fields := map[string]interface{}{
-		commonkeys.Password:  hashedPassword,
-		commonkeys.UpdatedAt: time.Now().UTC(),
+		commonkeys.UserPassword:  hashedPassword,
+		commonkeys.UserUpdatedAt: time.Now().UTC(),
 	}
 
 	updatedUser, err := s.userStore.UpdateUser(ctx, user.ID, fields)
