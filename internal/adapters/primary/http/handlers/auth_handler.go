@@ -5,12 +5,14 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/lechitz/AionApi/internal/platform/config"
+
 	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/httputils"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-	inputHttp "github.com/lechitz/AionApi/internal/core/ports/input"
+	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"go.opentelemetry.io/otel"
@@ -28,14 +30,16 @@ import (
 // Auth provides authentication handlers for login and logout functionalities.
 // Combines AuthService for logic and Logger for logging operations.
 type Auth struct {
-	AuthService inputHttp.AuthService
+	AuthService input.AuthService
 	Logger      output.Logger
+	Config      *config.Config
 }
 
 // NewAuth initializes and returns a new Auth instance with AuthService and Logger dependencies.
-func NewAuth(authService inputHttp.AuthService, logger output.Logger) *Auth {
+func NewAuth(authService input.AuthService, cfg *config.Config, logger output.Logger) *Auth {
 	return &Auth{
 		AuthService: authService,
+		Config:      cfg,
 		Logger:      logger,
 	}
 }
@@ -59,7 +63,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputils.SetAuthCookie(w, token, 0)
+	httputils.SetAuthCookie(w, token, a.Config.Cookie)
 
 	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
 	span.SetAttributes(attribute.String(commonkeys.Username, userDB.Username))
@@ -91,8 +95,9 @@ func (a *Auth) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputils.ClearAuthCookie(w)
+	httputils.ClearAuthCookie(w, a.Config.Cookie)
 
+	// TODO:passar pra uma outra função.
 	tokenPreview := ""
 	if len(tokenString) >= 10 {
 		tokenPreview = tokenString[:10] + "..."
