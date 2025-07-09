@@ -1,5 +1,5 @@
-// Package zap provides a zap-based zap implementation.
-package zap
+// Package logger provides a logger-based logger implementation.
+package logger
 
 import (
 	"log"
@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	failedToFlushLogger = "Failed to flush zap: %v"
+	failedToFlushLogger = "Failed to flush logger: %v"
 )
 
-// NewLogger initializes a zap.SugaredLogger with separate log levels for stdout and stderr. Returns the logger and a cleanup function to flush logs.
+// NewLogger initializes a logger.SugaredLogger with separate log levels for stdout and stderr. Returns the logger and a cleanup function to flush logs.
 func NewLogger() (*zap.SugaredLogger, func()) {
 	encoderCfg := zap.NewProductionEncoderConfig()
 	encoderCfg.TimeKey = "timestamp"

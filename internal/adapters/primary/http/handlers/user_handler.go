@@ -41,7 +41,7 @@ type User struct {
 	Config      *config.Config
 }
 
-// NewUser initializes and returns a new User instance with provided user service and zap dependencies.
+// NewUser initializes and returns a new User instance with provided user service and logger dependencies.
 func NewUser(userService input.UserService, cfg *config.Config, logger output.Logger) *User {
 	return &User{
 		UserService: userService,

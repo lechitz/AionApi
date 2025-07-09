@@ -50,7 +50,7 @@ func (t *Repository) Save(ctx context.Context, token domain.TokenDomain) error {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 
-		// TODO: ajustar o uso de TokenUser no zap.
+		// TODO: ajustar o uso de TokenUser no logger.
 
 		t.logger.Errorw(constants.ErrorToSaveTokenToRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
 		return err
@@ -103,7 +103,7 @@ func (t *Repository) Delete(ctx context.Context, token domain.TokenDomain) error
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 
-		// TODO: ajustar o uso de TokenUser no zap.
+		// TODO: ajustar o uso de TokenUser no logger.
 
 		t.logger.Errorw(constants.ErrorToDeleteTokenFromRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
 		return err

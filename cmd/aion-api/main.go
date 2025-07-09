@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/internal/platform/logger"
 	"net"
 	"net/http"
 	"os"
@@ -20,12 +21,11 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/observability"
 	"github.com/lechitz/AionApi/internal/shared/commonkeys"
-	"github.com/lechitz/AionApi/pkg/zap"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 func main() {
-	logger, cleanupLogger := zap.NewLogger()
+	logger, cleanupLogger := logger.NewLogger()
 	defer cleanupLogger()
 
 	cfg := loadConfig(logger)
