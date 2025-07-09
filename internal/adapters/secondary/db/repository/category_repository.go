@@ -13,7 +13,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 
@@ -26,7 +25,7 @@ import (
 )
 
 // CategoryRepository manages database operations related to category entities.
-// It uses gorm.DB for ORM and logger.Logger for logging operations.
+// It uses gorm.DB for ORM and output.Logger for logging operations.
 type CategoryRepository struct {
 	db     *gorm.DB
 	logger output.Logger
@@ -164,7 +163,7 @@ func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint6
 	))
 	defer span.End()
 
-	delete(updateFields, constants.CreatedAt)
+	delete(updateFields, commonkeys.CreatedAt)
 
 	var categoryDB model.CategoryDB
 	if err := c.db.WithContext(ctx).
@@ -188,7 +187,7 @@ func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint6
 	return mapper.CategoryFromDB(categoryDB), nil
 }
 
-// SoftDeleteCategory updates the DeletedAt and UpdatedAt fields to mark a category as soft-deleted based on category ID and user ID.
+// SoftDeleteCategory updates the DeletedAt and UserUpdatedAt fields to mark a category as soft-deleted based on category ID and user ID.
 func (c CategoryRepository) SoftDeleteCategory(
 	ctx context.Context,
 	category domain.Category,
@@ -202,8 +201,8 @@ func (c CategoryRepository) SoftDeleteCategory(
 	defer span.End()
 
 	fields := map[string]interface{}{
-		constants.DeletedAt: time.Now().UTC(),
-		constants.UpdatedAt: time.Now().UTC(),
+		commonkeys.DeletedAt: time.Now().UTC(),
+		commonkeys.UpdatedAt: time.Now().UTC(),
 	}
 
 	if err := c.db.WithContext(ctx).

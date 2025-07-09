@@ -19,13 +19,7 @@ import (
 
 // NewDatabaseConnection initializes a database connection using the provided configuration and logger. Returns a Gorm DB instance or an error.
 func NewDatabaseConnection(appCtx context.Context, cfg config.DBConfig, logger output.Logger) (*gorm.DB, error) {
-	conString := fmt.Sprintf(constants.MsgFormatConString, cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
-
-	// TODO: avaliar variáveis abaixo.
-
-	logger.Infow(constants.MsgDBConnection, constants.Host, cfg.Host, commonkeys.Port, cfg.Port, constants.DBName, cfg.Name)
-
-	db, err := tryConnectingWithRetries(conString, logger, 3)
+	db, err := tryConnectingWithRetries(cfg, logger)
 	if err != nil {
 		logger.Errorw(constants.ErrorToStartDB, commonkeys.Error, err.Error())
 		return nil, err
@@ -49,25 +43,28 @@ func NewDatabaseConnection(appCtx context.Context, cfg config.DBConfig, logger o
 	}
 
 	if cfg.ConnMaxLifetime > 0 {
-		sqlDB.SetConnMaxLifetime(time.Duration(cfg.ConnMaxLifetime) * time.Minute) // TODO: avaliar se vale apena passar pra time.Duration.
+		sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifetime)
 	}
 
 	return db, nil
 }
 
 // tryConnectingWithRetries attempts to establish a database connection with retries.
-func tryConnectingWithRetries(conString string, logger output.Logger, maxRetries int) (*gorm.DB, error) {
+func tryConnectingWithRetries(cfg config.DBConfig, logger output.Logger) (*gorm.DB, error) {
 	var db *gorm.DB
 	var err error
 
-	for tryConnect := 1; tryConnect <= maxRetries; tryConnect++ {
-		logger.Infow(constants.MsgTryingStartsDB, constants.Try, tryConnect) // TODO: avaliar se vale apena passar pra o Try para commonkeys.
+	conString := fmt.Sprintf(constants.MsgFormatConString, cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name, cfg.SSLMode, cfg.TimeZone)
+	logger.Infow(constants.MsgDBConnection, commonkeys.DBHost, cfg.Host, commonkeys.DBPort, cfg.Port, commonkeys.DBName, cfg.Name)
+
+	for tryConnect := 1; tryConnect <= cfg.MaxRetries; tryConnect++ {
+		logger.Infow(constants.MsgTryingStartsDB, commonkeys.DBTryConnectingWithRetries, tryConnect)
 		db, err = gorm.Open(postgres.Open(conString), &gorm.Config{})
 		if err == nil {
 			return db, nil
 		}
 		logger.Warnw(constants.ErrDBConnectionAttempt, commonkeys.Error, err.Error())
-		time.Sleep(3 * time.Second) // TODO: avaliar se vale apena ir para variáveis de ambiente.
+		time.Sleep(cfg.RetryInterval)
 	}
 
 	return nil, err

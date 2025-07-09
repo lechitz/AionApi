@@ -1,32 +1,44 @@
 // Package constants contains constants used throughout the application.
 package constants
 
-// SuccessToLoadConfiguration is a constant string indicating that the configuration has been successfully loaded.
-const SuccessToLoadConfiguration = "configuration loaded successfully"
+const (
 
-// SuccessToInitializeDependencies is a constant string indicating successful initialization of application dependencies.
-const SuccessToInitializeDependencies = "dependencies initialized successfully"
+	// SuccessToLoadConfiguration is a constant string indicating that the configuration has been successfully loaded.
+	SuccessToLoadConfiguration = "configuration loaded successfully"
 
-// LoadedConfig is a constant string used to indicate the application has successfully loaded its configuration.
-const LoadedConfig = "loaded config: %+v"
+	// SuccessToInitializeDependencies is a constant string indicating successful initialization of application dependencies.
+	SuccessToInitializeDependencies = "dependencies initialized successfully"
 
-// ErrToFailedLoadConfiguration is a constant string representing an error message for failure in loading configuration.
-const ErrToFailedLoadConfiguration = "failed to load configuration"
+	// LoadedConfig is a constant string used to indicate the application has successfully loaded its configuration.
+	LoadedConfig = "loaded config: %+v"
 
-// ErrInvalidConfiguration is a constant string used to indicate an invalid configuration.
-const ErrInvalidConfiguration = "invalid configuration"
+	// ErrToFailedLoadConfiguration is a constant string representing an error message for failure in loading configuration.
+	ErrToFailedLoadConfiguration = "failed to load configuration"
 
-// ErrInitializeDependencies is a constant string representing an error message when dependencies fail to initialize.
-const ErrInitializeDependencies = "failed to initialize dependencies"
+	// ErrInvalidConfiguration is a constant string used to indicate an invalid configuration.
+	ErrInvalidConfiguration = "invalid configuration"
 
-// ErrStartHTTPServer is a constant string representing an error indicating the failure to start the HTTP server.
-const ErrStartHTTPServer = "failed to start server"
+	// ErrInitializeDependencies is a constant string representing an error message when dependencies fail to initialize.
+	ErrInitializeDependencies = "failed to initialize dependencies"
 
-// ErrStartGraphqlServer is a constant string used to denote a failure in starting the GraphQL server.
-const ErrStartGraphqlServer = "failed to start graphql server"
+	// ErrStartHTTPServer is a constant string representing an error indicating the failure to start the HTTP server.
+	ErrStartHTTPServer = "failed to start server"
 
-// MsgShutdownSignalReceived is a constant string logged when the application receives a shutdown signal to start graceful shutdown procedures.
-const MsgShutdownSignalReceived = "shutdown signal received, attempting graceful shutdown"
+	// ErrStartGraphqlServer is a constant string used to denote a failure in starting the GraphQL server.
+	ErrStartGraphqlServer = "failed to start graphql server"
 
-// MsgUnexpectedServerFailure is a constant string used to indicate an unexpected failure in starting one of the application servers.
-const MsgUnexpectedServerFailure = "unexpected failure while starting one of the application servers (HTTP or GraphQL)"
+	// MsgShutdownSignalReceived is a constant string logged when the application receives a shutdown signal to start graceful shutdown procedures.
+	MsgShutdownSignalReceived = "shutdown signal received, attempting graceful shutdown"
+
+	// MsgUnexpectedServerFailure is a constant string used to indicate an unexpected failure in starting one of the application servers.
+	MsgUnexpectedServerFailure = "unexpected failure while starting one of the application servers (HTTP or GraphQL)"
+
+	// ServerStartFmt is a constant string used to format the message indicating the start of the server.
+	ServerStartFmt = "%s server started"
+
+	// ServerFailureFmt is a constant string used to format the message indicating a failure in starting the server.
+	ServerFailureFmt = "failed to start server on %s: %w"
+
+	// ShutdownFailureFmt is a constant string used to format the message indicating a failure in shutting down the server.
+	ShutdownFailureFmt = "failed to shutdown server on %s: %v"
+)

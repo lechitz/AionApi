@@ -15,6 +15,3 @@ const ErrConnectToDatabase = "Failed to connect to Database: %v"
 
 // ErrCloseCacheConnection indicates an error occurred while attempting to close the Cache connection.
 const ErrCloseCacheConnection = "failed to close Cache connection"
-
-// FieldAddr is a constant used as a key for specifying address information in structured logging or configuration contexts.
-const FieldAddr = "addr"
