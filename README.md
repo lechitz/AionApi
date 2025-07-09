@@ -105,12 +105,11 @@ This repository is organized using a public [GitHub Projects board](https://gith
 The project is organized as follows:
 
 ```text
-github/         - GitHub Actions workflows and issue templates
+.github/         - GitHub Actions workflows and issue templates
 cmd/            - application entry point
 infrastructure/ - migrations, docker files, observability configs
 internal/       - domain logic, use cases, ports, and adapters
 makefiles/      - grouped Make targets for builds, codegen, testing
-pkg/            - shared utilities
 tests/          - test data, mocks, and testing utilities
 Dockerfile      - Docker build instructions for the API
 Makefile        - main Makefile orchestrating tasks
