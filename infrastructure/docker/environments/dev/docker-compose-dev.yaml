@@ -7,7 +7,7 @@ services:
       - .env.dev
     volumes:
       - postgres-data-dev:/var/lib/postgresql/data
-      - ../../db/migrations:/docker-entrypoint-initdb.d
+      - ../../../db/migrations:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
@@ -36,7 +36,7 @@ services:
     container_name: otel-collector
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
-      - ../../observability/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+      - ../../../observability/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
     ports:
       - "4318:4318"   # OTLP HTTP
       - "55681:55681" # OTLP gRPC
@@ -51,7 +51,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ../../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       - rede_local
     depends_on:
@@ -67,9 +67,9 @@ services:
       - GF_SECURITY_ADMIN_USER=aion
       - GF_SECURITY_ADMIN_PASSWORD=aion
     volumes:
-      - ../../observability/grafana/dashboards:/var/lib/grafana/dashboards
-      - ../../observability/grafana/provisioning:/etc/grafana/provisioning/dashboards
-      - ../../observability/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - ../../../observability/grafana/dashboards:/var/lib/grafana/dashboards
+      - ../../../observability/grafana/provisioning:/etc/grafana/provisioning/dashboards
+      - ../../../observability/grafana/datasources:/etc/grafana/provisioning/datasources:ro
       - grafana-data:/var/lib/grafana
     networks:
       - rede_local
@@ -89,8 +89,8 @@ services:
   aion-api:
     image: aion-api:dev
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../../../..
+      dockerfile: infrastructure/docker/Dockerfile
     container_name: aion-api-dev
     env_file:
       - .env.dev

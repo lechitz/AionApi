@@ -3,12 +3,13 @@
 # ============================================================
 
 APPLICATION_NAME := aion-api
-COMPOSE_FILE_DEV := infrastructure/docker/dev/docker-compose-dev.yaml
-ENV_FILE_DEV     := infrastructure/docker/dev/.env.dev
-COMPOSE_FILE_PROD := infrastructure/docker/prod/docker-compose-prod.yaml
-ENV_FILE_PROD    := infrastructure/docker/prod/.env.prod
-COVERAGE_DIR = tests/coverage
 
+COMPOSE_FILE_DEV := infrastructure/docker/environments/dev/docker-compose-dev.yaml
+ENV_FILE_DEV     := infrastructure/docker/environments/dev/.env.dev
+COMPOSE_FILE_PROD := infrastructure/docker/environments/prod/docker-compose-prod.yaml
+ENV_FILE_PROD    := infrastructure/docker/environments/prod/.env.prod
+
+COVERAGE_DIR = tests/coverage
 
 # --- MIGRATION CONFIG ---
 MIGRATION_PATH := infrastructure/db/migrations
