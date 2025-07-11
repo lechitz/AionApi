@@ -17,8 +17,8 @@ type Loader struct {
 	cfg Config
 }
 
-// NewLoader returns a new instance of Loader.
-func NewLoader() *Loader {
+// New returns a new instance of Loader.
+func New() *Loader {
 	return &Loader{}
 }
 

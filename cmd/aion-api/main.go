@@ -48,8 +48,8 @@ func main() {
 }
 
 func loadConfig(logger output.ContextLogger) *config.Config {
-	loader := config.NewLoader()
-	cfg, err := loader.Load(logger)
+	configLoader := config.New()
+	cfg, err := configLoader.Load(logger)
 	if err != nil {
 		logger.Errorw(
 			constants.ErrToFailedLoadConfiguration,
