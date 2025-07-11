@@ -25,14 +25,14 @@ import (
 )
 
 // CategoryRepository manages database operations related to category entities.
-// It uses gorm.DB for ORM and output.Logger for logging operations.
+// It uses gorm.DB for ORM and output.ContextLogger for logging operations.
 type CategoryRepository struct {
 	db     *gorm.DB
-	logger output.Logger
+	logger output.ContextLogger
 }
 
-// NewCategoryRepository creates a new instance of CategoryRepository with a given gorm.DB and logger.
-func NewCategoryRepository(db *gorm.DB, logger output.Logger) *CategoryRepository {
+// NewCategoryRepository creates a new instance of CategoryRepository with a given gorm.DB and contextlogger.
+func NewCategoryRepository(db *gorm.DB, logger output.ContextLogger) *CategoryRepository {
 	return &CategoryRepository{
 		db:     db,
 		logger: logger,

@@ -17,14 +17,14 @@ import (
 // RouteComposer is a structure for configuring routes, middlewares, and logging in the HTTP router.
 type RouteComposer struct {
 	Router         output.Router
-	logger         output.Logger
+	logger         output.ContextLogger
 	authMiddleware *auth.MiddlewareAuth
 	BasePath       string
 }
 
 // NewHTTPRouter creates and configures a new HTTP router with middleware and authentication.
 func NewHTTPRouter(
-	logger output.Logger,
+	logger output.ContextLogger,
 	tokenRepository output.TokenStore,
 	contextPath string,
 	tokenClaimsExtractor output.TokenClaimsExtractor,

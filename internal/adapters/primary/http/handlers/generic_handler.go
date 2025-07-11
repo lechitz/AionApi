@@ -19,12 +19,12 @@ import (
 
 // Generic provides common HTTP handlers for the application.
 type Generic struct {
-	Logger        output.Logger
+	Logger        output.ContextLogger
 	GeneralConfig config.GeneralConfig
 }
 
 // NewGeneric initializes and returns a new Generic instance with a Logger dependency.
-func NewGeneric(logger output.Logger, general config.GeneralConfig) *Generic {
+func NewGeneric(logger output.ContextLogger, general config.GeneralConfig) *Generic {
 	return &Generic{
 		Logger:        logger,
 		GeneralConfig: general,

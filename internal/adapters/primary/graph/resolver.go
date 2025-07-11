@@ -10,5 +10,5 @@ import (
 
 type Resolver struct {
 	CategoryService input.CategoryService
-	Logger          output.Logger
+	Logger          output.ContextLogger
 }

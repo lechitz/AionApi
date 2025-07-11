@@ -1,11 +1,17 @@
 // Package ctxkeys contains constants used for context keys.
 package ctxkeys
 
-// ContextKey is a string type used for context keys.
-type ContextKey string
+// contextKey is a string type used for context keys.
+type contextKey string
 
 // UserID is a constant string representing the key used to define or identify a user ID.
-const UserID ContextKey = "user_id"
+const (
+	UserID contextKey = "user_id"
 
-// Token is a constant string representing the key used to define or identify a token.
-const Token ContextKey = "token"
+	// Token is a constant string representing the key used to define or identify a token.
+	Token contextKey = "token"
+
+	CtxKeyRequestID contextKey = "request_id"
+	CtxKeyTraceID   contextKey = "trace_id"
+	CtxKeyUserID    contextKey = "user_id"
+)

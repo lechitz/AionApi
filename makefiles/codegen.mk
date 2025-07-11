@@ -43,5 +43,5 @@ mocks:
 	mockgen -source=internal/core/ports/output/logger_output.go \
 	  -destination=tests/mocks/mock_logger.go \
 	  -package=mocks \
-	  -mock_names=Logger=MockLogger
+	  -mock_names=ContextLogger=MockLogger
 	@echo "✅  All mocks generated successfully."

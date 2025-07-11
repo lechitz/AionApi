@@ -21,11 +21,11 @@ import (
 // Repository is a repository for managing tokens.
 type Repository struct {
 	cache  output.Cache
-	logger output.Logger
+	logger output.ContextLogger
 }
 
 // NewTokenRepository creates a new instance of Repository with a given cache.Cache and logger.Logger.
-func NewTokenRepository(cache output.Cache, logger output.Logger) *Repository {
+func NewTokenRepository(cache output.Cache, logger output.ContextLogger) *Repository {
 	return &Repository{
 		cache:  cache,
 		logger: logger,
@@ -50,7 +50,7 @@ func (t *Repository) Save(ctx context.Context, token domain.TokenDomain) error {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 
-		// TODO: ajustar o uso de TokenUser no logger.
+		// TODO: ajustar o uso de TokenUser no contextlogger.
 
 		t.logger.Errorw(constants.ErrorToSaveTokenToRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
 		return err
@@ -103,7 +103,7 @@ func (t *Repository) Delete(ctx context.Context, token domain.TokenDomain) error
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 
-		// TODO: ajustar o uso de TokenUser no logger.
+		// TODO: ajustar o uso de TokenUser no contextlogger.
 
 		t.logger.Errorw(constants.ErrorToDeleteTokenFromRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
 		return err

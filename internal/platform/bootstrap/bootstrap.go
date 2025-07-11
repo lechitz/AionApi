@@ -31,11 +31,11 @@ type AppDependencies struct {
 
 	TokenClaimsExtractor output.TokenClaimsExtractor
 	TokenRepository      output.TokenStore
-	Logger               output.Logger
+	Logger               output.ContextLogger
 }
 
 // InitializeDependencies initializes and returns all core application dependencies.
-func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger output.Logger) (*AppDependencies, func(), error) {
+func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger output.ContextLogger) (*AppDependencies, func(), error) {
 	cacheClient, err := adapterCache.NewCacheConnection(appCtx, cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)

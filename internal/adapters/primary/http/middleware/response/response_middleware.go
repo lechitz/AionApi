@@ -13,7 +13,7 @@ import (
 )
 
 // Return sends an HTTP response with the specified status code and body, logging errors if writing the body fails.
-func Return(w http.ResponseWriter, statusCode int, body []byte, logger output.Logger) {
+func Return(w http.ResponseWriter, statusCode int, body []byte, logger output.ContextLogger) {
 	w.Header().Add("Content-Type", "application/json") // TODO: ajustar magic string.
 	w.WriteHeader(statusCode)
 
@@ -25,7 +25,7 @@ func Return(w http.ResponseWriter, statusCode int, body []byte, logger output.Lo
 }
 
 // ObjectResponse creates a JSON response with the given object, message, and current UTC date and returns it as a byte.Buffer.
-func ObjectResponse(obj any, message string, logger output.Logger) *bytes.Buffer {
+func ObjectResponse(obj any, message string, logger output.ContextLogger) *bytes.Buffer {
 	response := struct {
 		Date    time.Time `json:"date,omitempty"`
 		Result  any       `json:"result,omitempty"`
@@ -47,7 +47,7 @@ func ObjectResponse(obj any, message string, logger output.Logger) *bytes.Buffer
 // TODO: ajustar magic strings.
 
 // HandleError logs the error or warning, creates a JSON response, and sends it with the specified status code to the HTTP client.
-func HandleError(w http.ResponseWriter, logger output.Logger, status int, msg string, err error) {
+func HandleError(w http.ResponseWriter, logger output.ContextLogger, status int, msg string, err error) {
 	if err != nil {
 		logger.Errorw("operation failed", "message", msg, commonkeys.Error, err.Error(), "status", status) // TODO: ajustar magic string.
 		response := ObjectResponse(nil, msg+": "+err.Error(), logger)
@@ -60,7 +60,7 @@ func HandleError(w http.ResponseWriter, logger output.Logger, status int, msg st
 }
 
 // HandleCriticalError logs a critical error and message, and then panics with the error or message provided.
-func HandleCriticalError(logger output.Logger, message string, err error) {
+func HandleCriticalError(logger output.ContextLogger, message string, err error) {
 	if err != nil {
 		logger.Errorw("critical failure", "message", message, commonkeys.Error, err.Error()) // TODO: ajustar magic string.
 		panic(err)

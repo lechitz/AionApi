@@ -37,12 +37,12 @@ import (
 // User represents a handler for managing user-related operations and dependencies.
 type User struct {
 	UserService input.UserService
-	Logger      output.Logger
+	Logger      output.ContextLogger
 	Config      *config.Config
 }
 
-// NewUser initializes and returns a new User instance with provided user service and logger dependencies.
-func NewUser(userService input.UserService, cfg *config.Config, logger output.Logger) *User {
+// NewUser initializes and returns a new User instance with provided user service and contextlogger dependencies.
+func NewUser(userService input.UserService, cfg *config.Config, logger output.ContextLogger) *User {
 	return &User{
 		UserService: userService,
 		Config:      cfg,

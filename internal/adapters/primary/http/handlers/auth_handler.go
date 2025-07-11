@@ -31,12 +31,12 @@ import (
 // Combines AuthService for logic and Logger for logging operations.
 type Auth struct {
 	AuthService input.AuthService
-	Logger      output.Logger
+	Logger      output.ContextLogger
 	Config      *config.Config
 }
 
 // NewAuth initializes and returns a new Auth instance with AuthService and Logger dependencies.
-func NewAuth(authService input.AuthService, cfg *config.Config, logger output.Logger) *Auth {
+func NewAuth(authService input.AuthService, cfg *config.Config, logger output.ContextLogger) *Auth {
 	return &Auth{
 		AuthService: authService,
 		Config:      cfg,

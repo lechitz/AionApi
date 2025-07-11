@@ -11,7 +11,7 @@ type Service struct {
 	userStore    output.UserStore
 	tokenService input.TokenService
 	hashStore    output.HasherStore
-	logger       output.Logger
+	logger       output.ContextLogger
 }
 
 // NewUserService creates and returns a new Service instance with the provided dependencies for handling user-related operations.
@@ -19,7 +19,7 @@ func NewUserService(
 	userStore output.UserStore,
 	tokenService input.TokenService,
 	hashStore output.HasherStore,
-	logger output.Logger,
+	logger output.ContextLogger,
 ) *Service {
 	return &Service{
 		userStore:    userStore,

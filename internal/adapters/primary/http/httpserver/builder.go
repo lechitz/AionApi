@@ -18,7 +18,7 @@ type RouterBuilder struct {
 
 // BuildRouterRoutes sets up API routes, integrates middlewares.
 func BuildRouterRoutes(
-	logger output.Logger,
+	logger output.ContextLogger,
 	userService input.UserService,
 	authService input.AuthService,
 	tokenRepository output.TokenStore,

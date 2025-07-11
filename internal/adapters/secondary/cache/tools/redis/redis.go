@@ -23,11 +23,11 @@ const (
 
 type redisClient struct {
 	client *redis.Client
-	logger output.Logger
+	logger output.ContextLogger
 }
 
 // NewCacheConnection initializes a new Redis cache connection.
-func NewCacheConnection(appCtx context.Context, cfg config.CacheConfig, logger output.Logger) (output.Cache, error) {
+func NewCacheConnection(appCtx context.Context, cfg config.CacheConfig, logger output.ContextLogger) (output.Cache, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,
 		Password: cfg.Password,

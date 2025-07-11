@@ -24,7 +24,7 @@ const (
 )
 
 // InitTracer initializes the OpenTelemetry tracer using the provided configuration.
-func InitTracer(cfg *config.Config, logger output.Logger) func() {
+func InitTracer(cfg *config.Config, logger output.ContextLogger) func() {
 	opts := []otlptracehttp.Option{
 		otlptracehttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
 	}

@@ -17,8 +17,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// NewDatabaseConnection initializes a database connection using the provided configuration and logger. Returns a Gorm DB instance or an error.
-func NewDatabaseConnection(appCtx context.Context, cfg config.DBConfig, logger output.Logger) (*gorm.DB, error) {
+// NewDatabaseConnection initializes a database connection using the provided configuration and contextlogger. Returns a Gorm DB instance or an error.
+func NewDatabaseConnection(appCtx context.Context, cfg config.DBConfig, logger output.ContextLogger) (*gorm.DB, error) {
 	db, err := tryConnectingWithRetries(cfg, logger)
 	if err != nil {
 		logger.Errorw(constants.ErrorToStartDB, commonkeys.Error, err.Error())
@@ -50,7 +50,7 @@ func NewDatabaseConnection(appCtx context.Context, cfg config.DBConfig, logger o
 }
 
 // tryConnectingWithRetries attempts to establish a database connection with retries.
-func tryConnectingWithRetries(cfg config.DBConfig, logger output.Logger) (*gorm.DB, error) {
+func tryConnectingWithRetries(cfg config.DBConfig, logger output.ContextLogger) (*gorm.DB, error) {
 	var db *gorm.DB
 	var err error
 
@@ -70,8 +70,8 @@ func tryConnectingWithRetries(cfg config.DBConfig, logger output.Logger) (*gorm.
 	return nil, err
 }
 
-// Close terminates the database connection and logs success or error messages using the provided logger.
-func Close(db *gorm.DB, logger output.Logger) {
+// Close terminates the database connection and logs success or error messages using the provided contextlogger.
+func Close(db *gorm.DB, logger output.ContextLogger) {
 	sqlDB, err := db.DB()
 	if err != nil {
 		logger.Errorw(constants.MsgToRetrieveSQLFromGorm, commonkeys.Error, err.Error())

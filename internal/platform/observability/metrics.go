@@ -21,7 +21,7 @@ const (
 )
 
 // InitOtelMetrics initializes the OpenTelemetry metrics provider using the given configuration.
-func InitOtelMetrics(cfg *config.Config, logger output.Logger) func() {
+func InitOtelMetrics(cfg *config.Config, logger output.ContextLogger) func() {
 	opts := []otlpmetrichttp.Option{
 		otlpmetrichttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
 	}

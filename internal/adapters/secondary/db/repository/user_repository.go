@@ -26,11 +26,11 @@ import (
 // UserRepository handles interactions with the user database, providing methods for CRUD operations and user retrieval.
 type UserRepository struct {
 	db     *gorm.DB
-	logger output.Logger
+	logger output.ContextLogger
 }
 
-// NewUserRepository initializes a new UserRepository with the provided database connection and logger.
-func NewUserRepository(db *gorm.DB, logger output.Logger) *UserRepository {
+// NewUserRepository initializes a new UserRepository with the provided database connection and contextlogger.
+func NewUserRepository(db *gorm.DB, logger output.ContextLogger) *UserRepository {
 	return &UserRepository{
 		db:     db,
 		logger: logger,

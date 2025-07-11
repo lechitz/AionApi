@@ -36,7 +36,7 @@ type Config struct {
 }
 
 // Load reads environment configuration and returns a Config struct.
-func (l *Loader) Load(logger output.Logger) (*Config, error) {
+func (l *Loader) Load(logger output.ContextLogger) (*Config, error) {
 	if err := envconfig.Process(commonkeys.Setting, &l.cfg); err != nil {
 		response.HandleCriticalError(logger, constants.ErrFailedToProcessEnvVars, err)
 		return nil, err

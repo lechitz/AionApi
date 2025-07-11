@@ -25,12 +25,12 @@ import (
 // MiddlewareAuth provides authentication middleware functionality.
 type MiddlewareAuth struct {
 	tokenService         output.TokenStore
-	logger               output.Logger
+	logger               output.ContextLogger
 	tokenClaimsExtractor output.TokenClaimsExtractor
 }
 
 // NewAuthMiddleware creates and initializes middleware for authentication.
-func NewAuthMiddleware(tokenService output.TokenStore, logger output.Logger, tokenClaimsExtractor output.TokenClaimsExtractor) *MiddlewareAuth {
+func NewAuthMiddleware(tokenService output.TokenStore, logger output.ContextLogger, tokenClaimsExtractor output.TokenClaimsExtractor) *MiddlewareAuth {
 	return &MiddlewareAuth{
 		tokenService:         tokenService,
 		logger:               logger,
