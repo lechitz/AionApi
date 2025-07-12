@@ -14,4 +14,8 @@ type Router interface {
 	Mount(pattern string, handler http.Handler)
 	ServeHTTP(w http.ResponseWriter, r *http.Request)
 	Group(fn func(r Router))
+	SetNotFoundHandler(handler http.HandlerFunc)
+	SetMethodNotAllowedHandler(handler http.HandlerFunc)
+	SetRecoveryHandler(handler func(http.ResponseWriter, *http.Request, interface{}))
+	SetErrorHandler(handler func(http.ResponseWriter, *http.Request, error))
 }

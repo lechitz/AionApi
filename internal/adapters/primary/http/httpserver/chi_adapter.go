@@ -1,5 +1,5 @@
-// Package chi provides a wrapper around the chi.Router to implement the output.Router interface.
-package chi
+// Package httpserver provides a wrapper around the chi.Router to implement the output.Router interface.
+package httpserver
 
 import (
 	"net/http"
@@ -11,7 +11,9 @@ import (
 
 // Router is a wrapper around the chi.Router to implement the output.Router interface.
 type Router struct {
-	chi chi.Router
+	chi             chi.Router
+	recoveryHandler func(http.ResponseWriter, *http.Request, interface{})
+	errorHandler    func(http.ResponseWriter, *http.Request, error)
 }
 
 // NewRouter initializes and returns a new instance of output.Router using a Router implementation.
@@ -66,4 +68,26 @@ func (c *Router) Group(fn func(r output.Router)) {
 	c.chi.Group(func(r chi.Router) {
 		fn(&Router{chi: r})
 	})
+}
+
+// SetNotFoundHandler sets the handler to be called when no route matches (HTTP 404).
+func (c *Router) SetNotFoundHandler(handler http.HandlerFunc) {
+	c.chi.NotFound(handler)
+}
+
+// SetMethodNotAllowedHandler sets the handler to be called when the route exists, but the HTTP method is not allowed (HTTP 405).
+func (c *Router) SetMethodNotAllowedHandler(handler http.HandlerFunc) {
+	c.chi.MethodNotAllowed(handler)
+}
+
+// SetRecoveryHandler stores a custom recovery handler to be called when a panic occurs during request processing.
+// Note: chi does not natively support a global recovery handler, so this handler should be called by custom middleware.
+func (c *Router) SetRecoveryHandler(handler func(http.ResponseWriter, *http.Request, interface{})) {
+	c.recoveryHandler = handler
+}
+
+// SetErrorHandler stores a custom error handler to be used for centralized error responses across the router.
+// Note: this handler should be invoked from your application or middleware as needed.
+func (c *Router) SetErrorHandler(handler func(http.ResponseWriter, *http.Request, error)) {
+	c.errorHandler = handler
 }
