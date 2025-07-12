@@ -2,6 +2,10 @@
 package commonkeys
 
 const (
+
+	// User is the key for user value in configs, logging, or context.
+	User = "user"
+
 	// UserID is the key for identifying a user ID.
 	UserID = "user_id"
 

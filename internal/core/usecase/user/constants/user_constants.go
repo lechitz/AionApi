@@ -2,20 +2,26 @@
 package constants
 
 // ErrorToValidateCreateUser indicates an error during user creation validation.
-const ErrorToValidateCreateUser = "error to validate create user"
+const ErrorToValidateCreateUser = "validation error on CreateUser"
 
 // ErrorToDeleteToken indicates an error when deleting a token.
 const ErrorToDeleteToken = "error to delete token"
 
 // ErrorToHashPassword indicates an error while hashing a password.
 // #nosec G101: This constant does not leak a real secret, just an error message.
-const ErrorToHashPassword = "error to hash password"
+const ErrorToHashPassword = "error hashing password"
 
 // ErrorToCreateUser indicates an error when creating a user.
 const ErrorToCreateUser = "error to create user"
 
 // SuccessUserCreated indicates that the user was created successfully.
 const SuccessUserCreated = "user created successfully"
+
+// DBErrorCheckingUsername indicates an error when checking the username in the database.
+const DBErrorCheckingUsername = "error checking username in database"
+
+// DBErrorCheckingEmail indicates an error when checking the email in the database.
+const DBErrorCheckingEmail = "error checking email in database"
 
 // ErrorToGetAllUsers indicates an error when fetching all users.
 const ErrorToGetAllUsers = "error to get all users"
@@ -86,19 +92,10 @@ const UsernameIsAlreadyInUse = "username is already in use"
 // EmailIsAlreadyInUse indicates the email is already registered.
 const EmailIsAlreadyInUse = "email is already in use"
 
+// TracerName is the name of the tracer used for the user use case.
+const TracerName = "aionapi.user.usecase"
+
 // TODO: Avaliar se as const abaixo podem ir para "commonkeys" que não seja ContextKeys !
-
-// Name is the key used for a user's name.
-const Name = "name"
-
-// Username is the key used for a user's username.
-const Username = "username"
-
-// Email is the key used for a user's email.
-const Email = "email"
-
-// Password is the key used for a user's password.
-const Password = "password"
 
 // UpdatedAt is the key used for the last update timestamp.
 const UpdatedAt = "updated_at"
