@@ -51,6 +51,9 @@ const (
 	ErrMissingUserIDParam = "missing user ID parameter"
 	ErrInvalidUserIDParam = "invalid user ID"
 
+	ErrUpdateUserPasswordValidation = "validation error on UpdateUserPassword"
+	ErrUpdateUserValidation         = "validation error on UpdateUser"
+
 	ErrCreateUser     = "error creating user"
 	ErrGetUserByID    = "error getting user by ID"
 	ErrGetUsers       = "error getting users"
@@ -66,4 +69,11 @@ const (
 	MsgUserUpdated         = "user updated successfully"
 	MsgUserPasswordUpdated = "user password updated successfully"
 	MsgUserSoftDeleted     = "user soft deleted successfully"
+)
+
+// Validation errors and messages for CreateUser handler.
+const (
+	ValidationFieldCreateUser = "create_user"
+	ValidationFieldUpdateUser = "update_user"
+	ErrCreateUserValidation   = "validation error on CreateUser"
 )

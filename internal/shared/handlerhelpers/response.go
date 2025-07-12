@@ -19,9 +19,9 @@ import (
 func WriteAuthError(ctx context.Context, w http.ResponseWriter, span trace.Span, logger output.ContextLogger) {
 	err := sharederrors.ErrMissingUserID()
 	span.RecordError(err)
-	span.SetStatus(codes.Error, "missing user id")
+	span.SetStatus(codes.Error, sharederrors.ErrMsgMissingUserID)
 	span.SetAttributes(attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusUnauthorized))
-	logger.ErrorwCtx(ctx, "missing user id", commonkeys.Error, err.Error())
+	logger.ErrorwCtx(ctx, sharederrors.ErrMsgMissingUserID, commonkeys.Error, err.Error())
 	httpresponse.WriteAuthError(w, err, logger)
 }
 

@@ -2,14 +2,11 @@
 package user
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/dto"
-	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 	"github.com/lechitz/AionApi/internal/shared/handlerhelpers"
@@ -32,13 +29,17 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userID, err := parseUserIDParam(r, h.Logger)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, err.Error())
+		span.SetStatus(codes.Error, constants.ErrDecodeGetUserByIDRequest)
 		span.SetAttributes(
 			attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusBadRequest),
 			attribute.String(tracingkeys.RequestIPKey, ip),
 			attribute.String(tracingkeys.RequestUserAgentKey, userAgent),
 		)
-		h.Logger.ErrorwCtx(ctx, constants.ErrDecodeGetUserByIDRequest, commonkeys.Error, err.Error())
+		h.Logger.ErrorwCtx(ctx, constants.ErrDecodeGetUserByIDRequest,
+			commonkeys.Error, err.Error(),
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		handlerhelpers.WriteDecodeError(ctx, w, span, err, h.Logger)
 		return
 	}
@@ -55,9 +56,14 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		statusCode := sharederrors.MapErrorToHTTPStatus(err)
 		span.RecordError(err)
-		span.SetStatus(codes.Error, err.Error())
+		span.SetStatus(codes.Error, constants.ErrGetUserByID)
 		span.SetAttributes(attribute.Int(tracingkeys.HTTPStatusCodeKey, statusCode))
-		h.Logger.ErrorwCtx(ctx, constants.ErrGetUserByID, commonkeys.Error, err.Error())
+		h.Logger.ErrorwCtx(ctx, constants.ErrGetUserByID,
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.Error, err.Error(),
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		handlerhelpers.WriteDomainError(ctx, w, span, err, constants.ErrGetUserByID, h.Logger)
 		return
 	}
@@ -87,23 +93,4 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpresponse.WriteSuccess(w, http.StatusOK, res, constants.MsgUserFetched)
-}
-
-// parseUserIDParam extracts and validates the user ID parameter from the URL.
-func parseUserIDParam(r *http.Request, log output.ContextLogger) (uint64, error) {
-	userIDParam := chi.URLParam(r, commonkeys.UserID)
-
-	if userIDParam == "" {
-		err := errors.New(constants.ErrMissingUserIDParam)
-		log.Errorw(constants.ErrMissingUserIDParam, commonkeys.Error, err)
-		return 0, err
-	}
-
-	userID, err := strconv.ParseUint(userIDParam, 10, 64)
-	if err != nil {
-		log.Errorw(constants.ErrInvalidUserIDParam, commonkeys.Error, err)
-		return 0, err
-	}
-
-	return userID, nil
 }

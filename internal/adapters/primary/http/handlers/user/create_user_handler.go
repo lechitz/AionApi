@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jinzhu/copier"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/dto"
 	"github.com/lechitz/AionApi/internal/core/domain"
@@ -42,6 +41,22 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err := handlerhelpers.CheckRequiredFields(map[string]string{
+		commonkeys.Name:     req.Name,
+		commonkeys.Username: req.Username,
+		commonkeys.Email:    req.Email,
+		commonkeys.Password: req.Password,
+	})
+	if err != nil {
+		h.Logger.ErrorwCtx(ctx, constants.ErrCreateUserValidation,
+			commonkeys.Error, err.Error(),
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
+		handlerhelpers.WriteDecodeError(ctx, w, span, err, h.Logger)
+		return
+	}
+
 	span.SetAttributes(
 		attribute.String(commonkeys.Username, req.Username),
 		attribute.String(commonkeys.Email, req.Email),
@@ -49,10 +64,10 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		attribute.String(tracingkeys.RequestUserAgentKey, userAgent),
 	)
 
-	var userDomain domain.UserDomain
-	if err := copier.Copy(&userDomain, &req); err != nil {
-		handlerhelpers.WriteDecodeError(ctx, w, span, err, h.Logger)
-		return
+	userDomain := domain.UserDomain{
+		Name:     req.Name,
+		Username: req.Username,
+		Email:    req.Email,
 	}
 
 	span.AddEvent(constants.EventUserServiceCreateUser)
@@ -81,8 +96,12 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		trace.WithAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(user.ID, 10))),
 	)
 
-	var res dto.CreateUserResponse
-	_ = copier.Copy(&res, &user)
+	res := dto.CreateUserResponse{
+		Name:     user.Name,
+		Username: user.Username,
+		Email:    user.Email,
+		ID:       user.ID,
+	}
 
 	httpresponse.WriteSuccess(w, http.StatusCreated, res, constants.MsgUserCreated)
 }

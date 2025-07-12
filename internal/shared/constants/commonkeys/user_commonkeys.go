@@ -17,6 +17,9 @@ const (
 	// Password is the key for the user's password.
 	Password = "password"
 
+	// NewPassword is the key for the user's new password.
+	NewPassword = "new_password"
+
 	// UserCreatedAt is the key for the user's created_at field (legacy/compat).
 	UserCreatedAt = "created_at"
 

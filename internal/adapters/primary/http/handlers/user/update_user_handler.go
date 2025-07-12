@@ -10,7 +10,6 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 	"github.com/lechitz/AionApi/internal/shared/handlerhelpers"
-
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -45,10 +44,26 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fields := map[string]interface{}{
+		commonkeys.Name:     req.Name,
+		commonkeys.Username: req.Username,
+		commonkeys.Email:    req.Email,
+	}
+	if err := handlerhelpers.AtLeastOneField(fields); err != nil {
+		h.Logger.ErrorwCtx(ctx, constants.ErrUpdateUserValidation,
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+			commonkeys.Error, err.Error(),
+		)
+		handlerhelpers.WriteDecodeError(ctx, w, span, err, h.Logger)
+		return
+	}
+
 	span.SetAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String(commonkeys.Username, safeStringPtr(req.Username)),
-		attribute.String(commonkeys.Email, safeStringPtr(req.Email)),
+		attribute.String(commonkeys.Username, handlerhelpers.SafeStringPtr(req.Username)),
+		attribute.String(commonkeys.Email, handlerhelpers.SafeStringPtr(req.Email)),
 		attribute.String(tracingkeys.RequestIPKey, ip),
 		attribute.String(tracingkeys.RequestUserAgentKey, userAgent),
 	)
@@ -79,12 +94,4 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	)
 
 	h.writeUpdateSuccess(w, span, userUpdated)
-}
-
-// safeStringPtr safely dereferences a *string, returning an empty string if nil.
-func safeStringPtr(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
 }

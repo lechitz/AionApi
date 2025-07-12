@@ -46,3 +46,6 @@ const (
 const (
 	Error = "error" // Generic error, often used in logging or context
 )
+
+// Fields --- Handlers.
+const Fields = "fields"

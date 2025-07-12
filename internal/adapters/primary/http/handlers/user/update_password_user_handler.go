@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/constants"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/dto"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
@@ -13,15 +16,13 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/httputils"
 
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/constants"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/dto"
-	"github.com/lechitz/AionApi/internal/core/domain"
-
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
+
+//TODO:Pensar se ao tentar trocar a senha e não ocnseguir, deveria manter o token ativo da sessão
 
 // UpdateUserPassword handles PUT /user/password.
 func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
@@ -41,6 +42,20 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 
 	var req dto.UpdatePasswordUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		handlerhelpers.WriteDecodeError(ctx, w, span, err, h.Logger)
+		return
+	}
+
+	err := handlerhelpers.CheckRequiredFields(map[string]string{
+		commonkeys.Password:    req.Password,
+		commonkeys.NewPassword: req.NewPassword,
+	})
+	if err != nil {
+		h.Logger.ErrorwCtx(ctx, constants.ErrUpdateUserPasswordValidation,
+			commonkeys.Error, err.Error(),
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		handlerhelpers.WriteDecodeError(ctx, w, span, err, h.Logger)
 		return
 	}

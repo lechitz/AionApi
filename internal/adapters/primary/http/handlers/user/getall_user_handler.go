@@ -4,7 +4,6 @@ package user
 import (
 	"net/http"
 
-	"github.com/jinzhu/copier"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/dto"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -35,9 +34,15 @@ func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	users, err := h.Service.GetAllUsers(ctx)
 	if err != nil {
+		h.Logger.ErrorwCtx(ctx, constants.ErrGetUsers,
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+			commonkeys.Error, err.Error(),
+		)
 		handlerhelpers.WriteDomainError(ctx, w, span, err, constants.ErrGetUsers, h.Logger)
 		return
 	}
+
 	span.SetAttributes(
 		attribute.Int(commonkeys.UsersCount, len(users)),
 		attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusOK),
@@ -52,10 +57,20 @@ func (h *Handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		tracingkeys.RequestUserAgentKey, userAgent,
 	)
 
-	span.AddEvent(constants.EventUsersFetchedSuccess)
+	span.AddEvent(constants.EventUsersFetchedSuccess,
+		trace.WithAttributes(attribute.Int(commonkeys.UsersCount, len(users))),
+	)
 
-	var res []dto.GetUserResponse
-	_ = copier.Copy(&res, &users)
+	res := make([]dto.GetUserResponse, 0, len(users))
+	for _, user := range users {
+		res = append(res, dto.GetUserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Username:  user.Username,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt,
+		})
+	}
 
 	httpresponse.WriteSuccess(w, http.StatusOK, res, constants.MsgUsersFetched)
 }

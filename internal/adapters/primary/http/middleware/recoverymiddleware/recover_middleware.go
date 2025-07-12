@@ -1,4 +1,4 @@
-// Package recoverymiddleware provides HTTP middleware that recovers from panics,
+// Package recoverymiddleware provides HTTP middleware that recovers from panics.
 package recoverymiddleware
 
 import (

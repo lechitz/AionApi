@@ -5,14 +5,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/constants"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 	"github.com/lechitz/AionApi/internal/shared/handlerhelpers"
 	"github.com/lechitz/AionApi/internal/shared/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/httputils"
-
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/constants"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -33,6 +32,7 @@ func (h *Handler) SoftDeleteUser(w http.ResponseWriter, r *http.Request) {
 		handlerhelpers.WriteAuthError(ctx, w, span, h.Logger)
 		return
 	}
+
 	span.SetAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(tracingkeys.RequestIPKey, ip),
@@ -47,6 +47,12 @@ func (h *Handler) SoftDeleteUser(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err := h.Service.SoftDeleteUser(ctx, userID); err != nil {
+		h.Logger.ErrorwCtx(ctx, constants.ErrSoftDeleteUser,
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.Error, err.Error(),
+		)
 		handlerhelpers.WriteDomainError(ctx, w, span, err, constants.ErrSoftDeleteUser, h.Logger)
 		return
 	}
