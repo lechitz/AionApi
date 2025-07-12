@@ -31,7 +31,7 @@ func AuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
-	authService := auth.NewAuthService(
+	authService := auth.NewService(
 		mockUserRetriever,
 		mockTokenUsecase,
 		mockSecurityStore,

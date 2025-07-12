@@ -14,8 +14,8 @@ type Service struct {
 	logger         output.ContextLogger
 }
 
-// NewAuthService creates and returns a new instance of Service with dependencies for user retrieval, token management, and security operations.
-func NewAuthService(userRetriever output.UserRetriever, tokenService input.TokenService, securityHasher output.HasherStore, logger output.ContextLogger) *Service {
+// NewService creates and returns a new instance of Service with dependencies for user retrieval, token management, and security operations.
+func NewService(userRetriever output.UserRetriever, tokenService input.TokenService, securityHasher output.HasherStore, logger output.ContextLogger) *Service {
 	return &Service{
 		userRetriever:  userRetriever,
 		tokenService:   tokenService,
