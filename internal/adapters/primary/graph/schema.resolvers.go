@@ -7,13 +7,15 @@ package graph
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
 	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/ctxkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -26,28 +28,48 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, category model.Dt
 	ctx, span := tracer.Start(ctx, constants.SpanStartCreateCategory)
 	defer span.End()
 
-	span.AddEvent(constants.SpanEventCreateCategory, trace.WithAttributes(TraceAttributesFromCategory(category)...))
+	span.AddEvent(constants.EventCreateCategory, trace.WithAttributes(TraceAttributesFromCategory(category)...))
+	ip, userAgent := getClientMeta(ctx)
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.ErrUserIDNotFound,
+			commonkeys.Error, err.Error(),
+			commonkeys.Input, fmt.Sprintf(constants.SprintfStructVerbose, category),
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, err
 	}
 
 	createCategory := domain.Category{
-		UserID:      userID,
-		Name:        category.Name,
-		Description: *category.Description,
-		Color:       *category.ColorHex,
-		Icon:        *category.Icon,
+		UserID: userID,
+		Name:   category.Name,
+	}
+	if category.Description != nil {
+		createCategory.Description = *category.Description
+	}
+	if category.ColorHex != nil {
+		createCategory.Color = *category.ColorHex
+	}
+	if category.Icon != nil {
+		createCategory.Icon = *category.Icon
 	}
 
 	categoryDB, err := r.CategoryService.CreateCategory(ctx, createCategory)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.ErrCategoryCreate,
+			commonkeys.Error, err.Error(),
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.Input, fmt.Sprintf(constants.SprintfStructVerbose, category),
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, err
 	}
 
@@ -56,17 +78,17 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, category model.Dt
 		attribute.String(commonkeys.UserID, strconv.FormatUint(categoryDB.UserID, 10)),
 		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryDB.ID, 10)),
 	)
+	span.SetStatus(codes.Ok, constants.StatusCategoryCreated)
+	span.AddEvent(constants.EventCategoryCreatedSuccess)
 
-	span.SetStatus(codes.Ok, constants.SuccessCategoryCreated)
-
-	return &model.Category{
-		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
-		UserID:      strconv.FormatUint(userID, 10),
-		Name:        categoryDB.Name,
-		Description: &categoryDB.Description,
-		ColorHex:    &categoryDB.Color,
-		Icon:        &categoryDB.Icon,
-	}, nil
+	r.Logger.InfowCtx(ctx, constants.MsgCategoryCreated,
+		commonkeys.UserID, strconv.FormatUint(userID, 10),
+		commonkeys.CategoryID, strconv.FormatUint(categoryDB.ID, 10),
+		commonkeys.CategoryName, categoryDB.Name,
+		tracingkeys.RequestIPKey, ip,
+		tracingkeys.RequestUserAgentKey, userAgent,
+	)
+	return toGraphQLCategory(categoryDB), nil
 }
 
 // CreateTag is the resolver for the CreateTag field.
@@ -82,13 +104,20 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 	ctx, span := tracer.Start(ctx, constants.SpanStartUpdateCategory)
 	defer span.End()
 
-	span.AddEvent(constants.SpanEventUpdateCategory, trace.WithAttributes(attribute.String(commonkeys.CategoryID, category.CategoryID)))
+	ip, userAgent := getClientMeta(ctx)
 
+	span.AddEvent(constants.EventUpdateCategory, trace.WithAttributes(attribute.String(commonkeys.CategoryID, category.CategoryID)))
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.ErrUserIDNotFound,
+			commonkeys.Error, err.Error(),
+			commonkeys.Input, fmt.Sprintf(constants.SprintfStructVerbose, category),
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, err
 	}
 
@@ -96,19 +125,17 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.InvalidCategoryID,
+			commonkeys.Error, err.Error(),
+			commonkeys.Input, fmt.Sprintf(constants.SprintfStructVerbose, category),
+		)
 		return nil, errors.New(constants.InvalidCategoryID)
 	}
-
-	span.SetAttributes(
-		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String(commonkeys.CategoryID, category.CategoryID),
-	)
 
 	updateCategory := domain.Category{
 		ID:     categoryIDUint,
 		UserID: userID,
 	}
-
 	if category.Name != nil {
 		updateCategory.Name = *category.Name
 	}
@@ -126,20 +153,31 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.ErrCategoryUpdate,
+			commonkeys.Error, err.Error(),
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.CategoryID, category.CategoryID,
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, err
 	}
 
-	span.SetAttributes(attribute.String(commonkeys.CategoryName, categoryDB.Name))
-	span.SetStatus(codes.Ok, constants.SuccessCategoryUpdated)
+	span.SetAttributes(
+		attribute.String(commonkeys.CategoryID, category.CategoryID),
+		attribute.String(commonkeys.CategoryName, categoryDB.Name),
+	)
+	span.SetStatus(codes.Ok, constants.StatusCategoryUpdated)
+	span.AddEvent(constants.EventCategoryUpdatedSuccess)
 
-	return &model.Category{
-		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
-		UserID:      strconv.FormatUint(categoryDB.UserID, 10),
-		Name:        categoryDB.Name,
-		Description: &categoryDB.Description,
-		ColorHex:    &categoryDB.Color,
-		Icon:        &categoryDB.Icon,
-	}, nil
+	r.Logger.InfowCtx(ctx, constants.MsgCategoryUpdated,
+		commonkeys.UserID, strconv.FormatUint(userID, 10),
+		commonkeys.CategoryID, category.CategoryID,
+		commonkeys.CategoryName, categoryDB.Name,
+		tracingkeys.RequestIPKey, ip,
+		tracingkeys.RequestUserAgentKey, userAgent,
+	)
+	return toGraphQLCategory(categoryDB), nil
 }
 
 // SoftDeleteCategory is the resolver for the softDeleteCategory field.
@@ -148,13 +186,21 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 	ctx, span := tracer.Start(ctx, constants.SpanStartSoftDeleteCategory)
 	defer span.End()
 
-	span.AddEvent(constants.SpanEventSoftDeleteCategory, trace.WithAttributes(attribute.String(commonkeys.CategoryID, category.CategoryID)))
+	ip, userAgent := getClientMeta(ctx)
+
+	span.AddEvent(constants.EventSoftDeleteCategory, trace.WithAttributes(attribute.String(commonkeys.CategoryID, category.CategoryID)))
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.ErrUserIDNotFound,
+			commonkeys.Error, err.Error(),
+			commonkeys.CategoryID, category.CategoryID,
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return false, err
 	}
 
@@ -162,13 +208,12 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.InvalidCategoryID,
+			commonkeys.Error, err.Error(),
+			commonkeys.CategoryID, category.CategoryID,
+		)
 		return false, errors.New(constants.InvalidCategoryID)
 	}
-
-	span.SetAttributes(
-		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String(commonkeys.CategoryID, category.CategoryID),
-	)
 
 	categoryDomain := domain.Category{
 		ID:     categoryIDUint,
@@ -178,10 +223,25 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 	if err := r.CategoryService.SoftDeleteCategory(ctx, categoryDomain); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.ErrCategorySoftDelete,
+			commonkeys.Error, err.Error(),
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.CategoryID, category.CategoryID,
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return false, err
 	}
 
-	span.SetStatus(codes.Ok, constants.SuccessCategorySoftDeleted)
+	span.SetStatus(codes.Ok, constants.StatusCategorySoftDeleted)
+	span.AddEvent(constants.EventCategorySoftDeletedSuccess)
+
+	r.Logger.InfowCtx(ctx, constants.MsgCategorySoftDeleted,
+		commonkeys.UserID, strconv.FormatUint(userID, 10),
+		commonkeys.CategoryID, category.CategoryID,
+		tracingkeys.RequestIPKey, ip,
+		tracingkeys.RequestUserAgentKey, userAgent,
+	)
 	return true, nil
 }
 
@@ -191,14 +251,20 @@ func (r *queryResolver) GetAllCategories(ctx context.Context) ([]*model.Category
 	ctx, span := tracer.Start(ctx, constants.SpanStartAllGetCategories)
 	defer span.End()
 
-	span.AddEvent(constants.SpanEventGetAllCategories)
+	ip, userAgent := getClientMeta(ctx)
+
+	span.AddEvent(constants.EventGetAllCategories)
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
-		r.Logger.Errorw(constants.ErrUserIDNotFound, commonkeys.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.ErrUserIDNotFound,
+			commonkeys.Error, err.Error(),
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, err
 	}
 
@@ -208,24 +274,30 @@ func (r *queryResolver) GetAllCategories(ctx context.Context) ([]*model.Category
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, constants.ErrAllCategoriesNotFound)
+		r.Logger.ErrorwCtx(ctx, constants.ErrAllCategoriesNotFound,
+			commonkeys.Error, err.Error(),
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, errors.New(constants.ErrAllCategoriesNotFound)
 	}
 
 	categories := make([]*model.Category, len(categoryDB))
 	for i, category := range categoryDB {
-		categories[i] = &model.Category{
-			CategoryID:  strconv.FormatUint(category.ID, 10),
-			UserID:      strconv.FormatUint(userID, 10),
-			Name:        category.Name,
-			Description: &category.Description,
-			ColorHex:    &category.Color,
-			Icon:        &category.Icon,
-		}
+		categories[i] = toGraphQLCategory(category)
 	}
 
 	span.SetAttributes(attribute.Int(commonkeys.CategoriesCount, len(categories)))
-	span.SetStatus(codes.Ok, constants.SuccessAllCategoriesFetch)
+	span.SetStatus(codes.Ok, constants.StatusAllCategoriesFetched)
+	span.AddEvent(constants.EventAllCategoriesFetchedSuccess)
 
+	r.Logger.InfowCtx(ctx, constants.MsgAllCategoriesFetched,
+		commonkeys.UserID, strconv.FormatUint(userID, 10),
+		commonkeys.CategoriesCount, len(categories),
+		tracingkeys.RequestIPKey, ip,
+		tracingkeys.RequestUserAgentKey, userAgent,
+	)
 	return categories, nil
 }
 
@@ -235,14 +307,21 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 	ctx, span := tracer.Start(ctx, constants.SpanStartGetCategoryByID)
 	defer span.End()
 
-	span.AddEvent(constants.SpanEventGetCategoryByID, trace.WithAttributes(attribute.String(commonkeys.CategoryID, categoryRequest.CategoryID)))
+	ip, userAgent := getClientMeta(ctx)
+
+	span.AddEvent(constants.EventGetCategoryByID, trace.WithAttributes(attribute.String(commonkeys.CategoryID, categoryRequest.CategoryID)))
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
-		r.Logger.Errorw(constants.ErrUserIDNotFound, commonkeys.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.ErrUserIDNotFound,
+			commonkeys.Error, err.Error(),
+			commonkeys.CategoryID, categoryRequest.CategoryID,
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, err
 	}
 
@@ -251,7 +330,11 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 	categoryIDUint, err := strconv.ParseUint(categoryRequest.CategoryID, 10, 64)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, constants.InvalidCategoryID)
+		span.SetStatus(codes.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.InvalidCategoryID,
+			commonkeys.Error, err.Error(),
+			commonkeys.CategoryID, categoryRequest.CategoryID,
+		)
 		return nil, errors.New(constants.InvalidCategoryID)
 	}
 
@@ -266,23 +349,31 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, constants.ErrCategoryNotFound)
+		r.Logger.ErrorwCtx(ctx, constants.ErrCategoryNotFound,
+			commonkeys.Error, err.Error(),
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.CategoryID, categoryRequest.CategoryID,
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, err
 	}
 
-	span.SetStatus(codes.Ok, constants.SuccessCategoryFetch)
+	span.SetStatus(codes.Ok, constants.StatusCategoryFetch)
+	span.AddEvent(constants.EventCategoryFetchedSuccess)
 	span.SetAttributes(
 		attribute.String(commonkeys.CategoryName, categoryDB.Name),
 		attribute.String(commonkeys.CategoryColor, categoryDB.Color),
 	)
 
-	return &model.Category{
-		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
-		UserID:      strconv.FormatUint(categoryDB.UserID, 10),
-		Name:        categoryDB.Name,
-		Description: &categoryDB.Description,
-		ColorHex:    &categoryDB.Color,
-		Icon:        &categoryDB.Icon,
-	}, nil
+	r.Logger.InfowCtx(ctx, constants.MsgCategoryFetched,
+		commonkeys.UserID, strconv.FormatUint(userID, 10),
+		commonkeys.CategoryID, strconv.FormatUint(categoryDB.ID, 10),
+		commonkeys.CategoryName, categoryDB.Name,
+		tracingkeys.RequestIPKey, ip,
+		tracingkeys.RequestUserAgentKey, userAgent,
+	)
+	return toGraphQLCategory(categoryDB), nil
 }
 
 // GetCategoryByName is the resolver for the getCategoryByName field.
@@ -291,14 +382,21 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 	ctx, span := tracer.Start(ctx, constants.SpanStartGetCategoryByName)
 	defer span.End()
 
-	span.AddEvent(constants.SpanEventGetCategoryByName, trace.WithAttributes(attribute.String(commonkeys.CategoryName, categoryRequest.Name)))
+	ip, userAgent := getClientMeta(ctx)
+
+	span.AddEvent(constants.EventGetCategoryByName, trace.WithAttributes(attribute.String(commonkeys.CategoryName, categoryRequest.Name)))
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
 		err := errors.New(constants.ErrUserIDNotFound)
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
-		r.Logger.Errorw(constants.ErrUserIDNotFound, commonkeys.Error, err.Error())
+		r.Logger.ErrorwCtx(ctx, constants.ErrUserIDNotFound,
+			commonkeys.Error, err.Error(),
+			commonkeys.CategoryName, categoryRequest.Name,
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, err
 	}
 
@@ -316,34 +414,48 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, constants.ErrCategoryByNameNotFound)
+		r.Logger.ErrorwCtx(ctx, constants.ErrCategoryByNameNotFound,
+			commonkeys.Error, err.Error(),
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.CategoryName, categoryRequest.Name,
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, err
 	}
 
 	if categoryDB.Name == "" {
 		span.SetStatus(codes.Ok, constants.ErrCategoryNotFound)
+		r.Logger.ErrorwCtx(ctx, constants.ErrCategoryNotFound,
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.CategoryName, categoryRequest.Name,
+			tracingkeys.RequestIPKey, ip,
+			tracingkeys.RequestUserAgentKey, userAgent,
+		)
 		return nil, errors.New(constants.ErrCategoryNotFound)
 	}
 
-	span.SetStatus(codes.Ok, constants.SuccessCategoryFetch)
+	span.SetStatus(codes.Ok, constants.StatusCategoryFetch)
+	span.AddEvent(constants.EventCategoryFetchedSuccess)
 	span.SetAttributes(
 		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryDB.ID, 10)),
 		attribute.String(commonkeys.CategoryColor, categoryDB.Color),
 	)
 
-	return &model.Category{
-		CategoryID:  strconv.FormatUint(categoryDB.ID, 10),
-		UserID:      strconv.FormatUint(categoryDB.UserID, 10),
-		Name:        categoryDB.Name,
-		Description: &categoryDB.Description,
-		ColorHex:    &categoryDB.Color,
-		Icon:        &categoryDB.Icon,
-	}, nil
+	r.Logger.InfowCtx(ctx, constants.MsgCategoryFetched,
+		commonkeys.UserID, strconv.FormatUint(userID, 10),
+		commonkeys.CategoryID, strconv.FormatUint(categoryDB.ID, 10),
+		commonkeys.CategoryName, categoryDB.Name,
+		tracingkeys.RequestIPKey, ip,
+		tracingkeys.RequestUserAgentKey, userAgent,
+	)
+	return toGraphQLCategory(categoryDB), nil
 }
 
 // GetAllTags is the resolver for the GetAllTags field.
 func (r *queryResolver) GetAllTags(ctx context.Context) ([]*model.Tags, error) {
 	_ = ctx
-	return nil, errors.New("not implemented: GetAllTags - GetAllTags")
+	return nil, errors.New("not implemented: GetAllTags")
 }
 
 // GetTagByID is the resolver for the GetTagByID field.
