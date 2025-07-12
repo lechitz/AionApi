@@ -1,7 +1,6 @@
 package setup
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -20,7 +19,6 @@ type UserServiceTestSuite struct {
 	PasswordHasher *mocks.MockHasherStore
 	TokenService   *mocks.MockTokenUsecase
 	UserService    *user.Service
-	Ctx            context.Context
 }
 
 // UserServiceTest initializes and returns a UserServiceTestSuite with mocked dependencies to facilitate unit testing of the user service.
@@ -34,7 +32,7 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
-	userService := user.NewUserService(
+	userService := user.NewService(
 		mockUserStore,
 		mockTokenUsecase,
 		mockSecurityStore,
@@ -48,7 +46,6 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 		PasswordHasher: mockSecurityStore,
 		TokenService:   mockTokenUsecase,
 		UserService:    userService,
-		Ctx:            t.Context(),
 	}
 }
 
