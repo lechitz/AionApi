@@ -17,14 +17,16 @@ import (
 )
 
 // RecoveryHandler handles panics with a standardized error body.
-func (h *Handler) RecoveryHandler(w http.ResponseWriter, r *http.Request, recovered interface{}) {
+func (h *Handler) RecoveryHandler(w http.ResponseWriter, r *http.Request, recovered interface{}, errorID string) {
+	ctx := r.Context()
+
 	reqID := r.Header.Get(commonkeys.XRequestID)
 	stack := string(debug.Stack())
 	ip := r.RemoteAddr
 	userAgent := r.UserAgent()
 
 	_, span := otel.Tracer(constants.TracerGenericHandler).
-		Start(r.Context(), constants.TracerRecoveryHandler)
+		Start(ctx, constants.TracerRecoveryHandler)
 	defer span.End()
 
 	span.SetAttributes(
@@ -32,22 +34,25 @@ func (h *Handler) RecoveryHandler(w http.ResponseWriter, r *http.Request, recove
 		attribute.String(commonkeys.RequestID, reqID),
 		attribute.String(tracingkeys.RequestIPKey, ip),
 		attribute.String(tracingkeys.RequestUserAgentKey, userAgent),
+		attribute.String(tracingkeys.ErrorID, errorID),
 	)
 	span.RecordError(fmt.Errorf(constants.StacktraceFormat, recovered, stack))
 	span.SetStatus(codes.Error, constants.MsgRecoveredFromPanic)
 
-	h.Logger.Errorw(constants.MsgRecoveredFromPanic,
+	h.Logger.ErrorwCtx(ctx, constants.MsgRecoveryHandlerFired,
 		tracingkeys.RecoveredKey, recovered,
 		tracingkeys.StacktraceKey, stack,
+		tracingkeys.ErrorID, errorID,
 		commonkeys.URLPath, r.URL.Path,
 		commonkeys.RequestID, reqID,
 		tracingkeys.RequestIPKey, ip,
 		tracingkeys.RequestUserAgentKey, userAgent,
 	)
 
+	panicErr := fmt.Errorf(constants.RecoveredFormat, constants.MsgRecoveredFromPanic, errorID)
 	httpresponse.WriteError(
 		w,
-		constants.ErrRecoveredFromPanic,
+		panicErr,
 		constants.MsgRecoveredFromPanic,
 		h.Logger,
 	)

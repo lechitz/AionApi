@@ -3,6 +3,7 @@ package contextlogger
 
 import (
 	"context"
+	"go.opentelemetry.io/otel/trace"
 	"log"
 	"os"
 
@@ -100,36 +101,44 @@ func (l *ZapLoggerContextual) Warnw(msg string, keysAndValues ...any) {
 
 // InfowCtx adds contextual data from context and logs a structured info-level message.
 func (l *ZapLoggerContextual) InfowCtx(ctx context.Context, msg string, keysAndValues ...any) {
-	fields := enrichFieldsFromContext(ctx)
+	fields := EnrichFieldsFromContext(ctx)
 	l.base.Infow(msg, append(fields, keysAndValues...)...)
 }
 
 // ErrorwCtx adds contextual data from context and logs a structured error-level message.
 func (l *ZapLoggerContextual) ErrorwCtx(ctx context.Context, msg string, keysAndValues ...any) {
-	fields := enrichFieldsFromContext(ctx)
+	fields := EnrichFieldsFromContext(ctx)
 	l.base.Errorw(msg, append(fields, keysAndValues...)...)
 }
 
 // DebugwCtx adds contextual data from context and logs a structured debug-level message.
 func (l *ZapLoggerContextual) DebugwCtx(ctx context.Context, msg string, keysAndValues ...any) {
-	fields := enrichFieldsFromContext(ctx)
+	fields := EnrichFieldsFromContext(ctx)
 	l.base.Debugw(msg, append(fields, keysAndValues...)...)
 }
 
 // WarnwCtx adds contextual data from context and logs a structured warn-level message.
 func (l *ZapLoggerContextual) WarnwCtx(ctx context.Context, msg string, keysAndValues ...any) {
-	fields := enrichFieldsFromContext(ctx)
+	fields := EnrichFieldsFromContext(ctx)
 	l.base.Warnw(msg, append(fields, keysAndValues...)...)
 }
 
-// enrichFieldsFromContext extracts relevant request-scoped fields (e.g., request_id, trace_id, user_id) from context for structured logging.
-func enrichFieldsFromContext(ctx context.Context) []any {
+// EnrichFieldsFromContext extracts relevant request-scoped fields (e.g., request_id, trace_id, user_id) from context for structured logging.
+func EnrichFieldsFromContext(ctx context.Context) []any {
 	var fields []any
 	if reqID := contextutils.GetRequestID(ctx); reqID != "" {
 		fields = append(fields, ctxkeys.RequestID, reqID)
 	}
-	if traceID := contextutils.GetTraceID(ctx); traceID != "" {
-		fields = append(fields, ctxkeys.TraceID, traceID)
+
+	span := trace.SpanFromContext(ctx)
+	sc := span.SpanContext()
+	if sc.IsValid() {
+		fields = append(fields, ctxkeys.TraceID, sc.TraceID().String())
+		fields = append(fields, ctxkeys.SpanID, sc.SpanID().String())
+	} else {
+		if traceID := contextutils.GetTraceID(ctx); traceID != "" {
+			fields = append(fields, ctxkeys.TraceID, traceID)
+		}
 	}
 	if userID := contextutils.GetUserID(ctx); userID != "" {
 		fields = append(fields, ctxkeys.UserID, userID)

@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/generic"
+	"github.com/lechitz/AionApi/internal/platform/config"
+
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver/constants"
@@ -24,17 +27,19 @@ type RouteComposer struct {
 // NewHTTPRouter creates and configures a new HTTP router with middleware and authentication.
 func NewHTTPRouter(
 	tokenRepository output.TokenStore,
-	contextPath string,
+	cfg *config.Config,
 	tokenClaimsExtractor output.TokenClaimsExtractor,
 	logger output.ContextLogger,
+	genericHandler *generic.Handler,
 ) (*RouteComposer, error) {
-	normalizedPath, err := normalizeContextPath(contextPath)
+	normalizedPath, err := normalizeContextPath(cfg.ServerHTTP.Context)
 	if err != nil {
 		return nil, err
 	}
 
 	router := NewRouter()
-	router.Use(recoverymiddleware.New(logger))
+	router.Use(recoverymiddleware.New(genericHandler))
+	router.Use(injectRequestIDMiddleware)
 
 	authMiddleware := authmiddleware.New(
 		tokenRepository,

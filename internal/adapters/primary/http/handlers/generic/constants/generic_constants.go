@@ -28,20 +28,23 @@ const (
 
 // Error variables for generic handler (to be used as an error interface).
 var (
-	ErrMethodNotAllowed   = errors.New("method not allowed")
-	ErrResourceNotFound   = errors.New("resource not found")
-	ErrRecoveredFromPanic = errors.New("recovered from panic")
-	ErrInternalServer     = errors.New("internal server error")
+	ErrMethodNotAllowed = errors.New("method not allowed")
+	ErrResourceNotFound = errors.New("resource not found")
+	ErrInternalServer   = errors.New("internal server error")
 )
 
 // Standardized messages for logs, responses, and traces.
 const (
-	MsgServiceIsHealthy    = "service is healthy"
-	MsgMethodNotAllowed    = "the requested method is not allowed"
-	MsgResourceNotFound    = "resource not found"
-	MsgRecoveredFromPanic  = "application recovered from panic"
-	MsgInternalServerError = "internal server error"
+	MsgServiceIsHealthy     = "service is healthy"
+	MsgMethodNotAllowed     = "the requested method is not allowed"
+	MsgResourceNotFound     = "resource not found"
+	MsgRecoveredFromPanic   = "application recovered from panic"
+	MsgInternalServerError  = "internal server error"
+	MsgRecoveryHandlerFired = "recovery handler triggered"
 )
 
 // StacktraceFormat is the printf format for recording recovered panic and stacktrace in tracing/logs.
 const StacktraceFormat = "%v\n%s"
+
+// RecoveredFormat is the printf format for recording recovered panic and stacktrace in tracing/logs.
+const RecoveredFormat = "recovered from panic: %s\n%s"

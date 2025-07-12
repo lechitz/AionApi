@@ -2,6 +2,7 @@
 package httpserver
 
 import (
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/generic"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 	"github.com/lechitz/AionApi/internal/platform/config"
@@ -9,7 +10,15 @@ import (
 
 // ComposeRouter initializes and configures an HTTP router based on application dependencies and context path.
 func ComposeRouter(deps *bootstrap.AppDependencies, cfg *config.Config) (output.Router, error) {
-	httpRouter, err := NewHTTPRouter(deps.TokenRepository, cfg.ServerHTTP.Context, deps.TokenClaimsExtractor, deps.Logger)
+	genericHandler := generic.New(deps.Logger, cfg.General)
+
+	httpRouter, err := NewHTTPRouter(
+		deps.TokenRepository,
+		cfg,
+		deps.TokenClaimsExtractor,
+		deps.Logger,
+		genericHandler,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -23,5 +32,6 @@ func ComposeRouter(deps *bootstrap.AppDependencies, cfg *config.Config) (output.
 		httpRouter.GetRouter(),
 		deps.TokenClaimsExtractor,
 		cfg,
+		genericHandler,
 	)
 }

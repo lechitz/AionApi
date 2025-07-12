@@ -19,3 +19,6 @@ const (
 	// StacktraceKey is the key for recording the stack trace of an error.
 	StacktraceKey = "stacktrace"
 )
+
+// ErrorID is the key for recording the error ID.
+const ErrorID = "error.id"

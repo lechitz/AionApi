@@ -11,9 +11,8 @@ import (
 
 // Router is a wrapper around the chi.Router to implement the output.Router interface.
 type Router struct {
-	chi             chi.Router
-	recoveryHandler func(http.ResponseWriter, *http.Request, interface{})
-	errorHandler    func(http.ResponseWriter, *http.Request, error)
+	chi          chi.Router
+	errorHandler func(http.ResponseWriter, *http.Request, error)
 }
 
 // NewRouter initializes and returns a new instance of output.Router using a Router implementation.
@@ -28,9 +27,10 @@ func (c *Router) Use(middleware func(http.Handler) http.Handler) {
 
 // Route defines a sub-router for a specific route pattern within the current router.
 func (c *Router) Route(pattern string, fn func(r output.Router)) {
-	c.chi.Route(pattern, func(r chi.Router) {
-		fn(&Router{chi: r})
-	})
+	sub := chi.NewRouter()
+	wrapped := &Router{chi: sub}
+	fn(wrapped)
+	c.chi.Mount(pattern, sub)
 }
 
 // Get registers a route that matches the GET HTTP method for the specified path.
@@ -65,9 +65,7 @@ func (c *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // Group creates a new router group where shared middlewares or routes can be defined and applied.
 func (c *Router) Group(fn func(r output.Router)) {
-	c.chi.Group(func(r chi.Router) {
-		fn(&Router{chi: r})
-	})
+	fn(c)
 }
 
 // SetNotFoundHandler sets the handler to be called when no route matches (HTTP 404).
@@ -80,14 +78,17 @@ func (c *Router) SetMethodNotAllowedHandler(handler http.HandlerFunc) {
 	c.chi.MethodNotAllowed(handler)
 }
 
-// SetRecoveryHandler stores a custom recovery handler to be called when a panic occurs during request processing.
-// Note: chi does not natively support a global recovery handler, so this handler should be called by custom middleware.
-func (c *Router) SetRecoveryHandler(handler func(http.ResponseWriter, *http.Request, interface{})) {
-	c.recoveryHandler = handler
-}
-
 // SetErrorHandler stores a custom error handler to be used for centralized error responses across the router.
 // Note: this handler should be invoked from your application or middleware as needed.
 func (c *Router) SetErrorHandler(handler func(http.ResponseWriter, *http.Request, error)) {
 	c.errorHandler = handler
+}
+
+// GroupWithMiddleware creates a new router group where shared middlewares or routes can be defined and applied.
+// The provided middleware function is applied to all routes defined within the group.
+func (c *Router) GroupWithMiddleware(middleware func(http.Handler) http.Handler, fn func(r output.Router)) {
+	sub := chi.NewRouter()
+	sub.Use(middleware)
+	wrapped := &Router{chi: sub}
+	fn(wrapped)
 }

@@ -4,6 +4,8 @@ package graphqlserver
 import (
 	"net/http"
 
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/generic"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/go-chi/chi/v5"
@@ -21,7 +23,8 @@ func NewGraphqlHandler(deps *bootstrap.AppDependencies, cfg *config.Config) (htt
 	router := chi.NewRouter()
 
 	router.Use(authmiddleware.New(deps.TokenRepository, deps.Logger, deps.TokenClaimsExtractor).Auth)
-	router.Use(recoverymiddleware.New(deps.Logger))
+	genericHandler := generic.New(deps.Logger, cfg.General)
+	router.Use(recoverymiddleware.New(genericHandler))
 
 	resolver := &graph.Resolver{
 		CategoryService: deps.CategoryService,

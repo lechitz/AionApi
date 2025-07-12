@@ -17,12 +17,6 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 )
 
-// RouterBuilder is a struct for building and configuring HTTP routers with middleware and route handlers.
-type RouterBuilder struct {
-	Router      output.Router
-	ContextPath string
-}
-
 // BuildRouterRoutes sets up API routes, integrates middlewares.
 func BuildRouterRoutes(
 	logger output.ContextLogger,
@@ -33,10 +27,8 @@ func BuildRouterRoutes(
 	adapter output.Router,
 	tokenClaimsExtractor output.TokenClaimsExtractor,
 	cfg *config.Config,
+	genericHandler *generic.Handler,
 ) (output.Router, error) {
-	adapter.Use(injectRequestIDMiddleware)
-
-	genericHandler := generic.New(logger, cfg.General)
 	userHandler := user.New(userService, cfg, logger)
 	authHandler := auth.New(authService, cfg, logger)
 
@@ -51,7 +43,6 @@ func BuildRouterRoutes(
 
 	adapter.SetNotFoundHandler(genericHandler.NotFoundHandler)
 	adapter.SetMethodNotAllowedHandler(genericHandler.MethodNotAllowedHandler)
-	adapter.SetRecoveryHandler(genericHandler.RecoveryHandler)
 	adapter.SetErrorHandler(genericHandler.ErrorHandler)
 
 	adapter.Route(contextPath, func(rt output.Router) {

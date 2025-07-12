@@ -16,6 +16,6 @@ type Router interface {
 	Group(fn func(r Router))
 	SetNotFoundHandler(handler http.HandlerFunc)
 	SetMethodNotAllowedHandler(handler http.HandlerFunc)
-	SetRecoveryHandler(handler func(http.ResponseWriter, *http.Request, interface{}))
 	SetErrorHandler(handler func(http.ResponseWriter, *http.Request, error))
+	GroupWithMiddleware(middleware func(http.Handler) http.Handler, fn func(r Router))
 }
