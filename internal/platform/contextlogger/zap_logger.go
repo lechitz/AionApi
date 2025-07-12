@@ -3,9 +3,10 @@ package contextlogger
 
 import (
 	"context"
-	"go.opentelemetry.io/otel/trace"
 	"log"
 	"os"
+
+	"go.opentelemetry.io/otel/trace"
 
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 
