@@ -12,6 +12,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+
 	"github.com/lechitz/AionApi/internal/platform/contextlogger"
 
 	"github.com/lechitz/AionApi/cmd/aion-api/constants"
@@ -21,7 +23,6 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/observability"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 

@@ -1,71 +1,128 @@
-// Package constants contains constants used throughout the application.
+// Package constants contains constants used throughout the GraphQL Category/Tag resolvers.
 package constants
 
-// TracerCategory is the name of the tracer category for GraphQL.
-const TracerCategory = "GraphQL/TracerCategory"
+// --- Tracing: tracer and span names for OpenTelemetry.
+const (
+	// TracerCategory is the tracer name for Category operations in OpenTelemetry.
+	TracerCategory = "aionapi.graphql.category"
 
-// ErrUserIDNotFound is the error message when the user ID is not found in the context.
-const ErrUserIDNotFound = "user id not found in context"
+	// SpanStartCreateCategory is the span name for creating a category.
+	SpanStartCreateCategory = "category.create"
 
-// ErrCategoryNotFound is the error message when the category is not found.
-const ErrCategoryNotFound = "category not found"
+	// SpanStartUpdateCategory is the span name for updating a category.
+	SpanStartUpdateCategory = "category.update"
 
-// InvalidCategoryID is the error message when the category ID is invalid.
-const InvalidCategoryID = "invalid category id"
+	// SpanStartSoftDeleteCategory is the span name for soft-deleting a category.
+	SpanStartSoftDeleteCategory = "category.soft_delete"
 
-// ErrCategoryByNameNotFound is the error message when the name does not find the category.
-const ErrCategoryByNameNotFound = "category not found by name"
+	// SpanStartAllGetCategories is the span name for fetching all categories.
+	SpanStartAllGetCategories = "category.get_all"
 
-// ErrAllCategoriesNotFound is the error message when no categories are found.
-const ErrAllCategoriesNotFound = "no categories found"
+	// SpanStartGetCategoryByID is the span name for fetching a category by ID.
+	SpanStartGetCategoryByID = "category.get_by_id"
 
-// SuccessCategoryCreated is the success message when a category is created.
-const SuccessCategoryCreated = "category created successfully"
+	// SpanStartGetCategoryByName is the span name for fetching a category by name.
+	SpanStartGetCategoryByName = "category.get_by_name"
+)
 
-// SuccessCategoryFetch is the success message when a category is fetch.
-const SuccessCategoryFetch = "category fetched successfully"
+// --- Event names for trace points.
+const (
+	// EventCreateCategory marks the beginning of a category creation process.
+	EventCreateCategory = "category.create.event"
 
-// SuccessAllCategoriesFetch is the success message when all categories are fetch.
-const SuccessAllCategoriesFetch = "all categories fetched successfully"
+	// EventCategoryCreatedSuccess marks a successful creation of a category.
+	EventCategoryCreatedSuccess = "category.created.success"
 
-// SuccessCategoryUpdated is the success message when the category is updated.
-const SuccessCategoryUpdated = "category updated successfully"
+	// EventUpdateCategory marks the beginning of a category update process.
+	EventUpdateCategory = "category.update.event"
 
-// SuccessCategorySoftDeleted is the success message when the category is softly deleted.
-const SuccessCategorySoftDeleted = "category soft deleted successfully"
+	// EventCategoryUpdatedSuccess marks a successful update of a category.
+	EventCategoryUpdatedSuccess = "category.updated.success"
 
-// SpanStartCreateCategory is the name of the span for the CreateCategory mutation.
-const SpanStartCreateCategory = "CreateCategory"
+	// EventSoftDeleteCategory marks the beginning of a soft delete process for a category.
+	EventSoftDeleteCategory = "category.soft_delete.event"
 
-// SpanEventCreateCategory is the name of the event for the CreateCategory mutation.
-const SpanEventCreateCategory = "start CreateCategory mutation"
+	// EventCategorySoftDeletedSuccess marks a successful soft delete of a category.
+	EventCategorySoftDeletedSuccess = "category.soft_deleted.success"
 
-// SpanEventGetCategoryByID is the start span for the GetCategoryByID query.
-const SpanEventGetCategoryByID = "start GetCategoryByID query"
+	// EventGetAllCategories marks the fetching of all categories.
+	EventGetAllCategories = "category.get_all.event"
 
-// SpanEventGetCategoryByName is the start span for the GetCategoryByName query.
-const SpanEventGetCategoryByName = "start GetCategoryByName query"
+	// EventAllCategoriesFetchedSuccess marks successful fetch of all categories.
+	EventAllCategoriesFetchedSuccess = "category.fetched_all.success"
 
-// SpanEventUpdateCategory is the start span for the UpdateCategory mutation.
-const SpanEventUpdateCategory = "start UpdateCategory mutation"
+	// EventGetCategoryByID marks the fetching of a category by ID.
+	EventGetCategoryByID = "category.get_by_id.event"
 
-// SpanEventGetAllCategories is the start span for the GetAllCategories query.
-const SpanEventGetAllCategories = "start GetAllCategories query"
+	// EventGetCategoryByName marks the fetching of a category by name.
+	EventGetCategoryByName = "category.get_by_name.event"
 
-// SpanEventSoftDeleteCategory is the start span for the SoftDeleteCategory mutation.
-const SpanEventSoftDeleteCategory = "start SoftDeleteCategory mutation"
+	// EventCategoryFetchedSuccess marks a successful fetch of a category.
+	EventCategoryFetchedSuccess = "category.fetched.success"
+)
 
-// SpanStartGetCategoryByID is the span name for the GetCategoryByID query.
-const SpanStartGetCategoryByID = "GetCategoryByID"
+// --- Status names for semantic span states.
+const (
+	// StatusCategoryCreated marks a span as a successful category creation.
+	StatusCategoryCreated = "category_created"
 
-// SpanStartAllGetCategories is the span name for the GetAllCategories query.
-const SpanStartAllGetCategories = "GetAllCategories"
+	// StatusCategoryUpdated marks a span as a successful category update.
+	StatusCategoryUpdated = "category_updated"
 
-// SpanStartGetCategoryByName is the span name for the GetCategoryByName query.
-const SpanStartGetCategoryByName = "GetCategoryByName"
+	// StatusCategorySoftDeleted marks a span as a successful category soft delete.
+	StatusCategorySoftDeleted = "category_soft_deleted"
 
-// SpanStartUpdateCategory is the span name for the UpdateCategory mutation.
-const SpanStartUpdateCategory = "UpdateCategory"
+	// StatusAllCategoriesFetched marks a span as successful fetch of all categories.
+	StatusAllCategoriesFetched = "all_categories_fetched"
 
-// SpanStartSoftDeleteCategory is the span name for the SoftDeleteCategory mutation.
-const SpanStartSoftDeleteCategory = "SoftDeleteCategory"
+	// StatusCategoryFetch marks a span as a successful fetch of a category.
+	StatusCategoryFetch = "category_fetched"
+)
+
+// --- Error and message constants (for logs, responses, etc.).
+const (
+	// ErrUserIDNotFound is used when user ID is missing from context.
+	ErrUserIDNotFound = "user_id not found in context"
+
+	// ErrCategoryCreate is used when there is an error creating a category.
+	ErrCategoryCreate = "error creating category"
+
+	// ErrCategoryUpdate is used when there is an error updating a category.
+	ErrCategoryUpdate = "error updating category"
+
+	// ErrCategorySoftDelete is used when there is an error soft deleting a category.
+	ErrCategorySoftDelete = "error soft deleting category"
+
+	// ErrAllCategoriesNotFound is used when categories cannot be found.
+	ErrAllCategoriesNotFound = "categories not found"
+
+	// ErrCategoryNotFound is used when a category cannot be found.
+	ErrCategoryNotFound = "category not found"
+
+	// ErrCategoryByNameNotFound is used when a category by name cannot be found.
+	ErrCategoryByNameNotFound = "category by name not found"
+
+	// InvalidCategoryID is used when a category ID is invalid.
+	InvalidCategoryID = "invalid category id"
+
+	// MsgCategoryCreated is the success message for category creation.
+	MsgCategoryCreated = "category created successfully"
+
+	// MsgCategoryUpdated is the success message for category update.
+	MsgCategoryUpdated = "category updated successfully"
+
+	// MsgCategorySoftDeleted is the success message for category soft delete.
+	MsgCategorySoftDeleted = "category soft deleted successfully"
+
+	// MsgAllCategoriesFetched is the success message for fetching all categories.
+	MsgAllCategoriesFetched = "all categories fetched successfully"
+
+	// MsgCategoryFetched is the success message for fetching a category.
+	MsgCategoryFetched = "category fetched successfully"
+)
+
+// --- Utility for Sprintf struct logging.
+const (
+	// SprintfStructVerbose is the format string for detailed struct logging.
+	SprintfStructVerbose = "%+v"
+)
