@@ -1,28 +1,27 @@
-// Package recovery provides HTTP middleware that recovers from panics,
+// Package recoverymiddleware provides HTTP middleware that recovers from panics,
 // logs the error with stack trace, and responds with a 500 error.
-package recovery
+package recoverymiddleware
 
 import (
+	"errors"
 	"net/http"
 	"runtime/debug"
 
 	"github.com/google/uuid"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
-
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
+	"github.com/lechitz/AionApi/internal/shared/httpresponse"
 )
 
-// RecoverMiddleware is a middleware that recovers from panics, logs the error, and returns an internal server error response.
-func RecoverMiddleware(log output.ContextLogger) func(http.Handler) http.Handler {
+// New is a middleware that recovers from panics, logs the error, and returns an internal server error response.
+func New(logger output.ContextLogger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			defer func() {
 				if rec := recover(); rec != nil {
 					errorID := uuid.New().String()
 
-					// TODO: ajustar magic strings.
-					log.Errorw("panic recovered",
+					logger.Errorw("panic recovered",
 						"error", rec,
 						"path", r.URL.Path,
 						"method", r.Method,
@@ -30,8 +29,9 @@ func RecoverMiddleware(log output.ContextLogger) func(http.Handler) http.Handler
 						"error_id", errorID,
 					)
 
-					response.HandleError(w, log, http.StatusInternalServerError,
-						"unexpected server error (ref: "+errorID+")", nil)
+					panErr := errors.New("internal server error (ref: " + errorID + ")")
+
+					httpresponse.WriteError(w, panErr, "unexpected server error", logger)
 				}
 			}()
 

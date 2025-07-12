@@ -8,8 +8,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recovery"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/authmiddleware"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recoverymiddleware"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
@@ -20,8 +20,8 @@ import (
 func NewGraphqlHandler(deps *bootstrap.AppDependencies, cfg *config.Config) (http.Handler, error) {
 	router := chi.NewRouter()
 
-	router.Use(auth.NewAuthMiddleware(deps.TokenRepository, deps.Logger, deps.TokenClaimsExtractor).Auth)
-	router.Use(recovery.RecoverMiddleware(deps.Logger))
+	router.Use(authmiddleware.New(deps.TokenRepository, deps.Logger, deps.TokenClaimsExtractor).Auth)
+	router.Use(recoverymiddleware.New(deps.Logger))
 
 	resolver := &graph.Resolver{
 		CategoryService: deps.CategoryService,

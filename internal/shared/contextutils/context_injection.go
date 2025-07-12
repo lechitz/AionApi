@@ -5,12 +5,14 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/shared/ctxkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
+
+	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 )
 
 // InjectUserIntoContext puts userID from claims into context if present.
 func InjectUserIntoContext(ctx context.Context, claims map[string]any) context.Context {
-	userIDFloat, ok := claims["user_id"].(float64)
+	userIDFloat, ok := claims[claimskeys.UserID].(float64)
 	if !ok {
 		return ctx
 	}
@@ -22,7 +24,7 @@ func InjectUserIntoContext(ctx context.Context, claims map[string]any) context.C
 
 // GetRequestID returns the request ID from the context.
 func GetRequestID(ctx context.Context) string {
-	if v := ctx.Value(ctxkeys.CtxKeyRequestID); v != nil {
+	if v := ctx.Value(ctxkeys.RequestID); v != nil {
 		if s, ok := v.(string); ok {
 			return s
 		}
@@ -32,7 +34,7 @@ func GetRequestID(ctx context.Context) string {
 
 // GetTraceID returns the trace ID from the context.
 func GetTraceID(ctx context.Context) string {
-	if v := ctx.Value(ctxkeys.CtxKeyTraceID); v != nil {
+	if v := ctx.Value(ctxkeys.TraceID); v != nil {
 		if s, ok := v.(string); ok {
 			return s
 		}
@@ -42,7 +44,7 @@ func GetTraceID(ctx context.Context) string {
 
 // GetUserID returns the user ID from the context.
 func GetUserID(ctx context.Context) string {
-	if v := ctx.Value(ctxkeys.CtxKeyUserID); v != nil {
+	if v := ctx.Value(ctxkeys.UserID); v != nil {
 		switch id := v.(type) {
 		case uint64:
 			return strconv.FormatUint(id, 10)

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/category/constants"
 )
 

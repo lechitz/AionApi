@@ -6,9 +6,9 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 )
 

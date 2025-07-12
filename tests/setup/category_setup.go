@@ -28,7 +28,7 @@ func CategoryServiceTest(t *testing.T) *CategoryServiceTestSuite {
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
-	categoryService := category.NewCategoryService(mockCategoryRepository, mockLog)
+	categoryService := category.NewService(mockCategoryRepository, mockLog)
 
 	return &CategoryServiceTestSuite{
 		Ctrl:               ctrl,

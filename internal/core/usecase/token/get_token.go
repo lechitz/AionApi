@@ -6,12 +6,11 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/shared/claimskeys"
-
-	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
 )
 

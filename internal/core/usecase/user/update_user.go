@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
+	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
 
@@ -27,7 +27,7 @@ func (s *Service) UpdateUser(ctx context.Context, user domain.UserDomain) (domai
 	}
 
 	if user.Email != "" {
-		updateFields[commonkeys.UserEmail] = user.Email
+		updateFields[commonkeys.Email] = user.Email
 	}
 
 	if len(updateFields) == 0 {
@@ -70,7 +70,7 @@ func (s *Service) UpdateUserPassword(ctx context.Context, user domain.UserDomain
 	}
 
 	fields := map[string]interface{}{
-		commonkeys.UserPassword:  hashedPassword,
+		commonkeys.Password:      hashedPassword,
 		commonkeys.UserUpdatedAt: time.Now().UTC(),
 	}
 

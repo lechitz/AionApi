@@ -2,7 +2,7 @@ package graph
 
 import (
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel/attribute"
 )
 

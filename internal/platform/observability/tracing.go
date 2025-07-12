@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/config"

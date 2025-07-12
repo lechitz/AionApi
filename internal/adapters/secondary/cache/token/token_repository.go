@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/adapters/secondary/cache/token/constants"
 	"github.com/lechitz/AionApi/internal/core/domain"
@@ -24,8 +24,8 @@ type Repository struct {
 	logger output.ContextLogger
 }
 
-// NewTokenRepository creates a new instance of Repository with a given cache.Cache and logger.Logger.
-func NewTokenRepository(cache output.Cache, logger output.ContextLogger) *Repository {
+// NewRepository creates a new instance of Repository with a given cache.Cache and logger.Logger.
+func NewRepository(cache output.Cache, logger output.ContextLogger) *Repository {
 	return &Repository{
 		cache:  cache,
 		logger: logger,
@@ -52,7 +52,7 @@ func (t *Repository) Save(ctx context.Context, token domain.TokenDomain) error {
 
 		// TODO: ajustar o uso de TokenUser no contextlogger.
 
-		t.logger.Errorw(constants.ErrorToSaveTokenToRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
+		t.logger.Errorw(constants.ErrorToSaveTokenToRedis, commonkeys.Token, key, commonkeys.Error, err)
 		return err
 	}
 
@@ -75,7 +75,7 @@ func (t *Repository) Get(ctx context.Context, token domain.TokenDomain) (string,
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		t.logger.Errorw(constants.ErrorToGetTokenFromRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
+		t.logger.Errorw(constants.ErrorToGetTokenFromRedis, commonkeys.Token, key, commonkeys.Error, err)
 		return "", err
 	}
 
@@ -105,7 +105,7 @@ func (t *Repository) Delete(ctx context.Context, token domain.TokenDomain) error
 
 		// TODO: ajustar o uso de TokenUser no contextlogger.
 
-		t.logger.Errorw(constants.ErrorToDeleteTokenFromRedis, commonkeys.TokenUser, key, commonkeys.Error, err)
+		t.logger.Errorw(constants.ErrorToDeleteTokenFromRedis, commonkeys.Token, key, commonkeys.Error, err)
 		return err
 	}
 
@@ -115,5 +115,5 @@ func (t *Repository) Delete(ctx context.Context, token domain.TokenDomain) error
 
 // formatTokenKey formats the token key for the specified userID.
 func (t *Repository) formatTokenKey(userID uint64) string {
-	return fmt.Sprintf("token:user:%d", userID)
+	return fmt.Sprintf("token:user:%d", userID) // TODO:"VER COMO FICA !
 }

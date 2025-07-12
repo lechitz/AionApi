@@ -10,8 +10,8 @@ type Service struct {
 	Logger             output.ContextLogger
 }
 
-// NewCategoryService creates and returns a new instance of Service with the given repository and contextlogger dependencies.
-func NewCategoryService(repository output.CategoryStore, logger output.ContextLogger) *Service {
+// NewService creates and returns a new instance of Service with the given repository and contextlogger dependencies.
+func NewService(repository output.CategoryStore, logger output.ContextLogger) *Service {
 	return &Service{
 		CategoryRepository: repository,
 		Logger:             logger,

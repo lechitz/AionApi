@@ -9,12 +9,7 @@ import (
 
 // ComposeRouter initializes and configures an HTTP router based on application dependencies and context path.
 func ComposeRouter(deps *bootstrap.AppDependencies, cfg *config.Config) (output.Router, error) {
-	httpRouter, err := NewHTTPRouter(
-		deps.Logger,
-		deps.TokenRepository,
-		cfg.ServerHTTP.Context,
-		deps.TokenClaimsExtractor,
-	)
+	httpRouter, err := NewHTTPRouter(deps.TokenRepository, cfg.ServerHTTP.Context, deps.TokenClaimsExtractor, deps.Logger)
 	if err != nil {
 		return nil, err
 	}

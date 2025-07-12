@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/lechitz/AionApi/internal/shared/ctxkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 
 	"github.com/lechitz/AionApi/internal/shared/contextutils"
 	"go.uber.org/zap"
@@ -126,10 +126,10 @@ func (l *ZapLoggerContextual) WarnwCtx(ctx context.Context, msg string, keysAndV
 func enrichFieldsFromContext(ctx context.Context) []any {
 	var fields []any
 	if reqID := contextutils.GetRequestID(ctx); reqID != "" {
-		fields = append(fields, ctxkeys.CtxKeyRequestID, reqID)
+		fields = append(fields, ctxkeys.RequestID, reqID)
 	}
 	if traceID := contextutils.GetTraceID(ctx); traceID != "" {
-		fields = append(fields, ctxkeys.CtxKeyTraceID, traceID)
+		fields = append(fields, ctxkeys.TraceID, traceID)
 	}
 	if userID := contextutils.GetUserID(ctx); userID != "" {
 		fields = append(fields, ctxkeys.UserID, userID)

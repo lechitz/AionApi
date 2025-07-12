@@ -5,8 +5,8 @@ import "golang.org/x/crypto/bcrypt"
 // BcryptPasswordAdapter provides methods for hashing and validating passwords using the bcrypt algorithm.
 type BcryptPasswordAdapter struct{}
 
-// NewBcryptPasswordAdapter creates a new instance of BcryptPasswordAdapter for password hashing and validation.
-func NewBcryptPasswordAdapter() BcryptPasswordAdapter {
+// NewBcryptPassword creates a new instance of BcryptPasswordAdapter for password hashing and validation.
+func NewBcryptPassword() BcryptPasswordAdapter {
 	return BcryptPasswordAdapter{}
 }
 

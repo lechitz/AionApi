@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
@@ -31,8 +31,8 @@ type CategoryRepository struct {
 	logger output.ContextLogger
 }
 
-// NewCategoryRepository creates a new instance of CategoryRepository with a given gorm.DB and contextlogger.
-func NewCategoryRepository(db *gorm.DB, logger output.ContextLogger) *CategoryRepository {
+// NewCategory creates a new instance of CategoryRepository with a given gorm.DB and contextlogger.
+func NewCategory(db *gorm.DB, logger output.ContextLogger) *CategoryRepository {
 	return &CategoryRepository{
 		db:     db,
 		logger: logger,
@@ -163,7 +163,7 @@ func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint6
 	))
 	defer span.End()
 
-	delete(updateFields, commonkeys.CreatedAt)
+	delete(updateFields, commonkeys.CategoryCreatedAt)
 
 	var categoryDB model.CategoryDB
 	if err := c.db.WithContext(ctx).
@@ -201,8 +201,8 @@ func (c CategoryRepository) SoftDeleteCategory(
 	defer span.End()
 
 	fields := map[string]interface{}{
-		commonkeys.DeletedAt: time.Now().UTC(),
-		commonkeys.UpdatedAt: time.Now().UTC(),
+		commonkeys.CategoryDeletedAt: time.Now().UTC(),
+		commonkeys.CategoryUpdatedAt: time.Now().UTC(),
 	}
 
 	if err := c.db.WithContext(ctx).

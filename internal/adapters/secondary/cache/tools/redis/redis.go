@@ -6,19 +6,16 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
+	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/redis/go-redis/v9"
 )
 
 const (
 	// FailedToConnectToRedis is the error message for when the Redis client fails to connect.
 	FailedToConnectToRedis = "failed to connect to Redis"
-
-	// ErrCacheKeyDoesNotExist is the error message for when a cache key does not exist.
-	ErrCacheKeyDoesNotExist = "cache: key does not exist"
 )
 
 type redisClient struct {
@@ -26,8 +23,8 @@ type redisClient struct {
 	logger output.ContextLogger
 }
 
-// NewCacheConnection initializes a new Redis cache connection.
-func NewCacheConnection(appCtx context.Context, cfg config.CacheConfig, logger output.ContextLogger) (output.Cache, error) {
+// NewConnection initializes a new Redis cache connection.
+func NewConnection(appCtx context.Context, cfg config.CacheConfig, logger output.ContextLogger) (output.Cache, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,
 		Password: cfg.Password,

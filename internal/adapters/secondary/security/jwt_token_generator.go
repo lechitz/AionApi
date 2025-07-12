@@ -4,7 +4,7 @@ package security
 import (
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/claimskeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
 
 	"github.com/golang-jwt/jwt/v5"
 )

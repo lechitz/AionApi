@@ -5,14 +5,15 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+
 	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 )
 
 // SetAuthCookie sets a secure HTTP-only authentication cookie with the given token and expiration configuration.
 func SetAuthCookie(w http.ResponseWriter, token string, cfg config.CookieConfig) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     commonkeys.AuthToken,
+		Name:     commonkeys.AuthTokenCookieName,
 		Value:    token,
 		Path:     cfg.Path,
 		Domain:   cfg.Domain,
@@ -26,7 +27,7 @@ func SetAuthCookie(w http.ResponseWriter, token string, cfg config.CookieConfig)
 // ClearAuthCookie invalidates the authentication cookie by setting its value to empty and expiration to a past timestamp.
 func ClearAuthCookie(w http.ResponseWriter, cfg config.CookieConfig) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     commonkeys.AuthToken,
+		Name:     commonkeys.AuthTokenCookieName,
 		Value:    "",
 		Path:     cfg.Path,
 		MaxAge:   -1,

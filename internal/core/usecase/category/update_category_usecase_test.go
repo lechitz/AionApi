@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 

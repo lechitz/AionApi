@@ -29,7 +29,7 @@ func TokenServiceTest(t *testing.T, secretKey config.Secret) *TokenServiceTestSu
 
 	ExpectLoggerDefaultBehavior(mockLog)
 
-	tokenService := token.NewTokenService(mockTokenStore, mockLog, secretKey)
+	tokenService := token.NewService(mockTokenStore, mockLog, secretKey)
 
 	return &TokenServiceTestSuite{
 		Ctrl:         ctrl,

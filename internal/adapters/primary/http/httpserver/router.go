@@ -9,35 +9,34 @@ import (
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver/constants"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/auth"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recovery"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/router/chi"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/authmiddleware"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recoverymiddleware"
 )
 
 // RouteComposer is a structure for configuring routes, middlewares, and logging in the HTTP router.
 type RouteComposer struct {
 	Router         output.Router
 	logger         output.ContextLogger
-	authMiddleware *auth.MiddlewareAuth
+	authMiddleware *authmiddleware.MiddlewareAuth
 	BasePath       string
 }
 
 // NewHTTPRouter creates and configures a new HTTP router with middleware and authentication.
 func NewHTTPRouter(
-	logger output.ContextLogger,
 	tokenRepository output.TokenStore,
 	contextPath string,
 	tokenClaimsExtractor output.TokenClaimsExtractor,
+	logger output.ContextLogger,
 ) (*RouteComposer, error) {
 	normalizedPath, err := normalizeContextPath(contextPath)
 	if err != nil {
 		return nil, err
 	}
 
-	router := chi.NewRouter()
-	router.Use(recovery.RecoverMiddleware(logger))
+	router := NewRouter()
+	router.Use(recoverymiddleware.New(logger))
 
-	authMiddleware := auth.NewAuthMiddleware(
+	authMiddleware := authmiddleware.New(
 		tokenRepository,
 		logger,
 		tokenClaimsExtractor,

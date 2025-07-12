@@ -4,7 +4,7 @@ package bootstrap
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	adapterToken "github.com/lechitz/AionApi/internal/adapters/secondary/cache/token"
 	adapterCache "github.com/lechitz/AionApi/internal/adapters/secondary/cache/tools/redis"
@@ -36,14 +36,14 @@ type AppDependencies struct {
 
 // InitializeDependencies initializes and returns all core application dependencies.
 func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger output.ContextLogger) (*AppDependencies, func(), error) {
-	cacheClient, err := adapterCache.NewCacheConnection(appCtx, cfg.Cache, logger)
+	cacheClient, err := adapterCache.NewConnection(appCtx, cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)
 		return nil, nil, err
 	}
 	logger.Infow(constants.MsgCacheConnected, commonkeys.CacheAddr, cfg.Cache.Addr)
 
-	dbConn, err := adapterDB.NewDatabaseConnection(appCtx, cfg.DB, logger)
+	dbConn, err := adapterDB.NewConnection(appCtx, cfg.DB, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToDatabase, err)
 		return nil, nil, err
@@ -51,25 +51,25 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger o
 	logger.Infow(constants.MsgPostgresConnected)
 
 	// Security Hasher
-	passwordHasher := adapterSecurity.NewBcryptPasswordAdapter()
+	passwordHasher := adapterSecurity.NewBcryptPassword()
 
 	// Token Extractor
 	tokenClaimsExtractor := adapterSecurity.NewJWTClaimsExtractor(cfg.Secret.Key)
 
 	// Token
-	tokenRepository := adapterToken.NewTokenRepository(cacheClient, logger)
-	tokenService := token.NewTokenService(tokenRepository, logger, cfg.Secret)
+	tokenRepository := adapterToken.NewRepository(cacheClient, logger)
+	tokenService := token.NewService(tokenRepository, logger, cfg.Secret)
 
 	// User
-	userRepository := repository.NewUserRepository(dbConn, logger)
-	userService := user.NewUserService(userRepository, tokenService, passwordHasher, logger)
+	userRepository := repository.NewUser(dbConn, logger)
+	userService := user.NewService(userRepository, tokenService, passwordHasher, logger)
 
 	// Category
-	categoryRepository := repository.NewCategoryRepository(dbConn, logger)
-	categoryService := category.NewCategoryService(categoryRepository, logger)
+	categoryRepository := repository.NewCategory(dbConn, logger)
+	categoryService := category.NewService(categoryRepository, logger)
 
 	// Auth
-	authService := auth.NewAuthService(userRepository, tokenService, passwordHasher, logger)
+	authService := auth.NewService(userRepository, tokenService, passwordHasher, logger)
 
 	cleanupResources := func() {
 		adapterDB.Close(dbConn, logger)

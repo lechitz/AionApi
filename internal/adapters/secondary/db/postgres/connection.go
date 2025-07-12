@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
@@ -17,8 +17,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// NewDatabaseConnection initializes a database connection using the provided configuration and contextlogger. Returns a Gorm DB instance or an error.
-func NewDatabaseConnection(appCtx context.Context, cfg config.DBConfig, logger output.ContextLogger) (*gorm.DB, error) {
+// NewConnection initializes a database connection using the provided configuration and contextlogger. Returns a Gorm DB instance or an error.
+func NewConnection(appCtx context.Context, cfg config.DBConfig, logger output.ContextLogger) (*gorm.DB, error) {
 	db, err := tryConnectingWithRetries(cfg, logger)
 	if err != nil {
 		logger.Errorw(constants.ErrorToStartDB, commonkeys.Error, err.Error())

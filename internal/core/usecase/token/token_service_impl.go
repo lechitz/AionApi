@@ -12,8 +12,8 @@ type Service struct {
 	secretKey       string
 }
 
-// NewTokenService initializes a Service with a token repository, contextlogger, and token configuration for managing token operations.
-func NewTokenService(tokenRepo output.TokenStore, logger output.ContextLogger, secretKey config.Secret) *Service {
+// NewService initializes a Service with a token repository, contextlogger, and token configuration for managing token operations.
+func NewService(tokenRepo output.TokenStore, logger output.ContextLogger, secretKey config.Secret) *Service {
 	return &Service{
 		tokenRepository: tokenRepo,
 		logger:          logger,

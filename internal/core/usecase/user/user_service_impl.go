@@ -14,13 +14,8 @@ type Service struct {
 	logger       output.ContextLogger
 }
 
-// NewUserService creates and returns a new Service instance with the provided dependencies for handling user-related operations.
-func NewUserService(
-	userStore output.UserStore,
-	tokenService input.TokenService,
-	hashStore output.HasherStore,
-	logger output.ContextLogger,
-) *Service {
+// NewService creates and returns a new Service instance with the provided dependencies for handling user-related operations.
+func NewService(userStore output.UserStore, tokenService input.TokenService, hashStore output.HasherStore, logger output.ContextLogger) *Service {
 	return &Service{
 		userStore:    userStore,
 		tokenService: tokenService,
