@@ -86,12 +86,6 @@ const PasswordIsRequired = "password is required"
 // InvalidEmail indicates that the email format is invalid.
 const InvalidEmail = "invalid email format"
 
-// UsernameIsAlreadyInUse indicates the username is already taken.
-const UsernameIsAlreadyInUse = "username is already in use"
-
-// EmailIsAlreadyInUse indicates the email is already registered.
-const EmailIsAlreadyInUse = "email is already in use"
-
 // TracerName is the name of the tracer used for the user use case.
 const TracerName = "aionapi.user.usecase"
 

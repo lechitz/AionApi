@@ -31,6 +31,12 @@ const (
 
 	// ErrMsgParseUserID is the error message for parsing user ID.
 	ErrMsgParseUserID = "error parsing user id"
+
+	// ErrUsernameInUse ErrEmailInUse is the error message for an email already in use.
+	ErrUsernameInUse = "username already in use"
+
+	// ErrEmailInUse is the error message for an email already in use.
+	ErrEmailInUse = "email already in use"
 )
 
 // ====================================================================
