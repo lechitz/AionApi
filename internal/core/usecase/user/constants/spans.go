@@ -20,7 +20,7 @@ const (
 	SpanUpdateUser = "UpdateUser"
 
 	// SpanUpdateUserPassword is the name of the span for updating a user password.
-	SpanUpdateUserPassword = "UdpateUserPassword"
+	SpanUpdateUserPassword = "UdpateUserPassword" // #nosec G101
 
 	// SpanSoftDeleteUser is the name of the span for soft deleting a user.
 	SpanSoftDeleteUser = "SoftDeleteUser"
@@ -45,7 +45,4 @@ const (
 
 	// StatusDBErrorCreateUser is the status for when a user creation fails.
 	StatusDBErrorCreateUser = "db_error_create_user"
-
-	// StatusSuccess is the status for when a user creation succeeds.
-	StatusSuccess = "success"
 )
