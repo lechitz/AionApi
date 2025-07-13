@@ -1,22 +1,22 @@
-// Package httpserver provides a wrapper around the chi.Router to implement the output.Router interface.
+// Package httpserver provides a wrapper around the chi.Router to implement the output.HTTPRouter interface.
 package httpserver
 
 import (
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/core/ports/output"
+	"github.com/lechitz/AionApi/internal/core/ports/input"
 
 	"github.com/go-chi/chi/v5"
 )
 
-// Router is a wrapper around the chi.Router to implement the output.Router interface.
+// Router is a wrapper around the chi.Router to implement the output.HTTPRouter interface.
 type Router struct {
 	chi          chi.Router
 	errorHandler func(http.ResponseWriter, *http.Request, error)
 }
 
-// NewRouter initializes and returns a new instance of output.Router using a Router implementation.
-func NewRouter() output.Router {
+// NewRouter initializes and returns a new instance of output.HTTPRouter using a Router implementation.
+func NewRouter() input.HTTPRouter {
 	return &Router{chi: chi.NewRouter()}
 }
 
@@ -26,7 +26,7 @@ func (c *Router) Use(middleware func(http.Handler) http.Handler) {
 }
 
 // Route defines a sub-router for a specific route pattern within the current router.
-func (c *Router) Route(pattern string, fn func(r output.Router)) {
+func (c *Router) Route(pattern string, fn func(r input.HTTPRouter)) {
 	sub := chi.NewRouter()
 	wrapped := &Router{chi: sub}
 	fn(wrapped)
@@ -64,7 +64,7 @@ func (c *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // Group creates a new router group where shared middlewares or routes can be defined and applied.
-func (c *Router) Group(fn func(r output.Router)) {
+func (c *Router) Group(fn func(r input.HTTPRouter)) {
 	fn(c)
 }
 
@@ -86,7 +86,7 @@ func (c *Router) SetErrorHandler(handler func(http.ResponseWriter, *http.Request
 
 // GroupWithMiddleware creates a new router group where shared middlewares or routes can be defined and applied.
 // The provided middleware function is applied to all routes defined within the group.
-func (c *Router) GroupWithMiddleware(middleware func(http.Handler) http.Handler, fn func(r output.Router)) {
+func (c *Router) GroupWithMiddleware(middleware func(http.Handler) http.Handler, fn func(r input.HTTPRouter)) {
 	sub := chi.NewRouter()
 	sub.Use(middleware)
 	wrapped := &Router{chi: sub}

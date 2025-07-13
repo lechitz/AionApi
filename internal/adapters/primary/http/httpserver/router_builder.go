@@ -24,11 +24,11 @@ func BuildRouterRoutes(
 	authService input.AuthService,
 	tokenRepository output.TokenStore,
 	contextPath string,
-	adapter output.Router,
+	adapter input.HTTPRouter,
 	tokenClaimsExtractor output.TokenClaimsExtractor,
 	cfg *config.Config,
 	genericHandler *generic.Handler,
-) (output.Router, error) {
+) (input.HTTPRouter, error) {
 	userHandler := user.New(userService, cfg, logger)
 	authHandler := auth.New(authService, cfg, logger)
 
@@ -45,7 +45,7 @@ func BuildRouterRoutes(
 	adapter.SetMethodNotAllowedHandler(genericHandler.MethodNotAllowedHandler)
 	adapter.SetErrorHandler(genericHandler.ErrorHandler)
 
-	adapter.Route(contextPath, func(rt output.Router) {
+	adapter.Route(contextPath, func(rt input.HTTPRouter) {
 		rt.Group(r.AddHealthCheckRoutes(genericHandler))
 		rt.Group(r.AddUserRoutes(userHandler))
 		rt.Group(r.AddAuthRoutes(authHandler))
