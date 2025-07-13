@@ -22,7 +22,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-//TODO:Pensar se ao tentar trocar a senha e não ocnseguir, deveria manter o token ativo da sessão
+// TODO:Pensar se ao tentar trocar a senha e não ocnseguir, deveria manter o token ativo da sessão
 
 // UpdateUserPassword handles PUT /user/password.
 func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {

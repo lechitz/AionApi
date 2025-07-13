@@ -1,16 +1,19 @@
 package user_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
+
+// ---------------------- UpdateUser ----------------------
 
 func TestUpdateUser_Success(t *testing.T) {
 	suite := setup.UserServiceTest(t)
@@ -22,15 +25,59 @@ func TestUpdateUser_Success(t *testing.T) {
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
 	}
-
 	expected := setup.DefaultTestUser()
 
 	suite.UserRepository.EXPECT().
-		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
+		UpdateUser(gomock.Any(), input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(expected, nil)
 
-	result, err := suite.UserService.UpdateUser(suite.Ctx, input)
+	suite.Logger.EXPECT().
+		InfowCtx(gomock.Any(), constants.SuccessUserUpdated, commonkeys.UserID, gomock.Any(), commonkeys.UserUpdatedFields, gomock.Any())
 
+	result, err := suite.UserService.UpdateUser(context.Background(), input)
+
+	require.NoError(t, err)
+	require.Equal(t, expected, result)
+}
+
+func TestUpdateUser_UpdateOnlyUsername(t *testing.T) {
+	suite := setup.UserServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	input := domain.UserDomain{
+		ID:       setup.DefaultTestUser().ID,
+		Username: "new_username",
+	}
+	expected := setup.DefaultTestUser()
+	expected.Username = "new_username"
+
+	suite.UserRepository.EXPECT().
+		UpdateUser(gomock.Any(), input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
+		Return(expected, nil)
+	suite.Logger.EXPECT().InfowCtx(gomock.Any(), constants.SuccessUserUpdated, commonkeys.UserID, gomock.Any(), commonkeys.UserUpdatedFields, gomock.Any())
+
+	result, err := suite.UserService.UpdateUser(context.Background(), input)
+	require.NoError(t, err)
+	require.Equal(t, expected, result)
+}
+
+func TestUpdateUser_UpdateOnlyEmail(t *testing.T) {
+	suite := setup.UserServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	input := domain.UserDomain{
+		ID:    setup.DefaultTestUser().ID,
+		Email: "new@email.com",
+	}
+	expected := setup.DefaultTestUser()
+	expected.Email = "new@email.com"
+
+	suite.UserRepository.EXPECT().
+		UpdateUser(gomock.Any(), input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
+		Return(expected, nil)
+	suite.Logger.EXPECT().InfowCtx(gomock.Any(), constants.SuccessUserUpdated, commonkeys.UserID, gomock.Any(), commonkeys.UserUpdatedFields, gomock.Any())
+
+	result, err := suite.UserService.UpdateUser(context.Background(), input)
 	require.NoError(t, err)
 	require.Equal(t, expected, result)
 }
@@ -41,12 +88,43 @@ func TestUpdateUser_NoFieldsToUpdate(t *testing.T) {
 
 	input := domain.UserDomain{ID: setup.DefaultTestUser().ID}
 
-	result, err := suite.UserService.UpdateUser(suite.Ctx, input)
+	suite.Logger.EXPECT().
+		ErrorwCtx(gomock.Any(), constants.ErrorNoFieldsToUpdate, commonkeys.Error, constants.ErrorNoFieldsToUpdate)
+
+	result, err := suite.UserService.UpdateUser(context.Background(), input)
 
 	require.Error(t, err)
 	require.Equal(t, domain.UserDomain{}, result)
 	require.Equal(t, constants.ErrorNoFieldsToUpdate, err.Error())
 }
+
+func TestUpdateUser_ErrorToUpdateUser(t *testing.T) {
+	suite := setup.UserServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	input := domain.UserDomain{
+		ID:       setup.DefaultTestUser().ID,
+		Name:     "Felipe",
+		Username: setup.DefaultTestUser().Username,
+		Email:    setup.DefaultTestUser().Email,
+	}
+	expectedErr := errors.New(constants.ErrorToUpdateUser)
+
+	suite.UserRepository.EXPECT().
+		UpdateUser(gomock.Any(), input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
+		Return(domain.UserDomain{}, expectedErr)
+
+	suite.Logger.EXPECT().
+		ErrorwCtx(gomock.Any(), constants.ErrorToUpdateUser, commonkeys.Error, expectedErr.Error())
+
+	result, err := suite.UserService.UpdateUser(context.Background(), input)
+
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, result)
+	require.Contains(t, err.Error(), constants.ErrorToUpdateUser)
+}
+
+// ---------------------- UpdateUserPassword ----------------------
 
 func TestUpdateUserPassword_Success(t *testing.T) {
 	suite := setup.UserServiceTest(t)
@@ -61,27 +139,25 @@ func TestUpdateUserPassword_Success(t *testing.T) {
 	expectedToken := "newToken"
 
 	suite.UserRepository.EXPECT().
-		GetUserByID(suite.Ctx, input.ID).
+		GetUserByID(gomock.Any(), input.ID).
 		Return(expectedUser, nil)
-
 	suite.PasswordHasher.EXPECT().
 		ValidatePassword(expectedUser.Password, oldPassword).
 		Return(nil)
-
 	suite.PasswordHasher.EXPECT().
 		HashPassword(newPassword).
 		Return(hashedPassword, nil)
-
 	suite.UserRepository.EXPECT().
-		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
+		UpdateUser(gomock.Any(), input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(expectedUser, nil)
-
 	suite.TokenService.EXPECT().
-		CreateToken(suite.Ctx, gomock.AssignableToTypeOf(domain.TokenDomain{})).
+		CreateToken(gomock.Any(), gomock.AssignableToTypeOf(domain.TokenDomain{})).
 		Return(expectedToken, nil)
+	suite.Logger.EXPECT().
+		InfowCtx(gomock.Any(), constants.SuccessPasswordUpdated, commonkeys.UserID, gomock.Any())
 
 	result, token, err := suite.UserService.UpdateUserPassword(
-		suite.Ctx,
+		context.Background(),
 		input,
 		oldPassword,
 		newPassword,
@@ -100,12 +176,16 @@ func TestUpdateUserPassword_ErrorToGetUserByID(t *testing.T) {
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 
+	expectedErr := errors.New(constants.ErrorToGetUserByID)
 	suite.UserRepository.EXPECT().
-		GetUserByID(suite.Ctx, input.ID).
-		Return(domain.UserDomain{}, errors.New(constants.ErrorToGetUserByID))
+		GetUserByID(gomock.Any(), input.ID).
+		Return(domain.UserDomain{}, expectedErr)
+
+	suite.Logger.EXPECT().
+		ErrorwCtx(gomock.Any(), constants.ErrorToGetUserByID, commonkeys.Error, expectedErr.Error(), commonkeys.UserID, gomock.Any())
 
 	result, token, err := suite.UserService.UpdateUserPassword(
-		suite.Ctx,
+		context.Background(),
 		input,
 		oldPassword,
 		newPassword,
@@ -125,16 +205,19 @@ func TestUpdateUserPassword_ErrorToCompareHashAndPassword(t *testing.T) {
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 
+	expectedErr := errors.New(constants.ErrorToCompareHashAndPassword)
 	suite.UserRepository.EXPECT().
-		GetUserByID(suite.Ctx, input.ID).
+		GetUserByID(gomock.Any(), input.ID).
 		Return(setup.DefaultTestUser(), nil)
-
 	suite.PasswordHasher.EXPECT().
 		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
-		Return(errors.New(constants.ErrorToCompareHashAndPassword))
+		Return(expectedErr)
+
+	suite.Logger.EXPECT().
+		ErrorwCtx(gomock.Any(), constants.ErrorToCompareHashAndPassword, commonkeys.Error, expectedErr.Error(), commonkeys.UserID, gomock.Any())
 
 	result, token, err := suite.UserService.UpdateUserPassword(
-		suite.Ctx,
+		context.Background(),
 		input,
 		oldPassword,
 		newPassword,
@@ -154,20 +237,22 @@ func TestUpdateUserPassword_ErrorToHashPassword(t *testing.T) {
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 
+	expectedErr := errors.New(constants.ErrorToHashPassword)
 	suite.UserRepository.EXPECT().
-		GetUserByID(suite.Ctx, input.ID).
+		GetUserByID(gomock.Any(), input.ID).
 		Return(setup.DefaultTestUser(), nil)
-
 	suite.PasswordHasher.EXPECT().
 		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
 		Return(nil)
-
 	suite.PasswordHasher.EXPECT().
 		HashPassword(newPassword).
-		Return("", errors.New(constants.ErrorToHashPassword))
+		Return("", expectedErr)
+
+	suite.Logger.EXPECT().
+		ErrorwCtx(gomock.Any(), constants.ErrorToHashPassword, commonkeys.Error, expectedErr.Error(), commonkeys.UserID, gomock.Any())
 
 	result, token, err := suite.UserService.UpdateUserPassword(
-		suite.Ctx,
+		context.Background(),
 		input,
 		oldPassword,
 		newPassword,
@@ -188,24 +273,25 @@ func TestUpdateUserPassword_ErrorToUpdatePassword(t *testing.T) {
 	newPassword := "newPassword"
 	hashedPassword := "hashedNewPassword"
 
+	expectedErr := errors.New(constants.ErrorToUpdatePassword)
 	suite.UserRepository.EXPECT().
-		GetUserByID(suite.Ctx, input.ID).
+		GetUserByID(gomock.Any(), input.ID).
 		Return(setup.DefaultTestUser(), nil)
-
 	suite.PasswordHasher.EXPECT().
 		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
 		Return(nil)
-
 	suite.PasswordHasher.EXPECT().
 		HashPassword(newPassword).
 		Return(hashedPassword, nil)
-
 	suite.UserRepository.EXPECT().
-		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
-		Return(domain.UserDomain{}, errors.New(constants.ErrorToUpdatePassword))
+		UpdateUser(gomock.Any(), input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
+		Return(domain.UserDomain{}, expectedErr)
+
+	suite.Logger.EXPECT().
+		ErrorwCtx(gomock.Any(), constants.ErrorToUpdatePassword, commonkeys.Error, expectedErr.Error(), commonkeys.UserID, gomock.Any())
 
 	result, token, err := suite.UserService.UpdateUserPassword(
-		suite.Ctx,
+		context.Background(),
 		input,
 		oldPassword,
 		newPassword,
@@ -226,28 +312,28 @@ func TestUpdateUserPassword_ErrorToCreateToken(t *testing.T) {
 	newPassword := "newPassword"
 	hashedPassword := "hashedNewPassword"
 
+	expectedErr := errors.New(constants.ErrorToCreateToken)
 	suite.UserRepository.EXPECT().
-		GetUserByID(suite.Ctx, input.ID).
+		GetUserByID(gomock.Any(), input.ID).
 		Return(setup.DefaultTestUser(), nil)
-
 	suite.PasswordHasher.EXPECT().
 		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
 		Return(nil)
-
 	suite.PasswordHasher.EXPECT().
 		HashPassword(newPassword).
 		Return(hashedPassword, nil)
-
 	suite.UserRepository.EXPECT().
-		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
+		UpdateUser(gomock.Any(), input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(setup.DefaultTestUser(), nil)
-
 	suite.TokenService.EXPECT().
-		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
-		Return("", errors.New(constants.ErrorToCreateToken))
+		CreateToken(gomock.Any(), domain.TokenDomain{UserID: input.ID}).
+		Return("", expectedErr)
+
+	suite.Logger.EXPECT().
+		ErrorwCtx(gomock.Any(), constants.ErrorToCreateToken, commonkeys.Error, expectedErr.Error(), commonkeys.UserID, gomock.Any())
 
 	result, token, err := suite.UserService.UpdateUserPassword(
-		suite.Ctx,
+		context.Background(),
 		input,
 		oldPassword,
 		newPassword,
@@ -269,33 +355,32 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
 	}
-
 	oldPassword := "oldPassword"
 	newPassword := "newPassword"
 	hashedPassword := "hashedNewPassword"
 
+	expectedErr := errors.New(constants.ErrorToSaveToken)
 	suite.UserRepository.EXPECT().
-		GetUserByID(suite.Ctx, input.ID).
+		GetUserByID(gomock.Any(), input.ID).
 		Return(setup.DefaultTestUser(), nil)
-
 	suite.PasswordHasher.EXPECT().
 		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
 		Return(nil)
-
 	suite.PasswordHasher.EXPECT().
 		HashPassword(newPassword).
 		Return(hashedPassword, nil)
-
 	suite.UserRepository.EXPECT().
-		UpdateUser(suite.Ctx, input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
+		UpdateUser(gomock.Any(), input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(setup.DefaultTestUser(), nil)
-
 	suite.TokenService.EXPECT().
-		CreateToken(suite.Ctx, domain.TokenDomain{UserID: input.ID}).
-		Return("", errors.New(constants.ErrorToSaveToken))
+		CreateToken(gomock.Any(), domain.TokenDomain{UserID: input.ID}).
+		Return("", expectedErr)
+
+	suite.Logger.EXPECT().
+		ErrorwCtx(gomock.Any(), constants.ErrorToCreateToken, commonkeys.Error, expectedErr.Error(), commonkeys.UserID, gomock.Any())
 
 	result, token, err := suite.UserService.UpdateUserPassword(
-		suite.Ctx,
+		context.Background(),
 		input,
 		oldPassword,
 		newPassword,
@@ -305,4 +390,45 @@ func TestUpdateUserPassword_ErrorToSaveToken(t *testing.T) {
 	require.Equal(t, domain.UserDomain{}, result)
 	require.Empty(t, token)
 	require.Contains(t, err.Error(), constants.ErrorToSaveToken)
+}
+
+func TestUpdateUserPassword_UnknownTokenServiceError(t *testing.T) {
+	suite := setup.UserServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	input := setup.DefaultTestUser()
+	oldPassword := "oldPassword"
+	newPassword := "newPassword"
+	hashedPassword := "hashedNewPassword"
+	expectedErr := errors.New("random unknown error")
+
+	suite.UserRepository.EXPECT().
+		GetUserByID(gomock.Any(), input.ID).
+		Return(setup.DefaultTestUser(), nil)
+	suite.PasswordHasher.EXPECT().
+		ValidatePassword(setup.DefaultTestUser().Password, oldPassword).
+		Return(nil)
+	suite.PasswordHasher.EXPECT().
+		HashPassword(newPassword).
+		Return(hashedPassword, nil)
+	suite.UserRepository.EXPECT().
+		UpdateUser(gomock.Any(), input.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
+		Return(setup.DefaultTestUser(), nil)
+	suite.TokenService.EXPECT().
+		CreateToken(gomock.Any(), domain.TokenDomain{UserID: input.ID}).
+		Return("", expectedErr)
+
+	suite.Logger.EXPECT().
+		ErrorwCtx(gomock.Any(), constants.ErrorToCreateToken, commonkeys.Error, expectedErr.Error(), commonkeys.UserID, gomock.Any())
+
+	result, token, err := suite.UserService.UpdateUserPassword(
+		context.Background(),
+		input,
+		oldPassword,
+		newPassword,
+	)
+	require.Error(t, err)
+	require.Equal(t, domain.UserDomain{}, result)
+	require.Empty(t, token)
+	require.Contains(t, err.Error(), expectedErr.Error())
 }

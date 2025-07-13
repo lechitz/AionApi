@@ -37,6 +37,14 @@ const (
 
 	// ErrEmailInUse is the error message for an email already in use.
 	ErrEmailInUse = "email already in use"
+
+	// ErrorToCreateToken indicates an error when creating a token.
+	ErrorToCreateToken = "error to create token"
+
+	// ErrorToDeleteToken indicates an error when deleting a token.
+	ErrorToDeleteToken = "error to delete token"
+
+	NoFieldsToUpdate = "no fields to update"
 )
 
 // ====================================================================

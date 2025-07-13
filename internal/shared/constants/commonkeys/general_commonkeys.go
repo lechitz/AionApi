@@ -49,3 +49,8 @@ const (
 
 // Fields --- Handlers.
 const Fields = "fields"
+
+// Operation --- Handlers.
+const (
+	Operation = "operation"
+)

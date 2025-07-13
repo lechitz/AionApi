@@ -4,9 +4,6 @@ package constants
 // ErrorToValidateCreateUser indicates an error during user creation validation.
 const ErrorToValidateCreateUser = "validation error on CreateUser"
 
-// ErrorToDeleteToken indicates an error when deleting a token.
-const ErrorToDeleteToken = "error to delete token"
-
 // ErrorToHashPassword indicates an error while hashing a password.
 // #nosec G101: This constant does not leak a real secret, just an error message.
 const ErrorToHashPassword = "error hashing password"
@@ -64,6 +61,9 @@ const SuccessPasswordUpdated = "password updated successfully"
 
 // SuccessUserUpdated indicates the user was updated successfully.
 const SuccessUserUpdated = "user updated successfully"
+
+// ErrorToGetUserByUsername indicates an error when fetching a user by username.
+const ErrorToGetUserByUsername = "error to get user by username"
 
 // ErrorToSoftDeleteUser indicates an error when performing a soft delete on a user.
 const ErrorToSoftDeleteUser = "error to soft delete user"

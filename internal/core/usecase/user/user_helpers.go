@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"strings"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
@@ -42,4 +43,19 @@ func (s *Service) normalizeUserData(user *domain.UserDomain) domain.UserDomain {
 		user.Email = strings.ToLower(strings.TrimSpace(user.Email))
 	}
 	return *user
+}
+
+// buildUserUpdateFields returns a map with non-empty user fields for update operations.
+func buildUserUpdateFields(user domain.UserDomain) map[string]interface{} {
+	updateFields := make(map[string]interface{})
+	if user.Name != "" {
+		updateFields[commonkeys.Name] = user.Name
+	}
+	if user.Username != "" {
+		updateFields[commonkeys.Username] = user.Username
+	}
+	if user.Email != "" {
+		updateFields[commonkeys.Email] = user.Email
+	}
+	return updateFields
 }
