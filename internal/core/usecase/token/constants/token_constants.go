@@ -1,6 +1,12 @@
 // Package constants contains constants related to token operations.
 package constants
 
+// TracerName is the name of the tracer for token operations.
+const TracerName = "aionapi.token"
+
+// SpanCreateToken is the name of the span for creating a token.
+const SpanCreateToken = "CreateToken"
+
 // ErrorToSaveToken indicates an error saving the access reference.
 const ErrorToSaveToken = "error saving access reference" // #nosec G101
 
