@@ -10,12 +10,12 @@ const ErrGenerateSecretKey = "failed to generate secret key"
 // SecretKeyWasNotSet is logged when no SECRET_KEY is found, and a new one is generated.
 const SecretKeyWasNotSet = "SECRET_KEY was not set. A new one was generated for this runtime session." // #nosec G101
 
-// Validation message constants
+// Validation message constants.
 const (
 	ErrHTTPPortRequired     = "HTTP port is required"
 	ErrHTTPContextPathEmpty = "HTTP context path cannot be empty"
 	ErrHTTPReadTimeoutMin   = "HTTP read timeout must be at least %v"
-	ErrHTTPWriteTimeoutMin  = "HTTP write timeout must be at least %v"
+	ErrHTTPWriteTimeoutMin  = "HTTP write timeout must be at least %v" // #nosec G101
 
 	ErrGraphqlPortRequired    = "GraphQL port is required"
 	ErrGraphqlPathRequired    = "GraphQL path is required"
@@ -47,5 +47,5 @@ const (
 	ErrAppContextReqMin      = "context request timeout must be at least %v"
 	ErrAppShutdownTimeoutMin = "shutdown timeout must be at least %d second"
 
-	InfoJWTSecretGenerated = "JWT secret key successfully generated with length: %d"
+	InfoJWTSecretGenerated = "JWT secret key successfully generated with length: %d" // #nosec G101
 )
