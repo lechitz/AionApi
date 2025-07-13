@@ -35,7 +35,7 @@ type AppDependencies struct {
 }
 
 // InitializeDependencies initializes and returns all core application dependencies.
-func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger output.ContextLogger) (*AppDependencies, func(), error) {
+func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger output.ContextLogger) (*AppDependencies, func(ctx context.Context), error) {
 	cacheClient, err := adapterCache.NewConnection(appCtx, cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)
@@ -71,7 +71,7 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger o
 	// Auth
 	authService := auth.NewService(userRepository, tokenService, passwordHasher, logger)
 
-	cleanupResources := func() {
+	cleanupResources := func(ctx context.Context) {
 		adapterDB.Close(dbConn, logger)
 
 		if err := cacheClient.Close(); err != nil {

@@ -42,7 +42,11 @@ func main() {
 	defer cleanupTracer()
 
 	appDeps, cleanupDeps := initDependencies(appCtx, cfg, logger)
-	defer cleanupDeps()
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	defer cleanupDeps(shutdownCtx)
 
 	servers := buildAllServers(appCtx, appDeps, cfg, logger)
 	handleServers(appCtx, servers, cfg, logger, stopApp)
@@ -79,7 +83,7 @@ func loadConfig(logger output.ContextLogger) *config.Config {
 	return cfg
 }
 
-func initDependencies(ctx context.Context, cfg *config.Config, logger output.ContextLogger) (*bootstrap.AppDependencies, func()) {
+func initDependencies(ctx context.Context, cfg *config.Config, logger output.ContextLogger) (*bootstrap.AppDependencies, func(context.Context)) {
 	deps, cleanup, err := bootstrap.InitializeDependencies(ctx, cfg, logger)
 	if err != nil {
 		logger.Errorw(
