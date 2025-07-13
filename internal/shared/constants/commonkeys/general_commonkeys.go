@@ -1,56 +1,89 @@
 // Package commonkeys contains constants used throughout the application.
 package commonkeys
 
-// --- Application Metadata.
+// Application metadata keys.
 const (
-	APIName    = "api_name"    // Application or service name
-	AppEnv     = "app_env"     // Application environment ("development", "production", etc)
-	AppVersion = "app_version" // Application version
-	Setting    = "setting"     // Generic configuration setting
+	// APIName is the application or service name.
+	APIName = "api_name"
+
+	// AppEnv is the application environment ("development", "production", etc).
+	AppEnv = "app_env"
+
+	// AppVersion is the application version.
+	AppVersion = "app_version"
+
+	// Setting is a generic configuration setting.
+	Setting = "setting"
 )
 
-// --- HTTP Server/Request.
+// HTTP server keys.
 const (
-	ServerHTTPName = "server_name" // HTTP server name
-	ServerHTTPAddr = "http_port"   // HTTP server port/address
-	URLPath        = "path"        // Current URL path
-	Method         = "method"      // HTTP method (GET, POST, etc)
-	Status         = "status"      // Status of operation/process (e.g., success, failure)
+	// ServerHTTPName is the HTTP server name.
+	ServerHTTPName = "server_name"
+
+	// ServerHTTPAddr is the HTTP server port/address.
+	ServerHTTPAddr = "http_port"
 )
 
-// --- Database.
+// HTTP request keys.
 const (
-	DBName                     = "db_name" // Database name
-	DBHost                     = "host"    // Database host
-	DBPort                     = "port"    // Database port
-	DBTryConnectingWithRetries = "try"     // Connection retry counter
+	// URLPath is the current URL path.
+	URLPath = "path"
+
+	// Method is the HTTP method (GET, POST, etc).
+	Method = "method"
 )
 
-// CacheAddr --- Cache.
+// Operation/status keys.
 const (
-	CacheAddr = "cache_addr" // Cache/Redis server address.
-)
+	// Status is the status of an operation / process (e.g., success, failure).
+	Status = "status"
 
-// --- Request/Tracing Identifiers.
-const (
-	RequestID  = "request_id"   // Internal/external request ID in logs, headers, or context
-	XRequestID = "X-Request-ID" // Header key for external request tracking
-)
-
-// Input --- GraphQL.
-const (
-	Input = "input" // Input value (GraphQL, forms, payloads)
-)
-
-// Error --- General tag.
-const (
-	Error = "error" // Generic error, often used in logging or context
-)
-
-// Fields --- Handlers.
-const Fields = "fields"
-
-// Operation --- Handlers.
-const (
+	// Operation is the name of operation/handler/action.
 	Operation = "operation"
+
+	// StatusSuccess is the standard value for successful status.
+	StatusSuccess = "success"
+
+	// Error is the generic error key for logging/context.
+	Error = "error"
+
+	// Fields is used in handlers for payload fields.
+	Fields = "fields"
+)
+
+// Database keys.
+const (
+	// DBName is the database name.
+	DBName = "db_name"
+
+	// DBHost is the database host.
+	DBHost = "host"
+
+	// DBPort is the database port.
+	DBPort = "port"
+
+	// DBTryConnectingWithRetries is the connection retry counter.
+	DBTryConnectingWithRetries = "try"
+)
+
+// Cache keys.
+const (
+	// CacheAddr is the cache/Redis server address.
+	CacheAddr = "cache_addr"
+)
+
+// Request/tracing identifiers.
+const (
+	// RequestID is the internal/external request ID in logs, headers, or context.
+	RequestID = "request_id"
+
+	// XRequestID is the header key for external request tracking.
+	XRequestID = "X-Request-ID"
+)
+
+// Input keys (GraphQL, forms, payloads).
+const (
+	// Input is the key for input value (GraphQL, forms, payloads).
+	Input = "input"
 )
