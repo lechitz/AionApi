@@ -72,19 +72,31 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger o
 	authService := auth.NewService(userRepository, tokenService, passwordHasher, logger)
 
 	cleanupResources := func(ctx context.Context) {
-		adapterDB.Close(dbConn, logger)
+		done := make(chan struct{})
 
-		if err := cacheClient.Close(); err != nil {
-			logger.Errorf("%s: %v", constants.ErrCloseCacheConnection, err)
+		go func() {
+			adapterDB.Close(dbConn, logger)
+
+			if err := cacheClient.Close(); err != nil {
+				logger.Errorf("%s: %v", constants.ErrCloseCacheConnection, err)
+			}
+
+			close(done)
+		}()
+
+		select {
+		case <-ctx.Done():
+			logger.Warnw(constants.MsgCleanupAborted, commonkeys.Error, ctx.Err())
+		case <-done:
+			logger.Infow(constants.MsgCleanupCompletedSuccessfully)
 		}
 	}
 
 	return &AppDependencies{
-		AuthService:     authService,
-		UserService:     userService,
-		CategoryService: categoryService,
-		TokenService:    tokenService,
-
+		AuthService:          authService,
+		UserService:          userService,
+		CategoryService:      categoryService,
+		TokenService:         tokenService,
 		TokenClaimsExtractor: tokenClaimsExtractor,
 		TokenRepository:      tokenRepository,
 		Logger:               logger,

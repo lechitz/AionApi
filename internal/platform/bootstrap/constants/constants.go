@@ -15,3 +15,9 @@ const ErrConnectToDatabase = "Failed to connect to Database: %v"
 
 // ErrCloseCacheConnection indicates an error occurred while attempting to close the Cache connection.
 const ErrCloseCacheConnection = "failed to close Cache connection"
+
+// MsgCleanupCompletedSuccessfully is a constant string used to indicate that the cleanup process completed successfully.
+const MsgCleanupCompletedSuccessfully = "cleanup completed successfully"
+
+// MsgCleanupAborted is a constant string used to indicate that the cleanup process was aborted.
+const MsgCleanupAborted = "cleanup aborted due to context cancellation or timeout"
