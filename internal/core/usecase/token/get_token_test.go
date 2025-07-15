@@ -2,13 +2,12 @@ package token_test
 
 import (
 	"errors"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/security/jwt"
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/platform/config"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-
-	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
 
 	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
 	"github.com/lechitz/AionApi/tests/setup"
@@ -22,7 +21,7 @@ func TestVerifyToken_Success(t *testing.T) {
 
 	userID := testdata.TestPerfectUser.ID
 
-	tokenString, err := security.GenerateToken(userID, testdata.SecretKey)
+	tokenString, err := jwt.GenerateToken(userID, testdata.SecretKey)
 	require.NoError(t, err)
 
 	suite.TokenStore.EXPECT().
@@ -54,7 +53,7 @@ func TestCheck_TokenMismatch(t *testing.T) {
 
 	userID := uint64(1)
 
-	tokenString, err := security.GenerateToken(userID, testdata.SecretKey)
+	tokenString, err := jwt.GenerateToken(userID, testdata.SecretKey)
 	require.NoError(t, err)
 
 	cachedToken := "differentToken"
@@ -75,7 +74,7 @@ func TestCheck_ErrorToRetrieveTokenFromCache(t *testing.T) {
 
 	userID := testdata.TestPerfectUser.ID
 
-	tokenString, err := security.GenerateToken(userID, testdata.SecretKey)
+	tokenString, err := jwt.GenerateToken(userID, testdata.SecretKey)
 	require.NoError(t, err)
 
 	suite.TokenStore.EXPECT().
