@@ -19,7 +19,7 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/constants"
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain" //TODO: ajustar !!!!
 )
 
 // parseUserIDParam extracts and validates the user ID parameter from the URL.
@@ -43,8 +43,8 @@ func parseUserIDParam(r *http.Request, log output.ContextLogger) (uint64, error)
 }
 
 // buildUserDomainFromUpdate builds a user domain from an update user request.
-func buildUserDomainFromUpdate(userID uint64, req dto.UpdateUserRequest) domain.UserDomain {
-	userDomain := domain.UserDomain{ID: userID}
+func buildUserDomainFromUpdate(userID uint64, req dto.UpdateUserRequest) domain.User {
+	userDomain := domain.User{ID: userID}
 	if req.Name != nil {
 		userDomain.Name = *req.Name
 	}
@@ -65,7 +65,7 @@ func (h *Handler) parseUpdateUserRequest(r *http.Request) (dto.UpdateUserRequest
 }
 
 // writeUpdateSuccess writes a success response for a user update operation.
-func (h *Handler) writeUpdateSuccess(w http.ResponseWriter, span trace.Span, userUpdated domain.UserDomain) {
+func (h *Handler) writeUpdateSuccess(w http.ResponseWriter, span trace.Span, userUpdated domain.User) {
 	span.SetAttributes(attribute.String(commonkeys.UpdatedUsername, userUpdated.Username))
 	span.SetStatus(codes.Ok, constants.StatusUserUpdated)
 	span.SetAttributes(attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusOK))

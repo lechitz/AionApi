@@ -9,20 +9,20 @@ import (
 
 // UserCreator defines a method to create a new user with the given details and return the created user or an error.
 type UserCreator interface {
-	CreateUser(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, error)
+	CreateUser(ctx context.Context, user domain.User) (domain.User, error)
 }
 
 // UserRetriever defines methods to retrieve user information from a data source.
 type UserRetriever interface {
-	GetAllUsers(ctx context.Context) ([]domain.UserDomain, error)
-	GetUserByID(ctx context.Context, id uint64) (domain.UserDomain, error)
-	GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error)
+	GetAllUsers(ctx context.Context) ([]domain.User, error)
+	GetUserByID(ctx context.Context, id uint64) (domain.User, error)
+	GetUserByUsername(ctx context.Context, username string) (domain.User, error)
 }
 
 // UserUpdater defines methods for updating user information and user passwords in the system.
 type UserUpdater interface {
-	UpdateUser(ctx context.Context, user domain.UserDomain) (domain.UserDomain, error)
-	UpdateUserPassword(ctx context.Context, user domain.UserDomain, oldPassword, newPassword string) (domain.UserDomain, string, error)
+	UpdateUser(ctx context.Context, user domain.User) (domain.User, error)
+	UpdateUserPassword(ctx context.Context, user domain.User, oldPassword, newPassword string) (domain.User, string, error)
 }
 
 // UserDeleter provides a method to perform a soft delete operation on a user by their unique identifier.

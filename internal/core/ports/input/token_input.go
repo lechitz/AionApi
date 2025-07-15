@@ -6,9 +6,11 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
+//TODO: preciso ajustar isso aqui ..
+
 // TokenCreator defines a method for creating a new token in the system.
 type TokenCreator interface {
-	CreateToken(ctx context.Context, token domain.TokenDomain) (string, error)
+	CreateToken(ctx context.Context, userID uint64) (domain.TokenDomain, error)
 }
 
 // TokenVerifier defines a method for verifying the validity of a given token.

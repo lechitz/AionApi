@@ -226,9 +226,9 @@ func (mr *MockTokenStoreMockRecorder) Delete(ctx, token any) *gomock.Call {
 }
 
 // Get mocks base method.
-func (m *MockTokenStore) Get(ctx context.Context, token domain.TokenDomain) (string, error) {
+func (m *MockTokenStore) Get(ctx context.Context, userID string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", ctx, token)
+	ret := m.ctrl.Call(m, "Get", ctx, userID)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1

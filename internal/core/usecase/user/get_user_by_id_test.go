@@ -43,7 +43,7 @@ func TestGetUserByID_ErrorGeneric(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(gomock.Any(), userID).
-		Return(domain.UserDomain{}, expectedErr)
+		Return(domain.User{}, expectedErr)
 
 	suite.Logger.EXPECT().
 		ErrorwCtx(gomock.Any(), constants.ErrorToGetUserByID, commonkeys.Error, expectedErr.Error())
@@ -51,7 +51,7 @@ func TestGetUserByID_ErrorGeneric(t *testing.T) {
 	userDomain, err := suite.UserService.GetUserByID(context.Background(), userID)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, userDomain)
+	require.Equal(t, domain.User{}, userDomain)
 	require.Contains(t, err.Error(), "some db failure")
 }
 
@@ -64,7 +64,7 @@ func TestGetUserByID_Error(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByID(gomock.Any(), userID).
-		Return(domain.UserDomain{}, expectedErr)
+		Return(domain.User{}, expectedErr)
 
 	suite.Logger.EXPECT().
 		ErrorwCtx(gomock.Any(), constants.ErrorToGetUserByID, commonkeys.Error, expectedErr.Error())
@@ -72,5 +72,5 @@ func TestGetUserByID_Error(t *testing.T) {
 	userDomain, err := suite.UserService.GetUserByID(context.Background(), userID)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, userDomain)
+	require.Equal(t, domain.User{}, userDomain)
 }

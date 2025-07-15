@@ -10,14 +10,14 @@ import (
 	"gorm.io/gorm"
 )
 
-// UserFromDB converts a model.UserDB object into a domain.UserDomain object. It extracts and maps all user properties including timestamps.
-func UserFromDB(user model.UserDB) domain.UserDomain {
+// UserFromDB converts a model.UserDB object into a domain.User object. It extracts and maps all user properties including timestamps.
+func UserFromDB(user model.UserDB) domain.User {
 	var deletedAt *time.Time
 	if user.DeletedAt.Valid {
 		deletedAt = &user.DeletedAt.Time
 	}
 
-	return domain.UserDomain{
+	return domain.User{
 		ID:        user.ID,
 		Name:      user.Name,
 		Username:  user.Username,
@@ -29,8 +29,8 @@ func UserFromDB(user model.UserDB) domain.UserDomain {
 	}
 }
 
-// UserToDB converts a domain.UserDomain object into a model.UserDB object for database storage. It maps all relevant fields including timestamps.
-func UserToDB(user domain.UserDomain) model.UserDB {
+// UserToDB converts a domain.User object into a model.UserDB object for database storage. It maps all relevant fields including timestamps.
+func UserToDB(user domain.User) model.UserDB {
 	var deleted gorm.DeletedAt
 	if user.DeletedAt != nil {
 		deleted.Time = *user.DeletedAt

@@ -4,23 +4,23 @@ package repository
 import (
 	"context"
 	"errors"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres/mapper"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
+	"github.com/lechitz/AionApi/internal/shared/sharederrors"
+
+	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
-
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/mapper"
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
-
-	"gorm.io/gorm"
-
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
+	"gorm.io/gorm"
 )
 
 // UserRepository handles interactions with the user database, providing methods for CRUD operations and user retrieval.
@@ -29,47 +29,71 @@ type UserRepository struct {
 	logger output.ContextLogger
 }
 
-// NewUserRepository initializes a new UserRepository with the provided database connection and contextlogger.
-func NewUserRepository(db *gorm.DB, logger output.ContextLogger) *UserRepository {
+// NewUser initializes a new UserRepository with the provided database connection and contextlogger.
+func NewUser(db *gorm.DB, logger output.ContextLogger) *UserRepository {
 	return &UserRepository{
 		db:     db,
 		logger: logger,
 	}
 }
 
-// CreateUser adds a new user to the database, mapping the provided domain object and returning the created user or an error if the operation fails.
-func (up UserRepository) CreateUser(ctx context.Context, userDomain domain.UserDomain) (domain.UserDomain, error) {
+// isUniqueViolation detects a Postgres unique constraint violation and returns the affected field.
+func isUniqueViolation(err error) (string, bool) {
+	if err == nil {
+		return "", false
+	}
+	msg := err.Error()
+	// Postgres unique constraint violation
+	switch {
+	case strings.Contains(msg, "users_username_key"):
+		return commonkeys.Username, true
+	case strings.Contains(msg, "users_email_key"):
+		return commonkeys.Email, true
+	}
+	return "", false
+}
+
+// CreateUser inserts a new user. Returns a ValidationError if username/email is already in use.
+func (up UserRepository) CreateUser(ctx context.Context, userDomain domain.User) (domain.User, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "CreateUser", trace.WithAttributes(
 		attribute.String(commonkeys.Username, userDomain.Username),
-		attribute.String(commonkeys.UserEmail, userDomain.Email),
-		attribute.String("operation", "create"),
+		attribute.String(commonkeys.Email, userDomain.Email),
+		attribute.String(commonkeys.Operation, "create"),
 	))
 	defer span.End()
 
 	userDB := mapper.UserToDB(userDomain)
 
-	if err := up.db.WithContext(ctx).
-		Create(&userDB).Error; err != nil {
+	if err := up.db.WithContext(ctx).Create(&userDB).Error; err != nil {
+		if field, ok := isUniqueViolation(err); ok {
+			span.SetStatus(codes.Error, "validation: "+field+" is already in use")
+			span.SetAttributes(attribute.String("http.error_reason", field+"_already_exists"))
+			span.RecordError(err)
+			up.logger.ErrorwCtx(ctx, "unique constraint violation on create user", "field", field, commonkeys.Error, err.Error())
+			return domain.User{}, sharederrors.NewValidationError(field, field+" is already in use")
+		}
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return domain.UserDomain{}, err
+		up.logger.ErrorwCtx(ctx, "failed to create user", commonkeys.Error, err.Error())
+		return domain.User{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user created successfully")
+	up.logger.InfowCtx(ctx, "user created successfully", commonkeys.UserID, userDB.ID)
 	return mapper.UserFromDB(userDB), nil
 }
 
-// GetAllUsers retrieves all active users from the database and maps them to the domain.UserDomain format. Returns a slice of users or an error.
-func (up UserRepository) GetAllUsers(ctx context.Context) ([]domain.UserDomain, error) {
+// GetAllUsers returns all users (excluding soft-deleted). Returns error if DB operation fails.
+func (up UserRepository) GetAllUsers(ctx context.Context) ([]domain.User, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetAllUsers", trace.WithAttributes(
-		attribute.String("operation", "get_all"),
+		attribute.String(commonkeys.Operation, "get_all"),
 	))
 	defer span.End()
 
 	var usersDB []model.UserDB
-	var usersDomain []domain.UserDomain
+	var usersDomain []domain.User
 
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
@@ -77,6 +101,7 @@ func (up UserRepository) GetAllUsers(ctx context.Context) ([]domain.UserDomain, 
 		Find(&usersDB).Error; err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
+		up.logger.ErrorwCtx(ctx, "failed to get all users", commonkeys.Error, err.Error())
 		return nil, err
 	}
 
@@ -85,14 +110,16 @@ func (up UserRepository) GetAllUsers(ctx context.Context) ([]domain.UserDomain, 
 	}
 
 	span.SetStatus(codes.Ok, "all users retrieved successfully")
+	up.logger.InfowCtx(ctx, "all users retrieved successfully", commonkeys.UsersCount, len(usersDomain))
 	return usersDomain, nil
 }
 
 // GetUserByID retrieves a user from the database by their unique user ID and returns the user in domain object format or an error.
-func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain.UserDomain, error) {
+func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain.User, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByID", trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(commonkeys.Operation, "get_by_id"),
 	))
 	defer span.End()
 
@@ -104,19 +131,19 @@ func (up UserRepository) GetUserByID(ctx context.Context, userID uint64) (domain
 		First(&userDB).Error; err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-
-		return domain.UserDomain{}, err
+		up.logger.ErrorwCtx(ctx, "failed to get user by id", commonkeys.UserID, userID, commonkeys.Error, err.Error())
+		return domain.User{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user retrieved by id successfully")
-
+	up.logger.InfowCtx(ctx, "user retrieved by id successfully", commonkeys.UserID, userDB.ID)
 	return mapper.UserFromDB(userDB), nil
 }
 
-// GetUserByUsername retrieves a user from the database using their unique username. Returns a domain.UserDomain or an error if the user is not found.
+// GetUserByUsername retrieves a user from the database using their unique username. Returns a domain.User or an error if the user is not found.
 //
 //nolint:dupl // TODO: Refactor duplication with GetUserByEmail / GetUserByUsername when business logic diverges or for greater DRY. Prioritizing explicitness and speed for now.
-func (up UserRepository) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
+func (up UserRepository) GetUserByUsername(ctx context.Context, username string) (domain.User, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByUsername", trace.WithAttributes(
 		attribute.String(commonkeys.Username, username),
@@ -133,25 +160,27 @@ func (up UserRepository) GetUserByUsername(ctx context.Context, username string)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, "user not found (business as usual)")
-			return domain.UserDomain{}, nil
+			up.logger.InfowCtx(ctx, "user not found by username", commonkeys.Username, username)
+			return domain.User{}, nil
 		}
-
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return domain.UserDomain{}, err
+		up.logger.ErrorwCtx(ctx, "failed to get user by username", commonkeys.Username, username, commonkeys.Error, err.Error())
+		return domain.User{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user retrieved by username successfully")
+	up.logger.InfowCtx(ctx, "user retrieved by username successfully", commonkeys.UserID, userDB.ID, commonkeys.Username, userDB.Username)
 	return mapper.UserFromDB(userDB), nil
 }
 
-// GetUserByEmail retrieves a user by their email address from the database and returns a domain.UserDomain or nil if not found.
+// GetUserByEmail retrieves a user by their email address from the database and returns a domain.User or nil if not found.
 //
 //nolint:dupl // TODO:" Refactor duplication with GetUserByEmail / GetUserByUsername when business logic diverges or for greater DRY. Prioritizing explicitness and speed for now.
-func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
+func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (domain.User, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "GetUserByEmail", trace.WithAttributes(
-		attribute.String(commonkeys.UserEmail, email),
+		attribute.String(commonkeys.Email, email),
 		attribute.String("operation", "get_by_email"),
 	))
 	defer span.End()
@@ -165,15 +194,17 @@ func (up UserRepository) GetUserByEmail(ctx context.Context, email string) (doma
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, "user not found (business as usual)")
-			return domain.UserDomain{}, nil
+			up.logger.InfowCtx(ctx, "user not found by email", commonkeys.Email, email)
+			return domain.User{}, nil
 		}
-
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return domain.UserDomain{}, err
+		up.logger.ErrorwCtx(ctx, "failed to get user by email", commonkeys.Email, email, commonkeys.Error, err.Error())
+		return domain.User{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user retrieved by email successfully")
+	up.logger.InfowCtx(ctx, "user retrieved by email successfully", commonkeys.UserID, userDB.ID, commonkeys.Email, userDB.Email)
 	return mapper.UserFromDB(userDB), nil
 }
 
@@ -182,7 +213,7 @@ func (up UserRepository) UpdateUser(
 	ctx context.Context,
 	userID uint64,
 	fields map[string]interface{},
-) (domain.UserDomain, error) {
+) (domain.User, error) {
 	tr := otel.Tracer("UserRepository")
 	ctx, span := tr.Start(ctx, "UpdateUser", trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
@@ -190,7 +221,7 @@ func (up UserRepository) UpdateUser(
 	))
 	defer span.End()
 
-	delete(fields, commonkeys.CreatedAt)
+	delete(fields, commonkeys.UserCreatedAt)
 
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
@@ -198,11 +229,12 @@ func (up UserRepository) UpdateUser(
 		Updates(fields).Error; err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return domain.UserDomain{}, err
+		up.logger.ErrorwCtx(ctx, "failed to update user", commonkeys.UserID, userID, commonkeys.Error, err.Error())
+		return domain.User{}, err
 	}
 
 	span.SetStatus(codes.Ok, "user updated successfully")
-
+	up.logger.InfowCtx(ctx, "user updated successfully", commonkeys.UserID, userID)
 	return up.GetUserByID(ctx, userID)
 }
 
@@ -216,8 +248,8 @@ func (up UserRepository) SoftDeleteUser(ctx context.Context, userID uint64) erro
 	defer span.End()
 
 	fields := map[string]interface{}{
-		commonkeys.DeletedAt: time.Now().UTC(),
-		commonkeys.UpdatedAt: time.Now().UTC(),
+		commonkeys.UserDeletedAt: time.Now().UTC(),
+		commonkeys.UserUpdatedAt: time.Now().UTC(),
 	}
 
 	if err := up.db.WithContext(ctx).
@@ -226,10 +258,11 @@ func (up UserRepository) SoftDeleteUser(ctx context.Context, userID uint64) erro
 		Updates(fields).Error; err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
+		up.logger.ErrorwCtx(ctx, "failed to soft delete user", commonkeys.UserID, userID, commonkeys.Error, err.Error())
 		return err
 	}
 
 	span.SetStatus(codes.Ok, "user soft deleted successfully")
-
+	up.logger.InfowCtx(ctx, "user soft deleted successfully", commonkeys.UserID, userID)
 	return nil
 }

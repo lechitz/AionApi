@@ -5,9 +5,9 @@ import "time"
 
 // TODO: retirar o import de time do domain.
 
-// UserDomain represents a user within the AionApi system.
+// User represents a user within the AionApi system.
 // It contains identification data, credentials, and lifecycle metadata.
-type UserDomain struct {
+type User struct {
 	CreatedAt time.Time  // Timestamp of when the user was created
 	UpdatedAt time.Time  // Timestamp of the last update
 	DeletedAt *time.Time // Soft delete marker (nil if active)

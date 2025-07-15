@@ -3,6 +3,7 @@ package authmiddleware
 
 import (
 	"context"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/security/jwt"
 	"net/http"
 	"strconv"
 
@@ -11,8 +12,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/shared/contextutils"
 
-	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain" //TODO: retirar dependencia do domain e usar um DTO.
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/authmiddleware/constants"
@@ -36,6 +36,8 @@ func New(tokenService output.TokenStore, logger output.ContextLogger, tokenClaim
 		tokenClaimsExtractor: tokenClaimsExtractor,
 	}
 }
+
+// TODO: ajustar as repostas pra quando não tiver um token. Ver se faz sentido responder o payload padrão de respostas da API.
 
 // Auth validates JWT tokens and attaches user context.
 func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
@@ -67,7 +69,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 
 		tokenVal, ok := ctx.Value(ctxkeys.Token).(string)
 		if !ok || tokenVal == "" {
-			tokenVal, err = security.ExtractTokenFromCookie(r)
+			tokenVal, err = jwt.ExtractTokenFromCookie(r)
 			if err != nil {
 				span.SetStatus(codes.Error, "token missing in context and cookie")
 				span.SetAttributes(attribute.String("authmiddleware.error", err.Error()))
@@ -77,7 +79,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			}
 		}
 
-		tokenDomain := domain.TokenDomain{UserID: userID, Token: tokenVal}
+		tokenDomain := domain.TokenDomain{UserID: userID, Key: tokenVal} //TODO: retirar dependencia do domain e usar um DTO.
 
 		if _, err := a.tokenService.Get(ctx, tokenDomain); err != nil {
 			span.SetStatus(codes.Error, "token not found in cache")
@@ -90,7 +92,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 		span.SetStatus(codes.Ok, "authenticated")
 		span.SetAttributes(attribute.String("authmiddleware.status", "authenticated"))
 
-		newCtx = context.WithValue(newCtx, ctxkeys.Token, tokenDomain.Token)
+		newCtx = context.WithValue(newCtx, ctxkeys.Token, tokenDomain.Key)
 
 		a.logger.Infow("authmiddleware context set", commonkeys.UserID, strconv.FormatUint(userID, 10))
 

@@ -16,7 +16,7 @@ type UserServiceTestSuite struct {
 	Ctrl           *gomock.Controller
 	Logger         *mocks.MockLogger
 	UserRepository *mocks.MockUserStore
-	PasswordHasher *mocks.MockHasherStore
+	PasswordHasher *mocks.MockPasswordHasher
 	TokenService   *mocks.MockTokenUsecase
 	UserService    *user.Service
 }
@@ -26,7 +26,7 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	mockUserStore := mocks.NewMockUserStore(ctrl)
-	mockSecurityStore := mocks.NewMockHasherStore(ctrl)
+	mockSecurityStore := mocks.NewMockPasswordHasher(ctrl)
 	mockTokenUsecase := mocks.NewMockTokenUsecase(ctrl)
 	mockLog := mocks.NewMockLogger(ctrl)
 
@@ -49,9 +49,9 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 	}
 }
 
-// DefaultTestUser is a predefined instance of domain.UserDomain used for testing purposes, representing a perfect/valid user with complete and valid fields.
-func DefaultTestUser() domain.UserDomain {
-	return domain.UserDomain{
+// DefaultTestUser is a predefined instance of domain.User used for testing purposes, representing a perfect/valid user with complete and valid fields.
+func DefaultTestUser() domain.User {
+	return domain.User{
 		ID:        1,
 		Name:      "Test User",
 		Username:  "testuser",

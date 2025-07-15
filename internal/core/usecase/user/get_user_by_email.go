@@ -13,7 +13,7 @@ import (
 // GetUserByEmail retrieves a user by their email address from the database. Returns the user or an error if the operation fails.
 //
 //nolint:dupl // TODO: Refactor duplicated tracing logic
-func (s *Service) GetUserByEmail(ctx context.Context, email string) (domain.UserDomain, error) {
+func (s *Service) GetUserByEmail(ctx context.Context, email string) (domain.User, error) {
 	tracer := otel.Tracer(constants.TracerName)
 	ctx, span := tracer.Start(ctx, constants.SpanGetUserByEmail)
 	defer span.End()
@@ -28,7 +28,7 @@ func (s *Service) GetUserByEmail(ctx context.Context, email string) (domain.User
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, constants.ErrorToGetUserByEmail))
 		s.logger.ErrorwCtx(ctx, constants.ErrorToGetUserByEmail, commonkeys.Error, err.Error())
-		return domain.UserDomain{}, err
+		return domain.User{}, err
 	}
 
 	span.SetAttributes(

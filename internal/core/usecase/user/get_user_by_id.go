@@ -11,7 +11,7 @@ import (
 )
 
 // GetUserByID retrieves a user by their unique ID from the database. Returns the user or an error if the operation fails.
-func (s *Service) GetUserByID(ctx context.Context, userID uint64) (domain.UserDomain, error) {
+func (s *Service) GetUserByID(ctx context.Context, userID uint64) (domain.User, error) {
 	tracer := otel.Tracer(constants.TracerName)
 	ctx, span := tracer.Start(ctx, constants.SpanGetUserByID)
 	defer span.End()
@@ -26,7 +26,7 @@ func (s *Service) GetUserByID(ctx context.Context, userID uint64) (domain.UserDo
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, constants.ErrorToGetUserByID))
 		s.logger.ErrorwCtx(ctx, constants.ErrorToGetUserByID, commonkeys.Error, err.Error())
-		return domain.UserDomain{}, err
+		return domain.User{}, err
 	}
 
 	span.SetAttributes(

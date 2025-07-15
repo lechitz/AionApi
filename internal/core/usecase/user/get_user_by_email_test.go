@@ -42,7 +42,7 @@ func TestGetUserByEmail_Error(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(gomock.Any(), userEmail).
-		Return(domain.UserDomain{}, expectedErr)
+		Return(domain.User{}, expectedErr)
 
 	suite.Logger.EXPECT().
 		ErrorwCtx(gomock.Any(), constants.ErrorToGetUserByEmail, commonkeys.Error, expectedErr.Error())
@@ -50,5 +50,5 @@ func TestGetUserByEmail_Error(t *testing.T) {
 	userDomain, err := suite.UserService.GetUserByEmail(context.Background(), userEmail)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, userDomain)
+	require.Equal(t, domain.User{}, userDomain)
 }

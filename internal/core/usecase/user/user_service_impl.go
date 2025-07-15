@@ -8,18 +8,18 @@ import (
 
 // Service provides an abstraction for user management, including creating, retrieving, updating, and deleting users, plus authentication handling.
 type Service struct {
-	userStore    output.UserStore
-	tokenService input.TokenService
-	hashStore    output.HasherStore
-	logger       output.ContextLogger
+	userRepository output.UserRepository
+	tokenService   input.TokenService
+	hashStore      output.Hasher
+	logger         output.ContextLogger
 }
 
 // NewService creates and returns a new Service instance with the provided dependencies for handling user-related operations.
-func NewService(userStore output.UserStore, tokenService input.TokenService, hashStore output.HasherStore, logger output.ContextLogger) *Service {
+func NewService(userRepository output.UserRepository, tokenService input.TokenService, hashStore output.Hasher, logger output.ContextLogger) *Service {
 	return &Service{
-		userStore:    userStore,
-		tokenService: tokenService,
-		hashStore:    hashStore,
-		logger:       logger,
+		userRepository: userRepository,
+		tokenService:   tokenService,
+		hashStore:      hashStore,
+		logger:         logger,
 	}
 }

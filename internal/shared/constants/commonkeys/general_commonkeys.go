@@ -42,6 +42,26 @@ const (
 	// Operation is the name of operation/handler/action.
 	Operation = "operation"
 
+	// OperationCreate is the name of the create operation.
+	OperationCreate = "create"
+
+	// OperationSave is the name of the save operation.
+	OperationSave = "save"
+
+	// OperationGet is the name of the get operation.
+	OperationGet = "get"
+
+	// OperationUpdate is the name of the update operation.
+	OperationUpdate = "update"
+
+	// OperationDelete is the name of the delete operation.
+	OperationDelete = "delete"
+
+	// Entity is the name of the entity being operated on.
+	Entity = "entity"
+
+	EntityToken = "token"
+
 	// StatusSuccess is the standard value for successful status.
 	StatusSuccess = "success"
 

@@ -41,9 +41,6 @@ const ErrorToGetUserByID = "error to get user by id"
 // SuccessUserRetrieved indicates a user was successfully retrieved.
 const SuccessUserRetrieved = "user retrieved successfully"
 
-// ErrorToGetUserByUserName indicates an error when fetching a user by username.
-const ErrorToGetUserByUserName = "error to get user by username"
-
 // ErrorToGetUserByEmail indicates an error when fetching a user by email.
 const ErrorToGetUserByEmail = "error to get user by email"
 
@@ -87,7 +84,7 @@ const PasswordIsRequired = "password is required"
 const InvalidEmail = "invalid email format"
 
 // TracerName is the name of the tracer used for the user use case.
-const TracerName = "aionapi.user.usecase"
+const TracerName = "aionapi.user.create"
 
 // TODO: Avaliar se as const abaixo podem ir para "commonkeys" que não seja ContextKeys !
 

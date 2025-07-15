@@ -5,8 +5,8 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
-// TestPerfectLoginInputUser is a predefined instance of UserDomain representing a user with valid login credentials for testing purposes.
-var TestPerfectLoginInputUser = domain.UserDomain{
+// TestPerfectLoginInputUser is a predefined instance of User representing a user with valid login credentials for testing purposes.
+var TestPerfectLoginInputUser = domain.User{
 	Username: "testuser",
 	Password: "password123",
 }

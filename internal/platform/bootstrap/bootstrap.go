@@ -3,14 +3,14 @@ package bootstrap
 
 import (
 	"context"
-
+	"github.com/lechitz/AionApi/internal/adapters/secondary/cache/redis"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres/repository"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/security/hasher"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/security/jwt"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	adapterToken "github.com/lechitz/AionApi/internal/adapters/secondary/cache/token"
-	adapterCache "github.com/lechitz/AionApi/internal/adapters/secondary/cache/tools/redis"
-	adapterDB "github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres"
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
-	adapterSecurity "github.com/lechitz/AionApi/internal/adapters/secondary/security"
+	postgres "github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres"
 	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/core/usecase/category"
@@ -36,29 +36,31 @@ type AppDependencies struct {
 
 // InitializeDependencies initializes and returns all core application dependencies.
 func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger output.ContextLogger) (*AppDependencies, func(ctx context.Context), error) {
-	cacheClient, err := adapterCache.NewConnection(appCtx, cfg.Cache, logger)
+	cacheClient, err := redis.NewConnection(appCtx, cfg.Cache, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToCache, err)
 		return nil, nil, err
 	}
 	logger.Infow(constants.MsgCacheConnected, commonkeys.CacheAddr, cfg.Cache.Addr)
 
-	dbConn, err := adapterDB.NewConnection(appCtx, cfg.DB, logger)
+	dbConn, err := postgres.NewConnection(appCtx, cfg.DB, logger)
 	if err != nil {
 		logger.Errorf(constants.ErrConnectToDatabase, err)
 		return nil, nil, err
 	}
 	logger.Infow(constants.MsgPostgresConnected)
 
-	// Security Hasher
-	passwordHasher := adapterSecurity.NewBcryptPassword()
+	// Hasher
+	passwordHasher := hasher.NewBcryptHasher()
 
-	// Token Extractor
-	tokenClaimsExtractor := adapterSecurity.NewJWTClaimsExtractor(cfg.Secret.Key)
+	//TODO: ajustar nome abaixo.
+	// Taoken Claim Extractor
+	tokenClaimsExtractor := jwt.NewClaimsExtractor(cfg.Secret.Key)
 
-	// Token
-	tokenRepository := adapterToken.NewRepository(cacheClient, logger)
-	tokenService := token.NewService(tokenRepository, logger, cfg.Secret)
+	//TODO: ajustar nome abaixo.
+	// Key
+	tokenStore := adapterToken.NewStore(cacheClient, logger)
+	tokenService := token.NewService(tokenStore, logger, cfg.Secret)
 
 	// User
 	userRepository := repository.NewUser(dbConn, logger)
@@ -75,7 +77,7 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger o
 		done := make(chan struct{})
 
 		go func() {
-			adapterDB.Close(dbConn, logger)
+			postgres.Close(dbConn, logger)
 
 			if err := cacheClient.Close(); err != nil {
 				logger.Errorf("%s: %v", constants.ErrCloseCacheConnection, err)
@@ -98,7 +100,7 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger o
 		CategoryService:      categoryService,
 		TokenService:         tokenService,
 		TokenClaimsExtractor: tokenClaimsExtractor,
-		TokenRepository:      tokenRepository,
+		TokenRepository:      tokenStore,
 		Logger:               logger,
 	}, cleanupResources, nil
 }

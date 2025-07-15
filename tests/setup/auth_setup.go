@@ -14,7 +14,7 @@ type AuthServiceTestSuite struct {
 	Ctrl           *gomock.Controller
 	Logger         *mocks.MockLogger
 	UserRetriever  *mocks.MockUserRetriever
-	PasswordHasher *mocks.MockHasherStore
+	PasswordHasher *mocks.MockPasswordHasher
 	TokenService   *mocks.MockTokenUsecase
 	AuthService    *auth.Service
 	Ctx            context.Context
@@ -25,7 +25,7 @@ func AuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	mockUserRetriever := mocks.NewMockUserRetriever(ctrl)
-	mockSecurityStore := mocks.NewMockHasherStore(ctrl)
+	mockSecurityStore := mocks.NewMockPasswordHasher(ctrl)
 	mockTokenUsecase := mocks.NewMockTokenUsecase(ctrl)
 	mockLog := mocks.NewMockLogger(ctrl)
 

@@ -17,8 +17,8 @@ func TestLogin_Success(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := domain.UserDomain{Username: "lechitz"}
-	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
+	inputUser := domain.User{Username: "lechitz"}
+	mockUser := domain.User{ID: 1, Username: "lechitz", Password: "hashed"}
 
 	suite.UserRetriever.EXPECT().
 		GetUserByUsername(suite.Ctx, "lechitz").
@@ -43,11 +43,11 @@ func TestLogin_UserNotFound(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := domain.UserDomain{Username: "invalid_user"}
+	inputUser := domain.User{Username: "invalid_user"}
 
 	suite.UserRetriever.EXPECT().
 		GetUserByUsername(suite.Ctx, "invalid_user").
-		Return(domain.UserDomain{}, errors.New("not found"))
+		Return(domain.User{}, errors.New("not found"))
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "123456")
 
@@ -60,8 +60,8 @@ func TestLogin_WrongPassword(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := domain.UserDomain{Username: "lechitz"}
-	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
+	inputUser := domain.User{Username: "lechitz"}
+	mockUser := domain.User{ID: 1, Username: "lechitz", Password: "hashed"}
 
 	suite.UserRetriever.EXPECT().
 		GetUserByUsername(suite.Ctx, "lechitz").
@@ -83,8 +83,8 @@ func TestLogin_TokenCreationFails(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := domain.UserDomain{Username: "lechitz"}
-	mockUser := domain.UserDomain{ID: 1, Username: "lechitz", Password: "hashed"}
+	inputUser := domain.User{Username: "lechitz"}
+	mockUser := domain.User{ID: 1, Username: "lechitz", Password: "hashed"}
 
 	suite.UserRetriever.EXPECT().
 		GetUserByUsername(suite.Ctx, "lechitz").

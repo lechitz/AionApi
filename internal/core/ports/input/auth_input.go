@@ -9,7 +9,7 @@ import (
 
 // Authenticator defines methods for authenticating users and generating access tokens.
 type Authenticator interface {
-	Login(ctx context.Context, user domain.UserDomain, password string) (domain.UserDomain, string, error)
+	Login(ctx context.Context, username, password string) (domain.User, string, error)
 }
 
 // SessionRevoker provides a method to invalidate user sessions by revoking tokens.

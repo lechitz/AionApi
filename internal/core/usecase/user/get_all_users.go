@@ -10,8 +10,8 @@ import (
 	"strconv"
 )
 
-// GetAllUsers retrieves all users from the system. Returns a slice of UserDomain or an error if the operation fails.
-func (s *Service) GetAllUsers(ctx context.Context) ([]domain.UserDomain, error) {
+// GetAllUsers retrieves all users from the system. Returns a slice of User or an error if the operation fails.
+func (s *Service) GetAllUsers(ctx context.Context) ([]domain.User, error) {
 	tracer := otel.Tracer(constants.TracerName)
 	ctx, span := tracer.Start(ctx, constants.SpanGetAllUsers)
 	defer span.End()

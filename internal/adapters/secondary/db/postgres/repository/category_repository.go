@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres/mapper"
 	"strconv"
 	"time"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/adapters/secondary/db/model"
 
 	"gorm.io/gorm"

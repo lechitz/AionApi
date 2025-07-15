@@ -32,19 +32,29 @@ const (
 	// ErrMsgParseUserID is the error message for parsing user ID.
 	ErrMsgParseUserID = "error parsing user id"
 
-	// ErrUsernameInUse ErrEmailInUse is the error message for an email already in use.
+	// ErrUsernameInUse is the error message for a username already in use.
 	ErrUsernameInUse = "username already in use"
 
 	// ErrEmailInUse is the error message for an email already in use.
 	ErrEmailInUse = "email already in use"
 
-	// ErrorToCreateToken indicates an error when creating a token.
-	ErrorToCreateToken = "error to create token"
+	// ErrMsgCreateToken indicates an error when creating a token.
+	ErrMsgCreateToken = "error to create token"
 
-	// ErrorToDeleteToken indicates an error when deleting a token.
-	ErrorToDeleteToken = "error to delete token"
+	// ErrMsgDeleteToken indicates an error when deleting a token.
+	ErrMsgDeleteToken = "error to delete token"
 
+	// NoFieldsToUpdate indicates an error when updating a user.
 	NoFieldsToUpdate = "no fields to update"
+
+	// ErrInvalidToken indicates an error when a token is invalid.
+	ErrInvalidToken = "invalid token"
+
+	// ErrTokenNotFound indicates an error when a token is not found.
+	ErrTokenNotFound = "token not found"
+
+	// ErrInvalidClaims indicates an error when a token is invalid.
+	ErrInvalidClaims = "invalid claims"
 )
 
 // ====================================================================

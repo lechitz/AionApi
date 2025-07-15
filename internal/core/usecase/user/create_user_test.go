@@ -19,34 +19,34 @@ func TestCreateUser_Success(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
-		Name:     "  Felipe  ",
-		Username: " lechitz ",
-		Email:    "  LECHITZ@example.com ",
+	input := domain.User{
+		Name:     "  User  ",
+		Username: " username ",
+		Email:    "  user@example.com ",
+		Password: "password",
 	}
-	password := setup.DefaultTestUser().Password
 
-	normalized := domain.UserDomain{
-		Name:     "Felipe",
-		Username: "lechitz",
-		Email:    "lechitz@example.com",
-		Password: "hashed123",
+	normalized := domain.User{
+		Name:     "User",
+		Username: "username",
+		Email:    "example@example.com",
+		Password: "password",
 	}
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(gomock.Any(), "lechitz").
-		Return(domain.UserDomain{}, nil)
+		Return(domain.User{}, nil)
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(gomock.Any(), "lechitz@example.com").
-		Return(domain.UserDomain{}, nil)
+		Return(domain.User{}, nil)
 	suite.PasswordHasher.EXPECT().
-		HashPassword(password).Return("hashed123", nil)
+		HashPassword(input.Password).Return("hashed123", nil)
 	suite.UserRepository.EXPECT().
 		CreateUser(gomock.Any(), normalized).Return(normalized, nil)
 
 	suite.Logger.EXPECT().InfowCtx(gomock.Any(), constants.SuccessUserCreated, commonkeys.UserID, gomock.Any())
 
-	createdUser, err := suite.UserService.CreateUser(context.Background(), input, password)
+	createdUser, err := suite.UserService.CreateUser(context.Background(), input)
 
 	require.NoError(t, err)
 	require.Equal(t, normalized, createdUser)
@@ -56,7 +56,7 @@ func TestCreateUser_UsernameAlreadyExists(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := domain.User{
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
@@ -65,12 +65,12 @@ func TestCreateUser_UsernameAlreadyExists(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(gomock.Any(), setup.DefaultTestUser().Username).
-		Return(domain.UserDomain{ID: 1}, nil)
+		Return(domain.User{ID: 1}, nil)
 
 	createdUser, err := suite.UserService.CreateUser(context.Background(), input, password)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, domain.User{}, createdUser)
 	require.Equal(t, "validation error on username: "+sharederrors.ErrUsernameInUse, err.Error())
 }
 
@@ -78,7 +78,7 @@ func TestCreateUser_EmailAlreadyExists(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := domain.User{
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
@@ -87,16 +87,16 @@ func TestCreateUser_EmailAlreadyExists(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(gomock.Any(), setup.DefaultTestUser().Username).
-		Return(domain.UserDomain{}, nil)
+		Return(domain.User{}, nil)
 
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(gomock.Any(), setup.DefaultTestUser().Email).
-		Return(domain.UserDomain{ID: 1}, nil)
+		Return(domain.User{ID: 1}, nil)
 
 	createdUser, err := suite.UserService.CreateUser(context.Background(), input, password)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, domain.User{}, createdUser)
 	require.Equal(t, "validation error on email: "+sharederrors.ErrEmailInUse, err.Error())
 }
 
@@ -104,7 +104,7 @@ func TestCreateUser_ErrorToGetUserByUsername(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := domain.User{
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
@@ -114,7 +114,7 @@ func TestCreateUser_ErrorToGetUserByUsername(t *testing.T) {
 	expectedErr := errors.New(constants.DBErrorCheckingUsername)
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(gomock.Any(), setup.DefaultTestUser().Username).
-		Return(domain.UserDomain{}, expectedErr)
+		Return(domain.User{}, expectedErr)
 
 	suite.Logger.EXPECT().
 		ErrorwCtx(gomock.Any(), constants.DBErrorCheckingUsername, commonkeys.Error, expectedErr.Error())
@@ -123,14 +123,14 @@ func TestCreateUser_ErrorToGetUserByUsername(t *testing.T) {
 
 	require.Error(t, err)
 	require.Equal(t, expectedErr, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, domain.User{}, createdUser)
 }
 
 func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := domain.User{
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
@@ -139,12 +139,12 @@ func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(gomock.Any(), setup.DefaultTestUser().Username).
-		Return(domain.UserDomain{}, nil)
+		Return(domain.User{}, nil)
 
 	expectedErr := errors.New(constants.DBErrorCheckingEmail)
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(gomock.Any(), setup.DefaultTestUser().Email).
-		Return(domain.UserDomain{}, expectedErr)
+		Return(domain.User{}, expectedErr)
 
 	suite.Logger.EXPECT().
 		ErrorwCtx(gomock.Any(), constants.DBErrorCheckingEmail, commonkeys.Error, expectedErr.Error())
@@ -153,14 +153,14 @@ func TestCreateUser_ErrorToGetUserByEmail(t *testing.T) {
 
 	require.Error(t, err)
 	require.Equal(t, expectedErr, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, domain.User{}, createdUser)
 }
 
 func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := domain.User{
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
@@ -169,11 +169,11 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(gomock.Any(), setup.DefaultTestUser().Username).
-		Return(domain.UserDomain{}, nil)
+		Return(domain.User{}, nil)
 
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(gomock.Any(), setup.DefaultTestUser().Email).
-		Return(domain.UserDomain{}, nil)
+		Return(domain.User{}, nil)
 
 	expectedErr := errors.New(constants.ErrorToHashPassword)
 	suite.PasswordHasher.EXPECT().
@@ -186,14 +186,14 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 
 	require.Error(t, err)
 	require.Equal(t, expectedErr, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, domain.User{}, createdUser)
 }
 
 func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := domain.User{
 		Name:     setup.DefaultTestUser().Name,
 		Username: setup.DefaultTestUser().Username,
 		Email:    setup.DefaultTestUser().Email,
@@ -202,11 +202,11 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(gomock.Any(), setup.DefaultTestUser().Username).
-		Return(domain.UserDomain{}, nil)
+		Return(domain.User{}, nil)
 
 	suite.UserRepository.EXPECT().
 		GetUserByEmail(gomock.Any(), setup.DefaultTestUser().Email).
-		Return(domain.UserDomain{}, nil)
+		Return(domain.User{}, nil)
 
 	suite.PasswordHasher.EXPECT().
 		HashPassword(password).
@@ -218,7 +218,7 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 	expectedErr := errors.New(constants.ErrorToCreateUser)
 	suite.UserRepository.EXPECT().
 		CreateUser(gomock.Any(), expectedUser).
-		Return(domain.UserDomain{}, expectedErr)
+		Return(domain.User{}, expectedErr)
 
 	suite.Logger.EXPECT().ErrorwCtx(gomock.Any(), constants.ErrorToCreateUser, commonkeys.Error, expectedErr.Error())
 
@@ -226,14 +226,14 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 
 	require.Error(t, err)
 	require.Equal(t, expectedErr, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, domain.User{}, createdUser)
 }
 
 func TestCreateUser_ValidationErrorRequiredFields(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.UserDomain{
+	input := domain.User{
 		Name:     "",
 		Username: "",
 		Email:    "",
@@ -246,7 +246,7 @@ func TestCreateUser_ValidationErrorRequiredFields(t *testing.T) {
 	createdUser, err := suite.UserService.CreateUser(context.Background(), input, password)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, createdUser)
+	require.Equal(t, domain.User{}, createdUser)
 	require.Contains(t, err.Error(), "validation error")
 	require.Contains(t, err.Error(), "is required")
 }

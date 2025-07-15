@@ -1,9 +1,8 @@
 package model
 
 import (
+	"github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres/constants"
 	"time"
-
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/constants"
 
 	"gorm.io/gorm"
 )

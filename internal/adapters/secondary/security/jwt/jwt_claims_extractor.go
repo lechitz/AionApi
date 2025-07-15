@@ -1,8 +1,9 @@
-package security
+package jwt
 
 import (
 	"context"
 	"errors"
+	"github.com/lechitz/AionApi/internal/shared/sharederrors"
 	"net/http"
 
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -11,15 +12,15 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// JWTClaimsExtractor extracts JWT claims from a request or context.
-type JWTClaimsExtractor struct {
+// ClaimsExtractor extracts JWT claims from a request or context.
+type ClaimsExtractor struct {
 	secretKey string
 }
 
-// NewJWTClaimsExtractor creates and initializes a new JWTClaimsExtractor.
+// NewClaimsExtractor creates and initializes a new ClaimsExtractor.
 // secretKey is the secret key used to sign and verify JWT tokens.
-func NewJWTClaimsExtractor(secretKey string) *JWTClaimsExtractor {
-	return &JWTClaimsExtractor{
+func NewClaimsExtractor(secretKey string) *ClaimsExtractor {
+	return &ClaimsExtractor{
 		secretKey: secretKey,
 	}
 }
@@ -27,8 +28,8 @@ func NewJWTClaimsExtractor(secretKey string) *JWTClaimsExtractor {
 // ExtractFromRequest extracts JWT claims from the request.
 // Returns a map of claims or an error if the token is not found or another issue occurs.
 // The token is extracted from the request cookie.
-func (j *JWTClaimsExtractor) ExtractFromRequest(r *http.Request) (map[string]interface{}, error) {
-	token, err := ExtractTokenFromCookie(r)
+func (j *ClaimsExtractor) ExtractFromRequest(r *http.Request) (map[string]interface{}, error) {
+	token, err := extractTokenFromCookie(r)
 	if err != nil {
 		return nil, err
 	}
@@ -44,11 +45,11 @@ func (j *JWTClaimsExtractor) ExtractFromRequest(r *http.Request) (map[string]int
 // ExtractFromContext extracts JWT claims from the context.
 // Returns a map of claims or an error if the token is not found or another issue occurs.
 // The token is extracted from the context.
-func (j *JWTClaimsExtractor) ExtractFromContext(ctx context.Context) (map[string]interface{}, error) {
+func (j *ClaimsExtractor) ExtractFromContext(ctx context.Context) (map[string]interface{}, error) {
 	tokenVal := ctx.Value(ctxkeys.Token)
 	tokenStr, ok := tokenVal.(string)
 	if !ok || tokenStr == "" {
-		return nil, errors.New("token not found in context")
+		return nil, errors.New(sharederrors.ErrTokenNotFound)
 	}
 
 	return parseJWT(tokenStr, j.secretKey)
@@ -56,7 +57,7 @@ func (j *JWTClaimsExtractor) ExtractFromContext(ctx context.Context) (map[string
 
 // ExtractTokenFromCookie extracts the token from the request cookie.
 // Returns the token string or an error if the token is not found or another issue occurs.
-func ExtractTokenFromCookie(r *http.Request) (string, error) {
+func extractTokenFromCookie(r *http.Request) (string, error) { //TODO: está sendo usada em auth_middleware atualmente.
 	cookie, err := r.Cookie(commonkeys.AuthTokenCookieName)
 	if err != nil {
 		return "", err
@@ -71,12 +72,12 @@ func parseJWT(tokenString string, secretKey string) (map[string]interface{}, err
 		return []byte(secretKey), nil
 	})
 	if err != nil || parsedToken == nil || !parsedToken.Valid {
-		return nil, errors.New("invalid token")
+		return nil, errors.New(sharederrors.ErrInvalidToken)
 	}
 
 	claims, ok := parsedToken.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, errors.New("invalid claims")
+		return nil, errors.New(sharederrors.ErrInvalidClaims)
 	}
 
 	return claims, nil

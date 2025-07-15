@@ -13,10 +13,8 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-const (
-	// FailedToConnectToRedis is the error message for when the Redis client fails to connect.
-	FailedToConnectToRedis = "failed to connect to Redis"
-)
+// FailedToConnectToRedis is the error message for when the Redis client fails to connect.
+const FailedToConnectToRedis = "failed to connect to Redis"
 
 type redisClient struct {
 	client *redis.Client

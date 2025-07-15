@@ -1,10 +1,12 @@
+// Package user_test contains tests for user use cases.
 package user_test
 
 import (
 	"context"
 	"errors"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"testing"
+
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
@@ -57,7 +59,7 @@ func TestSoftDeleteUser_ErrorToDeleteToken(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	userID := uint64(1)
-	expectedErr := errors.New(sharederrors.ErrorToDeleteToken)
+	expectedErr := errors.New(sharederrors.ErrMsgDeleteToken)
 
 	suite.UserRepository.EXPECT().
 		SoftDeleteUser(gomock.Any(), userID).
@@ -67,7 +69,7 @@ func TestSoftDeleteUser_ErrorToDeleteToken(t *testing.T) {
 		Return(expectedErr)
 
 	suite.Logger.EXPECT().
-		ErrorwCtx(gomock.Any(), sharederrors.ErrorToDeleteToken, commonkeys.Error, gomock.Any())
+		ErrorwCtx(gomock.Any(), sharederrors.ErrMsgDeleteToken, commonkeys.Error, gomock.Any())
 
 	err := suite.UserService.SoftDeleteUser(context.Background(), userID)
 	assert.EqualError(t, err, expectedErr.Error())
@@ -111,7 +113,7 @@ func TestSoftDeleteUser_ErrorToDeleteToken_UnknownError(t *testing.T) {
 		Return(expectedErr)
 
 	suite.Logger.EXPECT().
-		ErrorwCtx(gomock.Any(), sharederrors.ErrorToDeleteToken, commonkeys.Error, expectedErr.Error())
+		ErrorwCtx(gomock.Any(), sharederrors.ErrMsgDeleteToken, commonkeys.Error, expectedErr.Error())
 
 	err := suite.UserService.SoftDeleteUser(context.Background(), userID)
 	assert.EqualError(t, err, expectedErr.Error())

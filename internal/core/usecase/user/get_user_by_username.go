@@ -13,7 +13,7 @@ import (
 // GetUserByUsername retrieves a user by their username from the database. Returns the user or an error if the operation fails.
 //
 //nolint:dupl // TODO: Refactor duplicated tracing logic
-func (s *Service) GetUserByUsername(ctx context.Context, username string) (domain.UserDomain, error) {
+func (s *Service) GetUserByUsername(ctx context.Context, username string) (domain.User, error) {
 	tracer := otel.Tracer(constants.TracerName)
 	ctx, span := tracer.Start(ctx, constants.SpanGetUserByUsername)
 	defer span.End()
@@ -28,7 +28,7 @@ func (s *Service) GetUserByUsername(ctx context.Context, username string) (domai
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, constants.ErrorToGetUserByUsername))
 		s.logger.ErrorwCtx(ctx, constants.ErrorToGetUserByUsername, commonkeys.Error, err.Error())
-		return domain.UserDomain{}, err
+		return domain.User{}, err
 	}
 
 	span.SetAttributes(

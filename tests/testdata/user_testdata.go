@@ -6,8 +6,8 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
-// TestPerfectUser is a predefined UserDomain instance used for testing, representing a fully initialized user with typical attributes and lifecycle timestamps.
-var TestPerfectUser = domain.UserDomain{
+// TestPerfectUser is a predefined User instance used for testing, representing a fully initialized user with typical attributes and lifecycle timestamps.
+var TestPerfectUser = domain.User{
 	ID:        1,
 	Name:      "User Name",
 	Username:  "user",

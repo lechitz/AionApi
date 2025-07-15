@@ -12,7 +12,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/core/domain" //TODO: retirar dependencia do domain e usar um DTO.
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
@@ -132,7 +132,7 @@ func (r *mutationResolver) UpdateCategory(ctx context.Context, category model.Dt
 		return nil, errors.New(constants.InvalidCategoryID)
 	}
 
-	updateCategory := domain.Category{
+	updateCategory := domain.Category{ //TODO: retirar dependencia do domain e usar um DTO.
 		ID:     categoryIDUint,
 		UserID: userID,
 	}
@@ -215,7 +215,7 @@ func (r *mutationResolver) SoftDeleteCategory(ctx context.Context, category mode
 		return false, errors.New(constants.InvalidCategoryID)
 	}
 
-	categoryDomain := domain.Category{
+	categoryDomain := domain.Category{ //TODO: retirar dependencia do domain e usar um DTO.
 		ID:     categoryIDUint,
 		UserID: userID,
 	}
@@ -340,7 +340,7 @@ func (r *queryResolver) GetCategoryByID(ctx context.Context, categoryRequest mod
 
 	span.SetAttributes(attribute.String(commonkeys.CategoryID, categoryRequest.CategoryID))
 
-	category := domain.Category{
+	category := domain.Category{ //TODO: retirar dependencia do domain e usar um DTO.
 		ID:     categoryIDUint,
 		UserID: userID,
 	}
@@ -405,7 +405,7 @@ func (r *queryResolver) GetCategoryByName(ctx context.Context, categoryRequest m
 		attribute.String(commonkeys.CategoryName, categoryRequest.Name),
 	)
 
-	category := domain.Category{
+	category := domain.Category{ //TODO: retirar dependencia do domain e usar um DTO.
 		UserID: userID,
 		Name:   categoryRequest.Name,
 	}

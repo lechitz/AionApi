@@ -18,7 +18,7 @@ func TestGetAllUsers_Success(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	expectedUsers := []domain.UserDomain{
+	expectedUsers := []domain.User{
 		setup.DefaultTestUser(),
 		setup.DefaultTestUser(),
 	}
@@ -59,7 +59,7 @@ func TestGetAllUsers_EmptyResult(t *testing.T) {
 	suite := setup.UserServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	var expectedUsers []domain.UserDomain
+	var expectedUsers []domain.User
 
 	suite.UserRepository.EXPECT().
 		GetAllUsers(gomock.Any()).

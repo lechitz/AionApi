@@ -2,8 +2,9 @@ package user
 
 import (
 	"errors"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"strings"
+
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
 
@@ -11,8 +12,10 @@ import (
 	"github.com/lechitz/AionApi/internal/core/usecase/user/constants"
 )
 
+//TODO: talvez esse método abaixo possa morrer. Parar pra ver depois.
+
 // validateCreateUserRequired validates required fields for creating a user and returns an error if any validation fails.
-func (s *Service) validateCreateUserRequired(user domain.UserDomain, password string) error {
+func (s *Service) validateCreateUserRequired(user domain.User) error {
 	if user.Name == "" {
 		return errors.New(constants.NameIsRequired)
 	}
@@ -22,7 +25,7 @@ func (s *Service) validateCreateUserRequired(user domain.UserDomain, password st
 	if user.Email == "" {
 		return errors.New(constants.EmailIsRequired)
 	}
-	if password == "" {
+	if user.Password == "" {
 		return errors.New(constants.PasswordIsRequired)
 	}
 	if err := checkmail.ValidateFormat(user.Email); err != nil {
@@ -32,7 +35,7 @@ func (s *Service) validateCreateUserRequired(user domain.UserDomain, password st
 }
 
 // normalizeUserData adjusts user fields by trimming spaces, converting email to lowercase, and ensuring data uniformity. Returns the normalized user.
-func (s *Service) normalizeUserData(user *domain.UserDomain) domain.UserDomain {
+func (s *Service) normalizeUserData(user *domain.User) domain.User {
 	if user.Name != "" {
 		user.Name = strings.TrimSpace(user.Name)
 	}
@@ -46,7 +49,7 @@ func (s *Service) normalizeUserData(user *domain.UserDomain) domain.UserDomain {
 }
 
 // buildUserUpdateFields returns a map with non-empty user fields for update operations.
-func buildUserUpdateFields(user domain.UserDomain) map[string]interface{} {
+func buildUserUpdateFields(user domain.User) map[string]interface{} {
 	updateFields := make(map[string]interface{})
 	if user.Name != "" {
 		updateFields[commonkeys.Name] = user.Name

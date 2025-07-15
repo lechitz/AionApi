@@ -8,7 +8,6 @@ import (
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/user/dto"
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
@@ -73,8 +72,12 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 		attribute.String(tracingkeys.RequestUserAgentKey, userAgent),
 	)
 
-	httputils.ClearAuthCookie(w, h.Config.Cookie)
-	userDomain := domain.UserDomain{ID: userID}
+	//TODO: avaliar se passo o userID ao inves de userDomain.. ou se passo o DTO userID + req.Password, e uma string do new.
+	_, newToken, err := h.Service.UpdateUserPassword(ctx, userID, req.Password, req.NewPassword)
+	if err != nil {
+		handlerhelpers.WriteDomainError(ctx, w, span, err, constants.ErrUpdateUser, h.Logger)
+		return
+	}
 
 	span.AddEvent(constants.EventUserServiceUpdateUserPassword,
 		trace.WithAttributes(
@@ -83,13 +86,10 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	_, newToken, err := h.Service.UpdateUserPassword(ctx, userDomain, req.Password, req.NewPassword)
-	if err != nil {
-		handlerhelpers.WriteDomainError(ctx, w, span, err, constants.ErrUpdateUser, h.Logger)
-		return
-	}
+	httputils.ClearAuthCookie(w, h.Config.Cookie)
 
 	httputils.SetAuthCookie(w, newToken, h.Config.Cookie)
+
 	span.SetStatus(codes.Ok, constants.StatusUserPasswordUpdated)
 	span.SetAttributes(
 		attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusOK),

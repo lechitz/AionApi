@@ -9,7 +9,7 @@ type LoginUserRequest struct {
 
 // LoginUserResponse represents **the** response payload after a successful login.
 type LoginUserResponse struct {
-	Username string `json:"username"`
+	Name string `json:"name"`
 }
 
 // LogoutUserRequest represents the payload used to request a logout.

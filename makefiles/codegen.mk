@@ -35,10 +35,10 @@ mocks:
 	  -package=mocks \
 	  -mock_names=CategoryStore=MockCategoryStore
 	@echo "→ SecurityStore"
-	mockgen -source=internal/core/ports/output/hasher_output.go \
-	  -destination=tests/mocks/mock_security_store.go \
+	mockgen -source=internal/core/ports/output/password_hasher_output.go \
+	  -destination=tests/mocks/mock_password_hasher_store.go \
 	  -package=mocks \
-	  -mock_names=Store=MockSecurityStore
+	  -mock_names=Store=MockPasswordHasher
 	@echo "→ Logger"
 	mockgen -source=internal/core/ports/output/logger_output.go \
 	  -destination=tests/mocks/mock_logger.go \

@@ -4,9 +4,9 @@ package config
 import (
 	"errors"
 	"fmt"
+	"github.com/lechitz/AionApi/internal/adapters/secondary/security/jwt"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/config/constants"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -44,7 +44,7 @@ func (l *Loader) Load(logger output.ContextLogger) (*Config, error) {
 	}
 
 	if l.cfg.Secret.Key == "" {
-		generated, err := security.GenerateJWTKey()
+		generated, err := jwt.GenerateToken() //TODO: ajustar e repensar a necessidade !
 		if err != nil {
 			logger.Errorw(constants.ErrGenerateSecretKey, commonkeys.Error, err)
 			panic(err)

@@ -35,17 +35,18 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		),
 	)
 
-	var req dto.CreateUserRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	var userDTO dto.CreateUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&userDTO); err != nil {
 		handlerhelpers.WriteDecodeError(ctx, w, span, err, h.Logger)
 		return
 	}
 
+	//TODO: passar validação pro DTO.
 	err := handlerhelpers.CheckRequiredFields(map[string]string{
-		commonkeys.Name:     req.Name,
-		commonkeys.Username: req.Username,
-		commonkeys.Email:    req.Email,
-		commonkeys.Password: req.Password,
+		commonkeys.Name:     userDTO.Name,
+		commonkeys.Username: userDTO.Username,
+		commonkeys.Email:    userDTO.Email,
+		commonkeys.Password: userDTO.Password,
 	})
 	if err != nil {
 		h.Logger.ErrorwCtx(ctx, constants.ErrCreateUserValidation,
@@ -58,50 +59,51 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	span.SetAttributes(
-		attribute.String(commonkeys.Username, req.Username),
-		attribute.String(commonkeys.Email, req.Email),
+		attribute.String(commonkeys.Username, userDTO.Username),
+		attribute.String(commonkeys.Email, userDTO.Email),
 		attribute.String(tracingkeys.RequestIPKey, ip),
 		attribute.String(tracingkeys.RequestUserAgentKey, userAgent),
 	)
 
-	userDomain := domain.UserDomain{
-		Name:     req.Name,
-		Username: req.Username,
-		Email:    req.Email,
+	userDomain := domain.User{
+		Name:     userDTO.Name,
+		Username: userDTO.Username,
+		Email:    userDTO.Email,
+		Password: userDTO.Password,
 	}
 
 	span.AddEvent(constants.EventUserServiceCreateUser)
-	user, err := h.Service.CreateUser(ctx, userDomain, req.Password)
+	newUser, err := h.Service.CreateUser(ctx, userDomain)
 	if err != nil {
 		handlerhelpers.WriteDomainError(ctx, w, span, err, constants.ErrCreateUser, h.Logger)
 		return
 	}
 
 	span.SetAttributes(
-		attribute.String(commonkeys.UserID, strconv.FormatUint(user.ID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(newUser.ID, 10)),
 		attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusCreated),
 	)
 	span.SetStatus(codes.Ok, constants.StatusUserCreated)
 
 	h.Logger.InfowCtx(ctx, constants.MsgUserCreated,
-		commonkeys.UserID, strconv.FormatUint(user.ID, 10),
-		commonkeys.Username, user.Username,
-		commonkeys.Email, user.Email,
+		commonkeys.UserID, strconv.FormatUint(newUser.ID, 10),
+		commonkeys.Username, newUser.Username,
+		commonkeys.Email, newUser.Email,
 		tracingkeys.RequestIPKey, ip,
 		tracingkeys.RequestUserAgentKey, userAgent,
 	)
 
 	span.AddEvent(
 		constants.EventUserCreatedSuccess,
-		trace.WithAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(user.ID, 10))),
+		trace.WithAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(newUser.ID, 10))),
 	)
 
-	res := dto.CreateUserResponse{
-		Name:     user.Name,
-		Username: user.Username,
-		Email:    user.Email,
-		ID:       user.ID,
+	response := dto.CreateUserResponse{
+		Name:     newUser.Name,
+		Username: newUser.Username,
+		Email:    newUser.Email,
+		ID:       newUser.ID,
 	}
 
-	httpresponse.WriteSuccess(w, http.StatusCreated, res, constants.MsgUserCreated)
+	httpresponse.WriteSuccess(w, http.StatusCreated, response, constants.MsgUserCreated)
 }

@@ -8,16 +8,16 @@ import (
 
 // Service provides authentication operations including login, logout, and user token management.
 type Service struct {
-	userRetriever  output.UserRetriever
+	userService    output.UserByUsernameFinder
 	tokenService   input.TokenService
-	securityHasher output.HasherStore
+	securityHasher output.Hasher
 	logger         output.ContextLogger
 }
 
 // NewService creates and returns a new instance of Service with dependencies for user retrieval, token management, and security operations.
-func NewService(userRetriever output.UserRetriever, tokenService input.TokenService, securityHasher output.HasherStore, logger output.ContextLogger) *Service {
+func NewService(userByUsernameFinder output.UserByUsernameFinder, tokenService input.TokenService, securityHasher output.Hasher, logger output.ContextLogger) *Service {
 	return &Service{
-		userRetriever:  userRetriever,
+		userService:    userByUsernameFinder,
 		tokenService:   tokenService,
 		securityHasher: securityHasher,
 		logger:         logger,

@@ -42,7 +42,7 @@ func TestGetUserByUsername_Error(t *testing.T) {
 
 	suite.UserRepository.EXPECT().
 		GetUserByUsername(gomock.Any(), username).
-		Return(domain.UserDomain{}, expectedErr)
+		Return(domain.User{}, expectedErr)
 
 	suite.Logger.EXPECT().
 		ErrorwCtx(gomock.Any(), constants.ErrorToGetUserByUsername, commonkeys.Error, expectedErr.Error())
@@ -50,5 +50,5 @@ func TestGetUserByUsername_Error(t *testing.T) {
 	userDomain, err := suite.UserService.GetUserByUsername(context.Background(), username)
 
 	require.Error(t, err)
-	require.Equal(t, domain.UserDomain{}, userDomain)
+	require.Equal(t, domain.User{}, userDomain)
 }

@@ -7,7 +7,6 @@ import (
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/auth/constants"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/auth/dto"
-	"github.com/lechitz/AionApi/internal/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 	"github.com/lechitz/AionApi/internal/shared/handlerhelpers"
@@ -42,17 +41,17 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//TODO: adicionar validação basica da quantidade de caractere em user e senha.
+
 	span.SetAttributes(
 		attribute.String(commonkeys.Username, loginReq.Username),
 		attribute.String(tracingkeys.RequestIPKey, ip),
 		attribute.String(tracingkeys.RequestUserAgentKey, userAgent),
 	)
 
-	userDomain := domain.UserDomain{Username: loginReq.Username}
-
 	span.AddEvent(constants.EventAuthServiceLogin)
 
-	userDB, token, err := h.Service.Login(ctx, userDomain, loginReq.Password)
+	user, token, err := h.Service.Login(ctx, loginReq.Username, loginReq.Password)
 	if err != nil {
 		handlerhelpers.WriteDomainError(ctx, w, span, err, constants.ErrLogin, h.Logger)
 		return
@@ -60,9 +59,9 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	httputils.SetAuthCookie(w, token, h.Config.Cookie)
 
-	loginUserResponse := dto.LoginUserResponse{Username: userDB.Username}
+	loginResponse := dto.LoginUserResponse{Name: user.Name}
 	span.SetAttributes(
-		attribute.String(commonkeys.Username, userDB.Username),
+		attribute.String(commonkeys.Name, loginResponse.Name),
 		attribute.String(tracingkeys.RequestIPKey, ip),
 		attribute.String(tracingkeys.RequestUserAgentKey, userAgent),
 	)
@@ -71,10 +70,10 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	span.AddEvent(constants.EventLoginSuccess)
 
 	h.Logger.InfowCtx(ctx, constants.MsgLoginSuccess,
-		commonkeys.Username, userDB.Username,
+		commonkeys.Name, loginResponse.Name,
 		tracingkeys.RequestIPKey, ip,
 		tracingkeys.RequestUserAgentKey, userAgent,
 	)
 
-	httpresponse.WriteSuccess(w, http.StatusOK, loginUserResponse, constants.MsgLoginSuccess)
+	httpresponse.WriteSuccess(w, http.StatusOK, loginResponse, constants.MsgLoginSuccess)
 }
