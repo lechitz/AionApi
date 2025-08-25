@@ -54,7 +54,7 @@ func InitTracer(cfg *config.Config, logger output.ContextLogger) func() {
 	exporter, err := otlptracehttp.New(context.Background(), opts...)
 	if err != nil {
 		logger.Errorw(ErrInitializeOTPL, commonkeys.Error, err)
-		panic(err)
+		panic(err) //TODO: avaliar se mantem panic ou substitui por os.Exit
 	}
 
 	resources := resource.NewWithAttributes(

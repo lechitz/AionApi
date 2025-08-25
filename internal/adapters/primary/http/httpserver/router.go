@@ -2,83 +2,63 @@
 package httpserver
 
 import (
-	"errors"
-	"fmt"
-	"strings"
+	"net/http"
 
-	"github.com/lechitz/AionApi/internal/core/ports/input"
-
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/handlers/generic"
-	"github.com/lechitz/AionApi/internal/platform/config"
-
-	"github.com/lechitz/AionApi/internal/core/ports/output"
-
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver/constants"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/controllers/generic/handler"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/authmiddleware"
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/recoverymiddleware"
+	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/requestidmiddleware"
+	"github.com/lechitz/AionApi/internal/core/ports/input"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
+	"github.com/lechitz/AionApi/internal/platform/config"
 )
 
-// RouteComposer is a structure for configuring routes, middlewares, and logging in the HTTP router.
+// HTTPRouter is a minimal interface to compose routes and middlewares.
+type HTTPRouter interface {
+	Use(middleware func(http.Handler) http.Handler)
+	Route(pattern string, fn func(r HTTPRouter))
+	Get(path string, handler http.HandlerFunc)
+	Post(path string, handler http.HandlerFunc)
+	Put(path string, handler http.HandlerFunc)
+	Delete(path string, handler http.HandlerFunc)
+	Mount(pattern string, handler http.Handler)
+	ServeHTTP(w http.ResponseWriter, r *http.Request)
+	Group(fn func(r HTTPRouter))
+	SetNotFoundHandler(handler http.HandlerFunc)
+	SetMethodNotAllowedHandler(handler http.HandlerFunc)
+	SetErrorHandler(handler func(http.ResponseWriter, *http.Request, error))
+	GroupWithMiddleware(middleware func(http.Handler) http.Handler, fn func(r HTTPRouter))
+}
+
+// RouteComposer wires router, base path and auth middleware.
 type RouteComposer struct {
-	Router         input.HTTPRouter
+	Router         HTTPRouter
 	logger         output.ContextLogger
 	authMiddleware *authmiddleware.MiddlewareAuth
 	BasePath       string
 }
 
-// NewHTTPRouter creates and configures a new HTTP router with middleware and authentication.
-func NewHTTPRouter(
-	tokenRepository output.TokenStore,
-	cfg *config.Config,
-	tokenClaimsExtractor output.TokenClaimsExtractor,
-	logger output.ContextLogger,
-	genericHandler *generic.Handler,
-) (*RouteComposer, error) {
-	normalizedPath, err := normalizeContextPath(cfg.ServerHTTP.Context)
-	if err != nil {
-		return nil, err
-	}
-
+// NewHTTPRouter sets up recovery/request-id middlewares and auth middleware.
+// NOTE: Auth middleware only extracts the raw token and delegates validation to TokenService.
+func NewHTTPRouter(cfg *config.Config, tokenSvc input.TokenService, genericHandler *handler.Handler, logger output.ContextLogger) (*RouteComposer, error) {
 	router := NewRouter()
-	router.Use(recoverymiddleware.New(genericHandler))
-	router.Use(injectRequestIDMiddleware)
 
-	authMiddleware := authmiddleware.New(
-		tokenRepository,
-		logger,
-		tokenClaimsExtractor,
-	)
+	// Generic middlewares
+	router.Use(recoverymiddleware.New(genericHandler))
+	router.Use(requestidmiddleware.New())
+
+	// Auth middleware (no JWT parsing here)
+	amw := authmiddleware.New(tokenSvc, logger)
 
 	return &RouteComposer{
-		BasePath:       normalizedPath,
+		BasePath:       cfg.ServerHTTP.Context,
 		Router:         router,
 		logger:         logger,
-		authMiddleware: authMiddleware,
+		authMiddleware: amw,
 	}, nil
 }
 
-// GetRouter retrieves the current router instance used for managing HTTP routes.
-func (r *RouteComposer) GetRouter() input.HTTPRouter {
+// GetRouter exposes the underlying router (useful for tests/customization).
+func (r *RouteComposer) GetRouter() HTTPRouter {
 	return r.Router
-}
-
-// normalizeContextPath ensures the given context path starts with '/' and is valid.
-func normalizeContextPath(raw string) (string, error) {
-	if raw == "" {
-		return "", errors.New(constants.ErrContextPathEmpty)
-	}
-
-	if strings.Contains(raw[1:], "/") {
-		return "", errors.New(constants.ErrContextPathSlash)
-	}
-
-	if raw[0] != '/' {
-		raw = "/" + raw
-	}
-
-	if len(raw) <= 1 {
-		return "", fmt.Errorf(constants.InvalidContextPath, raw)
-	}
-
-	return raw, nil
 }

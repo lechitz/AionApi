@@ -38,6 +38,9 @@ const (
 	// ErrEmailInUse is the error message for an email already in use.
 	ErrEmailInUse = "email already in use"
 
+	// ErrUsernameAndEmailInUse is the error message for a username and email already in use.
+	ErrUsernameAndEmailInUse = "username and email already in use"
+
 	// ErrMsgCreateToken indicates an error when creating a token.
 	ErrMsgCreateToken = "error to create token"
 
@@ -54,8 +57,12 @@ const (
 	ErrTokenNotFound = "token not found"
 
 	// ErrInvalidClaims indicates an error when a token is invalid.
-	ErrInvalidClaims = "invalid claims"
+	ErrInvalidClaims = "invalid claimsextractor"
 )
+
+// ErrNoFieldsToUpdate indicates an error when updating a user.
+
+var ErrNoFieldsToUpdate = errors.New("no fields provided for update")
 
 // ====================================================================
 //                  ─── CUSTOM ERROR TYPES.
@@ -121,6 +128,9 @@ func NewValidationError(field, reason string) error {
 
 // ErrParseUserID is returned when a user ID cannot be parsed.
 var ErrParseUserID = errors.New(ErrMsgParseUserID)
+
+var ErrUsernameExists = errors.New(ErrUsernameInUse)
+var ErrEmailExists = errors.New(ErrEmailInUse)
 
 // ====================================================================
 //             ─── ERRORS.

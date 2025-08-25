@@ -13,4 +13,5 @@ const (
 	SpanID           contextKey = "span_id"            // Context key for span ID.
 	RequestIP        contextKey = "request_ip"         // Context key for request IP.
 	RequestUserAgent contextKey = "request_user_agent" // Context key for request user agent.
+	Claims           contextKey = "claims"             // Context key for claims.
 )

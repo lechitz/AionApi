@@ -1,3 +1,4 @@
+// Package setup provides test suite builders and common test helpers for unit tests.
 package setup
 
 import (
@@ -9,41 +10,49 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-// AuthServiceTestSuite defines a test suite for AuthService, including mock services and dependencies for testing authentication components.
+// AuthServiceTestSuite groups all mocked dependencies and the system under test (AuthService),
+// making Auth-related unit tests simpler and more maintainable.
 type AuthServiceTestSuite struct {
 	Ctrl           *gomock.Controller
-	Logger         *mocks.MockLogger
-	UserRetriever  *mocks.MockUserRetriever
-	PasswordHasher *mocks.MockPasswordHasher
-	TokenService   *mocks.MockTokenUsecase
+	Logger         *mocks.ContextLogger
+	UserRepository *mocks.UserRepository
+	Hasher         *mocks.Hasher
+	TokenStore     *mocks.TokenStore
+	TokenProvider  *mocks.TokenProvider
 	AuthService    *auth.Service
 	Ctx            context.Context
 }
 
-// AuthServiceTest initializes and returns a test suite with mock dependencies for testing authentication services.
+// AuthServiceTest initializes and returns an AuthServiceTestSuite with the correct mocked
+// output ports (UserRepository, TokenStore, Hasher, TokenProvider, ContextLogger).
+// Use this helper to bootstrap each test and ensure proper teardown via Ctrl.Finish().
 func AuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	mockUserRetriever := mocks.NewMockUserRetriever(ctrl)
-	mockSecurityStore := mocks.NewMockPasswordHasher(ctrl)
-	mockTokenUsecase := mocks.NewMockTokenUsecase(ctrl)
-	mockLog := mocks.NewMockLogger(ctrl)
+	userRepo := mocks.NewUserRepository(ctrl)
+	hasher := mocks.NewHasher(ctrl)
+	tokenStore := mocks.NewTokenStore(ctrl)
+	tokenProvider := mocks.NewTokenProvider(ctrl)
+	log := mocks.NewContextLogger(ctrl)
 
-	ExpectLoggerDefaultBehavior(mockLog)
+	// Set default, non-intrusive expectations for the logger (no-ops).
+	ExpectLoggerDefaultBehavior(log)
 
 	authService := auth.NewService(
-		mockUserRetriever,
-		mockTokenUsecase,
-		mockSecurityStore,
-		mockLog,
+		userRepo,
+		tokenStore,
+		hasher,
+		tokenProvider,
+		log,
 	)
 
 	return &AuthServiceTestSuite{
 		Ctrl:           ctrl,
-		Logger:         mockLog,
-		UserRetriever:  mockUserRetriever,
-		PasswordHasher: mockSecurityStore,
-		TokenService:   mockTokenUsecase,
+		Logger:         log,
+		UserRepository: userRepo,
+		Hasher:         hasher,
+		TokenStore:     tokenStore,
+		TokenProvider:  tokenProvider,
 		AuthService:    authService,
 		Ctx:            t.Context(),
 	}

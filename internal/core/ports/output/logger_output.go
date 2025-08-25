@@ -17,4 +17,6 @@ type ContextLogger interface {
 
 	InfowCtx(ctx context.Context, msg string, keysAndValues ...any)
 	ErrorwCtx(ctx context.Context, msg string, keysAndValues ...any)
+	WarnwCtx(ctx context.Context, msg string, keysAndValues ...any)
+	DebugwCtx(ctx context.Context, msg string, keysAndValues ...any)
 }

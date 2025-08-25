@@ -2,21 +2,20 @@ package token
 
 import (
 	"github.com/lechitz/AionApi/internal/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/config"
 )
 
 // Service manages token-related operations including creation, validation, and deletion using a repository and logging functionality.
 type Service struct {
-	tokenRepository output.TokenStore
-	logger          output.ContextLogger
-	secretKey       string
+	tokenStore    output.TokenStore
+	tokenProvider output.TokenProvider
+	logger        output.ContextLogger
 }
 
-// NewService initializes a Service with a token repository, contextlogger, and token configuration for managing token operations.
-func NewService(tokenRepo output.TokenStore, logger output.ContextLogger, secretKey config.Secret) *Service {
+// NewService initializes a Service with a token repository, provider, and logger.
+func NewService(tokenStore output.TokenStore, tokenProvider output.TokenProvider, logger output.ContextLogger) *Service {
 	return &Service{
-		tokenRepository: tokenRepo,
-		logger:          logger,
-		secretKey:       secretKey.Key,
+		tokenStore:    tokenStore,
+		tokenProvider: tokenProvider,
+		logger:        logger,
 	}
 }

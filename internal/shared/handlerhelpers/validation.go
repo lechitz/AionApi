@@ -17,30 +17,3 @@ func CheckRequiredFields(fields map[string]string) error {
 	}
 	return nil
 }
-
-// AtLeastOneField checks if at least one field is present in the given map.
-func AtLeastOneField(fields map[string]interface{}) error {
-	var names []string
-	for name, value := range fields {
-		switch v := value.(type) {
-		case *string:
-			if v != nil && *v != "" {
-				return nil
-			}
-		case string:
-			if v != "" {
-				return nil
-			}
-		}
-		names = append(names, name)
-	}
-	return sharederrors.AtLeastOneFieldRequired(names...)
-}
-
-// SafeStringPtr safely dereferences a *string, returning an empty string if nil.
-func SafeStringPtr(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}

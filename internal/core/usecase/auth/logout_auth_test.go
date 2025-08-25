@@ -4,66 +4,37 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/usecase/token/constants"
-
-	"github.com/lechitz/AionApi/internal/core/domain"
+	authconst "github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 	"github.com/lechitz/AionApi/tests/setup"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 )
 
+// TestLogout_Success verifies that Delete(userID) is called and succeeds.
 func TestLogout_Success(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	token := "valid.token.value" // #nosec G101
-	userID := uint64(1)
-
-	suite.TokenService.EXPECT().
-		GetToken(suite.Ctx, token).
-		Return(userID, token, nil)
-
-	suite.TokenService.EXPECT().
-		Delete(suite.Ctx, domain.TokenDomain{UserID: userID, Token: token}).
+	suite.TokenStore.EXPECT().
+		Delete(gomock.Any(), uint64(1)).
 		Return(nil)
 
-	err := suite.AuthService.Logout(suite.Ctx, token)
-
-	assert.NoError(t, err)
+	err := suite.AuthService.Logout(suite.Ctx, 1)
+	require.NoError(t, err)
 }
 
-func TestLogout_CheckTokenFails(t *testing.T) {
-	suite := setup.AuthServiceTest(t)
-	defer suite.Ctrl.Finish()
-
-	token := "invalid.token.value"
-
-	suite.TokenService.EXPECT().
-		GetToken(suite.Ctx, token).
-		Return(uint64(0), "", errors.New(constants.ErrorInvalidToken))
-
-	err := suite.AuthService.Logout(suite.Ctx, token)
-
-	assert.ErrorContains(t, err, constants.ErrorInvalidToken)
-}
-
+// TestLogout_DeleteTokenFails verifies that a delete failure bubbles up.
 func TestLogout_DeleteTokenFails(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	token := "valid.token.value" // #nosec G101
-	userID := uint64(1)
-	tokenDomain := domain.TokenDomain{UserID: userID, Token: token}
-	expectedErr := errors.New("delete error")
+	expected := errors.New("delete error")
 
-	suite.TokenService.EXPECT().
-		GetToken(suite.Ctx, token).
-		Return(userID, token, nil)
+	suite.TokenStore.EXPECT().
+		Delete(gomock.Any(), uint64(1)).
+		Return(expected)
 
-	suite.TokenService.EXPECT().
-		Delete(suite.Ctx, tokenDomain).
-		Return(expectedErr)
-
-	err := suite.AuthService.Logout(suite.Ctx, token)
-
-	assert.ErrorContains(t, err, expectedErr.Error())
+	err := suite.AuthService.Logout(suite.Ctx, 1)
+	require.Error(t, err)
+	require.ErrorContains(t, err, authconst.ErrorToRevokeToken)
 }

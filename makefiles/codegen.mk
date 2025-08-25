@@ -4,44 +4,58 @@
 
 .PHONY: graphql mocks
 
+OUTPUT_PKG := github.com/lechitz/AionApi/internal/core/ports/output
+
 graphql:
 	@echo "Generating GraphQL code with gqlgen..."
-	cd internal/adapters/primary/graph && \
+	cd ../internal/adapters/primary/graph && \
 	go run github.com/99designs/gqlgen generate
 	@go mod tidy
 	@echo "✅  GraphQL code generated successfully."
 
 mocks:
-	@echo "Generating mocks for output ports and usecases..."
+	@echo "Generating mocks for ports and services..."
 	@mkdir -p tests/mocks
-	@echo "→ TokenStore"
-	mockgen -source=internal/core/ports/output/token_output.go \
-	  -destination=tests/mocks/mock_token_store.go \
+
+	# ---- Token ----
+	@echo "→ Output: TokenProvider"
+	mockgen -destination=tests/mocks/token_provider_mock.go \
 	  -package=mocks \
-	  -mock_names=Store=MockTokenStore
-	@echo "→ TokenUsecase"
-	mockgen -source=internal/core/ports/input/token_input.go \
-      -destination=tests/mocks/mock_token_usecase.go \
-      -package=mocks \
-      -mock_names=TokenService=MockTokenUsecase
-	@echo "→ UserStore"
-	mockgen -source=internal/core/ports/output/user_output.go \
-	  -destination=tests/mocks/mock_user_store.go \
+	  -mock_names TokenProvider=TokenProvider \
+	  $(OUTPUT_PKG) TokenProvider
+
+	@echo "→ Output: TokenStore"
+	mockgen -destination=tests/mocks/token_store_mock.go \
 	  -package=mocks \
-	  -mock_names=UserStore=MockUserStore
-	@echo "→ CategoryStore"
-	mockgen -source=internal/core/ports/output/category_output.go \
-	  -destination=tests/mocks/mock_category_store.go \
+	  -mock_names TokenStore=TokenStore \
+	  $(OUTPUT_PKG) TokenStore
+
+	# ---- User ----
+	@echo "→ Output: UserRepository"
+	mockgen -destination=tests/mocks/user_repository_mock.go \
 	  -package=mocks \
-	  -mock_names=CategoryStore=MockCategoryStore
-	@echo "→ SecurityStore"
-	mockgen -source=internal/core/ports/output/password_hasher_output.go \
-	  -destination=tests/mocks/mock_password_hasher_store.go \
+	  -mock_names UserRepository=UserRepository \
+	  $(OUTPUT_PKG) UserRepository
+
+	# ---- Category ----
+	@echo "→ Output: CategoryRepository"
+	mockgen -destination=tests/mocks/category_repository_mock.go \
 	  -package=mocks \
-	  -mock_names=Store=MockPasswordHasher
-	@echo "→ Logger"
-	mockgen -source=internal/core/ports/output/logger_output.go \
-	  -destination=tests/mocks/mock_logger.go \
+	  -mock_names CategoryRepository=CategoryRepository \
+	  $(OUTPUT_PKG) CategoryRepository
+
+	# ---- Hasher ----
+	@echo "→ Output: Hasher"
+	mockgen -destination=tests/mocks/hasher_mock.go \
 	  -package=mocks \
-	  -mock_names=ContextLogger=MockLogger
+	  -mock_names Hasher=Hasher \
+	  $(OUTPUT_PKG) Hasher
+
+	# ---- Logger ----
+	@echo "→ Output: ContextLogger"
+	mockgen -destination=tests/mocks/logger_mock.go \
+	  -package=mocks \
+	  -mock_names ContextLogger=ContextLogger \
+	  $(OUTPUT_PKG) ContextLogger
+
 	@echo "✅  All mocks generated successfully."

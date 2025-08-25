@@ -16,13 +16,13 @@ const (
 	Setting = "setting"
 )
 
-// HTTP server keys.
+// Server keys.
 const (
-	// ServerHTTPName is the HTTP server name.
-	ServerHTTPName = "server_name"
+	// ServerName is the HTTP server name.
+	ServerName = "server_name"
 
-	// ServerHTTPAddr is the HTTP server port/address.
-	ServerHTTPAddr = "http_port"
+	// ServerAddr is the HTTP server port/address.
+	ServerAddr = "http_port"
 )
 
 // HTTP request keys.
@@ -68,7 +68,7 @@ const (
 	// Error is the generic error key for logging/context.
 	Error = "error"
 
-	// Fields is used in handlers for payload fields.
+	// Fields is used in controllers for payload fields.
 	Fields = "fields"
 )
 

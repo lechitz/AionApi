@@ -1,29 +1,41 @@
 // Package constants contains constants related to authentication operations.
 package constants
 
-// ErrorToCompareHashAndPassword indicates an invalid password was provided.
-const ErrorToCompareHashAndPassword = "invalid credentials" // #nosec G101
+// TracerName identifies the tracer used in auth use cases.
+const TracerName = "aionapi.auth"
 
-// ErrorToCreateToken indicates failure to create a token.
-const ErrorToCreateToken = "error to create token"
+// Spans
+const (
+	SpanLogin  = "Login"
+	SpanLogout = "Logout"
+)
 
-// ErrorToCheckToken indicates failure to check a token.
-const ErrorToCheckToken = "error to check token"
+// Errors
+const (
+	ErrorToCompareHashAndPassword = "invalid credentials" // #nosec G101
 
-// ErrorToRevokeToken indicates failure to revoke a token.
-const ErrorToRevokeToken = "error to revoke token"
+	ErrorToCreateToken       = "error to create token"
+	ErrorToRevokeToken       = "error to revoke token"
+	ErrorToGetUserByUserName = "error to get user by username"
 
-// ErrorToGetUserByUserName indicates failure to retrieve a user by username.
-const ErrorToGetUserByUserName = "error to get user by username"
+	UserNotFoundOrInvalidCredentials = "user not found or invalid credentials"
+	InvalidCredentials               = "invalid credentials" // #nosec G101
+)
 
-// UserNotFoundOrInvalidCredentials indicates the user was not found or the provided credentials were invalid.
-const UserNotFoundOrInvalidCredentials = "user not found or invalid credentials"
+// Success messages
+const (
+	SuccessToLogin       = "user logged in successfully"
+	SuccessUserLoggedOut = "user logged out successfully"
+)
 
-// InvalidCredentials indicates the provided credentials are invalid.
-const InvalidCredentials = "invalid credentials" // #nosec G101
+// Events (trace)
+const (
+	EventLookupUser       = "lookup_user"
+	EventComparePassword  = "compare_password"
+	EventGenerateToken    = "generate_token"
+	EventSaveTokenToStore = "save_token_to_store"
+	EventLoginSuccess     = "login_success"
 
-// SuccessToLogin indicates the user has logged in successfully.
-const SuccessToLogin = "user logged in successfully"
-
-// SuccessUserLoggedOut indicates the user has logged out successfully.
-const SuccessUserLoggedOut = "user logged out successfully"
+	EventRevokeToken   = "revoke_token"
+	EventLogoutSuccess = "logout_success"
+)

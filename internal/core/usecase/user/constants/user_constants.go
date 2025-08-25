@@ -2,7 +2,7 @@
 package constants
 
 // ErrorToValidateCreateUser indicates an error during user creation validation.
-const ErrorToValidateCreateUser = "validation error on CreateUser"
+const ErrorToValidateCreateUser = "validation error on Create"
 
 // ErrorToHashPassword indicates an error while hashing a password.
 // #nosec G101: This constant does not leak a real secret, just an error message.
@@ -35,8 +35,8 @@ const ErrorToSaveToken = "error to save token"
 // SuccessUsersRetrieved indicates users were successfully retrieved.
 const SuccessUsersRetrieved = "users retrieved successfully"
 
-// ErrorToGetUserByID indicates an error when fetching a user by ID.
-const ErrorToGetUserByID = "error to get user by id"
+// ErrorToGetSelf indicates an error when fetching a user by ID.
+const ErrorToGetSelf = "error to get user by id"
 
 // SuccessUserRetrieved indicates a user was successfully retrieved.
 const SuccessUserRetrieved = "user retrieved successfully"
@@ -67,21 +67,6 @@ const ErrorToSoftDeleteUser = "error to soft delete user"
 
 // SuccessUserSoftDeleted indicates a user was softly deleted successfully.
 const SuccessUserSoftDeleted = "user soft deleted successfully"
-
-// NameIsRequired indicates that the user's name is required.
-const NameIsRequired = "name is required"
-
-// UsernameIsRequired indicates that the user's username is required.
-const UsernameIsRequired = "username is required"
-
-// EmailIsRequired indicates that the user's email is required.
-const EmailIsRequired = "email is required"
-
-// PasswordIsRequired indicates that the user's password is required.
-const PasswordIsRequired = "password is required"
-
-// InvalidEmail indicates that the email format is invalid.
-const InvalidEmail = "invalid email format"
 
 // TracerName is the name of the tracer used for the user use case.
 const TracerName = "aionapi.user.create"

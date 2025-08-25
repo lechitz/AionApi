@@ -1,6 +1,6 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
-  - ./schema.graphqls
+  - ./schema/*.graphqls
 
 # Where should the generated httpserver code go?
 exec:
@@ -27,23 +27,22 @@ exec:
 
 # Where should any generated models go?
 model:
-  filename: ./model/models_gen.go
   package: model
-
+  filename: ./model/models_gen.go
   # Optional: Pass in a path to a new gotpl template to use for generating the models
   # model_template: [your/path/model.gotpl]
 
 # Where should the resolver implementations go?
 resolver:
-  package: graph
-  layout: follow-schema # Only other option is "single-file."
+  package: resolvers
+  layout: follow-schema # Generates one resolver file per schema file.
+
+  # Only for follow-schema layout:
+  dir: ./resolvers
+  filename_template: "{name}_schema.resolvers.go"
 
   # Only for single-file layout:
   # filename: graph/resolver.go
-
-  # Only for follow-schema layout:
-  dir: ./
-  filename_template: "{name}.resolvers.go"
 
   # Optional: turn on to not generate template comments above resolvers
   # omit_template_comment: false
@@ -93,7 +92,7 @@ resolver:
 # skip_validation: true
 
 # Optional: set to skip running `go mod tidy` when generating httpserver code
-# skip_mod_tidy: true
+skip_mod_tidy: true
 
 # Optional: if this is set to true, argument directives that
 # decorate a field with a null value will still be called.
@@ -121,7 +120,7 @@ call_argument_directives_with_null: true
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-#  - "github.com/lechitz/AionApi/graph/model"
+#  - "github.com/lechitz/AionApi/internal/adapters/primary/graph/model"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -135,7 +134,7 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
-  # gqlgen provides a default GraphQL UUID convenience wrapper for github.com/google/uuid 
+  # gqlgen provides a default GraphQL UUID convenience wrapper for github.com/google/uuid
   # but you can override this to provide your own GraphQL UUID implementation
   UUID:
     model:
@@ -153,6 +152,7 @@ models:
   Int:
     model:
       - github.com/99designs/gqlgen/graphql.Int32
+
   Int64:
     model:
       - github.com/99designs/gqlgen/graphql.Int

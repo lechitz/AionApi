@@ -5,22 +5,8 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
-
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 )
-
-// InjectUserIntoContext puts userID from claims into context if present.
-func InjectUserIntoContext(ctx context.Context, claims map[string]any) context.Context {
-	userIDFloat, ok := claims[claimskeys.UserID].(float64)
-	if !ok {
-		return ctx
-	}
-
-	userID := uint64(userIDFloat)
-
-	return context.WithValue(ctx, ctxkeys.UserID, userID)
-}
 
 // GetRequestID returns the request ID from the context.
 func GetRequestID(ctx context.Context) string {

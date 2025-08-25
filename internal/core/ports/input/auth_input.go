@@ -14,7 +14,7 @@ type Authenticator interface {
 
 // SessionRevoker provides a method to invalidate user sessions by revoking tokens.
 type SessionRevoker interface {
-	Logout(ctx context.Context, token string) error
+	Logout(ctx context.Context, userID uint64) error
 }
 
 // AuthService combines the functionalities of authentication and session management.

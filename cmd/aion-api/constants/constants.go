@@ -9,9 +9,6 @@ const (
 	// SuccessToInitializeDependencies is a constant string indicating successful initialization of application dependencies.
 	SuccessToInitializeDependencies = "dependencies initialized successfully"
 
-	// LoadedConfig is a constant string used to indicate the application has successfully loaded its configuration.
-	LoadedConfig = "loaded config: %+v"
-
 	// ErrToFailedLoadConfiguration is a constant string representing an error message for failure in loading configuration.
 	ErrToFailedLoadConfiguration = "failed to load configuration"
 
@@ -33,12 +30,9 @@ const (
 	// MsgUnexpectedServerFailure is a constant string used to indicate an unexpected failure in starting one of the application servers.
 	MsgUnexpectedServerFailure = "unexpected failure while starting one of the application servers (HTTP or GraphQL)"
 
-	// ServerStartFmt is a constant string used to format the message indicating the start of the server.
-	ServerStartFmt = "%s server started"
-
 	// ServerFailureFmt is a constant string used to format the message indicating a failure in starting the server.
 	ServerFailureFmt = "failed to start server on %s: %w"
 
 	// ShutdownFailureFmt is a constant string used to format the message indicating a failure in shutting down the server.
-	ShutdownFailureFmt = "failed to shutdown server on %s: %v"
+	ShutdownFailureFmt = "failed to shutdown server"
 )

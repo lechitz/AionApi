@@ -1,3 +1,4 @@
+// internal/core/usecase/auth/logout.go
 package auth
 
 import (
@@ -5,31 +6,36 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 )
 
-// Logout revokes a user's authentication token, effectively logging them out. Returns an error if token verification or deletion fails.
-func (s *Service) Logout(ctx context.Context, token string) error {
-	userID, _, err := s.tokenService.GetToken(ctx, token)
-	if err != nil {
-		s.logger.Errorw(constants.ErrorToCheckToken, commonkeys.Error, err.Error())
-		return fmt.Errorf("%s: %w", constants.ErrorToCheckToken, err)
-	}
+// Logout revokes a user's authentication token.
+func (s *Service) Logout(ctx context.Context, userID uint64) error {
+	tracer := otel.Tracer(constants.TracerName)
+	ctx, span := tracer.Start(ctx, constants.SpanLogout)
+	defer span.End()
 
-	tokenDomain := domain.TokenDomain{
-		UserID: userID,
-		Token:  token,
-	}
+	span.SetAttributes(
+		attribute.String(commonkeys.Operation, constants.SpanLogout),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+	)
 
-	if err := s.tokenService.Delete(ctx, tokenDomain); err != nil {
-		s.logger.Errorw(constants.ErrorToRevokeToken, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(userID, 10))
+	span.AddEvent(constants.EventRevokeToken)
+	if err := s.tokenStore.Delete(ctx, userID); err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, constants.ErrorToRevokeToken)
+		s.logger.ErrorwCtx(ctx, constants.ErrorToRevokeToken, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(userID, 10))
 		return fmt.Errorf("%s: %w", constants.ErrorToRevokeToken, err)
 	}
 
-	s.logger.Infow(constants.SuccessUserLoggedOut, commonkeys.UserID, strconv.FormatUint(userID, 10))
+	span.AddEvent(constants.EventLogoutSuccess)
+	span.SetStatus(codes.Ok, constants.SuccessUserLoggedOut)
 
+	s.logger.InfowCtx(ctx, constants.SuccessUserLoggedOut, commonkeys.UserID, strconv.FormatUint(userID, 10))
 	return nil
 }

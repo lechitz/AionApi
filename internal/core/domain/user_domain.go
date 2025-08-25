@@ -3,8 +3,6 @@ package domain
 
 import "time"
 
-// TODO: retirar o import de time do domain.
-
 // User represents a user within the AionApi system.
 // It contains identification data, credentials, and lifecycle metadata.
 type User struct {

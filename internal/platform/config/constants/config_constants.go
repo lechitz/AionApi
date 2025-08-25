@@ -12,16 +12,23 @@ const SecretKeyWasNotSet = "SECRET_KEY was not set. A new one was generated for 
 
 // Validation message constants.
 const (
-	ErrHTTPPortRequired     = "HTTP port is required"
-	ErrHTTPContextPathEmpty = "HTTP context path cannot be empty"
-	ErrHTTPReadTimeoutMin   = "HTTP read timeout must be at least %v"
-	ErrHTTPWriteTimeoutMin  = "HTTP write timeout must be at least %v" // #nosec G101
+	ErrHTTPPortRequired               = "HTTP port is required"
+	ErrHTTPHostRequired               = "HTTP host is required"
+	ErrHTTPContextPathEmpty           = "HTTP context path cannot be empty"
+	ErrHTTPContextMustStart           = "HTTP context path must start with '/'"
+	ErrHTTPContextMustNotEndWithSlash = "HTTP context path must not end with '/'"
+	ErrHTTPReadTimeoutMin             = "HTTP read timeout must be at least %v"
+	ErrHTTPWriteTimeoutMin            = "HTTP write timeout must be at least %v" // #nosec G101
+	ErrHTTPReadHeaderTimeoutMin       = "HTTP read header timeout must be greater than 0"
+	ErrHTTPIdleTimeoutMin             = "HTTP idle timeout must be greater than 0"
+	ErrHTTPMaxHeaderBytesMin          = "HTTP max header bytes must be greater than 0"
 
-	ErrGraphqlPortRequired    = "GraphQL port is required"
-	ErrGraphqlPathRequired    = "GraphQL path is required"
-	ErrGraphqlPathMustStart   = "GraphQL path must start with '/'"
-	ErrGraphqlReadTimeoutMin  = "GraphQL read timeout must be at least %v"
-	ErrGraphqlWriteTimeoutMin = "GraphQL write timeout must be at least %v"
+	ErrGraphqlPortRequired         = "GraphQL port is required"
+	ErrGraphqlPathRequired         = "GraphQL path is required"
+	ErrGraphqlPathMustStart        = "GraphQL path must start with '/'"
+	ErrGraphqlReadHeaderTimeoutMin = "GraphQL read header timeout be greater than 0"
+	ErrGraphqlReadTimeoutMin       = "GraphQL read timeout must be at least %v"
+	ErrGraphqlWriteTimeoutMin      = "GraphQL write timeout must be at least %v"
 
 	ErrCachePoolSizeMin = "CACHE_POOL_SIZE must be at least %d"
 	ErrCacheAddrEmpty   = "cache address cannot be empty"
@@ -47,5 +54,5 @@ const (
 	ErrAppContextReqMin      = "context request timeout must be at least %v"
 	ErrAppShutdownTimeoutMin = "shutdown timeout must be at least %d second"
 
-	InfoJWTSecretGenerated = "JWT secret key successfully generated with length: %d" // #nosec G101
+	InfoSecretKeyGenerated = "JWT secret key successfully generated with length: %d" // #nosec G101
 )

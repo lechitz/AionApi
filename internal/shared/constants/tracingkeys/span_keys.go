@@ -10,6 +10,9 @@ const (
 
 	// RequestUserAgentKey is the key for recording the request's User-Agent header.
 	RequestUserAgentKey = "request.user_agent"
+
+	// ContextUserID is the key for recording the user ID from the context.
+	ContextUserID = "context.user_id"
 )
 
 const (

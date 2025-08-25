@@ -1,4 +1,4 @@
-// Package httpresponse centralizes HTTP response helpers for all handlers/domains.
+// Package httpresponse centralizes HTTP response helpers for all controllers/domains.
 package httpresponse
 
 import (

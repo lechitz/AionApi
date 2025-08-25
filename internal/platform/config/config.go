@@ -4,23 +4,9 @@ package config
 import (
 	"errors"
 	"fmt"
-	"github.com/lechitz/AionApi/internal/adapters/secondary/security/jwt"
 
-	"github.com/kelseyhightower/envconfig"
-	"github.com/lechitz/AionApi/internal/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/config/constants"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 )
-
-// Loader is responsible for reading environment configuration.
-type Loader struct {
-	cfg Config
-}
-
-// New returns a new instance of Loader.
-func New() *Loader {
-	return &Loader{}
-}
 
 // Config holds all configuration sections required to bootstrap the application.
 type Config struct {
@@ -33,28 +19,6 @@ type Config struct {
 	ServerHTTP    ServerHTTP
 	DB            DBConfig
 	Application   Application
-}
-
-// Load reads environment configuration and returns a Config struct.
-// Panics on fatal error, logging with the provided logger.
-func (l *Loader) Load(logger output.ContextLogger) (*Config, error) {
-	if err := envconfig.Process(commonkeys.Setting, &l.cfg); err != nil {
-		logger.Errorw(constants.ErrFailedToProcessEnvVars, commonkeys.Error, err)
-		panic(err)
-	}
-
-	if l.cfg.Secret.Key == "" {
-		generated, err := jwt.GenerateToken() //TODO: ajustar e repensar a necessidade !
-		if err != nil {
-			logger.Errorw(constants.ErrGenerateSecretKey, commonkeys.Error, err)
-			panic(err)
-		}
-		l.cfg.Secret.Key = generated
-		logger.Warnf(constants.SecretKeyWasNotSet)
-		logger.Infof(constants.InfoJWTSecretGenerated, len(generated))
-	}
-
-	return &l.cfg, nil
 }
 
 // Validate checks if the configuration is valid, returning the first validation error encountered.
@@ -77,15 +41,25 @@ func (c *Config) Validate() error {
 	if err := c.validateApp(); err != nil {
 		return err
 	}
+
 	return nil
 }
 
 func (c *Config) validateHTTP() error {
+	if c.ServerHTTP.Host == "" {
+		return errors.New(constants.ErrHTTPHostRequired)
+	}
 	if c.ServerHTTP.Port == "" {
 		return errors.New(constants.ErrHTTPPortRequired)
 	}
 	if c.ServerHTTP.Context == "" {
 		return errors.New(constants.ErrHTTPContextPathEmpty)
+	}
+	if c.ServerHTTP.Context[0] != '/' {
+		return errors.New(constants.ErrHTTPContextMustStart)
+	}
+	if len(c.ServerHTTP.Context) > 1 && c.ServerHTTP.Context[len(c.ServerHTTP.Context)-1] == '/' {
+		return errors.New(constants.ErrHTTPContextMustNotEndWithSlash)
 	}
 	if c.ServerHTTP.ReadTimeout < constants.MinHTTPTimeout {
 		return fmt.Errorf(constants.ErrHTTPReadTimeoutMin, constants.MinHTTPTimeout)
@@ -93,6 +67,16 @@ func (c *Config) validateHTTP() error {
 	if c.ServerHTTP.WriteTimeout < constants.MinHTTPTimeout {
 		return fmt.Errorf(constants.ErrHTTPWriteTimeoutMin, constants.MinHTTPTimeout)
 	}
+	if c.ServerHTTP.ReadHeaderTimeout <= 0 {
+		return errors.New(constants.ErrHTTPReadHeaderTimeoutMin)
+	}
+	if c.ServerHTTP.IdleTimeout <= 0 {
+		return errors.New(constants.ErrHTTPIdleTimeoutMin)
+	}
+	if c.ServerHTTP.MaxHeaderBytes <= 0 {
+		return errors.New(constants.ErrHTTPMaxHeaderBytesMin)
+	}
+
 	return nil
 }
 
@@ -112,6 +96,16 @@ func (c *Config) validateGraphQL() error {
 	if c.ServerGraphql.WriteTimeout < constants.MinGraphQLTimeout {
 		return fmt.Errorf(constants.ErrGraphqlWriteTimeoutMin, constants.MinGraphQLTimeout)
 	}
+	if c.ServerGraphql.ReadHeaderTimeout <= 0 {
+		return errors.New(constants.ErrGraphqlReadHeaderTimeoutMin)
+	}
+	if c.ServerGraphql.IdleTimeout <= 0 {
+		return errors.New(constants.ErrHTTPIdleTimeoutMin)
+	}
+	if c.ServerGraphql.MaxHeaderBytes <= 0 {
+		return errors.New(constants.ErrHTTPMaxHeaderBytesMin)
+	}
+
 	return nil
 }
 
@@ -131,7 +125,7 @@ func (c *Config) validateDB() error {
 	}
 	if c.DB.Type != "postgres" {
 		return fmt.Errorf(constants.ErrDBTypeUnsupported, c.DB.Type)
-	}
+	} //TODO: pensar onde colocar o `postgres`.
 	if c.DB.Host == "" {
 		return errors.New(constants.ErrDBHostEmpty)
 	}
@@ -173,6 +167,7 @@ func (c *Config) validateDB() error {
 	if c.DB.MaxRetries < constants.MinDBMaxRetries {
 		return fmt.Errorf(constants.ErrDBMaxRetriesMin, constants.MinDBMaxRetries)
 	}
+
 	return nil
 }
 
@@ -191,6 +186,7 @@ func (c *Config) validateObservability() error {
 			)
 		}
 	}
+
 	return nil
 }
 
@@ -201,5 +197,6 @@ func (c *Config) validateApp() error {
 	if c.Application.Timeout < constants.MinShutdownTimeout {
 		return fmt.Errorf(constants.ErrAppShutdownTimeoutMin, constants.MinShutdownTimeout)
 	}
+
 	return nil
 }

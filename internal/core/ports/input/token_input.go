@@ -8,24 +8,24 @@ import (
 
 //TODO: preciso ajustar isso aqui ..
 
-// TokenCreator defines a method for creating a new token in the system.
+// TokenCreator creates a new token for a user.
 type TokenCreator interface {
-	CreateToken(ctx context.Context, userID uint64) (domain.TokenDomain, error)
+	Create(ctx context.Context, userID uint64) (domain.Token, error)
 }
 
-// TokenVerifier defines a method for verifying the validity of a given token.
-type TokenVerifier interface {
-	GetToken(ctx context.Context, token string) (uint64, string, error)
+// TokenValidator validates a raw token and returns the resolved userID and claims.
+type TokenValidator interface {
+	Validate(ctx context.Context, token string) (userID uint64, claims map[string]any, err error)
 }
 
-// TokenRemover defines a method for deleting a token from the system.
+// TokenRemover revokes (deletes) the token for a given user.
 type TokenRemover interface {
-	Delete(ctx context.Context, token domain.TokenDomain) error
+	Revoke(ctx context.Context, userID uint64) error
 }
 
-// TokenService combines the functionalities of token creation, verification, deletion, and update operations.
+// TokenService is the full token application port.
 type TokenService interface {
 	TokenCreator
-	TokenVerifier
+	TokenValidator
 	TokenRemover
 }

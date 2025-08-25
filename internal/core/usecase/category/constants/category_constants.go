@@ -1,6 +1,31 @@
 // Package constants contains constants related to category operations.
 package constants
 
+// ===== Tracing =====
+const (
+	TracerName             = "aionapi.category"
+	SpanCreateCategory     = "CreateCategory"
+	SpanGetCategoryByID    = "GetCategoryByID"
+	SpanGetCategoryByName  = "GetCategoryByName"
+	SpanListAllCategories  = "ListAllCategories"
+	SpanUpdateCategory     = "UpdateCategory"
+	SpanSoftDeleteCategory = "SoftDeleteCategory"
+)
+
+// Events (trace)
+const (
+	EventValidateInput     = "validate_input"
+	EventCheckUniqueness   = "check_uniqueness"
+	EventRepositoryCreate  = "repository_create"
+	EventRepositoryGet     = "repository_get"
+	EventRepositoryListAll = "repository_list_all"
+	EventRepositoryUpdate  = "repository_update"
+	EventRepositoryDelete  = "repository_delete"
+	EventSuccess           = "success"
+)
+
+// ===== Mensagens/Erros existentes =====
+
 // ErrToValidateCategory indicates a validation error in a category operation.
 const ErrToValidateCategory = "category validation error"
 

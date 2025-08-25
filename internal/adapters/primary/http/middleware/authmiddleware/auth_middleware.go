@@ -1,101 +1,94 @@
-// Package authmiddleware provides functionality for authentication in HTTP middleware.
+// Package authmiddleware provides authentication middleware for HTTP.
 package authmiddleware
 
 import (
 	"context"
-	"github.com/lechitz/AionApi/internal/adapters/secondary/security/jwt"
+	"errors"
 	"net/http"
 	"strconv"
-
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
-
-	"github.com/lechitz/AionApi/internal/shared/contextutils"
-
-	"github.com/lechitz/AionApi/internal/core/domain" //TODO: retirar dependencia do domain e usar um DTO.
-	"github.com/lechitz/AionApi/internal/core/ports/output"
+	"strings"
 
 	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/authmiddleware/constants"
+	"github.com/lechitz/AionApi/internal/core/ports/input"
+	"github.com/lechitz/AionApi/internal/core/ports/output"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/AionApi/internal/shared/httpresponse"
+	"github.com/lechitz/AionApi/internal/shared/sharederrors"
+
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 )
 
-// MiddlewareAuth provides authentication middleware functionality.
 type MiddlewareAuth struct {
-	tokenService         output.TokenStore
-	logger               output.ContextLogger
-	tokenClaimsExtractor output.TokenClaimsExtractor
+	tokenService input.TokenService
+	logger       output.ContextLogger
 }
 
-// New creates and initializes middleware for authentication.
-func New(tokenService output.TokenStore, logger output.ContextLogger, tokenClaimsExtractor output.TokenClaimsExtractor) *MiddlewareAuth {
+func New(tokenService input.TokenService, logger output.ContextLogger) *MiddlewareAuth {
 	return &MiddlewareAuth{
-		tokenService:         tokenService,
-		logger:               logger,
-		tokenClaimsExtractor: tokenClaimsExtractor,
+		tokenService: tokenService,
+		logger:       logger,
 	}
 }
 
-// TODO: ajustar as repostas pra quando não tiver um token. Ver se faz sentido responder o payload padrão de respostas da API.
-
-// Auth validates JWT tokens and attaches user context.
 func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tr := otel.Tracer("MiddlewareAuth")
-		ctx, span := tr.Start(r.Context(), "Auth")
+		tr := otel.Tracer(constants.TracerAuthMiddleware)
+		ctx, span := tr.Start(r.Context(), constants.SpanAuthMiddleware)
 		defer span.End()
 
-		claims, err := a.tokenClaimsExtractor.ExtractFromRequest(r)
-		if err != nil {
-			span.SetStatus(codes.Error, "missing or invalid token")
-			span.SetAttributes(attribute.String("authmiddleware.error", err.Error()))
-			a.logger.Warnw(constants.ErrorUnauthorizedAccessMissingToken, commonkeys.Error, err.Error())
-			http.Error(w, constants.ErrorUnauthorizedAccessMissingToken, http.StatusUnauthorized)
-			return
-		}
-
-		newCtx := contextutils.InjectUserIntoContext(ctx, claims)
-
-		userID, ok := newCtx.Value(ctxkeys.UserID).(uint64)
-		if !ok {
-			span.SetStatus(codes.Error, "missing userID in claims")
-			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken)
-			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
-			return
-		}
-
-		span.SetAttributes(attribute.String("authmiddleware.userID", strconv.FormatUint(userID, 10)))
-
-		tokenVal, ok := ctx.Value(ctxkeys.Token).(string)
-		if !ok || tokenVal == "" {
-			tokenVal, err = jwt.ExtractTokenFromCookie(r)
-			if err != nil {
-				span.SetStatus(codes.Error, "token missing in context and cookie")
-				span.SetAttributes(attribute.String("authmiddleware.error", err.Error()))
-				a.logger.Warnw(constants.ErrorUnauthorizedAccessMissingToken, commonkeys.Error, err.Error())
-				http.Error(w, constants.ErrorUnauthorizedAccessMissingToken, http.StatusUnauthorized)
-				return
+		rawToken, err := extractToken(r)
+		if err != nil || rawToken == "" {
+			span.SetStatus(codes.Error, constants.SpanErrorMissingToken)
+			if err == nil {
+				err = sharederrors.ErrUnauthorized(constants.ErrorUnauthorizedAccessMissingToken)
 			}
-		}
-
-		tokenDomain := domain.TokenDomain{UserID: userID, Key: tokenVal} //TODO: retirar dependencia do domain e usar um DTO.
-
-		if _, err := a.tokenService.Get(ctx, tokenDomain); err != nil {
-			span.SetStatus(codes.Error, "token not found in cache")
-			span.SetAttributes(attribute.String("authmiddleware.error", err.Error()))
-			a.logger.Warnw(constants.ErrorUnauthorizedAccessInvalidToken, commonkeys.Error, err.Error())
-			http.Error(w, constants.ErrorUnauthorizedAccessInvalidToken, http.StatusUnauthorized)
+			a.logger.WarnwCtx(ctx, constants.ErrorUnauthorizedAccessMissingToken)
+			httpresponse.WriteAuthError(w, err, a.logger)
 			return
 		}
 
-		span.SetStatus(codes.Ok, "authenticated")
-		span.SetAttributes(attribute.String("authmiddleware.status", "authenticated"))
+		userID, claims, err := a.tokenService.Validate(ctx, rawToken)
+		if err != nil {
+			span.SetStatus(codes.Error, constants.SpanErrorTokenInvalid)
+			span.SetAttributes(attribute.String(constants.AttrAuthMiddlewareError, err.Error()))
+			a.logger.WarnwCtx(ctx, constants.ErrorUnauthorizedAccessInvalidToken, commonkeys.Error, err.Error())
+			httpresponse.WriteAuthError(w, err, a.logger)
+			return
+		}
 
-		newCtx = context.WithValue(newCtx, ctxkeys.Token, tokenDomain.Key)
+		ctx = context.WithValue(ctx, ctxkeys.UserID, userID)
+		ctx = context.WithValue(ctx, ctxkeys.Token, rawToken)
+		if claims != nil {
+			ctx = context.WithValue(ctx, ctxkeys.Claims, claims)
+		}
 
-		a.logger.Infow("authmiddleware context set", commonkeys.UserID, strconv.FormatUint(userID, 10))
+		span.SetStatus(codes.Ok, constants.SpanStatusAuthenticated)
+		span.SetAttributes(
+			attribute.String(constants.AttrAuthMiddlewareUserID, strconv.FormatUint(userID, 10)),
+			attribute.String(constants.AttrAuthMiddlewareStatus, constants.StatusAuthenticated),
+		)
+		a.logger.InfowCtx(ctx, constants.MsgContextSet, commonkeys.UserID, strconv.FormatUint(userID, 10))
 
-		next.ServeHTTP(w, r.WithContext(newCtx))
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func extractToken(r *http.Request) (string, error) {
+	// Authorization: Bearer <token>
+	if ah := r.Header.Get("Authorization"); ah != "" {
+		parts := strings.SplitN(ah, " ", 2)
+		if len(parts) == 2 && strings.EqualFold(parts[0], "Bearer") && parts[1] != "" {
+			return parts[1], nil
+		}
+	}
+
+	// Cookie
+	if c, err := r.Cookie(commonkeys.AuthTokenCookieName); err == nil && c != nil && c.Value != "" {
+		return c.Value, nil
+	}
+
+	return "", errors.New(constants.ErrorUnauthorizedAccessMissingToken)
 }

@@ -1,0 +1,41 @@
+# Category domain schema (extends root types defined in root.graphqls)
+
+type Category {
+    id: ID!
+    userId: ID!
+    name: String!
+    description: String
+    colorHex: String
+    icon: String
+}
+
+input CreateCategoryInput {
+    name: String!
+    description: String
+    colorHex: String
+    icon: String
+}
+
+input UpdateCategoryInput {
+    id: ID!
+    name: String
+    description: String
+    colorHex: String
+    icon: String
+}
+
+input DeleteCategoryInput {
+    id: ID!
+}
+
+extend type Query {
+    categories: [Category!]! @auth(role: "user")
+    categoryById(id: ID!): Category @auth(role: "user")
+    categoryByName(name: String!): Category @auth(role: "user")
+}
+
+extend type Mutation {
+    createCategory(input: CreateCategoryInput!): Category! @auth(role: "user")
+    updateCategory(input: UpdateCategoryInput!): Category! @auth(role: "user")
+    softDeleteCategory(input: DeleteCategoryInput!): Boolean! @auth(role: "user")
+}

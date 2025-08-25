@@ -51,7 +51,7 @@ func InitOtelMetrics(cfg *config.Config, logger output.ContextLogger) func() {
 	exporter, err := otlpmetrichttp.New(context.Background(), opts...)
 	if err != nil {
 		logger.Errorw(ErrFailedToInitializeOTLPMetricsExporter, commonkeys.Error, err)
-		panic(err)
+		panic(err) //TODO: avaliar se mantenho panic ou uso os.Exit
 	}
 
 	provider := metric.NewMeterProvider(

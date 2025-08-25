@@ -7,33 +7,51 @@ import (
 	"github.com/lechitz/AionApi/internal/core/domain"
 )
 
-// UserCreator defines a method to create a new user with the given details and return the created user or an error.
-type UserCreator interface {
-	CreateUser(ctx context.Context, user domain.User) (domain.User, error)
+// CreateUserCommand defines a struct for creating a new user.
+type CreateUserCommand struct {
+	Name     string
+	Username string
+	Email    string
+	Password string
 }
 
-// UserRetriever defines methods to retrieve user information from a data source.
-type UserRetriever interface {
-	GetAllUsers(ctx context.Context) ([]domain.User, error)
-	GetUserByID(ctx context.Context, id uint64) (domain.User, error)
+// UserCreator defines a method to create a new user with the given details and return the created user or an error.
+type UserCreator interface {
+	Create(ctx context.Context, cmd CreateUserCommand) (domain.User, error)
+}
+
+type UserReader interface {
+	GetByID(ctx context.Context, userID uint64) (domain.User, error)
 	GetUserByUsername(ctx context.Context, username string) (domain.User, error)
+	ListAll(ctx context.Context) ([]domain.User, error)
+}
+
+// UpdateUserCommand defines a struct for updating user information.
+type UpdateUserCommand struct {
+	Name     *string
+	Username *string
+	Email    *string
+}
+
+func (u UpdateUserCommand) HasUpdates() bool {
+	return u.Name != nil || u.Username != nil || u.Email != nil
 }
 
 // UserUpdater defines methods for updating user information and user passwords in the system.
 type UserUpdater interface {
-	UpdateUser(ctx context.Context, user domain.User) (domain.User, error)
-	UpdateUserPassword(ctx context.Context, user domain.User, oldPassword, newPassword string) (domain.User, string, error)
+	UpdateUser(ctx context.Context, userID uint64, cmd UpdateUserCommand) (domain.User, error)
+	UpdatePassword(ctx context.Context, userID uint64, oldPassword, newPassword string) (string, error)
 }
 
-// UserDeleter provides a method to perform a soft delete operation on a user by their unique identifier.
-type UserDeleter interface {
-	SoftDeleteUser(ctx context.Context, id uint64) error
+// UserRemover provides a method to perform a soft delete operation on a user by their unique identifier.
+type UserRemover interface {
+	SoftDeleteUser(ctx context.Context, userID uint64) error
 }
 
 // UserService defines methods for managing user creation, retrieval, updates, and soft deletion by extending related interfaces.
 type UserService interface {
 	UserCreator
-	UserRetriever
+	UserReader
 	UserUpdater
-	UserDeleter
+	UserRemover
 }

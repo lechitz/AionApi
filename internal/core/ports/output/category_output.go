@@ -9,14 +9,14 @@ import (
 
 // CategoryCreator defines an interface for creating a new category with specified attributes in a given context.
 type CategoryCreator interface {
-	CreateCategory(ctx context.Context, category domain.Category) (domain.Category, error)
+	Create(ctx context.Context, category domain.Category) (domain.Category, error)
 }
 
-// CategoryRetriver defines methods for retrieving category details or multiple categories for a specific user.
-type CategoryRetriver interface {
-	GetCategoryByID(ctx context.Context, category domain.Category) (domain.Category, error)
-	GetCategoryByName(ctx context.Context, category domain.Category) (domain.Category, error)
-	GetAllCategories(ctx context.Context, userID uint64) ([]domain.Category, error)
+// CategoryRetriever defines methods for retrieving category details or multiple categories for a specific user.
+type CategoryRetriever interface {
+	GetByID(ctx context.Context, categoryID, userID uint64) (domain.Category, error)
+	GetByName(ctx context.Context, categoryName string, userID uint64) (domain.Category, error)
+	ListAll(ctx context.Context, userID uint64) ([]domain.Category, error)
 }
 
 // CategoryUpdater defines an interface for updating a category's attributes in a given context based on the provided category ID and user ID.
@@ -26,13 +26,13 @@ type CategoryUpdater interface {
 
 // CategoryDeleter defines an interface for handling the soft deletion of categories within a contextual operation.
 type CategoryDeleter interface {
-	SoftDeleteCategory(ctx context.Context, category domain.Category) error
+	SoftDelete(ctx context.Context, categoryID, userID uint64) error
 }
 
-// CategoryStore represents a composite interface for managing categories, combining creation, retrieval, updating, and soft-deletion functionalities.
-type CategoryStore interface {
+// CategoryRepository represents a composite interface for managing categories, combining creation, retrieval, updating, and soft-deletion functionalities.
+type CategoryRepository interface {
 	CategoryCreator
-	CategoryRetriver
+	CategoryRetriever
 	CategoryUpdater
 	CategoryDeleter
 }

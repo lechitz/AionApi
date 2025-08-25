@@ -3,56 +3,48 @@
 package model
 
 type Category struct {
-	CategoryID  string  `json:"category_id"`
-	UserID      string  `json:"user_id"`
+	ID          string  `json:"id"`
+	UserID      string  `json:"userId"`
 	Name        string  `json:"name"`
 	Description *string `json:"description,omitempty"`
-	ColorHex    *string `json:"color_hex,omitempty"`
+	ColorHex    *string `json:"colorHex,omitempty"`
 	Icon        *string `json:"icon,omitempty"`
 }
 
-type DtoCreateCategory struct {
+type CreateCategoryInput struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description,omitempty"`
-	ColorHex    *string `json:"color_hex,omitempty"`
+	ColorHex    *string `json:"colorHex,omitempty"`
 	Icon        *string `json:"icon,omitempty"`
 }
 
-type DtoDeleteCategory struct {
-	CategoryID string `json:"category_id"`
-}
-
-type DtoGetCategoryByID struct {
-	CategoryID string `json:"category_id"`
-}
-
-type DtoGetCategoryByName struct {
-	Name string `json:"name"`
-}
-
-type DtoUpdateCategory struct {
-	CategoryID  string  `json:"category_id"`
-	Name        *string `json:"name,omitempty"`
+type CreateTagInput struct {
+	Name        string  `json:"name"`
+	CategoryID  string  `json:"categoryId"`
 	Description *string `json:"description,omitempty"`
-	ColorHex    *string `json:"color_hex,omitempty"`
-	Icon        *string `json:"icon,omitempty"`
+}
+
+type DeleteCategoryInput struct {
+	ID string `json:"id"`
 }
 
 type Mutation struct {
 }
 
-type NewTag struct {
-	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
-	CategoryID  string  `json:"category_id"`
-}
-
 type Query struct {
 }
 
-type Tags struct {
-	TagID       string    `json:"tag_id"`
-	Name        string    `json:"name"`
-	CategoryID  *Category `json:"category_id"`
-	Description *string   `json:"description,omitempty"`
+type Tag struct {
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	CategoryID  string  `json:"categoryId"`
+	Description *string `json:"description,omitempty"`
+}
+
+type UpdateCategoryInput struct {
+	ID          string  `json:"id"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	ColorHex    *string `json:"colorHex,omitempty"`
+	Icon        *string `json:"icon,omitempty"`
 }

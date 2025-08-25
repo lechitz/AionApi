@@ -2,24 +2,25 @@
 package auth
 
 import (
-	"github.com/lechitz/AionApi/internal/core/ports/input"
 	"github.com/lechitz/AionApi/internal/core/ports/output"
 )
 
 // Service provides authentication operations including login, logout, and user token management.
 type Service struct {
-	userService    output.UserByUsernameFinder
-	tokenService   input.TokenService
-	securityHasher output.Hasher
+	userRepository output.UserRepository
+	hasher         output.Hasher
+	tokenProvider  output.TokenProvider
+	tokenStore     output.TokenStore
 	logger         output.ContextLogger
 }
 
 // NewService creates and returns a new instance of Service with dependencies for user retrieval, token management, and security operations.
-func NewService(userByUsernameFinder output.UserByUsernameFinder, tokenService input.TokenService, securityHasher output.Hasher, logger output.ContextLogger) *Service {
+func NewService(userRepository output.UserRepository, tokenStore output.TokenStore, hasher output.Hasher, tokenProvider output.TokenProvider, logger output.ContextLogger) *Service {
 	return &Service{
-		userService:    userByUsernameFinder,
-		tokenService:   tokenService,
-		securityHasher: securityHasher,
+		userRepository: userRepository,
+		tokenStore:     tokenStore,
+		tokenProvider:  tokenProvider,
+		hasher:         hasher,
 		logger:         logger,
 	}
 }

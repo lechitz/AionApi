@@ -5,103 +5,143 @@ import (
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/core/domain"
-
-	"github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
-	"go.uber.org/mock/gomock"
-
+	authconst "github.com/lechitz/AionApi/internal/core/usecase/auth/constants"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 )
 
+// TestLogin_Success verifies that a valid username/password yields a
+// generated token saved in the store and returns the expected user + token.
 func TestLogin_Success(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := domain.User{Username: "lechitz"}
 	mockUser := domain.User{ID: 1, Username: "lechitz", Password: "hashed"}
 
-	suite.UserRetriever.EXPECT().
-		GetUserByUsername(suite.Ctx, "lechitz").
+	// 1) lookup user
+	suite.UserRepository.EXPECT().
+		GetByUsername(gomock.Any(), "lechitz").
 		Return(mockUser, nil)
 
-	suite.PasswordHasher.EXPECT().
-		ValidatePassword("hashed", "test123").
+	// 2) compare password (hashed vs plain)
+	suite.Hasher.EXPECT().
+		Compare("hashed", "test123").
 		Return(nil)
 
-	suite.TokenService.EXPECT().
-		CreateToken(suite.Ctx, gomock.AssignableToTypeOf(domain.TokenDomain{UserID: 1})).
+	// 3) generate token
+	suite.TokenProvider.EXPECT().
+		Generate(gomock.Any(), uint64(1)).
 		Return("token-string", nil)
 
-	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "test123")
+	// 4) persist token
+	suite.TokenStore.EXPECT().
+		Save(gomock.Any(), domain.Token{Key: 1, Value: "token-string"}).
+		Return(nil)
+
+	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, "lechitz", "test123")
 
 	require.NoError(t, err)
 	require.Equal(t, mockUser, userOut)
 	require.Equal(t, "token-string", tokenOut)
 }
 
-func TestLogin_UserNotFound(t *testing.T) {
+// TestLogin_UserNotFound_ReturnsGetUserError ensures we surface the repository error
+// when the username lookup fails.
+func TestLogin_UserNotFound_ReturnsGetUserError(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := domain.User{Username: "invalid_user"}
-
-	suite.UserRetriever.EXPECT().
-		GetUserByUsername(suite.Ctx, "invalid_user").
+	suite.UserRepository.EXPECT().
+		GetByUsername(gomock.Any(), "invalid_user").
 		Return(domain.User{}, errors.New("not found"))
 
-	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "123456")
+	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, "invalid_user", "123456")
 
 	require.Error(t, err)
+	require.Equal(t, authconst.ErrorToGetUserByUserName, err.Error())
 	require.Empty(t, userOut)
 	require.Empty(t, tokenOut)
 }
 
-func TestLogin_WrongPassword(t *testing.T) {
+// TestLogin_WrongPassword_ReturnsInvalidCredentials verifies an invalid password
+// returns InvalidCredentials and does not generate/save a token.
+func TestLogin_WrongPassword_ReturnsInvalidCredentials(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := domain.User{Username: "lechitz"}
 	mockUser := domain.User{ID: 1, Username: "lechitz", Password: "hashed"}
 
-	suite.UserRetriever.EXPECT().
-		GetUserByUsername(suite.Ctx, "lechitz").
+	suite.UserRepository.EXPECT().
+		GetByUsername(gomock.Any(), "lechitz").
 		Return(mockUser, nil)
 
-	suite.PasswordHasher.EXPECT().
-		ValidatePassword("hashed", "wrongpass").
-		Return(errors.New(constants.ErrorToCompareHashAndPassword))
+	suite.Hasher.EXPECT().
+		Compare("hashed", "wrongpass").
+		Return(errors.New(authconst.ErrorToCompareHashAndPassword))
 
-	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "wrongpass")
+	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, "lechitz", "wrongpass")
 
 	require.Error(t, err)
+	require.Equal(t, authconst.InvalidCredentials, err.Error())
 	require.Empty(t, userOut)
 	require.Empty(t, tokenOut)
-	require.Equal(t, constants.ErrorToCompareHashAndPassword, err.Error())
 }
 
-func TestLogin_TokenCreationFails(t *testing.T) {
+// TestLogin_ProviderGenerateFails ensures failure on token generation is surfaced.
+func TestLogin_ProviderGenerateFails(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	inputUser := domain.User{Username: "lechitz"}
 	mockUser := domain.User{ID: 1, Username: "lechitz", Password: "hashed"}
 
-	suite.UserRetriever.EXPECT().
-		GetUserByUsername(suite.Ctx, "lechitz").
+	suite.UserRepository.EXPECT().
+		GetByUsername(gomock.Any(), "lechitz").
 		Return(mockUser, nil)
 
-	suite.PasswordHasher.EXPECT().
-		ValidatePassword("hashed", "123456").
+	suite.Hasher.EXPECT().
+		Compare("hashed", "123456").
 		Return(nil)
 
-	suite.TokenService.EXPECT().
-		CreateToken(suite.Ctx, gomock.Any()).
-		Return("", errors.New(constants.ErrorToCreateToken))
+	suite.TokenProvider.EXPECT().
+		Generate(gomock.Any(), uint64(1)).
+		Return("", errors.New(authconst.ErrorToCreateToken))
 
-	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, inputUser, "123456")
+	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, "lechitz", "123456")
 
 	require.Error(t, err)
+	require.Equal(t, authconst.ErrorToCreateToken, err.Error())
 	require.Empty(t, userOut)
 	require.Empty(t, tokenOut)
-	require.Equal(t, constants.ErrorToCreateToken, err.Error())
+}
+
+// TestLogin_SaveTokenFails ensures failure on saving the token is surfaced.
+func TestLogin_SaveTokenFails(t *testing.T) {
+	suite := setup.AuthServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	mockUser := domain.User{ID: 1, Username: "lechitz", Password: "hashed"}
+
+	suite.UserRepository.EXPECT().
+		GetByUsername(gomock.Any(), "lechitz").
+		Return(mockUser, nil)
+
+	suite.Hasher.EXPECT().
+		Compare("hashed", "123456").
+		Return(nil)
+
+	suite.TokenProvider.EXPECT().
+		Generate(gomock.Any(), uint64(1)).
+		Return("token-string", nil)
+
+	suite.TokenStore.EXPECT().
+		Save(gomock.Any(), domain.Token{Key: 1, Value: "token-string"}).
+		Return(errors.New(authconst.ErrorToCreateToken))
+
+	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, "lechitz", "123456")
+
+	require.Error(t, err)
+	require.Equal(t, authconst.ErrorToCreateToken, err.Error())
+	require.Empty(t, userOut)
+	require.Empty(t, tokenOut)
 }
