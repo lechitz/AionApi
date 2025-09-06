@@ -113,3 +113,10 @@ include makefiles/*.mk
 	format lint lint-fix verify \
 	test test-cover test-html-report test-ci test-clean \
 	migrate-up migrate-down migrate-force migrate-new
+
+## Docs
+docs-serve:
+\t@.venv-docs/bin/mkdocs serve
+
+docs-build:
+\t@.venv-docs/bin/mkdocs build

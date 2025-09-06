@@ -1,6 +1,0 @@
-# Root schema & reusable directives live here.
-
-directive @auth(role: String) on FIELD_DEFINITION
-
-type Query
-type Mutation
