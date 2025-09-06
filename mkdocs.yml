@@ -11,6 +11,7 @@ theme:
     - content.tabs.link
 nav:
   - Home: index.md
+  - Getting started: getting-started.md
 plugins:
   - search
 markdown_extensions:
