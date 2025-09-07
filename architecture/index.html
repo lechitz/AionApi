@@ -1,0 +1,710 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Backend em Go — Hexagonal, REST/GraphQL, Observability">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Architecture - AionApi</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="AionApi" class="md-header__button md-logo" aria-label="AionApi" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AionApi
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/lechitz/AionApi" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lechitz/AionApi
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="AionApi" class="md-nav__button md-logo" aria-label="AionApi" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AionApi
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/lechitz/AionApi" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lechitz/AionApi
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-high-level-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      1) High-level layout
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-hexagonal-ports-adapters" class="md-nav__link">
+    <span class="md-ellipsis">
+      2) Hexagonal (Ports &amp; Adapters)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-request-lifecycles" class="md-nav__link">
+    <span class="md-ellipsis">
+      3) Request lifecycles
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3) Request lifecycles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-rest-example-update-user-password" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 REST (example: Update user password)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-graphql-example-create-category" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 GraphQL (example: Create category)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-platform-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      4) Platform layer
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-persistence-data-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      5) Persistence &amp; data rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-security-auth-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      6) Security &amp; Auth (HTTP)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-observability" class="md-nav__link">
+    <span class="md-ellipsis">
+      7) Observability
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-errors-responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      8) Errors &amp; responses
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-concurrency-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      9) Concurrency &amp; context
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-testing-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      10) Testing strategy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-code-generation-tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      11) Code generation &amp; tooling
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-adding-a-new-bounded-context-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      12) Adding a new bounded context (checklist)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-style-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      13) Style &amp; conventions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-glossary" class="md-nav__link">
+    <span class="md-ellipsis">
+      14) Glossary
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h1>
+<p>This document explains how AionApi is organized and how requests move through the system. It’s a practical guide for contributors who want to understand the Hexagonal (Ports &amp; Adapters) structure, observability, config, and testing strategy.</p>
+<blockquote>
+<p>TL;DR</p>
+<ul>
+<li><strong>Ports &amp; Adapters</strong> with clean, testable boundaries  </li>
+<li><strong>Primary adapters</strong> (HTTP/GraphQL) stay thin; <strong>Usecases</strong> hold business rules; <strong>Secondary adapters</strong> isolate infra  </li>
+<li><strong>Observability-first</strong>: OpenTelemetry traces + structured logs, Prometheus metrics, Grafana dashboards  </li>
+<li><strong>Consistency</strong>: shared error types, response helpers, constants, and middleware</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="1-high-level-layout">1) High-level layout<a class="headerlink" href="#1-high-level-layout" title="Permanent link">&para;</a></h2>
+<pre><code>
+cmd/                    # app entrypoint
+infrastructure/         # docker, migrations, otel/prometheus/grafana, loki/fluentbit
+internal/ &lt;context&gt;/            # bounded contexts (auth, user, category, tag, admin)
+adapter/
+primary/          # inbound adapters (http / graphql)
+secondary/        # outbound adapters (db, cache, token, logger)
+core/               # domain + ports + usecases (business logic)
+platform/             # cross-cutting platform: config, bootstrap, server, observability
+shared/               # reusable helpers: constants, responses, validation, errors
+makefiles/              # grouped Make targets used by the root Makefile
+tests/                  # unit test suites, mocks, fixtures, coverage
+
+</code></pre>
+<p><strong>Bounded contexts currently present:</strong> <code>auth</code>, <code>user</code>, <code>category</code>, <code>tag</code>, <code>admin</code>.</p>
+<hr />
+<h2 id="2-hexagonal-ports-adapters">2) Hexagonal (Ports &amp; Adapters)<a class="headerlink" href="#2-hexagonal-ports-adapters" title="Permanent link">&para;</a></h2>
+<p><strong>Why:</strong> decouple business logic from frameworks and vendors; make the core testable and stable.</p>
+<ul>
+<li><strong>Core / Usecases</strong> (<code>internal/*/core/usecase</code>):<br />
+  Implements input-port interfaces. Pure go, no HTTP/ORM/Redis types. Accepts <code>context.Context</code>, returns domain or semantic errors.</li>
+<li><strong>Primary Adapters</strong> (<code>internal/*/adapter/primary</code>):<br />
+  Transport-facing (HTTP or GraphQL). Decode/validate → call input ports → map domain → response. <strong>No business rules</strong> here.</li>
+<li><strong>Secondary Adapters</strong> (<code>internal/*/adapter/secondary</code>):<br />
+  Implement output-port interfaces (DB/Cache/Token/Logger). Hide GORM/Redis/JWT behind small interfaces.</li>
+</ul>
+<p><strong>Shared contracts &amp; helpers</strong> live under:
+- <code>internal/shared/sharederrors</code> — semantic errors (validation, not_found, conflict, unauthorized, internal, …)
+- <code>internal/shared/httpresponse</code> — opinionated JSON envelope + error→HTTP mapping
+- <code>internal/shared/constants</code> — keys for logs/headers/claims/tracing
+- <code>internal/shared/handlerhelpers</code> — boundary validation + tracing-friendly responses</p>
+<hr />
+<h2 id="3-request-lifecycles">3) Request lifecycles<a class="headerlink" href="#3-request-lifecycles" title="Permanent link">&para;</a></h2>
+<h3 id="31-rest-example-update-user-password">3.1 REST (example: Update user password)<a class="headerlink" href="#31-rest-example-update-user-password" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>HTTP route</strong> (primary adapter)<br />
+<code>internal/user/adapter/primary/http/handler/update_password_user_handler.go</code></li>
+<li><strong>DTO validation</strong><br />
+<code>internal/user/adapter/primary/http/dto/update_password_dto.go</code></li>
+<li><strong>Call usecase</strong><br />
+<code>internal/user/core/usecase/update_password.go</code></li>
+<li><strong>Usecase orchestration</strong>  </li>
+<li><code>repo.GetByID</code> → <code>hasher.Compare</code> → <code>hasher.Hash</code> → <code>repo.Update</code>  </li>
+<li><code>tokenProvider.Generate</code> → <code>authStore.Save</code></li>
+<li><strong>Response mapping</strong><br />
+<code>internal/shared/httpresponse</code> writes a standardized JSON and status code</li>
+<li><strong>Observability</strong><br />
+   Span created in handler &amp; usecase; canonical attributes added (user_id, operation, http_status)</li>
+</ol>
+<h3 id="32-graphql-example-create-category">3.2 GraphQL (example: Create category)<a class="headerlink" href="#32-graphql-example-create-category" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Resolver calls handler</strong><br />
+<code>internal/category/adapter/primary/graphql/resolver/*</code> → handler <code>Create</code></li>
+<li><strong>Handler</strong> maps GraphQL input → domain input, starts span<br />
+<code>internal/category/adapter/primary/graphql/handler/create.go</code></li>
+<li><strong>Usecase</strong> applies rules and calls repo via output ports<br />
+<code>internal/category/core/usecase/create.go</code></li>
+<li><strong>Repo</strong> persists with GORM and maps DB ↔ domain<br />
+<code>internal/category/adapter/secondary/db/repository/create.go</code></li>
+<li><strong>Handler</strong> maps domain → GraphQL model and returns to resolver</li>
+</ol>
+<hr />
+<h2 id="4-platform-layer">4) Platform layer<a class="headerlink" href="#4-platform-layer" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Config</strong> (<code>internal/platform/config</code>)<br />
+  Loads &amp; validates env vars, normalizes paths/timeouts, may generate a <strong>dev-only secret</strong> if missing.</li>
+<li><strong>Bootstrap</strong> (<code>internal/platform/bootstrap</code>)<br />
+  Wires concrete adapters (DB, cache, token, hasher, logger) and constructs services (usecases).</li>
+<li><strong>HTTP server</strong> (<code>internal/platform/server/http</code>)  </li>
+<li><strong>Router port</strong> + <strong>chi adapter</strong>  </li>
+<li><strong>Generic handlers</strong>: <code>/health</code>, 404/405, error/recovery  </li>
+<li><strong>Middlewares</strong>: <code>requestid</code>, <code>recovery</code>  </li>
+<li><strong>Composer</strong> mounts all context routes and GraphQL</li>
+<li><strong>GraphQL server</strong> (<code>internal/platform/server/graph</code>)<br />
+  Gathers schema modules from contexts; <code>make graphql</code> runs gqlgen and assembles the executable schema.</li>
+<li><strong>Observability</strong> (<code>internal/platform/observability</code>)<br />
+  OTel tracer/meter providers (OTLP over HTTP), resource attributes, and helper utilities.</li>
+</ul>
+<hr />
+<h2 id="5-persistence-data-rules">5) Persistence &amp; data rules<a class="headerlink" href="#5-persistence-data-rules" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>ORM</strong>: GORM models live in <code>internal/&lt;context&gt;/adapter/secondary/db/model</code>.<br />
+  Mapping functions in <code>mapper/</code> translate DB ↔ domain; the domain never sees GORM structs.</li>
+<li><strong>Repositories</strong>:<br />
+  Implement CRUD with <strong>context-aware</strong> DB calls (<code>db.WithContext(ctx)</code>), set span attributes, and translate driver errors to <code>sharederrors</code>.</li>
+<li><strong>Soft delete</strong>:<br />
+  Reads must exclude <code>deleted_at</code>; updates return not-found when rows affected = 0.</li>
+<li><strong>Migrations</strong>:<br />
+  SQL files in <code>infrastructure/db/migrations</code>. Use <code>make migrate-up</code> / <code>make migrate-down</code>.<br />
+  DSN provided via <code>MIGRATION_DB</code> (see <code>makefiles/migrate.mk</code>).</li>
+</ul>
+<hr />
+<h2 id="6-security-auth-http">6) Security &amp; Auth (HTTP)<a class="headerlink" href="#6-security-auth-http" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Login</strong>: <code>auth</code> usecase verifies credentials, issues token (<code>AuthProvider</code>), stores reference in cache (<code>AuthStore</code>).  </li>
+<li><strong>Middleware</strong> (primary HTTP adapter): validates <code>Authorization: Bearer &lt;token&gt;</code>, resolves <code>user_id</code>, injects into <code>context</code>.  </li>
+<li><strong>Cookies</strong>: helpers in <code>internal/shared/httputils</code> to set secure/HTTPOnly cookies when applicable.  </li>
+<li><strong>Never log secrets</strong> (passwords, raw tokens, cookie values).</li>
+</ul>
+<hr />
+<h2 id="7-observability">7) Observability<a class="headerlink" href="#7-observability" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Tracing</strong>:<br />
+  Consistent tracer names (e.g., <code>aionapi.user.usecase</code>, <code>aionapi.user.repository</code>, <code>aionapi.graphql.handler</code>).<br />
+  Each handler/usecase/repo opens a span, sets canonical attributes (operation, ids, status), records errors.</li>
+<li><strong>Metrics</strong>:<br />
+  Prometheus scrape via <code>infrastructure/observability/prometheus/prometheus.yml</code>.  </li>
+<li><strong>Dashboards</strong>:<br />
+  Grafana provisioning + a sample dashboard under <code>infrastructure/observability/grafana/dashboards/</code>.</li>
+<li><strong>Logs</strong>:<br />
+  Structured with contextual keys from <code>shared/constants/commonkeys</code>. Fluent Bit + Loki optional.</li>
+</ul>
+<hr />
+<h2 id="8-errors-responses">8) Errors &amp; responses<a class="headerlink" href="#8-errors-responses" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Domain errors</strong> come from <code>shared/sharederrors</code>.  </li>
+<li><strong>HTTP mapping</strong> is centralized in <code>shared/httpresponse</code>:  </li>
+<li><code>validation</code> → 400  </li>
+<li><code>unauthorized</code> → 401  </li>
+<li><code>forbidden</code> → 403  </li>
+<li><code>not_found</code> → 404  </li>
+<li><code>conflict</code> → 409  </li>
+<li><code>rate_limited</code> → 429  </li>
+<li><code>internal</code> → 500</li>
+<li><strong>Consistency</strong>: All adapters return the same envelope shape.</li>
+</ul>
+<hr />
+<h2 id="9-concurrency-context">9) Concurrency &amp; context<a class="headerlink" href="#9-concurrency-context" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Always pass <code>context.Context</code> through handlers, usecases, and repos.  </li>
+<li>Use deadlines/timeouts from config (HTTP/GraphQL).  </li>
+<li><strong>Never</strong> block without honoring ctx cancellation.</li>
+</ul>
+<hr />
+<h2 id="10-testing-strategy">10) Testing strategy<a class="headerlink" href="#10-testing-strategy" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Unit tests</strong> target <strong>usecases</strong> with port <strong>mocks</strong> (gomock).<br />
+  Suites in <code>tests/setup</code> and generated mocks in <code>tests/mocks</code>.</li>
+<li><strong>Transport tests</strong> exercise handlers with fake services.  </li>
+<li><strong>Coverage</strong>: <code>make test-cover</code> → <code>tests/coverage/coverage.html</code>.  </li>
+<li><strong>GraphQL codegen</strong> + <strong>mocks</strong> are part of the local pipeline: <code>make verify</code>.</li>
+</ul>
+<hr />
+<h2 id="11-code-generation-tooling">11) Code generation &amp; tooling<a class="headerlink" href="#11-code-generation-tooling" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>GraphQL</strong>: <code>make graphql</code> copies <code>*.graphqls</code> from contexts into the platform graph module and runs <code>gqlgen</code> + <code>go mod tidy</code>.</li>
+<li><strong>Mocks</strong>: <code>make mocks</code> generates gomock doubles for all output ports under <code>tests/mocks/</code> (flat or namespaced mode).</li>
+<li><strong>Quality</strong>: <code>make format</code>, <code>make lint</code>, <code>make lint-fix</code>.</li>
+<li><strong>Dev/Prod stacks</strong>: <code>make dev</code>, <code>make prod</code> orchestrate Docker Compose with env files under <code>infrastructure/docker/environments/</code>.</li>
+</ul>
+<hr />
+<h2 id="12-adding-a-new-bounded-context-checklist">12) Adding a new bounded context (checklist)<a class="headerlink" href="#12-adding-a-new-bounded-context-checklist" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Core</strong>  </li>
+<li><code>internal/&lt;ctx&gt;/core/domain</code> (entities/VOs)  </li>
+<li><code>internal/&lt;ctx&gt;/core/ports</code> (input/output)  </li>
+<li><code>internal/&lt;ctx&gt;/core/usecase</code> (service + validations + errors)</li>
+<li><strong>Adapters</strong>  </li>
+<li>Primary: <code>http</code> and/or <code>graphql</code> (DTOs, handlers, resolver, thin mapping)  </li>
+<li>Secondary: <code>db</code> (model/mapper/repository), <code>cache</code>, or any external port implementation</li>
+<li><strong>Platform wiring</strong>  </li>
+<li>Add repos/services in <code>internal/platform/bootstrap</code>  </li>
+<li>Mount routes in <code>internal/platform/server/http/composer.go</code> (and/or GraphQL handler)</li>
+<li><strong>Schema / codegen</strong>  </li>
+<li>If GraphQL, drop <code>schema/&lt;ctx&gt;.graphqls</code> and run <code>make graphql</code></li>
+<li><strong>Tests</strong>  </li>
+<li>Add gomock expectations &amp; table tests for usecases  </li>
+<li>Add handler tests with fake services</li>
+<li><strong>Docs</strong>  </li>
+<li>Create <code>docs/&lt;ctx&gt;.md</code> and link from <code>mkdocs.yml</code></li>
+</ol>
+<hr />
+<h2 id="13-style-conventions">13) Style &amp; conventions<a class="headerlink" href="#13-style-conventions" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Primary adapters</strong>: thin, transport-only, start spans, use shared helpers, never touch ORM/cache.  </li>
+<li><strong>Usecases</strong>: pure business rules; input/output ports only; return domain + semantic errors.  </li>
+<li><strong>Secondary adapters</strong>: context-aware DB/Cache calls; map infra errors to domain errors; log metadata only.  </li>
+<li><strong>Shared constants</strong>: no magic strings (claims, headers, log keys, trace attrs).</li>
+</ul>
+<hr />
+<h2 id="14-glossary">14) Glossary<a class="headerlink" href="#14-glossary" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Primary adapter</strong>: inbound interface (HTTP/GraphQL) that calls the domain via input ports.  </li>
+<li><strong>Usecase (core)</strong>: application/business logic that coordinates ports.  </li>
+<li><strong>Secondary adapter</strong>: outbound implementation for repositories or external services.  </li>
+<li><strong>Port</strong>: interface owned by the domain that expresses what it needs (output) or offers (input).  </li>
+<li><strong>Semantic error</strong>: a typed error category (<code>validation</code>, <code>not_found</code>, …) that maps to consistent transports.</li>
+</ul>
+<p>```</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.instant", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>
