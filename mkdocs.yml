@@ -12,6 +12,7 @@ theme:
 nav:
   - Home: index.md
   - Getting started: getting-started.md
+  - Architecture: architecture.md
 plugins:
   - search
 markdown_extensions:
