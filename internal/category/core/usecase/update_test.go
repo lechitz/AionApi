@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/category/domain"
-	"github.com/lechitz/AionApi/internal/core/category/usecase"
+	"github.com/lechitz/AionApi/internal/category/core/domain"
+	"github.com/lechitz/AionApi/internal/category/core/usecase"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.uber.org/mock/gomock"
 

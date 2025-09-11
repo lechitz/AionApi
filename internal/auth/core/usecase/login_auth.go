@@ -6,9 +6,9 @@ import (
 	"errors"
 	"strconv"
 
-	userDomain "github.com/lechitz/AionApi/internal/core/user/domain"
-	"github.com/lechitz/AionApi/internal/feature/auth/core/domain"
+	authDomain "github.com/lechitz/AionApi/internal/auth/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	userDomain "github.com/lechitz/AionApi/internal/user/core/domain"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -49,7 +49,7 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 	}
 
 	span.AddEvent(EventGenerateToken)
-	tokenValue, err := s.tokenProvider.Generate(ctx, user.ID)
+	tokenValue, err := s.authProvider.Generate(ctx, user.ID)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToCreateToken)
@@ -57,13 +57,13 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 		return userDomain.User{}, "", errors.New(ErrorToCreateToken)
 	}
 
-	token := domain.Auth{
+	token := authDomain.Auth{
 		Key:   user.ID,
 		Token: tokenValue,
 	}
 
 	span.AddEvent(EventSaveTokenToStore)
-	if err := s.tokenStore.Save(ctx, token); err != nil {
+	if err := s.authStore.Save(ctx, token); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToCreateToken)
 		s.logger.ErrorwCtx(ctx, ErrorToCreateToken, commonkeys.Error, err.Error())

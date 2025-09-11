@@ -4,9 +4,9 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/category/mapper"
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/category/model"
-	"github.com/lechitz/AionApi/internal/core/category/domain"
+	"github.com/lechitz/AionApi/internal/category/adapter/secondary/db/mapper"
+	"github.com/lechitz/AionApi/internal/category/adapter/secondary/db/model"
+	"github.com/lechitz/AionApi/internal/category/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"

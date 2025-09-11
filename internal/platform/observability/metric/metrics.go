@@ -4,11 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/tool/observability"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/port/output/logger"
-
 	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/AionApi/internal/platform/observability"
+	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/sdk/metric"
@@ -21,7 +20,7 @@ const (
 	ErrFailedToInitializeOTLPMetricsExporter = "failed to initialize OTLP metric exporter"
 )
 
-// InitOtelMetrics initializes the OpenTelemetry metrics jwtprovider using the given configuration.
+// InitOtelMetrics initializes the OpenTelemetry metrics token using the given configuration.
 func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 	opts := []otlpmetrichttp.Option{
 		otlpmetrichttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
@@ -40,7 +39,7 @@ func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 		}
 	}
 
-	if cfg.Observability.OtelExporterCompression == "gzip" { // TODO: avaliar se não deveria ir para variáveis.
+	if cfg.Observability.OtelExporterCompression == "gzip" {
 		opts = append(opts, otlpmetrichttp.WithCompression(otlpmetrichttp.GzipCompression))
 	}
 
@@ -68,7 +67,7 @@ func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 
 	return func() {
 		if err := provider.Shutdown(context.Background()); err != nil {
-			logger.Errorw("failed to shutdown OTEL metrics jwtprovider", commonkeys.Error, err) // TODO: AJUSTAR ERRO
+			logger.Errorw("failed to shutdown OTEL metrics token", commonkeys.Error, err) // TODO: AJUSTAR ERRO
 		}
 	}
 }

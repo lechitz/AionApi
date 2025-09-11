@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/category/domain"
-	"github.com/lechitz/AionApi/internal/core/category/usecase"
+	"github.com/lechitz/AionApi/internal/category/core/domain"
+	"github.com/lechitz/AionApi/internal/category/core/usecase"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
 	"github.com/stretchr/testify/require"
@@ -46,7 +46,7 @@ func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
 	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		GetByName(gomock.Any(), category.Name).
+		GetByName(gomock.Any(), category.Name, category.UserID).
 		Return(category, nil)
 
 	createdCategory, err := suite.CategoryService.Create(suite.Ctx, category)
@@ -62,7 +62,7 @@ func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
 	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		GetByName(gomock.Any(), category.Name).
+		GetByName(gomock.Any(), category.Name, category.UserID).
 		Return(domain.Category{}, nil)
 
 	suite.CategoryRepository.EXPECT().
@@ -82,7 +82,7 @@ func TestCreateCategory_Success(t *testing.T) {
 	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		GetByName(gomock.Any(), category.Name).
+		GetByName(gomock.Any(), category.Name, category.UserID).
 		Return(domain.Category{}, nil)
 
 	suite.CategoryRepository.EXPECT().

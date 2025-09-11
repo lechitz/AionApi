@@ -133,7 +133,7 @@ make verify    # run full pipeline before committing
 The API exposes REST endpoints for user management, authentication, and health checks, along with GraphQL operations for categories and tags.
 
 ### REST Endpoints
-- `GET  /aion-api/health-check/` — service status
+- `GET  /aion-api/health/` — service status
 - `POST /aion-api/user/create` — create a new user
 - `GET  /aion-api/user/all` — list users
 - `GET  /aion-api/user/{user_id}` — retrieve a user by ID

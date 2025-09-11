@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/auth/core/domain"
-	"github.com/lechitz/AionApi/internal/auth/core/usecase/token/usecase"
+	"github.com/lechitz/AionApi/internal/auth/core/usecase"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"

@@ -5,8 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/category/model"
-	"github.com/lechitz/AionApi/internal/core/category/domain"
+	"github.com/lechitz/AionApi/internal/category/adapter/secondary/db/model"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -15,11 +14,11 @@ import (
 )
 
 // SoftDelete updates the DeletedAt and UserUpdatedAt fields to mark a handler as soft-deleted based on handler ID and user ID.
-func (c CategoryRepository) SoftDelete(ctx context.Context, category domain.Category) error {
+func (c CategoryRepository) SoftDelete(ctx context.Context, categoryID uint64, userID uint64) error {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "SoftDelete", trace.WithAttributes(
-		attribute.String(commonkeys.UserID, strconv.FormatUint(category.UserID, 10)),
-		attribute.String(commonkeys.CategoryID, strconv.FormatUint(category.ID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryID, 10)),
 		attribute.String("operation", "soft_delete"),
 	))
 	defer span.End()
@@ -31,7 +30,7 @@ func (c CategoryRepository) SoftDelete(ctx context.Context, category domain.Cate
 
 	if err := c.db.WithContext(ctx).
 		Model(&model.CategoryDB{}).
-		Where("category_id = ? AND user_id = ?", category.ID, category.UserID).
+		Where("category_id = ? AND user_id = ?", categoryID, userID).
 		Updates(fields).Error; err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)

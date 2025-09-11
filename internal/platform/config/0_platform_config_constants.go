@@ -19,7 +19,7 @@ const (
 	MinDBRetryInterval = 1 * time.Second
 
 	// MinShutdownTimeout is the minimum allowed timeout for shutdown operations.
-	MinShutdownTimeout = 1
+	MinShutdownTimeout = 1 * time.Second
 
 	// MinCachePoolSize is the minimum allowed size for the cache pool.
 	MinCachePoolSize = 1
@@ -87,7 +87,7 @@ const (
 	ErrOtelCompressionInvalid = "OTel Exporter compression must be either 'none' or 'gzip', got: %s"
 
 	ErrAppContextReqMin      = "context request timeout must be at least %v"
-	ErrAppShutdownTimeoutMin = "shutdown timeout must be at least %d second"
+	ErrAppShutdownTimeoutMin = "shutdown timeout must be at least %.0fs second"
 
 	InfoSecretKeyGenerated = "JWT secret key successfully generated with length: %d" // #nosec G101
 )

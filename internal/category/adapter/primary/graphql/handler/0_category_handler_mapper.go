@@ -3,7 +3,7 @@ package handler
 import (
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/adapter/server/graph/model"
+	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
 	"github.com/lechitz/AionApi/internal/category/core/domain"
 )
 
@@ -21,12 +21,17 @@ func toDomainCreate(in model.CreateCategoryInput, userID uint64) domain.Category
 	return c
 }
 
-func toDomainUpdate(in model.UpdateCategoryInput, userID uint64) (domain.Category, error) {
-	id, err := strconv.ParseUint(in.ID, 10, 64)
-	if err != nil {
-		return domain.Category{}, err
+// Ajuste esta função conforme seu schema real de UpdateCategoryInput.
+// Assumimos campos opcionais: id, name, description, colorHex, icon.
+func toDomainUpdate(in model.UpdateCategoryInput, userID uint64) domain.Category {
+	var id uint64
+	if in.ID != nil {
+		id, _ = strconv.ParseUint(*in.ID, 10, 64)
 	}
-	c := domain.Category{ID: id, UserID: userID}
+	c := domain.Category{
+		ID:     id,
+		UserID: userID,
+	}
 	if in.Name != nil {
 		c.Name = *in.Name
 	}
@@ -39,23 +44,34 @@ func toDomainUpdate(in model.UpdateCategoryInput, userID uint64) (domain.Categor
 	if in.Icon != nil {
 		c.Icon = *in.Icon
 	}
-	return c, nil
+	return c
 }
 
-func toModelOut(c domain.Category) *model.Category {
-	return &model.Category{
-		ID:          strconv.FormatUint(c.ID, 10),
-		UserID:      strconv.FormatUint(c.UserID, 10), // <- Key (not UserId)
-		Name:        c.Name,
-		Description: strPtr(c.Description),
-		ColorHex:    strPtr(c.Color),
-		Icon:        strPtr(c.Icon),
+func toModel(d domain.Category) *model.Category {
+	out := &model.Category{
+		ID:     strconv.FormatUint(d.ID, 10),
+		UserID: strconv.FormatUint(d.UserID, 10),
+		Name:   d.Name,
 	}
+	if d.Description != "" {
+		out.Description = &d.Description
+	}
+	if d.Color != "" {
+		out.ColorHex = &d.Color
+	}
+	if d.Icon != "" {
+		out.Icon = &d.Icon
+	}
+	return out
 }
 
-func strPtr(s string) *string {
-	if s == "" {
-		return nil
+func toModelList(dd []domain.Category) []*model.Category {
+	if len(dd) == 0 {
+		return []*model.Category{}
 	}
-	return &s
+	out := make([]*model.Category, 0, len(dd))
+	for _, d := range dd {
+		out = append(out, toModel(d))
+	}
+	return out
 }

@@ -22,7 +22,7 @@ formatters:
 
 issues:
   exclude-files:
-    - "adapters/primary/graph/.*\\.go$"
+    - "adapter/primary/graph/.*\\.go$"
 
 linters:
   enable:

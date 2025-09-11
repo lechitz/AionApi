@@ -5,13 +5,12 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
-	"github.com/lechitz/AionApi/internal/shared/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/httputils"
-	"github.com/lechitz/AionApi/internal/shared/sharederrors"
-
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -59,7 +58,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputils.ClearAuthCookie(w, h.Config.Cookie)
+	cookies.ClearAuthCookie(w, h.Config.Cookie)
 
 	span.SetAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),

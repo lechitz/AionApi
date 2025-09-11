@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/category/domain"
-	"github.com/lechitz/AionApi/internal/core/category/usecase"
+	"github.com/lechitz/AionApi/internal/category/core/domain"
+	"github.com/lechitz/AionApi/internal/category/core/usecase"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
 	"github.com/stretchr/testify/require"
@@ -16,7 +16,7 @@ func TestGetByID_InvalidCategoryID(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	categoryDB, err := suite.CategoryService.GetByID(suite.Ctx, 0)
+	categoryDB, err := suite.CategoryService.GetByID(suite.Ctx, 1, 2)
 
 	require.Error(t, err)
 	require.Equal(t, usecase.CategoryIDIsRequired, err.Error())
@@ -27,13 +27,13 @@ func TestGetByID_ErrorToGetByID(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	id := testdata.PerfectCategory.ID
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		GetByID(gomock.Any(), id).
+		GetByID(gomock.Any(), category.ID, category.UserID).
 		Return(domain.Category{}, errors.New(usecase.FailedToGetCategoryByID))
 
-	_, err := suite.CategoryService.GetByID(suite.Ctx, id)
+	_, err := suite.CategoryService.GetByID(suite.Ctx, category.ID, category.UserID)
 
 	require.Error(t, err)
 	require.Equal(t, usecase.FailedToGetCategoryByID, err.Error())
@@ -43,14 +43,14 @@ func TestGetByID_Success(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	exp := testdata.PerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		GetByID(gomock.Any(), exp.ID).
-		Return(exp, nil)
+		GetByID(gomock.Any(), category.ID, category.UserID).
+		Return(category, nil)
 
-	categoryDB, err := suite.CategoryService.GetByID(suite.Ctx, exp.ID)
+	categoryDB, err := suite.CategoryService.GetByID(suite.Ctx, category.ID, category.UserID)
 
 	require.NoError(t, err)
-	require.Equal(t, exp, categoryDB)
+	require.Equal(t, category, categoryDB)
 }

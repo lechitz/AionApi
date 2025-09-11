@@ -1,9 +1,9 @@
-package graphql
+package handler
 
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/adapter/primary/graph/model"
+	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
 )
 
 func (h *Handler) ListAll(ctx context.Context) ([]*model.Tag, error) {

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/category/domain"
-	"github.com/lechitz/AionApi/internal/core/category/usecase"
+	"github.com/lechitz/AionApi/internal/category/core/domain"
+	"github.com/lechitz/AionApi/internal/category/core/usecase"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/lechitz/AionApi/tests/testdata"
 	"github.com/stretchr/testify/require"
@@ -16,7 +16,9 @@ func TestGetCategoryByName_InvalidCategoryName(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	categoryDB, err := suite.CategoryService.GetByName(suite.Ctx, "")
+	category := testdata.PerfectCategory
+
+	categoryDB, err := suite.CategoryService.GetByName(suite.Ctx, "", category.UserID)
 
 	require.Error(t, err)
 	require.Equal(t, usecase.CategoryNameIsRequired, err.Error())
@@ -27,13 +29,13 @@ func TestGetCategoryByName_ErrorToGetCategoryByName(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	name := testdata.PerfectCategory.Name
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		GetByName(gomock.Any(), name).
+		GetByName(gomock.Any(), category.Name, category.UserID).
 		Return(domain.Category{}, errors.New(usecase.FailedToGetCategoryByName))
 
-	categoryDB, err := suite.CategoryService.GetByName(suite.Ctx, name)
+	categoryDB, err := suite.CategoryService.GetByName(suite.Ctx, category.Name, category.UserID)
 
 	require.Error(t, err)
 	require.Equal(t, usecase.FailedToGetCategoryByName, err.Error())
@@ -44,14 +46,14 @@ func TestGetCategoryByName_Success(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	exp := testdata.PerfectCategory
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		GetByName(gomock.Any(), exp.Name).
-		Return(exp, nil)
+		GetByName(gomock.Any(), category.Name, category.UserID).
+		Return(category, nil)
 
-	categoryDB, err := suite.CategoryService.GetByName(suite.Ctx, exp.Name)
+	categoryDB, err := suite.CategoryService.GetByName(suite.Ctx, category.Name, category.UserID)
 
 	require.NoError(t, err)
-	require.Equal(t, exp, categoryDB)
+	require.Equal(t, category, categoryDB)
 }

@@ -4,11 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/tool/observability"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/port/output/logger"
-
 	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/AionApi/internal/platform/observability"
+	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -20,8 +19,8 @@ const (
 	// ErrInitializeOTPL is the error message for when the OTLP exporter fails to initialize.
 	ErrInitializeOTPL = "failed to initialize OTLP exporter"
 
-	// ErrFailedToShutdownTracerProvider is the error message for when the tracer jwtprovider fails to shutdown.
-	ErrFailedToShutdownTracerProvider = "failed to shutdown tracer jwtprovider"
+	// ErrFailedToShutdownTracerProvider is the error message for when the tracer token fails to shutdown.
+	ErrFailedToShutdownTracerProvider = "failed to shutdown tracer token"
 )
 
 // InitTracer initializes the OpenTelemetry tracer using the provided configuration.
@@ -43,7 +42,7 @@ func InitTracer(cfg *config.Config, logger logger.ContextLogger) func() {
 		}
 	}
 
-	if cfg.Observability.OtelExporterCompression == "gzip" { // TODO: avaliar se não deveria ir para variáveis.
+	if cfg.Observability.OtelExporterCompression == "gzip" {
 		opts = append(opts, otlptracehttp.WithCompression(otlptracehttp.GzipCompression))
 	}
 

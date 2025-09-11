@@ -21,7 +21,7 @@ const (
 	// ServerName is the HTTP server name.
 	ServerName = "server_name"
 
-	// ServerAddr is the HTTP server port/address.
+	// ServerAddr is the HTTP server ports/address.
 	ServerAddr = "http_port"
 )
 
@@ -80,8 +80,8 @@ const (
 	// DBHost is the database host.
 	DBHost = "host"
 
-	// DBPort is the database port.
-	DBPort = "port"
+	// DBPort is the database ports.
+	DBPort = "ports"
 
 	// DBTryConnectingWithRetries is the connection retry counter.
 	DBTryConnectingWithRetries = "try"

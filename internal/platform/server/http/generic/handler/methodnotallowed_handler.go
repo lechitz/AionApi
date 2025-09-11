@@ -4,9 +4,8 @@ package handler
 import (
 	"net/http"
 
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-
-	"github.com/lechitz/AionApi/internal/shared/httpresponse"
 )
 
 // MethodNotAllowedHandler handles 405 Method Not Allowed responses with a standardized error body.

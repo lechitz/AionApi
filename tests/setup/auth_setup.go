@@ -5,7 +5,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/usecase/auth"
+	"github.com/lechitz/AionApi/internal/auth/core/usecase"
 	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
@@ -14,12 +14,12 @@ import (
 // making Auth-related unit tests simpler and more maintainable.
 type AuthServiceTestSuite struct {
 	Ctrl           *gomock.Controller
-	Logger         *mocks.ContextLogger
-	UserRepository *mocks.UserRepository
-	Hasher         *mocks.Hasher
-	TokenStore     *mocks.TokenStore
-	TokenProvider  *mocks.TokenProvider
-	AuthService    *auth.Service
+	Logger         *mocks.MockContextLogger
+	UserRepository *mocks.MockUserRepository
+	Hasher         *mocks.MockHasher
+	TokenStore     *mocks.MockAuthStore
+	TokenProvider  *mocks.MockAuthProvider
+	AuthService    *usecase.Service
 	Ctx            context.Context
 }
 
@@ -29,20 +29,20 @@ type AuthServiceTestSuite struct {
 func AuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	userRepo := mocks.NewUserRepository(ctrl)
-	hasher := mocks.NewHasher(ctrl)
-	tokenStore := mocks.NewTokenStore(ctrl)
-	tokenProvider := mocks.NewTokenProvider(ctrl)
-	log := mocks.NewContextLogger(ctrl)
+	userRepo := mocks.NewMockUserRepository(ctrl)
+	hasher := mocks.NewMockHasher(ctrl)
+	tokenStore := mocks.NewMockAuthStore(ctrl)
+	tokenProvider := mocks.NewMockAuthProvider(ctrl)
+	log := mocks.NewMockContextLogger(ctrl)
 
 	// Set default, non-intrusive expectations for the logger (no-ops).
 	ExpectLoggerDefaultBehavior(log)
 
-	authService := auth.NewService(
+	authService := usecase.NewService(
 		userRepo,
 		tokenStore,
-		hasher,
 		tokenProvider,
+		hasher,
 		log,
 	)
 

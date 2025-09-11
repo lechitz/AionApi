@@ -1,9 +1,9 @@
-package graphql
+package handler
 
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/adapter/primary/graph/model"
+	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
 )
 
 func (h *Handler) Create(ctx context.Context, in model.CreateTagInput) (*model.Tag, error) {

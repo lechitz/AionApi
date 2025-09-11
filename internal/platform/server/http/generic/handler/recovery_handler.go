@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -12,7 +13,6 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/httpresponse"
 )
 
 // RecoveryHandler handles panics with a standardized error body.

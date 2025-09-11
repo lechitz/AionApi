@@ -1,4 +1,4 @@
-// internal/core/usecase/auth/logout.go
+// Package usecase (auth) contains use cases for authenticating users and generating tokens.
 package usecase
 
 import (
@@ -17,18 +17,16 @@ import (
 // Logout revokes a user's authentication token.
 func (s *Service) Logout(ctx context.Context, userID uint64) error {
 	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(
-		ctx,
-		SpanRevokeToken,
+	ctx, span := tracer.Start(ctx, SpanRevokeToken,
 		trace.WithAttributes(
 			attribute.String(commonkeys.Operation, SpanRevokeToken),
-			attribute.String(commonkeys.TokenKey, strconv.FormatUint(tokenKey, 10)),
+			attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		),
 	)
 	defer span.End()
 
 	span.AddEvent(EventRevokeToken)
-	if err := s.tokenStore.Delete(ctx, tokenKey); err != nil {
+	if err := s.authStore.Delete(ctx, userID); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToDeleteToken)
 		s.logger.ErrorwCtx(ctx, ErrorToDeleteToken, commonkeys.Error, err.Error())
@@ -36,10 +34,10 @@ func (s *Service) Logout(ctx context.Context, userID uint64) error {
 	}
 
 	span.AddEvent(EventTokenRevoked)
-	span.SetStatus(codes.Ok, SuccessTokenDeleted)
+	span.SetStatus(codes.Ok, SuccessUserLoggedOut)
 
-	s.logger.InfowCtx(ctx, SuccessTokenDeleted,
-		commonkeys.TokenKey, strconv.FormatUint(tokenKey, 10),
+	s.logger.InfowCtx(ctx, SuccessUserLoggedOut,
+		commonkeys.TokenKey, strconv.FormatUint(userID, 10),
 	)
 	return nil
 }

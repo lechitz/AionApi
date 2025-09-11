@@ -8,14 +8,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lechitz/AionApi/internal/feature/auth/adapter/primary/http/dto"
+	"github.com/lechitz/AionApi/internal/auth/adapter/primary/http/dto"
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
-	"github.com/lechitz/AionApi/internal/shared/handlerhelpers"
-	"github.com/lechitz/AionApi/internal/shared/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/httputils"
-	"github.com/lechitz/AionApi/internal/shared/sharederrors"
-
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -39,12 +37,12 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1MB
 	var loginReq dto.LoginUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
-		handlerhelpers.WriteDecodeError(ctx, w, span, err, h.Logger)
+		helpers.WriteDecodeError(ctx, w, span, err, h.Logger)
 		return
 	}
 
 	if err := validateLoginRequest(loginReq); err != nil {
-		handlerhelpers.WriteDecodeError(ctx, w, span, sharederrors.NewValidationError("credentials", err.Error()), h.Logger)
+		helpers.WriteDecodeError(ctx, w, span, sharederrors.NewValidationError("credentials", err.Error()), h.Logger)
 		return
 	}
 	span.SetAttributes(attribute.String(commonkeys.Username, loginReq.Username))
@@ -52,12 +50,12 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	span.AddEvent(EventAuthServiceLogin)
 	user, token, err := h.Service.Login(ctx, loginReq.Username, loginReq.Password)
 	if err != nil {
-		handlerhelpers.WriteDomainError(ctx, w, span, err, ErrLogin, h.Logger)
+		helpers.WriteDomainError(ctx, w, span, err, ErrLogin, h.Logger)
 		return
 	}
 	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(user.ID, 10)))
 
-	httputils.SetAuthCookie(w, token, h.Config.Cookie)
+	cookies.SetAuthCookie(w, token, h.Config.Cookie)
 
 	loginResponse := dto.LoginUserResponse{
 		Name: user.Name,

@@ -7,7 +7,7 @@ import (
 
 // ExpectLoggerDefaultBehavior sets relaxed expectations for ContextLogger methods with ctx.
 // It registers multiple arities to tolerate 0, 1, or 2 KV pairs commonly used in tests.
-func ExpectLoggerDefaultBehavior(logger *mocks.ContextLogger) {
+func ExpectLoggerDefaultBehavior(logger *mocks.MockContextLogger) {
 	// InfowCtx
 	logger.EXPECT().InfowCtx(gomock.Any(), gomock.Any()).AnyTimes()
 	logger.EXPECT().InfowCtx(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()

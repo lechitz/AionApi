@@ -4,8 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/category/domain"
-	"github.com/lechitz/AionApi/internal/core/category/usecase"
+	"github.com/lechitz/AionApi/internal/category/core/usecase"
 	"go.uber.org/mock/gomock"
 
 	"github.com/lechitz/AionApi/tests/setup"
@@ -18,10 +17,10 @@ func TestSoftDeleteCategory_ErrorToSoftDeleteCategory(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	suite.CategoryRepository.EXPECT().
-		SoftDelete(gomock.Any(), testdata.PerfectCategory).
+		SoftDelete(gomock.Any(), testdata.PerfectCategory.ID, testdata.PerfectCategory.UserID).
 		Return(errors.New(usecase.FailedToSoftDeleteCategory))
 
-	err := suite.CategoryService.SoftDelete(suite.Ctx, testdata.PerfectCategory)
+	err := suite.CategoryService.SoftDelete(suite.Ctx, testdata.PerfectCategory.ID, testdata.PerfectCategory.UserID)
 	assert.EqualError(t, err, usecase.FailedToSoftDeleteCategory)
 }
 
@@ -29,12 +28,12 @@ func TestSoftDeleteCategory_Success(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	input := domain.Category{ID: testdata.PerfectCategory.ID}
+	category := testdata.PerfectCategory
 
 	suite.CategoryRepository.EXPECT().
-		SoftDelete(gomock.Any(), input).
+		SoftDelete(gomock.Any(), category.ID, category.UserID).
 		Return(nil)
 
-	err := suite.CategoryService.SoftDelete(suite.Ctx, input)
+	err := suite.CategoryService.SoftDelete(suite.Ctx, category.ID, category.UserID)
 	assert.NoError(t, err)
 }

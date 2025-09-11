@@ -116,7 +116,7 @@ include makefiles/*.mk
 
 ## Docs
 docs-serve:
-\t@.venv-docs/bin/mkdocs serve
+	@.venv-docs/bin/mkdocs serve
 
 docs-build:
-\t@.venv-docs/bin/mkdocs build
+	@.venv-docs/bin/mkdocs build

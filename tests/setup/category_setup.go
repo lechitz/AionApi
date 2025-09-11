@@ -5,7 +5,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/usecase/category"
+	"github.com/lechitz/AionApi/internal/category/core/usecase"
 	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
@@ -14,9 +14,9 @@ import (
 // to simplify Category-related unit tests.
 type CategoryServiceTestSuite struct {
 	Ctrl               *gomock.Controller
-	Logger             *mocks.ContextLogger
-	CategoryRepository *mocks.CategoryRepository
-	CategoryService    *category.Service
+	Logger             *mocks.MockContextLogger
+	CategoryRepository *mocks.MockCategoryRepository
+	CategoryService    *usecase.Service
 	Ctx                context.Context
 }
 
@@ -26,13 +26,13 @@ type CategoryServiceTestSuite struct {
 func CategoryServiceTest(t *testing.T) *CategoryServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	categoryRepository := mocks.NewCategoryRepository(ctrl)
-	logger := mocks.NewContextLogger(ctrl)
+	categoryRepository := mocks.NewMockCategoryRepository(ctrl)
+	logger := mocks.NewMockContextLogger(ctrl)
 
 	// Set default, non-intrusive expectations for the logger.
 	ExpectLoggerDefaultBehavior(logger)
 
-	svc := category.NewService(categoryRepository, logger)
+	svc := usecase.NewService(categoryRepository, logger)
 
 	return &CategoryServiceTestSuite{
 		Ctrl:               ctrl,

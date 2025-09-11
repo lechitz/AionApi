@@ -32,7 +32,7 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 	sanitized := sanitizeTokenValue(tokenValue)
 
 	span.AddEvent(EventVerifyToken)
-	claims, err := s.tokenProvider.Verify(ctx, sanitized)
+	claims, err := s.authProvider.Verify(ctx, sanitized)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorInvalidToken)
@@ -51,7 +51,7 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
 	span.AddEvent(EventGetTokenFromStore)
-	cached, err := s.tokenStore.Get(ctx, userID)
+	cached, err := s.authStore.Get(ctx, userID)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToRetrieveTokenFromCache)

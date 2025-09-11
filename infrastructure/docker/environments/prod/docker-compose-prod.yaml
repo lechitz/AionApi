@@ -9,7 +9,7 @@ services:
       - .env.prod
     volumes:
       - postgres-data-prod:/var/lib/postgresql/data
-      - ./adapters/secondary/db/migrations:/docker-entrypoint-initdb.d
+      - ./adapter/secondary/db/migrations:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:

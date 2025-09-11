@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/lechitz/AionApi/internal/core/category/domain"
+	"github.com/lechitz/AionApi/internal/category/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -12,7 +12,7 @@ import (
 )
 
 // GetByName retrieves a handler by its name from the database and returns it.
-func (s *Service) GetByName(ctx context.Context, categoryName string) (domain.Category, error) {
+func (s *Service) GetByName(ctx context.Context, categoryName string, userID uint64) (domain.Category, error) {
 	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanGetCategoryByName)
 	defer span.End()
@@ -29,7 +29,7 @@ func (s *Service) GetByName(ctx context.Context, categoryName string) (domain.Ca
 	}
 
 	span.AddEvent(EventRepositoryGet)
-	category, err := s.CategoryRepository.GetByName(ctx, categoryName)
+	category, err := s.CategoryRepository.GetByName(ctx, categoryName, userID)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, FailedToGetCategoryByName)

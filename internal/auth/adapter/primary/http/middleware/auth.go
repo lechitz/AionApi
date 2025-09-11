@@ -8,31 +8,30 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lechitz/AionApi/internal/auth/core/port/input"
+	"github.com/lechitz/AionApi/internal/auth/core/ports/input"
+	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
-	"github.com/lechitz/AionApi/internal/shared/httpresponse"
-	"github.com/lechitz/AionApi/internal/shared/port/output/logger"
-	"github.com/lechitz/AionApi/internal/shared/sharederrors"
-
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 )
 
-type MiddlewareAuth struct {
-	tokenService input.TokenService
-	logger       logger.ContextLogger
+type AuthMiddleware struct {
+	authService input.AuthService
+	logger      logger.ContextLogger
 }
 
-func New(tokenService input.TokenService, logger logger.ContextLogger) *MiddlewareAuth {
-	return &MiddlewareAuth{
-		tokenService: tokenService,
-		logger:       logger,
+func New(authService input.AuthService, logger logger.ContextLogger) *AuthMiddleware {
+	return &AuthMiddleware{
+		authService: authService,
+		logger:      logger,
 	}
 }
 
-func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
+func (a *AuthMiddleware) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tr := otel.Tracer(TracerAuthMiddleware)
 		ctx, span := tr.Start(r.Context(), SpanAuthMiddleware)
@@ -49,7 +48,7 @@ func (a *MiddlewareAuth) Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		userID, claims, err := a.tokenService.Validate(ctx, rawToken)
+		userID, claims, err := a.authService.Validate(ctx, rawToken)
 		if err != nil {
 			span.SetStatus(codes.Error, SpanErrorTokenInvalid)
 			span.SetAttributes(attribute.String(AttrAuthMiddlewareError, err.Error()))

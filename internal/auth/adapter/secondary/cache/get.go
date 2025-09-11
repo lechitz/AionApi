@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/feature/auth/core/domain"
+	"github.com/lechitz/AionApi/internal/auth/core/domain"
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/sharederrors"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

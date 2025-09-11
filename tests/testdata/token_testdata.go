@@ -2,7 +2,7 @@
 package testdata
 
 import (
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/auth/core/domain"
 )
 
 // SecretKey is the key for secrets used in token operations.
@@ -10,10 +10,10 @@ const SecretKey = "secret"
 
 // TODO: Ajustar o uso dos testdata.
 
-// TestPerfectToken is a predefined Value instance used for testing purposes, representing a valid token associated with a user.
-var TestPerfectToken = domain.Token{
+// TestPerfectToken is a predefined Token instance used for testing purposes, representing a valid token associated with a user.
+var TestPerfectToken = domain.Auth{
 	Key:   1,
-	Value: "token_abc123",
+	Token: "token_abc123",
 	// CreatedAt: time.Now(),
 	// ExpiresAt: time.Now().Add(24 * time.Hour),
 }

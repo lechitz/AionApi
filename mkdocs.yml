@@ -1,5 +1,5 @@
 site_name: AionApi
-site_description: Backend em Go — Hexagonal, REST/GraphQL, Observability
+site_description: Backend Go — Hexagonal, REST/GraphQL, Observability
 repo_name: lechitz/AionApi
 repo_url: https://github.com/lechitz/AionApi
 theme:

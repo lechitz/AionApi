@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
-	"github.com/lechitz/AionApi/internal/core/usecase/user"
+	"github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/AionApi/internal/user/core/usecase"
 	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
@@ -16,12 +16,12 @@ import (
 // to keep user-related tests concise and consistent.
 type UserServiceTestSuite struct {
 	Ctrl           *gomock.Controller
-	Logger         *mocks.ContextLogger
-	UserRepository *mocks.UserRepository
-	TokenStore     *mocks.TokenStore
-	TokenProvider  *mocks.TokenProvider
-	Hasher         *mocks.Hasher
-	UserService    *user.Service
+	Logger         *mocks.MockContextLogger
+	UserRepository *mocks.MockUserRepository
+	TokenStore     *mocks.MockAuthStore
+	TokenProvider  *mocks.MockAuthProvider
+	Hasher         *mocks.MockHasher
+	UserService    *usecase.Service
 	Ctx            context.Context
 }
 
@@ -30,16 +30,16 @@ type UserServiceTestSuite struct {
 func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	userRepo := mocks.NewUserRepository(ctrl)
-	tokenStore := mocks.NewTokenStore(ctrl)
-	tokenProvider := mocks.NewTokenProvider(ctrl)
-	hasher := mocks.NewHasher(ctrl)
-	log := mocks.NewContextLogger(ctrl)
+	userRepo := mocks.NewMockUserRepository(ctrl)
+	tokenStore := mocks.NewMockAuthStore(ctrl)
+	tokenProvider := mocks.NewMockAuthProvider(ctrl)
+	hasher := mocks.NewMockHasher(ctrl)
+	log := mocks.NewMockContextLogger(ctrl)
 
 	// Set default, non-intrusive expectations for the logger (no-ops).
 	ExpectLoggerDefaultBehavior(log)
 
-	svc := user.NewService(
+	svc := usecase.NewService(
 		userRepo,
 		tokenStore,
 		tokenProvider,

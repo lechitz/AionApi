@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/shared/adapters/primary/graph/model"
+	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/category/mapper"
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/category/model"
-	"github.com/lechitz/AionApi/internal/core/category/domain"
+	"github.com/lechitz/AionApi/internal/category/adapter/secondary/db/mapper"
+	"github.com/lechitz/AionApi/internal/category/adapter/secondary/db/model"
+	"github.com/lechitz/AionApi/internal/category/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -17,11 +17,11 @@ import (
 )
 
 // GetByID retrieves a handler by its ID and user ID from the database and returns it as a domain.Category or an error if not found.
-func (c CategoryRepository) GetByID(ctx context.Context, category domain.Category) (domain.Category, error) {
+func (c CategoryRepository) GetByID(ctx context.Context, categoryID uint64, userID uint64) (domain.Category, error) {
 	tr := otel.Tracer("CategoryRepository")
 	ctx, span := tr.Start(ctx, "GetByID", trace.WithAttributes(
-		attribute.String(commonkeys.UserID, strconv.FormatUint(category.UserID, 10)),
-		attribute.String(commonkeys.CategoryID, strconv.FormatUint(category.ID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryID, 10)),
 		attribute.String("operation", "get_by_id"),
 	))
 	defer span.End()
@@ -30,7 +30,7 @@ func (c CategoryRepository) GetByID(ctx context.Context, category domain.Categor
 
 	if err := c.db.WithContext(ctx).
 		Select("category_id, user_id, name, description, color_hex, icon, created_at, updated_at").
-		Where("category_id = ? AND user_id = ?", category.ID, category.UserID).
+		Where("category_id = ? AND user_id = ?", categoryID, userID).
 		First(&categoryDB).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Error, "handler not found")

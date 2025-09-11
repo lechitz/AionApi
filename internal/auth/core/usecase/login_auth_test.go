@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/lechitz/AionApi/internal/auth/core/domain"
+	authconst "github.com/lechitz/AionApi/internal/auth/core/usecase"
 	domain2 "github.com/lechitz/AionApi/internal/core/user/domain"
-	"github.com/lechitz/AionApi/internal/feature/auth/core/domain"
-	authconst "github.com/lechitz/AionApi/internal/feature/auth/core/usecase"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
