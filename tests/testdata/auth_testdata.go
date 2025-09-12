@@ -2,7 +2,7 @@
 package testdata
 
 import (
-	"github.com/lechitz/AionApi/internal/core/user/domain"
+	"github.com/lechitz/AionApi/internal/user/core/domain"
 )
 
 // TestPerfectLoginInputUser is a predefined instance of User representing a user with valid login credentials for testing purposes.

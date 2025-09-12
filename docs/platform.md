@@ -265,7 +265,7 @@ Environment files are kept under `infrastructure/docker/environments/`. Review a
 ## 8) Security (HTTP/Auth)
 
 * `Authorization: Bearer <token>` is validated by the **auth middleware** (primary adapter). On success, it injects `user_id` into `context` for downstream handlers.
-* Cookie helpers (`internal/shared/httputils`) centralize secure cookie settings when a browser flow is used.
+* Cookie helpers (`internal/platform/server/http/helpers/httpresponse`) centralize secure cookie settings when a browser flow is used.
 * **Never log secrets**: passwords, raw tokens, or cookie contents.
 
 ---

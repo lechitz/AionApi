@@ -1,3 +1,4 @@
+// Package output defines interfaces for user-related output ports.
 package output
 
 import (
@@ -14,10 +15,10 @@ type UserCreator interface {
 // UserUniqueness holds information about whether a username or email is already taken
 // and, if so, who owns them.
 type UserUniqueness struct {
-	UsernameTaken   bool
-	EmailTaken      bool
 	UsernameOwnerID *uint64
 	EmailOwnerID    *uint64
+	UsernameTaken   bool
+	EmailTaken      bool
 }
 
 // UserFinder defines method for retrieving a user by ID.

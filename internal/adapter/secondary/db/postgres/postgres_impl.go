@@ -1,5 +1,5 @@
-// Package db provides database connection and management functions.
-package db
+// Package postgres provides a Postgres database implementation.
+package postgres
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 )
 
 // MsgFormatConString is the template for the database connection string.
-const MsgFormatConString = "host=%s ports=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s"
+const MsgFormatConString = "host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s"
 
 // MsgTryingStartsDB indicates an attempt to establish a database connection.
 const MsgTryingStartsDB = "trying to establish Database connection"

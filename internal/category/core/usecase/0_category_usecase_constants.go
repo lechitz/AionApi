@@ -1,30 +1,56 @@
-// Package constants contains constants related to handler operations.
+// Package usecase constants contains constants related to handler operations.
 package usecase
 
-// ===== Tracing =====
+// Tracing.
 const (
-	TracerName             = "aionapi.handler"
-	SpanCreateCategory     = "CreateCategory"
-	SpanGetCategoryByID    = "GetCategoryByID"
-	SpanGetCategoryByName  = "GetCategoryByName"
-	SpanListAllCategories  = "ListAllCategories"
-	SpanUpdateCategory     = "UpdateCategory"
+	// TracerName is the name of the tracer.
+	TracerName = "aionapi.handler"
+
+	// SpanCreateCategory is the name of the span for creating a category.
+	SpanCreateCategory = "CreateCategory"
+
+	// SpanGetCategoryByID is the name of the span for getting a category by ID.
+	SpanGetCategoryByID = "GetCategoryByID"
+
+	// SpanGetCategoryByName is the name of the span for getting a category by name.
+	SpanGetCategoryByName = "GetCategoryByName"
+
+	// SpanListAllCategories is the name of the span for listing all categories.
+	SpanListAllCategories = "ListAllCategories"
+
+	// SpanUpdateCategory is the name of the span for updating a category.
+	SpanUpdateCategory = "UpdateCategory"
+
+	// SpanSoftDeleteCategory is the name of the span for soft deleting a category.
 	SpanSoftDeleteCategory = "SoftDeleteCategory"
 )
 
-// Events (trace)
+// Events.
 const (
-	EventValidateInput     = "validate_input"
-	EventCheckUniqueness   = "check_uniqueness"
-	EventRepositoryCreate  = "repository_create"
-	EventRepositoryGet     = "repository_get"
-	EventRepositoryListAll = "repository_list_all"
-	EventRepositoryUpdate  = "repository_update"
-	EventRepositoryDelete  = "repository_delete"
-	EventSuccess           = "success"
-)
+	// EventValidateInput is the name of the event for validating input.
+	EventValidateInput = "validate_input"
 
-// ===== Mensagens/Erros existentes =====
+	// EventCheckUniqueness is the name of the event for checking uniqueness.
+	EventCheckUniqueness = "check_uniqueness"
+
+	// EventRepositoryCreate is the name of the event for creating a repository.
+	EventRepositoryCreate = "repository_create"
+
+	// EventRepositoryGet is the name of the event for getting a repository.
+	EventRepositoryGet = "repository_get"
+
+	// EventRepositoryListAll is the name of the event for listing all repositories.
+	EventRepositoryListAll = "repository_list_all"
+
+	// EventRepositoryUpdate is the name of the event for updating a repository.
+	EventRepositoryUpdate = "repository_update"
+
+	// EventRepositoryDelete is the name of the event for deleting a repository.
+	EventRepositoryDelete = "repository_delete"
+
+	// EventSuccess is the name of the event for a successful operation.
+	EventSuccess = "success"
+)
 
 // ErrToValidateCategory indicates a validation error in a handler operation.
 const ErrToValidateCategory = "handler validation error"
@@ -73,17 +99,3 @@ const CategoryColorIsTooLong = "handler color cannot exceed 7 characters"
 
 // CategoryIconIsTooLong indicates the handler icon is too long.
 const CategoryIconIsTooLong = "handler icon cannot exceed 50 characters"
-
-// TODO: separar o que foi de pra commonkeys
-
-// CategoryName is the key for handler name in context or responses.
-const CategoryName = "name"
-
-// CategoryDescription is the key for handler description in context or responses.
-const CategoryDescription = "description"
-
-// CategoryColor is the key for handler color in context or responses.
-const CategoryColor = "color_hex"
-
-// CategoryIcon is the key for handler icon in context or responses.
-const CategoryIcon = "icon"

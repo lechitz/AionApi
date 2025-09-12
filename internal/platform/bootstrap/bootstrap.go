@@ -4,11 +4,11 @@ package bootstrap
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/adapter/secondary/cache"
-	"github.com/lechitz/AionApi/internal/adapter/secondary/db"
+	"github.com/lechitz/AionApi/internal/adapter/secondary/cache/redis"
+	"github.com/lechitz/AionApi/internal/adapter/secondary/db/postgres"
 	"github.com/lechitz/AionApi/internal/adapter/secondary/hasher"
 	"github.com/lechitz/AionApi/internal/adapter/secondary/token"
-	adapterCache "github.com/lechitz/AionApi/internal/auth/adapter/secondary/cache"
+	"github.com/lechitz/AionApi/internal/auth/adapter/secondary/cache"
 	inputAuth "github.com/lechitz/AionApi/internal/auth/core/ports/input"
 	auth "github.com/lechitz/AionApi/internal/auth/core/usecase"
 	categoryRepo "github.com/lechitz/AionApi/internal/category/adapter/secondary/db/repository"
@@ -34,7 +34,7 @@ type AppDependencies struct {
 // InitializeDependencies wires infrastructure adapter and core use cases, returning input ports and a cleanup function.
 func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger logger.ContextLogger) (*AppDependencies, func(context.Context), error) {
 	// Infrastructure: cache
-	cacheClient, err := cache.NewConnection(appCtx, cfg.Cache, logger)
+	cacheClient, err := redis.NewConnection(appCtx, cfg.Cache, logger)
 	if err != nil {
 		logger.Errorw(ErrConnectToCache, commonkeys.Error, err)
 		return nil, nil, err
@@ -42,7 +42,7 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger l
 	logger.Infow(MsgCacheConnected, commonkeys.CacheAddr, cfg.Cache.Addr)
 
 	// Infrastructure: database
-	dbConn, err := db.NewConnection(appCtx, cfg.DB, logger)
+	dbConn, err := postgres.NewConnection(appCtx, cfg.DB, logger)
 	if err != nil {
 		logger.Errorw(ErrConnectToDatabase, commonkeys.Error, err)
 		return nil, nil, err
@@ -51,10 +51,10 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger l
 
 	// Secondary adapter (driven by output ports)
 	passwordHasher := hasher.New()
-	tokenProvider := token.New(cfg.Secret.Key)
-	tokenStore := adapterCache.New(cacheClient, logger)
-	userRepository := userRepo.NewUser(dbConn, logger)
-	categoryRepository := categoryRepo.NewCategory(dbConn, logger)
+	tokenProvider := token.NewProvider(cfg.Secret.Key)
+	tokenStore := cache.NewStore(cacheClient, logger)
+	userRepository := userRepo.New(dbConn, logger)
+	categoryRepository := categoryRepo.New(dbConn, logger)
 
 	// Core use cases (depend only on ports)
 	authService := auth.NewService(userRepository, tokenStore, tokenProvider, passwordHasher, logger)
@@ -65,7 +65,7 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger l
 	cleanup := func(ctx context.Context) {
 		done := make(chan struct{})
 		go func() {
-			db.Close(dbConn, logger)
+			postgres.Close(dbConn, logger)
 			if err := cacheClient.Close(); err != nil {
 				logger.Errorw(ErrCloseCacheConnection, commonkeys.Error, err)
 			}

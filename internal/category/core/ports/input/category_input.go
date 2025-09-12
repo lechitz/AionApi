@@ -9,7 +9,7 @@ import (
 
 // CategoryCreator defines a contract for creating a new handler within the system.
 type CategoryCreator interface {
-	Create(ctx context.Context, category domain.Category, userID uint64) (domain.Category, error)
+	Create(ctx context.Context, category domain.Category) (domain.Category, error)
 }
 
 // CategoryRetriever defines methods for retrieving handler data based on criteria or user associations.

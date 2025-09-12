@@ -1,3 +1,4 @@
+// Package mapper contains functions to convert between domain and database models.
 package mapper
 
 import (
@@ -22,6 +23,7 @@ func UserFromDB(user model.UserDB) domain.User {
 		Username:  user.Username,
 		Email:     user.Email,
 		Password:  user.Password,
+		Roles:     user.Roles,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 		DeletedAt: deletedAt,
@@ -42,6 +44,7 @@ func UserToDB(user domain.User) model.UserDB {
 		Username:  user.Username,
 		Email:     user.Email,
 		Password:  user.Password,
+		Roles:     user.Roles,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 		DeletedAt: deleted,

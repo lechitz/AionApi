@@ -1,4 +1,4 @@
-// cmd/aion-api/main.go
+// Package main
 package main
 
 import (
@@ -15,7 +15,7 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/observability/tracer"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/keygen"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	platform "github.com/lechitz/AionApi/internal/platform/server"
+	"github.com/lechitz/AionApi/internal/platform/server"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 )
 
@@ -42,7 +42,7 @@ func main() {
 		cleanupDeps(shutdownCtx)
 	}()
 
-	if err := platform.RunAll(appCtx, cfg, appDeps, logs); err != nil {
+	if err := server.RunAll(appCtx, cfg, appDeps, logs); err != nil {
 		logs.Errorw(ErrServerRunFailed, commonkeys.Error, err.Error())
 		os.Exit(1)
 	}
@@ -54,16 +54,12 @@ func loadConfig(keyGenerator keygen.Generator, logs logger.ContextLogger) *confi
 		logs.Errorw(ErrLoadConfig, commonkeys.Error, err.Error())
 		os.Exit(1)
 	}
+
 	if err := cfg.Validate(); err != nil {
 		logs.Errorw(ErrInvalidConfig, commonkeys.Error, err.Error())
 		os.Exit(1)
 	}
-	logs.Infow(
-		MsgConfigLoaded,
-		commonkeys.APIName, cfg.General.Name,
-		commonkeys.AppEnv, cfg.General.Env,
-		commonkeys.AppVersion, cfg.General.Version,
-	)
+	logs.Infow(MsgConfigLoaded, commonkeys.APIName, cfg.General.Name, commonkeys.AppEnv, cfg.General.Env, commonkeys.AppVersion, cfg.General.Version)
 	return cfg
 }
 

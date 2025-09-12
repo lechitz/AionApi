@@ -1,4 +1,4 @@
-// Package requestidmiddleware ensures a valid X-Request-ID header and context value.
+// Package requestid ensures a valid X-Request-ID header and context value.
 package requestid
 
 import (

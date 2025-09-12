@@ -11,8 +11,8 @@ import (
 
 // Loader is responsible for reading environment configuration.
 type Loader struct {
-	cfg          Config
 	keyGenerator keygen.Generator
+	cfg          Config
 }
 
 // New returns a new instance of Loader.

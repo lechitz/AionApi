@@ -44,7 +44,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
-	Auth func(ctx context.Context, obj any, next graphql.Resolver, role *string) (res any, err error)
+	Auth func(ctx context.Context, obj any, next graphql.Resolver, roles *string) (res any, err error)
 }
 
 type ComplexityRoot struct {
@@ -414,24 +414,24 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) dir_auth_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.dir_auth_argsRole(ctx, rawArgs)
+	arg0, err := ec.dir_auth_argsRoles(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["role"] = arg0
+	args["roles"] = arg0
 	return args, nil
 }
-func (ec *executionContext) dir_auth_argsRole(
+func (ec *executionContext) dir_auth_argsRoles(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*string, error) {
-	if _, ok := rawArgs["role"]; !ok {
+	if _, ok := rawArgs["roles"]; !ok {
 		var zeroVal *string
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-	if tmp, ok := rawArgs["role"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("roles"))
+	if tmp, ok := rawArgs["roles"]; ok {
 		return ec.unmarshalOString2ᚖstring(ctx, tmp)
 	}
 
@@ -997,7 +997,7 @@ func (ec *executionContext) _Mutation_createCategory(ctx context.Context, field 
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+			roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
 			if err != nil {
 				var zeroVal *model.Category
 				return zeroVal, err
@@ -1006,7 +1006,7 @@ func (ec *executionContext) _Mutation_createCategory(ctx context.Context, field 
 				var zeroVal *model.Category
 				return zeroVal, errors.New("directive auth is not implemented")
 			}
-			return ec.directives.Auth(ctx, nil, directive0, role)
+			return ec.directives.Auth(ctx, nil, directive0, roles)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1093,7 +1093,7 @@ func (ec *executionContext) _Mutation_updateCategory(ctx context.Context, field 
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+			roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
 			if err != nil {
 				var zeroVal *model.Category
 				return zeroVal, err
@@ -1102,7 +1102,7 @@ func (ec *executionContext) _Mutation_updateCategory(ctx context.Context, field 
 				var zeroVal *model.Category
 				return zeroVal, errors.New("directive auth is not implemented")
 			}
-			return ec.directives.Auth(ctx, nil, directive0, role)
+			return ec.directives.Auth(ctx, nil, directive0, roles)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1189,7 +1189,7 @@ func (ec *executionContext) _Mutation_softDeleteCategory(ctx context.Context, fi
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+			roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -1198,7 +1198,7 @@ func (ec *executionContext) _Mutation_softDeleteCategory(ctx context.Context, fi
 				var zeroVal bool
 				return zeroVal, errors.New("directive auth is not implemented")
 			}
-			return ec.directives.Auth(ctx, nil, directive0, role)
+			return ec.directives.Auth(ctx, nil, directive0, roles)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1271,7 +1271,7 @@ func (ec *executionContext) _Mutation_createTag(ctx context.Context, field graph
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+			roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
 			if err != nil {
 				var zeroVal *model.Tag
 				return zeroVal, err
@@ -1280,7 +1280,7 @@ func (ec *executionContext) _Mutation_createTag(ctx context.Context, field graph
 				var zeroVal *model.Tag
 				return zeroVal, errors.New("directive auth is not implemented")
 			}
-			return ec.directives.Auth(ctx, nil, directive0, role)
+			return ec.directives.Auth(ctx, nil, directive0, roles)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1363,7 +1363,7 @@ func (ec *executionContext) _Query_categories(ctx context.Context, field graphql
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+			roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
 			if err != nil {
 				var zeroVal []*model.Category
 				return zeroVal, err
@@ -1372,7 +1372,7 @@ func (ec *executionContext) _Query_categories(ctx context.Context, field graphql
 				var zeroVal []*model.Category
 				return zeroVal, errors.New("directive auth is not implemented")
 			}
-			return ec.directives.Auth(ctx, nil, directive0, role)
+			return ec.directives.Auth(ctx, nil, directive0, roles)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1448,7 +1448,7 @@ func (ec *executionContext) _Query_categoryById(ctx context.Context, field graph
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+			roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
 			if err != nil {
 				var zeroVal *model.Category
 				return zeroVal, err
@@ -1457,7 +1457,7 @@ func (ec *executionContext) _Query_categoryById(ctx context.Context, field graph
 				var zeroVal *model.Category
 				return zeroVal, errors.New("directive auth is not implemented")
 			}
-			return ec.directives.Auth(ctx, nil, directive0, role)
+			return ec.directives.Auth(ctx, nil, directive0, roles)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1541,7 +1541,7 @@ func (ec *executionContext) _Query_categoryByName(ctx context.Context, field gra
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+			roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
 			if err != nil {
 				var zeroVal *model.Category
 				return zeroVal, err
@@ -1550,7 +1550,7 @@ func (ec *executionContext) _Query_categoryByName(ctx context.Context, field gra
 				var zeroVal *model.Category
 				return zeroVal, errors.New("directive auth is not implemented")
 			}
-			return ec.directives.Auth(ctx, nil, directive0, role)
+			return ec.directives.Auth(ctx, nil, directive0, roles)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1634,7 +1634,7 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+			roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
 			if err != nil {
 				var zeroVal []*model.Tag
 				return zeroVal, err
@@ -1643,7 +1643,7 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 				var zeroVal []*model.Tag
 				return zeroVal, errors.New("directive auth is not implemented")
 			}
-			return ec.directives.Auth(ctx, nil, directive0, role)
+			return ec.directives.Auth(ctx, nil, directive0, roles)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1715,7 +1715,7 @@ func (ec *executionContext) _Query_tagById(ctx context.Context, field graphql.Co
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+			roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
 			if err != nil {
 				var zeroVal *model.Tag
 				return zeroVal, err
@@ -1724,7 +1724,7 @@ func (ec *executionContext) _Query_tagById(ctx context.Context, field graphql.Co
 				var zeroVal *model.Tag
 				return zeroVal, errors.New("directive auth is not implemented")
 			}
-			return ec.directives.Auth(ctx, nil, directive0, role)
+			return ec.directives.Auth(ctx, nil, directive0, roles)
 		}
 
 		tmp, err := directive1(rctx)

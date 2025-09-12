@@ -1,4 +1,4 @@
-// File: internal/user/core/usecase/get_by_username_test.go
+// File: internal/user/core/usecase/get_by_username_test.gohttputils
 package usecase_test
 
 import (

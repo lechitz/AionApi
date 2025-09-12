@@ -13,5 +13,6 @@ type User struct {
 	Username  string     // Username used for login
 	Email     string     // Email address
 	Password  string     // Hashed password
-	ID        uint64     // Unique identifier for the user
+	Roles     string
+	ID        uint64 // Unique identifier for the user
 }

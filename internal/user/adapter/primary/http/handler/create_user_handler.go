@@ -18,7 +18,7 @@ import (
 )
 
 // maxBodyBytes defines the maximum allowed size for request body in bytes (1MB)
-// to prevent memory exhaustion attacks and ensure reasonable payload sizes
+// to prevent memory exhaustion attacks and ensure reasonable payload sizes.
 const maxBodyBytes = 1 << 20 // 1MB
 
 // Create handles POST /user/create.

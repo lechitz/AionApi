@@ -1,3 +1,4 @@
+// Package metric provides utilities for working with metrics.
 package metric
 
 import (
@@ -51,7 +52,7 @@ func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 	exporter, err := otlpmetrichttp.New(context.Background(), opts...)
 	if err != nil {
 		logger.Errorw(ErrFailedToInitializeOTLPMetricsExporter, commonkeys.Error, err)
-		panic(err) //TODO: avaliar se mantenho panic ou uso os.Exit
+		panic(err) // TODO: avaliar se mantenho panic ou uso os.Exit
 	}
 
 	provider := metric.NewMeterProvider(

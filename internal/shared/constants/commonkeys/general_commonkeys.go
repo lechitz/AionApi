@@ -81,7 +81,7 @@ const (
 	DBHost = "host"
 
 	// DBPort is the database ports.
-	DBPort = "ports"
+	DBPort = "port"
 
 	// DBTryConnectingWithRetries is the connection retry counter.
 	DBTryConnectingWithRetries = "try"

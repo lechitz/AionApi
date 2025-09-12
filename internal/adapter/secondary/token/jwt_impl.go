@@ -2,7 +2,6 @@
 package token
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"strconv"
@@ -12,6 +11,7 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
 )
 
+// ExpTimeToken is the default expiration time for JWT tokens.
 const ExpTimeToken = 24 * time.Hour
 
 // Provider implements output.Provider using HMAC-SHA256.
@@ -19,16 +19,15 @@ type Provider struct {
 	secretKey string
 }
 
-// New builds a JWT token with the given secret key.
-func New(secretKey string) *Provider {
+// NewProvider builds a JWT token with the given secret key.
+func NewProvider(secretKey string) *Provider {
 	return &Provider{secretKey: secretKey}
 }
 
 // Generate creates a signed JWT with userID and expiration.
-// OBS: hoje não inclui "roles"; use GenerateWithClaims se quiser @auth(role:"...").
-func (p *Provider) Generate(_ context.Context, userID uint64) (string, error) {
+func (p *Provider) Generate(userID uint64) (string, error) {
 	claims := jwt.MapClaims{
-		claimskeys.UserID: userID,
+		claimskeys.UserID: strconv.FormatUint(userID, 10),
 		claimskeys.Exp:    time.Now().Add(ExpTimeToken).Unix(),
 	}
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -36,15 +35,14 @@ func (p *Provider) Generate(_ context.Context, userID uint64) (string, error) {
 }
 
 // Verify checks signature and expiration, returning the claims map on success.
-func (p *Provider) Verify(_ context.Context, token string) (map[string]any, error) {
+func (p *Provider) Verify(token string) (map[string]any, error) {
 	claims := jwt.MapClaims{}
 
-	tok, err := jwt.ParseWithClaims(
+	parsedToken, err := jwt.ParseWithClaims(
 		token,
 		claims,
 		func(t *jwt.Token) (interface{}, error) {
-			// defensive: only HS256
-			if t.Method != jwt.SigningMethodHS256 {
+			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, errors.New("unexpected signing method")
 			}
 			return []byte(p.secretKey), nil
@@ -54,11 +52,10 @@ func (p *Provider) Verify(_ context.Context, token string) (map[string]any, erro
 	if err != nil {
 		return nil, err
 	}
-	if !tok.Valid {
+	if !parsedToken.Valid {
 		return nil, jwt.ErrTokenInvalidClaims
 	}
 
-	// Manual exp check
 	if !expOK(claims[claimskeys.Exp]) {
 		return nil, errors.New("token expired")
 	}
@@ -67,9 +64,9 @@ func (p *Provider) Verify(_ context.Context, token string) (map[string]any, erro
 }
 
 // GenerateWithClaims creates a signed JWT with userID, expiration and extra claims (e.g., roles).
-func (p *Provider) GenerateWithClaims(_ context.Context, userID uint64, extra map[string]any) (string, error) {
+func (p *Provider) GenerateWithClaims(userID uint64, extra map[string]any) (string, error) {
 	claims := jwt.MapClaims{
-		claimskeys.UserID: userID,
+		claimskeys.UserID: strconv.FormatUint(userID, 10),
 		claimskeys.Exp:    time.Now().Add(ExpTimeToken).Unix(),
 	}
 	for k, v := range extra {

@@ -20,6 +20,7 @@ type UserCreator interface {
 	Create(ctx context.Context, cmd CreateUserCommand) (domain.User, error)
 }
 
+// UserReader defines methods for retrieving user information by unique identifier.
 type UserReader interface {
 	GetByID(ctx context.Context, userID uint64) (domain.User, error)
 	GetUserByUsername(ctx context.Context, username string) (domain.User, error)
@@ -33,6 +34,7 @@ type UpdateUserCommand struct {
 	Email    *string
 }
 
+// HasUpdates returns true if the command contains any updates.
 func (u UpdateUserCommand) HasUpdates() bool {
 	return u.Name != nil || u.Username != nil || u.Email != nil
 }

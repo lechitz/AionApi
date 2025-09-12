@@ -1,4 +1,4 @@
-// package handler
+// Package handler is the handler for the auth context in the application.
 package handler
 
 import (
@@ -8,14 +8,14 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
 )
 
-// RegisterHTTP registra as rotas REST do contexto de autenticação.
+// RegisterHTTP registers the auth context's HTTP handlers with the provided router.
 func RegisterHTTP(r ports.Router, h *Handler) {
-	r.Group("/v1/auth", func(ar ports.Router) {
-		// Público
+	r.Group("/auth", func(ar ports.Router) {
+		// Public.
 		ar.POST("/login", http.HandlerFunc(h.Login))
 
-		// Protegido por Auth
-		authmw := middleware.New(h.Service, h.Logger) // h já tem deps
+		// Protected.
+		authmw := middleware.New(h.Service, h.Logger)
 		ar.GroupWith(authmw.Auth, func(pr ports.Router) {
 			pr.POST("/logout", http.HandlerFunc(h.Logout))
 		})

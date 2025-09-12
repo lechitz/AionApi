@@ -1,10 +1,9 @@
+// Package output defines the output ports for the auth package.
 package output
-
-import "context"
 
 // AuthProvider defines an interface for generating and verifying tokens.
 type AuthProvider interface {
-	Generate(ctx context.Context, userID uint64) (string, error)
-	Verify(ctx context.Context, tokenValue string) (map[string]any, error)
-	GenerateWithClaims(ctx context.Context, userID uint64, extra map[string]any) (string, error)
+	Generate(userID uint64) (string, error)
+	Verify(tokenValue string) (map[string]any, error)
+	GenerateWithClaims(userID uint64, extra map[string]any) (string, error)
 }

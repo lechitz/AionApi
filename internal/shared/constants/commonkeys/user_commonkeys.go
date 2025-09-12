@@ -18,6 +18,9 @@ const (
 	// Email is the key for the user's email.
 	Email = "email"
 
+	// Roles is the key for the user's role.
+	Roles = "roles"
+
 	// Password is the key for the user's password.
 	Password = "password"
 

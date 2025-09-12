@@ -87,7 +87,7 @@ const (
 	ErrOtelCompressionInvalid = "OTel Exporter compression must be either 'none' or 'gzip', got: %s"
 
 	ErrAppContextReqMin      = "context request timeout must be at least %v"
-	ErrAppShutdownTimeoutMin = "shutdown timeout must be at least %.0fs second"
+	ErrAppShutdownTimeoutMin = "shutdown timeout must be at least %s second"
 
 	InfoSecretKeyGenerated = "JWT secret key successfully generated with length: %d" // #nosec G101
 )

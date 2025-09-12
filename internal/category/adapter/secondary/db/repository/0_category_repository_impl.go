@@ -13,8 +13,8 @@ type CategoryRepository struct {
 	logger logger.ContextLogger
 }
 
-// NewCategory creates a new instance of CategoryRepository with a given gorm.DB and contextlogger.
-func NewCategory(db *gorm.DB, logger logger.ContextLogger) *CategoryRepository {
+// New creates a new instance of CategoryRepository with a given gorm.DB and contextlogger.
+func New(db *gorm.DB, logger logger.ContextLogger) *CategoryRepository {
 	return &CategoryRepository{
 		db:     db,
 		logger: logger,

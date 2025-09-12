@@ -12,6 +12,7 @@ import (
 	"github.com/lechitz/AionApi/internal/user/core/ports/input"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Create handles user creation by normalizing input data, checking for uniqueness conflicts,
@@ -36,15 +37,9 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateUserCommand) (doma
 		span.SetAttributes(attribute.String(commonkeys.Status, StatusDBErrorUsernameOrEmail))
 		return domain.User{}, err
 	}
-	if conflict.UsernameTaken {
-		valErr := sharederrors.NewValidationError(commonkeys.Username, sharederrors.ErrUsernameInUse)
-		span.RecordError(valErr)
-		return domain.User{}, valErr
-	}
-	if conflict.EmailTaken {
-		valErr := sharederrors.NewValidationError(commonkeys.Email, sharederrors.ErrEmailInUse)
-		span.RecordError(valErr)
-		return domain.User{}, valErr
+
+	if err := validateUniquenessConflicts(ctx, span, conflict.UsernameTaken, conflict.EmailTaken); err != nil {
+		return domain.User{}, err
 	}
 
 	hashed, err := s.hasher.Hash(cmd.Password)
@@ -55,14 +50,15 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateUserCommand) (doma
 		return domain.User{}, err
 	}
 
-	toSave := domain.User{
+	user := domain.User{
 		Name:     cmd.Name,
 		Username: cmd.Username,
 		Email:    cmd.Email,
 		Password: hashed,
+		Roles:    UserRoles,
 	}
 
-	userDomain, err := s.userRepository.Create(ctx, toSave)
+	userDomain, err := s.userRepository.Create(ctx, user)
 	if err != nil {
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, StatusDBErrorCreateUser))
@@ -77,6 +73,21 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateUserCommand) (doma
 	s.logger.InfowCtx(ctx, SuccessUserCreated, commonkeys.UserID, strconv.FormatUint(userDomain.ID, 10))
 
 	return userDomain, nil
+}
+
+// validateUniquenessConflicts checks if the username or email are already taken and returns an error if so.
+func validateUniquenessConflicts(_ context.Context, span trace.Span, usernameTaken, emailTaken bool) error {
+	if usernameTaken {
+		valErr := sharederrors.NewValidationError(commonkeys.Username, sharederrors.ErrUsernameInUse)
+		span.RecordError(valErr)
+		return valErr
+	}
+	if emailTaken {
+		valErr := sharederrors.NewValidationError(commonkeys.Email, sharederrors.ErrEmailInUse)
+		span.RecordError(valErr)
+		return valErr
+	}
+	return nil
 }
 
 // normalizeCreateCmd trims whitespace and normalizes a case for user creation input fields.

@@ -1,3 +1,4 @@
+// Package chi implementa a porta Router sobre chi v5.
 package chi
 
 import (

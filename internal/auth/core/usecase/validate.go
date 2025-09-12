@@ -3,7 +3,6 @@ package usecase
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"strconv"
 	"strings"
@@ -32,7 +31,7 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 	sanitized := sanitizeTokenValue(tokenValue)
 
 	span.AddEvent(EventVerifyToken)
-	claims, err := s.authProvider.Verify(ctx, sanitized)
+	claims, err := s.authProvider.Verify(sanitized)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorInvalidToken)
@@ -98,8 +97,6 @@ func parseUserIDValue(v any) (uint64, error) {
 	switch t := v.(type) {
 	case string:
 		return strconv.ParseUint(strings.TrimSpace(t), 10, 64)
-	case json.Number:
-		return strconv.ParseUint(t.String(), 10, 64)
 	default:
 		return 0, errors.New(ErrorInvalidUserIDClaim)
 	}

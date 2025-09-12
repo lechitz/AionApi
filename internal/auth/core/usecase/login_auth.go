@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	authDomain "github.com/lechitz/AionApi/internal/auth/core/domain"
+	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	userDomain "github.com/lechitz/AionApi/internal/user/core/domain"
 
@@ -48,8 +49,10 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 		return userDomain.User{}, "", errors.New(InvalidCredentials)
 	}
 
+	roles := []string{user.Roles}
+
 	span.AddEvent(EventGenerateToken)
-	tokenValue, err := s.authProvider.Generate(ctx, user.ID)
+	tokenValue, err := s.authProvider.GenerateWithClaims(user.ID, map[string]any{claimskeys.Roles: roles})
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToCreateToken)

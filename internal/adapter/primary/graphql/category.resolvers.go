@@ -1,3 +1,4 @@
+// Package graphql is the GraphQL resolvers.
 package graphql
 
 import (
@@ -53,6 +54,8 @@ func (q *queryResolver) CategoryByName(ctx context.Context, name string) (*model
 	return q.CategoryController().GetByName(ctx, name, uid)
 }
 
-// Ensure Resolver implements interfaces
-var _ MutationResolver = (*mutationResolver)(nil)
-var _ QueryResolver = (*queryResolver)(nil)
+// Ensure Resolver implements interfaces.
+var (
+	_ MutationResolver = (*mutationResolver)(nil)
+	_ QueryResolver    = (*queryResolver)(nil)
+)

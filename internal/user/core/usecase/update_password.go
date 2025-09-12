@@ -60,7 +60,7 @@ func (s *Service) UpdatePassword(ctx context.Context, userID uint64, oldPassword
 		return "", fmt.Errorf("%s: %w", ErrorToUpdatePassword, err)
 	}
 
-	tokenValue, err := s.tokenProvider.Generate(ctx, updatedUser.ID)
+	tokenValue, err := s.tokenProvider.Generate(updatedUser.ID)
 	if err != nil || tokenValue == "" {
 		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgCreateToken))
 		if err != nil {

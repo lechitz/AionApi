@@ -1,5 +1,4 @@
-// File: internal/user/core/usecase/create_test.go
-// Package user_test contains tests for user use cases.
+// Package usecase_test contains tests for user use cases.
 package usecase_test
 
 import (
@@ -56,7 +55,7 @@ func TestCreateUser_Success(t *testing.T) {
 		})
 
 	// (Optional) If test setup doesn't already relax logger calls:
-	//suite.Logger.EXPECT().InfowCtx(gomock.Any(), usecase.SuccessUserCreated, commonkeys.UserID, gomock.Any()).AnyTimes()
+	// suite.Logger.EXPECT().InfowCtx(gomock.Any(), usecase.SuccessUserCreated, commonkeys.UserID, gomock.Any()).AnyTimes()
 
 	got, err := suite.UserService.Create(context.Background(), cmd)
 

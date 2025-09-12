@@ -1,3 +1,4 @@
+// Package repository is the repository for the user context in the application.
 package repository
 
 import (
@@ -16,6 +17,8 @@ import (
 )
 
 // GetByEmail retrieves a user by email. Returns zero-value user if not found.
+//
+//nolint:dupl
 func (up UserRepository) GetByEmail(ctx context.Context, email string) (domain.User, error) {
 	tr := otel.Tracer(TracerUserRepository)
 	ctx, span := tr.Start(ctx, SpanGetByEmail, trace.WithAttributes(

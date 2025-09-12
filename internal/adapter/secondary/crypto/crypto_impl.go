@@ -1,3 +1,4 @@
+// Package crypto implements output.JWTKeyGenerator.
 package crypto
 
 import (

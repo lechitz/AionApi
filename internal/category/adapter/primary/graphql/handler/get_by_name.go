@@ -38,10 +38,6 @@ func (h *Handler) GetByName(ctx context.Context, categoryName string, userID uin
 		)
 		return nil, err
 	}
-	if category.Name == "" {
-		span.SetStatus(codes.Ok, "handler not found")
-		return nil, errors.New("handler not found")
-	}
 
 	out := toModelOut(category)
 	span.SetAttributes(attribute.String(commonkeys.CategoryID, out.ID))

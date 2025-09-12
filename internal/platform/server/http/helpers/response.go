@@ -1,4 +1,4 @@
-// Package handlerhelpers provides common response handling functions.
+// Package helpers provides common response handling functions.
 package helpers
 
 import (

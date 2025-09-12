@@ -19,11 +19,13 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
+// AuthMiddleware is a middleware that authenticates a user.
 type AuthMiddleware struct {
 	authService input.AuthService
 	logger      logger.ContextLogger
 }
 
+// New creates a new instance of AuthMiddleware.
 func New(authService input.AuthService, logger logger.ContextLogger) *AuthMiddleware {
 	return &AuthMiddleware{
 		authService: authService,
@@ -31,6 +33,7 @@ func New(authService input.AuthService, logger logger.ContextLogger) *AuthMiddle
 	}
 }
 
+// Auth authenticates a user and sets the user ID and token in the context.
 func (a *AuthMiddleware) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tr := otel.Tracer(TracerAuthMiddleware)
@@ -74,6 +77,7 @@ func (a *AuthMiddleware) Auth(next http.Handler) http.Handler {
 	})
 }
 
+// extractToken extracts the token from the request.
 func extractToken(r *http.Request) (string, error) {
 	// Authorization: Bearer <token>
 	if ah := r.Header.Get("Authorization"); ah != "" {

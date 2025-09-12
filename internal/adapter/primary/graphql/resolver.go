@@ -20,5 +20,8 @@ func (r *Resolver) CategoryController() categoryController.Controller {
 	return categoryController.NewHandler(r.CategoryService, r.Logger)
 }
 
-// Nota: Quando o contexto de Tags tiver um controller similar ao de Category,
-// adicione aqui um método TagsController() seguindo o mesmo padrão.
+// TODO: Nota: Quando o contexto de Tags tiver um controller similar ao de Category, preciso adiciona-lo aqui:
+//// TagController returns the GraphQL controller for Tag.
+// func (r *Resolver) TagController() tagController.Controller {
+//	return tagController.NewHandler(r.TagService, r.Logger)
+// }

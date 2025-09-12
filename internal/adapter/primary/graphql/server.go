@@ -1,3 +1,4 @@
+// Package graphql provides a GraphQL server implementation.
 package graphql
 
 import (
@@ -17,6 +18,7 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/recovery"
 )
 
+// NewGraphqlHandler creates a new GraphQL handler with the given dependencies.
 func NewGraphqlHandler(
 	authService authInput.AuthService,
 	categoryService categoryInput.CategoryService,
@@ -25,15 +27,12 @@ func NewGraphqlHandler(
 ) (http.Handler, error) {
 	r := chi.NewRouter()
 
-	// Auth opcional (quando existir)
 	if authService != nil {
 		r.Use(authmw.New(authService, log).Auth)
 	}
 
-	// Recovery específico do subrouter GraphQL
 	r.Use(recovery.New(generic.New(log, cfg.General)))
 
-	// Usa o Resolver local (mesmo pacote graphql)
 	resolvers := &Resolver{
 		CategoryService: categoryService,
 		Logger:          log,
@@ -55,7 +54,6 @@ func NewGraphqlHandler(
 		KeepAlivePingInterval: 10 * time.Second,
 	})
 
-	// IMPORTANTE: monta em "/" — o composer montará o subrouter em cfg.ServerGraphql.Path
 	r.Handle("/", srv)
 	return r, nil
 }

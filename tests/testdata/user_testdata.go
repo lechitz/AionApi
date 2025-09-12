@@ -3,7 +3,7 @@ package testdata
 import (
 	"time"
 
-	"github.com/lechitz/AionApi/internal/core/user/domain"
+	"github.com/lechitz/AionApi/internal/user/core/domain"
 )
 
 // TestPerfectUser is a predefined User instance used for testing, representing a fully initialized user with typical attributes and lifecycle timestamps.

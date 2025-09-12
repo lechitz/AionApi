@@ -1,13 +1,34 @@
+// Package handler contains the GraphQL handlers for the category service.
 package handler
 
 import (
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
+	gmodel "github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
 	"github.com/lechitz/AionApi/internal/category/core/domain"
 )
 
-func toDomainCreate(in model.CreateCategoryInput, userID uint64) domain.Category {
+// toModelOut is a helper function to convert a domain.Category to a gmodel.Category.
+func toModelOut(c domain.Category) *gmodel.Category {
+	out := &gmodel.Category{
+		ID:     strconv.FormatUint(c.ID, 10),
+		UserID: strconv.FormatUint(c.UserID, 10),
+		Name:   c.Name,
+	}
+	if c.Description != "" {
+		out.Description = &c.Description
+	}
+	if c.Color != "" {
+		out.ColorHex = &c.Color
+	}
+	if c.Icon != "" {
+		out.Icon = &c.Icon
+	}
+	return out
+}
+
+// toDomainCreate is a helper function to convert a gmodel.CreateCategoryInput to a domain.Category.
+func toDomainCreate(in gmodel.CreateCategoryInput, userID uint64) domain.Category {
 	c := domain.Category{UserID: userID, Name: in.Name}
 	if in.Description != nil {
 		c.Description = *in.Description
@@ -21,12 +42,11 @@ func toDomainCreate(in model.CreateCategoryInput, userID uint64) domain.Category
 	return c
 }
 
-// Ajuste esta função conforme seu schema real de UpdateCategoryInput.
-// Assumimos campos opcionais: id, name, description, colorHex, icon.
-func toDomainUpdate(in model.UpdateCategoryInput, userID uint64) domain.Category {
-	var id uint64
-	if in.ID != nil {
-		id, _ = strconv.ParseUint(*in.ID, 10, 64)
+// toDomainUpdate is a helper function to convert a gmodel.UpdateCategoryInput to a domain.Category.
+func toDomainUpdate(in gmodel.UpdateCategoryInput, userID uint64) (domain.Category, error) {
+	id, err := strconv.ParseUint(in.ID, 10, 64)
+	if err != nil {
+		return domain.Category{}, err
 	}
 	c := domain.Category{
 		ID:     id,
@@ -44,34 +64,5 @@ func toDomainUpdate(in model.UpdateCategoryInput, userID uint64) domain.Category
 	if in.Icon != nil {
 		c.Icon = *in.Icon
 	}
-	return c
-}
-
-func toModel(d domain.Category) *model.Category {
-	out := &model.Category{
-		ID:     strconv.FormatUint(d.ID, 10),
-		UserID: strconv.FormatUint(d.UserID, 10),
-		Name:   d.Name,
-	}
-	if d.Description != "" {
-		out.Description = &d.Description
-	}
-	if d.Color != "" {
-		out.ColorHex = &d.Color
-	}
-	if d.Icon != "" {
-		out.Icon = &d.Icon
-	}
-	return out
-}
-
-func toModelList(dd []domain.Category) []*model.Category {
-	if len(dd) == 0 {
-		return []*model.Category{}
-	}
-	out := make([]*model.Category, 0, len(dd))
-	for _, d := range dd {
-		out = append(out, toModel(d))
-	}
-	return out
+	return c, nil
 }

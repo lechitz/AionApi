@@ -1,4 +1,5 @@
+// Package input is the input port for the tag context.
 package input
 
-type TagService interface {
-}
+// TagService interface for tag service.
+type TagService interface{}

@@ -19,6 +19,7 @@ func (up UserRepository) Create(ctx context.Context, userDomain domain.User) (do
 	ctx, span := tr.Start(ctx, SpanCreate, trace.WithAttributes(
 		attribute.String(commonkeys.Username, userDomain.Username),
 		attribute.String(commonkeys.Email, userDomain.Email),
+		attribute.String(commonkeys.Roles, userDomain.Roles),
 		attribute.String(commonkeys.Operation, OperationCreate),
 	))
 	defer span.End()

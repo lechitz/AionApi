@@ -1,3 +1,4 @@
+// Package grpc is the gRPC server composer.
 package grpc
 
 import (
@@ -7,7 +8,7 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 )
 
-// ComposeServer cria o *grpc.Server e (no futuro) registra os services.
+// ComposeServer creates a new gRPC server.
 func ComposeServer(_ interface{}, _ *bootstrap.AppDependencies, _ logger.ContextLogger) (*grpc.Server, error) {
 	// TODO: implementar interceptors, registrations etc.
 	return grpc.NewServer(), nil

@@ -1,5 +1,8 @@
-// Package constants contains constants related to user operations.
+// Package usecase constants contains constants related to user operations.
 package usecase
+
+// UserRoles is the role of a user.
+const UserRoles = "user"
 
 // ErrorToValidateCreateUser indicates an error during user creation validation.
 const ErrorToValidateCreateUser = "validation error on Create"

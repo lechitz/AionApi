@@ -1,4 +1,4 @@
-// Package constants contains constants used throughout the user handler.
+// Package handler constants contains constants used throughout the user handler.
 package handler
 
 import "errors"
@@ -65,6 +65,7 @@ const (
 	ErrSoftDeleteUser = "error soft deleting user"
 )
 
+// ErrNoFieldsToUpdate is the error message for no fields provided for update.
 var ErrNoFieldsToUpdate = errors.New("no fields provided for update")
 
 // Success messages used in user handler.

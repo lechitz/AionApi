@@ -1,3 +1,4 @@
+// Package runtime provides a runtime for the application.
 package runtime
 
 import (
@@ -11,20 +12,24 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 )
 
+// Actor is a function that can be started and stopped.
 type Actor struct {
 	Start     func() error
 	Interrupt func(error)
 }
 
+// Group is a collection of actors that can be started and stopped together.
 type Group struct {
 	actors []Actor
 }
 
+// Add adds an actor to the group.
 func (g *Group) Add(start func() error, interrupt func(error)) {
 	g.actors = append(g.actors, Actor{Start: start, Interrupt: interrupt})
 }
 
-func (g *Group) Run(ctx context.Context, timeout time.Duration, log logger.ContextLogger) {
+// Run starts all actors in the group and waits for them to finish.
+func (g *Group) Run(ctx context.Context, _ time.Duration, log logger.ContextLogger) {
 	var wg sync.WaitGroup
 	errCh := make(chan error, 1)
 

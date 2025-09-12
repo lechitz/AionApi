@@ -6,7 +6,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/auth/core/domain"
 	authconst "github.com/lechitz/AionApi/internal/auth/core/usecase"
-	domain2 "github.com/lechitz/AionApi/internal/core/user/domain"
+	domain2 "github.com/lechitz/AionApi/internal/user/core/domain"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -32,7 +32,7 @@ func TestLogin_Success(t *testing.T) {
 
 	// 3) generate token
 	suite.TokenProvider.EXPECT().
-		Generate(gomock.Any(), uint64(1)).
+		Generate(uint64(1)).
 		Return("token-string", nil)
 
 	// 4) persist token
@@ -105,7 +105,7 @@ func TestLogin_ProviderGenerateFails(t *testing.T) {
 		Return(nil)
 
 	suite.TokenProvider.EXPECT().
-		Generate(gomock.Any(), uint64(1)).
+		Generate(uint64(1)).
 		Return("", errors.New(authconst.ErrorToCreateToken))
 
 	userOut, tokenOut, err := suite.AuthService.Login(suite.Ctx, "lechitz", "123456")
@@ -132,7 +132,7 @@ func TestLogin_SaveTokenFails(t *testing.T) {
 		Return(nil)
 
 	suite.TokenProvider.EXPECT().
-		Generate(gomock.Any(), uint64(1)).
+		Generate(uint64(1)).
 		Return("token-string", nil)
 
 	suite.TokenStore.EXPECT().

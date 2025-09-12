@@ -1,4 +1,4 @@
-// Package constants contains constants used throughout the generic handler.
+// Package handler constants contains constants used throughout the generic handler.
 package handler
 
 import "errors"

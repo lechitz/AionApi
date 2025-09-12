@@ -12,8 +12,8 @@ type Store struct {
 	logger logger.ContextLogger
 }
 
-// New creates a new instance of Store with a given cache and logger.
-func New(cache cache.Cache, logger logger.ContextLogger) *Store {
+// NewStore creates a new instance of Store with a given cache and logger.
+func NewStore(cache cache.Cache, logger logger.ContextLogger) *Store {
 	return &Store{
 		cache:  cache,
 		logger: logger,

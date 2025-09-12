@@ -1,3 +1,4 @@
+// Package server is the server implementation.
 package server
 
 import (
@@ -42,7 +43,7 @@ func RunAll(ctx context.Context, cfg *config.Config, deps *bootstrap.AppDependen
 	)
 
 	// --------------------- gRPC (opcional, via config) -----------------------------------
-	//if cfg.ServerGRPC.Enabled {
+	// if cfg.ServerGRPC.Enabled {
 	//	grpcSrv, err := serverGRPC.ComposeServer(cfg, deps, log)
 	//	if err != nil {
 	//		return fmt.Errorf("compose gRPC server: %w", err)
@@ -61,7 +62,7 @@ func RunAll(ctx context.Context, cfg *config.Config, deps *bootstrap.AppDependen
 	//			_ = lis.Close()
 	//		},
 	//	)
-	//}
+	// }
 
 	// --------------------- Supervisor único ---------------------------------------------
 	log.Infow("servers starting...",

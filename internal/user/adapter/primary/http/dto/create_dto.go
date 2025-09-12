@@ -10,13 +10,26 @@ import (
 )
 
 const (
-	NameIsRequired        = "name is required"
-	UsernameIsRequired    = "username is required"
-	EmailIsRequired       = "email is required"
-	PasswordIsRequired    = "password is required"
+	// NameIsRequired is the error message for a missing name.
+	NameIsRequired = "name is required"
+
+	// UsernameIsRequired is the error message for a missing username.
+	UsernameIsRequired = "username is required"
+
+	// EmailIsRequired is the error message for a missing email.
+	EmailIsRequired = "email is required"
+
+	// PasswordIsRequired is the error message for a missing password.
+	PasswordIsRequired = "password is required"
+
+	// InvalidPasswordLength is the error message for an invalid password length.
 	InvalidPasswordLength = "password must be at least 8 characters"
-	InvalidEmail          = "invalid email format"
-	emailRegex            = `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
+
+	// InvalidEmail is the error message for an invalid email format.
+	InvalidEmail = "invalid email format"
+
+	// emailRegex is the regular expression for email validation.
+	emailRegex = `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
 )
 
 // CreateUserRequest represents the request for creating a user.
@@ -62,8 +75,8 @@ func (r *CreateUserRequest) ToCommand() input.CreateUserCommand {
 
 // CreateUserResponse is the HTTP output for user creation.
 type CreateUserResponse struct {
-	ID       uint64 `json:"id"`
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
+	ID       uint64 `json:"id"`
 }

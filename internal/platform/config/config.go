@@ -86,21 +86,21 @@ func (c *Config) validateGraphQL() error {
 	if c.ServerGraphql.Path[0] != '/' {
 		return errors.New(ErrGraphqlPathMustStart)
 	}
-	//if c.ServerGraphql.ReadTimeout < MinGraphQLTimeout {
+	// if c.ServerGraphql.ReadTimeout < MinGraphQLTimeout {
 	//	return fmt.Errorf(ErrGraphqlReadTimeoutMin, MinGraphQLTimeout)
-	//}
-	//if c.ServerGraphql.WriteTimeout < MinGraphQLTimeout {
+	// }
+	// if c.ServerGraphql.WriteTimeout < MinGraphQLTimeout {
 	//	return fmt.Errorf(ErrGraphqlWriteTimeoutMin, MinGraphQLTimeout)
-	//}
-	//if c.ServerGraphql.ReadHeaderTimeout <= 0 {
+	// }
+	// if c.ServerGraphql.ReadHeaderTimeout <= 0 {
 	//	return errors.New(ErrGraphqlReadHeaderTimeoutMin)
-	//}
-	//if c.ServerGraphql.IdleTimeout <= 0 {
+	// }
+	// if c.ServerGraphql.IdleTimeout <= 0 {
 	//	return errors.New(ErrHTTPIdleTimeoutMin)
-	//}
-	//if c.ServerGraphql.MaxHeaderBytes <= 0 {
+	// }
+	// if c.ServerGraphql.MaxHeaderBytes <= 0 {
 	//	return errors.New(ErrHTTPMaxHeaderBytesMin)
-	//}
+	// }
 
 	return nil
 }
@@ -188,7 +188,7 @@ func (c *Config) validateApp() error {
 		return fmt.Errorf(ErrAppContextReqMin, MinContextRequest)
 	}
 	if c.Application.Timeout < MinShutdownTimeout {
-		return fmt.Errorf(ErrAppShutdownTimeoutMin, MinShutdownTimeout)
+		return fmt.Errorf(ErrAppShutdownTimeoutMin, MinShutdownTimeout.String())
 	}
 
 	return nil

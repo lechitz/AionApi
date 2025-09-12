@@ -14,6 +14,7 @@ type UpdateUserRequest struct {
 	Email    *string `json:"email,omitempty"`
 }
 
+// ToCommand converts the request to a command.
 func (r UpdateUserRequest) ToCommand() input.UpdateUserCommand {
 	return input.UpdateUserCommand{
 		Name:     r.Name,

@@ -29,13 +29,13 @@ input DeleteCategoryInput {
 }
 
 extend type Query {
-    categories: [Category!]! @auth(role: "user")
-    categoryById(id: ID!): Category @auth(role: "user")
-    categoryByName(name: String!): Category @auth(role: "user")
+    categories: [Category!]! @auth(roles: "user")
+    categoryById(id: ID!): Category @auth(roles: "user")
+    categoryByName(name: String!): Category @auth(roles: "user")
 }
 
 extend type Mutation {
-    createCategory(input: CreateCategoryInput!): Category! @auth(role: "user")
-    updateCategory(input: UpdateCategoryInput!): Category! @auth(role: "user")
-    softDeleteCategory(input: DeleteCategoryInput!): Boolean! @auth(role: "user")
+    createCategory(input: CreateCategoryInput!): Category! @auth(roles: "user")
+    updateCategory(input: UpdateCategoryInput!): Category! @auth(roles: "user")
+    softDeleteCategory(input: DeleteCategoryInput!): Boolean! @auth(roles: "user")
 }

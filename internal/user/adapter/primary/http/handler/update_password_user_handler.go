@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"strconv"
 
-	handlerhelpers2 "github.com/lechitz/AionApi/internal/platform/server/http/handlerhelpers"
+	handlerhelpers2 "github.com/lechitz/AionApi/internal/platform/server/http/helpers"
 	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
-	"github.com/lechitz/AionApi/internal/shared/httputils"
+	"github.com/lechitz/AionApi/internal/shared/cookies"
 	"github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
 
 	"go.opentelemetry.io/otel"

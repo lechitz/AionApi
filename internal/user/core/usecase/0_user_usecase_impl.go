@@ -18,7 +18,13 @@ type Service struct {
 }
 
 // NewService creates and returns a new Service instance with the provided dependencies for handling user-related operations.
-func NewService(userRepository userOutput.UserRepository, authStore authOutput.AuthStore, tokenProvider authOutput.AuthProvider, hasher hasher.Hasher, logger logger.ContextLogger) *Service {
+func NewService(
+	userRepository userOutput.UserRepository,
+	authStore authOutput.AuthStore,
+	tokenProvider authOutput.AuthProvider,
+	hasher hasher.Hasher,
+	logger logger.ContextLogger,
+) *Service {
 	return &Service{
 		userRepository: userRepository,
 		authStore:      authStore,

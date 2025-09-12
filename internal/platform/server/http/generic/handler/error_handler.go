@@ -1,4 +1,4 @@
-// Package generic provides common HTTP controllers for the application.
+// Package handler generic provides common HTTP controllers for the application.
 package handler
 
 import (

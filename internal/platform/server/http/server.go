@@ -1,4 +1,5 @@
-package http // (use "http" se preferir, só evite colidir com stdlib)
+// Package http provides a set of utilities for building http servers.
+package http
 
 import (
 	"context"
@@ -10,16 +11,18 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 )
 
+// Params holds the parameters for building a new http.Server instance.
 type Params struct {
-	Addr              string
 	Handler           http.Handler
+	Addr              string
+	MaxHeaderBytes    int
 	ReadTimeout       time.Duration
 	WriteTimeout      time.Duration
 	ReadHeaderTimeout time.Duration
 	IdleTimeout       time.Duration
-	MaxHeaderBytes    int
 }
 
+// FromHTTP creates a new Params instance from the given http.Handler.
 func FromHTTP(cfg *config.Config, h http.Handler) Params {
 	return Params{
 		Addr:              net.JoinHostPort(cfg.ServerHTTP.Host, cfg.ServerHTTP.Port),
@@ -32,6 +35,7 @@ func FromHTTP(cfg *config.Config, h http.Handler) Params {
 	}
 }
 
+// Build builds a new http.Server instance.
 func Build(appCtx context.Context, p Params, _ logger.ContextLogger) *http.Server {
 	return &http.Server{
 		Addr:              p.Addr,

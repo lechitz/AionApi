@@ -49,7 +49,7 @@ type CookieConfig struct {
 type ServerGraphql struct {
 	Host string `envconfig:"GRAPHQL_HOST" default:"0.0.0.0"`
 	Name string `envconfig:"GRAPHQL_NAME" default:"GraphQL"`
-	//Port string `envconfig:"GRAPHQL_PORT" default:"8081"     required:"true"`
+	// Port string `envconfig:"GRAPHQL_PORT" default:"8081"     required:"true"`
 	Path string `envconfig:"GRAPHQL_PATH" default:"/graphql"`
 
 	ReadTimeout  time.Duration `envconfig:"GRAPHQL_READ_TIMEOUT"  default:"5s"`
@@ -75,6 +75,7 @@ type ServerHTTP struct {
 	MaxHeaderBytes    int           `envconfig:"HTTP_MAX_HEADER_BYTES"    default:"1048576"` // 1<<20
 }
 
+// ServerGRPC holds gRPC server configuration.
 type ServerGRPC struct {
 	Addr string `envconfig:"GRPC_ADDR" default:":9090"`
 }

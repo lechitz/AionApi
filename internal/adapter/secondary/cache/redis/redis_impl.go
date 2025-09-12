@@ -1,5 +1,5 @@
-// Package cache redis provides a Redis cache implementation.
-package cache
+// Package redis provides a Redis cache implementation.
+package redis
 
 import (
 	"context"

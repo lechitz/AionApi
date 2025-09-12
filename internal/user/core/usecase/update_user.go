@@ -1,4 +1,4 @@
-// Package user contains use cases for managing users in the system.
+// Package usecase user contains use cases for managing users in the system.
 package usecase
 
 import (

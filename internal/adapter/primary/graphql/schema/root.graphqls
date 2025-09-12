@@ -1,6 +1,6 @@
 # Root schema & reusable middleware live here.
 
-directive @auth(role: String) on FIELD_DEFINITION
+directive @auth(roles: String) on FIELD_DEFINITION
 
 type Query
 type Mutation

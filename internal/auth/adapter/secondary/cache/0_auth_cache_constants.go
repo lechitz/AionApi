@@ -1,4 +1,4 @@
-// Package constants contains constants used for token operations.
+// Package cache constants contains constants used for token operations.
 package cache
 
 import "time"
@@ -16,12 +16,20 @@ const ErrorToDeleteTokenFromRedis = "error to delete token from Redis"
 const TokenExpirationDefault = 24 * time.Hour
 
 // TokenUserKeyFormat defines the format for token keys associated with a specific user.
+//
+//nolint:gosec // Cache key pattern for Redis; contains the word "token" but is not a credential/secret.
 const TokenUserKeyFormat = "token:user:%d"
 
 const (
+	// TokenRetrievedSuccessfully is the message used when a token is retrieved successfully.
 	TokenRetrievedSuccessfully = "token retrieved successfully"
-	TokenDeletedSuccessfully   = "token deleted successfully"
-	TokenSavedSuccessfully     = "token saved successfully"
+
+	// TokenDeletedSuccessfully is the message used when a token is deleted successfully.
+	TokenDeletedSuccessfully = "token deleted successfully"
+
+	// TokenSavedSuccessfully is the message used when a token is saved successfully.
+	//nolint:gosec // Static log/message string; contains the word "token" but is not a credential/secret.
+	TokenSavedSuccessfully = "token saved successfully"
 )
 
 const (

@@ -15,8 +15,8 @@ type UserRepository struct {
 	logger logger.ContextLogger
 }
 
-// NewUser initializes a new UserRepository with the provided database connection and logger.
-func NewUser(db *gorm.DB, logger logger.ContextLogger) *UserRepository {
+// New initializes a new UserRepository with the provided database connection and logger.
+func New(db *gorm.DB, logger logger.ContextLogger) *UserRepository {
 	return &UserRepository{
 		db:     db,
 		logger: logger,

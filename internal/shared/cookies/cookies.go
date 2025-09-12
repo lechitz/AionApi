@@ -1,4 +1,4 @@
-// Package httputils provides utilities for working with HTTP cookies.
+// Package cookies provides utilities for working with HTTP cookies.
 package cookies
 
 import (
@@ -38,6 +38,7 @@ func ClearAuthCookie(w http.ResponseWriter, cfg config.CookieConfig) {
 	})
 }
 
+// mapSameSite maps the given string to the corresponding SameSite value.
 func mapSameSite(sameSite string) http.SameSite {
 	switch sameSite {
 	case "Strict":

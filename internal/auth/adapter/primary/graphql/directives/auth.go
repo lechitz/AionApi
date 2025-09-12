@@ -1,3 +1,4 @@
+// Package directives contains custom directives for gqlgen.
 package directives
 
 import (
@@ -12,17 +13,17 @@ import (
 // Auth implements the @auth(role: String) directive.
 // It enforces that a user is present in the context (populated by the HTTP auth middleware)
 // and, optionally, that the user has the required "role".
-func Auth() func(ctx context.Context, obj any, next graphql.Resolver, role *string) (res any, err error) {
-	return func(ctx context.Context, _ any, next graphql.Resolver, role *string) (any, error) {
+func Auth() func(ctx context.Context, obj any, next graphql.Resolver, roles *string) (res any, err error) {
+	return func(ctx context.Context, _ any, next graphql.Resolver, roles *string) (any, error) {
 		// 1) Must be authenticated (user_id in context)
 		if ctx.Value(ctxkeys.UserID) == nil {
 			return nil, sharederrors.ErrUnauthorized("missing user in context")
 		}
 
-		// 2) (Optional) Check for required role
-		if role != nil && *role != "" {
-			if !hasRole(ctx, *role) {
-				return nil, sharederrors.ErrForbidden("missing required role: " + *role)
+		// 2) (Optional) Check for a required role
+		if roles != nil && *roles != "" {
+			if !hasRole(ctx, *roles) {
+				return nil, sharederrors.ErrForbidden("missing required roles: " + *roles)
 			}
 		}
 

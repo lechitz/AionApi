@@ -14,10 +14,10 @@ input CreateTagInput {
 }
 
 extend type Query {
-    tags: [Tag!]! @auth(role: "user")
-    tagById(id: ID!): Tag @auth(role: "user")
+    tags: [Tag!]! @auth(roles: "user")
+    tagById(id: ID!): Tag @auth(roles: "user")
 }
 
 extend type Mutation {
-    createTag(input: CreateTagInput!): Tag! @auth(role: "user")
+    createTag(input: CreateTagInput!): Tag! @auth(roles: "user")
 }

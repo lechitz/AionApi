@@ -23,7 +23,7 @@ func (h *Handler) Create(ctx context.Context, input model.CreateCategoryInput, u
 	)
 
 	d := toDomainCreate(input, userID)
-	created, err := h.CategoryService.Create(ctx, d, userID)
+	created, err := h.CategoryService.Create(ctx, d)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
@@ -31,5 +31,5 @@ func (h *Handler) Create(ctx context.Context, input model.CreateCategoryInput, u
 	}
 
 	span.SetStatus(codes.Ok, StatusCreated)
-	return toModel(created), nil
+	return toModelOut(created), nil
 }

@@ -82,6 +82,7 @@ type UnauthorizedError struct {
 	Reason string
 }
 
+// Error returns the error message for the UnauthorizedError.
 func (e *UnauthorizedError) Error() string {
 	if e.Reason != "" {
 		return fmt.Sprintf("%s: %s", ErrMsgUnauthorized, e.Reason)
@@ -94,6 +95,7 @@ type ForbiddenError struct {
 	Reason string
 }
 
+// Error returns the error message for the ForbiddenError.
 func (e *ForbiddenError) Error() string {
 	if e.Reason != "" {
 		return fmt.Sprintf("%s: %s", ErrMsgForbidden, e.Reason)
@@ -107,6 +109,7 @@ type ValidationError struct {
 	Reason string
 }
 
+// Error returns the error message for the ValidationError.
 func (e *ValidationError) Error() string {
 	if e.Field != "" && e.Reason != "" {
 		return fmt.Sprintf("%s on %s: %s", ErrMsgValidation, e.Field, e.Reason)
@@ -148,8 +151,13 @@ func NewValidationError(field, reason string) error {
 // ErrParseUserID is returned when a user ID cannot be parsed.
 var ErrParseUserID = errors.New(ErrMsgParseUserID)
 
-var ErrUsernameExists = errors.New(ErrUsernameInUse)
-var ErrEmailExists = errors.New(ErrEmailInUse)
+var (
+	// ErrUsernameExists is returned when a username is already in use.
+	ErrUsernameExists = errors.New(ErrUsernameInUse)
+
+	// ErrEmailExists is returned when an email is already in use.
+	ErrEmailExists = errors.New(ErrEmailInUse)
+)
 
 // ====================================================================
 //             ─── ERRORS.

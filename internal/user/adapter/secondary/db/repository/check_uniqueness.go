@@ -28,9 +28,10 @@ func (up UserRepository) CheckUniqueness(ctx context.Context, username, email st
 
 	var res output.UserUniqueness
 
-	lookupIDByField := func(field, value, logOnFail string) (*uint64, error) {
+	// Returns (id, found, err). Avoid it (nil, nil) by not using pointer in the helper.
+	lookupIDByField := func(field, value, logOnFail string) (uint64, bool, error) {
 		if strings.TrimSpace(value) == "" {
-			return nil, nil
+			return 0, false, nil
 		}
 
 		var u model.UserDB
@@ -41,31 +42,30 @@ func (up UserRepository) CheckUniqueness(ctx context.Context, username, email st
 			First(&u).Error
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
+			return 0, false, nil
 		}
 		if err != nil {
 			span.SetStatus(codes.Error, err.Error())
 			span.RecordError(err)
 			up.logger.ErrorwCtx(ctx, logOnFail, field, value, commonkeys.Error, err.Error())
-			return nil, err
+			return 0, false, err
 		}
 
-		id := u.ID
-		return &id, nil
+		return u.ID, true, nil
 	}
 
-	if id, err := lookupIDByField(commonkeys.Username, username, LogFailedCheckUsername); err != nil {
+	if id, found, err := lookupIDByField(commonkeys.Username, username, LogFailedCheckUsername); err != nil {
 		return res, err
-	} else if id != nil {
+	} else if found {
 		res.UsernameTaken = true
-		res.UsernameOwnerID = id
+		res.UsernameOwnerID = &id
 	}
 
-	if id, err := lookupIDByField(commonkeys.Email, email, LogFailedCheckEmail); err != nil {
+	if id, found, err := lookupIDByField(commonkeys.Email, email, LogFailedCheckEmail); err != nil {
 		return res, err
-	} else if id != nil {
+	} else if found {
 		res.EmailTaken = true
-		res.EmailOwnerID = id
+		res.EmailOwnerID = &id
 	}
 
 	span.SetStatus(codes.Ok, StatusUniquenessChecked)

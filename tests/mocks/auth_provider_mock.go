@@ -10,7 +10,6 @@
 package mocks
 
 import (
-	context "context"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"
@@ -41,31 +40,46 @@ func (m *MockAuthProvider) EXPECT() *MockAuthProviderMockRecorder {
 }
 
 // Generate mocks base method.
-func (m *MockAuthProvider) Generate(ctx context.Context, userID uint64) (string, error) {
+func (m *MockAuthProvider) Generate(userID uint64) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Generate", ctx, userID)
+	ret := m.ctrl.Call(m, "Generate", userID)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Generate indicates an expected call of Generate.
-func (mr *MockAuthProviderMockRecorder) Generate(ctx, userID any) *gomock.Call {
+func (mr *MockAuthProviderMockRecorder) Generate(userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Generate", reflect.TypeOf((*MockAuthProvider)(nil).Generate), ctx, userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Generate", reflect.TypeOf((*MockAuthProvider)(nil).Generate), userID)
+}
+
+// GenerateWithClaims mocks base method.
+func (m *MockAuthProvider) GenerateWithClaims(userID uint64, extra map[string]any) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GenerateWithClaims", userID, extra)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GenerateWithClaims indicates an expected call of GenerateWithClaims.
+func (mr *MockAuthProviderMockRecorder) GenerateWithClaims(userID, extra any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateWithClaims", reflect.TypeOf((*MockAuthProvider)(nil).GenerateWithClaims), userID, extra)
 }
 
 // Verify mocks base method.
-func (m *MockAuthProvider) Verify(ctx context.Context, tokenValue string) (map[string]any, error) {
+func (m *MockAuthProvider) Verify(tokenValue string) (map[string]any, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Verify", ctx, tokenValue)
+	ret := m.ctrl.Call(m, "Verify", tokenValue)
 	ret0, _ := ret[0].(map[string]any)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Verify indicates an expected call of Verify.
-func (mr *MockAuthProviderMockRecorder) Verify(ctx, tokenValue any) *gomock.Call {
+func (mr *MockAuthProviderMockRecorder) Verify(tokenValue any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockAuthProvider)(nil).Verify), ctx, tokenValue)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockAuthProvider)(nil).Verify), tokenValue)
 }

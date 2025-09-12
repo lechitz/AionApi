@@ -120,7 +120,7 @@ tests/                  # unit test suites, mocks, fixtures, coverage
 
 - **Login**: `auth` usecase verifies credentials, issues token (`AuthProvider`), stores reference in cache (`AuthStore`).  
 - **Middleware** (primary HTTP adapter): validates `Authorization: Bearer <token>`, resolves `user_id`, injects into `context`.  
-- **Cookies**: helpers in `internal/shared/httputils` to set secure/HTTPOnly cookies when applicable.  
+- **Cookies**: helpers in `internal/platform/server/http/helpers/httpresponse` to set secure/HTTPOnly cookies when applicable.  
 - **Never log secrets** (passwords, raw tokens, cookie values).
 
 ---

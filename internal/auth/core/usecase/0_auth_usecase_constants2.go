@@ -1,4 +1,4 @@
-// Package constants contains constants related to token operations.
+// Package usecase constants contains constants related to token operations.
 package usecase
 
 // SpanValidateToken is the name of the span for validating a token.
@@ -19,7 +19,7 @@ const ErrorTokenMismatch = "provided reference does not match stored one"
 // SuccessTokenValidated indicates the access reference was validated successfully.
 const SuccessTokenValidated = "access reference validated successfully"
 
-// Events (trace)
+// Events (trace).
 const (
 	// EventVerifyToken is emitted right before verifying token signature/exp.
 	EventVerifyToken = "verify_token"

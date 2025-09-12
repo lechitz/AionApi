@@ -20,7 +20,6 @@ func newUserService(t *testing.T) (context.Context,
 	*mocks.MockHasher,
 	*mocks.MockAuthProvider,
 	*mocks.MockAuthStore,
-	*mocks.MockContextLogger,
 	*usecase.Service,
 	*gomock.Controller,
 ) {
@@ -52,7 +51,7 @@ func newUserService(t *testing.T) (context.Context,
 		logger,
 	)
 
-	return ctx, repo, hasher, provider, store, logger, svc, ctrl
+	return ctx, repo, hasher, provider, store, svc, ctrl
 }
 
 func defaultUser() userdomain.User {
@@ -69,7 +68,7 @@ func defaultUser() userdomain.User {
 }
 
 func TestUpdatePassword_Success(t *testing.T) {
-	ctx, repo, hasher, provider, store, _, svc, ctrl := newUserService(t)
+	ctx, repo, hasher, provider, store, svc, ctrl := newUserService(t)
 	defer ctrl.Finish()
 
 	u := defaultUser()
@@ -82,7 +81,7 @@ func TestUpdatePassword_Success(t *testing.T) {
 	repo.EXPECT().
 		Update(gomock.Any(), u.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(u, nil)
-	provider.EXPECT().Generate(gomock.Any(), u.ID).Return(token, nil)
+	provider.EXPECT().Generate(u.ID).Return(token, nil)
 	store.EXPECT().Save(gomock.Any(), authdomain.Auth{Key: u.ID, Token: token}).Return(nil)
 
 	gotToken, err := svc.UpdatePassword(ctx, u.ID, "oldPassword", "newPassword")
@@ -91,7 +90,7 @@ func TestUpdatePassword_Success(t *testing.T) {
 }
 
 func TestUpdatePassword_ErrorToGetSelf(t *testing.T) {
-	ctx, repo, _, _, _, _, svc, ctrl := newUserService(t)
+	ctx, repo, _, _, _, svc, ctrl := newUserService(t)
 	defer ctrl.Finish()
 
 	u := defaultUser()
@@ -106,7 +105,7 @@ func TestUpdatePassword_ErrorToGetSelf(t *testing.T) {
 }
 
 func TestUpdatePassword_ErrorToCompareHashAndPassword(t *testing.T) {
-	ctx, repo, hasher, _, _, _, svc, ctrl := newUserService(t)
+	ctx, repo, hasher, _, _, svc, ctrl := newUserService(t)
 	defer ctrl.Finish()
 
 	u := defaultUser()
@@ -122,7 +121,7 @@ func TestUpdatePassword_ErrorToCompareHashAndPassword(t *testing.T) {
 }
 
 func TestUpdatePassword_ErrorToHashPassword(t *testing.T) {
-	ctx, repo, hasher, _, _, _, svc, ctrl := newUserService(t)
+	ctx, repo, hasher, _, _, svc, ctrl := newUserService(t)
 	defer ctrl.Finish()
 
 	u := defaultUser()
@@ -139,7 +138,7 @@ func TestUpdatePassword_ErrorToHashPassword(t *testing.T) {
 }
 
 func TestUpdatePassword_ErrorToUpdatePassword(t *testing.T) {
-	ctx, repo, hasher, _, _, _, svc, ctrl := newUserService(t)
+	ctx, repo, hasher, _, _, svc, ctrl := newUserService(t)
 	defer ctrl.Finish()
 
 	u := defaultUser()
@@ -160,7 +159,7 @@ func TestUpdatePassword_ErrorToUpdatePassword(t *testing.T) {
 }
 
 func TestUpdatePassword_ErrorToCreateToken_WithProviderError(t *testing.T) {
-	ctx, repo, hasher, provider, _, _, svc, ctrl := newUserService(t)
+	ctx, repo, hasher, provider, _, svc, ctrl := newUserService(t)
 	defer ctrl.Finish()
 
 	u := defaultUser()
@@ -173,7 +172,7 @@ func TestUpdatePassword_ErrorToCreateToken_WithProviderError(t *testing.T) {
 	repo.EXPECT().
 		Update(gomock.Any(), u.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(u, nil)
-	provider.EXPECT().Generate(gomock.Any(), u.ID).Return("", providerErr)
+	provider.EXPECT().Generate(u.ID).Return("", providerErr)
 
 	gotToken, err := svc.UpdatePassword(ctx, u.ID, "oldPassword", "newPassword")
 	require.Error(t, err)
@@ -182,7 +181,7 @@ func TestUpdatePassword_ErrorToCreateToken_WithProviderError(t *testing.T) {
 }
 
 func TestUpdatePassword_ErrorToCreateToken_EmptyToken(t *testing.T) {
-	ctx, repo, hasher, provider, _, _, svc, ctrl := newUserService(t)
+	ctx, repo, hasher, provider, _, svc, ctrl := newUserService(t)
 	defer ctrl.Finish()
 
 	u := defaultUser()
@@ -195,7 +194,7 @@ func TestUpdatePassword_ErrorToCreateToken_EmptyToken(t *testing.T) {
 		Update(gomock.Any(), u.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(u, nil)
 	// Provider returns empty token without error.
-	provider.EXPECT().Generate(gomock.Any(), u.ID).Return("", nil)
+	provider.EXPECT().Generate(u.ID).Return("", nil)
 
 	gotToken, err := svc.UpdatePassword(ctx, u.ID, "oldPassword", "newPassword")
 	require.Error(t, err)
@@ -204,7 +203,7 @@ func TestUpdatePassword_ErrorToCreateToken_EmptyToken(t *testing.T) {
 }
 
 func TestUpdatePassword_ErrorToSaveToken(t *testing.T) {
-	ctx, repo, hasher, provider, store, _, svc, ctrl := newUserService(t)
+	ctx, repo, hasher, provider, store, svc, ctrl := newUserService(t)
 	defer ctrl.Finish()
 
 	u := defaultUser()
@@ -218,7 +217,7 @@ func TestUpdatePassword_ErrorToSaveToken(t *testing.T) {
 	repo.EXPECT().
 		Update(gomock.Any(), u.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(u, nil)
-	provider.EXPECT().Generate(gomock.Any(), u.ID).Return(token, nil)
+	provider.EXPECT().Generate(u.ID).Return(token, nil)
 	store.EXPECT().Save(gomock.Any(), authdomain.Auth{Key: u.ID, Token: token}).Return(saveErr)
 
 	gotToken, err := svc.UpdatePassword(ctx, u.ID, "oldPassword", "newPassword")
