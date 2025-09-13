@@ -1,5 +1,5 @@
 // Package handler contains the GraphQL handlers for the category service.
-package handler
+package controller
 
 import (
 	"strconv"

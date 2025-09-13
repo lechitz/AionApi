@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"context"
@@ -8,9 +8,10 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 )
 
-// Controller is the contract used by GraphQL resolvers.
+// TODO: verificar a necessidade e ajuste !!!
+// CategoryController is the contract used by GraphQL resolvers.
 // Keep it thin: map GraphQL <-> domain, add tracing/logging, delegate to use cases.
-type Controller interface {
+type CategoryController interface {
 	Create(ctx context.Context, in model.CreateCategoryInput, userID uint64) (*model.Category, error)
 	Update(ctx context.Context, in model.UpdateCategoryInput, userID uint64) (*model.Category, error)
 	SoftDelete(ctx context.Context, categoryID, userID uint64) error
@@ -20,15 +21,15 @@ type Controller interface {
 	ListAll(ctx context.Context, userID uint64) ([]*model.Category, error)
 }
 
-// Handler is the concrete implementation of Controller.
-type Handler struct {
+// controller is the concrete implementation of CategoryController.
+type controller struct {
 	CategoryService input.CategoryService
 	Logger          logger.ContextLogger
 }
 
-// NewHandler wires dependencies and returns a Controller.
-func NewHandler(svc input.CategoryService, log logger.ContextLogger) Controller {
-	return &Handler{
+// NewController wires dependencies and returns a CategoryController.
+func NewController(svc input.CategoryService, log logger.ContextLogger) CategoryController {
+	return &controller{
 		CategoryService: svc,
 		Logger:          log,
 	}

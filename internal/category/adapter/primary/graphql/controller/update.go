@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"context"
@@ -16,7 +16,7 @@ import (
 
 // Update handles handler update following the same orchestration: tracing, mapping,
 // error handling, and delegating to CategoryService.Update.
-func (h *Handler) Update(ctx context.Context, in model.UpdateCategoryInput, userID uint64) (*model.Category, error) {
+func (h *controller) Update(ctx context.Context, in model.UpdateCategoryInput, userID uint64) (*model.Category, error) {
 	tracer := otel.Tracer(TracerName)
 	ctx, span := tracer.Start(ctx, SpanUpdate)
 	defer span.End()

@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 )
 
 // ListAll retrieves all categories for the provided user ID.
-func (h *Handler) ListAll(ctx context.Context, userID uint64) ([]*model.Category, error) {
+func (h *controller) ListAll(ctx context.Context, userID uint64) ([]*model.Category, error) {
 	tracer := otel.Tracer(TracerName)
 	ctx, span := tracer.Start(ctx, SpanListAll)
 	defer span.End()

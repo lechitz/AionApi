@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 
 // SoftDelete orchestrates soft deletion using similar patterns: span, validation,
 // delegation, and logging.
-func (h *Handler) SoftDelete(ctx context.Context, categoryID, userID uint64) error {
+func (h *controller) SoftDelete(ctx context.Context, categoryID, userID uint64) error {
 	tracer := otel.Tracer(TracerName)
 	ctx, span := tracer.Start(ctx, SpanSoftDelete)
 	defer span.End()

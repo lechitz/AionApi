@@ -26,7 +26,6 @@ type UserFinder interface {
 	CheckUniqueness(ctx context.Context, username, email string) (UserUniqueness, error)
 	GetByID(ctx context.Context, userID uint64) (domain.User, error)
 	GetByUsername(ctx context.Context, username string) (domain.User, error)
-	GetByEmail(ctx context.Context, email string) (domain.User, error)
 	ListAll(ctx context.Context) ([]domain.User, error)
 }
 

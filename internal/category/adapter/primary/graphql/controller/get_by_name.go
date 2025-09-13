@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"context"
@@ -12,41 +12,35 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-// GetByID fetches a handler by ID.
-func (h *Handler) GetByID(ctx context.Context, categoryID uint64, userID uint64) (*model.Category, error) {
+// GetByName retrieves a handler by its name.
+func (h *controller) GetByName(ctx context.Context, categoryName string, userID uint64) (*model.Category, error) {
 	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(ctx, SpanGetByID)
+	ctx, span := tracer.Start(ctx, SpanGetByName)
 	defer span.End()
 
 	span.SetAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryID, 10)),
+		attribute.String(commonkeys.CategoryName, categoryName),
 	)
-
 	if userID == 0 {
 		span.SetStatus(codes.Error, ErrUserIDNotFound)
 		return nil, errors.New(ErrUserIDNotFound)
 	}
 
-	if categoryID == 0 {
-		span.SetStatus(codes.Error, ErrCategoryNotFound)
-		return nil, errors.New(ErrCategoryNotFound)
-	}
-
-	category, err := h.CategoryService.GetByID(ctx, categoryID, userID)
+	category, err := h.CategoryService.GetByName(ctx, categoryName, userID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, ErrCategoryNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrCategoryNotFound,
+		span.SetStatus(codes.Error, "handler by name not found")
+		h.Logger.ErrorwCtx(ctx, "handler by name not found",
 			commonkeys.Error, err.Error(),
 			commonkeys.UserID, userID,
-			commonkeys.CategoryID, categoryID,
+			commonkeys.CategoryName, categoryName,
 		)
 		return nil, err
 	}
 
 	out := toModelOut(category)
-	span.SetAttributes(attribute.String(commonkeys.CategoryName, out.Name))
+	span.SetAttributes(attribute.String(commonkeys.CategoryID, out.ID))
 	span.SetStatus(codes.Ok, StatusFetched)
 	return out, nil
 }

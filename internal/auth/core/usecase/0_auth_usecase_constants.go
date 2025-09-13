@@ -64,7 +64,7 @@ const (
 	EventGenerateToken = "generate_token"
 
 	// EventSaveTokenToStore is emitted right before saving the token to the cache.
-	EventSaveTokenToStore = "save_token_to_store"
+	EventSaveTokenToStore = "save_token_to_store" // #nosec G101: false positive — event name string, not a credential
 
 	// EventTokenRevoked is emitted right before revoking the token.
 	EventTokenRevoked = "token_revoked"
@@ -74,7 +74,4 @@ const (
 
 	// EventRevokeToken is emitted right before revoking the token.
 	EventRevokeToken = "revoke_token"
-
-	// EventLogoutSuccess is emitted right after a successful logout.
-	EventLogoutSuccess = "logout_success"
 )

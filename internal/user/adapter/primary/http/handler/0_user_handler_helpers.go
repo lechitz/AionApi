@@ -7,14 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
 	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
-	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
-	"github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/trace"
-
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 )
 
@@ -36,21 +29,4 @@ func parseUserIDParam(r *http.Request, log logger.ContextLogger) (uint64, error)
 	}
 
 	return userID, nil
-}
-
-// writeUpdateSuccess writes a success response for a user update operation using a DTO.
-// This avoids coupling controllers to domain entities.
-func (h *Handler) writeUpdateSuccess(w http.ResponseWriter, span trace.Span, res dto.UpdateUserResponse) {
-	updatedUsername := ""
-	if res.Username != nil {
-		updatedUsername = *res.Username
-	}
-
-	span.SetAttributes(
-		attribute.String(commonkeys.UpdatedUsername, updatedUsername),
-		attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusOK),
-	)
-	span.SetStatus(codes.Ok, StatusUserUpdated)
-
-	httpresponse.WriteSuccess(w, http.StatusOK, res, MsgUserUpdated)
 }

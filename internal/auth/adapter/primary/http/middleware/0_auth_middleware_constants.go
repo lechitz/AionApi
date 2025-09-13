@@ -29,13 +29,11 @@ const (
 	// StatusAuthenticated is the status for authenticated.
 	StatusAuthenticated = "authenticated"
 
-	//nolint:gosec // this is an error message for a missing or empty auth token.
 	// ErrorUnauthorizedAccessMissingToken is the error message for a missing or empty auth token.
-	ErrorUnauthorizedAccessMissingToken = "missing or empty auth token"
+	ErrorUnauthorizedAccessMissingToken = "missing or empty auth token" // #nosec G101: false positive — user-facing error message, not a credential
 
-	//nolint:gosec // this is an error message for an invalid auth token.
 	// ErrorUnauthorizedAccessInvalidToken is the error message for an invalid auth token.
-	ErrorUnauthorizedAccessInvalidToken = "invalid auth token"
+	ErrorUnauthorizedAccessInvalidToken = "invalid auth token" // #nosec G101: false positive — user-facing error message, not a credential
 
 	// MsgContextSet is the message for when the auth context is set.
 	MsgContextSet = "auth context attached to request"

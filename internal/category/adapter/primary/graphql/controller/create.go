@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"context"
@@ -11,8 +11,8 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-// Create mapeia o input GraphQL → domínio, delega ao service e retorna GraphQL model.
-func (h *Handler) Create(ctx context.Context, input model.CreateCategoryInput, userID uint64) (*model.Category, error) {
+// Create is the handler for creating a new category.
+func (h *controller) Create(ctx context.Context, input model.CreateCategoryInput, userID uint64) (*model.Category, error) {
 	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanCreate)
 	defer span.End()
@@ -22,8 +22,8 @@ func (h *Handler) Create(ctx context.Context, input model.CreateCategoryInput, u
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 	)
 
-	d := toDomainCreate(input, userID)
-	created, err := h.CategoryService.Create(ctx, d)
+	category := toDomainCreate(input, userID)
+	categoryDomain, err := h.CategoryService.Create(ctx, category)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
@@ -31,5 +31,5 @@ func (h *Handler) Create(ctx context.Context, input model.CreateCategoryInput, u
 	}
 
 	span.SetStatus(codes.Ok, StatusCreated)
-	return toModelOut(created), nil
+	return toModelOut(categoryDomain), nil
 }
