@@ -93,15 +93,15 @@ endif
 # GraphQL (gqlgen)
 # --------------------------------------------------------------------
 
-# Diretório do adapter GraphQL centralizado
+# Centralized GraphQL adapter directory
 GRAPH_DIR := internal/adapter/primary/graphql
 
-# Lista opcional de schemas (para log)
+# Optional list of schemas (for logging)
 GRAPHQL_SOURCES := $(shell find "$(GRAPH_DIR)/schema" -type f -name "*.graphqls" 2>/dev/null)
 
 graphql:
 	@echo "Generating GraphQL code with gqlgen..."
-	@echo "Schemas encontrados:"; if [ -n "$(GRAPHQL_SOURCES)" ]; then printf "  %s\n" $(GRAPHQL_SOURCES); else echo "  (nenhum .graphqls encontrado)"; fi
+	@echo "Schemas found:"; if [ -n "$(GRAPHQL_SOURCES)" ]; then printf "  %s\n" $(GRAPHQL_SOURCES); else echo "  (no .graphqls found)"; fi
 	cd "$(GRAPH_DIR)" && go run github.com/99designs/gqlgen generate
 	cd "$(ROOT_DIR)" && go mod tidy
 	@echo "✅  GraphQL code generated successfully."
