@@ -6,7 +6,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"

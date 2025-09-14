@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/user/adapter/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/user/core/domain"

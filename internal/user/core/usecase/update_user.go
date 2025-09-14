@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/user/core/domain"
 	"github.com/lechitz/AionApi/internal/user/core/ports/input"
 	"go.opentelemetry.io/otel/codes"
@@ -46,7 +46,7 @@ func (s *Service) UpdateUser(ctx context.Context, userID uint64, cmd input.Updat
 	if cmd.Email != nil {
 		fields[commonkeys.Email] = *cmd.Email
 	}
-	fields[UpdatedAt] = time.Now().UTC()
+	fields[commonkeys.UserUpdatedAt] = time.Now().UTC()
 
 	updatedUser, err := s.userRepository.Update(ctx, userID, fields)
 	if err != nil {

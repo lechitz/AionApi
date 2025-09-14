@@ -18,9 +18,6 @@ const (
 	// SpanGetByUsername is the name of the span for getting by username.
 	SpanGetByUsername = "GetByUsername"
 
-	// SpanGetByEmail is the name of the span for getting by email.
-	SpanGetByEmail = "GetByEmail"
-
 	// SpanListAll is the name of the span for list all.
 	SpanListAll = "ListAll"
 
@@ -44,9 +41,6 @@ const (
 
 	// OperationGetByUsername is the name of the operation for getting a user by username.
 	OperationGetByUsername = "get_by_username"
-
-	// OperationGetByEmail is the name of the operation for getting a user by email.
-	OperationGetByEmail = "get_by_email"
 
 	// OperationListAll is the name of the operation for getting all users.
 	OperationListAll = "get_all"
@@ -108,15 +102,6 @@ const (
 	// LogUserRetrievedByUsername is the message used when a username retrieves a user.
 	LogUserRetrievedByUsername = "user retrieved by username successfully"
 
-	// LogUserNotFoundByEmail is the message used when a user is not found by email.
-	LogUserNotFoundByEmail = "user not found by email"
-
-	// LogFailedGetByEmail is the message used when a user retrieval by email fails.
-	LogFailedGetByEmail = "failed to get user by email"
-
-	// LogUserRetrievedByEmail is the message used when a user is retrieved by email.
-	LogUserRetrievedByEmail = "user retrieved by email successfully"
-
 	// LogFailedListAll is the message used when a user retrieval by email fails.
 	LogFailedListAll = "failed to get all users"
 
@@ -162,9 +147,6 @@ const (
 	// StatusUserRetrievedByUsername is the status message for a user retrieval by username.
 	StatusUserRetrievedByUsername = "user retrieved by username successfully"
 
-	// StatusUserRetrievedByEmail is the status message for a user retrieval by email.
-	StatusUserRetrievedByEmail = "user retrieved by email successfully"
-
 	// StatusUsersRetrieved is the status message for a user retrieval by email.
 	StatusUsersRetrieved = "all users retrieved successfully"
 
@@ -179,9 +161,6 @@ const (
 const (
 	// SelectByUsernameColumns is the columns to select when getting a user by username.
 	SelectByUsernameColumns = "user_id, name, username, email, password, roles, created_at, updated_at, deleted_at"
-
-	// SelectByEmailColumns is the columns to select when getting a user by email.
-	SelectByEmailColumns = "user_id, name, username, email, password, roles, created_at, updated_at, deleted_at"
 
 	// SelectListAllColumns is the columns to select when listing all users.
 	SelectListAllColumns = "user_id, name, username, email, roles, created_at, updated_at, deleted_at"

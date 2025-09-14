@@ -6,8 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
 	"go.opentelemetry.io/otel/codes"
 
@@ -37,7 +36,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
-		helpers.WriteAuthError(ctx, w, span, h.Logger)
+		httpresponse.WriteAuthErrorSpan(ctx, w, span, h.Logger)
 		return
 	}
 
@@ -50,13 +49,13 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var req dto.UpdateUserRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		helpers.WriteDecodeError(ctx, w, span, err, h.Logger)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span, err, h.Logger)
 		return
 	}
 
 	cmd := req.ToCommand()
 	if !cmd.HasUpdates() {
-		helpers.WriteDecodeError(ctx, w, span, ErrNoFieldsToUpdate, h.Logger)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span, ErrNoFieldsToUpdate, h.Logger)
 		return
 	}
 
@@ -64,7 +63,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	userUpdated, err := h.UserService.UpdateUser(ctx, userID, cmd)
 	if err != nil {
-		helpers.WriteDomainError(ctx, w, span, err, ErrUpdateUser, h.Logger)
+		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, ErrUpdateUser, h.Logger)
 		return
 	}
 

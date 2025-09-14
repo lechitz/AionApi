@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/cookies"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/cookies"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
@@ -28,7 +27,7 @@ func (h *Handler) SoftDeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
-		helpers.WriteAuthError(ctx, w, span, h.Logger)
+		httpresponse.WriteAuthErrorSpan(ctx, w, span, h.Logger)
 		return
 	}
 
@@ -52,7 +51,7 @@ func (h *Handler) SoftDeleteUser(w http.ResponseWriter, r *http.Request) {
 			commonkeys.UserID, strconv.FormatUint(userID, 10),
 			commonkeys.Error, err.Error(),
 		)
-		helpers.WriteDomainError(ctx, w, span, err, ErrSoftDeleteUser, h.Logger)
+		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, ErrSoftDeleteUser, h.Logger)
 		return
 	}
 

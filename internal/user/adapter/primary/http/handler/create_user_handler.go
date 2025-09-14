@@ -6,11 +6,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
-	dto2 "github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
+	"github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -39,18 +38,18 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 
-	var req dto2.CreateUserRequest
+	var req dto.CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		span.SetStatus(codes.Error, EventDecodeRequest)
 		h.Logger.ErrorwCtx(ctx, ErrCreateUserValidation)
-		helpers.WriteDecodeError(ctx, w, span, err, h.Logger)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span, err, h.Logger)
 		return
 	}
 
 	if err := req.ValidateUser(); err != nil {
 		span.SetStatus(codes.Error, ErrCreateUserValidation)
 		h.Logger.ErrorwCtx(ctx, ErrCreateUserValidation)
-		helpers.WriteDecodeError(ctx, w, span, err, h.Logger)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span, err, h.Logger)
 		return
 	}
 
@@ -66,7 +65,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	userCreated, err := h.UserService.Create(ctx, cmd)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
-		helpers.WriteDomainError(ctx, w, span, err, ErrCreateUser, h.Logger)
+		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, ErrCreateUser, h.Logger)
 		return
 	}
 
@@ -89,7 +88,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		trace.WithAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userCreated.ID, 10))),
 	)
 
-	response := dto2.CreateUserResponse{
+	response := dto.CreateUserResponse{
 		Name:     userCreated.Name,
 		Username: userCreated.Username,
 		Email:    userCreated.Email,

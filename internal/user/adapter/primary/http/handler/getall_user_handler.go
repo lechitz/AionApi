@@ -4,8 +4,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 	"github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
@@ -38,7 +37,7 @@ func (h *Handler) ListAll(w http.ResponseWriter, r *http.Request) {
 			tracingkeys.RequestUserAgentKey, userAgent,
 			commonkeys.Error, err.Error(),
 		)
-		helpers.WriteDomainError(ctx, w, span, err, ErrGetUsers, h.Logger)
+		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, ErrGetUsers, h.Logger)
 		return
 	}
 

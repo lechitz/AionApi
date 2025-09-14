@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 	"github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
@@ -39,7 +38,7 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 			tracingkeys.RequestIPKey, ip,
 			tracingkeys.RequestUserAgentKey, userAgent,
 		)
-		helpers.WriteDecodeError(ctx, w, span, err, h.Logger)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span, err, h.Logger)
 		return
 	}
 
@@ -63,7 +62,7 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 			tracingkeys.RequestIPKey, ip,
 			tracingkeys.RequestUserAgentKey, userAgent,
 		)
-		helpers.WriteDomainError(ctx, w, span, err, ErrGetUserByID, h.Logger)
+		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, ErrGetUserByID, h.Logger)
 		return
 	}
 

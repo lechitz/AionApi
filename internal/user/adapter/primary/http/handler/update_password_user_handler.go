@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/cookies"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/cookies"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/validation"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
@@ -38,11 +38,11 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 
 	var req dto.UpdatePasswordUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		helpers.WriteDecodeError(ctx, w, span, err, h.Logger)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span, err, h.Logger)
 		return
 	}
 
-	err := helpers.CheckRequiredFields(map[string]string{
+	err := validation.CheckRequiredFields(map[string]string{
 		commonkeys.Password:    req.Password,
 		commonkeys.NewPassword: req.NewPassword,
 	})
@@ -52,13 +52,13 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 			tracingkeys.RequestIPKey, ip,
 			tracingkeys.RequestUserAgentKey, userAgent,
 		)
-		helpers.WriteDecodeError(ctx, w, span, err, h.Logger)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span, err, h.Logger)
 		return
 	}
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
-		helpers.WriteAuthError(ctx, w, span, h.Logger)
+		httpresponse.WriteAuthErrorSpan(ctx, w, span, h.Logger)
 		return
 	}
 
@@ -71,7 +71,7 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 
 	newToken, err := h.UserService.UpdatePassword(ctx, userID, req.Password, req.NewPassword)
 	if err != nil {
-		helpers.WriteDomainError(ctx, w, span, err, ErrUpdateUser, h.Logger)
+		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, ErrUpdateUser, h.Logger)
 		return
 	}
 
