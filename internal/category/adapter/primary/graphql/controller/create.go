@@ -1,7 +1,9 @@
+// Package controller contains GraphQL-facing controllers for the Category context.
 package controller
 
 import (
 	"context"
+	"errors"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -11,8 +13,8 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-// Create is the handler for creating a new category.
-func (h *controller) Create(ctx context.Context, input model.CreateCategoryInput, userID uint64) (*model.Category, error) {
+// Create is the GraphQL-facing entrypoint for creating a new category.
+func (h *controller) Create(ctx context.Context, in model.CreateCategoryInput, userID uint64) (*model.Category, error) {
 	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanCreate)
 	defer span.End()
@@ -22,14 +24,43 @@ func (h *controller) Create(ctx context.Context, input model.CreateCategoryInput
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 	)
 
-	category := toDomainCreate(input, userID)
-	categoryDomain, err := h.CategoryService.Create(ctx, category)
+	// Basic guards (controller-level preconditions).
+	if userID == 0 {
+		span.SetStatus(codes.Error, ErrUserIDNotFound)
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
+		return nil, errors.New(ErrUserIDNotFound)
+	}
+
+	cmd := toCreateCommand(in, userID)
+
+	// Delegate to the input port (use case).
+	domainOut, err := h.CategoryService.Create(ctx, cmd)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, err.Error())
+		span.SetStatus(codes.Error, MsgCreateError)
+		h.Logger.ErrorwCtx(
+			ctx,
+			MsgCreateError,
+			commonkeys.Error, err.Error(),
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.CategoryName, in.Name,
+		)
 		return nil, err
 	}
 
+	out := toModelOut(domainOut)
+	span.SetAttributes(
+		attribute.String(commonkeys.CategoryID, out.ID),
+		attribute.String(commonkeys.CategoryName, out.Name),
+	)
 	span.SetStatus(codes.Ok, StatusCreated)
-	return toModelOut(categoryDomain), nil
+
+	h.Logger.InfowCtx(
+		ctx,
+		MsgCreated,
+		commonkeys.UserID, strconv.FormatUint(userID, 10),
+		commonkeys.CategoryID, out.ID,
+		commonkeys.CategoryName, out.Name,
+	)
+	return out, nil
 }

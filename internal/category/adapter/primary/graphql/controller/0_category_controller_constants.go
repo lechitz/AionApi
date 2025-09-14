@@ -1,64 +1,80 @@
-// Package handler contains the GraphQL handlers for the category service.
+// Package controller contains GraphQL-facing controllers for the Category context.
 package controller
 
+// Tracing spans used for OpenTelemetry instrumentation.
 const (
-	// TracerName is the name of the tracer.
-	TracerName = "aionapi.graphql.handler"
+	// TracerName is the name of the tracer for Category GraphQL controllers.
+	TracerName = "aionapi.graphql.category"
 
-	// SpanCreate is the name of the span for create.
-	SpanCreate = "handler.create"
+	// SpanCreate is the span name for creating a category.
+	SpanCreate = "category.create"
 
-	// SpanUpdate is the name of the span for update.
-	SpanUpdate = "handler.update"
+	// SpanUpdate is the span name for updating a category.
+	SpanUpdate = "category.update"
 
-	// SpanSoftDelete is the name of the span for soft delete.
-	SpanSoftDelete = "handler.soft_delete"
+	// SpanSoftDelete is the span name for soft-deleting a category.
+	SpanSoftDelete = "category.soft_delete"
 
-	// SpanListAll is the name of the span for list all.
-	SpanListAll = "handler.list_all"
+	// SpanListAll is the span name for listing all categories.
+	SpanListAll = "category.list_all"
 
-	// SpanGetByID is the name of the span for get by id.
-	SpanGetByID = "handler.get_by_id"
+	// SpanGetByID is the span name for retrieving a category by ID.
+	SpanGetByID = "category.get_by_id"
 
-	// SpanGetByName is the name of the span for get by name.
-	SpanGetByName = "handler.get_by_name"
+	// SpanGetByName is the span name for retrieving a category by name.
+	SpanGetByName = "category.get_by_name"
+)
 
-	// StatusCreated is the status for when a handler is created.
-	StatusCreated = "category_created"
+// Status messages represent the outcome of controller operations.
+const (
+	// StatusCreated indicates that a category has been successfully created.
+	StatusCreated = "created"
 
-	// StatusUpdated is the status for when a handler is updated.
-	StatusUpdated = "category_updated"
+	// StatusUpdated indicates that a category has been successfully updated.
+	StatusUpdated = "updated"
 
-	// StatusSoftDeleted is the status for when a handler is soft deleted.
-	StatusSoftDeleted = "category_soft_deleted"
+	// StatusSoftDeleted indicates that a category has been successfully soft-deleted.
+	StatusSoftDeleted = "soft_deleted"
 
-	// StatusFetchedAll is the status for when all handlers are fetched.
-	StatusFetchedAll = "all_categories_fetched"
+	// StatusFetchedAll indicates that all categories have been successfully fetched.
+	StatusFetchedAll = "fetched_all"
 
-	// StatusFetched is the status for when a handler is fetched.
-	StatusFetched = "category_fetched"
+	// StatusFetched indicates that a single category has been successfully fetched.
+	StatusFetched = "fetched"
+)
 
-	// MsgCreated is the message for when a handler is created.
-	MsgCreated = "handler created successfully"
+// Log/messages and error strings used in logging and error reporting.
+const (
+	// MsgCreated is the log message for when a category is created.
+	MsgCreated = "category created"
 
-	// MsgUpdated is the message for when a handler is updated.
-	MsgUpdated = "handler updated successfully"
+	// MsgUpdated is the log message for when a category is updated.
+	MsgUpdated = "category updated"
 
-	// MsgSoftDeleted is the message for when a handler is soft deleted.
-	MsgSoftDeleted = "handler soft deleted successfully"
+	// MsgSoftDeleted is the log message for when a category is soft-deleted.
+	MsgSoftDeleted = "category soft-deleted"
 
-	// MsgFetchedAll is the message for when all handlers are fetched.
-	MsgFetchedAll = "all categories fetched successfully"
+	// MsgCreateError is the log message for when a create operation fails.
+	MsgCreateError = "error creating category"
 
-	// MsgFetched is the message for when a handler is fetched.
-	MsgFetched = "handler fetched successfully"
+	// MsgSoftDeleteError is the log message for when a soft-delete operation fails.
+	MsgSoftDeleteError = "error soft deleting category"
 
-	// ErrInvalidCategoryID is the error message for when an invalid category ID is provided.
-	ErrInvalidCategoryID = "invalid handler id"
+	// MsgUpdateError is the log message for when an update operation fails.
+	MsgUpdateError = "error updating category"
 
-	// ErrUserIDNotFound is the error message for when the user ID is not found in the context.
-	ErrUserIDNotFound = "user_id not found in context"
+	// ErrUserIDNotFound is the error message when the user ID is missing or invalid.
+	ErrUserIDNotFound = "user id not found"
 
-	// ErrCategoryNotFound is the error message for when a handler is not found.
-	ErrCategoryNotFound = "handler not found"
+	// ErrCategoryIDNotFound is the error message when the category ID is missing or invalid.
+	ErrCategoryIDNotFound = "category id not found"
+
+	// ErrInvalidCategoryID is the error message when the category ID cannot be parsed or is invalid.
+	ErrInvalidCategoryID = "invalid category id"
+
+	// ErrCategoryNotFound is the error message when a category cannot be found.
+	ErrCategoryNotFound = "category not found"
+
+	// ErrCategoriesNotFound is the error message when no categories can be found for a user.
+	ErrCategoriesNotFound = "categories not found"
 )

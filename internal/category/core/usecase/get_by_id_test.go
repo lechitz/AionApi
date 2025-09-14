@@ -16,7 +16,8 @@ func TestGetByID_InvalidCategoryID(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	categoryDB, err := suite.CategoryService.GetByID(suite.Ctx, 1, 2)
+	// invalid: categoryID == 0
+	categoryDB, err := suite.CategoryService.GetByID(suite.Ctx, 0, 2)
 
 	require.Error(t, err)
 	require.Equal(t, usecase.CategoryIDIsRequired, err.Error())

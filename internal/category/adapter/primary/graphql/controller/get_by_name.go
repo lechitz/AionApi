@@ -1,3 +1,4 @@
+// Package controller contains GraphQL-facing controllers for the Category context.
 package controller
 
 import (
@@ -12,26 +13,38 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-// GetByName retrieves a handler by its name.
+// GetByName fetches a category by name, adding tracing/logging and delegating to the input port.
 func (h *controller) GetByName(ctx context.Context, categoryName string, userID uint64) (*model.Category, error) {
-	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(ctx, SpanGetByName)
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanGetByName)
 	defer span.End()
 
 	span.SetAttributes(
+		attribute.String(commonkeys.Operation, SpanGetByName),
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(commonkeys.CategoryName, categoryName),
 	)
+
+	// Basic guards (controller-level preconditions).
 	if userID == 0 {
 		span.SetStatus(codes.Error, ErrUserIDNotFound)
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
 		return nil, errors.New(ErrUserIDNotFound)
 	}
+	if categoryName == "" {
+		span.SetStatus(codes.Error, ErrCategoryNotFound)
+		h.Logger.ErrorwCtx(ctx, ErrCategoryNotFound, commonkeys.CategoryName, categoryName)
+		return nil, errors.New(ErrCategoryNotFound)
+	}
 
+	// Delegate to the input port (use case).
 	category, err := h.CategoryService.GetByName(ctx, categoryName, userID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, "handler by name not found")
-		h.Logger.ErrorwCtx(ctx, "handler by name not found",
+		span.SetStatus(codes.Error, ErrCategoryNotFound)
+		h.Logger.ErrorwCtx(
+			ctx,
+			ErrCategoryNotFound,
 			commonkeys.Error, err.Error(),
 			commonkeys.UserID, userID,
 			commonkeys.CategoryName, categoryName,

@@ -19,7 +19,12 @@ import (
 )
 
 // NewGraphqlHandler creates a new GraphQL handler with the given dependencies.
-func NewGraphqlHandler(authService authInput.AuthService, categoryService categoryInput.CategoryService, log logger.ContextLogger, cfg *config.Config) (http.Handler, error) {
+func NewGraphqlHandler(
+	authService authInput.AuthService,
+	categoryService categoryInput.CategoryService,
+	log logger.ContextLogger,
+	cfg *config.Config,
+) (http.Handler, error) {
 	r := chi.NewRouter()
 
 	if authService != nil {

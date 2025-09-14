@@ -8,7 +8,6 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 )
 
-// TODO: verificar a necessidade e ajuste !!!
 // CategoryController is the contract used by GraphQL resolvers.
 // Keep it thin: map GraphQL <-> domain, add tracing/logging, delegate to use cases.
 type CategoryController interface {

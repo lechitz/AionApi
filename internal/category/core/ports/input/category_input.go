@@ -9,7 +9,7 @@ import (
 
 // CategoryCreator defines a contract for creating a new handler within the system.
 type CategoryCreator interface {
-	Create(ctx context.Context, category domain.Category) (domain.Category, error)
+	Create(ctx context.Context, category CreateCategoryCommand) (domain.Category, error)
 }
 
 // CategoryRetriever defines methods for retrieving handler data based on criteria or user associations.
@@ -21,7 +21,7 @@ type CategoryRetriever interface {
 
 // CategoryUpdater defines a contract for updating an existing handler within the system.
 type CategoryUpdater interface {
-	Update(ctx context.Context, category domain.Category) (domain.Category, error)
+	Update(ctx context.Context, category UpdateCategoryCommand) (domain.Category, error)
 }
 
 // CategoryDeleter defines a contract for soft-deleting a handler without permanently removing it from the system.

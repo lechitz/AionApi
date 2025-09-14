@@ -7,14 +7,6 @@ import (
 	"github.com/lechitz/AionApi/internal/user/core/domain"
 )
 
-// CreateUserCommand defines a struct for creating a new user.
-type CreateUserCommand struct {
-	Name     string
-	Username string
-	Email    string
-	Password string
-}
-
 // UserCreator defines a method to create a new user with the given details and return the created user or an error.
 type UserCreator interface {
 	Create(ctx context.Context, cmd CreateUserCommand) (domain.User, error)
@@ -25,18 +17,6 @@ type UserReader interface {
 	GetByID(ctx context.Context, userID uint64) (domain.User, error)
 	GetUserByUsername(ctx context.Context, username string) (domain.User, error)
 	ListAll(ctx context.Context) ([]domain.User, error)
-}
-
-// UpdateUserCommand defines a struct for updating user information.
-type UpdateUserCommand struct {
-	Name     *string
-	Username *string
-	Email    *string
-}
-
-// HasUpdates returns true if the command contains any updates.
-func (u UpdateUserCommand) HasUpdates() bool {
-	return u.Name != nil || u.Username != nil || u.Email != nil
 }
 
 // UserUpdater defines methods for updating user information and user passwords in the system.

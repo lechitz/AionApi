@@ -3,7 +3,9 @@ package usecase
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"math"
 	"strconv"
 	"strings"
 
@@ -92,11 +94,18 @@ func extractUserIDFromClaims(claims map[string]any) (uint64, error) {
 	return 0, errors.New(ErrorInvalidUserIDClaim)
 }
 
-// parseUserIDValue converts a claim value to uint64 safely (no float64 precision loss).
+// parseUserIDValue converts a claim value to uint64 safely.
 func parseUserIDValue(v any) (uint64, error) {
 	switch t := v.(type) {
 	case string:
 		return strconv.ParseUint(strings.TrimSpace(t), 10, 64)
+	case json.Number:
+		return strconv.ParseUint(t.String(), 10, 64)
+	case float64:
+		if t < 0 || t != math.Trunc(t) {
+			return 0, errors.New(ErrorInvalidUserIDClaim)
+		}
+		return uint64(t), nil
 	default:
 		return 0, errors.New(ErrorInvalidUserIDClaim)
 	}

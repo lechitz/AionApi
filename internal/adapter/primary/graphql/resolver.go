@@ -3,9 +3,8 @@ package graphql
 import (
 	categoryController "github.com/lechitz/AionApi/internal/category/adapter/primary/graphql/controller"
 	inputCategory "github.com/lechitz/AionApi/internal/category/core/ports/input"
-	inputTag "github.com/lechitz/AionApi/internal/tag/core/ports/input"
-
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	inputTag "github.com/lechitz/AionApi/internal/tag/core/ports/input"
 )
 
 // Resolver wires services into thin GraphQL controllers per context.
@@ -15,8 +14,8 @@ type Resolver struct {
 	Logger          logger.ContextLogger
 }
 
-// CategoryController returns the GraphQL controller for Category.
-func (r *Resolver) CategoryController() categoryController.controller {
+// CategoryController returns the Category adapter controller (interface).
+func (r *Resolver) CategoryController() categoryController.CategoryController {
 	return categoryController.NewController(r.CategoryService, r.Logger)
 }
 

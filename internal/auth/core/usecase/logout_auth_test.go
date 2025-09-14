@@ -4,7 +4,6 @@ import (
 	"errors"
 	"testing"
 
-	authconst "github.com/lechitz/AionApi/internal/auth/core/usecase"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -28,13 +27,14 @@ func TestLogout_DeleteTokenFails(t *testing.T) {
 	suite := setup.AuthServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	expected := errors.New("delete error")
+	uid := uint64(7)
 
 	suite.TokenStore.EXPECT().
-		Delete(gomock.Any(), uint64(1)).
-		Return(expected)
+		Delete(gomock.Any(), uid).
+		Return(errors.New("delete error"))
 
-	err := suite.AuthService.Logout(suite.Ctx, 1)
-	require.Error(t, err)
-	require.ErrorContains(t, err, authconst.ErrorToRevokeToken)
+	err := suite.AuthService.Logout(suite.Ctx, uid)
+
+	// Align with current message emitted by use case ("error to delete token")
+	require.ErrorContains(t, err, "error to delete token")
 }

@@ -1,4 +1,4 @@
-// Package handler contains the GraphQL handlers for the category service.
+// Package controller provides mapping helpers between GraphQL models and core commands/domain for the Category context.
 package controller
 
 import (
@@ -6,9 +6,10 @@ import (
 
 	gmodel "github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
 	"github.com/lechitz/AionApi/internal/category/core/domain"
+	"github.com/lechitz/AionApi/internal/category/core/ports/input"
 )
 
-// toModelOut is a helper function to convert a domain.Category to a gmodel.Category.
+// toModelOut converts a domain.Category to a GraphQL model.Category.
 func toModelOut(c domain.Category) *gmodel.Category {
 	out := &gmodel.Category{
 		ID:     strconv.FormatUint(c.ID, 10),
@@ -27,42 +28,30 @@ func toModelOut(c domain.Category) *gmodel.Category {
 	return out
 }
 
-// toDomainCreate is a helper function to convert a gmodel.CreateCategoryInput to a domain.Category.
-func toDomainCreate(in gmodel.CreateCategoryInput, userID uint64) domain.Category {
-	c := domain.Category{UserID: userID, Name: in.Name}
-	if in.Description != nil {
-		c.Description = *in.Description
+// toCreateCommand converts a GraphQL CreateCategoryInput into an input.CreateCategoryCommand.
+func toCreateCommand(in gmodel.CreateCategoryInput, userID uint64) input.CreateCategoryCommand {
+	return input.CreateCategoryCommand{
+		Name:        in.Name,
+		Description: in.Description,
+		ColorHex:    in.ColorHex,
+		Icon:        in.Icon,
+		UserID:      userID,
 	}
-	if in.ColorHex != nil {
-		c.Color = *in.ColorHex
-	}
-	if in.Icon != nil {
-		c.Icon = *in.Icon
-	}
-	return c
 }
 
-// toDomainUpdate is a helper function to convert a gmodel.UpdateCategoryInput to a domain.Category.
-func toDomainUpdate(in gmodel.UpdateCategoryInput, userID uint64) (domain.Category, error) {
+// toUpdateCommand converts a GraphQL UpdateCategoryInput into an input.UpdateCategoryCommand.
+// It parses the ID field (string) into uint64 before passing it to the use case.
+func toUpdateCommand(in gmodel.UpdateCategoryInput, userID uint64) (input.UpdateCategoryCommand, error) {
 	id, err := strconv.ParseUint(in.ID, 10, 64)
 	if err != nil {
-		return domain.Category{}, err
+		return input.UpdateCategoryCommand{}, err
 	}
-	c := domain.Category{
-		ID:     id,
-		UserID: userID,
-	}
-	if in.Name != nil {
-		c.Name = *in.Name
-	}
-	if in.Description != nil {
-		c.Description = *in.Description
-	}
-	if in.ColorHex != nil {
-		c.Color = *in.ColorHex
-	}
-	if in.Icon != nil {
-		c.Icon = *in.Icon
-	}
-	return c, nil
+	return input.UpdateCategoryCommand{
+		ID:          id,
+		Name:        in.Name,
+		Description: in.Description,
+		ColorHex:    in.ColorHex,
+		Icon:        in.Icon,
+		UserID:      userID,
+	}, nil
 }

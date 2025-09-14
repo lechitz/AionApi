@@ -1,3 +1,4 @@
+// Package controller contains GraphQL-facing controllers for the Category context.
 package controller
 
 import (
@@ -7,41 +8,44 @@ import (
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 )
 
-// Update handles handler update following the same orchestration: tracing, mapping,
-// error handling, and delegating to CategoryService.Update.
+// Update updates a category using the provided GraphQL input, adding tracing/logging and delegating to the input port.
 func (h *controller) Update(ctx context.Context, in model.UpdateCategoryInput, userID uint64) (*model.Category, error) {
-	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(ctx, SpanUpdate)
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanUpdate)
 	defer span.End()
 
 	span.SetAttributes(
+		attribute.String(commonkeys.Operation, SpanUpdate),
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(commonkeys.CategoryID, in.ID),
 	)
+
 	if userID == 0 {
 		span.SetStatus(codes.Error, ErrUserIDNotFound)
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
 		return nil, errors.New(ErrUserIDNotFound)
 	}
 
-	domainCat, err := toDomainUpdate(in, userID)
+	cmd, err := toUpdateCommand(in, userID)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrInvalidCategoryID)
+		h.Logger.ErrorwCtx(ctx, ErrInvalidCategoryID, commonkeys.Error, err.Error())
 		return nil, errors.New(ErrInvalidCategoryID)
 	}
 
-	updated, err := h.CategoryService.Update(ctx, domainCat)
+	category, err := h.CategoryService.Update(ctx, cmd)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, err.Error())
-		h.Logger.ErrorwCtx(ctx, "error updating handler",
+		span.SetStatus(codes.Error, MsgUpdateError)
+		h.Logger.ErrorwCtx(
+			ctx,
+			MsgUpdateError,
 			commonkeys.Error, err.Error(),
 			commonkeys.UserID, strconv.FormatUint(userID, 10),
 			commonkeys.CategoryID, in.ID,
@@ -49,18 +53,16 @@ func (h *controller) Update(ctx context.Context, in model.UpdateCategoryInput, u
 		return nil, err
 	}
 
-	out := toModelOut(updated)
+	out := toModelOut(category)
 	span.SetAttributes(attribute.String(commonkeys.CategoryName, out.Name))
 	span.SetStatus(codes.Ok, StatusUpdated)
 
-	ip, _ := ctx.Value(ctxkeys.RequestIP).(string)
-	ua, _ := ctx.Value(ctxkeys.RequestUserAgent).(string)
-	h.Logger.InfowCtx(ctx, MsgUpdated,
+	h.Logger.InfowCtx(
+		ctx,
+		MsgUpdated,
 		commonkeys.UserID, strconv.FormatUint(userID, 10),
 		commonkeys.CategoryID, out.ID,
 		commonkeys.CategoryName, out.Name,
-		tracingkeys.RequestIPKey, ip,
-		tracingkeys.RequestUserAgentKey, ua,
 	)
 	return out, nil
 }
