@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"strconv"
 
-	handlerhelpers2 "github.com/lechitz/AionApi/internal/platform/server/http/helpers"
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers"
+	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/cookies"
 	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
-	"github.com/lechitz/AionApi/internal/shared/cookies"
 	"github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
 
 	"go.opentelemetry.io/otel"
@@ -38,11 +38,11 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 
 	var req dto.UpdatePasswordUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		handlerhelpers2.WriteDecodeError(ctx, w, span, err, h.Logger)
+		helpers.WriteDecodeError(ctx, w, span, err, h.Logger)
 		return
 	}
 
-	err := handlerhelpers2.CheckRequiredFields(map[string]string{
+	err := helpers.CheckRequiredFields(map[string]string{
 		commonkeys.Password:    req.Password,
 		commonkeys.NewPassword: req.NewPassword,
 	})
@@ -52,13 +52,13 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 			tracingkeys.RequestIPKey, ip,
 			tracingkeys.RequestUserAgentKey, userAgent,
 		)
-		handlerhelpers2.WriteDecodeError(ctx, w, span, err, h.Logger)
+		helpers.WriteDecodeError(ctx, w, span, err, h.Logger)
 		return
 	}
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
-		handlerhelpers2.WriteAuthError(ctx, w, span, h.Logger)
+		helpers.WriteAuthError(ctx, w, span, h.Logger)
 		return
 	}
 
@@ -71,7 +71,7 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 
 	newToken, err := h.UserService.UpdatePassword(ctx, userID, req.Password, req.NewPassword)
 	if err != nil {
-		handlerhelpers2.WriteDomainError(ctx, w, span, err, ErrUpdateUser, h.Logger)
+		helpers.WriteDomainError(ctx, w, span, err, ErrUpdateUser, h.Logger)
 		return
 	}
 
