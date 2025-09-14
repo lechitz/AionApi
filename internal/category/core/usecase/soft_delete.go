@@ -31,7 +31,7 @@ func (s *Service) SoftDelete(ctx context.Context, categoryID uint64, userID uint
 	}
 
 	span.AddEvent(EventSuccess)
-	span.SetStatus(codes.Ok, "deleted")
+	span.SetStatus(codes.Ok, StatusSoftDeleted)
 	s.Logger.InfowCtx(ctx, SuccessfullySoftDeletedCategory, commonkeys.CategoryID, strconv.FormatUint(categoryID, 10))
 
 	return nil
