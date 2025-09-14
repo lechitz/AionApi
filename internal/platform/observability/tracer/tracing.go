@@ -1,4 +1,4 @@
-// Package tracer provides a wrapper for the OpenTelemetry tracer.
+// Package tracer provides a wrapper for configuring and managing the OpenTelemetry tracer.
 package tracer
 
 import (
@@ -17,14 +17,21 @@ import (
 )
 
 const (
-	// ErrInitializeOTPL is the error message for when the OTLP exporter fails to initialize.
-	ErrInitializeOTPL = "failed to initialize OTLP exporter"
+	// ErrFailedToInitializeOTLPExporter is logged when the OTLP trace exporter cannot be created.
+	ErrFailedToInitializeOTLPExporter = "failed to initialize OTLP trace exporter"
 
-	// ErrFailedToShutdownTracerProvider is the error message for when the tracer token fails to shutdown.
-	ErrFailedToShutdownTracerProvider = "failed to shutdown tracer token"
+	// ErrFailedToShutdownTracerProvider is logged when the tracer provider fails to shut down.
+	ErrFailedToShutdownTracerProvider = "failed to shutdown tracer provider"
+
+	// WarnInvalidOTLPExporterTimeout is logged when the timeout string cannot be parsed and the default is used.
+	WarnInvalidOTLPExporterTimeout = "invalid OTLP exporter timeout, using default"
+
+	// CompressionGzip is the string value that enables gzip compression for the OTLP HTTP exporter.
+	CompressionGzip = "gzip"
 )
 
-// InitTracer initializes the OpenTelemetry tracer using the provided configuration.
+// InitTracer initializes the OpenTelemetry tracer using the provided configuration,
+// installs it as the global tracer provider, and returns a cleanup function to shut it down gracefully.
 func InitTracer(cfg *config.Config, logger logger.ContextLogger) func() {
 	opts := []otlptracehttp.Option{
 		otlptracehttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
@@ -39,11 +46,11 @@ func InitTracer(cfg *config.Config, logger logger.ContextLogger) func() {
 		if err == nil {
 			opts = append(opts, otlptracehttp.WithTimeout(timeout))
 		} else {
-			logger.Warnw("Invalid OTEL exporter timeout, using default", commonkeys.Error, err)
+			logger.Warnw(WarnInvalidOTLPExporterTimeout, commonkeys.Error, err)
 		}
 	}
 
-	if cfg.Observability.OtelExporterCompression == "gzip" {
+	if cfg.Observability.OtelExporterCompression == CompressionGzip {
 		opts = append(opts, otlptracehttp.WithCompression(otlptracehttp.GzipCompression))
 	}
 
@@ -54,8 +61,8 @@ func InitTracer(cfg *config.Config, logger logger.ContextLogger) func() {
 
 	exporter, err := otlptracehttp.New(context.Background(), opts...)
 	if err != nil {
-		logger.Errorw(ErrInitializeOTPL, commonkeys.Error, err)
-		panic(err) // TODO: avaliar se mantem panic ou substitui por os.Exit
+		logger.Errorw(ErrFailedToInitializeOTLPExporter, commonkeys.Error, err)
+		panic(err)
 	}
 
 	resources := resource.NewWithAttributes(

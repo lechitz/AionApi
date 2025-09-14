@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

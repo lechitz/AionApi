@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/lechitz/AionApi/internal/platform/server/http/generic/dto"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"

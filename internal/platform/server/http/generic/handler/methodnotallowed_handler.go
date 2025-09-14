@@ -4,7 +4,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 )
 

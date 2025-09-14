@@ -1,6 +1,6 @@
-# HTTP Utils (Shared)
+# HTTP Utils
 
-**Folder:** `internal/platform/server/http/helpers/httpresponse`
+**Folder:** `internal/platform/server/http/utils/httpresponse`
 
 ## Responsibility
 

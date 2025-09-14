@@ -1,4 +1,4 @@
-// Package chi implementa a porta Router sobre chi v5.
+// Package chi implements the Router port on top of chi v5.
 package chi
 
 import (
@@ -8,22 +8,22 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
 )
 
-// rtr implementa a porta Router sobre chi v5.
-type rtr struct {
+// router is the chi v5-backed implementation of the Router port.
+type router struct {
 	chi         chiv5.Router
 	errorHandle func(http.ResponseWriter, *http.Request, error)
 }
 
-// New cria um Router baseado em chi v5, sem middlewares por padrão.
-// Middlewares de plataforma (request-id, recovery, cors...) devem ser aplicados
-// no composer da plataforma antes de registrar os módulos de domínio.
+// New returns a chi v5-based Router with no middlewares by default.
+// Platform-level middlewares (request-id, recovery, CORS, etc.) should be
+// applied by the platform composer before registering domain modules.
 func New() ports.Router {
-	return &rtr{chi: chiv5.NewRouter()}
+	return &router{chi: chiv5.NewRouter()}
 }
 
-// Use aplica middlewares no pipeline do chi.
-// Aceita N middlewares; ignora nils defensivamente.
-func (r *rtr) Use(mw ...ports.Middleware) {
+// Use applies one or more middlewares to the chi pipeline.
+// Nil middlewares are ignored defensively.
+func (r *router) Use(mw ...ports.Middleware) {
 	for _, m := range mw {
 		if m != nil {
 			r.chi.Use(m)
@@ -31,58 +31,66 @@ func (r *rtr) Use(mw ...ports.Middleware) {
 	}
 }
 
-// Group cria uma subárvore de rotas com 'prefix'.
-// A função fn recebe um Router isolado daquela subárvore.
-func (r *rtr) Group(prefix string, fn func(ports.Router)) {
+// Group creates a sub-route tree under 'prefix'.
+// The provided function receives an isolated Router for that subtree.
+func (r *router) Group(prefix string, fn func(ports.Router)) {
 	r.chi.Route(prefix, func(cr chiv5.Router) {
-		fn(&rtr{chi: cr})
+		fn(&router{chi: cr})
 	})
 }
 
-// GroupWith cria uma subárvore aplicando um middleware específico apenas nela.
-func (r *rtr) GroupWith(m ports.Middleware, fn func(ports.Router)) {
+// GroupWith creates a sub-route tree and applies a middleware only to it.
+func (r *router) GroupWith(m ports.Middleware, fn func(ports.Router)) {
 	r.chi.Group(func(gr chiv5.Router) {
 		if m != nil {
 			gr.Use(m)
 		}
-		fn(&rtr{chi: gr})
+		fn(&router{chi: gr})
 	})
 }
 
-// Mount pendura um http.Handler pronto em um prefixo (ex.: /graphql).
-func (r *rtr) Mount(prefix string, h http.Handler) {
+// Mount attaches a ready http.Handler under a prefix (e.g., /graphql).
+func (r *router) Mount(prefix string, h http.Handler) {
 	r.chi.Mount(prefix, h)
 }
 
-// Handle registra uma rota para um método arbitrário.
-func (r *rtr) Handle(method, path string, h http.Handler) {
+// Handle registers a route for an arbitrary HTTP method.
+func (r *router) Handle(method, path string, h http.Handler) {
 	r.chi.Method(method, path, h)
 }
 
-// Atalhos para verbos comuns.
-func (r *rtr) GET(path string, h http.Handler)    { r.Handle(http.MethodGet, path, h) }
-func (r *rtr) POST(path string, h http.Handler)   { r.Handle(http.MethodPost, path, h) }
-func (r *rtr) PUT(path string, h http.Handler)    { r.Handle(http.MethodPut, path, h) }
-func (r *rtr) DELETE(path string, h http.Handler) { r.Handle(http.MethodDelete, path, h) }
+// Convenience helpers for common HTTP verbs.
 
-// SetNotFound define o handler 404 customizado.
-func (r *rtr) SetNotFound(h http.Handler) {
+// GET is a convenience method to register a route for the HTTP GET verb.
+func (r *router) GET(path string, h http.Handler) { r.Handle(http.MethodGet, path, h) }
+
+// POST is a convenience method to register a route for the HTTP POST verb.
+func (r *router) POST(path string, h http.Handler) { r.Handle(http.MethodPost, path, h) }
+
+// PUT is a convenience method to register a route for the HTTP PUT verb.
+func (r *router) PUT(path string, h http.Handler) { r.Handle(http.MethodPut, path, h) }
+
+// DELETE is a convenience method to register a route for the HTTP DELETE verb.
+func (r *router) DELETE(path string, h http.Handler) { r.Handle(http.MethodDelete, path, h) }
+
+// SetNotFound sets the custom 404 handler.
+func (r *router) SetNotFound(h http.Handler) {
 	r.chi.NotFound(h.ServeHTTP)
 }
 
-// SetMethodNotAllowed define o handler 405 customizado.
-func (r *rtr) SetMethodNotAllowed(h http.Handler) {
+// SetMethodNotAllowed sets the custom 405 handler.
+func (r *router) SetMethodNotAllowed(h http.Handler) {
 	r.chi.MethodNotAllowed(h.ServeHTTP)
 }
 
-// SetError armazena um handler de erro centralizado (opcional).
-// OBS: o chi não invoca isso automaticamente; a plataforma pode utilizá-lo
-// dentro de um middleware de erro/recovery para padronizar respostas.
-func (r *rtr) SetError(h func(http.ResponseWriter, *http.Request, error)) {
+// SetError stores a centralized error handler (optional).
+// Note: chi does not invoke this automatically; the platform may call it
+// from an error/recovery middleware to standardize error responses.
+func (r *router) SetError(h func(http.ResponseWriter, *http.Request, error)) {
 	r.errorHandle = h
 }
 
-// ServeHTTP cumpre a interface http.Handler e delega para o chi.
-func (r *rtr) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+// ServeHTTP implements http.Handler and delegates to chi.
+func (r *router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	r.chi.ServeHTTP(w, req)
 }

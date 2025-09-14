@@ -59,12 +59,8 @@ const (
 	ErrHTTPIdleTimeoutMin             = "HTTP idle timeout must be greater than 0"
 	ErrHTTPMaxHeaderBytesMin          = "HTTP max header bytes must be greater than 0"
 
-	ErrGraphqlPortRequired         = "GraphQL ports is required"
-	ErrGraphqlPathRequired         = "GraphQL path is required"
-	ErrGraphqlPathMustStart        = "GraphQL path must start with '/'"
-	ErrGraphqlReadHeaderTimeoutMin = "GraphQL read header timeout be greater than 0"
-	ErrGraphqlReadTimeoutMin       = "GraphQL read timeout must be at least %v"
-	ErrGraphqlWriteTimeoutMin      = "GraphQL write timeout must be at least %v"
+	ErrGraphqlPathRequired  = "GraphQL path is required"
+	ErrGraphqlPathMustStart = "GraphQL path must start with '/'"
 
 	ErrCachePoolSizeMin = "CACHE_POOL_SIZE must be at least %d"
 	ErrCacheAddrEmpty   = "cache address cannot be empty"

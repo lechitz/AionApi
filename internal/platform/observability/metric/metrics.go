@@ -1,4 +1,4 @@
-// Package metric provides utilities for working with metrics.
+// Package metric provides utilities for initializing and managing OpenTelemetry metrics.
 package metric
 
 import (
@@ -17,11 +17,18 @@ import (
 )
 
 const (
-	// ErrFailedToInitializeOTLPMetricsExporter is the error message for when the OTLP metrics exporter fails to initialize.
+	// ErrFailedToInitializeOTLPMetricsExporter is logged when the OTLP metrics exporter cannot be created.
 	ErrFailedToInitializeOTLPMetricsExporter = "failed to initialize OTLP metric exporter"
+
+	// ErrInvalidOTELExporterTimeout is logged when the timeout string cannot be parsed as a valid duration.
+	ErrInvalidOTELExporterTimeout = "invalid OTLP exporter timeout"
+
+	// ErrToShutDownOTELMetrics is logged when shutting down the metrics provider fails.
+	ErrToShutDownOTELMetrics = "failed to shutdown OTLP metrics provider"
 )
 
-// InitOtelMetrics initializes the OpenTelemetry metrics token using the given configuration.
+// InitOtelMetrics sets up the OpenTelemetry MeterProvider using the given configuration,
+// installs it as the global provider, and returns a cleanup function to gracefully shut it down.
 func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 	opts := []otlpmetrichttp.Option{
 		otlpmetrichttp.WithEndpoint(cfg.Observability.OtelExporterOTLPEndpoint),
@@ -36,7 +43,7 @@ func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 		if err == nil {
 			opts = append(opts, otlpmetrichttp.WithTimeout(timeout))
 		} else {
-			logger.Warnw("Invalid OTEL exporter timeout, using default", commonkeys.Error, err) // TODO: AJUSTAR ERRO.
+			logger.Warnw(ErrInvalidOTELExporterTimeout, commonkeys.Error, err)
 		}
 	}
 
@@ -52,7 +59,7 @@ func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 	exporter, err := otlpmetrichttp.New(context.Background(), opts...)
 	if err != nil {
 		logger.Errorw(ErrFailedToInitializeOTLPMetricsExporter, commonkeys.Error, err)
-		panic(err) // TODO: avaliar se mantenho panic ou uso os.Exit
+		panic(err)
 	}
 
 	provider := metric.NewMeterProvider(
@@ -68,7 +75,7 @@ func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 
 	return func() {
 		if err := provider.Shutdown(context.Background()); err != nil {
-			logger.Errorw("failed to shutdown OTEL metrics token", commonkeys.Error, err) // TODO: AJUSTAR ERRO
+			logger.Errorw(ErrToShutDownOTELMetrics, commonkeys.Error, err)
 		}
 	}
 }

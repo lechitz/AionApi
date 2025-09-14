@@ -1,4 +1,4 @@
-// Package runtime provides a runtime for the application.
+// Package runtime provides a lightweight runtime group to start and stop multiple actors together.
 package runtime
 
 import (
@@ -12,23 +12,32 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 )
 
-// Actor is a function that can be started and stopped.
+// Log message constants.
+const (
+	// LogShutdownSignal is logged when the context is canceled and shutdown begins.
+	LogShutdownSignal = "shutdown signal received"
+	// LogUnexpectedFailure is logged when an actor returns an unexpected error.
+	LogUnexpectedFailure = "unexpected server failure"
+)
+
+// Actor represents a unit of work with start and interrupt functions.
 type Actor struct {
 	Start     func() error
 	Interrupt func(error)
 }
 
-// Group is a collection of actors that can be started and stopped together.
+// Group manages a set of actors that are started and stopped together.
 type Group struct {
 	actors []Actor
 }
 
-// Add adds an actor to the group.
+// Add registers an actor to the group.
 func (g *Group) Add(start func() error, interrupt func(error)) {
 	g.actors = append(g.actors, Actor{Start: start, Interrupt: interrupt})
 }
 
-// Run starts all actors in the group and waits for them to finish.
+// Run starts all actors and blocks until the context is canceled or any actor fails.
+// When exiting, all actors receive an interrupt signal.
 func (g *Group) Run(ctx context.Context, _ time.Duration, log logger.ContextLogger) {
 	var wg sync.WaitGroup
 	errCh := make(chan error, 1)
@@ -48,9 +57,9 @@ func (g *Group) Run(ctx context.Context, _ time.Duration, log logger.ContextLogg
 
 	select {
 	case <-ctx.Done():
-		log.Infow("shutdown signal received")
+		log.Infow(LogShutdownSignal)
 	case err := <-errCh:
-		log.Errorw("unexpected server failure", commonkeys.Error, err.Error())
+		log.Errorw(LogUnexpectedFailure, commonkeys.Error, err.Error())
 	}
 
 	var iwg sync.WaitGroup

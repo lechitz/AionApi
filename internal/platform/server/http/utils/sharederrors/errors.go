@@ -41,26 +41,14 @@ const (
 	// ErrEmailInUse is the error message for an email already in use.
 	ErrEmailInUse = "email already in use"
 
-	// ErrUsernameAndEmailInUse is the error message for a username and email already in use.
-	ErrUsernameAndEmailInUse = "username and email already in use"
-
 	// ErrMsgCreateToken indicates an error when creating a token.
 	ErrMsgCreateToken = "error to create token"
 
 	// ErrMsgDeleteToken indicates an error when deleting a token.
 	ErrMsgDeleteToken = "error to delete token"
 
-	// NoFieldsToUpdate indicates an error when updating a user.
-	NoFieldsToUpdate = "no fields to update"
-
-	// ErrInvalidToken indicates an error when a token is invalid.
-	ErrInvalidToken = "invalid token"
-
 	// ErrTokenNotFound indicates an error when a token is not found.
 	ErrTokenNotFound = "token not found"
-
-	// ErrInvalidClaims indicates an error when a token is invalid.
-	ErrInvalidClaims = "invalid claimsextractor"
 )
 
 // ErrNoFieldsToUpdate indicates an error when updating a user.
@@ -90,7 +78,7 @@ func (e *UnauthorizedError) Error() string {
 	return ErrMsgUnauthorized
 }
 
-// ForbiddenError describes an error for forbidden access attempts (authenticated, mas sem permissão).
+// ForbiddenError describes an error for forbidden access attempts.
 type ForbiddenError struct {
 	Reason string
 }

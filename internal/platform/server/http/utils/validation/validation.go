@@ -1,10 +1,9 @@
-package helpers
+// Package validation provides small HTTP validation helpers for controllers and middleware.
+package validation
 
 import (
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 )
-
-// TODO: CheckRequiredFields pode passar pra validação no DTO.
 
 // CheckRequiredFields checks if all required fields are present in the given map.
 func CheckRequiredFields(fields map[string]string) error {
