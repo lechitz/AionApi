@@ -17,7 +17,7 @@ import (
 // Logout revokes a user's authentication token.
 func (s *Service) Logout(ctx context.Context, userID uint64) error {
 	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(ctx, SpanRevokeToken,
+	ctx, span := tracer.Start(ctx, SpanLogout,
 		trace.WithAttributes(
 			attribute.String(commonkeys.Operation, SpanRevokeToken),
 			attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),

@@ -26,9 +26,6 @@ const (
 	// ErrorToCreateToken is the error message when the token cannot be created. // #nosec G101.
 	ErrorToCreateToken = "error to create token"
 
-	// ErrorToRevokeToken is the error message when the token cannot be revoked. // #nosec G101.
-	ErrorToRevokeToken = "error to revoke token"
-
 	// ErrorToDeleteToken is the error message when the token cannot be deleted. // #nosec G101.
 	ErrorToDeleteToken = "error to delete token"
 

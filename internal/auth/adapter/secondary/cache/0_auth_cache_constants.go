@@ -45,3 +45,14 @@ const (
 	// SpanNameTokenDelete is the name of the span for deleting a token.
 	SpanNameTokenDelete = "token.delete"
 )
+
+const (
+	// OperationSave is the name of the save operation.
+	OperationSave = "save"
+
+	// OperationGet is the name of the get operation.
+	OperationGet = "get"
+
+	// OperationDelete is the name of the delete operation.
+	OperationDelete = "delete"
+)

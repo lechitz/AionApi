@@ -6,8 +6,17 @@ import (
 	"strings"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+)
+
+const (
+	// ErrMissingUserIDInContext is returned when the request context does not contain a user ID (i.e., the user is not authenticated).
+	ErrMissingUserIDInContext = "missing user id in context"
+
+	// ErrMissingRequiredRoles is returned when the authenticated user lacks one or more roles required by the @auth directive; the missing role is appended to this prefix.
+	ErrMissingRequiredRoles = "missing required roles: "
 )
 
 // Auth implements the @auth(role: String) directive.
@@ -17,13 +26,13 @@ func Auth() func(ctx context.Context, obj any, next graphql.Resolver, roles *str
 	return func(ctx context.Context, _ any, next graphql.Resolver, roles *string) (any, error) {
 		// 1) Must be authenticated (user_id in context)
 		if ctx.Value(ctxkeys.UserID) == nil {
-			return nil, sharederrors.ErrUnauthorized("missing user in context")
+			return nil, sharederrors.ErrUnauthorized(ErrMissingUserIDInContext)
 		}
 
 		// 2) (Optional) Check for a required role
 		if roles != nil && *roles != "" {
 			if !hasRole(ctx, *roles) {
-				return nil, sharederrors.ErrForbidden("missing required roles: " + *roles)
+				return nil, sharederrors.ErrForbidden(ErrMissingRequiredRoles + *roles)
 			}
 		}
 
@@ -43,7 +52,7 @@ func hasRole(ctx context.Context, required string) bool {
 func extractRolesFromClaims(claims any) any {
 	switch m := claims.(type) {
 	case map[string]any:
-		return m["roles"]
+		return m[commonkeys.Roles]
 	case []string:
 		return m
 	case []any:

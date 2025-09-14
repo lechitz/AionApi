@@ -17,7 +17,7 @@ import (
 func (s *Store) Save(ctx context.Context, token domain.Auth) error {
 	tr := otel.Tracer(SpanTracerTokenStore)
 	ctx, span := tr.Start(ctx, SpanNameTokenSave, trace.WithAttributes(
-		attribute.String(commonkeys.Operation, commonkeys.OperationSave),
+		attribute.String(commonkeys.Operation, OperationSave),
 		attribute.String(commonkeys.Entity, commonkeys.EntityToken),
 		attribute.String(commonkeys.TokenKey, strconv.FormatUint(token.Key, 10)),
 	))

@@ -17,7 +17,7 @@ func (s *Store) Delete(ctx context.Context, tokenKey uint64) error {
 	tr := otel.Tracer(SpanTracerTokenStore)
 	ctx, span := tr.Start(ctx, SpanNameTokenDelete, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(tokenKey, 10)),
-		attribute.String(commonkeys.Operation, commonkeys.OperationDelete),
+		attribute.String(commonkeys.Operation, OperationDelete),
 		attribute.String(commonkeys.Entity, commonkeys.EntityToken),
 	))
 	defer span.End()
