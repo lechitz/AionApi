@@ -1,0 +1,39 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Public and internal REST API for AionAPI. Swagger (OpenAPI 3.x) is generated via swaggo.",
+        "title": "AionAPI — REST API Documentation",
+        "termsOfService": "https://github.com/lechitz/AionApi",
+        "contact": {
+            "name": "Lechitz",
+            "url": "https://github.com/lechitz",
+            "email": "felipe.lechitz@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "0.1.0"
+    },
+    "basePath": "/api/v1",
+    "paths": {},
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Use \"Bearer {token}\" (JWT).",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "CookieAuth": {
+            "description": "Session-based authentication cookie (e.g., Redis-backed).",
+            "type": "apiKey",
+            "name": "auth_token",
+            "in": "cookie",
+            "x-graphqlplayground": "/graphql/  // Cross-reference to GraphQL Playground (not covered by Swagger)"
+        }
+    }
+}

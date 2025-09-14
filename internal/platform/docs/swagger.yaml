@@ -1,0 +1,32 @@
+basePath: /api/v1
+info:
+  contact:
+    email: felipe.lechitz@gmail.com
+    name: Lechitz
+    url: https://github.com/lechitz
+  description: Public and internal REST API for AionAPI. Swagger (OpenAPI 3.x) is
+    generated via swaggo.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: https://github.com/lechitz/AionApi
+  title: AionAPI — REST API Documentation
+  version: 0.1.0
+paths: {}
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    description: Use "Bearer {token}" (JWT).
+    in: header
+    name: Authorization
+    type: apiKey
+  CookieAuth:
+    description: Session-based authentication cookie (e.g., Redis-backed).
+    in: cookie
+    name: auth_token
+    type: apiKey
+    x-graphqlplayground: /graphql/  // Cross-reference to GraphQL Playground (not
+      covered by Swagger)
+swagger: "2.0"

@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main, feature/** ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          check-latest: true
+
+      - name: Cache Go build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
+
+      - name: Generate Swagger docs
+        run: make docs.gen
+
+      - name: Check Swagger docs drift
+        run: make docs.check-dirty
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./... -race -count=1
+
+      - name: Upload swagger.json
+        uses: actions/upload-artifact@v4
+        with:
+          name: swagger-json
+          path: internal/platform/docs/swagger.json
+
+      - name: Upload swagger.yaml
+        uses: actions/upload-artifact@v4
+        with:
+          name: swagger-yaml
+          path: internal/platform/docs/swagger.yaml
