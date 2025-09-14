@@ -36,9 +36,6 @@ const (
 	// UserDeletedAt is the key for the user's deleted_at field (legacy/compat).
 	UserDeletedAt = "deleted_at"
 
-	// Users is the key for a collection of users.
-	Users = "users"
-
 	// UsersCount is the key for the total count of users.
 	UsersCount = "users_count"
 

@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/auth/core/domain"
-	"github.com/lechitz/AionApi/internal/platform/server/http/helpers/sharederrors"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -19,7 +19,7 @@ func (s *Store) Get(ctx context.Context, tokenKey uint64) (domain.Auth, error) {
 	tr := otel.Tracer(SpanTracerTokenStore)
 	ctx, span := tr.Start(ctx, SpanNameTokenGet, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(tokenKey, 10)),
-		attribute.String(commonkeys.Operation, commonkeys.OperationGet),
+		attribute.String(commonkeys.Operation, OperationGet),
 		attribute.String(commonkeys.Entity, commonkeys.EntityToken),
 	))
 	defer span.End()

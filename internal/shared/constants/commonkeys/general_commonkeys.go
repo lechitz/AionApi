@@ -16,15 +16,6 @@ const (
 	Setting = "setting"
 )
 
-// Server keys.
-const (
-	// ServerName is the HTTP server name.
-	ServerName = "server_name"
-
-	// ServerAddr is the HTTP server ports/address.
-	ServerAddr = "http_port"
-)
-
 // HTTP request keys.
 const (
 	// URLPath is the current URL path.
@@ -42,21 +33,6 @@ const (
 	// Operation is the name of operation/handler/action.
 	Operation = "operation"
 
-	// OperationCreate is the name of the create operation.
-	OperationCreate = "create"
-
-	// OperationSave is the name of the save operation.
-	OperationSave = "save"
-
-	// OperationGet is the name of the get operation.
-	OperationGet = "get"
-
-	// OperationUpdate is the name of the update operation.
-	OperationUpdate = "update"
-
-	// OperationDelete is the name of the delete operation.
-	OperationDelete = "delete"
-
 	// Entity is the name of the entity being operated on.
 	Entity = "entity"
 
@@ -70,6 +46,9 @@ const (
 
 	// Fields is used in controllers for payload fields.
 	Fields = "fields"
+
+	// Message is the standard key used for human-readable messages in logs and API responses.
+	Message = "message"
 )
 
 // Database keys.
@@ -100,10 +79,4 @@ const (
 
 	// XRequestID is the header key for external request tracking.
 	XRequestID = "X-Request-ID"
-)
-
-// Input keys (GraphQL, forms, payloads).
-const (
-	// Input is the key for input value (GraphQL, forms, payloads).
-	Input = "input"
 )

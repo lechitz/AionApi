@@ -8,8 +8,6 @@ import (
 // SecretKey is the key for secrets used in token operations.
 const SecretKey = "secret"
 
-// TODO: Ajustar o uso dos testdata.
-
 // TestPerfectToken is a predefined Token instance used for testing purposes, representing a valid token associated with a user.
 var TestPerfectToken = domain.Auth{
 	Key:   1,

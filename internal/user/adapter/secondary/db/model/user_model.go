@@ -12,8 +12,6 @@ const (
 	TableUsers = "aion_api.users"
 )
 
-// TODO: analisar o impacto ao retirar a lib time do domain.
-
 // UserDB represents the database model for storing user information.
 type UserDB struct {
 	Name      string         `gorm:"column:name"`

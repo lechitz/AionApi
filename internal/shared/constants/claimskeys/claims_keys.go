@@ -10,7 +10,4 @@ const (
 
 	// Exp is the JWT claim key for expiration time.
 	Exp = "exp"
-
-	// TokenValue is the JWT claim key for token value.
-	TokenValue = "token"
 )
