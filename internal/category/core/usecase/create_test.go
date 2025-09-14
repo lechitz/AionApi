@@ -154,9 +154,9 @@ func TestCreateCategory_PtrOrEmpty_NilPointersBecomeEmptyStrings(t *testing.T) {
 
 	created, err := suite.CategoryService.Create(suite.Ctx, cmd)
 	require.NoError(t, err)
-	require.Equal(t, "", created.Description)
-	require.Equal(t, "", created.Color)
-	require.Equal(t, "", created.Icon)
+	require.Empty(t, created.Description)
+	require.Empty(t, created.Color)
+	require.Empty(t, created.Icon)
 }
 
 func TestCreateCategory_Success(t *testing.T) {

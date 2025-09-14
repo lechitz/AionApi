@@ -42,7 +42,7 @@ func (s *Service) Update(ctx context.Context, cmd input.UpdateCategoryCommand) (
 	}
 
 	span.AddEvent(EventSuccess)
-	span.SetStatus(codes.Ok, "updated")
+	span.SetStatus(codes.Ok, StatusUpdated)
 	s.Logger.InfowCtx(
 		ctx,
 		SuccessfullyUpdatedCategory,

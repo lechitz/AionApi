@@ -33,6 +33,6 @@ func (s *Service) ListAll(ctx context.Context, userID uint64) ([]domain.Category
 	}
 
 	span.AddEvent(EventSuccess)
-	span.SetStatus(codes.Ok, "retrieved")
+	span.SetStatus(codes.Ok, StatusRetrievedAll)
 	return categories, nil
 }

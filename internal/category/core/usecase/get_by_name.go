@@ -38,6 +38,6 @@ func (s *Service) GetByName(ctx context.Context, categoryName string, userID uin
 	}
 
 	span.AddEvent(EventSuccess)
-	span.SetStatus(codes.Ok, "retrieved")
+	span.SetStatus(codes.Ok, StatusRetrievedByName)
 	return category, nil
 }

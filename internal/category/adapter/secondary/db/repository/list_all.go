@@ -16,10 +16,10 @@ import (
 
 // ListAll retrieves all categories associated with a specific user defined by the userID. Returns a slice of domain.Category or an error.
 func (c CategoryRepository) ListAll(ctx context.Context, userID uint64) ([]domain.Category, error) {
-	tr := otel.Tracer("CategoryRepository")
-	ctx, span := tr.Start(ctx, "ListAll", trace.WithAttributes(
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanListAllRepo, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String("operation", "get_all"),
+		attribute.String(commonkeys.Operation, OpListAll),
 	))
 	defer span.End()
 
@@ -39,6 +39,6 @@ func (c CategoryRepository) ListAll(ctx context.Context, userID uint64) ([]domai
 		categories[i] = mapper.CategoryFromDB(categoryDB)
 	}
 
-	span.SetStatus(codes.Ok, "all categories retrieved successfully")
+	span.SetStatus(codes.Ok, StatusFetchedAll)
 	return categories, nil
 }

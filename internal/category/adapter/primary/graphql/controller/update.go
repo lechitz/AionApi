@@ -25,6 +25,7 @@ func (h *controller) Update(ctx context.Context, in model.UpdateCategoryInput, u
 		attribute.String(commonkeys.CategoryID, in.ID),
 	)
 
+	// Basic guards (controller-level preconditions).
 	if userID == 0 {
 		span.SetStatus(codes.Error, ErrUserIDNotFound)
 		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
@@ -39,6 +40,7 @@ func (h *controller) Update(ctx context.Context, in model.UpdateCategoryInput, u
 		return nil, errors.New(ErrInvalidCategoryID)
 	}
 
+	// Delegate to the input port (use case).
 	category, err := h.CategoryService.Update(ctx, cmd)
 	if err != nil {
 		span.RecordError(err)

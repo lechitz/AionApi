@@ -18,11 +18,11 @@ import (
 
 // GetByName retrieves a handler by its name and user ID from the database and returns it as a domain.Category or an error if not found.
 func (c CategoryRepository) GetByName(ctx context.Context, categoryName string, userID uint64) (domain.Category, error) {
-	tr := otel.Tracer("CategoryRepository")
-	ctx, span := tr.Start(ctx, "GetByName", trace.WithAttributes(
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanGetByNameRepo, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(commonkeys.CategoryName, categoryName),
-		attribute.String("operation", "get_by_name"),
+		attribute.String(commonkeys.Operation, OpGetByName),
 	))
 	defer span.End()
 
@@ -32,7 +32,7 @@ func (c CategoryRepository) GetByName(ctx context.Context, categoryName string, 
 		First(&categoryDB).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			span.SetStatus(codes.Ok, "handler not found (normal case)")
+			span.SetStatus(codes.Ok, ErrHandlerNotFoundMsg)
 			return domain.Category{}, nil
 		}
 
@@ -41,6 +41,6 @@ func (c CategoryRepository) GetByName(ctx context.Context, categoryName string, 
 		return domain.Category{}, err
 	}
 
-	span.SetStatus(codes.Ok, "handler fetched successfully")
+	span.SetStatus(codes.Ok, StatusRetrievedByName)
 	return mapper.CategoryFromDB(categoryDB), nil
 }

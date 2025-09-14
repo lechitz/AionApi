@@ -15,11 +15,11 @@ import (
 
 // SoftDelete updates the DeletedAt and UserUpdatedAt fields to mark a handler as soft-deleted based on handler ID and user ID.
 func (c CategoryRepository) SoftDelete(ctx context.Context, categoryID uint64, userID uint64) error {
-	tr := otel.Tracer("CategoryRepository")
-	ctx, span := tr.Start(ctx, "SoftDelete", trace.WithAttributes(
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanSoftDeleteRepo, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryID, 10)),
-		attribute.String("operation", "soft_delete"),
+		attribute.String(commonkeys.Operation, OpSoftDelete),
 	))
 	defer span.End()
 
@@ -37,6 +37,6 @@ func (c CategoryRepository) SoftDelete(ctx context.Context, categoryID uint64, u
 		return err
 	}
 
-	span.SetStatus(codes.Ok, "handler soft deleted successfully")
+	span.SetStatus(codes.Ok, StatusSoftDeleted)
 	return nil
 }

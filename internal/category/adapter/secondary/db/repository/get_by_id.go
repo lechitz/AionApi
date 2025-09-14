@@ -16,32 +16,31 @@ import (
 	"gorm.io/gorm"
 )
 
-// GetByID retrieves a handler by its ID and user ID from the database and returns it as a domain.Category or an error if not found.
+// GetByID loads a category by its ID and user ID. Returns not-found or generic errors using constants.
 func (c CategoryRepository) GetByID(ctx context.Context, categoryID uint64, userID uint64) (domain.Category, error) {
-	tr := otel.Tracer("CategoryRepository")
-	ctx, span := tr.Start(ctx, "GetByID", trace.WithAttributes(
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanGetByIDRepo, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryID, 10)),
-		attribute.String("operation", "get_by_id"),
+		attribute.String(commonkeys.Operation, OpGetByID),
 	))
 	defer span.End()
 
 	var categoryDB model.CategoryDB
-
 	if err := c.db.WithContext(ctx).
 		Select("category_id, user_id, name, description, color_hex, icon, created_at, updated_at").
 		Where("category_id = ? AND user_id = ?", categoryID, userID).
 		First(&categoryDB).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			span.SetStatus(codes.Error, "handler not found")
-			span.RecordError(errors.New("handler not found"))
-			return domain.Category{}, errors.New("handler not found")
+			span.SetStatus(codes.Error, ErrHandlerNotFoundMsg)
+			span.RecordError(errors.New(ErrHandlerNotFoundMsg))
+			return domain.Category{}, errors.New(ErrHandlerNotFoundMsg)
 		}
-		span.SetStatus(codes.Error, "error getting handler")
+		span.SetStatus(codes.Error, ErrGetHandlerMsg)
 		span.RecordError(err)
-		return domain.Category{}, errors.New("error getting handler")
+		return domain.Category{}, errors.New(ErrGetHandlerMsg)
 	}
 
-	span.SetStatus(codes.Ok, "handler retrieved by id successfully")
+	span.SetStatus(codes.Ok, StatusRetrievedByID)
 	return mapper.CategoryFromDB(categoryDB), nil
 }

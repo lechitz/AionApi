@@ -16,11 +16,11 @@ import (
 
 // UpdateCategory updates a handler in the database based on its ID and user ID, updating only fields specified in the updateFields map.
 func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint64, userID uint64, updateFields map[string]interface{}) (domain.Category, error) {
-	tr := otel.Tracer("CategoryRepository")
-	ctx, span := tr.Start(ctx, "Update", trace.WithAttributes(
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanUpdateRepo, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryID, 10)),
-		attribute.String("operation", "update"),
+		attribute.String(commonkeys.Operation, OpUpdate),
 	))
 	defer span.End()
 
@@ -44,6 +44,6 @@ func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint6
 		return domain.Category{}, err
 	}
 
-	span.SetStatus(codes.Ok, "handler updated successfully")
+	span.SetStatus(codes.Ok, StatusUpdated)
 	return mapper.CategoryFromDB(categoryDB), nil
 }

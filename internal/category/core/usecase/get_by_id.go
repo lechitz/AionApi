@@ -39,6 +39,6 @@ func (s *Service) GetByID(ctx context.Context, categoryID, userID uint64) (domai
 	}
 
 	span.AddEvent(EventSuccess)
-	span.SetStatus(codes.Ok, "retrieved")
+	span.SetStatus(codes.Ok, StatusRetrievedByID)
 	return categoryDB, nil
 }

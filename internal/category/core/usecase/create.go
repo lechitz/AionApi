@@ -60,7 +60,7 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateCategoryCommand) (
 	}
 
 	span.AddEvent(EventSuccess)
-	span.SetStatus(codes.Ok, "created")
+	span.SetStatus(codes.Ok, StatusCreated)
 	s.Logger.InfowCtx(ctx, fmt.Sprintf(SuccessfullyCreatedCategory, createdCategory.Name))
 
 	return createdCategory, nil

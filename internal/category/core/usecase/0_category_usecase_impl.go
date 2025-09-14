@@ -1,3 +1,7 @@
+// Package usecase contains the business logic for the Category context.
+// It orchestrates input commands, applies validation and domain rules,
+// and delegates persistence to the repository layer while handling
+// observability and logging concerns.package usecase
 package usecase
 
 import (
