@@ -1,26 +1,10 @@
+// Package config provides configuration loading and validation for the application.
 package config
 
 import (
 	"errors"
 	"fmt"
-
-	"github.com/kelseyhightower/envconfig"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/middleware/response"
-	"github.com/lechitz/AionApi/internal/adapters/secondary/security"
-	"github.com/lechitz/AionApi/internal/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/config/constants"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
 )
-
-// Loader is responsible for reading environment configuration.
-type Loader struct {
-	cfg Config
-}
-
-// NewLoader returns a new instance of Loader.
-func NewLoader() *Loader {
-	return &Loader{}
-}
 
 // Config holds all configuration sections required to bootstrap the application.
 type Config struct {
@@ -35,28 +19,7 @@ type Config struct {
 	Application   Application
 }
 
-// Load reads environment configuration and returns a Config struct.
-func (l *Loader) Load(logger output.Logger) (*Config, error) {
-	if err := envconfig.Process(commonkeys.Setting, &l.cfg); err != nil {
-		response.HandleCriticalError(logger, constants.ErrFailedToProcessEnvVars, err)
-		return nil, err
-	}
-
-	if l.cfg.Secret.Key == "" {
-		generated, err := security.GenerateJWTKey()
-		if err != nil {
-			response.HandleCriticalError(logger, constants.ErrGenerateSecretKey, err)
-			return nil, err
-		}
-		l.cfg.Secret.Key = generated
-		logger.Warnf(constants.SecretKeyWasNotSet)
-		logger.Infof("JWT secret key successfully generated with length: %d", len(generated)) // TODO: ajustar magic string.
-	}
-
-	return &l.cfg, nil
-}
-
-// Validate checks if the configuration is valid.
+// Validate checks if the configuration is valid, returning the first validation error encountered.
 func (c *Config) Validate() error {
 	if err := c.validateHTTP(); err != nil {
 		return err
@@ -76,129 +39,141 @@ func (c *Config) Validate() error {
 	if err := c.validateApp(); err != nil {
 		return err
 	}
+
 	return nil
 }
 
 func (c *Config) validateHTTP() error {
+	if c.ServerHTTP.Host == "" {
+		return errors.New(ErrHTTPHostRequired)
+	}
 	if c.ServerHTTP.Port == "" {
-		return errors.New("HTTP port is required") // TODO: ajustar magic string.
+		return errors.New(ErrHTTPPortRequired)
 	}
 	if c.ServerHTTP.Context == "" {
-		return errors.New("HTTP context path cannot be empty") // TODO: ajustar magic string.
+		return errors.New(ErrHTTPContextPathEmpty)
 	}
-	if c.ServerHTTP.ReadTimeout < constants.MinHTTPTimeout {
-		return fmt.Errorf("HTTP read timeout must be at least %v", constants.MinHTTPTimeout) // TODO: ajustar magic string.
+	if c.ServerHTTP.Context[0] != '/' {
+		return errors.New(ErrHTTPContextMustStart)
 	}
-	if c.ServerHTTP.WriteTimeout < constants.MinHTTPTimeout {
-		return fmt.Errorf("HTTP write timeout must be at least %v", constants.MinHTTPTimeout) // TODO: ajustar magic string.
+	if len(c.ServerHTTP.Context) > 1 && c.ServerHTTP.Context[len(c.ServerHTTP.Context)-1] == '/' {
+		return errors.New(ErrHTTPContextMustNotEndWithSlash)
 	}
+	if c.ServerHTTP.ReadTimeout < MinHTTPTimeout {
+		return fmt.Errorf(ErrHTTPReadTimeoutMin, MinHTTPTimeout)
+	}
+	if c.ServerHTTP.WriteTimeout < MinHTTPTimeout {
+		return fmt.Errorf(ErrHTTPWriteTimeoutMin, MinHTTPTimeout)
+	}
+	if c.ServerHTTP.ReadHeaderTimeout <= 0 {
+		return errors.New(ErrHTTPReadHeaderTimeoutMin)
+	}
+	if c.ServerHTTP.IdleTimeout <= 0 {
+		return errors.New(ErrHTTPIdleTimeoutMin)
+	}
+	if c.ServerHTTP.MaxHeaderBytes <= 0 {
+		return errors.New(ErrHTTPMaxHeaderBytesMin)
+	}
+
 	return nil
 }
 
 func (c *Config) validateGraphQL() error {
-	if c.ServerGraphql.Port == "" {
-		return errors.New("GraphQL port is required") // TODO: ajustar magic string.
-	}
 	if c.ServerGraphql.Path == "" {
-		return errors.New("GraphQL path is required") // TODO: ajustar magic string.
+		return errors.New(ErrGraphqlPathRequired)
 	}
-	if c.ServerGraphql.Path[0] != '/' { // TODO: ajustar magic string.
-		return errors.New("GraphQL path must start with '/'") // TODO: ajustar magic string.
+	if c.ServerGraphql.Path[0] != '/' {
+		return errors.New(ErrGraphqlPathMustStart)
 	}
-	if c.ServerGraphql.ReadTimeout < constants.MinGraphQLTimeout {
-		return fmt.Errorf("GraphQL read timeout must be at least %v", constants.MinGraphQLTimeout) // TODO: ajustar magic string.
-	}
-	if c.ServerGraphql.WriteTimeout < constants.MinGraphQLTimeout {
-		return fmt.Errorf("GraphQL write timeout must be at least %v", constants.MinGraphQLTimeout) // TODO: ajustar magic string.
-	}
+
 	return nil
 }
 
 func (c *Config) validateCache() error {
-	if c.Cache.PoolSize < constants.MinCachePoolSize {
-		return fmt.Errorf("CACHE_POOL_SIZE must be at least %d", constants.MinCachePoolSize) // TODO: ajustar magic string.
+	if c.Cache.PoolSize < MinCachePoolSize {
+		return fmt.Errorf(ErrCachePoolSizeMin, MinCachePoolSize)
 	}
 	if c.Cache.Addr == "" {
-		return errors.New("cache address cannot be empty") // TODO: ajustar magic string.
+		return errors.New(ErrCacheAddrEmpty)
 	}
 	return nil
 }
 
 func (c *Config) validateDB() error {
 	if c.DB.Type == "" {
-		return errors.New("DB_TYPE cannot be empty") // TODO: ajustar magic string.
-	}
-	if c.DB.Type != "postgres" { // TODO: ajustar magic string.
-		return fmt.Errorf("unsupported DB_TYPE: %s", c.DB.Type) // TODO: ajustar magic string.
+		return errors.New(ErrDBTypeEmpty)
 	}
 	if c.DB.Host == "" {
-		return errors.New("DB_HOST cannot be empty") // TODO: ajustar magic string.
+		return errors.New(ErrDBHostEmpty)
 	}
 	if c.DB.Port == "" {
-		return errors.New("DB_PORT cannot be empty") // TODO: ajustar magic string.
+		return errors.New(ErrDBPortEmpty)
 	}
 	if c.DB.Name == "" {
-		return errors.New("database name is required") // TODO: ajustar magic string.
+		return errors.New(ErrDBNameRequired)
 	}
 	if c.DB.User == "" {
-		return errors.New("database user is required") // TODO: ajustar magic string.
+		return errors.New(ErrDBUserRequired)
 	}
 	if c.DB.Password == "" {
-		return errors.New("database password is required") // TODO: ajustar magic string.
+		return errors.New(ErrDBPasswordRequired)
 	}
 	if c.DB.TimeZone == "" {
-		return errors.New("DB timezone (TZ) cannot be empty") // TODO: ajustar magic string.
+		return errors.New(ErrDBTimeZoneEmpty)
 	}
 
 	switch c.DB.SSLMode {
-	case "disable", "require", "verify-ca", "verify-full": // TODO: ajustar magic string.
-		// Next t
+	case "disable", "require", "verify-ca", "verify-full":
+		// valid
 	default:
-		return fmt.Errorf("invalid DB_SSL_MODE value: %s", c.DB.SSLMode) // TODO: ajustar magic string.
+		return fmt.Errorf(ErrDBSSLModeInvalid, c.DB.SSLMode)
 	}
 
-	if c.DB.MaxOpenConns < constants.MinDBMaxOpenConns {
-		return fmt.Errorf("DB_MAX_CONNECTIONS must be at least %d", constants.MinDBMaxOpenConns) // TODO: ajustar magic string.
+	if c.DB.MaxOpenConns < MinDBMaxOpenConns {
+		return fmt.Errorf(ErrDBMaxOpenConnsMin, MinDBMaxOpenConns)
 	}
-	if c.DB.MaxIdleConns < constants.MinDBMaxIdleConns {
-		return errors.New("DB_MAX_IDLE_CONNECTIONS cannot be negative") // TODO: ajustar magic string.
+	if c.DB.MaxIdleConns < MinDBMaxIdleConns {
+		return errors.New(ErrDBMaxIdleConnsNeg)
 	}
-	if c.DB.ConnMaxLifetime < constants.MinDBConnMaxLifetimeMin {
-		return errors.New("DB_CONN_MAX_LIFETIME_MINUTES cannot be negative") // TODO: ajustar magic string.
+	if c.DB.ConnMaxLifetime < MinDBConnMaxLifetimeMin {
+		return errors.New(ErrDBConnMaxLifetimeNeg)
 	}
-	if c.DB.RetryInterval < constants.MinDBRetryInterval {
-		return fmt.Errorf("DB_CONNECT_RETRY_INTERVAL must be at least %v", constants.MinDBRetryInterval) // TODO: ajustar magic string.
+	if c.DB.RetryInterval < MinDBRetryInterval {
+		return fmt.Errorf(ErrDBRetryIntervalMin, MinDBRetryInterval)
 	}
-	if c.DB.MaxRetries < constants.MinDBMaxRetries {
-		return fmt.Errorf("DB_CONNECT_MAX_RETRIES must be at least %d", constants.MinDBMaxRetries) // TODO: ajustar magic string.
+	if c.DB.MaxRetries < MinDBMaxRetries {
+		return fmt.Errorf(ErrDBMaxRetriesMin, MinDBMaxRetries)
 	}
+
 	return nil
 }
 
 func (c *Config) validateObservability() error {
 	if c.Observability.OtelExporterOTLPEndpoint == "" {
-		return errors.New("OTel Exporter endpoint cannot be empty") // TODO: ajustar magic string.
+		return errors.New(ErrOtelEndpointEmpty)
 	}
 	if c.Observability.OtelExporterCompression != "" {
 		switch c.Observability.OtelExporterCompression {
-		case "none", "gzip": // TODO: ajustar magic string.
-			// ok
+		case "none", "gzip":
+			// valid
 		default:
 			return fmt.Errorf(
-				"OTel Exporter compression must be either 'none' or 'gzip', got: %s",
+				ErrOtelCompressionInvalid,
 				c.Observability.OtelExporterCompression,
-			) // TODO: ajustar magic string.
+			)
 		}
 	}
+
 	return nil
 }
 
 func (c *Config) validateApp() error {
-	if c.Application.ContextRequest < constants.MinContextRequest {
-		return fmt.Errorf("context request timeout must be at least %v", constants.MinContextRequest) // TODO: ajustar magic string.
+	if c.Application.ContextRequest < MinContextRequest {
+		return fmt.Errorf(ErrAppContextReqMin, MinContextRequest)
 	}
-	if c.Application.Timeout < constants.MinShutdownTimeout {
-		return fmt.Errorf("shutdown timeout must be at least %d second", constants.MinShutdownTimeout) // TODO: ajustar magic string.
+	if c.Application.Timeout < MinShutdownTimeout {
+		return fmt.Errorf(ErrAppShutdownTimeoutMin, MinShutdownTimeout.String())
 	}
+
 	return nil
 }

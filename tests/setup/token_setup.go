@@ -4,38 +4,43 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-
-	"github.com/lechitz/AionApi/internal/core/usecase/token"
+	"github.com/lechitz/AionApi/internal/auth/core/usecase"
 	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 
-// TokenServiceTestSuite is a test suite for testing TokenService with mocked dependencies and utilities for test cases.// TokenServiceTestSuite is a struct for managing the dependencies needed to test the TokenService implementation.
+// TokenServiceTestSuite groups mocked dependencies and the SUT (TokenService)
+// to simplify Token-related unit tests.
 type TokenServiceTestSuite struct {
-	Ctx          context.Context
-	TokenService *token.Service
-	Ctrl         *gomock.Controller
-	Logger       *mocks.MockLogger
-	TokenStore   *mocks.MockTokenStore
+	Ctx            context.Context
+	TokenService   *usecase.Service
+	Ctrl           *gomock.Controller
+	Logger         *mocks.MockContextLogger
+	TokenStore     *mocks.MockAuthStore
+	AuthProvider   *mocks.MockAuthProvider
+	UserRepository *mocks.MockUserRepository
 }
 
-// TokenServiceTest initializes a test suite for Service with mocked dependencies and a given secret key.
-func TokenServiceTest(t *testing.T, secretKey config.Secret) *TokenServiceTestSuite {
+// TokenServiceTest initializes and returns a TokenServiceTestSuite with mocked output ports.
+func TokenServiceTest(t *testing.T) *TokenServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	mockLog := mocks.NewMockLogger(ctrl)
-	mockTokenStore := mocks.NewMockTokenStore(ctrl)
+	userRepository := mocks.NewMockUserRepository(ctrl)
+	logger := mocks.NewMockContextLogger(ctrl)
+	hasher := mocks.NewMockHasher(ctrl)
+	authStore := mocks.NewMockAuthStore(ctrl)
+	authProvider := mocks.NewMockAuthProvider(ctrl)
 
-	ExpectLoggerDefaultBehavior(mockLog)
+	ExpectLoggerDefaultBehavior(logger)
 
-	tokenService := token.NewTokenService(mockTokenStore, mockLog, secretKey)
+	svc := usecase.NewService(userRepository, authStore, authProvider, hasher, logger)
 
 	return &TokenServiceTestSuite{
 		Ctrl:         ctrl,
-		Logger:       mockLog,
-		TokenStore:   mockTokenStore,
-		TokenService: tokenService,
+		Logger:       logger,
+		TokenStore:   authStore,
+		AuthProvider: authProvider,
+		TokenService: svc,
 		Ctx:          t.Context(),
 	}
 }

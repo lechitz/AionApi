@@ -49,11 +49,14 @@ type CookieConfig struct {
 type ServerGraphql struct {
 	Host string `envconfig:"GRAPHQL_HOST" default:"0.0.0.0"`
 	Name string `envconfig:"GRAPHQL_NAME" default:"GraphQL"`
-	Port string `envconfig:"GRAPHQL_PORT" default:"8081"     required:"true"`
 	Path string `envconfig:"GRAPHQL_PATH" default:"/graphql"`
 
 	ReadTimeout  time.Duration `envconfig:"GRAPHQL_READ_TIMEOUT"  default:"5s"`
 	WriteTimeout time.Duration `envconfig:"GRAPHQL_WRITE_TIMEOUT" default:"5s"`
+
+	ReadHeaderTimeout time.Duration `envconfig:"GRAPHQL_READ_HEADER_TIMEOUT" default:"5s"`
+	IdleTimeout       time.Duration `envconfig:"GRAPHQL_IDLE_TIMEOUT"        default:"60s"`
+	MaxHeaderBytes    int           `envconfig:"GRAPHQL_MAX_HEADER_BYTES"    default:"1048576"`
 }
 
 // ServerHTTP holds HTTP server configuration.
@@ -65,6 +68,10 @@ type ServerHTTP struct {
 
 	ReadTimeout  time.Duration `envconfig:"HTTP_READ_TIMEOUT"  default:"10s"`
 	WriteTimeout time.Duration `envconfig:"HTTP_WRITE_TIMEOUT" default:"10s"`
+
+	ReadHeaderTimeout time.Duration `envconfig:"HTTP_READ_HEADER_TIMEOUT" default:"5s"`
+	IdleTimeout       time.Duration `envconfig:"HTTP_IDLE_TIMEOUT"        default:"60s"`
+	MaxHeaderBytes    int           `envconfig:"HTTP_MAX_HEADER_BYTES"    default:"1048576"` // 1<<20
 }
 
 // DBConfig holds database connection configuration.

@@ -1,3 +1,4 @@
+// Package setup provides test suite builders and common test helpers for unit tests.
 package setup
 
 import (
@@ -5,56 +6,62 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/core/domain"
+	"github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/AionApi/internal/user/core/usecase"
 	"github.com/lechitz/AionApi/tests/mocks"
-
-	"github.com/lechitz/AionApi/internal/core/usecase/user"
 	"go.uber.org/mock/gomock"
 )
 
-// UserServiceTestSuite is a test suite for testing the UserService and its dependencies.
+// UserServiceTestSuite groups mocked dependencies and the system under test (UserService)
+// to keep user-related tests concise and consistent.
 type UserServiceTestSuite struct {
 	Ctrl           *gomock.Controller
-	Logger         *mocks.MockLogger
-	UserRepository *mocks.MockUserStore
-	PasswordHasher *mocks.MockHasherStore
-	TokenService   *mocks.MockTokenUsecase
-	UserService    *user.Service
+	Logger         *mocks.MockContextLogger
+	UserRepository *mocks.MockUserRepository
+	TokenStore     *mocks.MockAuthStore
+	TokenProvider  *mocks.MockAuthProvider
+	Hasher         *mocks.MockHasher
+	UserService    *usecase.Service
 	Ctx            context.Context
 }
 
-// UserServiceTest initializes and returns a UserServiceTestSuite with mocked dependencies to facilitate unit testing of the user service.
+// UserServiceTest initializes and returns a UserServiceTestSuite using mocked output ports.
+// Use this helper to bootstrap each test and ensure proper teardown via Ctrl.Finish().
 func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	mockUserStore := mocks.NewMockUserStore(ctrl)
-	mockSecurityStore := mocks.NewMockHasherStore(ctrl)
-	mockTokenUsecase := mocks.NewMockTokenUsecase(ctrl)
-	mockLog := mocks.NewMockLogger(ctrl)
+	userRepo := mocks.NewMockUserRepository(ctrl)
+	tokenStore := mocks.NewMockAuthStore(ctrl)
+	tokenProvider := mocks.NewMockAuthProvider(ctrl)
+	hasher := mocks.NewMockHasher(ctrl)
+	log := mocks.NewMockContextLogger(ctrl)
 
-	ExpectLoggerDefaultBehavior(mockLog)
+	// Set default, non-intrusive expectations for the logger (no-ops).
+	ExpectLoggerDefaultBehavior(log)
 
-	userService := user.NewUserService(
-		mockUserStore,
-		mockTokenUsecase,
-		mockSecurityStore,
-		mockLog,
+	svc := usecase.NewService(
+		userRepo,
+		tokenStore,
+		tokenProvider,
+		hasher,
+		log,
 	)
 
 	return &UserServiceTestSuite{
 		Ctrl:           ctrl,
-		Logger:         mockLog,
-		UserRepository: mockUserStore,
-		PasswordHasher: mockSecurityStore,
-		TokenService:   mockTokenUsecase,
-		UserService:    userService,
+		Logger:         log,
+		UserRepository: userRepo,
+		TokenStore:     tokenStore,
+		TokenProvider:  tokenProvider,
+		Hasher:         hasher,
+		UserService:    svc,
 		Ctx:            t.Context(),
 	}
 }
 
-// DefaultTestUser is a predefined instance of domain.UserDomain used for testing purposes, representing a perfect/valid user with complete and valid fields.
-func DefaultTestUser() domain.UserDomain {
-	return domain.UserDomain{
+// DefaultTestUser returns a valid domain.User commonly used in unit tests.
+func DefaultTestUser() domain.User {
+	return domain.User{
 		ID:        1,
 		Name:      "Test User",
 		Username:  "testuser",
@@ -62,6 +69,5 @@ func DefaultTestUser() domain.UserDomain {
 		Password:  "password123",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		DeletedAt: nil,
 	}
 }

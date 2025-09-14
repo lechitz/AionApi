@@ -8,7 +8,7 @@
 # Test binary, built with `go test -c`
 *.test
 
-# Output of the go coverage tool, specifically when used with LiteIDE
+# Output of the go coverage adapter, specifically when used with LiteIDE
 *.out
 coverage.html
 report.json
@@ -28,3 +28,6 @@ go.work.sum
 # IDE files
 .idea
 .qodo
+
+.venv-docs/
+site/

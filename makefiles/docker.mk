@@ -6,9 +6,11 @@
 .PHONY: build-prod prod-up prod-down prod clean-prod
 .PHONY: docker-clean-all
 
+APPLICATION_NAME := aion-api
+
 build-dev: clean-dev
 	@echo "\033[1;36m[BUILD-DEV]\033[0m Building DEV image..."
-	docker build -t $(APPLICATION_NAME):dev .
+	docker build -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):dev .
 
 dev-up: dev-down
 	@echo "\033[1;36m[DEV-UP]\033[0m Starting DEV environment..."
@@ -29,7 +31,7 @@ clean-dev:
 
 build-prod: clean-prod
 	@echo "\033[1;36m[BUILD-PROD]\033[0m Building PROD image..."
-	docker build -t $(APPLICATION_NAME):prod .
+	docker build -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):prod .
 
 prod-up: prod-down
 	@echo "\033[1;36m[PROD-UP]\033[0m Starting PROD environment..."
@@ -47,7 +49,7 @@ clean-prod:
 	@docker volume ls --filter "name=prod" -q | xargs -r docker volume rm
 	@docker images --filter "reference=*prod*" -q | xargs -r docker rmi -f
 
-	docker-clean-all:
+docker-clean-all:
 	@echo "\033[1;33m[CLEAN-ALL]\033[0m Removing ALL containers, volumes, images..."
 	@docker ps -a -q | xargs -r docker rm -f
 	@docker volume ls -q | xargs -r docker volume rm

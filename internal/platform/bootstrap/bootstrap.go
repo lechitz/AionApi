@@ -1,81 +1,81 @@
-// Package bootstrap provides a set of utilities for initializing application dependencies and managing the application lifecycle.
+// Package bootstrap composes secondary adapter and use cases (composition root).
 package bootstrap
 
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
-
-	adapterToken "github.com/lechitz/AionApi/internal/adapters/secondary/cache/token"
-	adapterCache "github.com/lechitz/AionApi/internal/adapters/secondary/cache/tools/redis"
-	adapterDB "github.com/lechitz/AionApi/internal/adapters/secondary/db/postgres"
-	"github.com/lechitz/AionApi/internal/adapters/secondary/db/repository"
-	adapterSecurity "github.com/lechitz/AionApi/internal/adapters/secondary/security"
-	"github.com/lechitz/AionApi/internal/core/ports/input"
-	"github.com/lechitz/AionApi/internal/core/ports/output"
-	"github.com/lechitz/AionApi/internal/core/usecase/category"
-
-	"github.com/lechitz/AionApi/internal/core/usecase/auth"
-	"github.com/lechitz/AionApi/internal/core/usecase/token"
-	"github.com/lechitz/AionApi/internal/core/usecase/user"
-	"github.com/lechitz/AionApi/internal/platform/bootstrap/constants"
+	"github.com/lechitz/AionApi/internal/adapter/secondary/cache/redis"
+	"github.com/lechitz/AionApi/internal/adapter/secondary/db/postgres"
+	"github.com/lechitz/AionApi/internal/adapter/secondary/hasher"
+	"github.com/lechitz/AionApi/internal/adapter/secondary/token"
+	"github.com/lechitz/AionApi/internal/auth/adapter/secondary/cache"
+	inputAuth "github.com/lechitz/AionApi/internal/auth/core/ports/input"
+	auth "github.com/lechitz/AionApi/internal/auth/core/usecase"
+	categoryRepo "github.com/lechitz/AionApi/internal/category/adapter/secondary/db/repository"
+	inputCategory "github.com/lechitz/AionApi/internal/category/core/ports/input"
+	category "github.com/lechitz/AionApi/internal/category/core/usecase"
 	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	userRepo "github.com/lechitz/AionApi/internal/user/adapter/secondary/db/repository"
+	inputUser "github.com/lechitz/AionApi/internal/user/core/ports/input"
+	user "github.com/lechitz/AionApi/internal/user/core/usecase"
 )
 
-// AppDependencies bundles the services and adapters used throughout the application.
+// AppDependencies exposes input ports that the primary adapter consumes.
 type AppDependencies struct {
-	AuthService     input.AuthService
-	UserService     input.UserService
-	CategoryService input.CategoryService
-	TokenService    input.TokenService
+	AuthService     inputAuth.AuthService
+	UserService     inputUser.UserService
+	CategoryService inputCategory.CategoryService
 
-	TokenClaimsExtractor output.TokenClaimsExtractor
-	TokenRepository      output.TokenStore
-	Logger               output.Logger
+	Logger logger.ContextLogger
 }
 
-// InitializeDependencies initializes and returns all core application dependencies.
-func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger output.Logger) (*AppDependencies, func(), error) {
-	cacheClient, err := adapterCache.NewCacheConnection(appCtx, cfg.Cache, logger)
+// InitializeDependencies wires infrastructure adapter and core use cases, returning input ports and a cleanup function.
+func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger logger.ContextLogger) (*AppDependencies, func(context.Context), error) {
+	// Infrastructure: cache
+	cacheClient, err := redis.NewConnection(appCtx, cfg.Cache, logger)
 	if err != nil {
-		logger.Errorf(constants.ErrConnectToCache, err)
+		logger.Errorw(ErrConnectToCache, commonkeys.Error, err)
 		return nil, nil, err
 	}
-	logger.Infow(constants.MsgCacheConnected, commonkeys.CacheAddr, cfg.Cache.Addr)
+	logger.Infow(MsgCacheConnected, commonkeys.CacheAddr, cfg.Cache.Addr)
 
-	dbConn, err := adapterDB.NewDatabaseConnection(appCtx, cfg.DB, logger)
+	// Infrastructure: database
+	dbConn, err := postgres.NewConnection(appCtx, cfg.DB, logger)
 	if err != nil {
-		logger.Errorf(constants.ErrConnectToDatabase, err)
+		logger.Errorw(ErrConnectToDatabase, commonkeys.Error, err)
 		return nil, nil, err
 	}
-	logger.Infow(constants.MsgPostgresConnected)
+	logger.Infow(MsgPostgresConnected)
 
-	// Security Hasher
-	passwordHasher := adapterSecurity.NewBcryptPasswordAdapter()
+	// Secondary adapter (driven by output ports)
+	passwordHasher := hasher.New()
+	tokenProvider := token.NewProvider(cfg.Secret.Key)
+	tokenStore := cache.NewStore(cacheClient, logger)
+	userRepository := userRepo.New(dbConn, logger)
+	categoryRepository := categoryRepo.New(dbConn, logger)
 
-	// Token Extractor
-	tokenClaimsExtractor := adapterSecurity.NewJWTClaimsExtractor(cfg.Secret.Key)
+	// Core use cases (depend only on ports)
+	authService := auth.NewService(userRepository, tokenStore, tokenProvider, passwordHasher, logger)
+	userService := user.NewService(userRepository, tokenStore, tokenProvider, passwordHasher, logger)
+	categoryService := category.NewService(categoryRepository, logger)
 
-	// Token
-	tokenRepository := adapterToken.NewTokenRepository(cacheClient, logger)
-	tokenService := token.NewTokenService(tokenRepository, logger, cfg.Secret)
-
-	// User
-	userRepository := repository.NewUserRepository(dbConn, logger)
-	userService := user.NewUserService(userRepository, tokenService, passwordHasher, logger)
-
-	// Category
-	categoryRepository := repository.NewCategoryRepository(dbConn, logger)
-	categoryService := category.NewCategoryService(categoryRepository, logger)
-
-	// Auth
-	authService := auth.NewAuthService(userRepository, tokenService, passwordHasher, logger)
-
-	cleanupResources := func() {
-		adapterDB.Close(dbConn, logger)
-
-		if err := cacheClient.Close(); err != nil {
-			logger.Errorf("%s: %v", constants.ErrCloseCacheConnection, err)
+	// Resource cleanup
+	cleanup := func(ctx context.Context) {
+		done := make(chan struct{})
+		go func() {
+			postgres.Close(dbConn, logger)
+			if err := cacheClient.Close(); err != nil {
+				logger.Errorw(ErrCloseCacheConnection, commonkeys.Error, err)
+			}
+			close(done)
+		}()
+		select {
+		case <-ctx.Done():
+			logger.Warnw(MsgCleanupAborted, commonkeys.Error, ctx.Err())
+		case <-done:
+			logger.Infow(MsgCleanupCompletedSuccessfully)
 		}
 	}
 
@@ -83,10 +83,6 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger o
 		AuthService:     authService,
 		UserService:     userService,
 		CategoryService: categoryService,
-		TokenService:    tokenService,
-
-		TokenClaimsExtractor: tokenClaimsExtractor,
-		TokenRepository:      tokenRepository,
-		Logger:               logger,
-	}, cleanupResources, nil
+		Logger:          logger,
+	}, cleanup, nil
 }

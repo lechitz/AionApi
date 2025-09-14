@@ -1,181 +1,95 @@
+// Package main is the entry point for the application.
 package main
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"net"
-	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
-	"time"
 
-	"github.com/lechitz/AionApi/cmd/aion-api/constants"
-	"github.com/lechitz/AionApi/internal/adapters/primary/graph/graphqlserver"
-	"github.com/lechitz/AionApi/internal/adapters/primary/http/httpserver"
-	"github.com/lechitz/AionApi/internal/core/ports/output"
+	"github.com/lechitz/AionApi/internal/adapter/secondary/contextlogger"
+	"github.com/lechitz/AionApi/internal/adapter/secondary/crypto"
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/observability"
-	"github.com/lechitz/AionApi/internal/shared/commonkeys"
-	"github.com/lechitz/AionApi/pkg/zap"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"github.com/lechitz/AionApi/internal/platform/observability/metric"
+	"github.com/lechitz/AionApi/internal/platform/observability/tracer"
+	"github.com/lechitz/AionApi/internal/platform/ports/output/keygen"
+	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/platform/server"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 )
 
+// the main is the entry point for the application.
 func main() {
-	logger, cleanupLogger := zap.NewLogger()
+	os.Exit(run())
+}
+
+// run is the main application logic.
+func run() int {
+	logs, cleanupLogger := contextlogger.New()
 	defer cleanupLogger()
 
-	cfg := loadConfig(logger)
+	keyGenerator := crypto.New()
 
-	appCtx, stopApp := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stopApp()
+	cfg, err := loadConfig(keyGenerator, logs)
+	if err != nil {
+		logs.Errorw(ErrLoadConfig, commonkeys.Error, err.Error())
+		return 2
+	}
 
-	cleanupMetrics := observability.InitOtelMetrics(cfg, logger)
+	appCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	cleanupMetrics := metric.InitOtelMetrics(cfg, logs)
 	defer cleanupMetrics()
 
-	cleanupTracer := observability.InitTracer(cfg, logger)
+	cleanupTracer := tracer.InitTracer(cfg, logs)
 	defer cleanupTracer()
 
-	appDeps, cleanupDeps := initDependencies(appCtx, cfg, logger)
-	defer cleanupDeps()
+	appDeps, cleanupDeps, err := initDependencies(appCtx, cfg, logs)
+	if err != nil {
+		logs.Errorw(ErrInitDeps, commonkeys.Error, err.Error())
+		return 3
+	}
+	defer func() {
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), cfg.Application.Timeout)
+		defer cancel()
+		cleanupDeps(shutdownCtx)
+	}()
 
-	servers := buildAllServers(appCtx, appDeps, cfg, logger)
-	handleServers(appCtx, servers, cfg, logger, stopApp)
+	if err := server.RunAll(appCtx, cfg, appDeps, logs); err != nil {
+		logs.Errorw(ErrServerRunFailed, commonkeys.Error, err.Error())
+		return 1
+	}
+	return 0
 }
 
-func loadConfig(logger output.Logger) *config.Config {
-	loader := config.NewLoader()
-	cfg, err := loader.Load(logger)
+// loadConfig loads the application configuration.
+func loadConfig(keyGenerator keygen.Generator, logs logger.ContextLogger) (*config.Config, error) {
+	cfg, err := config.New(keyGenerator).Load(logs)
 	if err != nil {
-		logger.Errorw(constants.ErrToFailedLoadConfiguration, commonkeys.Error, err.Error())
-		os.Exit(1)
+		return nil, err
 	}
+
 	if err := cfg.Validate(); err != nil {
-		logger.Errorw(constants.ErrInvalidConfiguration, commonkeys.Error, err.Error())
-		os.Exit(1)
+		return nil, err
 	}
 
-	logger.Infow(
-		constants.SuccessToLoadConfiguration,
-		commonkeys.APIName,
-		cfg.General.Name,
-		commonkeys.AppEnv,
-		cfg.General.Env,
-		commonkeys.AppVersion,
-		cfg.General.Version,
+	logs.Infow(
+		MsgConfigLoaded,
+		commonkeys.APIName, cfg.General.Name,
+		commonkeys.AppEnv, cfg.General.Env,
+		commonkeys.AppVersion, cfg.General.Version,
 	)
-	return cfg
+	return cfg, nil
 }
 
-func initDependencies(ctx context.Context, cfg *config.Config, logger output.Logger) (*bootstrap.AppDependencies, func()) {
-	deps, cleanup, err := bootstrap.InitializeDependencies(ctx, cfg, logger)
+// initDependencies initializes the application dependencies.
+func initDependencies(appCtx context.Context, cfg *config.Config, logs logger.ContextLogger) (*bootstrap.AppDependencies, func(context.Context), error) {
+	deps, cleanup, err := bootstrap.InitializeDependencies(appCtx, cfg, logs)
 	if err != nil {
-		logger.Errorw(constants.ErrInitializeDependencies, commonkeys.Error, err.Error())
-		os.Exit(1)
+		return nil, nil, err
 	}
-	logger.Infow(constants.SuccessToInitializeDependencies)
-	return deps, cleanup
-}
-
-func setupHTTPHandler(deps *bootstrap.AppDependencies, cfg *config.Config, logger output.Logger) http.Handler {
-	router, err := httpserver.ComposeRouter(deps, cfg)
-	if err != nil {
-		logger.Errorw(constants.ErrStartHTTPServer, commonkeys.Error, err.Error())
-		os.Exit(1)
-	}
-	return otelhttp.NewHandler(router, fmt.Sprintf("%s-REST", cfg.Observability.OtelServiceName))
-}
-
-func setupGraphQLHandler(deps *bootstrap.AppDependencies, cfg *config.Config, logger output.Logger) http.Handler {
-	handler, err := graphqlserver.NewGraphqlHandler(deps, cfg)
-	if err != nil {
-		logger.Errorw(constants.ErrStartGraphqlServer, commonkeys.Error, err.Error())
-		os.Exit(1)
-	}
-	return otelhttp.NewHandler(handler, fmt.Sprintf("%s-GraphQL", cfg.Observability.OtelServiceName))
-}
-
-func buildServer(ctx context.Context, name, host, port string, handler http.Handler, readTimeout, writeTimeout time.Duration, logger output.Logger) *http.Server {
-	addr := net.JoinHostPort(host, port)
-
-	srv := &http.Server{
-		Addr:         addr,
-		BaseContext:  func(_ net.Listener) context.Context { return ctx },
-		Handler:      handler,
-		ReadTimeout:  readTimeout,
-		WriteTimeout: writeTimeout,
-	}
-
-	logger.Infow(fmt.Sprintf(constants.ServerStartFmt, name), commonkeys.ServerHTTPName, name, commonkeys.ServerHTTPAddr, addr)
-
-	return srv
-}
-
-func buildAllServers(ctx context.Context, deps *bootstrap.AppDependencies, cfg *config.Config, logger output.Logger) []*http.Server {
-	return []*http.Server{
-		buildServer(
-			ctx,
-			cfg.ServerHTTP.Name,
-			cfg.ServerHTTP.Host,
-			cfg.ServerHTTP.Port,
-			setupHTTPHandler(deps, cfg, logger),
-			cfg.ServerHTTP.ReadTimeout,
-			cfg.ServerHTTP.WriteTimeout,
-			logger,
-		),
-		buildServer(
-			ctx,
-			cfg.ServerGraphql.Name,
-			cfg.ServerGraphql.Host,
-			cfg.ServerGraphql.Port,
-			setupGraphQLHandler(deps, cfg, logger),
-			cfg.ServerGraphql.ReadTimeout,
-			cfg.ServerGraphql.WriteTimeout,
-			logger,
-		),
-	}
-}
-
-func handleServers(ctx context.Context, servers []*http.Server, cfg *config.Config, logger output.Logger, stop context.CancelFunc) {
-	var wg sync.WaitGroup
-	errChan := make(chan error, len(servers))
-
-	for _, srv := range servers {
-		wg.Add(1)
-		go func(s *http.Server) {
-			defer wg.Done()
-			if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-				errChan <- fmt.Errorf(constants.ServerFailureFmt, s.Addr, err)
-			}
-		}(srv)
-	}
-
-	select {
-	case err := <-errChan:
-		logger.Errorw(constants.MsgUnexpectedServerFailure, commonkeys.Error, err.Error())
-		stop()
-	case <-ctx.Done():
-		logger.Infow(constants.MsgShutdownSignalReceived)
-	}
-
-	shutdownServers(servers, cfg.Application.Timeout, logger)
-	wg.Wait()
-}
-
-func shutdownServers(servers []*http.Server, timeout time.Duration, logger output.Logger) {
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-
-	for _, srv := range servers {
-		if err := srv.Shutdown(ctx); err != nil {
-			logger.Errorw(
-				fmt.Sprintf(constants.ShutdownFailureFmt, srv.Addr, err),
-				commonkeys.ServerHTTPAddr, srv.Addr,
-				commonkeys.Error, err.Error(),
-			)
-		}
-	}
+	logs.Infow(MsgDepsInitialized)
+	return deps, cleanup, nil
 }

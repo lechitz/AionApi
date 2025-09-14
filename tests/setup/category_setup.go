@@ -1,40 +1,44 @@
-// Package setup contains test setup utilities for testing Service.
+// Package setup provides test suite builders and common helpers for unit tests.
 package setup
 
 import (
 	"context"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/core/usecase/category"
+	"github.com/lechitz/AionApi/internal/category/core/usecase"
 	"github.com/lechitz/AionApi/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 
-// CategoryServiceTestSuite is a test suite structure for testing methods in the CategoryService, holding mock dependencies and context.
+// CategoryServiceTestSuite groups mocked dependencies and the SUT (CategoryService)
+// to simplify Category-related unit tests.
 type CategoryServiceTestSuite struct {
 	Ctrl               *gomock.Controller
-	Logger             *mocks.MockLogger
-	CategoryRepository *mocks.MockCategoryStore
-	CategoryService    *category.Service
+	Logger             *mocks.MockContextLogger
+	CategoryRepository *mocks.MockCategoryRepository
+	CategoryService    *usecase.Service
 	Ctx                context.Context
 }
 
-// CategoryServiceTest initializes and returns a CategoryServiceTestSuite with mock dependencies for testing Service logic.
+// CategoryServiceTest initializes and returns a CategoryServiceTestSuite with the
+// correct mocked output ports (CategoryStore, ContextLogger). Use this helper to
+// bootstrap each test and ensure proper teardown via Ctrl.Finish().
 func CategoryServiceTest(t *testing.T) *CategoryServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
-	mockCategoryRepository := mocks.NewMockCategoryStore(ctrl)
-	mockLog := mocks.NewMockLogger(ctrl)
+	categoryRepository := mocks.NewMockCategoryRepository(ctrl)
+	logger := mocks.NewMockContextLogger(ctrl)
 
-	ExpectLoggerDefaultBehavior(mockLog)
+	// Set default, non-intrusive expectations for the logger.
+	ExpectLoggerDefaultBehavior(logger)
 
-	categoryService := category.NewCategoryService(mockCategoryRepository, mockLog)
+	svc := usecase.NewService(categoryRepository, logger)
 
 	return &CategoryServiceTestSuite{
 		Ctrl:               ctrl,
-		Logger:             mockLog,
-		CategoryService:    categoryService,
-		CategoryRepository: mockCategoryRepository,
+		Logger:             logger,
+		CategoryRepository: categoryRepository,
+		CategoryService:    svc,
 		Ctx:                t.Context(),
 	}
 }

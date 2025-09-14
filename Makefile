@@ -3,12 +3,13 @@
 # ============================================================
 
 APPLICATION_NAME := aion-api
-COMPOSE_FILE_DEV := infrastructure/docker/dev/docker-compose-dev.yaml
-ENV_FILE_DEV     := infrastructure/docker/dev/.env.dev
-COMPOSE_FILE_PROD := infrastructure/docker/prod/docker-compose-prod.yaml
-ENV_FILE_PROD    := infrastructure/docker/prod/.env.prod
-COVERAGE_DIR = tests/coverage
 
+COMPOSE_FILE_DEV := infrastructure/docker/environments/dev/docker-compose-dev.yaml
+ENV_FILE_DEV     := infrastructure/docker/environments/dev/.env.dev
+COMPOSE_FILE_PROD := infrastructure/docker/environments/prod/docker-compose-prod.yaml
+ENV_FILE_PROD    := infrastructure/docker/environments/prod/.env.prod
+
+COVERAGE_DIR = tests/coverage
 
 # --- MIGRATION CONFIG ---
 MIGRATION_PATH := infrastructure/db/migrations
@@ -19,9 +20,9 @@ MIGRATE_BIN := $(shell command -v migrate 2> /dev/null)
 #                HELP & TOOLING SECTION
 # ============================================================
 
-include makefiles/*.mk
+.PHONY: all help tools-install
 
-.PHONY: help tools-install
+all: help
 
 help:
 	@echo ""
@@ -101,6 +102,8 @@ help:
 #                 CONSOLIDATED .PHONY TARGETS
 # ============================================================
 
+include makefiles/*.mk
+
 .PHONY: \
 	help tools-install \
 	build-dev dev-up dev-down dev clean-dev \
@@ -110,3 +113,10 @@ help:
 	format lint lint-fix verify \
 	test test-cover test-html-report test-ci test-clean \
 	migrate-up migrate-down migrate-force migrate-new
+
+## Docs
+docs-serve:
+	@.venv-docs/bin/mkdocs serve
+
+docs-build:
+	@.venv-docs/bin/mkdocs build

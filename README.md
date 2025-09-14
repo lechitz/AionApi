@@ -84,7 +84,7 @@ This repository is organized using a public [GitHub Projects board](https://gith
 
 1. **Copy the example environment file**
    ```bash
-   cp infrastructure/docker/example/.env.example infrastructure/docker/dev/.env.dev
+   cp infrastructure/docker/environments/example/.env.example infrastructure/docker/environments/dev/.env.dev
    ```
 2. **Edit `.env.dev`** with values that match your local setup.
 
@@ -105,14 +105,12 @@ This repository is organized using a public [GitHub Projects board](https://gith
 The project is organized as follows:
 
 ```text
-github/         - GitHub Actions workflows and issue templates
+.github/        - GitHub Actions workflows and issue templates
 cmd/            - application entry point
 infrastructure/ - migrations, docker files, observability configs
 internal/       - domain logic, use cases, ports, and adapters
 makefiles/      - grouped Make targets for builds, codegen, testing
-pkg/            - shared utilities
 tests/          - test data, mocks, and testing utilities
-Dockerfile      - Docker build instructions for the API
 Makefile        - main Makefile orchestrating tasks
 .golangci.yml   - static analysis and linter configuration
 ```
@@ -135,7 +133,7 @@ make verify    # run full pipeline before committing
 The API exposes REST endpoints for user management, authentication, and health checks, along with GraphQL operations for categories and tags.
 
 ### REST Endpoints
-- `GET  /aion-api/health-check/` — service status
+- `GET  /aion-api/health/` — service status
 - `POST /aion-api/user/create` — create a new user
 - `GET  /aion-api/user/all` — list users
 - `GET  /aion-api/user/{user_id}` — retrieve a user by ID

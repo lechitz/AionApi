@@ -1,0 +1,116 @@
+services:
+  postgres:
+    image: postgres
+    container_name: postgres-dev
+    restart: always
+    env_file:
+      - .env.dev
+    volumes:
+      - postgres-data-dev:/var/lib/postgresql/data
+      - ../../../db/migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - rede_local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis
+    container_name: redis-aion-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - rede_local
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.101.0
+    container_name: otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ../../../observability/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - "4318:4318"   # OTLP HTTP
+      - "55681:55681" # OTLP gRPC
+      - "9888:9888"   # /metrics Prometheus scrape
+    networks:
+      - rede_local
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus-dev
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../../../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - rede_local
+    depends_on:
+      - otel-collector
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=aion
+      - GF_SECURITY_ADMIN_PASSWORD=aion
+    volumes:
+      - ../../../observability/grafana/dashboards:/var/lib/grafana/dashboards
+      - ../../../observability/grafana/provisioning:/etc/grafana/provisioning/dashboards
+      - ../../../observability/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - grafana-data:/var/lib/grafana
+    networks:
+      - rede_local
+    depends_on:
+      - prometheus
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    container_name: jaeger-dev
+    restart: unless-stopped
+    ports:
+      - "16686:16686"   # UI Web
+      - "9411:9411"     # Zipkin ingest!
+    networks:
+      - rede_local
+
+  aion-api:
+    image: aion-api:dev
+    build:
+      context: ../../../..
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: aion-api-dev
+    env_file:
+      - .env.dev
+    ports:
+      - "5001:5001" # REST
+      - "8081:8081" # GraphQL
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    networks:
+      - rede_local
+    restart: unless-stopped
+
+networks:
+  rede_local:
+
+volumes:
+  postgres-data-dev:
+  grafana-data:

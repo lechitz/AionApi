@@ -1,0 +1,22 @@
+site_name: AionApi
+site_description: Backend Go — Hexagonal, REST/GraphQL, Observability
+repo_name: lechitz/AionApi
+repo_url: https://github.com/lechitz/AionApi
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.instant
+    - content.code.copy
+    - content.tabs.link
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Architecture: architecture.md
+plugins:
+  - search
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - tables
