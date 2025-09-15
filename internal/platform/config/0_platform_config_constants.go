@@ -9,9 +9,6 @@ const (
 	// MinHTTPTimeout is the minimum allowed timeout for HTTP requests.
 	MinHTTPTimeout = 1 * time.Second
 
-	// MinGraphQLTimeout is the minimum allowed timeout for GraphQL requests.
-	MinGraphQLTimeout = 1 * time.Second
-
 	// MinContextRequest is the minimum allowed timeout for context requests.
 	MinContextRequest = 500 * time.Millisecond
 
