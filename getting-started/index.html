@@ -774,7 +774,7 @@ make migrate-up
 make seed-all
 
 # 6) Health check
-curl -s http://localhost:8080/aion-api/health | jq
+curl -s http://localhost:8080/aion/health | jq
 </code></pre>
 <p>If things are ok, you should see a JSON payload containing the service name/version/environment.</p>
 <hr />
@@ -829,7 +829,7 @@ make dev-down
 <li><strong>API</strong>: <code>localhost:8080</code> (REST base prefix: <code>/aion-api</code>, GraphQL: <code>/graphql</code>)</li>
 </ul>
 <p>Health check:</p>
-<pre><code class="language-bash">curl -s http://localhost:8080/aion-api/health | jq
+<pre><code class="language-bash">curl -s http://localhost:8080/aion/health | jq
 </code></pre>
 <hr />
 <h2 id="database-migrations-seeds">Database: migrations &amp; seeds<a class="headerlink" href="#database-migrations-seeds" title="Permanent link">&para;</a></h2>
