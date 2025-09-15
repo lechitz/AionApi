@@ -202,4 +202,3 @@ linters:
     rowserrcheck:
       packages:
         - github.com/jmoiron/sqlx
-        -
