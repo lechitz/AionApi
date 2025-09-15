@@ -27,7 +27,7 @@ make migrate-up
 make seed-all
 
 # 6) Health check
-curl -s http://localhost:8080/aion-api/health | jq
+curl -s http://localhost:8080/aion/health | jq
 ```
 
 If things are ok, you should see a JSON payload containing the service name/version/environment.
@@ -98,7 +98,7 @@ Expected services:
 Health check:
 
 ```bash
-curl -s http://localhost:8080/aion-api/health | jq
+curl -s http://localhost:8080/aion/health | jq
 ```
 
 ---

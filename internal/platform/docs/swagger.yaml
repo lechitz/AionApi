@@ -1,0 +1,503 @@
+basePath: /api/v1
+definitions:
+  github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserRequest:
+    properties:
+      password:
+        description: |-
+          Password is the credential paired with the username.
+          Example: "P@ssw0rd123"
+        example: P@ssw0rd123
+        type: string
+      username:
+        description: |-
+          Username is the unique identifier used to authenticate the user.
+          Example: "lechitz"
+        example: lechitz
+        type: string
+    type: object
+  github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserResponse:
+    properties:
+      name:
+        description: |-
+          Name is a friendly display name for the authenticated user.
+          Example: "Felipe Lechitz"
+        example: Felipe Lechitz
+        type: string
+    type: object
+  github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserRequest:
+    properties:
+      email:
+        description: |-
+          Email is the user's contact email address.
+          Example: "dev@aion.local"
+        example: dev@aion.local
+        type: string
+      name:
+        description: |-
+          Name is the human-friendly display name of the user.
+          Example: "Felipe Lechitz"
+        example: Felipe Lechitz
+        type: string
+      password:
+        description: |-
+          Password is the user's credential (minimum length: 8).
+          Example: "P@ssw0rd123"
+        example: P@ssw0rd123
+        type: string
+      username:
+        description: |-
+          Username is the unique handle for login and identification.
+          Example: "lechitz"
+        example: lechitz
+        type: string
+    type: object
+  github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserResponse:
+    properties:
+      email:
+        description: |-
+          Email is the created user's email address.
+          Example: "dev@aion.local"
+        example: dev@aion.local
+        type: string
+      id:
+        description: |-
+          ID is the created user's identifier.
+          Example: 42
+        example: 42
+        type: integer
+      name:
+        description: |-
+          Name is the created user's display name.
+          Example: "Felipe Lechitz"
+        example: Felipe Lechitz
+        type: string
+      username:
+        description: |-
+          Username is the created user's unique handle.
+          Example: "lechitz"
+        example: lechitz
+        type: string
+    type: object
+  github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.GetUserResponse:
+    properties:
+      created_at:
+        description: |-
+          CreatedAt is the timestamp when the user was created.
+          Format: date-time. Example: "2024-01-02T15:04:05Z".
+        example: "2024-01-02T15:04:05Z"
+        type: string
+      email:
+        description: |-
+          Email is the user's email address.
+          Example: "dev@aion.local".
+        example: dev@aion.local
+        type: string
+      name:
+        description: |-
+          Name is the user's display name.
+          Example: "Felipe Lechitz".
+        example: Felipe Lechitz
+        type: string
+      user_id:
+        description: |-
+          ID is the user's identifier.
+          Example: 42.
+        example: 42
+        type: integer
+      username:
+        description: |-
+          Username is the user's unique handle.
+          Example: "lechitz".
+        example: lechitz
+        type: string
+    type: object
+  github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdatePasswordUserRequest:
+    properties:
+      new_password:
+        description: |-
+          NewPassword is the new password to be set.
+          Example: "N3wP@ssw0rd456"
+        example: N3wP@ssw0rd456
+        type: string
+      password:
+        description: |-
+          Password is the current password for the user.
+          Example: "P@ssw0rd123"
+        example: P@ssw0rd123
+        type: string
+    type: object
+  github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserRequest:
+    properties:
+      email:
+        description: |-
+          Email is the new email address for the user.
+          Example: "alice@example.com"
+        example: alice@example.com
+        type: string
+      name:
+        description: |-
+          Name is the new display name for the user.
+          Example: "Alice Doe"
+        example: Alice Doe
+        type: string
+      username:
+        description: |-
+          Username is the new unique handle for the user.
+          Example: "alice"
+        example: alice
+        type: string
+    type: object
+  github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserResponse:
+    properties:
+      email:
+        description: |-
+          Email is the current email after the update (if changed).
+          Example: "alice@example.com"
+        example: alice@example.com
+        type: string
+      name:
+        description: |-
+          Name is the current display name after the update (if changed).
+          Example: "Alice Doe"
+        example: Alice Doe
+        type: string
+      updated_at:
+        description: |-
+          UpdatedAt is the timestamp when the user was updated.
+          Example: "2025-09-14T22:01:02Z"
+        example: "2025-09-14T22:01:02Z"
+        format: date-time
+        type: string
+      user_id:
+        description: |-
+          ID is the user's unique identifier.
+          Example: 42
+        example: 42
+        type: integer
+      username:
+        description: |-
+          Username is the current username after the update (if changed).
+          Example: "alice"
+        example: alice
+        type: string
+    type: object
+info:
+  contact:
+    email: felipe.lechitz@gmail.com
+    name: Lechitz
+    url: https://github.com/lechitz
+  description: Public and internal REST API for AionAPI. Swagger (OpenAPI 3.x) is
+    generated via swaggo.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: https://github.com/lechitz/AionApi
+  title: AionAPI — REST API Documentation
+  version: 0.1.0
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Validates credentials and issues a session token (JWT or cookie).
+        On success, returns user-facing info and sets `auth_token` cookie.
+      parameters:
+      - description: Login payload
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login succeeded
+          headers:
+            Set-Cookie:
+              description: auth_token=<opaque or JWT>; Path=/; HttpOnly; Secure (if
+                enabled)
+              type: string
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserResponse'
+        "400":
+          description: Invalid request payload or validation error
+          schema:
+            type: string
+        "401":
+          description: Invalid credentials
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Authenticate user (login)
+      tags:
+      - Auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Invalidates the current authenticated session (token or cookie)
+        and clears the auth cookie.
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Logout succeeded (no content)
+          headers:
+            Set-Cookie:
+              description: auth_token=deleted; Path=/; Max-Age=0; HttpOnly; Secure
+                (if enabled)
+              type: string
+          schema:
+            type: string
+        "401":
+          description: Unauthorized or missing user context
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Logout current user
+      tags:
+      - Auth
+  /user:
+    delete:
+      consumes:
+      - application/json
+      description: Marks the current authenticated user as soft-deleted and clears
+        the auth cookie. Returns 204 No Content.
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: User soft-deleted (no content)
+          headers:
+            Set-Cookie:
+              description: auth_token=deleted; Path=/; Max-Age=0; HttpOnly; Secure
+                (if enabled)
+              type: string
+          schema:
+            type: string
+        "401":
+          description: Unauthorized or missing user context
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Soft-delete current user
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Updates the authenticated user's profile fields. At least one field
+        must be provided.
+      parameters:
+      - description: Fields to update
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserResponse'
+        "400":
+          description: Invalid request or no fields to update
+          schema:
+            type: string
+        "401":
+          description: Unauthorized or missing user context
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "409":
+          description: Conflict updating user
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Update current user
+      tags:
+      - Users
+  /user/{user_id}:
+    get:
+      description: Returns a single user resource by its unique identifier.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User fetched
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.GetUserResponse'
+        "400":
+          description: Invalid user_id
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Get user by ID
+      tags:
+      - Users
+  /user/all:
+    get:
+      description: Returns a list containing all user resources.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Users fetched
+          schema:
+            items:
+              $ref: '#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.GetUserResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: List all users
+      tags:
+      - Users
+  /user/create:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new user account. On success, returns basic user information.
+      parameters:
+      - description: User payload
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserResponse'
+        "400":
+          description: Invalid request payload or validation error
+          schema:
+            type: string
+        "409":
+          description: Username or email already exists
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create user
+      tags:
+      - Users
+  /user/password:
+    put:
+      consumes:
+      - application/json
+      description: Validates the current password and updates it to a new one. On
+        success, the auth cookie is refreshed.
+      parameters:
+      - description: Current and new passwords
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdatePasswordUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password updated; auth cookie refreshed
+          headers:
+            Set-Cookie:
+              description: auth_token=<new>; Path=/; HttpOnly; Secure (if enabled)
+              type: string
+          schema:
+            type: string
+        "400":
+          description: Invalid request payload or validation error
+          schema:
+            type: string
+        "401":
+          description: Unauthorized or missing user context
+          schema:
+            type: string
+        "409":
+          description: Conflict updating password
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Update current user's password
+      tags:
+      - Users
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    description: Use "Bearer {token}" (JWT).
+    in: header
+    name: Authorization
+    type: apiKey
+  CookieAuth:
+    description: Session-based authentication cookie (e.g., Redis-backed).
+    in: cookie
+    name: auth_token
+    type: apiKey
+    x-graphqlplayground: /graphql/  // Cross-reference to GraphQL Playground (not
+      covered by Swagger)
+swagger: "2.0"

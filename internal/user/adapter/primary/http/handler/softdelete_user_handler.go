@@ -7,6 +7,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/cookies"
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
@@ -16,7 +17,20 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-// SoftDeleteUser handles DELETE /user/.
+// SoftDeleteUser soft-deletes the authenticated user and clears the auth cookie.
+//
+// @Summary      Soft-delete current user
+// @Description  Marks the current authenticated user as soft-deleted and clears the auth cookie. Returns 204 No Content.
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Security     CookieAuth
+// @Success      204  {string}  string  "User soft-deleted (no content)"
+// @Header       204  {string}  Set-Cookie  "auth_token=deleted; Path=/; Max-Age=0; HttpOnly; Secure (if enabled)"
+// @Failure      401  {string}  string  "Unauthorized or missing user context"
+// @Failure      500  {string}  string  "Internal server error"
+// @Router       /user [delete].
 func (h *Handler) SoftDeleteUser(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerUserHandler).
 		Start(r.Context(), SpanSoftDeleteUserHandler)
@@ -27,7 +41,8 @@ func (h *Handler) SoftDeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
-		httpresponse.WriteAuthErrorSpan(ctx, w, span, h.Logger)
+		err := sharederrors.ErrMissingUserID()
+		httpresponse.WriteAuthErrorSpan(ctx, w, span, err, h.Logger)
 		return
 	}
 

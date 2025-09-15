@@ -1,7 +1,10 @@
 # ---------------------------------------------------------------------
 # Lint Workflow for AionAPI (Go)
-# Purpose: Perform static code analysis using golangci-lint, fieldalignment, and govet.
-# Trigger: Runs on every PR targeting the 'main' branch.
+# Purpose: Run golangci-lint (via reviewdog), fieldalignment, and go vet.
+# Extras: Ensures Swagger artifacts are up-to-date before linting.
+# Trigger: Every PR targeting 'main'.
+# NOTE: Your .golangci.yml should set `issues.exclude-generated: true`
+#       or exclude internal/platform/docs to avoid flags on generated code.
 # ---------------------------------------------------------------------
 
 name: Lint
@@ -22,30 +25,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
+      # 1) Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Go
+      # 2) Setup Go from go.mod and use latest patch
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+          check-latest: true
 
-      # Step 3: Clean the modcache to avoid tar file conflicts
-      - name: Clean Go mod cache
-        run: |
-          go clean -modcache
-          rm -rf ~/go/pkg/mod/gorm.io || true
+      # 3) Pre-download modules to stabilize builds
+      - name: Download modules
+        run: go mod download
 
-      # Step 4: Create expected cache directories (if missing)
+      # 4) Ensure local caches exist
       - name: Ensure cache dirs exist
         run: |
           mkdir -p ~/.cache/go-build
-          mkdir -p ~/go/pkg/mod
           mkdir -p ~/.cache/golangci-lint
 
-      # Step 5: Cache Go build artifacts
+      # 5) Cache Go build artifacts
       - name: Cache Go build
         uses: actions/cache@v4
         with:
@@ -54,7 +55,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-build-
 
-      # Step 6: Cache golangci-lint cache
+      # 6) Cache golangci-lint cache
       - name: Cache golangci-lint
         uses: actions/cache@v4
         with:
@@ -63,26 +64,32 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-golangci-
 
-      # Step 7: Install lint tools
-      - name: Install lint tools
-        run: |
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.56.2
-          go install golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest
+      # 7) Swagger drift gate: generate and verify artifacts are committed
+      - name: Generate Swagger docs
+        run: make docs.gen
 
-      # Step 8: Run golangci-lint via reviewdog
+      - name: Check Swagger docs drift
+        run: make docs.check-dirty
+
+      # 8) Run golangci-lint via reviewdog (PR review annotations)
       - name: Run golangci-lint via reviewdog
         uses: reviewdog/action-golangci-lint@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          golangci_lint_version: v2.1.6
           golangci_lint_flags: --config=.golangci.yml ./...
           level: warning
           reporter: github-pr-review
           fail_level: error
 
-      # Step 9: Run fieldalignment for struct optimization alerts
+      # 9) Install fieldalignment analyzer
+      - name: Install fieldalignment
+        run: go install golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest
+
+      # 10) Run fieldalignment on config structs (advisory)
       - name: Run fieldalignment
         run: fieldalignment ./internal/platform/config
 
-      # Step 10: Run native go vet
+      # 11) Run native go vet across the repo
       - name: Run go vet
         run: go vet ./...

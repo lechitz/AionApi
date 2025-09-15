@@ -14,7 +14,18 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-// ListAll handles GET /user/all.
+// ListAll returns all users.
+//
+// @Summary      List all users
+// @Description  Returns a list containing all user resources.
+// @Tags         Users
+// @Produce      json
+// @Security     BearerAuth
+// @Security     CookieAuth
+// @Success      200  {array}   dto.GetUserResponse  "Users fetched"
+// @Failure      401  {string}  string               "Unauthorized"
+// @Failure      500  {string}  string               "Internal server error"
+// @Router       /user/all [get].
 func (h *Handler) ListAll(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerUserHandler).
 		Start(r.Context(), SpanGetAllUsersHandler)

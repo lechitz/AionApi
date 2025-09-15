@@ -2,7 +2,7 @@
 #                                CODE QUALITY
 # ============================================================
 
-.PHONY: format lint lint-fix verify
+.PHONY: format lint lint-fix verify verify-ci
 
 format:
 	@echo "Running goimports..."
@@ -18,5 +18,13 @@ lint-fix:
 	@echo "Running golangci-lint with --fix..."
 	golangci-lint run --fix --config=.golangci.yml ./...
 
-verify: graphql mocks lint test test-cover test-ci test-clean
+# Local pre-commit verify:
+# - DOES NOT modify your working tree
+# - Validates Swagger artifacts by generating to a temp dir and diffing
+# - Then runs linters and tests
+verify: graphql mocks docs.validate lint test test-cover test-ci test-clean
 	@echo "✅  Verify passed successfully!"
+
+# CI-style verify (stricter, enforces committed artifacts)
+verify-ci: docs.gen docs.check-dirty lint test
+	@echo "✅  CI verify passed!"

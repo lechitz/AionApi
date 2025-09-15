@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
 	"go.opentelemetry.io/otel/codes"
 
@@ -18,7 +19,23 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-// UpdateUser handles PUT /user/.
+// UpdateUser updates the current authenticated user's profile.
+//
+// @Summary      Update current user
+// @Description  Updates the authenticated user's profile fields. At least one field must be provided.
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Security     CookieAuth
+// @Param        body  body      dto.UpdateUserRequest   true  "Fields to update"
+// @Success      200   {object}  dto.UpdateUserResponse        "User updated"
+// @Failure      400   {string}  string                       "Invalid request or no fields to update"
+// @Failure      401   {string}  string                       "Unauthorized or missing user context"
+// @Failure      404   {string}  string                       "User not found"
+// @Failure      409   {string}  string                       "Conflict updating user"
+// @Failure      500   {string}  string                       "Internal server error"
+// @Router       /user [put].
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerUserHandler).
 		Start(r.Context(), SpanUpdateUserHandler)
@@ -36,7 +53,8 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
-		httpresponse.WriteAuthErrorSpan(ctx, w, span, h.Logger)
+		err := sharederrors.ErrMissingUserID()
+		httpresponse.WriteAuthErrorSpan(ctx, w, span, err, h.Logger)
 		return
 	}
 

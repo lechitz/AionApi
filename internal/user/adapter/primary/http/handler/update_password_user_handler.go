@@ -8,7 +8,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/cookies"
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/validation"
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
@@ -20,7 +20,23 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-// UpdateUserPassword handles PUT /user/password.
+// UpdateUserPassword updates the authenticated user's password and refreshes the auth cookie.
+//
+// @Summary      Update current user's password
+// @Description  Validates the current password and updates it to a new one. On success, the auth cookie is refreshed.
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Security     CookieAuth
+// @Param        body  body      dto.UpdatePasswordUserRequest  true  "Current and new passwords"
+// @Success      200   {string}  string                         "Password updated; auth cookie refreshed"
+// @Header       200   {string}  Set-Cookie                     "auth_token=<new>; Path=/; HttpOnly; Secure (if enabled)"
+// @Failure      400   {string}  string                         "Invalid request payload or validation error"
+// @Failure      401   {string}  string                         "Unauthorized or missing user context"
+// @Failure      409   {string}  string                         "Conflict updating password"
+// @Failure      500   {string}  string                         "Internal server error"
+// @Router       /user/password [put].
 func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerUserHandler).
 		Start(r.Context(), SpanUpdatePasswordHandler)
@@ -42,7 +58,7 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := validation.CheckRequiredFields(map[string]string{
+	err := CheckRequiredFields(map[string]string{
 		commonkeys.Password:    req.Password,
 		commonkeys.NewPassword: req.NewPassword,
 	})
@@ -58,7 +74,8 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 
 	userID, ok := ctx.Value(ctxkeys.UserID).(uint64)
 	if !ok || userID == 0 {
-		httpresponse.WriteAuthErrorSpan(ctx, w, span, h.Logger)
+		err := sharederrors.ErrMissingUserID()
+		httpresponse.WriteAuthErrorSpan(ctx, w, span, err, h.Logger)
 		return
 	}
 
@@ -83,7 +100,6 @@ func (h *Handler) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 	)
 
 	cookies.ClearAuthCookie(w, h.Config.Cookie)
-
 	cookies.SetAuthCookie(w, newToken, h.Config.Cookie)
 
 	span.SetStatus(codes.Ok, StatusUserPasswordUpdated)

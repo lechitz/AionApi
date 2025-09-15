@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres
+    image: postgres:16
     container_name: postgres-dev
     restart: always
     env_file:
@@ -19,14 +19,14 @@ services:
       retries: 5
 
   redis:
-    image: redis
+    image: redis:7.2
     container_name: redis-aion-dev
     ports:
       - "6379:6379"
     networks:
       - rede_local
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -39,14 +39,13 @@ services:
       - ../../../observability/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
     ports:
       - "4318:4318"   # OTLP HTTP
-      - "55681:55681" # OTLP gRPC
       - "9888:9888"   # /metrics Prometheus scrape
     networks:
       - rede_local
     restart: unless-stopped
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.53.0
     container_name: prometheus-dev
     ports:
       - "9090:9090"
@@ -67,10 +66,10 @@ services:
       - GF_SECURITY_ADMIN_USER=aion
       - GF_SECURITY_ADMIN_PASSWORD=aion
     volumes:
+      - grafana-data:/var/lib/grafana
       - ../../../observability/grafana/dashboards:/var/lib/grafana/dashboards
       - ../../../observability/grafana/provisioning:/etc/grafana/provisioning/dashboards
       - ../../../observability/grafana/datasources:/etc/grafana/provisioning/datasources:ro
-      - grafana-data:/var/lib/grafana
     networks:
       - rede_local
     depends_on:
@@ -82,7 +81,7 @@ services:
     restart: unless-stopped
     ports:
       - "16686:16686"   # UI Web
-      - "9411:9411"     # Zipkin ingest!
+      - "9411:9411"     # Zipkin ingest
     networks:
       - rede_local
 
@@ -95,8 +94,7 @@ services:
     env_file:
       - .env.dev
     ports:
-      - "5001:5001" # REST
-      - "8081:8081" # GraphQL
+      - "5001:5001" # REST + GraphQL
     depends_on:
       postgres:
         condition: service_healthy
@@ -107,6 +105,11 @@ services:
     networks:
       - rede_local
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5001/aion/health >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   rede_local:

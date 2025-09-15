@@ -20,10 +20,6 @@ formatters:
     paths:
       - ".*\\.my\\.go$"
 
-issues:
-  exclude-files:
-    - "adapter/primary/graph/.*\\.go$"
-
 linters:
   enable:
     - asasalint
@@ -95,11 +91,14 @@ linters:
     - whitespace
 
   exclusions:
+    generated: strict
+    paths:
+      - "adapter/primary/graph/.*\\.go$"
     rules:
       - path: '(.+)_test\.go'
         linters:
           - asasalint
-      - path: .*\.go
+      - path: '.*\.go'
         linters:
           - govet
         text: "shadow: declaration of"
@@ -163,12 +162,6 @@ linters:
           paramsOnly: false
         underef:
           skipRecvDeref: false
-
-    govet:
-      enable-all: true
-      settings:
-        shadow:
-          strict: false
 
     inamedparam:
       skip-single-param: true

@@ -20,7 +20,19 @@ import (
 // to prevent memory exhaustion attacks and ensure reasonable payload sizes.
 const maxBodyBytes = 1 << 20 // 1MB
 
-// Create handles POST /user/create.
+// Create registers a new user and returns the created user payload.
+//
+// @Summary      Create user
+// @Description  Registers a new user account. On success, returns basic user information.
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Param        user  body      dto.CreateUserRequest   true   "User payload"
+// @Success      201   {object}  dto.CreateUserResponse         "User created"
+// @Failure      400   {string}  string                         "Invalid request payload or validation error"
+// @Failure      409   {string}  string                         "Username or email already exists"
+// @Failure      500   {string}  string                         "Internal server error"
+// @Router       /user/create [post].
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	tr := otel.Tracer(TracerUserHandler)
 	ctx, span := tr.Start(r.Context(), SpanCreateUserHandler)

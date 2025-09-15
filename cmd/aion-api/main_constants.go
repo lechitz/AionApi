@@ -15,4 +15,7 @@ const (
 
 	// ErrServerRunFailed is the error message for when the server fails to run.
 	ErrServerRunFailed = "server run failed"
+
+	// SwaggerTitle is the default human-readable title shown in the generated API documentation (Swagger/OpenAPI).
+	SwaggerTitle = "AionAPI — REST API"
 )

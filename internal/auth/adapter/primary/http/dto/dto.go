@@ -1,19 +1,34 @@
 // Package dto contains Data Transfer Objects used by the HTTP layer.
 package dto
 
-// LoginUserRequest represents the expected payload to log a user in.
+// LoginUserRequest is the request body for login.
+// Fields include examples to improve Swagger UI readability.
 type LoginUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	// Username is the unique identifier used to authenticate the user.
+	// Example: "lechitz"
+	Username string `json:"username" example:"lechitz"`
+
+	// Password is the credential paired with the username.
+	// Example: "P@ssw0rd123"
+	Password string `json:"password" example:"P@ssw0rd123"`
 }
 
-// LoginUserResponse represents **the** response payload after a successful login.
+// LoginUserResponse is the response body returned on a successful login.
 type LoginUserResponse struct {
-	Name string `json:"name"`
+	// Name is a friendly display name for the authenticated user.
+	// Example: "Felipe Lechitz"
+	Name string `json:"name" example:"Felipe Lechitz"`
 }
 
-// LogoutUserRequest represents the payload used to request a logout.
+// LogoutUserRequest is NOT used by the current logout endpoint.
+// The endpoint is stateless and relies on the auth context/cookie.
+// This struct remains as a placeholder for future explicit-body flows (if needed).
 type LogoutUserRequest struct {
-	Token  string `json:"token"`
-	UserID uint64 `json:"user_id"`
+	// Token preview or opaque token for explicit invalidation (not used today).
+	// Example: "eyJhbGciOi..." (truncated)
+	Token string `json:"token,omitempty" example:"eyJhbGciOi..."`
+
+	// UserID for explicit ownership checks (not used today).
+	// Example: 42
+	UserID uint64 `json:"user_id,omitempty" example:"42"`
 }
