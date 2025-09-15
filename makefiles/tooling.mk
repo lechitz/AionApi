@@ -12,4 +12,6 @@ tools-install:
 	go install gotest.tools/gotestsum@latest
 	go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 	go install github.com/99designs/gqlgen@latest
+	go install github.com/golang/mock/mockgen@latest
+	go install github.com/swaggo/swag/cmd/swag@latest
 	@echo "✅  Tools installed successfully."

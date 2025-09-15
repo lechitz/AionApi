@@ -19,7 +19,20 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-// Login handles the user login request, validates the credentials, and returns an authentication token.
+// Login authenticates a user and issues a session token.
+//
+// @Summary      Authenticate user (login)
+// @Description  Validates credentials and issues a session token (JWT or cookie). On success, returns user-facing info and sets `auth_token` cookie.
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        login  body      dto.LoginUserRequest  true  "Login payload"
+// @Success      200    {object}  dto.LoginUserResponse  "Login succeeded"
+// @Header       200    {string}  Set-Cookie  "auth_token=<opaque or JWT>; Path=/; HttpOnly; Secure (if enabled)"
+// @Failure      400    {string}  string  "Invalid request payload or validation error"
+// @Failure      401    {string}  string  "Invalid credentials"
+// @Failure      500    {string}  string  "Internal server error"
+// @Router       /auth/login [post].
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerAuthHandler).
 		Start(r.Context(), SpanLoginHandler)
@@ -74,8 +87,8 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	httpresponse.WriteSuccess(w, http.StatusOK, loginResponse, MsgLoginSuccess)
 }
 
-// validateLoginRequest checks the login request payload for required fields and
-// enforces minimum length constraints on username and password.
+// validateLoginRequest checks the login request payload for required fields
+// and enforces minimum length constraints on username and password.
 func validateLoginRequest(req dto.LoginUserRequest) error {
 	if strings.TrimSpace(req.Username) == "" || strings.TrimSpace(req.Password) == "" {
 		return errors.New(ErrRequiredFields)

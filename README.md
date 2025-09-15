@@ -133,18 +133,18 @@ make verify    # run full pipeline before committing
 The API exposes REST endpoints for user management, authentication, and health checks, along with GraphQL operations for categories and tags.
 
 ### REST Endpoints
-- `GET  /aion-api/health/` — service status
-- `POST /aion-api/user/create` — create a new user
-- `GET  /aion-api/user/all` — list users
-- `GET  /aion-api/user/{user_id}` — retrieve a user by ID
-- `PUT  /aion-api/user/` — update user data
-- `PUT  /aion-api/user/password` — update the logged user's password
-- `DELETE /aion-api/user/` — soft delete the logged user
-- `POST /aion-api/auth/login` — obtain a JWT token
-- `POST /aion-api/auth/logout` — invalidate the user session
+- `GET  /aion/health/` — service status
+- `POST /aion/api/v1/user/create` — create a new user
+- `GET  /aion/api/v1/user/all` — list users
+- `GET  /aion/api/v1/user/{user_id}` — retrieve a user by ID
+- `PUT  /aion/api/v1/user/` — update user data
+- `PUT  /aion/api/v1/user/password` — update the logged user's password
+- `DELETE /aion/api/v1/user/` — soft delete the logged user
+- `POST /aion/api/v1/auth/login` — obtain a JWT token
+- `POST /aion/api/v1/auth/logout` — invalidate the user session
 
 ### GraphQL Operations
-Endpoint: `/graphql`
+Endpoint: `/aion/api/v1/graphql`
 - Queries: `GetAllCategories`, `GetCategoryByID`, `GetCategoryByName`, `GetAllTags`, `GetTagByID`
 - Mutations: `CreateCategory`, `CreateTag`, `UpdateCategory`, `SoftDeleteCategory`
 

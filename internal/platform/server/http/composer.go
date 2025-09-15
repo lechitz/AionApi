@@ -4,6 +4,8 @@ package http
 import (
 	"fmt"
 	"net/http"
+	"path"
+	"strings"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql"
 
@@ -19,65 +21,93 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
 	"github.com/lechitz/AionApi/internal/platform/server/http/router/chi"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+
+	httpSwagger "github.com/swaggo/http-swagger" // use Handler(...opts) which returns http.Handler
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
-// Log/route/name constants used in this file.
-const (
-	// RouteHealth is the health-check endpoint path.
-	RouteHealth = "/health"
-
-	// LogErrComposeGraphQL is the log message when composing the GraphQL handler fails.
-	LogErrComposeGraphQL = "failed to compose GraphQL handler"
-
-	// OTelHTTPHandlerNameFormat formats the OpenTelemetry HTTP handler name with the service name.
-	OTelHTTPHandlerNameFormat = "%s-HTTP"
-)
-
-// ComposeHandler assembles the HTTP handler with platform middlewares, domain routes, and GraphQL.
-// It returns an otel-instrumented http.Handler ready to be served by an HTTP server.
+// ComposeHandler assembles the HTTP handler with platform middlewares, domain routes, Swagger UI and GraphQL.
 func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log logger.ContextLogger) (http.Handler, error) {
 	r := chi.New() // ports.Router
 
-	// Global middlewares (recovery should be the outermost).
+	// Global middlewares
 	gh := genericHandler.New(log, cfg.General)
 	r.Use(
 		recovery.New(gh),
 		requestid.New(),
 	)
 
-	// Default handlers.
+	// Default handlers
 	r.SetNotFound(http.HandlerFunc(gh.NotFoundHandler))
 	r.SetMethodNotAllowed(http.HandlerFunc(gh.MethodNotAllowedHandler))
 	r.SetError(gh.ErrorHandler)
 
-	apiPrefix := cfg.ServerHTTP.Context
-	r.Group(apiPrefix, func(api ports.Router) {
-		// Health check.
-		api.GET(RouteHealth, http.HandlerFunc(gh.HealthCheck))
+	// Resolve context and mount points from config with safe fallbacks
+	apiContext := cfg.ServerHTTP.Context
+	if apiContext == "" {
+		apiContext = "/"
+	}
 
-		// Auth REST endpoints.
-		if deps.AuthService != nil {
-			ah := authhandler.New(deps.AuthService, cfg, log)
-			authhandler.RegisterHTTP(api, ah)
-		}
+	swaggerMount := cfg.ServerHTTP.SwaggerMountPath
+	if swaggerMount == "" {
+		swaggerMount = DefaultSwaggerMountPath
+	}
 
-		// User REST endpoints.
-		if deps.UserService != nil {
-			uh := userhandler.New(deps.UserService, cfg, log)
-			userhandler.RegisterHTTP(api, uh, deps.AuthService, log)
-		}
+	docsAlias := cfg.ServerHTTP.DocsAliasPath
+	if docsAlias == "" {
+		docsAlias = DefaultDocsAliasPath
+	}
 
-		// GraphQL endpoint.
-		gqlHandler, err := graphql.NewGraphqlHandler(deps.AuthService, deps.CategoryService, log, cfg)
-		if err != nil {
-			log.Errorw(LogErrComposeGraphQL, commonkeys.Error, err)
-			return
-		}
-		api.Mount(cfg.ServerGraphql.Path, gqlHandler)
+	routeHealth := cfg.ServerHTTP.HealthRoute
+	if routeHealth == "" {
+		routeHealth = DefaultRouteHealth
+	}
+
+	r.Group(apiContext, func(api ports.Router) {
+		// Health endpoint
+		api.GET(routeHealth, http.HandlerFunc(gh.HealthCheck))
+
+		// Swagger UI + OpenAPI JSON mounted under the API context
+		// httpSwagger.Handler returns an http.Handler suitable for Mount.
+		swaggerDocURL := path.Clean(apiContext + "/" +
+			strings.TrimPrefix(swaggerMount, "/") + "/" + DefaultSwaggerDocFile)
+
+		api.Mount(swaggerMount, httpSwagger.Handler(
+			httpSwagger.URL(swaggerDocURL), // UI loads doc.json from this URL
+			httpSwagger.DeepLinking(true),
+			httpSwagger.DocExpansion("none"),
+			httpSwagger.DomID("swagger-ui"),
+		))
+
+		// Friendly alias: {apiContext}{docsAlias} -> {apiContext}{swaggerMount}/{swaggerIndex}
+		api.GET(docsAlias, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, path.Join(apiContext, swaggerMount, DefaultSwaggerIndexFile), http.StatusTemporaryRedirect)
+		}))
+
+		// Group API Root (ex.: /api/v1)
+		api.Group(cfg.ServerHTTP.APIRoot, func(v1 ports.Router) {
+			// REST endpoints
+			if deps.AuthService != nil {
+				ah := authhandler.New(deps.AuthService, cfg, log)
+				authhandler.RegisterHTTP(v1, ah)
+			}
+
+			if deps.UserService != nil {
+				uh := userhandler.New(deps.UserService, cfg, log)
+				userhandler.RegisterHTTP(v1, uh, deps.AuthService, log)
+			}
+
+			// GraphQL endpoint
+			gqlHandler, err := graphql.NewGraphqlHandler(deps.AuthService, deps.CategoryService, log, cfg)
+			if err != nil {
+				log.Errorw(LogErrComposeGraphQL, commonkeys.Error, err)
+				return
+			}
+			v1.Mount(cfg.ServerGraphql.Path, gqlHandler)
+		})
 	})
 
-	// Wrap router with OpenTelemetry instrumentation.
+	// OpenTelemetry HTTP wrapper
 	h := otelhttp.NewHandler(
 		r,
 		fmt.Sprintf(OTelHTTPHandlerNameFormat, cfg.Observability.OtelServiceName),

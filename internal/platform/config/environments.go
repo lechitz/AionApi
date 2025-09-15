@@ -61,14 +61,18 @@ type ServerGraphql struct {
 
 // ServerHTTP holds HTTP server configuration.
 type ServerHTTP struct {
-	Host    string `envconfig:"HTTP_HOST"    default:"0.0.0.0"`
-	Name    string `envconfig:"HTTP_NAME"    default:"HTTP"`
-	Port    string `envconfig:"HTTP_PORT"    default:"5001"     required:"true"`
-	Context string `envconfig:"HTTP_CONTEXT" default:"aion-api"`
+	Host string `envconfig:"HTTP_HOST" default:"0.0.0.0"`
+	Name string `envconfig:"HTTP_NAME" default:"HTTP"`
+	Port string `envconfig:"HTTP_PORT" default:"5001"    required:"true"`
 
-	ReadTimeout  time.Duration `envconfig:"HTTP_READ_TIMEOUT"  default:"10s"`
-	WriteTimeout time.Duration `envconfig:"HTTP_WRITE_TIMEOUT" default:"10s"`
+	Context          string `envconfig:"HTTP_CONTEXT"            default:"/aion"`
+	APIRoot          string `envconfig:"HTTP_API_ROOT"           default:"/api/v1"`
+	SwaggerMountPath string `envconfig:"HTTP_SWAGGER_MOUNT_PATH" default:"/swagger"`
+	DocsAliasPath    string `envconfig:"HTTP_DOCS_ALIAS_PATH"    default:"/docs"`
+	HealthRoute      string `envconfig:"HTTP_HEALTH_ROUTE"       default:"/health"`
 
+	ReadTimeout       time.Duration `envconfig:"HTTP_READ_TIMEOUT"        default:"10s"`
+	WriteTimeout      time.Duration `envconfig:"HTTP_WRITE_TIMEOUT"       default:"10s"`
 	ReadHeaderTimeout time.Duration `envconfig:"HTTP_READ_HEADER_TIMEOUT" default:"5s"`
 	IdleTimeout       time.Duration `envconfig:"HTTP_IDLE_TIMEOUT"        default:"60s"`
 	MaxHeaderBytes    int           `envconfig:"HTTP_MAX_HEADER_BYTES"    default:"1048576"` // 1<<20

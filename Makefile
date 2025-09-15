@@ -4,17 +4,17 @@
 
 APPLICATION_NAME := aion-api
 
-COMPOSE_FILE_DEV := infrastructure/docker/environments/dev/docker-compose-dev.yaml
-ENV_FILE_DEV     := infrastructure/docker/environments/dev/.env.dev
+COMPOSE_FILE_DEV  := infrastructure/docker/environments/dev/docker-compose-dev.yaml
+ENV_FILE_DEV      := infrastructure/docker/environments/dev/.env.dev
 COMPOSE_FILE_PROD := infrastructure/docker/environments/prod/docker-compose-prod.yaml
-ENV_FILE_PROD    := infrastructure/docker/environments/prod/.env.prod
+ENV_FILE_PROD     := infrastructure/docker/environments/prod/.env.prod
 
 COVERAGE_DIR = tests/coverage
 
 # --- MIGRATION CONFIG ---
 MIGRATION_PATH := infrastructure/db/migrations
 MIGRATION_DB   ?= $(DB_URL)
-MIGRATE_BIN := $(shell command -v migrate 2> /dev/null)
+MIGRATE_BIN    := $(shell command -v migrate 2> /dev/null)
 
 # ============================================================
 #                HELP & TOOLING SECTION
@@ -94,8 +94,14 @@ help:
 	@echo "    \033[0m test-html-report     \033[1;37m    →  Generate HTML test report (requires go-test-html-report)"
 	@echo ""
 	@echo ""
+	@echo " 🔶 \033[48;5;235;33m┃ \033[1mAPI DOCS (SWAGGER) ┃\033[0m"
+	@echo ""
+	@echo "    \033[0m docs.gen            \033[1;37m     →  Generate Swagger artifacts (docs.go, swagger.json/yaml)"
+	@echo "    \033[0m docs.check-dirty    \033[1;37m     →  Fail if Swagger artifacts are out-of-date"
+	@echo "    \033[0m docs.clean          \033[1;37m     →  Remove generated Swagger artifacts"
+	@echo ""
+	@echo ""
 	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
-
 	@echo ""
 
 # ============================================================
@@ -112,9 +118,9 @@ include makefiles/*.mk
 	graphql mocks \
 	format lint lint-fix verify \
 	test test-cover test-html-report test-ci test-clean \
-	migrate-up migrate-down migrate-force migrate-new
+	migrate-up migrate-down migrate-force migrate-new \
+	docs.gen docs.check-dirty docs.clean docs.validate
 
-## Docs
 docs-serve:
 	@.venv-docs/bin/mkdocs serve
 

@@ -15,7 +15,20 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-// GetUserByID handles GET /user/{user_id}.
+// GetUserByID retrieves a user by its ID.
+//
+// @Summary      Get user by ID
+// @Description  Returns a single user resource by its unique identifier.
+// @Tags         Users
+// @Produce      json
+// @Security     BearerAuth
+// @Security     CookieAuth
+// @Param        user_id  path      integer  true  "User ID (uint64)"
+// @Success      200      {object}  dto.GetUserResponse  "User fetched"
+// @Failure      400      {string}  string                "Invalid user_id"
+// @Failure      404      {string}  string                "User not found"
+// @Failure      500      {string}  string                "Internal server error"
+// @Router       /user/{user_id} [get].
 func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerUserHandler).
 		Start(r.Context(), SpanGetUserByIDHandler)

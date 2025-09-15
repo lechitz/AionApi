@@ -87,3 +87,26 @@ const (
 
 	InfoSecretKeyGenerated = "JWT secret key successfully generated with length: %d" // #nosec G101
 )
+
+// Errors for HTTP config (Swagger/Docs/Health).
+const (
+	ErrHTTPSwaggerMountPathEmpty       = "http.swagger_mount_path is required"
+	ErrHTTPSwaggerMountMustStart       = "http.swagger_mount_path must start with '/'"
+	ErrHTTPSwaggerMountMustNotEndSlash = "http.swagger_mount_path must not end with '/'"
+	ErrHTTPSwaggerMountTooShort        = "http.swagger_mount_path must be longer than '/'"
+
+	ErrHTTPDocsAliasPathEmpty       = "http.docs_alias_path is required"
+	ErrHTTPDocsAliasMustStart       = "http.docs_alias_path must start with '/'"
+	ErrHTTPDocsAliasMustNotEndSlash = "http.docs_alias_path must not end with '/'"
+	ErrHTTPDocsAliasTooShort        = "http.docs_alias_path must be longer than '/'"
+
+	ErrHTTPHealthRouteEmpty           = "http.health_route is required"
+	ErrHTTPHealthRouteMustStart       = "http.health_route must start with '/'"
+	ErrHTTPHealthRouteMustNotEndSlash = "http.health_route must not end with '/'"
+	ErrHTTPHealthRouteTooShort        = "http.health_route must be longer than '/'"
+
+	ErrHTTPAPIRootEmpty           = "http.api_root is required"
+	ErrHTTPAPIRootMustStart       = "http.api_root must start with '/'"
+	ErrHTTPAPIRootMustNotEndSlash = "http.api_root must not end with '/'"
+	ErrHTTPAPIRootTooShort        = "http.api_root must be longer than '/'"
+)

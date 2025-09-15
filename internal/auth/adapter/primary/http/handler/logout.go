@@ -17,7 +17,20 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-// Logout handles the user logout request: invalidates the token, clears cookies, logs the event, and returns a standard response.
+// Logout invalidates the current session and clears the auth cookie.
+//
+// @Summary      Logout current user
+// @Description  Invalidates the current authenticated session (token or cookie) and clears the auth cookie.
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Security     CookieAuth
+// @Success      204  {string}  string  "Logout succeeded (no content)"
+// @Header       204  {string}  Set-Cookie  "auth_token=deleted; Path=/; Max-Age=0; HttpOnly; Secure (if enabled)"
+// @Failure      401  {string}  string  "Unauthorized or missing user context"
+// @Failure      500  {string}  string  "Internal server error"
+// @Router       /auth/logout [post].
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerAuthHandler).
 		Start(r.Context(), SpanLogoutHandler)
@@ -76,5 +89,5 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	)
 	span.AddEvent(EventLogoutSuccess)
 
-	httpresponse.WriteSuccess(w, http.StatusOK, nil, MsgLogoutSuccess)
+	httpresponse.WriteNoContent(w)
 }

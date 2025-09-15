@@ -1,16 +1,45 @@
-// Package main is the entry point for the application.
+// Package main AionAPI
+//
+// @title           AionAPI — REST API Documentation
+// @version         0.1.0
+// @description     Public and internal REST API for AionAPI. Swagger (OpenAPI 3.x) is generated via swaggo.
+// @termsOfService  https://github.com/lechitz/AionApi
+//
+// @contact.name   Lechitz
+// @contact.url    https://github.com/lechitz
+// @contact.email  felipe.lechitz@gmail.com
+//
+// @license.name  MIT
+// @license.url   https://opensource.org/licenses/MIT
+//
+// @schemes http https
+// @BasePath /api/v1
+//
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Use "Bearer {token}" (JWT).
+//
+// @securityDefinitions.apikey CookieAuth
+// @in cookie
+// @name auth_token
+// @description Session-based authentication cookie (e.g., Redis-backed).
+//
+// @x-graphQLPlayground /graphql/  // Cross-reference to GraphQL Playground (not covered by Swagger)
 package main
 
 import (
 	"context"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 
 	"github.com/lechitz/AionApi/internal/adapter/secondary/contextlogger"
 	"github.com/lechitz/AionApi/internal/adapter/secondary/crypto"
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/AionApi/internal/platform/docs"
 	"github.com/lechitz/AionApi/internal/platform/observability/metric"
 	"github.com/lechitz/AionApi/internal/platform/observability/tracer"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/keygen"
@@ -36,6 +65,8 @@ func run() int {
 		logs.Errorw(ErrLoadConfig, commonkeys.Error, err.Error())
 		return 2
 	}
+
+	configureSwagger(cfg)
 
 	appCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
@@ -82,6 +113,13 @@ func loadConfig(keyGenerator keygen.Generator, logs logger.ContextLogger) (*conf
 		commonkeys.AppVersion, cfg.General.Version,
 	)
 	return cfg, nil
+}
+
+// configureSwagger applies runtime metadata from the loaded application configuration to the generated Swagger/OpenAPI spec.
+func configureSwagger(cfg *config.Config) {
+	docs.SwaggerInfo.BasePath = path.Clean(cfg.ServerHTTP.Context + cfg.ServerHTTP.APIRoot)
+	docs.SwaggerInfo.Title = SwaggerTitle
+	docs.SwaggerInfo.Version = cfg.General.Version
 }
 
 // initDependencies initializes the application dependencies.

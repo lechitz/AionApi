@@ -39,7 +39,6 @@ func (c *Config) Validate() error {
 	if err := c.validateApp(); err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -50,15 +49,68 @@ func (c *Config) validateHTTP() error {
 	if c.ServerHTTP.Port == "" {
 		return errors.New(ErrHTTPPortRequired)
 	}
-	if c.ServerHTTP.Context == "" {
-		return errors.New(ErrHTTPContextPathEmpty)
+
+	// Context: allow root "/" but disallow trailing slash otherwise.
+	if err := validateHTTPPath(
+		c.ServerHTTP.Context,
+		true,
+		ErrHTTPContextPathEmpty,
+		ErrHTTPContextMustStart,
+		"",
+		ErrHTTPContextMustNotEndWithSlash,
+	); err != nil {
+		return err
 	}
-	if c.ServerHTTP.Context[0] != '/' {
-		return errors.New(ErrHTTPContextMustStart)
+
+	// API root (versioned base, e.g., "/api/v1"): must start with '/', cannot be just "/", cannot end with "/".
+	if err := validateHTTPPath(
+		c.ServerHTTP.APIRoot,
+		false,
+		ErrHTTPAPIRootEmpty,
+		ErrHTTPAPIRootMustStart,
+		ErrHTTPAPIRootTooShort,
+		ErrHTTPAPIRootMustNotEndSlash,
+	); err != nil {
+		return err
 	}
-	if len(c.ServerHTTP.Context) > 1 && c.ServerHTTP.Context[len(c.ServerHTTP.Context)-1] == '/' {
-		return errors.New(ErrHTTPContextMustNotEndWithSlash)
+
+	// Swagger mount: must start with '/', cannot be just "/", cannot end with "/".
+	if err := validateHTTPPath(
+		c.ServerHTTP.SwaggerMountPath,
+		false,
+		ErrHTTPSwaggerMountPathEmpty,
+		ErrHTTPSwaggerMountMustStart,
+		ErrHTTPSwaggerMountTooShort,
+		ErrHTTPSwaggerMountMustNotEndSlash,
+	); err != nil {
+		return err
 	}
+
+	// Docs alias: same rules as swagger mount.
+	if err := validateHTTPPath(
+		c.ServerHTTP.DocsAliasPath,
+		false,
+		ErrHTTPDocsAliasPathEmpty,
+		ErrHTTPDocsAliasMustStart,
+		ErrHTTPDocsAliasTooShort,
+		ErrHTTPDocsAliasMustNotEndSlash,
+	); err != nil {
+		return err
+	}
+
+	// Health route: same rules as swagger mount.
+	if err := validateHTTPPath(
+		c.ServerHTTP.HealthRoute,
+		false,
+		ErrHTTPHealthRouteEmpty,
+		ErrHTTPHealthRouteMustStart,
+		ErrHTTPHealthRouteTooShort,
+		ErrHTTPHealthRouteMustNotEndSlash,
+	); err != nil {
+		return err
+	}
+
+	// Timeouts and header limits
 	if c.ServerHTTP.ReadTimeout < MinHTTPTimeout {
 		return fmt.Errorf(ErrHTTPReadTimeoutMin, MinHTTPTimeout)
 	}
@@ -85,7 +137,6 @@ func (c *Config) validateGraphQL() error {
 	if c.ServerGraphql.Path[0] != '/' {
 		return errors.New(ErrGraphqlPathMustStart)
 	}
-
 	return nil
 }
 
@@ -157,13 +208,9 @@ func (c *Config) validateObservability() error {
 		case "none", "gzip":
 			// valid
 		default:
-			return fmt.Errorf(
-				ErrOtelCompressionInvalid,
-				c.Observability.OtelExporterCompression,
-			)
+			return fmt.Errorf(ErrOtelCompressionInvalid, c.Observability.OtelExporterCompression)
 		}
 	}
-
 	return nil
 }
 
@@ -174,6 +221,33 @@ func (c *Config) validateApp() error {
 	if c.Application.Timeout < MinShutdownTimeout {
 		return fmt.Errorf(ErrAppShutdownTimeoutMin, MinShutdownTimeout.String())
 	}
+	return nil
+}
 
+// validateHTTPPath centralizes path validation rules.
+// - allowRoot=true: "/" is allowed; any longer value must not end with "/".
+// - allowRoot=false: must start with "/", cannot be just "/", cannot end with "/".
+func validateHTTPPath(v string, allowRoot bool, errEmpty, errMustStart, errTooShort, errMustNotEnd string) error {
+	if v == "" {
+		return errors.New(errEmpty)
+	}
+	if v[0] != '/' {
+		return errors.New(errMustStart)
+	}
+	if allowRoot {
+		// "/" is allowed; disallow trailing slash only when longer than 1.
+		if len(v) > 1 && v[len(v)-1] == '/' {
+			return errors.New(errMustNotEnd)
+		}
+		return nil
+	}
+
+	if len(v) == 1 {
+		return errors.New(errTooShort)
+	}
+
+	if v[len(v)-1] == '/' {
+		return errors.New(errMustNotEnd)
+	}
 	return nil
 }

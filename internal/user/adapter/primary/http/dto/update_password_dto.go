@@ -2,8 +2,13 @@
 package dto
 
 // UpdatePasswordUserRequest represents a request to update a user's password.
-// It includes the current password and a new password for the user.
+// Both fields are required. Minimum length recommendation: 8 characters.
 type UpdatePasswordUserRequest struct {
-	Password    string `json:"password"`
-	NewPassword string `json:"new_password"`
+	// Password is the current password for the user.
+	// Example: "P@ssw0rd123"
+	Password string `json:"password" example:"P@ssw0rd123"`
+
+	// NewPassword is the new password to be set.
+	// Example: "N3wP@ssw0rd456"
+	NewPassword string `json:"new_password" example:"N3wP@ssw0rd456"`
 }

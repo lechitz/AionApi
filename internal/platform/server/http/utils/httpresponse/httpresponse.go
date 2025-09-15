@@ -46,17 +46,22 @@ type ResponseBody struct {
 	Code    int       `json:"code"`
 }
 
-// WriteJSON encodes any payload as JSON and writes it to the response with proper headers and status code.
-// Allows passing extra headers (for CORS, Location, etc.).
+// WriteJSON encodes any payload as JSON and writes it with headers and status code.
 func WriteJSON(w http.ResponseWriter, status int, payload any, headers ...map[string]string) {
-	w.Header().Set(headerContentType, contentTypeJSON)
 	for _, hdr := range headers {
 		for k, v := range hdr {
 			w.Header().Set(k, v)
 		}
 	}
+
+	if status == http.StatusNoContent {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	w.Header().Set(headerContentType, contentTypeJSON)
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(payload)
+	_ = json.NewEncoder(w).Encode(payload) // best effort; safe to ignore encode error for responses.
 }
 
 // WriteSuccess sends a standardized success response with an optional result and message.
@@ -107,17 +112,17 @@ func WriteNoContent(w http.ResponseWriter, headers ...map[string]string) {
 }
 
 // ---------------------------
-// Span-aware helper variants
+// Span-aware helper variants.
 // ---------------------------
 
 // WriteAuthErrorSpan records trace/log metadata for an auth error, then writes the HTTP response.
-func WriteAuthErrorSpan(ctx context.Context, w http.ResponseWriter, span trace.Span, log logger.ContextLogger) {
-	err := sharederrors.ErrMissingUserID()
+func WriteAuthErrorSpan(ctx context.Context, w http.ResponseWriter, span trace.Span, err error, log logger.ContextLogger) {
+	status := sharederrors.MapErrorToHTTPStatus(err)
 	span.RecordError(err)
-	span.SetStatus(codes.Error, sharederrors.ErrMsgMissingUserID)
-	span.SetAttributes(attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusUnauthorized))
+	span.SetStatus(codes.Error, err.Error())
+	span.SetAttributes(attribute.Int(tracingkeys.HTTPStatusCodeKey, status))
 	if log != nil {
-		log.ErrorwCtx(ctx, sharederrors.ErrMsgMissingUserID, commonkeys.Error, err.Error())
+		log.ErrorwCtx(ctx, msgUnauthorized, commonkeys.Error, err.Error())
 	}
 	WriteAuthError(w, err, log)
 }
