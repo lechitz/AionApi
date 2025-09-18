@@ -17,6 +17,9 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	tagRepo "github.com/lechitz/AionApi/internal/tag/adapter/secondary/db/repository"
+	inputTag "github.com/lechitz/AionApi/internal/tag/core/ports/input"
+	tag "github.com/lechitz/AionApi/internal/tag/core/usecase"
 	userRepo "github.com/lechitz/AionApi/internal/user/adapter/secondary/db/repository"
 	inputUser "github.com/lechitz/AionApi/internal/user/core/ports/input"
 	user "github.com/lechitz/AionApi/internal/user/core/usecase"
@@ -27,6 +30,7 @@ type AppDependencies struct {
 	AuthService     inputAuth.AuthService
 	UserService     inputUser.UserService
 	CategoryService inputCategory.CategoryService
+	TagService      inputTag.TagService
 
 	Logger logger.ContextLogger
 }
@@ -55,11 +59,13 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger l
 	tokenStore := cache.NewStore(cacheClient, logger)
 	userRepository := userRepo.New(dbConn, logger)
 	categoryRepository := categoryRepo.New(dbConn, logger)
+	tagRepository := tagRepo.New(dbConn, logger)
 
 	// Core use cases (depend only on ports)
 	authService := auth.NewService(userRepository, tokenStore, tokenProvider, passwordHasher, logger)
 	userService := user.NewService(userRepository, tokenStore, tokenProvider, passwordHasher, logger)
 	categoryService := category.NewService(categoryRepository, logger)
+	tagService := tag.NewService(tagRepository, logger)
 
 	// Resource cleanup
 	cleanup := func(ctx context.Context) {
@@ -83,6 +89,7 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger l
 		AuthService:     authService,
 		UserService:     userService,
 		CategoryService: categoryService,
+		TagService:      tagService,
 		Logger:          logger,
 	}, cleanup, nil
 }

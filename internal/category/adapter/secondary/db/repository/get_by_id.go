@@ -32,13 +32,13 @@ func (c CategoryRepository) GetByID(ctx context.Context, categoryID uint64, user
 		Where("category_id = ? AND user_id = ?", categoryID, userID).
 		First(&categoryDB).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			span.SetStatus(codes.Error, ErrHandlerNotFoundMsg)
-			span.RecordError(errors.New(ErrHandlerNotFoundMsg))
-			return domain.Category{}, errors.New(ErrHandlerNotFoundMsg)
+			span.SetStatus(codes.Error, ErrCategoryNotFoundMsg)
+			span.RecordError(errors.New(ErrCategoryNotFoundMsg))
+			return domain.Category{}, errors.New(ErrCategoryNotFoundMsg)
 		}
-		span.SetStatus(codes.Error, ErrGetHandlerMsg)
+		span.SetStatus(codes.Error, ErrGetCategoryMsg)
 		span.RecordError(err)
-		return domain.Category{}, errors.New(ErrGetHandlerMsg)
+		return domain.Category{}, errors.New(ErrGetCategoryMsg)
 	}
 
 	span.SetStatus(codes.Ok, StatusRetrievedByID)

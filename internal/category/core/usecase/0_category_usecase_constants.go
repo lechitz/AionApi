@@ -58,35 +58,35 @@ const (
 // Domain/user-facing error/status messages.
 const (
 	// ErrToValidateCategory indicates a validation error in a category operation.
-	ErrToValidateCategory = "handler validation error"
+	ErrToValidateCategory = "category validation error"
 	// CategoryAlreadyExists is returned when trying to create a category that already exists.
-	CategoryAlreadyExists = "handler already exists"
+	CategoryAlreadyExists = "category already exists"
 	// FailedToCreateCategory indicates failure to create a category.
-	FailedToCreateCategory = "failed to create handler"
+	FailedToCreateCategory = "failed to create category"
 	// FailedToUpdateCategory indicates failure to update a category.
-	FailedToUpdateCategory = "failed to update handler"
+	FailedToUpdateCategory = "failed to update category"
 	// SuccessfullyCreatedCategory formats a success message when a category is created.
-	SuccessfullyCreatedCategory = "successfully created handler %s"
+	SuccessfullyCreatedCategory = "successfully created category %s"
 	// SuccessfullyUpdatedCategory formats a success message when a category is updated.
-	SuccessfullyUpdatedCategory = "successfully updated handler %s"
+	SuccessfullyUpdatedCategory = "successfully updated category %s"
 	// SuccessfullySoftDeletedCategory formats a success message when a category is soft-deleted.
-	SuccessfullySoftDeletedCategory = "successfully soft deleted handler %s"
+	SuccessfullySoftDeletedCategory = "successfully soft deleted category %s"
 	// FailedToGetCategoryByID indicates failure to retrieve a category by its ID.
-	FailedToGetCategoryByID = "failed to get handler by id"
+	FailedToGetCategoryByID = "failed to get category by id"
 	// FailedToGetCategoryByName indicates failure to retrieve a category by its name.
-	FailedToGetCategoryByName = "failed to get handler by name"
+	FailedToGetCategoryByName = "failed to get category by name"
 	// FailedToGetAllCategories indicates failure to retrieve all categories.
 	FailedToGetAllCategories = "failed to get all categories"
 	// FailedToSoftDeleteCategory indicates failure to soft-delete a category.
-	FailedToSoftDeleteCategory = "failed to soft delete handler"
+	FailedToSoftDeleteCategory = "failed to soft delete category"
 	// CategoryIDIsRequired indicates the category ID is required.
-	CategoryIDIsRequired = "handler id is required"
+	CategoryIDIsRequired = "category id is required"
 	// CategoryNameIsRequired indicates the category name is required.
-	CategoryNameIsRequired = "handler name is required"
+	CategoryNameIsRequired = "category name is required"
 	// CategoryDescriptionIsTooLong indicates the category description is too long.
-	CategoryDescriptionIsTooLong = "handler description cannot exceed 200 characters"
+	CategoryDescriptionIsTooLong = "category description cannot exceed 200 characters"
 	// CategoryColorIsTooLong indicates the category color is too long.
-	CategoryColorIsTooLong = "handler color cannot exceed 7 characters"
+	CategoryColorIsTooLong = "category color cannot exceed 7 characters"
 	// CategoryIconIsTooLong indicates the category icon is too long.
-	CategoryIconIsTooLong = "handler icon cannot exceed 50 characters"
+	CategoryIconIsTooLong = "category icon cannot exceed 50 characters"
 )

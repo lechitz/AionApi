@@ -47,31 +47,31 @@ const OpUpdate = "update"
 
 // Status messages (used with span.SetStatus/SetStatus + logs)
 
-// StatusHandlerCreated indicates the category (handler) was created successfully.
-const StatusHandlerCreated = "handler created successfully"
+// StatusCategoryCreated indicates the category was created successfully.
+const StatusCategoryCreated = "category created successfully"
 
 // StatusRetrievedByID indicates a category was retrieved by ID successfully.
-const StatusRetrievedByID = "handler retrieved by id successfully"
+const StatusRetrievedByID = "category retrieved by id successfully"
 
 // StatusRetrievedByName indicates a category was retrieved by Name successfully.
-const StatusRetrievedByName = "handler retrieved by name successfully"
+const StatusRetrievedByName = "category retrieved by name successfully"
 
 // StatusFetchedAll indicates all categories were retrieved successfully.
 const StatusFetchedAll = "all categories retrieved successfully"
 
 // StatusSoftDeleted indicates a category was soft-deleted successfully.
-const StatusSoftDeleted = "handler soft deleted successfully"
+const StatusSoftDeleted = "category soft deleted successfully"
 
 // StatusUpdated indicates a category was updated successfully.
-const StatusUpdated = "handler updated successfully"
+const StatusUpdated = "category updated successfully"
 
 // Error/log messages
 
-// ErrCreateHandlerMsg is the error message used when creation fails.
-const ErrCreateHandlerMsg = "error creating handler"
+// ErrCreateCategoryMsg is the error message used when creation fails.
+const ErrCreateCategoryMsg = "error creating category"
 
-// ErrGetHandlerMsg is the error message used when a generic get fails.
-const ErrGetHandlerMsg = "error getting handler"
+// ErrGetCategoryMsg is the error message used when a generic get fails.
+const ErrGetCategoryMsg = "error getting category"
 
-// ErrHandlerNotFoundMsg is the error message used when a category is not found.
-const ErrHandlerNotFoundMsg = "handler not found"
+// ErrCategoryNotFoundMsg is the error message used when a category is not found.
+const ErrCategoryNotFoundMsg = "category not found"

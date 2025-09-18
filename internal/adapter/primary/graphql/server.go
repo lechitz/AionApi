@@ -12,6 +12,8 @@ import (
 	authmw "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/middleware"
 	authInput "github.com/lechitz/AionApi/internal/auth/core/ports/input"
 	categoryInput "github.com/lechitz/AionApi/internal/category/core/ports/input"
+	tagInput "github.com/lechitz/AionApi/internal/tag/core/ports/input"
+
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	genericHandler "github.com/lechitz/AionApi/internal/platform/server/http/generic/handler"
@@ -22,6 +24,7 @@ import (
 func NewGraphqlHandler(
 	authService authInput.AuthService,
 	categoryService categoryInput.CategoryService,
+	tagService tagInput.TagService,
 	log logger.ContextLogger,
 	cfg *config.Config,
 ) (http.Handler, error) {
@@ -35,6 +38,7 @@ func NewGraphqlHandler(
 
 	resolvers := &Resolver{
 		CategoryService: categoryService,
+		TagService:      tagService,
 		Logger:          log,
 	}
 

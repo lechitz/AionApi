@@ -16,7 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// GetByName retrieves a handler by its name and user ID from the database and returns it as a domain.Category or an error if not found.
+// GetByName retrieves a category by its name and user ID from the database and returns it as a domain.Category or an error if not found.
 func (c CategoryRepository) GetByName(ctx context.Context, categoryName string, userID uint64) (domain.Category, error) {
 	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanGetByNameRepo, trace.WithAttributes(
@@ -32,7 +32,7 @@ func (c CategoryRepository) GetByName(ctx context.Context, categoryName string, 
 		First(&categoryDB).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			span.SetStatus(codes.Ok, ErrHandlerNotFoundMsg)
+			span.SetStatus(codes.Ok, ErrCategoryNotFoundMsg)
 			return domain.Category{}, nil
 		}
 

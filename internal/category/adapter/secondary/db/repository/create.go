@@ -26,13 +26,13 @@ func (c CategoryRepository) Create(ctx context.Context, category domain.Category
 
 	categoryDB := mapper.CategoryToDB(category)
 	if err := c.db.WithContext(ctx).Create(&categoryDB).Error; err != nil {
-		wrappedErr := fmt.Errorf("%s: %w", ErrCreateHandlerMsg, err)
+		wrappedErr := fmt.Errorf("%s: %w", ErrCreateCategoryMsg, err)
 		span.SetStatus(codes.Error, wrappedErr.Error())
 		span.RecordError(wrappedErr)
-		c.logger.Errorw(ErrCreateHandlerMsg, commonkeys.Category, category, commonkeys.Error, wrappedErr.Error())
+		c.logger.Errorw(ErrCreateCategoryMsg, commonkeys.Category, category, commonkeys.Error, wrappedErr.Error())
 		return domain.Category{}, wrappedErr
 	}
 
-	span.SetStatus(codes.Ok, StatusHandlerCreated)
+	span.SetStatus(codes.Ok, StatusCategoryCreated)
 	return mapper.CategoryFromDB(categoryDB), nil
 }

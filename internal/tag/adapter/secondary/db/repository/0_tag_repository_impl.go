@@ -6,16 +6,16 @@ import (
 	"gorm.io/gorm"
 )
 
-// CategoryRepository manages database operations related to category entities.
+// TagRepository manages database operations related to tag entities.
 // It uses gorm.DB for ORM and output.ContextLogger for logging operations.
-type CategoryRepository struct {
+type TagRepository struct {
 	db     *gorm.DB
 	logger logger.ContextLogger
 }
 
 // New creates a new instance of CategoryRepository with a given gorm.DB and contextlogger.
-func New(db *gorm.DB, logger logger.ContextLogger) *CategoryRepository {
-	return &CategoryRepository{
+func New(db *gorm.DB, logger logger.ContextLogger) *TagRepository {
+	return &TagRepository{
 		db:     db,
 		logger: logger,
 	}
