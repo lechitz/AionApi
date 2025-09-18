@@ -76,7 +76,6 @@ func TestCreateTag_ErrorToGetTagByName(t *testing.T) {
 	tag := perfectTag()
 	cmd := makeCreateTagCmdFromDomain(tag)
 
-	// Simula "já existe" (GetByName retorna um registro válido).
 	suite.TagRepository.EXPECT().
 		GetByName(gomock.Any(), tag.Name, tag.UserID).
 		Return(tag, nil)
@@ -117,12 +116,10 @@ func TestCreateTag_PtrOrEmpty_NilPointersBecomeEmptyStrings(t *testing.T) {
 	suite := setup.TagServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	// Description vazia => ponteiro nil no cmd
 	tag := domain.Tag{
 		UserID:     10,
 		CategoryID: 20,
 		Name:       "Focus",
-		// Description == "" (nil no cmd)
 	}
 
 	cmd := makeCreateTagCmdFromDomain(tag)
@@ -131,7 +128,6 @@ func TestCreateTag_PtrOrEmpty_NilPointersBecomeEmptyStrings(t *testing.T) {
 		GetByName(gomock.Any(), tag.Name, tag.UserID).
 		Return(domain.Tag{}, nil)
 
-	// O usecase monta domain.Tag com Description "" (ptrOrEmpty)
 	expectedCreate := domain.Tag{
 		UserID:      tag.UserID,
 		CategoryID:  tag.CategoryID,
@@ -145,7 +141,7 @@ func TestCreateTag_PtrOrEmpty_NilPointersBecomeEmptyStrings(t *testing.T) {
 
 	created, err := suite.TagService.Create(suite.Ctx, cmd)
 	require.NoError(t, err)
-	require.Equal(t, "", created.Description)
+	require.Empty(t, created.Description)
 }
 
 func TestCreateTag_Success(t *testing.T) {
