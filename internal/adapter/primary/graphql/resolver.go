@@ -2,6 +2,8 @@ package graphql
 
 import (
 	categoryController "github.com/lechitz/AionApi/internal/category/adapter/primary/graphql/controller"
+	tagController "github.com/lechitz/AionApi/internal/tag/adapter/primary/graphql/controller"
+
 	inputCategory "github.com/lechitz/AionApi/internal/category/core/ports/input"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	inputTag "github.com/lechitz/AionApi/internal/tag/core/ports/input"
@@ -19,9 +21,7 @@ func (r *Resolver) CategoryController() categoryController.CategoryController {
 	return categoryController.NewController(r.CategoryService, r.Logger)
 }
 
-// TODO: Nota: Quando o contexto de Tags tiver um controller similar ao de Category, preciso adiciona-lo aqui:
-
-//// TagController returns the GraphQL controller for Tag.
-// func (r *Resolver) TagController() tagController.controller {
-//	return tagController.NewController(r.TagService, r.Logger)
-// }
+// TagController returns  the Tag adapter controller (interface).
+func (r *Resolver) TagController() tagController.TagController {
+	return tagController.NewController(r.TagService, r.Logger)
+}

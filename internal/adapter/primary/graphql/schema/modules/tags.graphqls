@@ -1,7 +1,8 @@
-# Tags domain schema (extends root types defined in root.graphqls)
+# Tag domain schema (extends root types defined in root.graphqls)
 
 type Tag {
     id: ID!
+    userId: ID!
     name: String!
     categoryId: ID!
     description: String
@@ -14,8 +15,7 @@ input CreateTagInput {
 }
 
 extend type Query {
-    tags: [Tag!]! @auth(roles: "user")
-    tagById(id: ID!): Tag @auth(roles: "user")
+    tagByName(name: String!): Tag @auth(roles: "user")
 }
 
 extend type Mutation {

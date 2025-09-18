@@ -98,7 +98,7 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 			}
 
 			// GraphQL endpoint
-			gqlHandler, err := graphql.NewGraphqlHandler(deps.AuthService, deps.CategoryService, log, cfg)
+			gqlHandler, err := graphql.NewGraphqlHandler(deps.AuthService, deps.CategoryService, deps.TagService, log, cfg)
 			if err != nil {
 				log.Errorw(LogErrComposeGraphQL, commonkeys.Error, err)
 				return

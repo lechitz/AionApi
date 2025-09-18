@@ -68,8 +68,7 @@ type ComplexityRoot struct {
 		Categories     func(childComplexity int) int
 		CategoryByID   func(childComplexity int, id string) int
 		CategoryByName func(childComplexity int, name string) int
-		TagByID        func(childComplexity int, id string) int
-		Tags           func(childComplexity int) int
+		TagByName      func(childComplexity int, name string) int
 	}
 
 	Tag struct {
@@ -77,6 +76,7 @@ type ComplexityRoot struct {
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Name        func(childComplexity int) int
+		UserID      func(childComplexity int) int
 	}
 }
 
@@ -90,8 +90,7 @@ type QueryResolver interface {
 	Categories(ctx context.Context) ([]*model.Category, error)
 	CategoryByID(ctx context.Context, id string) (*model.Category, error)
 	CategoryByName(ctx context.Context, name string) (*model.Category, error)
-	Tags(ctx context.Context) ([]*model.Tag, error)
-	TagByID(ctx context.Context, id string) (*model.Tag, error)
+	TagByName(ctx context.Context, name string) (*model.Tag, error)
 }
 
 type executableSchema struct {
@@ -223,23 +222,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.CategoryByName(childComplexity, args["name"].(string)), true
-	case "Query.tagById":
-		if e.complexity.Query.TagByID == nil {
+	case "Query.tagByName":
+		if e.complexity.Query.TagByName == nil {
 			break
 		}
 
-		args, err := ec.field_Query_tagById_args(ctx, rawArgs)
+		args, err := ec.field_Query_tagByName_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.TagByID(childComplexity, args["id"].(string)), true
-	case "Query.tags":
-		if e.complexity.Query.Tags == nil {
-			break
-		}
-
-		return e.complexity.Query.Tags(childComplexity), true
+		return e.complexity.Query.TagByName(childComplexity, args["name"].(string)), true
 
 	case "Tag.categoryId":
 		if e.complexity.Tag.CategoryID == nil {
@@ -265,6 +258,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Tag.Name(childComplexity), true
+	case "Tag.userId":
+		if e.complexity.Tag.UserID == nil {
+			break
+		}
+
+		return e.complexity.Tag.UserID(childComplexity), true
 
 	}
 	return 0, false
@@ -484,14 +483,14 @@ func (ec *executionContext) field_Query_categoryByName_args(ctx context.Context,
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_tagById_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Query_tagByName_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "name", ec.unmarshalNString2string)
 	if err != nil {
 		return nil, err
 	}
-	args["id"] = arg0
+	args["name"] = arg0
 	return args, nil
 }
 
@@ -995,6 +994,8 @@ func (ec *executionContext) fieldContext_Mutation_createTag(ctx context.Context,
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Tag_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Tag_userId(ctx, field)
 			case "name":
 				return ec.fieldContext_Tag_name(ctx, field)
 			case "categoryId":
@@ -1254,83 +1255,16 @@ func (ec *executionContext) fieldContext_Query_categoryByName(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_tagByName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Query_tags,
-		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-
-				return ec.resolvers.Query().Tags(ctx)
-			}
-
-			directive1 := func(ctx context.Context) (any, error) {
-				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
-				if err != nil {
-					var zeroVal []*model.Tag
-					return zeroVal, err
-				}
-				if ec.directives.Auth == nil {
-					var zeroVal []*model.Tag
-					return zeroVal, errors.New("directive auth is not implemented")
-				}
-				return ec.directives.Auth(ctx, nil, directive0, roles)
-			}
-
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.([]*model.Tag); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Tag`, tmp)
-		},
-		nil,
-		ec.marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Query_tags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Tag_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Tag_name(ctx, field)
-			case "categoryId":
-				return ec.fieldContext_Tag_categoryId(ctx, field)
-			case "description":
-				return ec.fieldContext_Tag_description(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Tag", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_tagById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Query_tagById,
+		ec.fieldContext_Query_tagByName,
 		func(ctx context.Context) (any, error) {
 			directive0 := func(ctx context.Context) (any, error) {
 				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().TagByID(ctx, fc.Args["id"].(string))
+				return ec.resolvers.Query().TagByName(ctx, fc.Args["name"].(string))
 			}
 
 			directive1 := func(ctx context.Context) (any, error) {
@@ -1365,7 +1299,7 @@ func (ec *executionContext) _Query_tagById(ctx context.Context, field graphql.Co
 	)
 }
 
-func (ec *executionContext) fieldContext_Query_tagById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_tagByName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -1375,6 +1309,8 @@ func (ec *executionContext) fieldContext_Query_tagById(ctx context.Context, fiel
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Tag_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Tag_userId(ctx, field)
 			case "name":
 				return ec.fieldContext_Tag_name(ctx, field)
 			case "categoryId":
@@ -1392,7 +1328,7 @@ func (ec *executionContext) fieldContext_Query_tagById(ctx context.Context, fiel
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_tagById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_tagByName_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -1522,6 +1458,33 @@ func (ec *executionContext) _Tag_id(ctx context.Context, field graphql.Collected
 }
 
 func (ec *executionContext) fieldContext_Tag_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Tag",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Tag_userId(ctx context.Context, field graphql.CollectedField, obj *model.Tag) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Tag_userId,
+		func(ctx context.Context) (any, error) { return obj.UserID, nil },
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Tag_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Tag",
 		Field:      field,
@@ -3422,29 +3385,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "tags":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_tags(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "tagById":
+		case "tagByName":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -3453,7 +3394,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_tagById(ctx, field)
+				res = ec._Query_tagByName(ctx, field)
 				return res
 			}
 
@@ -3507,6 +3448,11 @@ func (ec *executionContext) _Tag(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = graphql.MarshalString("Tag")
 		case "id":
 			out.Values[i] = ec._Tag_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "userId":
+			out.Values[i] = ec._Tag_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -4003,50 +3949,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 
 func (ec *executionContext) marshalNTag2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx context.Context, sel ast.SelectionSet, v model.Tag) graphql.Marshaler {
 	return ec._Tag(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Tag) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalNTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx context.Context, sel ast.SelectionSet, v *model.Tag) graphql.Marshaler {

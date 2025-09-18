@@ -36,6 +36,7 @@ type Query struct {
 
 type Tag struct {
 	ID          string  `json:"id"`
+	UserID      string  `json:"userId"`
 	Name        string  `json:"name"`
 	CategoryID  string  `json:"categoryId"`
 	Description *string `json:"description,omitempty"`
