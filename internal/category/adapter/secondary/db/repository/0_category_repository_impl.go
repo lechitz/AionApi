@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// CategoryRepository manages database operations related to handler entities.
+// CategoryRepository manages database operations related to category entities.
 // It uses gorm.DB for ORM and output.ContextLogger for logging operations.
 type CategoryRepository struct {
 	db     *gorm.DB
