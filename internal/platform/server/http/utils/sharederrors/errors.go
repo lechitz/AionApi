@@ -166,3 +166,6 @@ func MissingFields(fields ...string) error {
 	}
 	return NewValidationError(commonkeys.Fields, fmt.Sprintf(ErrMsgMissingFields, strings.Join(fields, ", ")))
 }
+
+// ErrMissingUserIDParam is the error for missing user ID parameter.
+var ErrMissingUserIDParam = errors.New(ErrMsgMissingUserID)

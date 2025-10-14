@@ -20,6 +20,12 @@ func (q *queryResolver) TagByName(ctx context.Context, tagName string) (*model.T
 	return q.TagController().GetByName(ctx, tagName, uid)
 }
 
+// TagByID is the resolve for the tagByID field.
+func (q *queryResolver) TagByID(ctx context.Context, tagID uint64) (*model.Tag, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.TagController().GetByID(ctx, tagID, uid)
+}
+
 // Tags is the resolver for the tag field.
 func (q *queryResolver) Tags(_ context.Context) ([]*model.Tag, error) {
 	return nil, errors.New("not implemented: Tags")

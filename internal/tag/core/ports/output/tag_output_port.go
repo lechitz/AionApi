@@ -14,6 +14,7 @@ type TagCreator interface {
 
 // TagRetriever defines methods for retrieving tag details or multiple tags for a specific user.
 type TagRetriever interface {
+	GetByID(ctx context.Context, tagID, userID uint64) (domain.Tag, error)
 	GetByName(ctx context.Context, TagName string, userID uint64) (domain.Tag, error)
 }
 
