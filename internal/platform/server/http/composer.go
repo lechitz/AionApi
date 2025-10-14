@@ -16,6 +16,7 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	genericHandler "github.com/lechitz/AionApi/internal/platform/server/http/generic/handler"
+	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/cors"
 	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/recovery"
 	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/requestid"
 	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
@@ -35,6 +36,7 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 	r.Use(
 		recovery.New(gh),
 		requestid.New(),
+		cors.New(),
 	)
 
 	// Default handlers
