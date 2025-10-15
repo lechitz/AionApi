@@ -483,19 +483,40 @@ const docTemplate = `{
                     "example": "P@ssw0rd123"
                 },
                 "username": {
-                    "description": "Username is the unique identifier used to authenticate the user.\nExample: \"lechitz\"",
+                    "description": "Username is the unique identifier used to authenticate the user.\nExample: \"joaopereira\"",
                     "type": "string",
-                    "example": "lechitz"
+                    "example": "joaopereira"
                 }
             }
         },
         "github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserResponse": {
             "type": "object",
             "properties": {
+                "id": {
+                    "description": "ID is the unique identifier for the authenticated user.\nExample: 42",
+                    "type": "integer",
+                    "example": 42
+                },
                 "name": {
-                    "description": "Name is a friendly display name for the authenticated user.\nExample: \"Felipe Lechitz\"",
+                    "description": "Name is a friendly display name for the authenticated user.\nExample: \"João Pereira\"",
                     "type": "string",
-                    "example": "Felipe Lechitz"
+                    "example": "João Pereira"
+                },
+                "roles": {
+                    "description": "Roles are the permissions or roles assigned to the user.\nExample: [\"admin\", \"user\"]",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "admin",
+                        "user"
+                    ]
+                },
+                "token": {
+                    "description": "Token is the JSON Web Token used for authenticating subsequent requests.\nExample: \"eyJhbGciOi...\"",
+                    "type": "string",
+                    "example": "eyJhbGciOi..."
                 }
             }
         },
@@ -508,9 +529,9 @@ const docTemplate = `{
                     "example": "dev@aion.local"
                 },
                 "name": {
-                    "description": "Name is the human-friendly display name of the user.\nExample: \"Felipe Lechitz\"",
+                    "description": "Name is the human-friendly display name of the user.\nExample: \"João Pereira\"",
                     "type": "string",
-                    "example": "Felipe Lechitz"
+                    "example": "João Pereira"
                 },
                 "password": {
                     "description": "Password is the user's credential (minimum length: 8).\nExample: \"P@ssw0rd123\"",
@@ -538,9 +559,9 @@ const docTemplate = `{
                     "example": 42
                 },
                 "name": {
-                    "description": "Name is the created user's display name.\nExample: \"Felipe Lechitz\"",
+                    "description": "Name is the created user's display name.\nExample: \"João Pereira\"",
                     "type": "string",
-                    "example": "Felipe Lechitz"
+                    "example": "João Pereira"
                 },
                 "username": {
                     "description": "Username is the created user's unique handle.\nExample: \"lechitz\"",
@@ -563,9 +584,9 @@ const docTemplate = `{
                     "example": "dev@aion.local"
                 },
                 "name": {
-                    "description": "Name is the user's display name.\nExample: \"Felipe Lechitz\".",
+                    "description": "Name is the user's display name.\nExample: \"João Pereira\".",
                     "type": "string",
-                    "example": "Felipe Lechitz"
+                    "example": "João Pereira"
                 },
                 "user_id": {
                     "description": "ID is the user's identifier.\nExample: 42.",

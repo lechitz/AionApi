@@ -202,3 +202,11 @@ linters:
     rowserrcheck:
       packages:
         - github.com/jmoiron/sqlx
+
+issues:
+  exclude-rules:
+    - path: "internal/platform/docs/docs.go"
+      linters:
+        - gochecknoglobals
+        - gochecknoinits
+        - godot
