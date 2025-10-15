@@ -1,4 +1,4 @@
-// Package usecase_test contains tests for the auth use cases.
+// Package usecase_test contains tests for the auth use cases.ValidateValidate
 package usecase_test
 
 import (

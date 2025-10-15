@@ -2,6 +2,7 @@
 package mapper
 
 import (
+	"strings"
 	"time"
 
 	"github.com/lechitz/AionApi/internal/user/adapter/secondary/db/model"
@@ -17,13 +18,23 @@ func UserFromDB(user model.UserDB) domain.User {
 		deletedAt = &user.DeletedAt.Time
 	}
 
+	// Convert comma-separated roles string to slice
+	var roles []string
+	if user.Roles != "" {
+		roles = strings.Split(user.Roles, ",")
+		// Trim spaces from each role
+		for i := range roles {
+			roles[i] = strings.TrimSpace(roles[i])
+		}
+	}
+
 	return domain.User{
 		ID:        user.ID,
 		Name:      user.Name,
 		Username:  user.Username,
 		Email:     user.Email,
 		Password:  user.Password,
-		Roles:     user.Roles,
+		Roles:     roles,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 		DeletedAt: deletedAt,
@@ -38,13 +49,19 @@ func UserToDB(user domain.User) model.UserDB {
 		deleted.Valid = true
 	}
 
+	// Convert roles slice to comma-separated string
+	rolesStr := "user" // default value
+	if len(user.Roles) > 0 {
+		rolesStr = strings.Join(user.Roles, ",")
+	}
+
 	return model.UserDB{
 		ID:        user.ID,
 		Name:      user.Name,
 		Username:  user.Username,
 		Email:     user.Email,
 		Password:  user.Password,
-		Roles:     user.Roles,
+		Roles:     rolesStr,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 		DeletedAt: deleted,

@@ -49,10 +49,13 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 		return userDomain.User{}, "", errors.New(InvalidCredentials)
 	}
 
-	roles := []string{user.Roles}
-
+	roles := user.Roles
+	claims := map[string]any{
+		claimskeys.Roles: roles,
+		claimskeys.Name:  user.Name,
+	}
 	span.AddEvent(EventGenerateToken)
-	tokenValue, err := s.authProvider.GenerateWithClaims(user.ID, map[string]any{claimskeys.Roles: roles})
+	tokenValue, err := s.authProvider.GenerateWithClaims(user.ID, claims)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToCreateToken)

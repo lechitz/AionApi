@@ -579,9 +579,9 @@ const docTemplate = `{
                     "example": "2024-01-02T15:04:05Z"
                 },
                 "email": {
-                    "description": "Email is the user's email address.\nExample: \"dev@aion.local\".",
+                    "description": "Email is the user's email address.\nExample: \"joaopereira@aion.local\".",
                     "type": "string",
-                    "example": "dev@aion.local"
+                    "example": "joaopereira@aion.local"
                 },
                 "name": {
                     "description": "Name is the user's display name.\nExample: \"João Pereira\".",
@@ -594,9 +594,9 @@ const docTemplate = `{
                     "example": 42
                 },
                 "username": {
-                    "description": "Username is the user's unique handle.\nExample: \"lechitz\".",
+                    "description": "Username is the user's unique handle.\nExample: \"joaopereira\".",
                     "type": "string",
-                    "example": "lechitz"
+                    "example": "joaopereira"
                 }
             }
         },

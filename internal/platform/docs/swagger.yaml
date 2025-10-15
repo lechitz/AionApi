@@ -111,8 +111,8 @@ definitions:
       email:
         description: |-
           Email is the user's email address.
-          Example: "dev@aion.local".
-        example: dev@aion.local
+          Example: "joaopereira@aion.local".
+        example: joaopereira@aion.local
         type: string
       name:
         description: |-
@@ -129,8 +129,8 @@ definitions:
       username:
         description: |-
           Username is the user's unique handle.
-          Example: "lechitz".
-        example: lechitz
+          Example: "joaopereira".
+        example: joaopereira
         type: string
     type: object
   github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdatePasswordUserRequest:

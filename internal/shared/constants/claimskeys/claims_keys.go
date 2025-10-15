@@ -8,6 +8,9 @@ const (
 	// Roles is the JWT claim key for user roles.
 	Roles = "roles"
 
+	// Name is the JWT claim key for name of the user.
+	Name = "name"
+
 	// Exp is the JWT claim key for expiration time.
 	Exp = "exp"
 )

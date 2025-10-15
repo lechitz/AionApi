@@ -33,7 +33,7 @@ func TestCreateUser_Success(t *testing.T) {
 		Username: "username",
 		Email:    "user@example.com",
 		Password: "hashed123",
-		Roles:    "user",
+		Roles:    []string{"user"},
 	}
 
 	suite.UserRepository.EXPECT().

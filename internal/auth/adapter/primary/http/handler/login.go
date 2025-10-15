@@ -71,7 +71,10 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	cookies.SetAuthCookie(w, token, h.Config.Cookie)
 
 	loginResponse := dto.LoginUserResponse{
-		Name: user.Name,
+		Token: token,
+		ID:    user.ID,
+		Name:  user.Name,
+		Roles: user.Roles,
 	}
 
 	span.AddEvent(EventLoginSuccess)

@@ -32,8 +32,8 @@ const (
 // Fields include examples to improve Swagger UI readability.
 type CreateUserRequest struct {
 	// Name is the human-friendly display name of the user.
-	// Example: "Felipe Lechitz"
-	Name string `json:"name" example:"Felipe Lechitz"`
+	// Example: "João Pereira"
+	Name string `json:"name" example:"João Pereira"`
 
 	// Username is the unique handle for login and identification.
 	// Example: "lechitz"
@@ -84,8 +84,8 @@ func (r *CreateUserRequest) ToCommand() input.CreateUserCommand {
 // CreateUserResponse is the response payload returned after a successful user creation.
 type CreateUserResponse struct {
 	// Name is the created user's display name.
-	// Example: "Felipe Lechitz"
-	Name string `json:"name" example:"Felipe Lechitz"`
+	// Example: "João Pereira"
+	Name string `json:"name" example:"João Pereira"`
 
 	// Username is the created user's unique handle.
 	// Example: "lechitz"
