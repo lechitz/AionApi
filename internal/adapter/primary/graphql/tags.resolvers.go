@@ -3,6 +3,7 @@ package graphql
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
@@ -21,9 +22,13 @@ func (q *queryResolver) TagByName(ctx context.Context, tagName string) (*model.T
 }
 
 // TagByID is the resolve for the tagByID field.
-func (q *queryResolver) TagByID(ctx context.Context, tagID uint64) (*model.Tag, error) {
+func (q *queryResolver) TagByID(ctx context.Context, tagID string) (*model.Tag, error) {
+	id, err := strconv.ParseUint(tagID, 10, 64)
+	if err != nil {
+		return nil, err
+	}
 	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
-	return q.TagController().GetByID(ctx, tagID, uid)
+	return q.TagController().GetByID(ctx, id, uid)
 }
 
 // Tags is the resolver for the tag field.
