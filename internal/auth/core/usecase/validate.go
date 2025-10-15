@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
@@ -20,7 +21,7 @@ import (
 // Validate verifies signature/exp, extracts userID from claims, and checks cache consistency.
 // Returns the resolved userID and the decoded claims on success.
 func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[string]any, error) {
-	tracer := otel.Tracer(TracerName)
+	tracer := otel.Tracer(SpanValidateToken)
 	ctx, span := tracer.Start(
 		ctx,
 		SpanValidateToken,
@@ -38,7 +39,7 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorInvalidToken)
 		s.logger.ErrorwCtx(ctx, ErrorInvalidToken, commonkeys.Error, err.Error())
-		return 0, nil, errors.New(ErrorInvalidToken)
+		return 0, nil, sharederrors.ErrUnauthorized(ErrorInvalidToken)
 	}
 
 	span.AddEvent(EventExtractUserID)
@@ -47,7 +48,7 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorInvalidUserIDClaim)
 		s.logger.ErrorwCtx(ctx, ErrorInvalidUserIDClaim, commonkeys.Error, err.Error())
-		return 0, nil, errors.New(ErrorInvalidUserIDClaim)
+		return 0, nil, sharederrors.ErrUnauthorized(ErrorInvalidUserIDClaim)
 	}
 	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
@@ -64,7 +65,7 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 	if cached.Token == "" || cached.Token != sanitized {
 		span.SetStatus(codes.Error, ErrorTokenMismatch)
 		s.logger.ErrorwCtx(ctx, ErrorTokenMismatch, commonkeys.UserID, strconv.FormatUint(userID, 10))
-		return 0, nil, errors.New(ErrorTokenMismatch)
+		return 0, nil, sharederrors.ErrUnauthorized(ErrorTokenMismatch)
 	}
 
 	span.AddEvent(EventTokenValidated)
