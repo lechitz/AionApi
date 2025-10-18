@@ -42,7 +42,7 @@ func (m *MockGenerator) EXPECT() *MockGeneratorMockRecorder {
 // Generate mocks base method.
 func (m *MockGenerator) Generate() (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Generate")
+	ret := m.ctrl.Call(m, "GenerateRefreshToken")
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -51,5 +51,5 @@ func (m *MockGenerator) Generate() (string, error) {
 // Generate indicates an expected call of Generate.
 func (mr *MockGeneratorMockRecorder) Generate() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Generate", reflect.TypeOf((*MockGenerator)(nil).Generate))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateRefreshToken", reflect.TypeOf((*MockGenerator)(nil).Generate))
 }

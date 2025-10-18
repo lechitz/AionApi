@@ -39,34 +39,34 @@ func (m *MockAuthProvider) EXPECT() *MockAuthProviderMockRecorder {
 	return m.recorder
 }
 
-// Generate mocks base method.
-func (m *MockAuthProvider) Generate(userID uint64) (string, error) {
+// GenerateAccessToken mocks base method.
+func (m *MockAuthProvider) GenerateAccessToken(userID uint64, extra map[string]any) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Generate", userID)
+	ret := m.ctrl.Call(m, "GenerateAccessToken", userID, extra)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Generate indicates an expected call of Generate.
-func (mr *MockAuthProviderMockRecorder) Generate(userID any) *gomock.Call {
+// GenerateAccessToken indicates an expected call of GenerateAccessToken.
+func (mr *MockAuthProviderMockRecorder) GenerateAccessToken(userID, extra any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Generate", reflect.TypeOf((*MockAuthProvider)(nil).Generate), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateAccessToken", reflect.TypeOf((*MockAuthProvider)(nil).GenerateAccessToken), userID, extra)
 }
 
-// GenerateWithClaims mocks base method.
-func (m *MockAuthProvider) GenerateWithClaims(userID uint64, extra map[string]any) (string, error) {
+// GenerateRefreshToken mocks base method.
+func (m *MockAuthProvider) GenerateRefreshToken(userID uint64) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateWithClaims", userID, extra)
+	ret := m.ctrl.Call(m, "GenerateRefreshToken", userID)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GenerateWithClaims indicates an expected call of GenerateWithClaims.
-func (mr *MockAuthProviderMockRecorder) GenerateWithClaims(userID, extra any) *gomock.Call {
+// GenerateRefreshToken indicates an expected call of GenerateRefreshToken.
+func (mr *MockAuthProviderMockRecorder) GenerateRefreshToken(userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateWithClaims", reflect.TypeOf((*MockAuthProvider)(nil).GenerateWithClaims), userID, extra)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateRefreshToken", reflect.TypeOf((*MockAuthProvider)(nil).GenerateRefreshToken), userID)
 }
 
 // Verify mocks base method.
