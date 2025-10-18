@@ -8,6 +8,7 @@ import (
 	"github.com/lechitz/AionApi/internal/auth/core/domain"
 	"github.com/lechitz/AionApi/internal/auth/core/usecase"
 	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -54,8 +55,8 @@ func TestValidate_Success_UserIDString(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: "123"}, nil)
 
 	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userID).
-		Return(domain.Auth{Key: userID, Token: token}, nil)
+		Get(gomock.Any(), userID, commonkeys.TokenTypeAccess).
+		Return(domain.AccessToken{Key: userID, Token: token}.ToAuth(), nil)
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
 	require.NoError(t, err)
@@ -80,8 +81,8 @@ func TestValidate_Success_SubWithSpaces(t *testing.T) {
 		Return(map[string]any{"sub": subRaw}, nil)
 
 	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userIDWant).
-		Return(domain.Auth{Key: userIDWant, Token: token}, nil)
+		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
+		Return(domain.AccessToken{Key: userIDWant, Token: token}.ToAuth(), nil)
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
 	require.NoError(t, err)
@@ -105,8 +106,8 @@ func TestValidate_Success_JSONNumberClaim(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: json.Number("123")}, nil)
 
 	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userIDWant).
-		Return(domain.Auth{Key: userIDWant, Token: token}, nil)
+		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
+		Return(domain.AccessToken{Key: userIDWant, Token: token}.ToAuth(), nil)
 
 	uid, _, err := suite.TokenService.Validate(suite.Ctx, raw)
 	require.NoError(t, err)
@@ -129,8 +130,8 @@ func TestValidate_Success_Float64Integral(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: float64(777)}, nil)
 
 	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userIDWant).
-		Return(domain.Auth{Key: userIDWant, Token: token}, nil)
+		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
+		Return(domain.AccessToken{Key: userIDWant, Token: token}.ToAuth(), nil)
 
 	uid, _, err := suite.TokenService.Validate(suite.Ctx, raw)
 	require.NoError(t, err)
@@ -144,7 +145,7 @@ func TestValidate_Success_SanitizeBearerAndSpaces(t *testing.T) {
 
 	const (
 		rawMessy   = "   bEaReR tok.sanitized   "
-		token      = "tok.sanitized" //nolint:gosec // fake token for tests
+		token      = "tok.sanitized" //nolint:gosec // test token
 		userIDWant = uint64(88)
 	)
 
@@ -153,8 +154,8 @@ func TestValidate_Success_SanitizeBearerAndSpaces(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: "88"}, nil)
 
 	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userIDWant).
-		Return(domain.Auth{Key: userIDWant, Token: token}, nil)
+		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
+		Return(domain.AccessToken{Key: userIDWant, Token: token}.ToAuth(), nil)
 
 	uid, _, err := suite.TokenService.Validate(suite.Ctx, rawMessy)
 	require.NoError(t, err)
@@ -168,7 +169,7 @@ func TestValidate_Success_SanitizeOnlySpaces_NoBearer(t *testing.T) {
 
 	const (
 		rawMessy   = "   tok.no.bearer   "
-		token      = "tok.no.bearer"
+		token      = "tok.no.bearer" // test token
 		userIDWant = uint64(11)
 	)
 
@@ -177,8 +178,8 @@ func TestValidate_Success_SanitizeOnlySpaces_NoBearer(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: "11"}, nil)
 
 	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userIDWant).
-		Return(domain.Auth{Key: userIDWant, Token: token}, nil)
+		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
+		Return(domain.AccessToken{Key: userIDWant, Token: token}.ToAuth(), nil)
 
 	uid, _, err := suite.TokenService.Validate(suite.Ctx, rawMessy)
 	require.NoError(t, err)
@@ -201,8 +202,8 @@ func TestValidate_Success_NoBearerNoSpaces_ReturnS(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: "22"}, nil)
 
 	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userIDWant).
-		Return(domain.Auth{Key: userIDWant, Token: token}, nil)
+		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
+		Return(domain.AccessToken{Key: userIDWant, Token: token}.ToAuth(), nil)
 
 	uid, _, err := suite.TokenService.Validate(suite.Ctx, raw)
 	require.NoError(t, err)
@@ -314,7 +315,7 @@ func TestValidate_Error_StoreGet(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	const (
-		token      = "tok.store.err" //nolint:gosec // simulated cache error token
+		token      = "tok.store.err" //nolint:gosec // test token
 		raw        = bearerPrefix + token
 		userIDWant = uint64(42)
 	)
@@ -324,7 +325,7 @@ func TestValidate_Error_StoreGet(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: "42"}, nil)
 
 	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userIDWant).
+		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
 		Return(domain.Auth{}, errors.New(usecase.ErrorToRetrieveTokenFromCache))
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
@@ -350,8 +351,8 @@ func TestValidate_Error_Mismatch(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: "5"}, nil)
 
 	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userIDWant).
-		Return(domain.Auth{Key: userIDWant, Token: cachedTokenDifferent}, nil)
+		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
+		Return(domain.AccessToken{Key: userIDWant, Token: cachedTokenDifferent}.ToAuth(), nil)
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
 	requireUnauthorizedWith(t, err, usecase.ErrorTokenMismatch)
@@ -364,7 +365,7 @@ func TestValidate_Error_EmptyTokenInCache(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	const (
-		token      = "tok.empty.cache"
+		token      = "tok.empty.cache" // test token
 		raw        = bearerPrefix + token
 		userIDWant = uint64(77)
 	)
@@ -374,8 +375,8 @@ func TestValidate_Error_EmptyTokenInCache(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: "77"}, nil)
 
 	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userIDWant).
-		Return(domain.Auth{Key: userIDWant, Token: ""}, nil)
+		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
+		Return(domain.AccessToken{Key: userIDWant, Token: ""}.ToAuth(), nil)
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
 	requireUnauthorizedWith(t, err, usecase.ErrorTokenMismatch)

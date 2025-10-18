@@ -53,7 +53,7 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
 	span.AddEvent(EventGetTokenFromStore)
-	cached, err := s.authStore.Get(ctx, userID)
+	cached, err := s.authStore.Get(ctx, userID, commonkeys.TokenTypeAccess)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToRetrieveTokenFromCache)
