@@ -2,12 +2,14 @@ package usecase
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/lechitz/AionApi/internal/auth/core/domain"
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -60,7 +62,7 @@ func (s *Service) UpdatePassword(ctx context.Context, userID uint64, oldPassword
 		return "", fmt.Errorf("%s: %w", ErrorToUpdatePassword, err)
 	}
 
-	tokenValue, err := s.tokenProvider.Generate(updatedUser.ID)
+	tokenValue, err := s.tokenProvider.GenerateRefreshToken(updatedUser.ID)
 	if err != nil || tokenValue == "" {
 		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgCreateToken))
 		if err != nil {
@@ -72,7 +74,13 @@ func (s *Service) UpdatePassword(ctx context.Context, userID uint64, oldPassword
 		return "", fmt.Errorf("%s: empty token", ErrorToCreateToken)
 	}
 
-	if err := s.authStore.Save(ctx, domain.Auth{Key: updatedUser.ID, Token: tokenValue}); err != nil {
+	// compute TTL from tokenValue via Verify
+	expiration := time.Duration(0)
+	if c, err := s.tokenProvider.Verify(tokenValue); err == nil {
+		expiration = claimsTTLFromVerifyResult(c)
+	}
+
+	if err := s.authStore.Save(ctx, domain.NewAccessToken(tokenValue, updatedUser.ID).ToAuth(), expiration); err != nil {
 		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgCreateToken))
 		span.RecordError(err)
 		s.logger.ErrorwCtx(ctx, ErrorToCreateToken, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10))
@@ -86,4 +94,38 @@ func (s *Service) UpdatePassword(ctx context.Context, userID uint64, oldPassword
 	s.logger.InfowCtx(ctx, SuccessPasswordUpdated, commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10))
 
 	return tokenValue, nil
+}
+
+// helper to compute TTL from claims 'exp' value (copied from auth usecase).
+func claimsTTLFromVerifyResult(claims map[string]any) time.Duration {
+	if claims == nil {
+		return 0
+	}
+	v, ok := claims[claimskeys.Exp]
+	if !ok {
+		return 0
+	}
+	switch x := v.(type) {
+	case float64:
+		exp := int64(x)
+		return time.Until(time.Unix(exp, 0))
+	case int64:
+		return time.Until(time.Unix(x, 0))
+	case int:
+		return time.Until(time.Unix(int64(x), 0))
+	case string:
+		n, err := strconv.ParseInt(x, 10, 64)
+		if err != nil {
+			return 0
+		}
+		return time.Until(time.Unix(n, 0))
+	case json.Number:
+		n, err := x.Int64()
+		if err != nil {
+			return 0
+		}
+		return time.Until(time.Unix(n, 0))
+	default:
+		return 0
+	}
 }
