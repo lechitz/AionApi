@@ -31,3 +31,4 @@ go.work.sum
 
 .venv-docs/
 site/
+/infrastructure/docker/environments/dev/.env
