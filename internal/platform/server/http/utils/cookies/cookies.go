@@ -38,6 +38,29 @@ func ClearAuthCookie(w http.ResponseWriter, cfg config.CookieConfig) {
 	})
 }
 
+// SetRefreshCookie sets a secure HTTP-only refresh token cookie.
+func SetRefreshCookie(w http.ResponseWriter, token string, cfg config.CookieConfig) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    token,
+		Path:     cfg.Path,
+		Domain:   cfg.Domain,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: mapSameSite(cfg.SameSite),
+		MaxAge:   cfg.MaxAge * 7,
+	})
+}
+
+// ExtractRefreshToken retrieves the refresh token from the request cookies.
+func ExtractRefreshToken(r *http.Request) (string, error) {
+	c, err := r.Cookie("refresh_token")
+	if err != nil || c == nil || c.Value == "" {
+		return "", err
+	}
+	return c.Value, nil
+}
+
 // mapSameSite maps the given string to the corresponding SameSite value.
 func mapSameSite(sameSite string) http.SameSite {
 	switch sameSite {

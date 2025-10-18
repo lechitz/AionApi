@@ -66,9 +66,6 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 	}
 
 	r.Group(apiContext, func(api ports.Router) {
-		// Health endpoint
-		api.GET(routeHealth, http.HandlerFunc(gh.HealthCheck))
-
 		// Swagger UI + OpenAPI JSON mounted under the API context
 		// httpSwagger.Handler returns an http.Handler suitable for Mount.
 		swaggerDocURL := path.Clean(apiContext + "/" +
@@ -109,10 +106,16 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 		})
 	})
 
-	// OpenTelemetry HTTP wrapper
-	h := otelhttp.NewHandler(
+	// OpenTelemetry HTTP wrapper: instrument the main router but expose health route uninstrumented
+	instrumented := otelhttp.NewHandler(
 		r,
 		fmt.Sprintf(OTelHTTPHandlerNameFormat, cfg.Observability.OtelServiceName),
 	)
-	return h, nil
+
+	// Use a top-level ServeMux to serve the health path directly and delegate the rest to the instrumented handler
+	mux := http.NewServeMux()
+	mux.Handle(path.Clean(apiContext+"/"+strings.TrimPrefix(routeHealth, "/")), http.HandlerFunc(gh.HealthCheck))
+	mux.Handle("/", instrumented)
+
+	return mux, nil
 }
