@@ -13,6 +13,7 @@ func RegisterHTTP(r ports.Router, h *Handler) {
 	r.Group("/auth", func(ar ports.Router) {
 		// Public endpoint.
 		ar.POST("/login", http.HandlerFunc(h.Login))
+		ar.POST("/refresh", http.HandlerFunc(h.Refresh))
 
 		// Protected endpoints require an authenticated context.
 		authmw := middleware.New(h.Service, h.Logger)
