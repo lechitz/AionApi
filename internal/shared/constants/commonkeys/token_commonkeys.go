@@ -11,3 +11,12 @@ const (
 	// AuthTokenCookieName is the key for an authentication token value.
 	AuthTokenCookieName = "auth_token"
 )
+
+// Token type constants.
+const (
+	// TokenTypeAccess identifies an access token stored in the cache.
+	TokenTypeAccess = "access"
+
+	// TokenTypeRefresh identifies a refresh token stored in the cache.
+	TokenTypeRefresh = "refresh"
+)
