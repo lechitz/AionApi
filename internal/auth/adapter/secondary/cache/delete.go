@@ -12,8 +12,8 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-// Delete removes the token for the given user.
-func (s *Store) Delete(ctx context.Context, tokenKey uint64) error {
+// Delete removes the token for the given user and token type.
+func (s *Store) Delete(ctx context.Context, tokenKey uint64, tokenType string) error {
 	tr := otel.Tracer(SpanTracerTokenStore)
 	ctx, span := tr.Start(ctx, SpanNameTokenDelete, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(tokenKey, 10)),
@@ -22,7 +22,7 @@ func (s *Store) Delete(ctx context.Context, tokenKey uint64) error {
 	))
 	defer span.End()
 
-	cacheKey := fmt.Sprintf(TokenUserKeyFormat, tokenKey)
+	cacheKey := fmt.Sprintf(TokenUserKeyFormat, tokenKey, tokenType)
 
 	if err := s.cache.Del(ctx, cacheKey); err != nil {
 		span.SetStatus(codes.Error, err.Error())

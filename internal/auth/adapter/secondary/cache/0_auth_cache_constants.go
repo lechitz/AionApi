@@ -15,10 +15,10 @@ const ErrorToDeleteTokenFromRedis = "error to delete token from Redis"
 // TokenExpirationDefault defines the default expiration for tokens.
 const TokenExpirationDefault = 24 * time.Hour
 
-// TokenUserKeyFormat defines the format for token keys associated with a specific user.
+// TokenUserKeyFormat defines the format for token keys associated with a specific user and token type.
 //
 //nolint:gosec // Cache key pattern for Redis; contains the word "token" but is not a credential/secret.
-const TokenUserKeyFormat = "token:user:%d"
+const TokenUserKeyFormat = "token:user:%d:%s"
 
 const (
 	// TokenRetrievedSuccessfully is the message used when a token is retrieved successfully.

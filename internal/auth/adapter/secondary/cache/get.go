@@ -15,7 +15,8 @@ import (
 )
 
 // Get returns the token for a user or empty if not present.
-func (s *Store) Get(ctx context.Context, tokenKey uint64) (domain.Auth, error) {
+func (s *Store) Get(ctx context.Context, tokenKey uint64, tokenType string) (domain.Auth, error) {
+	_ = tokenType // explicit usage to satisfy static analyzers when tokenType may be conditionally used
 	tr := otel.Tracer(SpanTracerTokenStore)
 	ctx, span := tr.Start(ctx, SpanNameTokenGet, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(tokenKey, 10)),
@@ -24,7 +25,7 @@ func (s *Store) Get(ctx context.Context, tokenKey uint64) (domain.Auth, error) {
 	))
 	defer span.End()
 
-	cacheKey := fmt.Sprintf(TokenUserKeyFormat, tokenKey)
+	cacheKey := fmt.Sprintf(TokenUserKeyFormat, tokenKey, tokenType)
 
 	tokenValue, err := s.cache.Get(ctx, cacheKey)
 	if err != nil {
@@ -39,9 +40,15 @@ func (s *Store) Get(ctx context.Context, tokenKey uint64) (domain.Auth, error) {
 		return domain.Auth{}, nil
 	}
 
-	tokenDomain := domain.Auth{
-		Key:   tokenKey,
-		Token: tokenValue,
+	var tokenDomain domain.Auth
+	switch tokenType {
+	case commonkeys.TokenTypeAccess:
+		tokenDomain = domain.NewAccessToken(tokenValue, tokenKey).ToAuth()
+	case commonkeys.TokenTypeRefresh:
+		tokenDomain = domain.NewRefreshToken(tokenValue, tokenKey).ToAuth()
+	default:
+		// Fallback to generic Auth when tokenType is unknown
+		tokenDomain = domain.Auth{Key: tokenKey, Token: tokenValue, Type: tokenType}
 	}
 
 	span.SetStatus(codes.Ok, TokenRetrievedSuccessfully)

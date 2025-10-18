@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/lechitz/AionApi/internal/auth/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -13,8 +14,8 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-// Save persists the token for the given userID.
-func (s *Store) Save(ctx context.Context, token domain.Auth) error {
+// Save persists the token for the given userID with a TTL.
+func (s *Store) Save(ctx context.Context, token domain.Auth, expiration time.Duration) error {
 	tr := otel.Tracer(SpanTracerTokenStore)
 	ctx, span := tr.Start(ctx, SpanNameTokenSave, trace.WithAttributes(
 		attribute.String(commonkeys.Operation, OperationSave),
@@ -23,9 +24,14 @@ func (s *Store) Save(ctx context.Context, token domain.Auth) error {
 	))
 	defer span.End()
 
-	cacheKey := fmt.Sprintf(TokenUserKeyFormat, token.Key)
+	cacheKey := fmt.Sprintf(TokenUserKeyFormat, token.Key, token.Type)
 
-	if err := s.cache.Set(ctx, cacheKey, token.Token, TokenExpirationDefault); err != nil {
+	// if no expiration passed, fall back to default
+	if expiration <= 0 {
+		expiration = TokenExpirationDefault
+	}
+
+	if err := s.cache.Set(ctx, cacheKey, token.Token, expiration); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 		s.logger.Errorw(ErrorToSaveTokenToRedis, commonkeys.TokenKey, cacheKey, commonkeys.Error, err)
