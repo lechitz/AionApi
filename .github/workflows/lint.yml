@@ -10,9 +10,10 @@
 name: Lint
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ "*" ]
 
 permissions:
   contents: read
@@ -93,3 +94,18 @@ jobs:
       # 11) Run native go vet across the repo
       - name: Run go vet
         run: go vet ./...
+
+      # 12) Run sensitive string check
+      - name: Run sensitive string check
+        run: make sensitive-strings-ci
+
+      # 13) Install linters
+      - name: Install linters
+        run: |
+            go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.0
+            go install golang.org/x/tools/cmd/goimports@latest
+            echo "linters installed"
+
+      # 14) Run linters
+      - name: Run linters
+        run: make lint
