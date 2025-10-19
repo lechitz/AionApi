@@ -6,8 +6,14 @@ const TracerAuthHandler = "aionapi.auth.handler"
 
 // Span names for OpenTelemetry auth handler operations.
 const (
-	SpanLoginHandler  = "auth.login"
-	SpanLogoutHandler = "auth.logout"
+	SpanLoginHandler   = "auth.login"
+	SpanLogoutHandler  = "auth.logout"
+	SpanRefreshHandler = "auth.refresh"
+)
+
+// Attribute keys used in spans for auth handlers.
+const (
+	AttrRefreshTokenPresent = "refresh_token_present"
 )
 
 // Event names for key points within auth handler spans.
