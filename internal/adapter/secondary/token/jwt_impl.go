@@ -1,4 +1,4 @@
-// Package token is a JWT-based implementation of output.Provider.
+// Package token is a JWT-based implementation of output.feature: add TagByID queryResolverProvider.
 package token
 
 import (
@@ -12,7 +12,7 @@ import (
 )
 
 // ExpTimeToken is the default expiration time for JWT tokens.
-const ExpTimeToken = 24 * time.Hour
+const ExpTimeToken = 2 * time.Hour
 
 // Provider implements output.Provider using HMAC-SHA256.
 type Provider struct {
@@ -24,8 +24,8 @@ func NewProvider(secretKey string) *Provider {
 	return &Provider{secretKey: secretKey}
 }
 
-// Generate creates a signed JWT with userID and expiration.
-func (p *Provider) Generate(userID uint64) (string, error) {
+// GenerateRefreshToken generates a signed JWT with userID and expiration.
+func (p *Provider) GenerateRefreshToken(userID uint64) (string, error) {
 	claims := jwt.MapClaims{
 		claimskeys.UserID: strconv.FormatUint(userID, 10),
 		claimskeys.Exp:    time.Now().Add(ExpTimeToken).Unix(),
@@ -63,8 +63,8 @@ func (p *Provider) Verify(token string) (map[string]any, error) {
 	return claims, nil
 }
 
-// GenerateWithClaims creates a signed JWT with userID, expiration and extra claims (e.g., roles).
-func (p *Provider) GenerateWithClaims(userID uint64, extra map[string]any) (string, error) {
+// GenerateAccessToken generates a signed JWT with userID, expiration and extra claims (e.g., roles).
+func (p *Provider) GenerateAccessToken(userID uint64, extra map[string]any) (string, error) {
 	claims := jwt.MapClaims{
 		claimskeys.UserID: strconv.FormatUint(userID, 10),
 		claimskeys.Exp:    time.Now().Add(ExpTimeToken).Unix(),
