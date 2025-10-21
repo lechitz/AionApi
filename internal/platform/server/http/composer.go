@@ -102,6 +102,7 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 				log.Errorw(LogErrComposeGraphQL, commonkeys.Error, err)
 				return
 			}
+
 			v1.Mount(cfg.ServerGraphql.Path, gqlHandler)
 		})
 	})
@@ -112,9 +113,16 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 		fmt.Sprintf(OTelHTTPHandlerNameFormat, cfg.Observability.OtelServiceName),
 	)
 
-	// Use a top-level ServeMux to serve the health path directly and delegate the rest to the instrumented handler
 	mux := http.NewServeMux()
-	mux.Handle(path.Clean(apiContext+"/"+strings.TrimPrefix(routeHealth, "/")), http.HandlerFunc(gh.HealthCheck))
+	p := path.Clean(apiContext + "/" + strings.TrimPrefix(routeHealth, "/"))
+	mux.Handle(p, http.HandlerFunc(gh.HealthCheck))
+	mux.Handle(p+"/", http.HandlerFunc(gh.HealthCheck))
+
+	// Backwards compatibility: also expose health under {apiContext}{APIRoot}{routeHealth} (e.g., /aion/api/v1/health)
+	altHealth := path.Clean(apiContext + "/" + strings.TrimPrefix(cfg.ServerHTTP.APIRoot, "/") + "/" + strings.TrimPrefix(routeHealth, "/"))
+	mux.Handle(altHealth, http.HandlerFunc(gh.HealthCheck))
+	mux.Handle(altHealth+"/", http.HandlerFunc(gh.HealthCheck))
+
 	mux.Handle("/", instrumented)
 
 	return mux, nil

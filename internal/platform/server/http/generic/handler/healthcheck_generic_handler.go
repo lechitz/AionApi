@@ -15,6 +15,18 @@ import (
 
 // HealthCheck Health Check responds to health check requests with service metadata and status.
 func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		reqID := r.Header.Get(commonkeys.XRequestID)
+		h.Logger.Warnw(MsgMethodNotAllowed,
+			commonkeys.Method, r.Method,
+			commonkeys.URLPath, r.URL.Path,
+			commonkeys.RequestID, reqID,
+		)
+
+		httpresponse.WriteError(w, ErrMethodNotAllowed, MsgMethodNotAllowed, h.Logger)
+		return
+	}
+
 	_, span := otel.Tracer(TracerGenericHandler).
 		Start(r.Context(), TracerHealthCheckHandler)
 	defer span.End()

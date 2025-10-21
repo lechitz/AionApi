@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -16,10 +17,11 @@ func (h *Handler) NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 		commonkeys.RequestID, reqID,
 	)
 
-	httpresponse.WriteError(
-		w,
-		ErrResourceNotFound,
-		MsgResourceNotFound,
-		h.Logger,
-	)
+	body := httpresponse.ResponseBody{
+		Date:    time.Now().UTC(),
+		Error:   MsgResourceNotFound,
+		Details: ErrResourceNotFound.Error(),
+		Code:    http.StatusNotFound,
+	}
+	httpresponse.WriteJSON(w, http.StatusNotFound, body)
 }

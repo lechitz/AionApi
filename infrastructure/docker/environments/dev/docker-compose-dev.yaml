@@ -13,7 +13,7 @@ services:
     networks:
       - rede_local
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -106,11 +106,11 @@ services:
       - rede_local
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:5001/aion/health >/dev/null 2>&1"]
-      interval: 60s
+      test: ["CMD-SHELL", "wget -qO- \"http://localhost:$$HTTP_PORT$$HTTP_CONTEXT$$HTTP_API_ROOT$$HTTP_HEALTH_ROUTE\" >/dev/null 2>&1"]
+      interval: 10s
       timeout: 5s
-      start_period: 1s
-      retries: 3
+      start_period: 30s
+      retries: 5
 
 networks:
   rede_local:
