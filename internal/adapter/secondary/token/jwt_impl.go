@@ -12,7 +12,7 @@ import (
 )
 
 // ExpTimeToken is the default expiration time for JWT tokens.
-const ExpTimeToken = 2 * time.Hour
+const ExpTimeToken = 24 * time.Hour
 
 // Provider implements output.Provider using HMAC-SHA256.
 type Provider struct {
