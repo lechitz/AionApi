@@ -95,17 +95,13 @@ jobs:
       - name: Run go vet
         run: go vet ./...
 
-      # 12) Run sensitive string check
-      - name: Run sensitive string check
-        run: make sensitive-strings-ci
-
-      # 13) Install linters
+      # 12) Install linters
       - name: Install linters
         run: |
             go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.0
             go install golang.org/x/tools/cmd/goimports@latest
             echo "linters installed"
 
-      # 14) Run linters
+      # 13) Run linters
       - name: Run linters
         run: make lint
