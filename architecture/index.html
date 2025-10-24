@@ -678,20 +678,21 @@
 <hr />
 <h2 id="1-high-level-layout">1) High-level layout<a class="headerlink" href="#1-high-level-layout" title="Permanent link">&para;</a></h2>
 <pre><code>
-cmd/                    # app entrypoint
-infrastructure/         # docker, migrations, otel/prometheus/grafana, loki/fluentbit
-internal/ &lt;context&gt;/            # bounded contexts (auth, user, category, tag, admin)
-adapter/
-primary/          # inbound adapters (http / graphql)
-secondary/        # outbound adapters (db, cache, token, logger)
-core/               # domain + ports + usecases (business logic)
-platform/             # cross-cutting platform: config, bootstrap, server, observability
-shared/               # reusable helpers: constants, responses, validation, errors
-makefiles/              # grouped Make targets used by the root Makefile
-tests/                  # unit test suites, mocks, fixtures, coverage
+cmd/                     # app entrypoint
+docs/                    # public documentation
+infrastructure/          # docker, migrations, otel/prometheus/grafana, loki/fluentbit
+internal/                # bounded contexts (auth, user, category, tag, admin)
+   adapter/              # general adapter structure
+      |_ primary/         # inbound adapters (http / graphql)
+      |_ secondary/       # outbound adapters (db, cache, token, logger)
+   &lt;bounded-context&gt;/    # domain + ports + usecases (business logic)
+   platform/             # cross-cutting platform: config, bootstrap, server, observability
+   shared/               # reusable helpers: constants, responses, validation, errors
+makefiles/               # grouped Make targets used by the root Makefile
+tests/                   # unit test suites, mocks, fixtures, coverage
 
 </code></pre>
-<p><strong>Bounded contexts currently present:</strong> <code>auth</code>, <code>user</code>, <code>category</code>, <code>tag</code>, <code>admin</code>.</p>
+<p><strong>Bounded contexts currently present:</strong> <code>auth</code>, <code>user</code>, <code>category</code>, <code>tag</code>, <code>habit</code>, <code>admin</code>.</p>
 <hr />
 <h2 id="2-hexagonal-ports-adapters">2) Hexagonal (Ports &amp; Adapters)<a class="headerlink" href="#2-hexagonal-ports-adapters" title="Permanent link">&para;</a></h2>
 <p><strong>Why:</strong> decouple business logic from frameworks and vendors; make the core testable and stable.</p>
