@@ -11,8 +11,9 @@ theme:
     - content.tabs.link
 nav:
   - Home: index.md
-  - Getting started: getting-started.md
   - Architecture: architecture.md
+  - Swagger UI: https://lechitz.github.io/AionApi/swagger-ui/
+  - Getting Started: getting-started.md
 plugins:
   - search
 markdown_extensions:
