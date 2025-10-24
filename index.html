@@ -268,9 +268,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#secoes-sugeridas" class="md-nav__link">
+  <a href="#build-better-habits-with-data" class="md-nav__link">
     <span class="md-ellipsis">
-      Seções sugeridas
+      Build better habits with data
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick links
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start-dev" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick start (dev)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explore-the-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Explore the API
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preview-this-documentation-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      Preview this documentation locally
     </span>
   </a>
   
@@ -355,9 +391,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#secoes-sugeridas" class="md-nav__link">
+  <a href="#build-better-habits-with-data" class="md-nav__link">
     <span class="md-ellipsis">
-      Seções sugeridas
+      Build better habits with data
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick links
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start-dev" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick start (dev)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explore-the-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Explore the API
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preview-this-documentation-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      Preview this documentation locally
     </span>
   </a>
   
@@ -382,19 +454,65 @@
   
 
 
-<h1 id="aionapi-documentation">AionApi Documentation<a class="headerlink" href="#aionapi-documentation" title="Permanent link">&para;</a></h1>
-<p>Bem-vindo! Este site concentra a documentação do backend AionApi (Go, Hexagonal, REST/GraphQL, PostgreSQL, Redis, OpenTelemetry).</p>
-<h2 id="secoes-sugeridas">Seções sugeridas<a class="headerlink" href="#secoes-sugeridas" title="Permanent link">&para;</a></h2>
+<h1 id="aionapi-documentation">AionApi — Documentation<a class="headerlink" href="#aionapi-documentation" title="Permanent link">&para;</a></h1>
+<p>Welcome to the AionApi documentation — a concise reference and walkthrough for this modular Go backend that powers habit and diary management with REST and GraphQL APIs.</p>
+<hr />
+<h2 id="build-better-habits-with-data">Build better habits with data<a class="headerlink" href="#build-better-habits-with-data" title="Permanent link">&para;</a></h2>
+<p>Aion helps you capture daily actions, measure patterns, and foster sustainable routines using a simple, extensible API-first platform. The server is designed for reliability, observability, and developer ergonomics — ideal for experimentation and iteration.</p>
+<p>Key ideas:
+- Instrumented by default (OpenTelemetry + Prometheus) so you can observe behavior and performance
+- Hexagonal (Ports &amp; Adapters) architecture that keeps business logic decoupled from transport and infrastructure
+- Developer-first workflows with codegen, generated mocks, formatters and linters</p>
+<hr />
+<h2 id="quick-links">Quick links<a class="headerlink" href="#quick-links" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Getting Started</strong>: instalação, <code>make</code> e ambiente dev.</li>
-<li><strong>Architecture</strong>: Ports &amp; Adapters, camadas e convenções.</li>
-<li><strong>Platform</strong>: HTTP Router (port + chi), Observability (OTel), Config.</li>
-<li><strong>API</strong>: REST endpoints e operações GraphQL.</li>
-<li><strong>Guides</strong>: como rodar migrations, seeds, mocks, testes e cobertura.</li>
+<li>Getting started — Quick setup and local developer workflow: <code>docs/getting-started.md</code></li>
+<li>Architecture — Design, component responsibilities and request flows: <code>docs/architecture.md</code></li>
+<li>Platform — Observability, server and configuration notes: <code>docs/platform.md</code></li>
+<li>API (Swagger) — interactive API explorer: https://lechitz.github.io/AionApi/swagger-ui/</li>
+<li>Raw OpenAPI spec: <code>./swagger/swagger.yaml</code></li>
 </ul>
+<hr />
+<h2 id="quick-start-dev">Quick start (dev)<a class="headerlink" href="#quick-start-dev" title="Permanent link">&para;</a></h2>
+<p>These commands get you from repo clone to a running dev environment.</p>
+<pre><code class="language-bash"># clone
+git clone git@github.com:lechitz/AionApi.git
+cd AionApi
+
+# install recommended developer tools (goimports, golines, golangci-lint, migrate, gqlgen, mockgen, ...)
+make install-tools
+
+# fetch modules
+go mod download
+
+# start the local development stack (Postgres, API, etc.)
+make dev
+
+# apply migrations and optionally seed sample data
+export MIGRATION_DB=&quot;postgres://aion:aion@localhost:5432/aionapi?sslmode=disable&quot;
+make migrate-up
+make seed-all
+
+# health check
+curl -s http://localhost:8080/aion/health | jq
+</code></pre>
 <blockquote>
-<p>Edite livremente esta página e adicione novas em <code>docs/</code>.</p>
+<p>Note: <code>make install-tools</code> is a convenient alias for the repository tooling installer (<code>tools-install</code> in <code>makefiles/tooling.mk</code>).</p>
 </blockquote>
+<hr />
+<h2 id="explore-the-api">Explore the API<a class="headerlink" href="#explore-the-api" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Live interactive API (Swagger UI): https://lechitz.github.io/AionApi/swagger-ui/</li>
+<li>OpenAPI spec (raw): <code>https://raw.githubusercontent.com/lechitz/AionApi/main/swagger/swagger.yaml</code></li>
+</ul>
+<hr />
+<h2 id="preview-this-documentation-locally">Preview this documentation locally<a class="headerlink" href="#preview-this-documentation-locally" title="Permanent link">&para;</a></h2>
+<p>If you want to preview the MkDocs site while editing:</p>
+<pre><code class="language-bash"># ensure mkdocs + mkdocs-material are installed in your environment
+mkdocs serve
+# open http://127.0.0.1:8000 in the browser
+</code></pre>
+<hr />
 
 
 

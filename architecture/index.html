@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#architecture" class="md-skip">
+        <a href="#architecture-aionapi" class="md-skip">
           Skip to content
         </a>
       
@@ -312,46 +312,55 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-high-level-layout" class="md-nav__link">
+  <a href="#high-level-layout" class="md-nav__link">
     <span class="md-ellipsis">
-      1) High-level layout
+      High-level layout
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-hexagonal-ports-adapters" class="md-nav__link">
+  <a href="#design-principles" class="md-nav__link">
     <span class="md-ellipsis">
-      2) Hexagonal (Ports &amp; Adapters)
+      Design principles
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-request-lifecycles" class="md-nav__link">
+  <a href="#components-and-responsibilities" class="md-nav__link">
     <span class="md-ellipsis">
-      3) Request lifecycles
+      Components and responsibilities
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="3) Request lifecycles">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-lifecycle-detailed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request lifecycle (detailed)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Request lifecycle (detailed)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#31-rest-example-update-user-password" class="md-nav__link">
+  <a href="#rest-flow-example-update-password" class="md-nav__link">
     <span class="md-ellipsis">
-      3.1 REST (example: Update user password)
+      REST flow (example: Update password)
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#32-graphql-example-create-category" class="md-nav__link">
+  <a href="#graphql-flow-example-create-category" class="md-nav__link">
     <span class="md-ellipsis">
-      3.2 GraphQL (example: Create category)
+      GraphQL flow (example: Create Category)
     </span>
   </a>
   
@@ -363,99 +372,90 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-platform-layer" class="md-nav__link">
+  <a href="#error-model-and-http-mapping" class="md-nav__link">
     <span class="md-ellipsis">
-      4) Platform layer
+      Error model and HTTP mapping
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-persistence-data-rules" class="md-nav__link">
+  <a href="#persistence-and-migrations" class="md-nav__link">
     <span class="md-ellipsis">
-      5) Persistence &amp; data rules
+      Persistence and migrations
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-security-auth-http" class="md-nav__link">
+  <a href="#authentication-security" class="md-nav__link">
     <span class="md-ellipsis">
-      6) Security &amp; Auth (HTTP)
+      Authentication &amp; security
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-observability" class="md-nav__link">
+  <a href="#observability" class="md-nav__link">
     <span class="md-ellipsis">
-      7) Observability
+      Observability
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#8-errors-responses" class="md-nav__link">
+  <a href="#testing-strategy" class="md-nav__link">
     <span class="md-ellipsis">
-      8) Errors &amp; responses
+      Testing strategy
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-concurrency-context" class="md-nav__link">
+  <a href="#code-generation-developer-tooling" class="md-nav__link">
     <span class="md-ellipsis">
-      9) Concurrency &amp; context
+      Code generation &amp; developer tooling
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#10-testing-strategy" class="md-nav__link">
+  <a href="#adding-a-new-bounded-context-checklist" class="md-nav__link">
     <span class="md-ellipsis">
-      10) Testing strategy
+      Adding a new bounded context — checklist
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#11-code-generation-tooling" class="md-nav__link">
+  <a href="#deployment-and-operational-notes" class="md-nav__link">
     <span class="md-ellipsis">
-      11) Code generation &amp; tooling
+      Deployment and operational notes
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#12-adding-a-new-bounded-context-checklist" class="md-nav__link">
+  <a href="#diagram-mermaid" class="md-nav__link">
     <span class="md-ellipsis">
-      12) Adding a new bounded context (checklist)
+      Diagram (Mermaid)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#13-style-conventions" class="md-nav__link">
+  <a href="#conventions-style" class="md-nav__link">
     <span class="md-ellipsis">
-      13) Style &amp; conventions
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#14-glossary" class="md-nav__link">
-    <span class="md-ellipsis">
-      14) Glossary
+      Conventions &amp; style
     </span>
   </a>
   
@@ -496,46 +496,55 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-high-level-layout" class="md-nav__link">
+  <a href="#high-level-layout" class="md-nav__link">
     <span class="md-ellipsis">
-      1) High-level layout
+      High-level layout
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-hexagonal-ports-adapters" class="md-nav__link">
+  <a href="#design-principles" class="md-nav__link">
     <span class="md-ellipsis">
-      2) Hexagonal (Ports &amp; Adapters)
+      Design principles
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-request-lifecycles" class="md-nav__link">
+  <a href="#components-and-responsibilities" class="md-nav__link">
     <span class="md-ellipsis">
-      3) Request lifecycles
+      Components and responsibilities
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="3) Request lifecycles">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-lifecycle-detailed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request lifecycle (detailed)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Request lifecycle (detailed)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#31-rest-example-update-user-password" class="md-nav__link">
+  <a href="#rest-flow-example-update-password" class="md-nav__link">
     <span class="md-ellipsis">
-      3.1 REST (example: Update user password)
+      REST flow (example: Update password)
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#32-graphql-example-create-category" class="md-nav__link">
+  <a href="#graphql-flow-example-create-category" class="md-nav__link">
     <span class="md-ellipsis">
-      3.2 GraphQL (example: Create category)
+      GraphQL flow (example: Create Category)
     </span>
   </a>
   
@@ -547,99 +556,90 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-platform-layer" class="md-nav__link">
+  <a href="#error-model-and-http-mapping" class="md-nav__link">
     <span class="md-ellipsis">
-      4) Platform layer
+      Error model and HTTP mapping
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-persistence-data-rules" class="md-nav__link">
+  <a href="#persistence-and-migrations" class="md-nav__link">
     <span class="md-ellipsis">
-      5) Persistence &amp; data rules
+      Persistence and migrations
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-security-auth-http" class="md-nav__link">
+  <a href="#authentication-security" class="md-nav__link">
     <span class="md-ellipsis">
-      6) Security &amp; Auth (HTTP)
+      Authentication &amp; security
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-observability" class="md-nav__link">
+  <a href="#observability" class="md-nav__link">
     <span class="md-ellipsis">
-      7) Observability
+      Observability
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#8-errors-responses" class="md-nav__link">
+  <a href="#testing-strategy" class="md-nav__link">
     <span class="md-ellipsis">
-      8) Errors &amp; responses
+      Testing strategy
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-concurrency-context" class="md-nav__link">
+  <a href="#code-generation-developer-tooling" class="md-nav__link">
     <span class="md-ellipsis">
-      9) Concurrency &amp; context
+      Code generation &amp; developer tooling
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#10-testing-strategy" class="md-nav__link">
+  <a href="#adding-a-new-bounded-context-checklist" class="md-nav__link">
     <span class="md-ellipsis">
-      10) Testing strategy
+      Adding a new bounded context — checklist
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#11-code-generation-tooling" class="md-nav__link">
+  <a href="#deployment-and-operational-notes" class="md-nav__link">
     <span class="md-ellipsis">
-      11) Code generation &amp; tooling
+      Deployment and operational notes
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#12-adding-a-new-bounded-context-checklist" class="md-nav__link">
+  <a href="#diagram-mermaid" class="md-nav__link">
     <span class="md-ellipsis">
-      12) Adding a new bounded context (checklist)
+      Diagram (Mermaid)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#13-style-conventions" class="md-nav__link">
+  <a href="#conventions-style" class="md-nav__link">
     <span class="md-ellipsis">
-      13) Style &amp; conventions
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#14-glossary" class="md-nav__link">
-    <span class="md-ellipsis">
-      14) Glossary
+      Conventions &amp; style
     </span>
   </a>
   
@@ -664,209 +664,194 @@
   
 
 
-<h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h1>
-<p>This document explains how AionApi is organized and how requests move through the system. It’s a practical guide for contributors who want to understand the Hexagonal (Ports &amp; Adapters) structure, observability, config, and testing strategy.</p>
+<h1 id="architecture-aionapi">Architecture — AionApi<a class="headerlink" href="#architecture-aionapi" title="Permanent link">&para;</a></h1>
+<p>This document describes the architectural principles, component responsibilities, and runtime flows in AionApi. It is intended as a technical reference for maintainers and for guiding future extensions.</p>
 <blockquote>
-<p>TL;DR</p>
+<p>Summary</p>
 <ul>
-<li><strong>Ports &amp; Adapters</strong> with clean, testable boundaries  </li>
-<li><strong>Primary adapters</strong> (HTTP/GraphQL) stay thin; <strong>Usecases</strong> hold business rules; <strong>Secondary adapters</strong> isolate infra  </li>
-<li><strong>Observability-first</strong>: OpenTelemetry traces + structured logs, Prometheus metrics, Grafana dashboards  </li>
-<li><strong>Consistency</strong>: shared error types, response helpers, constants, and middleware</li>
+<li>Hexagonal (Ports &amp; Adapters) architecture: core business logic is independent of transport and infrastructure.</li>
+<li>Primary adapters (HTTP / GraphQL) are thin; usecases contain business rules and orchestrations.</li>
+<li>Observability-first: OpenTelemetry tracing, Prometheus metrics, and Grafana dashboards.</li>
+<li>Consistent error model, standard response envelope, and strict use of context propagation.</li>
 </ul>
 </blockquote>
 <hr />
-<h2 id="1-high-level-layout">1) High-level layout<a class="headerlink" href="#1-high-level-layout" title="Permanent link">&para;</a></h2>
-<pre><code>
-cmd/                     # app entrypoint
-docs/                    # public documentation
-infrastructure/          # docker, migrations, otel/prometheus/grafana, loki/fluentbit
-internal/                # bounded contexts (auth, user, category, tag, admin)
-   adapter/              # general adapter structure
-      |_ primary/         # inbound adapters (http / graphql)
-      |_ secondary/       # outbound adapters (db, cache, token, logger)
-   &lt;bounded-context&gt;/    # domain + ports + usecases (business logic)
-   platform/             # cross-cutting platform: config, bootstrap, server, observability
-   shared/               # reusable helpers: constants, responses, validation, errors
-makefiles/               # grouped Make targets used by the root Makefile
-tests/                   # unit test suites, mocks, fixtures, coverage
-
+<h2 id="high-level-layout">High-level layout<a class="headerlink" href="#high-level-layout" title="Permanent link">&para;</a></h2>
+<p>Top-level layout (simplified):</p>
+<pre><code>AionApi/
+├─ cmd/                      # application entrypoints
+├─ internal/                 # bounded contexts and platform (bootstrap, server, config)
+│  ├─ &lt;bounded-context&gt;/     # auth, user, category, tag, habit, admin ...
+│  │  ├─ core/               # business logic
+|  |  │  ├─ domain/          # entities, value objects
+│  │  │  ├─ ports/           # input/output interfaces
+│  │  │  └─ usecase/         # application services
+│  │  ├─ adapter/            # primary (http/graphql) + secondary (db/cache/token)
+│  └─ platform/              # config, bootstrap, server, observability
+├─ infrastructure/           # docker, migrations, observability resources
+├─ docs/                     # MkDocs site
+├─ swagger/                  # OpenAPI artifacts
+└─ tests/                    # test helpers and generated mocks
 </code></pre>
-<p><strong>Bounded contexts currently present:</strong> <code>auth</code>, <code>user</code>, <code>category</code>, <code>tag</code>, <code>habit</code>, <code>admin</code>.</p>
+<p>Bounded contexts include <code>auth</code>, <code>user</code>, <code>category</code>, <code>tag</code>, <code>habit</code>, and <code>admin</code>. Each context defines its own domain model, ports, and adapters.</p>
 <hr />
-<h2 id="2-hexagonal-ports-adapters">2) Hexagonal (Ports &amp; Adapters)<a class="headerlink" href="#2-hexagonal-ports-adapters" title="Permanent link">&para;</a></h2>
-<p><strong>Why:</strong> decouple business logic from frameworks and vendors; make the core testable and stable.</p>
+<h2 id="design-principles">Design principles<a class="headerlink" href="#design-principles" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Core / Usecases</strong> (<code>internal/*/core/usecase</code>):<br />
-  Implements input-port interfaces. Pure go, no HTTP/ORM/Redis types. Accepts <code>context.Context</code>, returns domain or semantic errors.</li>
-<li><strong>Primary Adapters</strong> (<code>internal/*/adapter/primary</code>):<br />
-  Transport-facing (HTTP or GraphQL). Decode/validate → call input ports → map domain → response. <strong>No business rules</strong> here.</li>
-<li><strong>Secondary Adapters</strong> (<code>internal/*/adapter/secondary</code>):<br />
-  Implement output-port interfaces (DB/Cache/Token/Logger). Hide GORM/Redis/JWT behind small interfaces.</li>
+<li>Explicit contracts: the core defines input and output ports (interfaces) so implementations can vary without changing business code.</li>
+<li>Single responsibility: adapters are responsible only for translation and transport concerns; usecases handle business rules.</li>
+<li>Testability: core logic is pure Go and easy to unit-test with table-driven tests + mocks for ports.</li>
+<li>Observability: every handler, usecase and repository opens a span and adds structured attributes.</li>
+<li>Config-driven timeouts and limits: no hard-coded timeouts; read from configuration with safe defaults.</li>
 </ul>
-<p><strong>Shared contracts &amp; helpers</strong> live under:
-- <code>internal/shared/sharederrors</code> — semantic errors (validation, not_found, conflict, unauthorized, internal, …)
-- <code>internal/shared/httpresponse</code> — opinionated JSON envelope + error→HTTP mapping
-- <code>internal/shared/constants</code> — keys for logs/headers/claims/tracing
-- <code>internal/shared/handlerhelpers</code> — boundary validation + tracing-friendly responses</p>
 <hr />
-<h2 id="3-request-lifecycles">3) Request lifecycles<a class="headerlink" href="#3-request-lifecycles" title="Permanent link">&para;</a></h2>
-<h3 id="31-rest-example-update-user-password">3.1 REST (example: Update user password)<a class="headerlink" href="#31-rest-example-update-user-password" title="Permanent link">&para;</a></h3>
+<h2 id="components-and-responsibilities">Components and responsibilities<a class="headerlink" href="#components-and-responsibilities" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Core (Usecases)</li>
+<li>Located at <code>internal/&lt;ctx&gt;/core/usecase</code>.</li>
+<li>
+<p>Implement application flows, validations, and orchestrations. Return domain values or typed semantic errors.</p>
+</li>
+<li>
+<p>Primary adapters (HTTP / GraphQL)</p>
+</li>
+<li>Located at <code>internal/&lt;ctx&gt;/adapter/primary</code>.</li>
+<li>
+<p>Decode requests, validate DTOs, start traces/spans, call usecases, map domain → transport response.</p>
+</li>
+<li>
+<p>Secondary adapters (DB, Cache, Token, Logger)</p>
+</li>
+<li>Located at <code>internal/&lt;ctx&gt;/adapter/secondary</code>.</li>
+<li>
+<p>Implement output ports declared by the core. They keep infra-specific code isolated (GORM, redis client, external SDKs).</p>
+</li>
+<li>
+<p>Platform layer</p>
+</li>
+<li>
+<p><code>internal/platform</code> contains bootstrap wiring, server setup (HTTP / GraphQL), shared middleware, config loader, and observability wiring.</p>
+</li>
+<li>
+<p>Shared packages</p>
+</li>
+<li><code>internal/shared/*</code> holds shared helpers: <code>sharederrors</code>, <code>httpresponse</code>, <code>constants</code>, and test helpers.</li>
+</ul>
+<hr />
+<h2 id="request-lifecycle-detailed">Request lifecycle (detailed)<a class="headerlink" href="#request-lifecycle-detailed" title="Permanent link">&para;</a></h2>
+<h3 id="rest-flow-example-update-password">REST flow (example: Update password)<a class="headerlink" href="#rest-flow-example-update-password" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>HTTP route</strong> (primary adapter)<br />
-<code>internal/user/adapter/primary/http/handler/update_password_user_handler.go</code></li>
-<li><strong>DTO validation</strong><br />
-<code>internal/user/adapter/primary/http/dto/update_password_dto.go</code></li>
-<li><strong>Call usecase</strong><br />
-<code>internal/user/core/usecase/update_password.go</code></li>
-<li><strong>Usecase orchestration</strong>  </li>
-<li><code>repo.GetByID</code> → <code>hasher.Compare</code> → <code>hasher.Hash</code> → <code>repo.Update</code>  </li>
-<li><code>tokenProvider.Generate</code> → <code>authStore.Save</code></li>
-<li><strong>Response mapping</strong><br />
-<code>internal/shared/httpresponse</code> writes a standardized JSON and status code</li>
-<li><strong>Observability</strong><br />
-   Span created in handler &amp; usecase; canonical attributes added (user_id, operation, http_status)</li>
+<li>HTTP request arrives at handler (<code>adapter/primary/http</code>).</li>
+<li>Handler parses the request and validates the DTO.</li>
+<li>Handler starts a trace span and sets common attributes (route, method, user_id if available).</li>
+<li>Handler calls the usecase input port with <code>context.Context</code>.</li>
+<li>Usecase executes domain logic, calling output ports (repositories, caches, token provider).</li>
+<li>Output adapters perform context-aware IO (e.g. <code>db.WithContext(ctx)</code>) and map infra errors to semantic domain errors.</li>
+<li>Usecase returns domain values or a semantic error.</li>
+<li>Handler maps results to a standardized JSON envelope (<code>internal/shared/httpresponse</code>) and ends the span.</li>
 </ol>
-<h3 id="32-graphql-example-create-category">3.2 GraphQL (example: Create category)<a class="headerlink" href="#32-graphql-example-create-category" title="Permanent link">&para;</a></h3>
+<h3 id="graphql-flow-example-create-category">GraphQL flow (example: Create Category)<a class="headerlink" href="#graphql-flow-example-create-category" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Resolver → GraphQL handler → DTO mapping → usecase → repository → domain mapping → resolver returns GraphQL model.</li>
+<li>GraphQL middleware should also start a top-level span and propagate context to resolvers.</li>
+</ul>
+<hr />
+<h2 id="error-model-and-http-mapping">Error model and HTTP mapping<a class="headerlink" href="#error-model-and-http-mapping" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The repository uses typed semantic errors (validation, not_found, conflict, unauthorized, internal, etc.) defined in <code>internal/shared/sharederrors</code>.</li>
+<li>The adapter maps these semantic errors to HTTP status codes consistently:</li>
+<li>validation → 400</li>
+<li>unauthorized → 401</li>
+<li>forbidden → 403</li>
+<li>not_found → 404</li>
+<li>conflict → 409</li>
+<li>internal → 500</li>
+<li>All responses use a consistent envelope shape to simplify clients and monitoring.</li>
+</ul>
+<hr />
+<h2 id="persistence-and-migrations">Persistence and migrations<a class="headerlink" href="#persistence-and-migrations" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Migrations are SQL files under <code>infrastructure/db/migrations</code> and applied with the <code>migrate</code> CLI via Make targets (<code>make migrate-up</code>).</li>
+<li>Repositories implement explicit mapping between DB models and domain models to keep the domain clean of ORM types.</li>
+<li>Repositories always use context-aware DB operations and return translated semantic errors.</li>
+<li>Soft deletes: the application ensures reads exclude logically deleted rows and updates return not-found when no rows were affected.</li>
+</ul>
+<hr />
+<h2 id="authentication-security">Authentication &amp; security<a class="headerlink" href="#authentication-security" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Authentication usecase issues access and refresh tokens through an <code>AuthProvider</code> output port.</li>
+<li>Tokens may be stored / referenced in a cache (<code>AuthStore</code>) for revocation support.</li>
+<li>HTTP authentication middleware validates <code>Authorization: Bearer &lt;token&gt;</code> and populates context with <code>user_id</code> and claims.</li>
+<li>Secrets must never be logged (the logger and helpers ensure sensitive fields are redacted).</li>
+<li>Follow OWASP guidance for JWT usage, cookie flags and CORS policies.</li>
+</ul>
+<hr />
+<h2 id="observability">Observability<a class="headerlink" href="#observability" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Tracing: OpenTelemetry spans are created at the handler and propagated into usecases and repositories. Naming convention: <code>aionapi.&lt;context&gt;.&lt;component&gt;</code> (e.g. <code>aionapi.user.usecase</code>).</li>
+<li>Metrics: Prometheus instrumentation and scrape config live under <code>infrastructure/observability/prometheus</code>.</li>
+<li>Dashboards &amp; logs: Grafana dashboards and Fluent Bit/Loki configs are under <code>infrastructure/observability</code>.</li>
+</ul>
+<p>Suggested local env to enable OTLP export:</p>
+<pre><code class="language-bash">export OTEL_EXPORTER_OTLP_ENDPOINT=&quot;http://localhost:4318&quot;
+export OTEL_SERVICE_NAME=&quot;AionApi&quot;
+export OTEL_SERVICE_VERSION=&quot;0.1.0&quot;
+</code></pre>
+<hr />
+<h2 id="testing-strategy">Testing strategy<a class="headerlink" href="#testing-strategy" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Unit tests: focus on usecases; use gomock-generated mocks for output ports (<code>tests/mocks</code>), and helper suites in <code>tests/setup</code>.</li>
+<li>Integration tests: exercise adapters and real infra (run against Dockerized Postgres/Redis). Use a dedicated test DB and cleanup strategy.</li>
+<li>End-to-end / smoke tests: run against the full <code>make dev</code> stack and validate common flows (health, login, create user, basic GraphQL ops).</li>
+<li>Coverage: <code>make test-cover</code> produces coverage artifacts in <code>tests/coverage/</code>.</li>
+</ul>
+<hr />
+<h2 id="code-generation-developer-tooling">Code generation &amp; developer tooling<a class="headerlink" href="#code-generation-developer-tooling" title="Permanent link">&para;</a></h2>
+<ul>
+<li>GraphQL: schema fragments live in contexts; <code>make graphql</code> collects them and runs <code>gqlgen</code>.</li>
+<li>Mocks: <code>make mocks</code> runs <code>mockgen</code> and stores generated mocks under <code>tests/mocks</code>.</li>
+<li>Quality: <code>make lint</code>, <code>make lint-fix</code>, <code>make format</code> and <code>golangci-lint</code> configuration are part of the developer workflow.</li>
+</ul>
+<hr />
+<h2 id="adding-a-new-bounded-context-checklist">Adding a new bounded context — checklist<a class="headerlink" href="#adding-a-new-bounded-context-checklist" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Resolver calls handler</strong><br />
-<code>internal/category/adapter/primary/graphql/resolver/*</code> → handler <code>Create</code></li>
-<li><strong>Handler</strong> maps GraphQL input → domain input, starts span<br />
-<code>internal/category/adapter/primary/graphql/handler/create.go</code></li>
-<li><strong>Usecase</strong> applies rules and calls repo via output ports<br />
-<code>internal/category/core/usecase/create.go</code></li>
-<li><strong>Repo</strong> persists with GORM and maps DB ↔ domain<br />
-<code>internal/category/adapter/secondary/db/repository/create.go</code></li>
-<li><strong>Handler</strong> maps domain → GraphQL model and returns to resolver</li>
-</ol>
-<hr />
-<h2 id="4-platform-layer">4) Platform layer<a class="headerlink" href="#4-platform-layer" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Config</strong> (<code>internal/platform/config</code>)<br />
-  Loads &amp; validates env vars, normalizes paths/timeouts, may generate a <strong>dev-only secret</strong> if missing.</li>
-<li><strong>Bootstrap</strong> (<code>internal/platform/bootstrap</code>)<br />
-  Wires concrete adapters (DB, cache, token, hasher, logger) and constructs services (usecases).</li>
-<li><strong>HTTP server</strong> (<code>internal/platform/server/http</code>)  </li>
-<li><strong>Router port</strong> + <strong>chi adapter</strong>  </li>
-<li><strong>Generic handlers</strong>: <code>/health</code>, 404/405, error/recovery  </li>
-<li><strong>Middlewares</strong>: <code>requestid</code>, <code>recovery</code>  </li>
-<li><strong>Composer</strong> mounts all context routes and GraphQL</li>
-<li><strong>GraphQL server</strong> (<code>internal/platform/server/graph</code>)<br />
-  Gathers schema modules from contexts; <code>make graphql</code> runs gqlgen and assembles the executable schema.</li>
-<li><strong>Observability</strong> (<code>internal/platform/observability</code>)<br />
-  OTel tracer/meter providers (OTLP over HTTP), resource attributes, and helper utilities.</li>
-</ul>
-<hr />
-<h2 id="5-persistence-data-rules">5) Persistence &amp; data rules<a class="headerlink" href="#5-persistence-data-rules" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>ORM</strong>: GORM models live in <code>internal/&lt;context&gt;/adapter/secondary/db/model</code>.<br />
-  Mapping functions in <code>mapper/</code> translate DB ↔ domain; the domain never sees GORM structs.</li>
-<li><strong>Repositories</strong>:<br />
-  Implement CRUD with <strong>context-aware</strong> DB calls (<code>db.WithContext(ctx)</code>), set span attributes, and translate driver errors to <code>sharederrors</code>.</li>
-<li><strong>Soft delete</strong>:<br />
-  Reads must exclude <code>deleted_at</code>; updates return not-found when rows affected = 0.</li>
-<li><strong>Migrations</strong>:<br />
-  SQL files in <code>infrastructure/db/migrations</code>. Use <code>make migrate-up</code> / <code>make migrate-down</code>.<br />
-  DSN provided via <code>MIGRATION_DB</code> (see <code>makefiles/migrate.mk</code>).</li>
-</ul>
-<hr />
-<h2 id="6-security-auth-http">6) Security &amp; Auth (HTTP)<a class="headerlink" href="#6-security-auth-http" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Login</strong>: <code>auth</code> usecase verifies credentials, issues token (<code>AuthProvider</code>), stores reference in cache (<code>AuthStore</code>).  </li>
-<li><strong>Middleware</strong> (primary HTTP adapter): validates <code>Authorization: Bearer &lt;token&gt;</code>, resolves <code>user_id</code>, injects into <code>context</code>.  </li>
-<li><strong>Cookies</strong>: helpers in <code>internal/platform/server/http/helpers/httpresponse</code> to set secure/HTTPOnly cookies when applicable.  </li>
-<li><strong>Never log secrets</strong> (passwords, raw tokens, cookie values).</li>
-</ul>
-<hr />
-<h2 id="7-observability">7) Observability<a class="headerlink" href="#7-observability" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Tracing</strong>:<br />
-  Consistent tracer names (e.g., <code>aionapi.user.usecase</code>, <code>aionapi.user.repository</code>, <code>aionapi.graphql.handler</code>).<br />
-  Each handler/usecase/repo opens a span, sets canonical attributes (operation, ids, status), records errors.</li>
-<li><strong>Metrics</strong>:<br />
-  Prometheus scrape via <code>infrastructure/observability/prometheus/prometheus.yml</code>.  </li>
-<li><strong>Dashboards</strong>:<br />
-  Grafana provisioning + a sample dashboard under <code>infrastructure/observability/grafana/dashboards/</code>.</li>
-<li><strong>Logs</strong>:<br />
-  Structured with contextual keys from <code>shared/constants/commonkeys</code>. Fluent Bit + Loki optional.</li>
-</ul>
-<hr />
-<h2 id="8-errors-responses">8) Errors &amp; responses<a class="headerlink" href="#8-errors-responses" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Domain errors</strong> come from <code>shared/sharederrors</code>.  </li>
-<li><strong>HTTP mapping</strong> is centralized in <code>shared/httpresponse</code>:  </li>
-<li><code>validation</code> → 400  </li>
-<li><code>unauthorized</code> → 401  </li>
-<li><code>forbidden</code> → 403  </li>
-<li><code>not_found</code> → 404  </li>
-<li><code>conflict</code> → 409  </li>
-<li><code>rate_limited</code> → 429  </li>
-<li><code>internal</code> → 500</li>
-<li><strong>Consistency</strong>: All adapters return the same envelope shape.</li>
-</ul>
-<hr />
-<h2 id="9-concurrency-context">9) Concurrency &amp; context<a class="headerlink" href="#9-concurrency-context" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Always pass <code>context.Context</code> through handlers, usecases, and repos.  </li>
-<li>Use deadlines/timeouts from config (HTTP/GraphQL).  </li>
-<li><strong>Never</strong> block without honoring ctx cancellation.</li>
-</ul>
-<hr />
-<h2 id="10-testing-strategy">10) Testing strategy<a class="headerlink" href="#10-testing-strategy" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Unit tests</strong> target <strong>usecases</strong> with port <strong>mocks</strong> (gomock).<br />
-  Suites in <code>tests/setup</code> and generated mocks in <code>tests/mocks</code>.</li>
-<li><strong>Transport tests</strong> exercise handlers with fake services.  </li>
-<li><strong>Coverage</strong>: <code>make test-cover</code> → <code>tests/coverage/coverage.html</code>.  </li>
-<li><strong>GraphQL codegen</strong> + <strong>mocks</strong> are part of the local pipeline: <code>make verify</code>.</li>
-</ul>
-<hr />
-<h2 id="11-code-generation-tooling">11) Code generation &amp; tooling<a class="headerlink" href="#11-code-generation-tooling" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>GraphQL</strong>: <code>make graphql</code> copies <code>*.graphqls</code> from contexts into the platform graph module and runs <code>gqlgen</code> + <code>go mod tidy</code>.</li>
-<li><strong>Mocks</strong>: <code>make mocks</code> generates gomock doubles for all output ports under <code>tests/mocks/</code> (flat or namespaced mode).</li>
-<li><strong>Quality</strong>: <code>make format</code>, <code>make lint</code>, <code>make lint-fix</code>.</li>
-<li><strong>Dev/Prod stacks</strong>: <code>make dev</code>, <code>make prod</code> orchestrate Docker Compose with env files under <code>infrastructure/docker/environments/</code>.</li>
-</ul>
-<hr />
-<h2 id="12-adding-a-new-bounded-context-checklist">12) Adding a new bounded context (checklist)<a class="headerlink" href="#12-adding-a-new-bounded-context-checklist" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Core</strong>  </li>
-<li><code>internal/&lt;ctx&gt;/core/domain</code> (entities/VOs)  </li>
-<li><code>internal/&lt;ctx&gt;/core/ports</code> (input/output)  </li>
-<li><code>internal/&lt;ctx&gt;/core/usecase</code> (service + validations + errors)</li>
-<li><strong>Adapters</strong>  </li>
-<li>Primary: <code>http</code> and/or <code>graphql</code> (DTOs, handlers, resolver, thin mapping)  </li>
-<li>Secondary: <code>db</code> (model/mapper/repository), <code>cache</code>, or any external port implementation</li>
-<li><strong>Platform wiring</strong>  </li>
-<li>Add repos/services in <code>internal/platform/bootstrap</code>  </li>
-<li>Mount routes in <code>internal/platform/server/http/composer.go</code> (and/or GraphQL handler)</li>
-<li><strong>Schema / codegen</strong>  </li>
-<li>If GraphQL, drop <code>schema/&lt;ctx&gt;.graphqls</code> and run <code>make graphql</code></li>
-<li><strong>Tests</strong>  </li>
-<li>Add gomock expectations &amp; table tests for usecases  </li>
-<li>Add handler tests with fake services</li>
-<li><strong>Docs</strong>  </li>
-<li>Create <code>docs/&lt;ctx&gt;.md</code> and link from <code>mkdocs.yml</code></li>
+<li>Create <code>internal/&lt;ctx&gt;/core/domain</code> for entities and value objects.</li>
+<li>Define input/output ports under <code>internal/&lt;ctx&gt;/core/ports</code>.</li>
+<li>Implement usecases in <code>internal/&lt;ctx&gt;/core/usecase</code>.</li>
+<li>Add primary adapters (<code>adapter/primary/http</code> and/or <code>graphql</code>) for transport.</li>
+<li>Add secondary adapters (<code>adapter/secondary/db</code>, <code>cache</code>, <code>token</code>) implementing the output ports.</li>
+<li>Wire concrete adapters in <code>internal/platform/bootstrap</code>.</li>
+<li>Mount routes in <code>internal/platform/server/http/composer.go</code>.</li>
+<li>Add tests and generate mocks (<code>make mocks</code>).</li>
+<li>Document the context in <code>docs/</code> and update <code>mkdocs.yml</code> nav if needed.</li>
 </ol>
 <hr />
-<h2 id="13-style-conventions">13) Style &amp; conventions<a class="headerlink" href="#13-style-conventions" title="Permanent link">&para;</a></h2>
+<h2 id="deployment-and-operational-notes">Deployment and operational notes<a class="headerlink" href="#deployment-and-operational-notes" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Primary adapters</strong>: thin, transport-only, start spans, use shared helpers, never touch ORM/cache.  </li>
-<li><strong>Usecases</strong>: pure business rules; input/output ports only; return domain + semantic errors.  </li>
-<li><strong>Secondary adapters</strong>: context-aware DB/Cache calls; map infra errors to domain errors; log metadata only.  </li>
-<li><strong>Shared constants</strong>: no magic strings (claims, headers, log keys, trace attrs).</li>
+<li>Use environment-specific config files for production vs staging vs local development.  </li>
+<li>Keep secrets in a secure vault or secrets manager (do not commit to repo).  </li>
+<li>CI jobs should run <code>make lint</code>, <code>make test</code>, and <code>make docs.gen</code> (if docs changes are present).  </li>
+<li>Consider blue/green or rolling deployment patterns for production services.</li>
 </ul>
 <hr />
-<h2 id="14-glossary">14) Glossary<a class="headerlink" href="#14-glossary" title="Permanent link">&para;</a></h2>
+<h2 id="diagram-mermaid">Diagram (Mermaid)<a class="headerlink" href="#diagram-mermaid" title="Permanent link">&para;</a></h2>
+<p>You can embed a Mermaid diagram into MkDocs (if plugin enabled). Example:</p>
+<pre><code class="language-mermaid">flowchart LR
+  Client --&gt;|HTTP/GraphQL| Handler[Handler (primary adapter)]
+  Handler --&gt;|calls| Usecase[Usecase (core)]
+  Usecase --&gt; Repo[Repository (secondary adapter)]
+  Usecase --&gt; AuthProvider[AuthProvider (secondary)]
+  Repo --&gt; DB[(Postgres)]
+  AuthProvider --&gt; Cache[(Redis)]
+</code></pre>
+<hr />
+<h2 id="conventions-style">Conventions &amp; style<a class="headerlink" href="#conventions-style" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Primary adapter</strong>: inbound interface (HTTP/GraphQL) that calls the domain via input ports.  </li>
-<li><strong>Usecase (core)</strong>: application/business logic that coordinates ports.  </li>
-<li><strong>Secondary adapter</strong>: outbound implementation for repositories or external services.  </li>
-<li><strong>Port</strong>: interface owned by the domain that expresses what it needs (output) or offers (input).  </li>
-<li><strong>Semantic error</strong>: a typed error category (<code>validation</code>, <code>not_found</code>, …) that maps to consistent transports.</li>
+<li>Always propagate <code>context.Context</code> and honor cancellations and deadlines.  </li>
+<li>Keep handlers thin: validation, tracing, DTO mapping, usecase invocation, response mapping.  </li>
+<li>Keep usecases pure from infra concerns; use small interfaces for side effects.  </li>
+<li>Avoid magic strings — centralize keys in <code>internal/shared/constants</code>.</li>
 </ul>
-<p>```</p>
+<hr />
 
 
 
