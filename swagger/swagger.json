@@ -1,0 +1,682 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Public and internal REST API for AionAPI. Swagger (OpenAPI 3.x) is generated via swaggo.",
+        "title": "AionAPI — REST API Documentation",
+        "termsOfService": "https://github.com/lechitz/AionApi",
+        "contact": {
+            "name": "Lechitz",
+            "url": "https://github.com/lechitz",
+            "email": "felipe.lechitz@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "0.1.0"
+    },
+    "basePath": "/api/v1",
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Validates credentials and issues a session token (JWT or cookie). On success, returns user-facing info and sets `auth_token` cookie.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Authenticate user (login)",
+                "parameters": [
+                    {
+                        "description": "Login payload",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login succeeded",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserResponse"
+                        },
+                        "headers": {
+                            "Set-Cookie": {
+                                "type": "string",
+                                "description": "auth_token=\u003copaque or JWT\u003e; Path=/; HttpOnly; Secure (if enabled)"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Invalidates the current authenticated session (token or cookie) and clears the auth cookie.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout current user",
+                "responses": {
+                    "204": {
+                        "description": "Logout succeeded (no content)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "Set-Cookie": {
+                                "type": "string",
+                                "description": "auth_token=deleted; Path=/; Max-Age=0; HttpOnly; Secure (if enabled)"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized or missing user context",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Updates the authenticated user's profile fields. At least one field must be provided.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update current user",
+                "parameters": [
+                    {
+                        "description": "Fields to update",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User updated",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or no fields to update",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized or missing user context",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict updating user",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Marks the current authenticated user as soft-deleted and clears the auth cookie. Returns 204 No Content.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Soft-delete current user",
+                "responses": {
+                    "204": {
+                        "description": "User soft-deleted (no content)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "Set-Cookie": {
+                                "type": "string",
+                                "description": "auth_token=deleted; Path=/; Max-Age=0; HttpOnly; Secure (if enabled)"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized or missing user context",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Returns a list containing all user resources.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List all users",
+                "responses": {
+                    "200": {
+                        "description": "Users fetched",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.GetUserResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/create": {
+            "post": {
+                "description": "Registers a new user account. On success, returns basic user information.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create user",
+                "parameters": [
+                    {
+                        "description": "User payload",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Username or email already exists",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/password": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Validates the current password and updates it to a new one. On success, the auth cookie is refreshed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update current user's password",
+                "parameters": [
+                    {
+                        "description": "Current and new passwords",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdatePasswordUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password updated; auth cookie refreshed",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "Set-Cookie": {
+                                "type": "string",
+                                "description": "auth_token=\u003cnew\u003e; Path=/; HttpOnly; Secure (if enabled)"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized or missing user context",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict updating password",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{user_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Returns a single user resource by its unique identifier.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User fetched",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.GetUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserRequest": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "description": "Password is the credential paired with the username.\nExample: \"P@ssw0rd123\"",
+                    "type": "string",
+                    "example": "P@ssw0rd123"
+                },
+                "username": {
+                    "description": "Username is the unique identifier used to authenticate the user.\nExample: \"joaopereira\"",
+                    "type": "string",
+                    "example": "joaopereira"
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID is the unique identifier for the authenticated user.\nExample: 42",
+                    "type": "integer",
+                    "example": 42
+                },
+                "name": {
+                    "description": "Name is a friendly display name for the authenticated user.\nExample: \"João Pereira\"",
+                    "type": "string",
+                    "example": "João Pereira"
+                },
+                "roles": {
+                    "description": "Roles are the permissions or roles assigned to the user.\nExample: [\"admin\", \"user\"]",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "admin",
+                        "user"
+                    ]
+                },
+                "token": {
+                    "description": "Token is the JSON Web Token used for authenticating subsequent requests.\nExample: \"eyJhbGciOi...\"",
+                    "type": "string",
+                    "example": "eyJhbGciOi..."
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email is the user's contact email address.\nExample: \"dev@aion.local\"",
+                    "type": "string",
+                    "example": "dev@aion.local"
+                },
+                "name": {
+                    "description": "Name is the human-friendly display name of the user.\nExample: \"João Pereira\"",
+                    "type": "string",
+                    "example": "João Pereira"
+                },
+                "password": {
+                    "description": "Password is the user's credential (minimum length: 8).\nExample: \"P@ssw0rd123\"",
+                    "type": "string",
+                    "example": "P@ssw0rd123"
+                },
+                "username": {
+                    "description": "Username is the unique handle for login and identification.\nExample: \"lechitz\"",
+                    "type": "string",
+                    "example": "lechitz"
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email is the created user's email address.\nExample: \"dev@aion.local\"",
+                    "type": "string",
+                    "example": "dev@aion.local"
+                },
+                "id": {
+                    "description": "ID is the created user's identifier.\nExample: 42",
+                    "type": "integer",
+                    "example": 42
+                },
+                "name": {
+                    "description": "Name is the created user's display name.\nExample: \"João Pereira\"",
+                    "type": "string",
+                    "example": "João Pereira"
+                },
+                "username": {
+                    "description": "Username is the created user's unique handle.\nExample: \"lechitz\"",
+                    "type": "string",
+                    "example": "lechitz"
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.GetUserResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt is the timestamp when the user was created.\nFormat: date-time. Example: \"2024-01-02T15:04:05Z\".",
+                    "type": "string",
+                    "example": "2024-01-02T15:04:05Z"
+                },
+                "email": {
+                    "description": "Email is the user's email address.\nExample: \"joaopereira@aion.local\".",
+                    "type": "string",
+                    "example": "joaopereira@aion.local"
+                },
+                "name": {
+                    "description": "Name is the user's display name.\nExample: \"João Pereira\".",
+                    "type": "string",
+                    "example": "João Pereira"
+                },
+                "user_id": {
+                    "description": "ID is the user's identifier.\nExample: 42.",
+                    "type": "integer",
+                    "example": 42
+                },
+                "username": {
+                    "description": "Username is the user's unique handle.\nExample: \"joaopereira\".",
+                    "type": "string",
+                    "example": "joaopereira"
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdatePasswordUserRequest": {
+            "type": "object",
+            "properties": {
+                "new_password": {
+                    "description": "NewPassword is the new password to be set.\nExample: \"N3wP@ssw0rd456\"",
+                    "type": "string",
+                    "example": "N3wP@ssw0rd456"
+                },
+                "password": {
+                    "description": "Password is the current password for the user.\nExample: \"P@ssw0rd123\"",
+                    "type": "string",
+                    "example": "P@ssw0rd123"
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email is the new email address for the user.\nExample: \"alice@example.com\"",
+                    "type": "string",
+                    "example": "alice@example.com"
+                },
+                "name": {
+                    "description": "Name is the new display name for the user.\nExample: \"Alice Doe\"",
+                    "type": "string",
+                    "example": "Alice Doe"
+                },
+                "username": {
+                    "description": "Username is the new unique handle for the user.\nExample: \"alice\"",
+                    "type": "string",
+                    "example": "alice"
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email is the current email after the update (if changed).\nExample: \"alice@example.com\"",
+                    "type": "string",
+                    "example": "alice@example.com"
+                },
+                "name": {
+                    "description": "Name is the current display name after the update (if changed).\nExample: \"Alice Doe\"",
+                    "type": "string",
+                    "example": "Alice Doe"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt is the timestamp when the user was updated.\nExample: \"2025-09-14T22:01:02Z\"",
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-09-14T22:01:02Z"
+                },
+                "user_id": {
+                    "description": "ID is the user's unique identifier.\nExample: 42",
+                    "type": "integer",
+                    "example": 42
+                },
+                "username": {
+                    "description": "Username is the current username after the update (if changed).\nExample: \"alice\"",
+                    "type": "string",
+                    "example": "alice"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Use \"Bearer {token}\" (JWT).",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "CookieAuth": {
+            "description": "Session-based authentication cookie (e.g., Redis-backed).",
+            "type": "apiKey",
+            "name": "auth_token",
+            "in": "cookie",
+            "x-graphqlplayground": "/graphql/  // Cross-reference to GraphQL Playground (not covered by Swagger)"
+        }
+    }
+}
