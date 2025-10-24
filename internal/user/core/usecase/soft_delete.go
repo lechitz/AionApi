@@ -22,13 +22,23 @@ func (s *Service) SoftDeleteUser(ctx context.Context, userID uint64) error {
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 	)
 
-	if err := s.authStore.Delete(ctx, userID); err != nil {
+	// Delete associated tokens
+	if err := s.authStore.Delete(ctx, userID, commonkeys.TokenTypeAccess); err != nil {
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgDeleteToken))
 		s.logger.ErrorwCtx(ctx, sharederrors.ErrMsgDeleteToken, commonkeys.Error, err.Error())
 		return err
 	}
 
+	// Delete refresh token
+	if err := s.authStore.Delete(ctx, userID, commonkeys.TokenTypeRefresh); err != nil {
+		span.RecordError(err)
+		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgDeleteToken))
+		s.logger.ErrorwCtx(ctx, sharederrors.ErrMsgDeleteToken, commonkeys.Error, err.Error())
+		return err
+	}
+
+	// Perform soft delete on user
 	if err := s.userRepository.SoftDelete(ctx, userID); err != nil {
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToSoftDeleteUser))

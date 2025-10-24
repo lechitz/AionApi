@@ -3,6 +3,7 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -16,10 +17,12 @@ func (h *Handler) MethodNotAllowedHandler(w http.ResponseWriter, r *http.Request
 		commonkeys.URLPath, r.URL.Path,
 		commonkeys.RequestID, reqID,
 	)
-	httpresponse.WriteError(
-		w,
-		ErrMethodNotAllowed,
-		MsgMethodNotAllowed,
-		h.Logger,
-	)
+
+	body := httpresponse.ResponseBody{
+		Date:    time.Now().UTC(),
+		Error:   MsgMethodNotAllowed,
+		Details: ErrMethodNotAllowed.Error(),
+		Code:    http.StatusMethodNotAllowed,
+	}
+	httpresponse.WriteJSON(w, http.StatusMethodNotAllowed, body)
 }

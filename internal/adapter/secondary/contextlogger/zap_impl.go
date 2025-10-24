@@ -128,21 +128,21 @@ func (l *ZapLoggerContextual) WarnwCtx(ctx context.Context, msg string, keysAndV
 func EnrichFieldsFromContext(ctx context.Context) []any {
 	var fields []any
 	if reqID := GetRequestID(ctx); reqID != "" {
-		fields = append(fields, ctxkeys.RequestID, reqID)
+		fields = append(fields, string(ctxkeys.RequestID), reqID)
 	}
 
 	span := trace.SpanFromContext(ctx)
 	sc := span.SpanContext()
 	if sc.IsValid() {
-		fields = append(fields, ctxkeys.TraceID, sc.TraceID().String())
-		fields = append(fields, ctxkeys.SpanID, sc.SpanID().String())
+		fields = append(fields, string(ctxkeys.TraceID), sc.TraceID().String())
+		fields = append(fields, string(ctxkeys.SpanID), sc.SpanID().String())
 	} else {
 		if traceID := GetTraceID(ctx); traceID != "" {
-			fields = append(fields, ctxkeys.TraceID, traceID)
+			fields = append(fields, string(ctxkeys.TraceID), traceID)
 		}
 	}
 	if userID := GetUserID(ctx); userID != "" {
-		fields = append(fields, ctxkeys.UserID, userID)
+		fields = append(fields, string(ctxkeys.UserID), userID)
 	}
 	return fields
 }
@@ -153,6 +153,19 @@ func GetRequestID(ctx context.Context) string {
 		if s, ok := v.(string); ok {
 			return s
 		}
+		// fallback: try to stringify
+		switch vv := v.(type) {
+		case string:
+			return vv
+		case []byte:
+			return string(vv)
+		case int:
+			return strconv.Itoa(vv)
+		case int64:
+			return strconv.FormatInt(vv, 10)
+		case uint64:
+			return strconv.FormatUint(vv, 10)
+		}
 	}
 	return ""
 }
@@ -162,6 +175,19 @@ func GetTraceID(ctx context.Context) string {
 	if v := ctx.Value(ctxkeys.TraceID); v != nil {
 		if s, ok := v.(string); ok {
 			return s
+		}
+		// fallback stringify
+		switch vv := v.(type) {
+		case string:
+			return vv
+		case []byte:
+			return string(vv)
+		case int:
+			return strconv.Itoa(vv)
+		case int64:
+			return strconv.FormatInt(vv, 10)
+		case uint64:
+			return strconv.FormatUint(vv, 10)
 		}
 	}
 	return ""
@@ -175,8 +201,12 @@ func GetUserID(ctx context.Context) string {
 			return strconv.FormatUint(id, 10)
 		case int64:
 			return strconv.FormatInt(id, 10)
+		case int:
+			return strconv.Itoa(id)
 		case string:
 			return id
+		case []byte:
+			return string(id)
 		}
 	}
 	return ""

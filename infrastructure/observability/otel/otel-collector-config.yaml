@@ -4,11 +4,18 @@ receivers:
       http:
       grpc:
 
+processors:
+  filter/health:
+    spans:
+      exclude:
+        match_type: regexp
+        span_names:
+          - "^/aion/health$"
+  batch:
+
 exporters:
   prometheus:
     endpoint: "0.0.0.0:9888"
-  logging:
-    verbosity: detailed
   otlp:
     endpoint: jaeger:4317
     tls:
@@ -18,7 +25,8 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [otlp, logging]
+      processors: ["filter/health", batch]
+      exporters: [otlp]
     metrics:
       receivers: [otlp]
-      exporters: [prometheus, logging]
+      exporters: [prometheus]

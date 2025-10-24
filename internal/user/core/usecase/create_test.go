@@ -33,7 +33,7 @@ func TestCreateUser_Success(t *testing.T) {
 		Username: "username",
 		Email:    "user@example.com",
 		Password: "hashed123",
-		Roles:    "user",
+		Roles:    []string{"user"},
 	}
 
 	suite.UserRepository.EXPECT().
@@ -55,10 +55,7 @@ func TestCreateUser_Success(t *testing.T) {
 			return u, nil
 		})
 
-	// (Optional) If test setup doesn't already relax logger calls:
-	// suite.Logger.EXPECT().InfowCtx(gomock.Any(), usecase.SuccessUserCreated, commonkeys.UserID, gomock.Any()).AnyTimes()
-
-	got, err := suite.UserService.Create(context.Background(), cmd)
+	got, err := suite.UserService.Create(suite.Ctx, cmd)
 
 	require.NoError(t, err)
 	require.Equal(t, expected, got)
@@ -79,7 +76,7 @@ func TestCreateUser_UsernameAlreadyExists(t *testing.T) {
 		CheckUniqueness(gomock.Any(), "taken", "user@example.com").
 		Return(output.UserUniqueness{UsernameTaken: true, EmailTaken: false}, nil)
 
-	got, err := suite.UserService.Create(context.Background(), cmd)
+	got, err := suite.UserService.Create(suite.Ctx, cmd)
 
 	require.Error(t, err)
 	require.Equal(t, domain.User{}, got)
@@ -102,7 +99,7 @@ func TestCreateUser_EmailAlreadyExists(t *testing.T) {
 		CheckUniqueness(gomock.Any(), "user1", "inuse@example.com").
 		Return(output.UserUniqueness{UsernameTaken: false, EmailTaken: true}, nil)
 
-	got, err := suite.UserService.Create(context.Background(), cmd)
+	got, err := suite.UserService.Create(suite.Ctx, cmd)
 
 	require.Error(t, err)
 	require.Equal(t, domain.User{}, got)
@@ -126,7 +123,7 @@ func TestCreateUser_DBErrorOnCheckUniqueness(t *testing.T) {
 		CheckUniqueness(gomock.Any(), "user1", "user1@example.com").
 		Return(output.UserUniqueness{}, dbErr)
 
-	got, err := suite.UserService.Create(context.Background(), cmd)
+	got, err := suite.UserService.Create(suite.Ctx, cmd)
 
 	require.Error(t, err)
 	require.Equal(t, dbErr, err)
@@ -154,10 +151,7 @@ func TestCreateUser_ErrorToHashPassword(t *testing.T) {
 		Hash("password").
 		Return("", hashErr)
 
-	// (Optional) If the setup doesn't relax logger calls:
-	// suite.Logger.EXPECT().ErrorwCtx(gomock.Any(), usecase.ErrorToHashPassword, commonkeys.Error, gomock.Any()).AnyTimes()
-
-	got, err := suite.UserService.Create(context.Background(), cmd)
+	got, err := suite.UserService.Create(suite.Ctx, cmd)
 
 	require.Error(t, err)
 	require.Equal(t, hashErr, err)
@@ -188,10 +182,7 @@ func TestCreateUser_ErrorToCreateUser(t *testing.T) {
 		Create(gomock.Any(), gomock.AssignableToTypeOf(domain.User{})).
 		Return(domain.User{}, createErr)
 
-	// (Optional) If needed:
-	// suite.Logger.EXPECT().ErrorwCtx(gomock.Any(), usecase.ErrorToCreateUser, commonkeys.Error, gomock.Any()).AnyTimes()
-
-	got, err := suite.UserService.Create(context.Background(), cmd)
+	got, err := suite.UserService.Create(suite.Ctx, cmd)
 
 	require.Error(t, err)
 	require.Equal(t, createErr, err)

@@ -1,7 +1,9 @@
 // Package handler constants contains constants used throughout the generic handler.
 package handler
 
-import "errors"
+import (
+	httperrors "github.com/lechitz/AionApi/internal/platform/server/http/errors"
+)
 
 // Tracer names for OpenTelemetry generic handler operations.
 const (
@@ -28,9 +30,12 @@ const (
 
 // Error variables for generic handler (to be used as an error interface).
 var (
-	ErrMethodNotAllowed = errors.New("method not allowed")
-	ErrResourceNotFound = errors.New("resource not found")
-	ErrInternalServer   = errors.New("internal server error")
+	// ErrMethodNotAllowed indicates that the HTTP method used is not allowed for the requested resource.
+	ErrMethodNotAllowed = httperrors.ErrMethodNotAllowed
+	// ErrResourceNotFound indicates that the requested resource could not be found.
+	ErrResourceNotFound = httperrors.ErrResourceNotFound
+	// ErrInternalServer indicates a generic internal server error.
+	ErrInternalServer = httperrors.ErrInternalServer
 )
 
 // Standardized messages for logs, responses, and traces.

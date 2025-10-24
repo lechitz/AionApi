@@ -55,7 +55,7 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateUserCommand) (doma
 		Username: cmd.Username,
 		Email:    cmd.Email,
 		Password: hashed,
-		Roles:    UserRoles,
+		Roles:    []string{UserRoles},
 	}
 
 	userDomain, err := s.userRepository.Create(ctx, user)

@@ -10,9 +10,10 @@
 name: Lint
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ "*" ]
 
 permissions:
   contents: read
@@ -39,6 +40,14 @@ jobs:
       # 3) Pre-download modules to stabilize builds
       - name: Download modules
         run: go mod download
+
+      # 3.1) Install development tools from Makefile (golines, gofumpt, goimports, golangci-lint, etc.)
+      - name: Install development tools
+        run: make -f makefiles/tooling.mk tools-install
+
+      # 3.2) Add GOPATH/bin to PATH so installed tools are available
+      - name: Add GOPATH/bin to PATH
+        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
       # 4) Ensure local caches exist
       - name: Ensure cache dirs exist
@@ -76,7 +85,7 @@ jobs:
         uses: reviewdog/action-golangci-lint@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          golangci_lint_version: v2.1.6
+          golangci_lint_version: v2.5.0
           golangci_lint_flags: --config=.golangci.yml ./...
           level: warning
           reporter: github-pr-review
@@ -93,3 +102,18 @@ jobs:
       # 11) Run native go vet across the repo
       - name: Run go vet
         run: go vet ./...
+
+      # 12) Install linters
+      - name: Install linters
+        run: |
+            go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.5.0
+            go install golang.org/x/tools/cmd/goimports@latest
+            echo "linters installed"
+
+      # 12.1) Print golangci-lint version for auditability
+      - name: Check golangci-lint version
+        run: golangci-lint --version
+
+      # 13) Run linters
+      - name: Run linters
+        run: make lint

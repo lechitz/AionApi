@@ -15,21 +15,22 @@ This document explains how AionApi is organized and how requests move through th
 
 ```
 
-cmd/                    # app entrypoint
-infrastructure/         # docker, migrations, otel/prometheus/grafana, loki/fluentbit
-internal/ <context>/            # bounded contexts (auth, user, category, tag, admin)
-adapter/
-primary/          # inbound adapters (http / graphql)
-secondary/        # outbound adapters (db, cache, token, logger)
-core/               # domain + ports + usecases (business logic)
-platform/             # cross-cutting platform: config, bootstrap, server, observability
-shared/               # reusable helpers: constants, responses, validation, errors
-makefiles/              # grouped Make targets used by the root Makefile
-tests/                  # unit test suites, mocks, fixtures, coverage
+cmd/                     # app entrypoint
+docs/                    # public documentation
+infrastructure/          # docker, migrations, otel/prometheus/grafana, loki/fluentbit
+internal/                # bounded contexts (auth, user, category, tag, admin)
+   adapter/              # general adapter structure
+      |_ primary/         # inbound adapters (http / graphql)
+      |_ secondary/       # outbound adapters (db, cache, token, logger)
+   <bounded-context>/    # domain + ports + usecases (business logic)
+   platform/             # cross-cutting platform: config, bootstrap, server, observability
+   shared/               # reusable helpers: constants, responses, validation, errors
+makefiles/               # grouped Make targets used by the root Makefile
+tests/                   # unit test suites, mocks, fixtures, coverage
 
 ```
 
-**Bounded contexts currently present:** `auth`, `user`, `category`, `tag`, `admin`.
+**Bounded contexts currently present:** `auth`, `user`, `category`, `tag`, `habit`, `admin`.
 
 ---
 

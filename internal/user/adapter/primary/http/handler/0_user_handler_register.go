@@ -20,6 +20,7 @@ func RegisterHTTP(r ports.Router, h *Handler, authService authinput.AuthService,
 			mw := authMiddleware.New(authService, lg)
 			ur.GroupWith(mw.Auth, func(pr ports.Router) {
 				pr.GET("/all", http.HandlerFunc(h.ListAll))
+				pr.GET("/me", http.HandlerFunc(h.GetMe))
 				pr.GET("/{user_id}", http.HandlerFunc(h.GetUserByID))
 				pr.PUT("/", http.HandlerFunc(h.UpdateUser))
 				pr.PUT("/password", http.HandlerFunc(h.UpdateUserPassword))

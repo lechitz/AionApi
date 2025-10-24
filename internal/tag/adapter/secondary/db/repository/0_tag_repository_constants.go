@@ -21,6 +21,9 @@ const OpCreate = "create"
 // OpGetByName is the attribute value for the "get by name" operation.
 const OpGetByName = "get_by_name"
 
+// OpGetByID is the attribute value for the "get by id" operation.
+const OpGetByID = "get_by_id"
+
 // Status messages (used with span.SetStatus/SetStatus + logs)
 
 // StatusTagCreated indicates the Tag (handler) was created successfully.
@@ -46,8 +49,11 @@ const StatusUpdated = "Tag updated successfully"
 // ErrCreateTagMsg is the error message used when creation fails.
 const ErrCreateTagMsg = "error creating Tag"
 
-// ErrGetTagMsg is the error message used when a generic get fails.
-const ErrGetTagMsg = "error getting Tag"
+// ErrGetTagByIDMsg is the error message used when a generic get fails.
+const ErrGetTagByIDMsg = "error getting Tag by ID"
+
+// ErrGetTagByNameMsg is the error message used when a generic get fails.
+const ErrGetTagByNameMsg = "error getting Tag by name"
 
 // ErrTagNotFoundMsg is the error message used when a Tag is not found.
 const ErrTagNotFoundMsg = "Tag not found"

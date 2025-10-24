@@ -18,7 +18,7 @@ type UserDB struct {
 	Username  string         `gorm:"column:username"`
 	Email     string         `gorm:"column:email"`
 	Password  string         `gorm:"column:password"`
-	Roles     string         `gorm:"column:roles;type:varchar(32);not null;default:user"`
+	Roles     string         `gorm:"column:roles;not null;default:'user'"`
 	CreatedAt time.Time      `gorm:"column:created_at"`
 	UpdatedAt time.Time      `gorm:"column:updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`

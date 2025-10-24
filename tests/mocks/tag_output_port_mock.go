@@ -80,6 +80,21 @@ func (m *MockTagRetriever) EXPECT() *MockTagRetrieverMockRecorder {
 	return m.recorder
 }
 
+// GetByID mocks base method.
+func (m *MockTagRetriever) GetByID(ctx context.Context, tagID, userID uint64) (domain.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByID", ctx, tagID, userID)
+	ret0, _ := ret[0].(domain.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockTagRetrieverMockRecorder) GetByID(ctx, tagID, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockTagRetriever)(nil).GetByID), ctx, tagID, userID)
+}
+
 // GetByName mocks base method.
 func (m *MockTagRetriever) GetByName(ctx context.Context, TagName string, userID uint64) (domain.Tag, error) {
 	m.ctrl.T.Helper()
@@ -132,6 +147,21 @@ func (m *MockTagRepository) Create(ctx context.Context, tag domain.Tag) (domain.
 func (mr *MockTagRepositoryMockRecorder) Create(ctx, tag any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockTagRepository)(nil).Create), ctx, tag)
+}
+
+// GetByID mocks base method.
+func (m *MockTagRepository) GetByID(ctx context.Context, tagID, userID uint64) (domain.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByID", ctx, tagID, userID)
+	ret0, _ := ret[0].(domain.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockTagRepositoryMockRecorder) GetByID(ctx, tagID, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockTagRepository)(nil).GetByID), ctx, tagID, userID)
 }
 
 // GetByName mocks base method.

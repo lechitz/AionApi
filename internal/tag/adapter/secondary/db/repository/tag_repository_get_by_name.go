@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -35,10 +36,14 @@ func (r TagRepository) GetByName(ctx context.Context, tagName string, userID uin
 			span.SetStatus(codes.Ok, ErrTagNotFoundMsg)
 			return domain.Tag{}, nil
 		}
-
-		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		return domain.Tag{}, err
+		span.SetStatus(codes.Error, OpGetByName)
+		r.logger.ErrorwCtx(ctx, ErrGetTagByIDMsg,
+			commonkeys.Error, err.Error(),
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.TagName, tagName,
+		)
+		return domain.Tag{}, fmt.Errorf("get tag by name: %w", err)
 	}
 
 	span.SetStatus(codes.Ok, StatusRetrievedByName)

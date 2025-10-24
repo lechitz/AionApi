@@ -10,16 +10,16 @@ type GetUserResponse struct {
 	CreatedAt time.Time `json:"created_at" example:"2024-01-02T15:04:05Z"`
 
 	// Name is the user's display name.
-	// Example: "Felipe Lechitz".
-	Name string `json:"name" example:"Felipe Lechitz"`
+	// Example: "João Pereira".
+	Name string `json:"name" example:"João Pereira"`
 
 	// Username is the user's unique handle.
-	// Example: "lechitz".
-	Username string `json:"username" example:"lechitz"`
+	// Example: "joaopereira".
+	Username string `json:"username" example:"joaopereira"`
 
 	// Email is the user's email address.
-	// Example: "dev@aion.local".
-	Email string `json:"email" example:"dev@aion.local"`
+	// Example: "joaopereira@aion.local".
+	Email string `json:"email" example:"joaopereira@aion.local"`
 
 	// ID is the user's identifier.
 	// Example: 42.

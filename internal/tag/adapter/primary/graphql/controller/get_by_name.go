@@ -35,7 +35,7 @@ func (h *controller) GetByName(ctx context.Context, tagName string, userID uint6
 
 	if tagName == "" {
 		span.SetStatus(codes.Error, ErrTagNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrTagNotFound, commonkeys.CategoryName, tagName)
+		h.Logger.ErrorwCtx(ctx, ErrTagNotFound, commonkeys.TagName, tagName)
 		return nil, errors.New(ErrTagNotFound)
 	}
 

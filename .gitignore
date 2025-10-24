@@ -31,3 +31,7 @@ go.work.sum
 
 .venv-docs/
 site/
+/infrastructure/docker/environments/dev/.env
+
+# Personal, local-only docs (private workspace for notes/ideas)
+docs/personal/

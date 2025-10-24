@@ -12,6 +12,7 @@ package mocks
 import (
 	context "context"
 	reflect "reflect"
+	"time"
 
 	domain "github.com/lechitz/AionApi/internal/auth/core/domain"
 	gomock "go.uber.org/mock/gomock"
@@ -42,44 +43,44 @@ func (m *MockAuthStore) EXPECT() *MockAuthStoreMockRecorder {
 }
 
 // Delete mocks base method.
-func (m *MockAuthStore) Delete(ctx context.Context, tokenKey uint64) error {
+func (m *MockAuthStore) Delete(ctx context.Context, tokenKey uint64, tokenType string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", ctx, tokenKey)
+	ret := m.ctrl.Call(m, "Delete", ctx, tokenKey, tokenType)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockAuthStoreMockRecorder) Delete(ctx, tokenKey any) *gomock.Call {
+func (mr *MockAuthStoreMockRecorder) Delete(ctx, tokenKey, tokenType any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockAuthStore)(nil).Delete), ctx, tokenKey)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockAuthStore)(nil).Delete), ctx, tokenKey, tokenType)
 }
 
 // Get mocks base method.
-func (m *MockAuthStore) Get(ctx context.Context, tokenKey uint64) (domain.Auth, error) {
+func (m *MockAuthStore) Get(ctx context.Context, tokenKey uint64, tokenType string) (domain.Auth, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", ctx, tokenKey)
+	ret := m.ctrl.Call(m, "Get", ctx, tokenKey, tokenType)
 	ret0, _ := ret[0].(domain.Auth)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockAuthStoreMockRecorder) Get(ctx, tokenKey any) *gomock.Call {
+func (mr *MockAuthStoreMockRecorder) Get(ctx, tokenKey, tokenType any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockAuthStore)(nil).Get), ctx, tokenKey)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockAuthStore)(nil).Get), ctx, tokenKey, tokenType)
 }
 
 // Save mocks base method.
-func (m *MockAuthStore) Save(ctx context.Context, token domain.Auth) error {
+func (m *MockAuthStore) Save(ctx context.Context, token domain.Auth, expiration time.Duration) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Save", ctx, token)
+	ret := m.ctrl.Call(m, "Save", ctx, token, expiration)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Save indicates an expected call of Save.
-func (mr *MockAuthStoreMockRecorder) Save(ctx, token any) *gomock.Call {
+func (mr *MockAuthStoreMockRecorder) Save(ctx, token, expiration any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockAuthStore)(nil).Save), ctx, token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockAuthStore)(nil).Save), ctx, token, expiration)
 }

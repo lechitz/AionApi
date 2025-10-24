@@ -68,6 +68,7 @@ type ComplexityRoot struct {
 		Categories     func(childComplexity int) int
 		CategoryByID   func(childComplexity int, id string) int
 		CategoryByName func(childComplexity int, name string) int
+		TagByID        func(childComplexity int, tagID string) int
 		TagByName      func(childComplexity int, name string) int
 	}
 
@@ -91,6 +92,7 @@ type QueryResolver interface {
 	CategoryByID(ctx context.Context, id string) (*model.Category, error)
 	CategoryByName(ctx context.Context, name string) (*model.Category, error)
 	TagByName(ctx context.Context, name string) (*model.Tag, error)
+	TagByID(ctx context.Context, tagID string) (*model.Tag, error)
 }
 
 type executableSchema struct {
@@ -222,6 +224,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.CategoryByName(childComplexity, args["name"].(string)), true
+	case "Query.tagByID":
+		if e.complexity.Query.TagByID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tagByID_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TagByID(childComplexity, args["tagID"].(string)), true
 	case "Query.tagByName":
 		if e.complexity.Query.TagByName == nil {
 			break
@@ -480,6 +493,17 @@ func (ec *executionContext) field_Query_categoryByName_args(ctx context.Context,
 		return nil, err
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_tagByID_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "tagID", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
+	}
+	args["tagID"] = arg0
 	return args, nil
 }
 
@@ -1329,6 +1353,86 @@ func (ec *executionContext) fieldContext_Query_tagByName(ctx context.Context, fi
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_tagByName_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_tagByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_tagByID,
+		func(ctx context.Context) (any, error) {
+			directive0 := func(ctx context.Context) (any, error) {
+				fc := graphql.GetFieldContext(ctx)
+				return ec.resolvers.Query().TagByID(ctx, fc.Args["tagID"].(string))
+			}
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.Tag
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.Tag
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return nil, graphql.ErrorOnPath(ctx, err)
+			}
+			if tmp == nil {
+				return nil, nil
+			}
+			if data, ok := tmp.(*model.Tag); ok {
+				return data, nil
+			}
+			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Tag`, tmp)
+		},
+		nil,
+		ec.marshalOTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_tagByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Tag_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Tag_userId(ctx, field)
+			case "name":
+				return ec.fieldContext_Tag_name(ctx, field)
+			case "categoryId":
+				return ec.fieldContext_Tag_categoryId(ctx, field)
+			case "description":
+				return ec.fieldContext_Tag_description(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Tag", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_tagByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -3395,6 +3499,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_tagByName(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "tagByID":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_tagByID(ctx, field)
 				return res
 			}
 

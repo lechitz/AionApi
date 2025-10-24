@@ -4,6 +4,8 @@ package sharederrors
 import (
 	"errors"
 	"net/http"
+
+	httperrors "github.com/lechitz/AionApi/internal/platform/server/http/errors"
 )
 
 // MapErrorToHTTPStatus maps domain and validation errors to the correct HTTP status code.
@@ -33,8 +35,12 @@ func MapErrorToHTTPStatus(err error) int {
 		return http.StatusUnauthorized
 	}
 
-	// Sentinel errors (via errors.Is)
+	// Sentinel errors (via errors.Is) - include common HTTP handlers
 	switch {
+	case errors.Is(err, httperrors.ErrResourceNotFound):
+		return http.StatusNotFound
+	case errors.Is(err, httperrors.ErrMethodNotAllowed):
+		return http.StatusMethodNotAllowed
 	case errors.Is(err, ErrParseUserID):
 		return http.StatusBadRequest
 	case errors.Is(err, ErrNoFieldsToUpdate):

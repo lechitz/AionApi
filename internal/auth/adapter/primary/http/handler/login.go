@@ -61,17 +61,21 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	span.SetAttributes(attribute.String(commonkeys.Username, loginReq.Username))
 
 	span.AddEvent(EventAuthServiceLogin)
-	user, token, err := h.Service.Login(ctx, loginReq.Username, loginReq.Password)
+	user, accessToken, refreshToken, err := h.Service.Login(ctx, loginReq.Username, loginReq.Password)
 	if err != nil {
 		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, ErrLogin, h.Logger)
 		return
 	}
 	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(user.ID, 10)))
 
-	cookies.SetAuthCookie(w, token, h.Config.Cookie)
+	cookies.SetAuthCookie(w, accessToken, h.Config.Cookie)
+	cookies.SetRefreshCookie(w, refreshToken, h.Config.Cookie)
 
 	loginResponse := dto.LoginUserResponse{
-		Name: user.Name,
+		Token: accessToken,
+		ID:    user.ID,
+		Name:  user.Name,
+		Roles: user.Roles,
 	}
 
 	span.AddEvent(EventLoginSuccess)

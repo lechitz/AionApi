@@ -2,7 +2,6 @@
 package usecase_test
 
 import (
-	"context"
 	"errors"
 	"testing"
 
@@ -33,7 +32,7 @@ func TestUpdateUser_Success(t *testing.T) {
 		Update(gomock.Any(), uid, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(expected, nil)
 
-	got, err := suite.UserService.UpdateUser(context.Background(), uid, cmd)
+	got, err := suite.UserService.UpdateUser(suite.Ctx, uid, cmd)
 	require.NoError(t, err)
 	require.Equal(t, expected, got)
 }
@@ -53,7 +52,7 @@ func TestUpdateUser_UpdateOnlyUsername(t *testing.T) {
 		Update(gomock.Any(), uid, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(expected, nil)
 
-	got, err := suite.UserService.UpdateUser(context.Background(), uid, cmd)
+	got, err := suite.UserService.UpdateUser(suite.Ctx, uid, cmd)
 	require.NoError(t, err)
 	require.Equal(t, expected, got)
 }
@@ -73,7 +72,7 @@ func TestUpdateUser_UpdateOnlyEmail(t *testing.T) {
 		Update(gomock.Any(), uid, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(expected, nil)
 
-	got, err := suite.UserService.UpdateUser(context.Background(), uid, cmd)
+	got, err := suite.UserService.UpdateUser(suite.Ctx, uid, cmd)
 	require.NoError(t, err)
 	require.Equal(t, expected, got)
 }
@@ -85,7 +84,7 @@ func TestUpdateUser_NoFieldsToUpdate(t *testing.T) {
 	uid := setup.DefaultTestUser().ID
 	var cmd userinput.UpdateUserCommand // all fields nil => HasUpdates() == false
 
-	got, err := suite.UserService.UpdateUser(context.Background(), uid, cmd)
+	got, err := suite.UserService.UpdateUser(suite.Ctx, uid, cmd)
 	require.Error(t, err)
 	require.Equal(t, userdomain.User{}, got)
 	require.Equal(t, usecase.ErrorNoFieldsToUpdate, err.Error())
@@ -107,7 +106,7 @@ func TestUpdateUser_ErrorToUpdateUser(t *testing.T) {
 		Update(gomock.Any(), uid, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(userdomain.User{}, repoErr)
 
-	got, err := suite.UserService.UpdateUser(context.Background(), uid, cmd)
+	got, err := suite.UserService.UpdateUser(suite.Ctx, uid, cmd)
 	require.Error(t, err)
 	require.Equal(t, userdomain.User{}, got)
 	require.ErrorContains(t, err, usecase.ErrorToUpdateUser)

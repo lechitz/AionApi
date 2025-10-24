@@ -12,6 +12,7 @@ import (
 // Keep it thin: map GraphQL <-> domain, add tracing/logging, delegate to use cases.
 type TagController interface {
 	Create(ctx context.Context, in model.CreateTagInput, userID uint64) (*model.Tag, error)
+	GetByID(ctx context.Context, tagID, userID uint64) (*model.Tag, error)
 	GetByName(ctx context.Context, tagName string, userID uint64) (*model.Tag, error)
 }
 

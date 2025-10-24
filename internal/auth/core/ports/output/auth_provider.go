@@ -3,7 +3,7 @@ package output
 
 // AuthProvider defines an interface for generating and verifying tokens.
 type AuthProvider interface {
-	Generate(userID uint64) (string, error)
+	GenerateRefreshToken(userID uint64) (string, error) // TODO: Para Refresh Token.
 	Verify(tokenValue string) (map[string]any, error)
-	GenerateWithClaims(userID uint64, extra map[string]any) (string, error)
+	GenerateAccessToken(userID uint64, extra map[string]any) (string, error) // TODO: Para Access Token.
 }

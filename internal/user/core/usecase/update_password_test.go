@@ -4,12 +4,16 @@ package usecase_test
 import (
 	"context"
 	"errors"
+	"strconv"
 	"testing"
 	"time"
 
 	authdomain "github.com/lechitz/AionApi/internal/auth/core/domain"
 	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
 	"github.com/lechitz/AionApi/internal/user/core/usecase"
+
+	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/tests/mocks"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -26,7 +30,7 @@ func newUserService(t *testing.T) (context.Context,
 	t.Helper()
 
 	ctrl := gomock.NewController(t)
-	ctx := context.Background()
+	ctx := t.Context()
 
 	repo := mocks.NewMockUserRepository(ctrl)
 	hasher := mocks.NewMockHasher(ctrl)
@@ -81,8 +85,13 @@ func TestUpdatePassword_Success(t *testing.T) {
 	repo.EXPECT().
 		Update(gomock.Any(), u.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(u, nil)
-	provider.EXPECT().Generate(u.ID).Return(token, nil)
-	store.EXPECT().Save(gomock.Any(), authdomain.Auth{Key: u.ID, Token: token}).Return(nil)
+	provider.EXPECT().GenerateRefreshToken(u.ID).Return(token, nil)
+
+	// The implementation calls Verify to compute TTL before saving; expect it and return a positive exp
+	exp := strconv.FormatInt(time.Now().Add(3*time.Minute).Unix(), 10)
+	provider.EXPECT().Verify(token).Return(map[string]any{claimskeys.Exp: exp}, nil)
+
+	store.EXPECT().Save(gomock.Any(), authdomain.Auth{Key: u.ID, Token: token, Type: commonkeys.TokenTypeAccess}, gomock.Any()).Return(nil)
 
 	gotToken, err := svc.UpdatePassword(ctx, u.ID, "oldPassword", "newPassword")
 	require.NoError(t, err)
@@ -172,7 +181,7 @@ func TestUpdatePassword_ErrorToCreateToken_WithProviderError(t *testing.T) {
 	repo.EXPECT().
 		Update(gomock.Any(), u.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(u, nil)
-	provider.EXPECT().Generate(u.ID).Return("", providerErr)
+	provider.EXPECT().GenerateRefreshToken(u.ID).Return("", providerErr)
 
 	gotToken, err := svc.UpdatePassword(ctx, u.ID, "oldPassword", "newPassword")
 	require.Error(t, err)
@@ -194,7 +203,7 @@ func TestUpdatePassword_ErrorToCreateToken_EmptyToken(t *testing.T) {
 		Update(gomock.Any(), u.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(u, nil)
 	// Provider returns empty token without error.
-	provider.EXPECT().Generate(u.ID).Return("", nil)
+	provider.EXPECT().GenerateRefreshToken(u.ID).Return("", nil)
 
 	gotToken, err := svc.UpdatePassword(ctx, u.ID, "oldPassword", "newPassword")
 	require.Error(t, err)
@@ -217,8 +226,13 @@ func TestUpdatePassword_ErrorToSaveToken(t *testing.T) {
 	repo.EXPECT().
 		Update(gomock.Any(), u.ID, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(u, nil)
-	provider.EXPECT().Generate(u.ID).Return(token, nil)
-	store.EXPECT().Save(gomock.Any(), authdomain.Auth{Key: u.ID, Token: token}).Return(saveErr)
+	provider.EXPECT().GenerateRefreshToken(u.ID).Return(token, nil)
+
+	// Expect Verify to compute TTL; return a future exp so Save is attempted and returns the configured error
+	exp := strconv.FormatInt(time.Now().Add(3*time.Minute).Unix(), 10)
+	provider.EXPECT().Verify(token).Return(map[string]any{claimskeys.Exp: exp}, nil)
+
+	store.EXPECT().Save(gomock.Any(), authdomain.Auth{Key: u.ID, Token: token, Type: commonkeys.TokenTypeAccess}, gomock.Any()).Return(saveErr)
 
 	gotToken, err := svc.UpdatePassword(ctx, u.ID, "oldPassword", "newPassword")
 	require.Error(t, err)

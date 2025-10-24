@@ -11,17 +11,39 @@ definitions:
       username:
         description: |-
           Username is the unique identifier used to authenticate the user.
-          Example: "lechitz"
-        example: lechitz
+          Example: "joaopereira"
+        example: joaopereira
         type: string
     type: object
   github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserResponse:
     properties:
+      id:
+        description: |-
+          ID is the unique identifier for the authenticated user.
+          Example: 42
+        example: 42
+        type: integer
       name:
         description: |-
           Name is a friendly display name for the authenticated user.
-          Example: "Felipe Lechitz"
-        example: Felipe Lechitz
+          Example: "João Pereira"
+        example: João Pereira
+        type: string
+      roles:
+        description: |-
+          Roles are the permissions or roles assigned to the user.
+          Example: ["admin", "user"]
+        example:
+        - admin
+        - user
+        items:
+          type: string
+        type: array
+      token:
+        description: |-
+          Token is the JSON Web Token used for authenticating subsequent requests.
+          Example: "eyJhbGciOi..."
+        example: eyJhbGciOi...
         type: string
     type: object
   github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserRequest:
@@ -35,8 +57,8 @@ definitions:
       name:
         description: |-
           Name is the human-friendly display name of the user.
-          Example: "Felipe Lechitz"
-        example: Felipe Lechitz
+          Example: "João Pereira"
+        example: João Pereira
         type: string
       password:
         description: |-
@@ -68,8 +90,8 @@ definitions:
       name:
         description: |-
           Name is the created user's display name.
-          Example: "Felipe Lechitz"
-        example: Felipe Lechitz
+          Example: "João Pereira"
+        example: João Pereira
         type: string
       username:
         description: |-
@@ -89,14 +111,14 @@ definitions:
       email:
         description: |-
           Email is the user's email address.
-          Example: "dev@aion.local".
-        example: dev@aion.local
+          Example: "joaopereira@aion.local".
+        example: joaopereira@aion.local
         type: string
       name:
         description: |-
           Name is the user's display name.
-          Example: "Felipe Lechitz".
-        example: Felipe Lechitz
+          Example: "João Pereira".
+        example: João Pereira
         type: string
       user_id:
         description: |-
@@ -107,8 +129,8 @@ definitions:
       username:
         description: |-
           Username is the user's unique handle.
-          Example: "lechitz".
-        example: lechitz
+          Example: "joaopereira".
+        example: joaopereira
         type: string
     type: object
   github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdatePasswordUserRequest:

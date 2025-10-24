@@ -16,6 +16,7 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	genericHandler "github.com/lechitz/AionApi/internal/platform/server/http/generic/handler"
+	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/cors"
 	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/recovery"
 	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/requestid"
 	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
@@ -35,6 +36,7 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 	r.Use(
 		recovery.New(gh),
 		requestid.New(),
+		cors.New(),
 	)
 
 	// Default handlers
@@ -64,9 +66,6 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 	}
 
 	r.Group(apiContext, func(api ports.Router) {
-		// Health endpoint
-		api.GET(routeHealth, http.HandlerFunc(gh.HealthCheck))
-
 		// Swagger UI + OpenAPI JSON mounted under the API context
 		// httpSwagger.Handler returns an http.Handler suitable for Mount.
 		swaggerDocURL := path.Clean(apiContext + "/" +
@@ -103,14 +102,28 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 				log.Errorw(LogErrComposeGraphQL, commonkeys.Error, err)
 				return
 			}
+
 			v1.Mount(cfg.ServerGraphql.Path, gqlHandler)
 		})
 	})
 
-	// OpenTelemetry HTTP wrapper
-	h := otelhttp.NewHandler(
+	// OpenTelemetry HTTP wrapper: instrument the main router but expose health route uninstrumented
+	instrumented := otelhttp.NewHandler(
 		r,
 		fmt.Sprintf(OTelHTTPHandlerNameFormat, cfg.Observability.OtelServiceName),
 	)
-	return h, nil
+
+	mux := http.NewServeMux()
+	p := path.Clean(apiContext + "/" + strings.TrimPrefix(routeHealth, "/"))
+	mux.Handle(p, http.HandlerFunc(gh.HealthCheck))
+	mux.Handle(p+"/", http.HandlerFunc(gh.HealthCheck))
+
+	// Backwards compatibility: also expose health under {apiContext}{APIRoot}{routeHealth} (e.g., /aion/api/v1/health)
+	altHealth := path.Clean(apiContext + "/" + strings.TrimPrefix(cfg.ServerHTTP.APIRoot, "/") + "/" + strings.TrimPrefix(routeHealth, "/"))
+	mux.Handle(altHealth, http.HandlerFunc(gh.HealthCheck))
+	mux.Handle(altHealth+"/", http.HandlerFunc(gh.HealthCheck))
+
+	mux.Handle("/", instrumented)
+
+	return mux, nil
 }

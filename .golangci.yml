@@ -34,10 +34,8 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    - exptostd
     - fatcontext
     - forbidigo
-    - funcorder
     - funlen
     - gocheckcompilerdirectives
     - gochecknoglobals
@@ -50,7 +48,6 @@ linters:
     - goprintffuncname
     - gosec
     - govet
-    - iface
     - ineffassign
     - intrange
     - loggercheck
@@ -60,7 +57,6 @@ linters:
     - nakedret
     - nestif
     - nilerr
-    - nilnesserr
     - nilnil
     - noctx
     - nolintlint
@@ -71,7 +67,6 @@ linters:
     - promlinter
     - protogetter
     - reassign
-    - recvcheck
     - revive
     - rowserrcheck
     - sloglint
@@ -86,7 +81,6 @@ linters:
     - unparam
     - unused
     - usestdlibvars
-    - usetesting
     - wastedassign
     - whitespace
 
@@ -202,3 +196,11 @@ linters:
     rowserrcheck:
       packages:
         - github.com/jmoiron/sqlx
+
+issues:
+  exclude-rules:
+    - path: "internal/platform/docs/docs.go"
+      linters:
+        - gochecknoglobals
+        - gochecknoinits
+        - godot

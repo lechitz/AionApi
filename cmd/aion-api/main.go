@@ -35,11 +35,11 @@ import (
 	"path"
 	"syscall"
 
+	swagger "github.com/lechitz/AionApi/docs/swagger"
 	"github.com/lechitz/AionApi/internal/adapter/secondary/contextlogger"
 	"github.com/lechitz/AionApi/internal/adapter/secondary/crypto"
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
 	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/docs"
 	"github.com/lechitz/AionApi/internal/platform/observability/metric"
 	"github.com/lechitz/AionApi/internal/platform/observability/tracer"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/keygen"
@@ -117,9 +117,9 @@ func loadConfig(keyGenerator keygen.Generator, logs logger.ContextLogger) (*conf
 
 // configureSwagger applies runtime metadata from the loaded application configuration to the generated Swagger/OpenAPI spec.
 func configureSwagger(cfg *config.Config) {
-	docs.SwaggerInfo.BasePath = path.Clean(cfg.ServerHTTP.Context + cfg.ServerHTTP.APIRoot)
-	docs.SwaggerInfo.Title = SwaggerTitle
-	docs.SwaggerInfo.Version = cfg.General.Version
+	swagger.SwaggerInfo.BasePath = path.Clean(cfg.ServerHTTP.Context + cfg.ServerHTTP.APIRoot)
+	swagger.SwaggerInfo.Title = SwaggerTitle
+	swagger.SwaggerInfo.Version = cfg.General.Version
 }
 
 // initDependencies initializes the application dependencies.

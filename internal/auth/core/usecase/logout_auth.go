@@ -26,7 +26,15 @@ func (s *Service) Logout(ctx context.Context, userID uint64) error {
 	defer span.End()
 
 	span.AddEvent(EventRevokeToken)
-	if err := s.authStore.Delete(ctx, userID); err != nil {
+	// Delete access token
+	if err := s.authStore.Delete(ctx, userID, commonkeys.TokenTypeAccess); err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, ErrorToDeleteToken)
+		s.logger.ErrorwCtx(ctx, ErrorToDeleteToken, commonkeys.Error, err.Error())
+		return fmt.Errorf("%s: %w", ErrorToDeleteToken, err)
+	}
+	// Delete refresh token
+	if err := s.authStore.Delete(ctx, userID, commonkeys.TokenTypeRefresh); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToDeleteToken)
 		s.logger.ErrorwCtx(ctx, ErrorToDeleteToken, commonkeys.Error, err.Error())

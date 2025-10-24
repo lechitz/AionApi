@@ -28,7 +28,7 @@ func (r TagRepository) Create(ctx context.Context, tag domain.Tag) (domain.Tag, 
 	if err := r.db.WithContext(ctx).Create(&row).Error; err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, OpCreate)
-		r.logger.ErrorwCtx(ctx, "failed to insert tag", commonkeys.Error, err.Error())
+		r.logger.ErrorwCtx(ctx, ErrCreateTagMsg, commonkeys.Error, err.Error())
 		return domain.Tag{}, fmt.Errorf("insert tag: %w", err)
 	}
 	return mapper.TagFromDB(row), nil

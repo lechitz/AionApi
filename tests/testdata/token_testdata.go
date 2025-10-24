@@ -9,7 +9,7 @@ import (
 const SecretKey = "secret"
 
 // TestPerfectToken is a predefined Token instance used for testing purposes, representing a valid token associated with a user.
-var TestPerfectToken = domain.Auth{
+var TestPerfectToken = domain.AccessToken{
 	Key:   1,
 	Token: "token_abc123",
 	// CreatedAt: time.Now(),
