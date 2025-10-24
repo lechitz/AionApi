@@ -108,7 +108,9 @@ help:
 #                 CONSOLIDATED .PHONY TARGETS
 # ============================================================
 
-include makefiles/*.mk
+-include makefiles/*.mk
+
+.PHONY: graphql mocks docs.gen docs.validate docs.check-dirty lint test test-cover test-ci test-clean
 
 .PHONY: \
 	help tools-install \
