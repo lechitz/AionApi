@@ -16,9 +16,8 @@
   <script>
     window.onload = function() {
       SwaggerUIBundle({
-        // load the spec from the published site (site-relative). This works when the site is served
-        // from GitHub Pages (gh-pages) and avoids raw.githubusercontent 404 issues when spec lives only on gh-pages.
-        url: "/swagger/swagger.yaml",
+        // load the spec from the published GitHub Pages URL for the AionApi project site.
+        url: "https://lechitz.github.io/AionApi/swagger/swagger.yaml",
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
