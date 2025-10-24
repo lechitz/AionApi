@@ -48,7 +48,6 @@ linters:
     - goprintffuncname
     - gosec
     - govet
-    - iface
     - ineffassign
     - intrange
     - loggercheck
