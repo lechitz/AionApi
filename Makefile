@@ -112,6 +112,10 @@ help:
 
 .PHONY: graphql mocks docs.gen docs.validate docs.check-dirty lint test test-cover test-ci test-clean
 
+# Short aliases
+.PHONY: install-tools
+install-tools: tools-install
+
 .PHONY: \
 	help tools-install tools.check \
 	build-dev dev-up dev-down dev clean-dev \

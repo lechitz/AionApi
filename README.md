@@ -1,155 +1,171 @@
 # AionApi
 
-_This repository is part of an ongoing study and development project. Many features are still being built and tested, so expect frequent changes as new tools and patterns are explored._
+This repository hosts AionApi — a modular backend service implemented in Go that exposes both REST and GraphQL APIs for habit and diary management. The project follows a Ports & Adapters (Hexagonal) architecture and is designed for testability, observability, and iterative development.
 
-## Aion: Empowering you to take control of your time, habits, and aspirations
 
-> _Aion is an innovative habit management system designed to help you organize, track, and analyze your daily routine for improved physical, mental, and emotional well-being. It combines cutting-edge technology with a user-centered approach to make your productivity and self-improvement journey seamless and insightful._
->
-> Whether you’re focusing on fitness, learning, or personal growth, Aion is your companion in building the discipline you need to achieve sustainable success.
+---
 
-## **Table of Contents**
+## Quick links
+- Documentation site: [AionApi - Github Pages](https://lechitz.github.io/AionApi/)
 
-- [Overview](#overview)
-- [Current and Upcoming Features](#current-and-upcoming-features)
-- [Project Management](#project-management)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Development](#development)
-- [API Endpoints](#api-endpoints)
-    - [REST Endpoints](#rest-endpoints)
-    - [GraphQL Operations](#graphql-operations)
-- [License](#license)
-
+> Visit the live [AionApi - Swagger UI](https://lechitz.github.io/AionApi/swagger-ui/) to interact with the API and try requests.
 ---
 
 ## Overview
 
-AionAPI is a backend service written in **Go** that exposes both REST and GraphQL endpoints. It relies on **PostgreSQL** for persistent storage and **Redis** for caching. The project follows the **Ports & Adapters (Hexagonal)** architecture, enabling clear separation between domain logic and external technologies. Observability is handled with **OpenTelemetry**, **Jaeger**, **Prometheus**, and **Grafana**, while structured logging is powered by **Zap**.
+Aion is a habit management system focused on helping users organize, track and analyze routines to improve physical, mental and emotional well-being. The API provides endpoints for user management, authentication, categories, tags and diary entries (personal and professional).
 
-**Technology Stack**
-
+### Technology stack
 - Go 1.24
-- chi HTTP router and gqlgen for GraphQL
-- GORM ORM for PostgreSQL
-- Redis cache
-- Docker & Docker Compose
-- OpenTelemetry with Jaeger tracing and Prometheus metrics
-- Grafana dashboards
+- chi router for HTTP
+- gqlgen for GraphQL
+- GORM for PostgreSQL integration
+- Redis for caching / session management
+- Docker & Docker Compose for local environments
+- OpenTelemetry (OTel) for traces and metrics
+- Jaeger / Prometheus / Grafana for observability
 - zap for structured logging
 
+### Key features (current / planned)
+- Habit and diary entry management (personal and diary contexts)
+- Tagging and category system with GraphQL support
+- Authentication (access and refresh tokens) and session invalidation
+- Database migrations and seed data for reproducible dev environments
+- Observability (traces, metrics, dashboards)
+- Developer-friendly tooling: codegen, mocks, linters and formatting
+
 ---
 
-## Current and Upcoming Features
+## Project management
 
-- **Streamlined Habit Management** — organize and track your habits effortlessly.
-- **Data-Driven Insights** — visualize your progress and analyze behavior patterns.
-- **Modern Integrations** — sync with tools and platforms for extended usability.
-- **Developer-Friendly API** — clean, extensible endpoints for all your needs.
-
----
-
-## Project Management
-
-This repository is organized using a public [GitHub Projects board](https://github.com/users/lechitz/projects/1) where tasks, issues, and epics are tracked. The board provides visibility into ongoing work and completed milestones, keeping development structured and transparent.
+This repository is organized using a public [AionApi - GitHub Projects](https://github.com/users/lechitz/projects/1) where tasks, issues, and epics are tracked. The board provides visibility into ongoing work and completed milestones, keeping development structured and transparent.
 
 ---
 
 ## Installation
 
 ### Prerequisites
+- Go 1.24 or newer
+- Git
+- Docker & Docker Compose (for containerized development)
+- Make (GNU Make)
 
-- [Go](https://go.dev/doc/install) 1.24 or newer
-- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/) (for containerized development)
-
-### Steps
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/lechitz/AionApi.git
-   cd AionApi
-   ```
-2. **Install development tools** (optional)
-   ```bash
-   make tools-install
-   ```
-3. **Download Go dependencies**
-   ```bash
-   go mod tidy
-   ```
+Clone and prepare
+```bash
+git clone git@github.com:lechitz/AionApi.git
+cd AionApi
+```
+Install development tools (recommended)
+```bash
+make -f makefiles/tooling.mk tools-install
+```
+Download modules
+```bash
+go mod download
+```
 
 ---
 
 ## Configuration
 
-1. **Copy the example environment file**
-   ```bash
-   cp infrastructure/docker/environments/example/.env.example infrastructure/docker/environments/dev/.env.dev
-   ```
-2. **Edit `.env.dev`** with values that match your local setup.
-
-
-3. **Start the development environment**
-   ```bash
-   make dev
-   ```
-4. **Run database migrations** (optional)
-   ```bash
-   make migrate-up
-   ```
-
----
-
-## Development
-
-The project is organized as follows:
-
-```text
-.github/        - GitHub Actions workflows and issue templates
-cmd/            - application entry point
-infrastructure/ - migrations, docker files, observability configs
-internal/       - domain logic, use cases, ports, and adapters
-makefiles/      - grouped Make targets for builds, codegen, testing
-tests/          - test data, mocks, and testing utilities
-Makefile        - main Makefile orchestrating tasks
-.golangci.yml   - static analysis and linter configuration
-```
-
-Run `make help` to see all available commands. Frequently used ones include:
-
+Copy the example environment and edit for local development:
 ```bash
-make format    # format Go code
-make lint      # run static analysis
-make dev-up    # start the development environment
-make dev-down  # stop and remove dev containers
-make dev       # builds and runs the dev environment
-make verify    # run full pipeline before committing
+cp infrastructure/docker/environments/example/.env.example infrastructure/docker/environments/dev/.env.dev
+# edit infrastructure/docker/environments/dev/.env.dev
+```
+Start the development environment (Docker)
+```bash
+make dev
+```
+Run migrations (example)
+```bash
+export MIGRATE_BIN="$(go env GOPATH)/bin/migrate"
+export MIGRATION_DB="postgres://aion:aion@localhost:5432/aionapi?sslmode=disable"
+export MIGRATION_PATH="infrastructure/db/migrations"
+make migrate-up
+```
+Seed sample data (optional)
+```bash
+make seed-all
 ```
 
 ---
 
-## API Endpoints
+## Development & common commands
 
-The API exposes REST endpoints for user management, authentication, and health checks, along with GraphQL operations for categories and tags.
+Run formatting and linting
+```bash
+make lint        # format + golangci-lint checks
+make lint-fix    # attempt autofix
+```
+Run tests and coverage
+```bash
+make test
+make test-cover  # generates coverage report in tests/coverage/
+```
+Code generation
+```bash
+make graphql  # gqlgen codegen
+make mocks    # generate gomock mocks in tests/mocks/
+```
+Build the server binary
+```bash
+go build -o bin/aion-api ./cmd/aion-api
+```
+Run the built server (example)
+```bash
+export APP_ENV=development
+export DATABASE_URL=postgres://aion:aion@localhost:5432/aionapi?sslmode=disable
+./bin/aion-api
+```
 
-### REST Endpoints
-- `GET  /aion/health/` — service status
-- `POST /aion/api/v1/user/create` — create a new user
-- `GET  /aion/api/v1/user/all` — list users
-- `GET  /aion/api/v1/user/{user_id}` — retrieve a user by ID
-- `PUT  /aion/api/v1/user/` — update user data
-- `PUT  /aion/api/v1/user/password` — update the logged user's password
-- `DELETE /aion/api/v1/user/` — soft delete the logged user
-- `POST /aion/api/v1/auth/login` — obtain a JWT token
-- `POST /aion/api/v1/auth/logout` — invalidate the user session
+---
 
-### GraphQL Operations
-Endpoint: `/aion/api/v1/graphql`
+## API summary
+
+REST base prefix: `/aion-api/v1`
+- `GET  /aion/health` — service health
+- `POST /aion-api/v1/user/create` — create user
+- `GET  /aion-api/v1/user/all` — list users
+- `GET  /aion-api/v1/user/{user_id}` — get user by ID
+- `PUT  /aion-api/v1/user` — update user
+- `PUT  /aion-api/v1/user/password` — update logged user's password
+- `DELETE /aion-api/v1/user` — soft-delete logged user
+- `POST /aion-api/v1/auth/login` — login and obtain tokens
+- `POST /aion-api/v1/auth/logout` — invalidate session
+
+GraphQL endpoint (example): `/aion-api/v1/graphql`
 - Queries: `GetAllCategories`, `GetCategoryByID`, `GetCategoryByName`, `GetAllTags`, `GetTagByID`
 - Mutations: `CreateCategory`, `CreateTag`, `UpdateCategory`, `SoftDeleteCategory`
+
+For full API spec, consult `swagger/swagger.yaml` and the generated JSON (`swagger/swagger.json`).
+
+---
+
+## Architecture (preview)
+
+The codebase follows a Hexagonal architecture (Ports & Adapters): business logic (usecases) is isolated from transport and infrastructure. Primary adapters (HTTP/GraphQL) are thin layers that map requests to input ports and format responses. Secondary adapters implement persistence, cache and external integrations behind defined interfaces.
+
+For a detailed architecture overview, see: [AionApi - Architecture](https://lechitz.github.io/AionApi/architecture/)
+
+---
+
+## Observability & monitoring
+
+The platform integrates OpenTelemetry. Configuration for local preview is available under `infrastructure/observability/` and includes collector config, Prometheus and Grafana dashboards. To enable local OTLP exporter, set:
+```bash
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
+export OTEL_SERVICE_NAME="AionApi"
+export OTEL_SERVICE_VERSION="0.1.0"
+```
+
+
 
 ---
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is available under the MIT License — see the `LICENSE` file for details.
+
+---
+
