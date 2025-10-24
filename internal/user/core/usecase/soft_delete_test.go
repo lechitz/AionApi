@@ -31,7 +31,7 @@ func TestSoftDeleteUser_Success(t *testing.T) {
 		SoftDelete(gomock.Any(), userID).
 		Return(nil)
 
-	err := suite.UserService.SoftDeleteUser(context.Background(), userID)
+	err := suite.UserService.SoftDeleteUser(suite.Ctx, userID)
 	assert.NoError(t, err)
 }
 
@@ -52,7 +52,7 @@ func TestSoftDeleteUser_ErrorToSoftDeleteUser(t *testing.T) {
 		SoftDelete(gomock.Any(), userID).
 		Return(expected)
 
-	err := suite.UserService.SoftDeleteUser(context.Background(), userID)
+	err := suite.UserService.SoftDeleteUser(suite.Ctx, userID)
 	assert.EqualError(t, err, expected.Error())
 }
 
@@ -68,7 +68,7 @@ func TestSoftDeleteUser_ErrorToDeleteToken(t *testing.T) {
 		Delete(gomock.Any(), userID, commonkeys.TokenTypeAccess).
 		Return(expected)
 
-	err := suite.UserService.SoftDeleteUser(context.Background(), userID)
+	err := suite.UserService.SoftDeleteUser(suite.Ctx, userID)
 	assert.EqualError(t, err, expected.Error())
 }
 
@@ -77,7 +77,7 @@ func TestSoftDeleteUser_ContextCancelled(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	userID := uint64(1)
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(suite.Ctx)
 	cancel()
 
 	suite.TokenStore.EXPECT().
@@ -99,6 +99,6 @@ func TestSoftDeleteUser_ErrorToDeleteToken_UnknownError(t *testing.T) {
 		Delete(gomock.Any(), userID, commonkeys.TokenTypeAccess).
 		Return(expected)
 
-	err := suite.UserService.SoftDeleteUser(context.Background(), userID)
+	err := suite.UserService.SoftDeleteUser(suite.Ctx, userID)
 	assert.EqualError(t, err, expected.Error())
 }

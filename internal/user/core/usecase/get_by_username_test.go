@@ -2,7 +2,6 @@
 package usecase_test
 
 import (
-	"context"
 	"testing"
 
 	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
@@ -28,7 +27,7 @@ func TestGetUserByUsername_Success(t *testing.T) {
 		GetByUsername(gomock.Any(), username).
 		Return(u, nil)
 
-	got, err := suite.UserService.GetUserByUsername(context.Background(), username)
+	got, err := suite.UserService.GetUserByUsername(suite.Ctx, username)
 	require.NoError(t, err)
 	require.Equal(t, u, got)
 }
@@ -43,7 +42,7 @@ func TestGetUserByUsername_Error(t *testing.T) {
 		GetByUsername(gomock.Any(), username).
 		Return(userdomain.User{}, gorm.ErrRecordNotFound)
 
-	got, err := suite.UserService.GetUserByUsername(context.Background(), username)
+	got, err := suite.UserService.GetUserByUsername(suite.Ctx, username)
 	require.Error(t, err)
 	require.Equal(t, userdomain.User{}, got)
 }

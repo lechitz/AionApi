@@ -30,7 +30,7 @@ func newUserService(t *testing.T) (context.Context,
 	t.Helper()
 
 	ctrl := gomock.NewController(t)
-	ctx := context.Background()
+	ctx := t.Context()
 
 	repo := mocks.NewMockUserRepository(ctrl)
 	hasher := mocks.NewMockHasher(ctrl)

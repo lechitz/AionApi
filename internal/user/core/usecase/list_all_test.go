@@ -2,7 +2,6 @@
 package usecase_test
 
 import (
-	"context"
 	"errors"
 	"testing"
 
@@ -25,7 +24,7 @@ func TestListAll_Success_WithUsers(t *testing.T) {
 		ListAll(gomock.Any()).
 		Return(users, nil)
 
-	got, err := suite.UserService.ListAll(context.Background())
+	got, err := suite.UserService.ListAll(suite.Ctx)
 	require.NoError(t, err)
 	require.Equal(t, users, got)
 }
@@ -38,7 +37,7 @@ func TestListAll_Success_EmptySlice(t *testing.T) {
 		ListAll(gomock.Any()).
 		Return([]userdomain.User{}, nil)
 
-	got, err := suite.UserService.ListAll(context.Background())
+	got, err := suite.UserService.ListAll(suite.Ctx)
 	require.NoError(t, err)
 	require.Empty(t, got)
 }
@@ -53,7 +52,7 @@ func TestListAll_Error(t *testing.T) {
 		ListAll(gomock.Any()).
 		Return(nil, expected)
 
-	got, err := suite.UserService.ListAll(context.Background())
+	got, err := suite.UserService.ListAll(suite.Ctx)
 	require.Error(t, err)
 	require.Empty(t, got) // accept []domain.User{} or nil
 	require.ErrorContains(t, err, "db failure")

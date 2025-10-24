@@ -67,7 +67,7 @@ func TestRefresh_CookieMissing(t *testing.T) {
 	// Setup a simple in-memory tracer provider so handler can start spans and we can inspect them.
 	tt := NewTestTracer(t)
 	defer func() {
-		if err := tt.Shutdown(context.Background()); err != nil {
+		if err := tt.Shutdown(t.Context()); err != nil {
 			t.Fatalf("failed to shutdown tracer: %v", err)
 		}
 	}()
@@ -117,7 +117,7 @@ func TestRefresh_CookiePresent_Success(t *testing.T) {
 	// simple in-memory tracer provider
 	tt := NewTestTracer(t)
 	defer func() {
-		if err := tt.Shutdown(context.Background()); err != nil {
+		if err := tt.Shutdown(t.Context()); err != nil {
 			t.Fatalf("failed to shutdown tracer: %v", err)
 		}
 	}()
@@ -156,7 +156,7 @@ func TestRefresh_ServiceError(t *testing.T) {
 	// in-memory tracer provider
 	tt := NewTestTracer(t)
 	defer func() {
-		if err := tt.Shutdown(context.Background()); err != nil {
+		if err := tt.Shutdown(t.Context()); err != nil {
 			t.Fatalf("failed to shutdown tracer: %v", err)
 		}
 	}()

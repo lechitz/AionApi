@@ -2,7 +2,6 @@
 package usecase_test
 
 import (
-	"context"
 	"errors"
 	"testing"
 
@@ -28,7 +27,7 @@ func TestGetUserByID_Success(t *testing.T) {
 		GetByID(gomock.Any(), u.ID).
 		Return(u, nil)
 
-	got, err := suite.UserService.GetByID(context.Background(), u.ID)
+	got, err := suite.UserService.GetByID(suite.Ctx, u.ID)
 	require.NoError(t, err)
 	require.Equal(t, u, got)
 }
@@ -44,7 +43,7 @@ func TestGetUserByID_ErrorGeneric(t *testing.T) {
 		GetByID(gomock.Any(), id).
 		Return(userdomain.User{}, expected)
 
-	got, err := suite.UserService.GetByID(context.Background(), id)
+	got, err := suite.UserService.GetByID(suite.Ctx, id)
 	require.Error(t, err)
 	require.Equal(t, userdomain.User{}, got)
 	require.ErrorContains(t, err, "some db failure")
@@ -60,7 +59,7 @@ func TestGetUserByID_NotFound(t *testing.T) {
 		GetByID(gomock.Any(), id).
 		Return(userdomain.User{}, gorm.ErrRecordNotFound)
 
-	got, err := suite.UserService.GetByID(context.Background(), id)
+	got, err := suite.UserService.GetByID(suite.Ctx, id)
 	require.Error(t, err)
 	require.Equal(t, userdomain.User{}, got)
 }
