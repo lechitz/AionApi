@@ -41,6 +41,14 @@ jobs:
       - name: Download modules
         run: go mod download
 
+      # 3.1) Install development tools from Makefile (golines, gofumpt, goimports, golangci-lint, etc.)
+      - name: Install development tools
+        run: make -f makefiles/tooling.mk tools-install
+
+      # 3.2) Add GOPATH/bin to PATH so installed tools are available
+      - name: Add GOPATH/bin to PATH
+        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
       # 4) Ensure local caches exist
       - name: Ensure cache dirs exist
         run: |

@@ -20,7 +20,7 @@ MIGRATE_BIN    := $(shell command -v migrate 2> /dev/null)
 #                HELP & TOOLING SECTION
 # ============================================================
 
-.PHONY: all help tools-install
+.PHONY: all help tools-install tools.check
 
 all: help
 
@@ -113,7 +113,7 @@ help:
 .PHONY: graphql mocks docs.gen docs.validate docs.check-dirty lint test test-cover test-ci test-clean
 
 .PHONY: \
-	help tools-install \
+	help tools-install tools.check \
 	build-dev dev-up dev-down dev clean-dev \
 	build-prod prod-up prod-down prod clean-prod \
 	docker-clean-all \
