@@ -34,10 +34,8 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    - exptostd
     - fatcontext
     - forbidigo
-    - funcorder
     - funlen
     - gocheckcompilerdirectives
     - gochecknoglobals
@@ -60,7 +58,6 @@ linters:
     - nakedret
     - nestif
     - nilerr
-    - nilnesserr
     - nilnil
     - noctx
     - nolintlint
@@ -71,7 +68,6 @@ linters:
     - promlinter
     - protogetter
     - reassign
-    - recvcheck
     - revive
     - rowserrcheck
     - sloglint
@@ -86,7 +82,6 @@ linters:
     - unparam
     - unused
     - usestdlibvars
-    - usetesting
     - wastedassign
     - whitespace
 
