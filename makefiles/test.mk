@@ -2,7 +2,7 @@
 #                         TESTING
 # ============================================================
 
-.PHONY: test test-cover test-html-report test-ci test-clean
+.PHONY: test test-cover test-html-report test-ci test-clean test-checks
 
 # Execute unit tests
 test:
@@ -29,6 +29,21 @@ test-html-report:
 test-ci:
 	@echo "Running CI tests with coverage output..."
 	go test ./... -race -coverprofile=$(COVERAGE_DIR)/coverage.out -v
+
+# Check tests for common anti-patterns and fail early with actionable message
+# Currently checks for uses of context.Background() inside _test.go files.
+# Prefer t.Context() (or suite.T().Context()) so test cancellations/timeouts propagate.
+test-checks:
+	@echo "Checking tests for discouraged patterns..."
+	@matches=$$(grep -R --line-number "context.Background()" --include="*_test.go" . \
+		--exclude-dir=.git --exclude-dir=vendor --exclude-dir=tests || true); \
+	if [ -n "$$matches" ]; then \
+		echo "Found context.Background() usages in tests. Prefer using t.Context() or the suite's context. Matches:"; \
+		echo "$$matches"; \
+		exit 1; \
+	else \
+		echo "No discouraged test patterns found."; \
+	fi
 
 # Cleanup coverage artifacts and test reports
 test-clean:
