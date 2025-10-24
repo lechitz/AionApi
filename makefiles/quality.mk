@@ -23,10 +23,14 @@ lint-fix:
 # - Validates Swagger artifacts by generating to a temp dir and diffing
 # - Then runs linters and tests
 verify: graphql mocks docs.validate lint test test-cover test-ci test-clean
+	@echo "Running test checks..."
+	@$(MAKE) -s test-checks
 	@echo "✅  Verify passed successfully!"
 
 # CI-style verify (stricter, enforces committed artifacts)
 verify-ci: docs.gen docs.check-dirty lint test
+	@echo "Running test checks..."
+	@$(MAKE) -s test-checks
 	@echo "✅  CI verify passed!"
 
 sensitive-strings:
