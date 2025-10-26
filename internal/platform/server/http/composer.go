@@ -115,13 +115,15 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 
 	mux := http.NewServeMux()
 	p := path.Clean(apiContext + "/" + strings.TrimPrefix(routeHealth, "/"))
-	mux.Handle(p, http.HandlerFunc(gh.HealthCheck))
-	mux.Handle(p+"/", http.HandlerFunc(gh.HealthCheck))
+	// Wrap health handlers with CORS middleware so OPTIONS (preflight) is handled correctly
+	corsMw := cors.New()
+	mux.Handle(p, corsMw(http.HandlerFunc(gh.HealthCheck)))
+	mux.Handle(p+"/", corsMw(http.HandlerFunc(gh.HealthCheck)))
 
 	// Backwards compatibility: also expose health under {apiContext}{APIRoot}{routeHealth} (e.g., /aion/api/v1/health)
 	altHealth := path.Clean(apiContext + "/" + strings.TrimPrefix(cfg.ServerHTTP.APIRoot, "/") + "/" + strings.TrimPrefix(routeHealth, "/"))
-	mux.Handle(altHealth, http.HandlerFunc(gh.HealthCheck))
-	mux.Handle(altHealth+"/", http.HandlerFunc(gh.HealthCheck))
+	mux.Handle(altHealth, corsMw(http.HandlerFunc(gh.HealthCheck)))
+	mux.Handle(altHealth+"/", corsMw(http.HandlerFunc(gh.HealthCheck)))
 
 	mux.Handle("/", instrumented)
 

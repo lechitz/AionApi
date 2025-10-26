@@ -23,10 +23,16 @@ func (s *Service) GetByID(ctx context.Context, tagID uint64, userID uint64) (dom
 		attribute.String(commonkeys.TagName, strconv.FormatUint(tagID, 10)),
 	)
 
+	if userID == 0 {
+		span.SetStatus(codes.Error, UserIDIsRequired)
+		s.Logger.ErrorwCtx(ctx, UserIDIsRequired, commonkeys.UserID, strconv.FormatUint(userID, 10))
+		return domain.Tag{}, errors.New(UserIDIsRequired)
+	}
+
 	if tagID == 0 {
-		span.SetStatus(codes.Error, TagNameIsRequired)
-		s.Logger.ErrorwCtx(ctx, TagNameIsRequired, commonkeys.TagName, strconv.FormatUint(tagID, 10))
-		return domain.Tag{}, errors.New(TagNameIsRequired)
+		span.SetStatus(codes.Error, UserIDIsRequired)
+		s.Logger.ErrorwCtx(ctx, UserIDIsRequired, commonkeys.TagName, strconv.FormatUint(tagID, 10))
+		return domain.Tag{}, errors.New(UserIDIsRequired)
 	}
 
 	span.AddEvent(EventRepositoryGet)

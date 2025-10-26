@@ -70,6 +70,9 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateTagCommand) (domai
 
 // validateCreateCommand checks required fields and length constraints for CreateCategoryCommand.
 func (s *Service) validateCreateCommand(cmd input.CreateTagCommand) error {
+	if cmd.UserID == 0 {
+		return errors.New(UserIDIsRequired)
+	}
 	if cmd.Name == "" {
 		return errors.New(TagNameIsRequired)
 	}

@@ -17,6 +17,8 @@ input CreateTagInput {
 extend type Query {
     tagByName(name: String!): Tag @auth(roles: "user")
     tagByID(tagID: String!): Tag @auth(roles: "user")
+    tagByCategoryID(categoryID: String!): [Tag!]! @auth(roles: "user")
+    getAll: [Tag!]! @auth(roles: "user")
 }
 
 extend type Mutation {

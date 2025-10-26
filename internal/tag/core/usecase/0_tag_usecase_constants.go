@@ -9,6 +9,12 @@ const SpanCreateTag = "tag.create"
 // SpanGetTagByName is the span name for getting a tag by name.
 const SpanGetTagByName = "GetTagByName"
 
+// SpanGetByCategory is the span name for retrieving tags by category.
+const SpanGetByCategory = "tag.get_by_category"
+
+// SpanGetAll is the span name for listing all tags for a user.
+const SpanGetAll = "tag.list_all"
+
 // EventValidateInput marks the moment input validation starts/completes.
 const EventValidateInput = "validate_input"
 
@@ -17,6 +23,9 @@ const EventRepositoryCreate = "repository_create"
 
 // EventRepositoryGet marks the repository single-get call.
 const EventRepositoryGet = "repository_get"
+
+// EventRepositoryListAll marks the repository list-all call.
+const EventRepositoryListAll = "repository_list_all"
 
 // EventCheckUniqueness marks the uniqueness-check step.
 const EventCheckUniqueness = "check_uniqueness"
@@ -36,14 +45,26 @@ const FailedToCreateTag = "failed_to_create_tag"
 // FailedToGetTagByName indicates failure to retrieve a tag by its name.
 const FailedToGetTagByName = "failed to get tag by name"
 
+// FailedToListTags indicates failure to list all tags for a user.
+const FailedToListTags = "failed_to_list_tags"
+
+// ErrFailedToListTags is the error message used when listing tags fails.
+const ErrFailedToListTags = "failed to list tags"
+
 // StatusCreated is the span status description used when the tag is successfully created.
 const StatusCreated = "created"
 
 // StatusRetrievedByName indicates a resource was retrieved by name.
 const StatusRetrievedByName = "retrieved_by_name"
 
+// StatusListedAll indicates all tags were listed successfully.
+const StatusListedAll = "listed_all"
+
 // SuccessfullyCreatedTag is a structured log message used after a successful creation (expects tag name).
 const SuccessfullyCreatedTag = "tag successfully created: %s"
+
+// UserIDIsRequired is the validation message when the user ID is missing.
+const UserIDIsRequired = "user ID is required"
 
 // TagNameIsRequired is the validation message when the tag name is missing.
 const TagNameIsRequired = "tag name is required"

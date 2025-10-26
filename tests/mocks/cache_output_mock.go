@@ -12,7 +12,7 @@ package mocks
 import (
 	context "context"
 	reflect "reflect"
-	time "time"
+	"time"
 
 	gomock "go.uber.org/mock/gomock"
 )
