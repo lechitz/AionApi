@@ -35,3 +35,10 @@ site/
 
 # Personal, local-only docs (private workspace for notes/ideas)
 docs/personal/
+
+# Local module cache used by Go
+.gocache
+.gomodcache/
+
+# Go build cache
+.gotmp/

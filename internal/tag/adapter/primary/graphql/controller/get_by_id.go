@@ -23,7 +23,7 @@ func (h *controller) GetByID(ctx context.Context, tagID, userID uint64) (*model.
 	span.SetAttributes(
 		attribute.String(commonkeys.Operation, SpanGetByName),
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String(commonkeys.TagName, strconv.FormatUint(tagID, 10)),
+		attribute.String(commonkeys.TagID, strconv.FormatUint(tagID, 10)),
 	)
 
 	// Controller-level preconditions.
