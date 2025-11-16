@@ -33,49 +33,7 @@ func (h *controller) Update(ctx context.Context, in gmodel.UpdateRecordInput, us
 		return nil, errors.New(ErrInvalidRecordID)
 	}
 
-	cmd := input.UpdateRecordCommand{}
-	if in.Title != nil {
-		cmd.Title = in.Title
-	}
-	if in.Description != nil {
-		cmd.Description = in.Description
-	}
-	if in.CategoryID != nil && *in.CategoryID != "" {
-		if v, err := strconv.ParseUint(*in.CategoryID, 10, 64); err == nil {
-			cmd.CategoryID = &v
-		}
-	}
-	if in.TagID != nil && *in.TagID != "" {
-		if v, err := strconv.ParseUint(*in.TagID, 10, 64); err == nil {
-			cmd.TagID = &v
-		}
-	}
-	if in.EventTime != nil && *in.EventTime != "" {
-		if d, err := time.Parse(time.RFC3339, *in.EventTime); err == nil {
-			cmd.EventTime = &d
-		}
-	}
-	if in.RecordedAt != nil && *in.RecordedAt != "" {
-		if d, err := time.Parse(time.RFC3339, *in.RecordedAt); err == nil {
-			cmd.RecordedAt = &d
-		}
-	}
-	if in.DurationSeconds != nil {
-		d := int(*in.DurationSeconds)
-		cmd.DurationSecs = &d
-	}
-	if in.Value != nil {
-		cmd.Value = in.Value
-	}
-	if in.Source != nil {
-		cmd.Source = in.Source
-	}
-	if in.Timezone != nil {
-		cmd.Timezone = in.Timezone
-	}
-	if in.Status != nil {
-		cmd.Status = in.Status
-	}
+	cmd := buildUpdateCommand(in)
 
 	do, err := h.RecordService.Update(ctx, recID, userID, cmd)
 	if err != nil {
@@ -92,4 +50,46 @@ func (h *controller) Update(ctx context.Context, in gmodel.UpdateRecordInput, us
 	)
 	span.SetStatus(codes.Ok, "updated")
 	return out, nil
+}
+
+// buildUpdateCommand constructs an UpdateRecordCommand from GraphQL input.
+func buildUpdateCommand(in gmodel.UpdateRecordInput) input.UpdateRecordCommand {
+	cmd := input.UpdateRecordCommand{
+		Title:       in.Title,
+		Description: in.Description,
+		Value:       in.Value,
+		Source:      in.Source,
+		Timezone:    in.Timezone,
+		Status:      in.Status,
+	}
+
+	parseUint64Field(in.CategoryID, &cmd.CategoryID)
+	parseUint64Field(in.TagID, &cmd.TagID)
+	parseTimeField(in.EventTime, &cmd.EventTime)
+	parseTimeField(in.RecordedAt, &cmd.RecordedAt)
+
+	if in.DurationSeconds != nil {
+		d := int(*in.DurationSeconds)
+		cmd.DurationSecs = &d
+	}
+
+	return cmd
+}
+
+// parseUint64Field parses an optional string field to uint64.
+func parseUint64Field(src *string, dst **uint64) {
+	if src != nil && *src != "" {
+		if v, err := strconv.ParseUint(*src, 10, 64); err == nil {
+			*dst = &v
+		}
+	}
+}
+
+// parseTimeField parses an optional RFC3339 string field to time.Time.
+func parseTimeField(src *string, dst **time.Time) {
+	if src != nil && *src != "" {
+		if d, err := time.Parse(time.RFC3339, *src); err == nil {
+			*dst = &d
+		}
+	}
 }
