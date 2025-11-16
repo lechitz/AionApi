@@ -11,6 +11,12 @@ const (
 
 	// SpanGetByName is the span name for retrieving a tag by name.
 	SpanGetByName = "tag.get_by_name"
+
+	// SpanGetByCategory is the span name for retrieving tags by category.
+	SpanGetByCategory = "tag.get_by_category"
+
+	// SpanListAll is the span name for listing all tags for a user.
+	SpanListAll = "tag.list_all"
 )
 
 // Status messages represent the outcome of controller operations.
@@ -33,6 +39,9 @@ const (
 	// ErrUserIDNotFound is the error message when the user ID is missing or invalid.
 	ErrUserIDNotFound = "user id not found"
 
+	// ErrCategoryNotFound is the error message when the category ID is missing or invalid.
+	ErrCategoryNotFound = "category id not found"
+
 	// ErrInvalidTagID is the error message when the tag ID cannot be parsed or is invalid.
 	ErrInvalidTagID = "invalid tag id"
 
@@ -41,4 +50,7 @@ const (
 
 	// ErrTagNotFound is the error message when a tag cannot be found.
 	ErrTagNotFound = "tag not found"
+
+	// ErrFailedToListTags is the error message when listing tags fails.
+	ErrFailedToListTags = "failed to list tags"
 )

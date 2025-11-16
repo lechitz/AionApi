@@ -1,24 +1,60 @@
--- (user_id = 1)
-INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at) VALUES
-  (1, 'Reading',        'Books, articles and studies',           '#F8B400', 'book',      '2024-06-16 09:02:00', '2024-06-16 09:02:00', NULL),
-  (1, 'Health',         'Personal care and well-being',          '#E94F37', 'heart',     '2024-06-16 09:03:00', '2024-06-16 09:03:00', NULL),
-  (1, 'Development',    'Programming projects and studies',      '#1976D2', 'code',      '2024-06-16 09:04:00', '2024-06-16 09:04:00', NULL);
+-- ============================================================================
+-- Category Seed Data - User ID 1 (Test User)
+-- Idempotent via WHERE NOT EXISTS to match unique index on (user_id, lower(name))
+-- ============================================================================
 
--- (user_id = 2)
-INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at) VALUES
-    (2, 'Finance',       'Personal financial management',         '#388E3C', 'dollar',    '2024-06-15 10:15:00', '2024-06-15 10:15:00', NULL);
+-- saude_fisica
+INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at)
+SELECT 1, 'saude_fisica', 'Atividades físicas e condicionamento', '#E94F37', 'dumbbell', '2025-01-01 08:00:00', '2025-01-01 08:00:00', NULL
+WHERE NOT EXISTS (
+  SELECT 1 FROM aion_api.tag_categories WHERE user_id = 1 AND lower(name) = lower('saude_fisica') AND deleted_at IS NULL
+);
 
--- (user_id = 3)
--- No categories
+-- meditacao
+INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at)
+SELECT 1, 'meditacao', 'Práticas de meditação e atenção plena', '#9C27B0', 'spa', '2025-01-01 08:05:00', '2025-01-01 08:05:00', NULL
+WHERE NOT EXISTS (
+  SELECT 1 FROM aion_api.tag_categories WHERE user_id = 1 AND lower(name) = lower('meditacao') AND deleted_at IS NULL
+);
 
--- (user_id = 4)
-INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at) VALUES
-  (4, 'Travel',         'Travel planning and itineraries',       '#9C27B0', 'airplane',  '2024-06-14 15:00:00', '2024-06-14 15:00:00', NULL),
-  (4, 'Cooking',        'Recipes and culinary experiences',      '#795548', 'utensils',  '2024-06-14 15:05:00', '2024-06-14 15:05:00', NULL),
-  (4, 'Meditation',     'Mindfulness practices',                 '#FFD600', 'spa',       '2024-06-14 15:10:00', '2024-06-14 15:10:00', NULL),
-  (4, 'Investments',    'Stocks, funds, and fixed income',       '#1976D2', 'chart-line','2024-06-14 15:12:00', '2024-06-14 15:12:00', NULL);
+-- saude_mental
+INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at)
+SELECT 1, 'saude_mental', 'Saúde mental, planejamento e bem-estar', '#F8B400', 'brain', '2025-01-01 08:10:00', '2025-01-01 08:10:00', NULL
+WHERE NOT EXISTS (
+  SELECT 1 FROM aion_api.tag_categories WHERE user_id = 1 AND lower(name) = lower('saude_mental') AND deleted_at IS NULL
+);
 
--- (user_id = 5)
-INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at) VALUES
-  (5, 'Cinema',         'Movies, series and analysis',           '#00ACC1', 'film',      '2024-06-13 16:30:00', '2024-06-13 16:30:00', NULL),
-  (5, 'Gym',            'Workout routines and diets',            '#616161', 'dumbbell',  '2024-06-13 16:32:00', '2024-06-13 16:32:00', NULL);
+-- estudo_trabalho
+INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at)
+SELECT 1, 'estudo_trabalho', 'Estudo, trabalho e desenvolvimento', '#1976D2', 'briefcase', '2025-01-01 08:15:00', '2025-01-01 08:15:00', NULL
+WHERE NOT EXISTS (
+  SELECT 1 FROM aion_api.tag_categories WHERE user_id = 1 AND lower(name) = lower('estudo_trabalho') AND deleted_at IS NULL
+);
+
+-- idiomas
+INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at)
+SELECT 1, 'idiomas', 'Atividades de aprendizado de idiomas', '#00ACC1', 'globe', '2025-01-01 08:20:00', '2025-01-01 08:20:00', NULL
+WHERE NOT EXISTS (
+  SELECT 1 FROM aion_api.tag_categories WHERE user_id = 1 AND lower(name) = lower('idiomas') AND deleted_at IS NULL
+);
+
+-- pessoal
+INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at)
+SELECT 1, 'pessoal', 'Assuntos pessoais, lazer e tempo livre', '#FF6F00', 'user', '2025-01-01 08:25:00', '2025-01-01 08:25:00', NULL
+WHERE NOT EXISTS (
+  SELECT 1 FROM aion_api.tag_categories WHERE user_id = 1 AND lower(name) = lower('pessoal') AND deleted_at IS NULL
+);
+
+-- trabalho_de_casa
+INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at)
+SELECT 1, 'trabalho_de_casa', 'Tarefas domésticas e manutenção da casa', '#388E3C', 'home', '2025-01-01 08:30:00', '2025-01-01 08:30:00', NULL
+WHERE NOT EXISTS (
+  SELECT 1 FROM aion_api.tag_categories WHERE user_id = 1 AND lower(name) = lower('trabalho_de_casa') AND deleted_at IS NULL
+);
+
+-- outros
+INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, created_at, updated_at, deleted_at)
+SELECT 1, 'outros', 'Atividades diversas / off / viagens', '#616161', 'ellipsis-h', '2025-01-01 08:35:00', '2025-01-01 08:35:00', NULL
+WHERE NOT EXISTS (
+  SELECT 1 FROM aion_api.tag_categories WHERE user_id = 1 AND lower(name) = lower('outros') AND deleted_at IS NULL
+);

@@ -6,6 +6,8 @@ type Tag {
     name: String!
     categoryId: ID!
     description: String
+    createdAt: String!      # ISO8601 timestamp
+    updatedAt: String!      # ISO8601 timestamp
 }
 
 input CreateTagInput {
@@ -16,9 +18,12 @@ input CreateTagInput {
 
 extend type Query {
     tagByName(name: String!): Tag @auth(roles: "user")
-    tagByID(tagID: String!): Tag @auth(roles: "user")
+    tagById(id: ID!): Tag @auth(roles: "user")
+    tags: [Tag!]! @auth(roles: "user")
+    tagsByCategoryId(categoryId: ID!): [Tag!]! @auth(roles: "user")
 }
 
 extend type Mutation {
     createTag(input: CreateTagInput!): Tag! @auth(roles: "user")
 }
+

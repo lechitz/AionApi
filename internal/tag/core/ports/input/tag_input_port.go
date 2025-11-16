@@ -16,6 +16,8 @@ type TagCreator interface {
 type TagRetriever interface {
 	GetByID(ctx context.Context, tagID uint64, userID uint64) (domain.Tag, error)
 	GetByName(ctx context.Context, tagName string, userID uint64) (domain.Tag, error)
+	GetByCategoryID(ctx context.Context, categoryID uint64, userID uint64) ([]domain.Tag, error)
+	GetAll(ctx context.Context, userID uint64) ([]domain.Tag, error)
 }
 
 // TagService defines a contract that combines creating, retrieving, updating, and soft-deleting tags in the system.

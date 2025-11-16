@@ -1,0 +1,68 @@
+## Record domain schema (extends root types defined in root.graphqls)
+
+type Record {
+    id: ID!
+    userId: ID!
+    categoryId: ID!
+    title: String!
+    description: String
+    tagId: ID!
+    eventTime: String!
+    recordedAt: String
+    durationSeconds: Int
+    value: Float
+    source: String
+    timezone: String
+    status: String
+    createdAt: String!
+    updatedAt: String!
+}
+
+input CreateRecordInput {
+    title: String!
+    description: String
+    categoryId: ID!
+    tagId: ID!
+    eventTime: String
+    recordedAt: String
+    durationSeconds: Int
+    value: Float
+    source: String
+    timezone: String
+    status: String
+}
+
+input UpdateRecordInput {
+    id: ID!
+    title: String
+    description: String
+    categoryId: ID
+    tagId: ID
+    eventTime: String
+    recordedAt: String
+    durationSeconds: Int
+    value: Float
+    source: String
+    timezone: String
+    status: String
+}
+
+input DeleteRecordInput {
+    id: ID!
+}
+
+extend type Query {
+    recordById(id: ID!): Record @auth(roles: "user")
+    records(limit: Int, afterEventTime: String, afterId: ID): [Record!]! @auth(roles: "user")
+    recordsByTag(tagId: ID!, limit: Int): [Record!]! @auth(roles: "user")
+    recordsByDay(date: String!): [Record!]! @auth(roles: "user")
+    recordsUntil(until: String!, limit: Int): [Record!]! @auth(roles: "user")
+    recordsBetween(startDate: String!, endDate: String!, limit: Int): [Record!]! @auth(roles: "user")
+}
+
+extend type Mutation {
+    createRecord(input: CreateRecordInput!): Record! @auth(roles: "user")
+    updateRecord(input: UpdateRecordInput!): Record! @auth(roles: "user")
+    softDeleteRecord(input: DeleteRecordInput!): Boolean! @auth(roles: "user")
+    softDeleteAllRecords: Boolean! @auth(roles: "user")
+}

@@ -15,7 +15,9 @@ type TagCreator interface {
 // TagRetriever defines methods for retrieving tag details or multiple tags for a specific user.
 type TagRetriever interface {
 	GetByID(ctx context.Context, tagID, userID uint64) (domain.Tag, error)
-	GetByName(ctx context.Context, TagName string, userID uint64) (domain.Tag, error)
+	GetByName(ctx context.Context, tagName string, userID uint64) (domain.Tag, error)
+	GetByCategoryID(ctx context.Context, categoryID uint64, userID uint64) ([]domain.Tag, error)
+	GetAll(ctx context.Context, userID uint64) ([]domain.Tag, error)
 }
 
 // TagRepository represents a composite interface for managing tags, combining creation, retrieval, updating, and soft-deletion functionalities.

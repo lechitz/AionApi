@@ -2,5 +2,15 @@
 
 directive @auth(roles: String) on FIELD_DEFINITION
 
-type Query
-type Mutation
+scalar JSON
+
+# Base root types: include a placeholder field so parser accepts them and modules can `extend`.
+# The placeholder field is harmless and keeps the schema compatible with gqlgen.
+
+type Query {
+    _empty: Boolean
+}
+
+type Mutation {
+    _empty: Boolean
+}

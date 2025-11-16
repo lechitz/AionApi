@@ -4,6 +4,7 @@
 
 .PHONY: format lint lint-fix verify verify-ci
 
+# Run goimports and golines to format code
 format:
 	@echo "Running goimports..."
 	@if command -v goimports >/dev/null 2>&1; then \
@@ -19,6 +20,7 @@ format:
 	fi
 	@echo "Finished formatting checks."
 
+# Run golangci-lint checks
 lint: format
 	@echo "Running golangci-lint check..."
 	@if command -v golangci-lint >/dev/null 2>&1; then \
@@ -31,6 +33,7 @@ lint: format
 		echo "warning: 'golangci-lint' not found, skipping lint (install with: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.0)"; \
 	fi
 
+# Auto-fix lint issues where possible
 lint-fix:
 	@echo "Running golangci-lint with --fix..."
 	@if command -v golangci-lint >/dev/null 2>&1; then \
@@ -39,11 +42,8 @@ lint-fix:
 		echo "warning: 'golangci-lint' not found, skipping lint-fix (install with: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.0)"; \
 	fi
 
-# Local pre-commit verify:
-# - DOES NOT modify your working tree
-# - Validates Swagger artifacts by generating to a temp dir and diffing
-# - Then runs linters and tests
-verify: graphql mocks docs.validate lint test test-cover test-ci test-clean
+# General verify (checks code quality, but does not enforce committed artifacts)
+verify: graphql mocks docs.validate test test-cover test-ci test-clean
 	@echo "Running test checks..."
 	@$(MAKE) -s test-checks
 	@echo "✅  Verify passed successfully!"

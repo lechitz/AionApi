@@ -4,9 +4,10 @@ import (
 	"context"
 	"testing"
 
+	"go.uber.org/mock/gomock"
+
 	"github.com/lechitz/AionApi/internal/auth/core/usecase"
 	"github.com/lechitz/AionApi/tests/mocks"
-	"go.uber.org/mock/gomock"
 )
 
 // TokenServiceTestSuite groups mocked dependencies and the SUT (TokenService)

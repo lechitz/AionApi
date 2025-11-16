@@ -36,7 +36,7 @@ test-ci:
 test-checks:
 	@echo "Checking tests for discouraged patterns..."
 	@matches=$$(grep -R --line-number "context.Background()" --include="*_test.go" . \
-		--exclude-dir=.git --exclude-dir=vendor --exclude-dir=tests || true); \
+		--exclude-dir=.git --exclude-dir=vendor --exclude-dir=tests --exclude-dir=.gomodcache || true); \
 	if [ -n "$$matches" ]; then \
 		echo "Found context.Background() usages in tests. Prefer using t.Context() or the suite's context. Matches:"; \
 		echo "$$matches"; \

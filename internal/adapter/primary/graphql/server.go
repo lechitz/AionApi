@@ -12,6 +12,7 @@ import (
 	authmw "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/middleware"
 	authInput "github.com/lechitz/AionApi/internal/auth/core/ports/input"
 	categoryInput "github.com/lechitz/AionApi/internal/category/core/ports/input"
+	recordInput "github.com/lechitz/AionApi/internal/record/core/ports/input"
 	tagInput "github.com/lechitz/AionApi/internal/tag/core/ports/input"
 
 	"github.com/lechitz/AionApi/internal/platform/config"
@@ -25,20 +26,19 @@ func NewGraphqlHandler(
 	authService authInput.AuthService,
 	categoryService categoryInput.CategoryService,
 	tagService tagInput.TagService,
+	recordService recordInput.RecordService,
 	log logger.ContextLogger,
 	cfg *config.Config,
 ) (http.Handler, error) {
 	r := chi.NewRouter()
 
-	if authService != nil {
-		r.Use(authmw.New(authService, log).Auth)
-	}
-
+	// Recovery middleware for all routes
 	r.Use(recovery.New(genericHandler.New(log, cfg.General)))
 
 	resolvers := &Resolver{
 		CategoryService: categoryService,
 		TagService:      tagService,
+		RecordService:   recordService,
 		Logger:          log,
 	}
 
@@ -58,6 +58,13 @@ func NewGraphqlHandler(
 		KeepAlivePingInterval: 10 * time.Second,
 	})
 
-	r.Handle("/", srv)
+	// Main GraphQL endpoint (with auth middleware)
+	r.Group(func(protected chi.Router) {
+		if authService != nil {
+			protected.Use(authmw.New(authService, log).Auth)
+		}
+		protected.Handle("/", srv)
+	})
+
 	return r, nil
 }

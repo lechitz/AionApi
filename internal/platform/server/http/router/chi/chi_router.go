@@ -18,7 +18,9 @@ type router struct {
 // Platform-level middlewares (request-id, recovery, CORS, etc.) should be
 // applied by the platform composer before registering domain modules.
 func New() ports.Router {
-	return &router{chi: chiv5.NewRouter()}
+	return &router{
+		chi: chiv5.NewRouter(),
+	}
 }
 
 // Use applies one or more middlewares to the chi pipeline.

@@ -2,7 +2,6 @@ package graphql
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -31,7 +30,18 @@ func (q *queryResolver) TagByID(ctx context.Context, tagID string) (*model.Tag, 
 	return q.TagController().GetByID(ctx, id, uid)
 }
 
-// Tags is the resolver for the tag field.
-func (q *queryResolver) Tags(_ context.Context) ([]*model.Tag, error) {
-	return nil, errors.New("not implemented: Tags")
+// TagsByCategoryID is the resolver for the tagsByCategoryId field.
+func (q *queryResolver) TagsByCategoryID(ctx context.Context, categoryID string) ([]*model.Tag, error) {
+	id, err := strconv.ParseUint(categoryID, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	userID, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.TagController().GetByCategoryID(ctx, id, userID)
+}
+
+// Tags is the resolver for the tags field (list all tags for user).
+func (q *queryResolver) Tags(ctx context.Context) ([]*model.Tag, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.TagController().GetAll(ctx, uid)
 }

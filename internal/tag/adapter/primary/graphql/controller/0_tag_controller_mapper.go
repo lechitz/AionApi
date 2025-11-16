@@ -3,6 +3,7 @@ package controller
 
 import (
 	"strconv"
+	"time"
 
 	gmodel "github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
 	"github.com/lechitz/AionApi/internal/tag/core/domain"
@@ -20,6 +21,10 @@ func toModelOut(t domain.Tag) *gmodel.Tag {
 	if t.Description != "" {
 		out.Description = &t.Description
 	}
+
+	out.CreatedAt = t.CreatedAt.Format(time.RFC3339)
+	out.UpdatedAt = t.UpdatedAt.Format(time.RFC3339)
+
 	return out
 }
 

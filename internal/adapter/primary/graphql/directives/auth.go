@@ -24,12 +24,10 @@ const (
 // and, optionally, that the user has the required "role".
 func Auth() func(ctx context.Context, obj any, next graphql.Resolver, roles *string) (res any, err error) {
 	return func(ctx context.Context, _ any, next graphql.Resolver, roles *string) (any, error) {
-		// 1) Must be authenticated (user_id in context)
 		if ctx.Value(ctxkeys.UserID) == nil {
 			return nil, sharederrors.ErrUnauthorized(ErrMissingUserIDInContext)
 		}
 
-		// 2) (Optional) Check for a required role
 		if roles != nil && *roles != "" {
 			if !hasRole(ctx, *roles) {
 				return nil, sharederrors.ErrForbidden(ErrMissingRequiredRoles + *roles)
@@ -80,7 +78,6 @@ func rolesContain(v any, required string) bool {
 			}
 		}
 	case string:
-		// Support CSV in a single string: "admin,user,editor"
 		for _, r := range strings.Split(vv, ",") {
 			if strings.TrimSpace(r) == required {
 				return true
