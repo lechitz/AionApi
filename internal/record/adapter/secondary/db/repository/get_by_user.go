@@ -5,6 +5,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
+	"github.com/lechitz/AionApi/internal/record/core/domain"
 )
 
 // ListByUser returns records for the given user ordered by event_time desc.

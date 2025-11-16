@@ -5,6 +5,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
+	"github.com/lechitz/AionApi/internal/record/core/domain"
 )
 
 // ListByTag returns records filtered by tag for a given user.

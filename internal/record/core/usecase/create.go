@@ -47,21 +47,41 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateRecordCommand) (do
 			return domain.Record{}, fmt.Errorf("lookup tag: %w", err)
 		}
 		if tagObj.ID == 0 {
-			// tag not found — create one for the specified category
+			// tag not found — create one for the specified category with a generated name
 			newTag := tagdomain.Tag{
-				Name:       fmt.Sprintf("tag-%d", finalTagID),
+				Name:       fmt.Sprintf("auto-tag-%d", time.Now().UTC().UnixNano()),
 				UserID:     userID,
 				CategoryID: cmd.CategoryID,
 			}
 			createdTag, err := s.TagRepository.Create(ctx, newTag)
 			if err != nil {
-				return domain.Record{}, fmt.Errorf("create fallback tag: %w", err)
+				return domain.Record{}, fmt.Errorf("create auto tag: %w", err)
 			}
 			finalTagID = createdTag.ID
 		} else {
-			// tag exists — ensure it belongs to the category
+			// tag exists — ensure it belongs to the category; otherwise create a category-specific twin
 			if tagObj.CategoryID != cmd.CategoryID {
-				return domain.Record{}, errors.New("tag belongs to a different category")
+				// Try to create a tag with the same name under the requested category.
+				// Note: tags have a user-scoped unique name; if that conflicts, fallback to a derived unique name.
+				candidate := tagdomain.Tag{
+					Name:       tagObj.Name,
+					UserID:     userID,
+					CategoryID: cmd.CategoryID,
+				}
+				createdTag, err := s.TagRepository.Create(ctx, candidate)
+				if err != nil {
+					// Fallback to a derived unique name per category
+					alt := tagdomain.Tag{
+						Name:       fmt.Sprintf("%s@cat-%d", tagObj.Name, cmd.CategoryID),
+						UserID:     userID,
+						CategoryID: cmd.CategoryID,
+					}
+					createdTag, err = s.TagRepository.Create(ctx, alt)
+					if err != nil {
+						return domain.Record{}, fmt.Errorf("create category tag: %w", err)
+					}
+				}
+				finalTagID = createdTag.ID
 			}
 		}
 	} else {
