@@ -29,8 +29,11 @@ func toModelOut(t domain.Record) *gmodel.Record {
 		out.RecordedAt = &r
 	}
 	if t.DurationSecs != nil {
-		d := int32(*t.DurationSecs)
-		out.DurationSeconds = &d
+		v := *t.DurationSecs
+		if v >= -2147483648 && v <= 2147483647 { // ensure safe conversion to int32
+			dv := int32(v)
+			out.DurationSeconds = &dv
+		}
 	}
 	if t.Value != nil {
 		out.Value = t.Value

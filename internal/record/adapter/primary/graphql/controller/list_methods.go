@@ -186,7 +186,18 @@ func (h *controller) ListAllBetween(ctx context.Context, userID uint64, startDat
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "error listing records between dates")
-		h.Logger.ErrorwCtx(ctx, "error listing records between dates", "error", err.Error(), "start_date", startDateStr, "end_date", endDateStr, commonkeys.UserID, userID)
+		h.Logger.ErrorwCtx(
+			ctx,
+			"error listing records between dates",
+			"error",
+			err.Error(),
+			"start_date",
+			startDateStr,
+			"end_date",
+			endDateStr,
+			commonkeys.UserID,
+			userID,
+		)
 		return nil, err
 	}
 

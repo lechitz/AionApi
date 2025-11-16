@@ -9,7 +9,7 @@ import (
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 )
 
-// GetByUserCategoryDate retrieves a record by user+category+date
+// GetByUserCategoryDate retrieves a record by user+category+date.
 func (r *RecordRepository) GetByUserCategoryDate(ctx context.Context, userID uint64, categoryID uint64, date time.Time) (domain.Record, error) {
 	var recordDB model.Record
 

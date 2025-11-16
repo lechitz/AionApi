@@ -79,14 +79,14 @@ func (q *queryResolver) Records(ctx context.Context, limit *int32, afterEventTim
 	if limit != nil && *limit > 0 {
 		lim = int(*limit)
 	}
-	var afterIdInt *int64
+	var afterIDInt *int64
 	if afterID != nil && *afterID != "" {
 		if v, err := strconv.ParseInt(*afterID, 10, 64); err == nil {
-			afterIdInt = &v
+			afterIDInt = &v
 		}
 	}
 
-	return q.RecordController().ListByUser(ctx, uid, lim, afterEventTime, afterIdInt)
+	return q.RecordController().ListByUser(ctx, uid, lim, afterEventTime, afterIDInt)
 }
 
 // UpdateRecord is the resolver for the updateRecord field.

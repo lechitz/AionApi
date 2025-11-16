@@ -5,12 +5,12 @@ import "time"
 
 // CreateRecordCommand represents input for creating a record via usecase.
 type CreateRecordCommand struct {
-	UserID       uint64     `json:"userId" validate:"required"`
-	CategoryID   uint64     `json:"categoryId" validate:"required"`
-	Title        string     `json:"title" validate:"required,max=255"`
+	UserID       uint64     `json:"userId"                    validate:"required"`
+	CategoryID   uint64     `json:"categoryId"                validate:"required"`
+	Title        string     `json:"title"                     validate:"required,max=255"`
 	Description  *string    `json:"description,omitempty"`
-	TagID        uint64     `json:"tagId" validate:"required"`
-	EventTime    time.Time  `json:"eventTime" validate:"required"`
+	TagID        uint64     `json:"tagId"                     validate:"required"`
+	EventTime    time.Time  `json:"eventTime"                 validate:"required"`
 	RecordedAt   *time.Time `json:"recordedAt,omitempty"`
 	DurationSecs *int       `json:"durationSeconds,omitempty"`
 	Value        *float64   `json:"value,omitempty"`

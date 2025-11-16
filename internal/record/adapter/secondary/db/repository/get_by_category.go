@@ -9,7 +9,14 @@ import (
 )
 
 // ListByCategory returns records filtered by category for a given user.
-func (r *RecordRepository) ListByCategory(ctx context.Context, categoryID uint64, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]domain.Record, error) {
+func (r *RecordRepository) ListByCategory(
+	ctx context.Context,
+	categoryID uint64,
+	userID uint64,
+	limit int,
+	afterEventTime *string,
+	afterID *int64,
+) ([]domain.Record, error) {
 	var recordsDB []model.Record
 	q := r.db.WithContext(ctx).
 		Where("category_id = ? AND user_id = ? AND deleted_at IS NULL", categoryID, userID).

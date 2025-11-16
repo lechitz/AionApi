@@ -1,6 +1,9 @@
 package graphql
 
-import "context"
+import (
+	"context"
+	"errors"
+)
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating, and any unknown code will be moved to the end.
@@ -12,11 +15,17 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
+type (
+	mutationResolver struct{ *Resolver }
+	queryResolver    struct{ *Resolver }
+)
 
 // Empty is a placeholder resolver to avoid gqlgen errors when no other resolvers are defined.
-func (m *mutationResolver) Empty(_ context.Context) (*bool, error) { return nil, nil }
+func (m *mutationResolver) Empty(_ context.Context) (*bool, error) {
+	return nil, errors.New("not implemented")
+}
 
 // Empty is a placeholder resolver to avoid gqlgen errors when no other resolvers are defined.
-func (q *queryResolver) Empty(_ context.Context) (*bool, error) { return nil, nil }
+func (q *queryResolver) Empty(_ context.Context) (*bool, error) {
+	return nil, errors.New("not implemented")
+}
