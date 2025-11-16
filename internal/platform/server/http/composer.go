@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	authhandler "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/handler"
 	userhandler "github.com/lechitz/AionApi/internal/user/adapter/primary/http/handler"
@@ -23,7 +24,6 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/router/chi"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 
-	httpSwagger "github.com/swaggo/http-swagger"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
@@ -101,7 +101,7 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 				deps.AuthService,
 				deps.CategoryService,
 				deps.TagService,
-				//deps.RecordService,
+				deps.RecordService,
 				log,
 				cfg,
 			)
