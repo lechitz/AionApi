@@ -26,6 +26,15 @@ func TagFromDB(db model.TagDB) domain.Tag {
 	}
 }
 
+// TagsFromDB maps a slice of TagDB to a slice of domain.Tag.
+func TagsFromDB(dbTags []model.TagDB) []domain.Tag {
+	tags := make([]domain.Tag, len(dbTags))
+	for i, db := range dbTags {
+		tags[i] = TagFromDB(db)
+	}
+	return tags
+}
+
 // TagToDB maps a domain.Tag to TagDB.
 func TagToDB(t domain.Tag) model.TagDB {
 	return model.TagDB{
