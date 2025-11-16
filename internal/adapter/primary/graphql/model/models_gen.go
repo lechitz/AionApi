@@ -18,6 +18,20 @@ type CreateCategoryInput struct {
 	Icon        *string `json:"icon,omitempty"`
 }
 
+type CreateRecordInput struct {
+	Title           string   `json:"title"`
+	Description     *string  `json:"description,omitempty"`
+	CategoryID      string   `json:"categoryId"`
+	TagID           string   `json:"tagId"`
+	EventTime       *string  `json:"eventTime,omitempty"`
+	RecordedAt      *string  `json:"recordedAt,omitempty"`
+	DurationSeconds *int32   `json:"durationSeconds,omitempty"`
+	Value           *float64 `json:"value,omitempty"`
+	Source          *string  `json:"source,omitempty"`
+	Timezone        *string  `json:"timezone,omitempty"`
+	Status          *string  `json:"status,omitempty"`
+}
+
 type CreateTagInput struct {
 	Name        string  `json:"name"`
 	CategoryID  string  `json:"categoryId"`
@@ -28,10 +42,32 @@ type DeleteCategoryInput struct {
 	ID string `json:"id"`
 }
 
+type DeleteRecordInput struct {
+	ID string `json:"id"`
+}
+
 type Mutation struct {
 }
 
 type Query struct {
+}
+
+type Record struct {
+	ID              string   `json:"id"`
+	UserID          string   `json:"userId"`
+	CategoryID      string   `json:"categoryId"`
+	Title           string   `json:"title"`
+	Description     *string  `json:"description,omitempty"`
+	TagID           string   `json:"tagId"`
+	EventTime       string   `json:"eventTime"`
+	RecordedAt      *string  `json:"recordedAt,omitempty"`
+	DurationSeconds *int32   `json:"durationSeconds,omitempty"`
+	Value           *float64 `json:"value,omitempty"`
+	Source          *string  `json:"source,omitempty"`
+	Timezone        *string  `json:"timezone,omitempty"`
+	Status          *string  `json:"status,omitempty"`
+	CreatedAt       string   `json:"createdAt"`
+	UpdatedAt       string   `json:"updatedAt"`
 }
 
 type Tag struct {
@@ -40,6 +76,8 @@ type Tag struct {
 	Name        string  `json:"name"`
 	CategoryID  string  `json:"categoryId"`
 	Description *string `json:"description,omitempty"`
+	CreatedAt   string  `json:"createdAt"`
+	UpdatedAt   string  `json:"updatedAt"`
 }
 
 type UpdateCategoryInput struct {
@@ -48,4 +86,19 @@ type UpdateCategoryInput struct {
 	Description *string `json:"description,omitempty"`
 	ColorHex    *string `json:"colorHex,omitempty"`
 	Icon        *string `json:"icon,omitempty"`
+}
+
+type UpdateRecordInput struct {
+	ID              string   `json:"id"`
+	Title           *string  `json:"title,omitempty"`
+	Description     *string  `json:"description,omitempty"`
+	CategoryID      *string  `json:"categoryId,omitempty"`
+	TagID           *string  `json:"tagId,omitempty"`
+	EventTime       *string  `json:"eventTime,omitempty"`
+	RecordedAt      *string  `json:"recordedAt,omitempty"`
+	DurationSeconds *int32   `json:"durationSeconds,omitempty"`
+	Value           *float64 `json:"value,omitempty"`
+	Source          *string  `json:"source,omitempty"`
+	Timezone        *string  `json:"timezone,omitempty"`
+	Status          *string  `json:"status,omitempty"`
 }
