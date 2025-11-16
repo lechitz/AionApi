@@ -19,7 +19,7 @@
 #   - bash available (we rely on pipefail)
 #   - Go toolchain installed
 #   - mockgen installed:
-#       go install github.com/golang/mock/mockgen@latest
+#       go install go.uber.org/mock/mockgen@latest
 #
 # Common usage:
 #   make mocks                 # generate all mocks (flat)
@@ -112,7 +112,7 @@ graphql:
 verify_mockgen:
 	@if ! command -v mockgen >/dev/null 2>&1 ; then \
 		echo "❌ 'mockgen' not found."; \
-		echo "   Install it with: go install github.com/golang/mock/mockgen@latest"; \
+		echo "   Install it with: go install go.uber.org/mock/mockgen@latest"; \
 		exit 1; \
 	fi
 	@mockgen -version || true
