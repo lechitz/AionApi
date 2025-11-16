@@ -12,8 +12,15 @@ theme:
 nav:
   - Home: index.md
   - Architecture: architecture.md
-  - Swagger UI: https://lechitz.github.io/AionApi/swagger-ui/
   - Getting Started: getting-started.md
+#  - GraphQL:
+#      - Overview: graphql/index.md
+#      - Queries: graphql/queries.md
+#      - Mutations: graphql/mutations.md
+#      - Types: graphql/types.md
+#      - Examples: graphql/examples.md
+#      - Collection (Runner): graphql/collection.md
+  - Swagger UI: https://lechitz.github.io/AionApi/swagger-ui/
 plugins:
   - search
 markdown_extensions:

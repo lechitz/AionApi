@@ -13,11 +13,13 @@
     * Root: `internal/adapter/primary/graphql/schema/root.graphqls`
     * Modules: `internal/adapter/primary/graphql/schema/modules/*.graphqls`
       (e.g., `category.graphqls`, `tags.graphqls`)
+    * Dev tooling: `.graphqlrc.yaml` / `.graphqlconfig` (this directory) configure IDEs/editors for autocomplete, validation, and navigation.
 * **Resolvers (root layer)**
 
     * `internal/adapter/primary/graphql/root.resolvers.go`
     * `internal/adapter/primary/graphql/category.resolvers.go`
     * `internal/adapter/primary/graphql/tags.resolvers.go`
+    * `internal/adapter/primary/graphql/record.resolvers.go`
 * **Custom directives / middleware**
 
     * `internal/adapter/primary/graphql/directives/auth.go` (`@auth`)

@@ -1,0 +1,23 @@
+{
+  "projects": {
+    "default": {
+      "schema": [
+        "./internal/adapter/primary/graphql/schema/root.graphqls",
+        "./internal/adapter/primary/graphql/schema/modules/**/*.graphqls"
+      ],
+      "documents": [
+        "./internal/adapter/primary/graphql/schema/modules/**/*.graphqls"
+      ],
+      "extensions": {
+        "endpoints": {
+          "default": {
+            "url": "http://localhost:8080/graphql",
+            "headers": {
+              "user-id": "1"
+            }
+          }
+        }
+      }
+    }
+  }
+}
