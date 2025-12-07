@@ -13,7 +13,7 @@ const (
 
 // HTTP path(s) used by Aion-Chat service.
 const (
-	//PathProcess is the endpoint for processing chat messages.
+	// PathProcess is the endpoint for processing chat messages.
 	PathProcess = "/internal/process"
 )
 

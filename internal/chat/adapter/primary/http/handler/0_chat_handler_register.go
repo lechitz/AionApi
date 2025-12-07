@@ -12,7 +12,6 @@ import (
 
 // RegisterHTTP attaches the chat routes to the given router.
 func RegisterHTTP(r ports.Router, h *Handler, authService input.AuthService, log logger.ContextLogger) {
-
 	if authService != nil {
 		mw := authMiddleware.New(authService, log)
 		r.GroupWith(mw.Auth, func(pr ports.Router) {

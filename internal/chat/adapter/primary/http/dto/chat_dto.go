@@ -8,16 +8,16 @@ type ChatRequest struct {
 
 // ChatResponse represents the response returned to the client.
 type ChatResponse struct {
-	Response string                   `json:"response" example:"Você bebeu 2.5 litros de água hoje..."`
+	Response string                   `json:"response"          example:"Você bebeu 2.5 litros de água hoje..."`
 	Sources  []map[string]interface{} `json:"sources,omitempty"`
 	Usage    *TokenUsage              `json:"usage,omitempty"`
 }
 
 // TokenUsage represents LLM token consumption statistics.
 type TokenUsage struct {
-	PromptTokens     int `json:"prompt_tokens,omitempty" example:"50"`
+	PromptTokens     int `json:"prompt_tokens,omitempty"     example:"50"`
 	CompletionTokens int `json:"completion_tokens,omitempty" example:"100"`
-	TotalTokens      int `json:"total_tokens" example:"150"`
+	TotalTokens      int `json:"total_tokens"                example:"150"`
 }
 
 // InternalChatRequest represents the request sent to the Aion-Chat service (Python).

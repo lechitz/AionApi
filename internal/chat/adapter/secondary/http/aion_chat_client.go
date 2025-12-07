@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/lechitz/AionApi/internal/chat/adapter/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -27,7 +28,7 @@ func (c *AionChatClient) SendMessage(ctx context.Context, req *dto.InternalChatR
 	span.SetAttributes(
 		attribute.String(AttrHTTPURL, url),
 		attribute.String(AttrHTTPMethod, http.MethodPost),
-		attribute.Int64(AttrUserID, int64(req.UserID)),
+		attribute.String(AttrUserID, strconv.FormatUint(req.UserID, 10)),
 	)
 
 	jsonData, err := json.Marshal(req)

@@ -25,4 +25,3 @@ func New(chatService input.ChatService, cfg *config.Config, log logger.ContextLo
 		Logger:  log,
 	}
 }
-

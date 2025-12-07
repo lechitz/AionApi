@@ -107,4 +107,3 @@ type AionChatConfig struct {
 	BaseURL string        `envconfig:"AION_CHAT_URL"     default:"http://aion-chat:8000"`
 	Timeout time.Duration `envconfig:"AION_CHAT_TIMEOUT" default:"30s"`
 }
-

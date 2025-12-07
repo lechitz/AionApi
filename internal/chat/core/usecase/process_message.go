@@ -3,6 +3,7 @@ package usecase
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/lechitz/AionApi/internal/chat/adapter/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/chat/core/domain"
@@ -18,8 +19,8 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 	defer span.End()
 
 	span.SetAttributes(
-		attribute.Int64(AttrUserID, int64(userID)),
-		attribute.String(AttrMessageLength, string(rune(len(message)))),
+		attribute.String(AttrUserID, strconv.FormatUint(userID, 10)),
+		attribute.Int(AttrMessageLength, len(message)),
 	)
 
 	s.logger.InfowCtx(ctx, LogProcessingChatMessage, LogKeyUserID, userID, LogKeyMessageLength, len(message))
