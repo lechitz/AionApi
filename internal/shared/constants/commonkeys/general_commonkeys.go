@@ -49,6 +49,9 @@ const (
 
 	// Message is the standard key used for human-readable messages in logs and API responses.
 	Message = "message"
+
+	// URL is the standard key used for URLs in logs and API responses.
+	URL = "url"
 )
 
 // Database keys.

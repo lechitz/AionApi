@@ -11,6 +11,7 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	authhandler "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/handler"
+	chathandler "github.com/lechitz/AionApi/internal/chat/adapter/primary/http/handler"
 	userhandler "github.com/lechitz/AionApi/internal/user/adapter/primary/http/handler"
 
 	"github.com/lechitz/AionApi/internal/platform/bootstrap"
@@ -94,6 +95,11 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 			if deps.UserService != nil {
 				uh := userhandler.New(deps.UserService, cfg, log)
 				userhandler.RegisterHTTP(v1, uh, deps.AuthService, log)
+			}
+
+			if deps.ChatService != nil {
+				ch := chathandler.New(deps.ChatService, cfg, log)
+				chathandler.RegisterHTTP(v1, ch, deps.AuthService, log)
 			}
 
 			// GraphQL endpoint

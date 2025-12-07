@@ -101,3 +101,10 @@ type Application struct {
 
 	ContextRequest time.Duration `envconfig:"CONTEXT_REQUEST" default:"2.1s"`
 }
+
+// AionChatConfig holds configuration for the Aion-Chat service (Python AI service).
+type AionChatConfig struct {
+	BaseURL string        `envconfig:"AION_CHAT_URL"     default:"http://aion-chat:8000"`
+	Timeout time.Duration `envconfig:"AION_CHAT_TIMEOUT" default:"30s"`
+}
+

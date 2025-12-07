@@ -17,6 +17,7 @@ type Config struct {
 	ServerHTTP    ServerHTTP
 	DB            DBConfig
 	Application   Application
+	AionChat      AionChatConfig
 }
 
 // Validate checks if the configuration is valid, returning the first validation error encountered.
