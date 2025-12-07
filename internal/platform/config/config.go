@@ -11,13 +11,13 @@ type Config struct {
 	General       GeneralConfig
 	Secret        Secret
 	Observability ObservabilityConfig
-	Cache         CacheConfig
+	AionChat      AionChatConfig
 	Cookie        CookieConfig
-	ServerGraphql ServerGraphql
+	Cache         CacheConfig
 	ServerHTTP    ServerHTTP
 	DB            DBConfig
+	ServerGraphql ServerGraphql
 	Application   Application
-	AionChat      AionChatConfig
 }
 
 // Validate checks if the configuration is valid, returning the first validation error encountered.
