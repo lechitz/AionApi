@@ -2,7 +2,7 @@
 #                                CODE QUALITY
 # ============================================================
 
-.PHONY: format lint lint-fix verify verify-ci
+.PHONY: format lint lint-fix fieldalignment fieldalignment-report verify verify-ci
 
 # Run goimports and golines to format code
 format:
@@ -33,6 +33,24 @@ lint: format
 		echo "warning: 'golangci-lint' not found, skipping lint (install with: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.0)"; \
 	fi
 
+# Check struct field alignment for memory efficiency (strict - fails on issues)
+fieldalignment:
+	@if command -v fieldalignment >/dev/null 2>&1; then \
+		echo "Running fieldalignment on critical paths..."; \
+		fieldalignment ./internal/platform/config ./internal/chat/core/domain || exit 1; \
+	else \
+		echo "warning: 'fieldalignment' not found, skipping (install with: make tools-install)"; \
+	fi
+
+# Check struct field alignment across entire repo (advisory - reports but doesn't fail)
+fieldalignment-report:
+	@if command -v fieldalignment >/dev/null 2>&1; then \
+		echo "Running fieldalignment across entire repository..."; \
+		fieldalignment ./... || echo "⚠️  fieldalignment found issues (advisory only)"; \
+	else \
+		echo "warning: 'fieldalignment' not found, skipping (install with: make tools-install)"; \
+	fi
+
 # Auto-fix lint issues where possible
 lint-fix:
 	@echo "Running golangci-lint with --fix..."
@@ -43,13 +61,13 @@ lint-fix:
 	fi
 
 # General verify (checks code quality, but does not enforce committed artifacts)
-verify: lint graphql mocks docs.validate test test-cover test-ci test-clean
+verify: lint fieldalignment graphql mocks docs.validate test test-cover test-ci test-clean
 	@echo "Running test checks..."
 	@$(MAKE) -s test-checks
 	@echo "✅  Verify passed successfully!"
 
 # CI-style verify (stricter, enforces committed artifacts)
-verify-ci: tools.check docs.gen docs.check-dirty lint test
+verify-ci: tools.check docs.gen docs.check-dirty lint fieldalignment test
 	@echo "Running test checks..."
 	@$(MAKE) -s test-checks
 	@echo "✅  CI verify passed!"

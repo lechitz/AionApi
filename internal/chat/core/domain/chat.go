@@ -5,11 +5,11 @@ import "time"
 
 // ChatMessage represents a chat message in the domain.
 type ChatMessage struct {
+	Timestamp  time.Time
 	ID         string
-	UserID     uint64
 	Message    string
 	Response   string
-	Timestamp  time.Time
+	UserID     uint64
 	TokensUsed int
 }
 
@@ -17,6 +17,6 @@ type ChatMessage struct {
 type ChatResult struct {
 	Response      string
 	Sources       []interface{}
-	TokensUsed    int
 	FunctionCalls []string
+	TokensUsed    int
 }
