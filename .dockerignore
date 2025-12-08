@@ -1,33 +1,16 @@
-# Version control
 .git
 .gitignore
-
-# OS and IDE files
+.idea
+.vscode
+node_modules
+tests/coverage
+__pycache__
+*.pyc
+*.pyo
+*.swp
 .DS_Store
-.vscode/
-.idea/
-
-# Local environment files
-#.env*
-#.env.*.local
-
-# Tool and cache files
+venv
+.venv
+coverage/
 *.log
-*.tmp
-*.cache
-/tmp
-/cache
 
-# Build outputs / binaries
-bin/
-*.exe
-*.out
-
-# Tests and coverage reports
-coverage.out
-coverage_tmp.out
-coverage.html
-
-# Others
-node_modules/
-migrations/

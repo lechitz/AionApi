@@ -10,7 +10,7 @@ APPLICATION_NAME := aion-api
 
 build-dev: clean-dev
 	@echo "\033[1;36m[BUILD-DEV]\033[0m Building DEV image..."
-	docker build -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):dev .
+	DOCKER_BUILDKIT=1 docker build --progress=plain --build-arg BUILD_LDFLAGS="" -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):dev .
 
 dev-up: dev-down
 	@echo "\033[1;36m[DEV-UP]\033[0m Starting DEV environment..."
@@ -46,7 +46,7 @@ clean-dev:
 
 build-prod: clean-prod
 	@echo "\033[1;36m[BUILD-PROD]\033[0m Building PROD image..."
-	docker build -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):prod .
+	DOCKER_BUILDKIT=1 docker build --progress=plain --build-arg BUILD_LDFLAGS="-s -w" -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):prod .
 
 prod-up: prod-down
 	@echo "\033[1;36m[PROD-UP]\033[0m Starting PROD environment..."
