@@ -11,11 +11,12 @@ type Config struct {
 	General       GeneralConfig
 	Secret        Secret
 	Observability ObservabilityConfig
-	Cache         CacheConfig
+	AionChat      AionChatConfig
 	Cookie        CookieConfig
-	ServerGraphql ServerGraphql
+	Cache         CacheConfig
 	ServerHTTP    ServerHTTP
 	DB            DBConfig
+	ServerGraphql ServerGraphql
 	Application   Application
 }
 

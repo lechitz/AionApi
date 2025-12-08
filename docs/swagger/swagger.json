@@ -128,6 +128,76 @@
                 }
             }
         },
+        "/chat": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth.": []
+                    }
+                ],
+                "description": "Sends a message to the AI assistant and receives a response. Requires authentication.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Chat"
+                ],
+                "summary": "Send chat message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Chat message",
+                        "name": "chat",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chat response",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "503": {
+                        "description": "Service unavailable - AI service is down",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/user": {
             "put": {
                 "security": [
@@ -514,6 +584,56 @@
                     "description": "Token is the JSON Web Token used for authenticating subsequent requests.\nExample: \"eyJhbGciOi...\"",
                     "type": "string",
                     "example": "eyJhbGciOi..."
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatRequest": {
+            "type": "object",
+            "required": [
+                "message"
+            ],
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "maxLength": 2000,
+                    "minLength": 1,
+                    "example": "Quanto de água eu bebi hoje?"
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string",
+                    "example": "Você bebeu 2.5 litros de água hoje..."
+                },
+                "sources": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                },
+                "usage": {
+                    "$ref": "#/definitions/github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.TokenUsage"
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.TokenUsage": {
+            "type": "object",
+            "properties": {
+                "completion_tokens": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "prompt_tokens": {
+                    "type": "integer",
+                    "example": 50
+                },
+                "total_tokens": {
+                    "type": "integer",
+                    "example": 150
                 }
             }
         },

@@ -35,6 +35,7 @@ site/
 
 # Personal, local-only docs (private workspace for notes/ideas)
 docs/personal/
+notes/
 
 # Local module cache used by Go
 .gocache

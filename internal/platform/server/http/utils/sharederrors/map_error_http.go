@@ -35,6 +35,11 @@ func MapErrorToHTTPStatus(err error) int {
 		return http.StatusUnauthorized
 	}
 
+	var ae *AuthenticationError
+	if errors.As(err, &ae) {
+		return http.StatusUnauthorized
+	}
+
 	// Sentinel errors (via errors.Is) - include common HTTP handlers
 	switch {
 	case errors.Is(err, httperrors.ErrResourceNotFound):

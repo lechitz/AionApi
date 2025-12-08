@@ -95,6 +95,8 @@ services:
       - .env.dev
     ports:
       - "5001:5001" # REST + GraphQL
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       postgres:
         condition: service_healthy

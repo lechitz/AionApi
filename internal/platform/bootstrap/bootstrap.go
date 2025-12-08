@@ -14,6 +14,9 @@ import (
 	categoryRepo "github.com/lechitz/AionApi/internal/category/adapter/secondary/db/repository"
 	inputCategory "github.com/lechitz/AionApi/internal/category/core/ports/input"
 	category "github.com/lechitz/AionApi/internal/category/core/usecase"
+	chatClient "github.com/lechitz/AionApi/internal/chat/adapter/secondary/http"
+	inputChat "github.com/lechitz/AionApi/internal/chat/core/ports/input"
+	chat "github.com/lechitz/AionApi/internal/chat/core/usecase"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	recordRepo "github.com/lechitz/AionApi/internal/record/adapter/secondary/db/repository"
@@ -35,6 +38,7 @@ type AppDependencies struct {
 	CategoryService inputCategory.CategoryService
 	TagService      inputTag.TagService
 	RecordService   inputRecord.RecordService
+	ChatService     inputChat.ChatService
 
 	Logger logger.ContextLogger
 }
@@ -66,12 +70,16 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger l
 	tagRepository := tagRepo.New(dbConn, logger)
 	recordRepository := recordRepo.New(dbConn, logger)
 
+	// Chat client (HTTP adapter to Aion-Chat service)
+	chatHTTPClient := chatClient.NewClient(cfg.AionChat.BaseURL, cfg.AionChat.Timeout, logger)
+
 	// Core use cases (depend only on ports)
 	authService := auth.NewService(userRepository, tokenStore, tokenProvider, passwordHasher, logger)
 	userService := user.NewService(userRepository, tokenStore, tokenProvider, passwordHasher, logger)
 	categoryService := category.NewService(categoryRepository, logger)
 	tagService := tag.NewService(tagRepository, logger)
 	recordService := record.NewService(recordRepository, tagRepository, logger)
+	chatService := chat.NewService(chatHTTPClient, logger)
 
 	// Resource cleanup
 	cleanup := func(ctx context.Context) {
@@ -97,6 +105,7 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger l
 		CategoryService: categoryService,
 		TagService:      tagService,
 		RecordService:   recordService,
+		ChatService:     chatService,
 		Logger:          logger,
 	}, cleanup, nil
 }

@@ -97,6 +97,19 @@ type ValidationError struct {
 	Reason string
 }
 
+// AuthenticationError describes an error for authentication failures.
+type AuthenticationError struct {
+	Reason string
+}
+
+// Error returns the error message for the AuthenticationError.
+func (e *AuthenticationError) Error() string {
+	if e.Reason != "" {
+		return fmt.Sprintf("%s: %s", ErrMsgUnauthorized, e.Reason)
+	}
+	return ErrMsgUnauthorized
+}
+
 // Error returns the error message for the ValidationError.
 func (e *ValidationError) Error() string {
 	if e.Field != "" && e.Reason != "" {
@@ -130,6 +143,11 @@ func ErrForbidden(reason string) error {
 // NewValidationError returns a new ValidationError for the given field and reason.
 func NewValidationError(field, reason string) error {
 	return &ValidationError{Field: field, Reason: reason}
+}
+
+// NewAuthenticationError returns a new AuthenticationError with a specific reason.
+func NewAuthenticationError(reason string) error {
+	return &AuthenticationError{Reason: reason}
 }
 
 // ====================================================================

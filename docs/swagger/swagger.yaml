@@ -46,6 +46,41 @@ definitions:
         example: eyJhbGciOi...
         type: string
     type: object
+  github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatRequest:
+    properties:
+      message:
+        example: Quanto de água eu bebi hoje?
+        maxLength: 2000
+        minLength: 1
+        type: string
+    required:
+    - message
+    type: object
+  github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatResponse:
+    properties:
+      response:
+        example: Você bebeu 2.5 litros de água hoje...
+        type: string
+      sources:
+        items:
+          additionalProperties: true
+          type: object
+        type: array
+      usage:
+        $ref: '#/definitions/github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.TokenUsage'
+    type: object
+  github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.TokenUsage:
+    properties:
+      completion_tokens:
+        example: 100
+        type: integer
+      prompt_tokens:
+        example: 50
+        type: integer
+      total_tokens:
+        example: 150
+        type: integer
+    type: object
   github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserRequest:
     properties:
       email:
@@ -289,6 +324,52 @@ paths:
       summary: Logout current user
       tags:
       - Auth
+  /chat:
+    post:
+      consumes:
+      - application/json
+      description: Sends a message to the AI assistant and receives a response. Requires
+        authentication.
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Chat message
+        in: body
+        name: chat
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Chat response
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatResponse'
+        "400":
+          description: Invalid request payload or validation error
+          schema:
+            type: string
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+        "503":
+          description: Service unavailable - AI service is down
+          schema:
+            type: string
+      security:
+      - BearerAuth.: []
+      summary: Send chat message
+      tags:
+      - Chat
   /user:
     delete:
       consumes:
