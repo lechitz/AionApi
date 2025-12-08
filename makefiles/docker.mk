@@ -2,7 +2,7 @@
 #                DOCKER ENVIRONMENT TARGETS
 # ============================================================
 
-.PHONY: build-dev dev-up dev-down dev clean-dev
+.PHONY: build-dev dev-up dev-down dev dev-clean clean-dev
 .PHONY: build-prod prod-up prod-down prod clean-prod
 .PHONY: docker-clean-all
 
@@ -21,7 +21,22 @@ dev-down:
 	@echo "\033[1;36m[DEV-DOWN]\033[0m Stopping DEV environment..."
 	export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down -v
 
-dev: build-dev dev-up
+dev: dev-clean
+
+dev-logs: build-dev dev-up
+	@echo "\033[1;36m[DEV-LOGS]\033[0m Starting DEV environment (foreground, all logs)..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up
+
+dev-clean: build-dev
+	@echo "\033[1;36m[DEV-CLEAN]\033[0m Starting DEV (detached, following aion-api only)..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down -v 2>/dev/null || true
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres 2>/dev/null || true
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d
+	@echo "\033[1;32m✓\033[0m Services started in background. Following aion-api logs..."
+	@echo "\033[1;33m→\033[0m Use 'docker compose -f $(COMPOSE_FILE_DEV) logs -f' to see all logs"
+	@echo "\033[1;33m→\033[0m Use 'make dev-down' to stop\n"
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f aion-api
 
 clean-dev:
 	@echo "\033[1;33m[CLEAN-DEV]\033[0m Cleaning DEV containers, volumes, images..."

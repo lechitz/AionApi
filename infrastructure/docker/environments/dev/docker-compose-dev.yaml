@@ -109,10 +109,10 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- \"http://localhost:$$HTTP_PORT$$HTTP_CONTEXT$$HTTP_API_ROOT$$HTTP_HEALTH_ROUTE\" >/dev/null 2>&1"]
-      interval: 10s
+      interval: 600s
       timeout: 5s
       start_period: 30s
-      retries: 5
+      retries: 3
 
 networks:
   rede_local:
