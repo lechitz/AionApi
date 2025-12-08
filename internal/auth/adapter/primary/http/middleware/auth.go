@@ -36,7 +36,6 @@ func New(authService input.AuthService, logger logger.ContextLogger) *AuthMiddle
 // Auth authenticates a user and sets the user ID and token in the context.
 func (a *AuthMiddleware) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		// Check if already authenticated via service token (S2S)
 		if svc, ok := r.Context().Value(ctxkeys.ServiceAccount).(bool); ok && svc {
 			if userID, ok := r.Context().Value(ctxkeys.UserID).(uint64); ok {
@@ -93,7 +92,6 @@ func (a *AuthMiddleware) Auth(next http.Handler) http.Handler {
 
 // extractToken extracts the token from the request.
 func extractToken(r *http.Request) (string, error) {
-
 	// Authorization: Bearer <token>
 	if ah := r.Header.Get("Authorization"); ah != "" {
 		parts := strings.SplitN(ah, " ", 2)

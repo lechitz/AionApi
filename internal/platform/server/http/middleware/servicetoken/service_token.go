@@ -10,23 +10,34 @@ import (
 
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 )
 
 const (
-	HeaderServiceKey  = "X-Service-Key"
+	// HeaderServiceKey is the HTTP header name used to pass the service API key.
+	HeaderServiceKey = "X-Service-Key" // #nosec G101: false positive — header name, not a credential
+
+	// HeaderServiceUser is the HTTP header name used to pass an optional service user id.
 	HeaderServiceUser = "X-Service-User-Id"
 
+	// ErrServiceTokenInvalid is the error message returned when the service token is invalid.
 	ErrServiceTokenInvalid = "service token invalid"
 
-	LogNoServiceKey  = "servicetoken: no service key configured"
-	LogInvalidKey    = "servicetoken: invalid service key"
-	LogS2SAuth       = "servicetoken: S2S auth"
+	// LogNoServiceKey is the log message when no service key is configured.
+	LogNoServiceKey = "servicetoken: no service key configured"
+
+	// LogInvalidKey is the log message when an invalid service key is provided.
+	LogInvalidKey = "servicetoken: invalid service key"
+
+	// LogS2SAuth is the log message when S2S authentication is successful.
+	LogS2SAuth = "servicetoken: S2S auth"
+
+	// LogInvalidUserID is the log message when an invalid user ID is provided.
 	LogInvalidUserID = "servicetoken: invalid user id"
 
-	LogKeyUserID = "user_id"
-	LogKeyPath   = "path"
-	LogKeyValue  = "value"
+	// LogKeyValue is the log key for generic value.
+	LogKeyValue = "value"
 )
 
 // New returns a middleware that validates S2S authentication via X-Service-Key header.
@@ -62,7 +73,7 @@ func New(cfg *config.Config, log logger.ContextLogger) func(next http.Handler) h
 			if userIDStr := r.Header.Get(HeaderServiceUser); userIDStr != "" {
 				if userID, err := strconv.ParseUint(userIDStr, 10, 64); err == nil {
 					ctx = context.WithValue(ctx, ctxkeys.UserID, userID)
-					log.Infow(LogS2SAuth, LogKeyUserID, userID, LogKeyPath, r.URL.Path)
+					log.Infow(LogS2SAuth, commonkeys.UserID, userID, commonkeys.URLPath, r.URL.Path)
 				} else {
 					log.Warnw(LogInvalidUserID, LogKeyValue, userIDStr)
 				}

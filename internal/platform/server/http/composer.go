@@ -69,7 +69,6 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 	}
 
 	router.Group(apiContext, func(api ports.Router) {
-
 		// Swagger UI + OpenAPI JSON mounted under the API context
 		swaggerDocURL := path.Clean(apiContext + "/" +
 			strings.TrimPrefix(swaggerMount, "/") + "/" + DefaultSwaggerDocFile)
@@ -88,7 +87,6 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 
 		// Group API Root (ex.: /api/v1)
 		api.Group(cfg.ServerHTTP.APIRoot, func(v1 ports.Router) {
-
 			// REST endpoints
 			if deps.AuthService != nil {
 				ah := authhandler.New(deps.AuthService, cfg, log)
