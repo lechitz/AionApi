@@ -29,6 +29,9 @@ const (
 	// StatusAuthenticated is the status for authenticated.
 	StatusAuthenticated = "authenticated"
 
+	// MsgS2SAuthBypass is the message for S2S auth bypass.
+	MsgS2SAuthBypass = "S2S auth bypass: service account authenticated"
+
 	// ErrorUnauthorizedAccessMissingToken is the error message for a missing or empty auth token.
 	ErrorUnauthorizedAccessMissingToken = "missing or empty auth token" // #nosec G101: false positive — user-facing error message, not a credential
 

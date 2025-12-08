@@ -21,6 +21,7 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/cors"
 	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/recovery"
 	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/requestid"
+	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/servicetoken"
 	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
 	"github.com/lechitz/AionApi/internal/platform/server/http/router/chi"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -68,6 +69,7 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 	}
 
 	router.Group(apiContext, func(api ports.Router) {
+
 		// Swagger UI + OpenAPI JSON mounted under the API context
 		swaggerDocURL := path.Clean(apiContext + "/" +
 			strings.TrimPrefix(swaggerMount, "/") + "/" + DefaultSwaggerDocFile)
@@ -86,6 +88,7 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 
 		// Group API Root (ex.: /api/v1)
 		api.Group(cfg.ServerHTTP.APIRoot, func(v1 ports.Router) {
+
 			// REST endpoints
 			if deps.AuthService != nil {
 				ah := authhandler.New(deps.AuthService, cfg, log)
@@ -116,7 +119,10 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 				return
 			}
 
-			v1.Mount(cfg.ServerGraphql.Path, gqlHandler)
+			// Wrap GraphQL handler with service-token middleware so trusted services can impersonate users when calling GraphQL
+			wrappedGQL := servicetoken.New(cfg, log)(gqlHandler)
+
+			v1.Mount(cfg.ServerGraphql.Path, wrappedGQL)
 		})
 	})
 

@@ -12,5 +12,5 @@ const (
 	TraceID        contextKey = "trace_id"        // Context key for trace ID.
 	SpanID         contextKey = "span_id"         // Context key for span ID.
 	Claims         contextKey = "claims"          // Context key for claims.
-	IdempotencyKey contextKey = "idempotency_key" // Context key for Idempotency-Key header.
+	ServiceAccount contextKey = "service_account" // Context key for service account calls.
 )
