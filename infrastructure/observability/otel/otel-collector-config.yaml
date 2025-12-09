@@ -16,8 +16,10 @@ processors:
 exporters:
   prometheus:
     endpoint: "0.0.0.0:9888"
-  otlp:
-    endpoint: jaeger:4317
+  zipkin:
+    endpoint: "http://jaeger:9411/api/v2/spans"
+  otlp/jaeger:
+    endpoint: "jaeger:4317"
     tls:
       insecure: true
 
@@ -26,7 +28,7 @@ service:
     traces:
       receivers: [otlp]
       processors: ["filter/health", batch]
-      exporters: [otlp]
+      exporters: [zipkin, otlp/jaeger]
     metrics:
       receivers: [otlp]
       exporters: [prometheus]

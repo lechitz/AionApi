@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1.4
-FROM golang:1.24 AS builder
+# Use Go 1.25 to satisfy go.mod requirement (go 1.25.4 locally).
+FROM golang:1.25 AS builder
 
 WORKDIR /app
 
