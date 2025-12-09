@@ -15,7 +15,7 @@ import (
 
 // ListAll returns all (non-deleted) users.
 func (up UserRepository) ListAll(ctx context.Context) ([]domain.User, error) {
-	tr := otel.Tracer(TracerUserRepository)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanListAll, trace.WithAttributes(
 		attribute.String(commonkeys.Operation, OperationListAll),
 	))

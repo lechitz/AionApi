@@ -1,23 +1,78 @@
 package usecase
 
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
+
 // TracerName identifies the tracer used in auth use cases.
-const TracerName = "aionapi.auth"
+// Format: aionapi.<domain>.<layer> .
+const TracerName = "aionapi.auth.usecase"
 
-// Spans.
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
 const (
+	// SpanLogin is the span name for login operation.
+	SpanLogin = "auth.login"
 
-	// SpanLogin is the name of the span for login.
-	SpanLogin = "Login"
+	// SpanLogout is the span name for logout operation.
+	SpanLogout = "auth.logout"
 
-	// SpanLogout is the name of the span for logout.
-	SpanLogout = "Logout"
+	// SpanRevokeToken is the span name for token revocation.
+	SpanRevokeToken = "auth.token.revoke" // #nosec G101: span name, not a credential
 
-	// SpanRevokeToken is the name of the span for revoke token.
-	SpanRevokeToken = "RevokeToken"
+	// SpanValidateToken is the span name for token validation.
+	SpanValidateToken = "auth.token.validate" // #nosec G101: span name, not a credential
 )
 
-// SpanValidateToken is the name of the span for validating a token.
-const SpanValidateToken = "ValidateToken"
+// -----------------------------------------------------------------------------
+// Event Names
+// Format: <domain>.<action>.<detail>
+// -----------------------------------------------------------------------------
+
+const (
+	// EventLookupUser is emitted before looking up the user.
+	EventLookupUser = "auth.user.lookup"
+
+	// EventComparePassword is emitted before comparing the password.
+	EventComparePassword = "auth.password.compare" //nolint:goconst // unique event name
+
+	// EventGenerateToken is emitted before generating the token.
+	EventGenerateToken = "auth.token.generate" // #nosec G101: event name, not a credential
+
+	// EventSaveTokenToStore is emitted before saving the token to the cache.
+	EventSaveTokenToStore = "auth.token.save" // #nosec G101: false positive — event name string, not a credential
+
+	// EventTokenRevoked is emitted after token revocation.
+	EventTokenRevoked = "auth.token.revoked" // #nosec G101: event name, not a credential
+
+	// EventLoginSuccess is emitted after successful login.
+	EventLoginSuccess = "auth.login.success"
+
+	// EventRevokeToken is emitted before revoking the token.
+	EventRevokeToken = "auth.token.revoke" // #nosec G101: event name, not a credential
+
+	// EventVerifyToken is emitted before verifying token signature/exp.
+	EventVerifyToken = "auth.token.verify" // #nosec G101: event name, not a credential
+
+	// EventExtractUserID is emitted before extracting/parsing the userID claim.
+	EventExtractUserID = "auth.user_id.extract"
+
+	// EventGetTokenFromStore is emitted before fetching the token from the cache.
+	EventGetTokenFromStore = "auth.token.get" // #nosec G101: event name, not a credential
+
+	// EventCompareToken is emitted before comparing the provided token with the stored one.
+	EventCompareToken = "auth.token.compare" // #nosec G101: event name, not a credential
+
+	// EventTokenValidated is emitted when token validation succeeds.
+	EventTokenValidated = "auth.token.validated" // #nosec G101: event name, not a credential
+)
+
+// =============================================================================
+// BUSINESS LOGIC - Error Messages
+// =============================================================================
 
 // ErrorInvalidToken indicates the token is invalid.
 const ErrorInvalidToken = "invalid access reference"
@@ -36,18 +91,17 @@ const SuccessTokenValidated = "access reference validated successfully"
 
 // Errors.
 const (
-
 	// ErrorToCompareHashAndPassword is the error message when the password is invalid.
 	ErrorToCompareHashAndPassword = "invalid credentials" // #nosec G101
 
-	// ErrorToCreateToken is the error message when the token cannot be created. // #nosec G101.
-	ErrorToCreateToken = "error to create token"
+	// ErrorToCreateToken is the error message when the token cannot be created.
+	ErrorToCreateToken = "error to create token" // #nosec G101
 
-	// ErrorToDeleteToken is the error message when the token cannot be deleted. // #nosec G101.
-	ErrorToDeleteToken = "error to delete token"
+	// ErrorToDeleteToken is the error message when the token cannot be deleted.
+	ErrorToDeleteToken = "error to delete token" // #nosec G101
 
-	// ErrorToGetUserByUserName is the error message when the user cannot be found. // #nosec G101.
-	ErrorToGetUserByUserName = "error to get user by username"
+	// ErrorToGetUserByUserName is the error message when the user cannot be found.
+	ErrorToGetUserByUserName = "error to get user by username" // #nosec G101
 
 	// UserNotFoundOrInvalidCredentials is the error message when the user cannot be found.
 	UserNotFoundOrInvalidCredentials = "user not found or invalid credentials"
@@ -63,44 +117,4 @@ const (
 
 	// SuccessUserLoggedOut is the success message when the user logs out.
 	SuccessUserLoggedOut = "user logged out successfully"
-)
-
-// Events (trace).
-const (
-
-	// EventLookupUser is emitted right before looking up the user.
-	EventLookupUser = "lookup_user"
-
-	// EventComparePassword //nolint:gosec,goconst is emitted right before comparing the password.
-	EventComparePassword = "compare_password"
-
-	// EventGenerateToken is emitted right before generating the token.
-	EventGenerateToken = "generate_token"
-
-	// EventSaveTokenToStore is emitted right before saving the token to the cache.
-	EventSaveTokenToStore = "save_token_to_store" // #nosec G101: false positive — event name string, not a credential
-
-	// EventTokenRevoked is emitted right before revoking the token.
-	EventTokenRevoked = "token_revoked"
-
-	// EventLoginSuccess is emitted right after successful login.
-	EventLoginSuccess = "login_success"
-
-	// EventRevokeToken is emitted right before revoking the token.
-	EventRevokeToken = "revoke_token"
-
-	// EventVerifyToken is emitted right before verifying token signature/exp.
-	EventVerifyToken = "verify_token"
-
-	// EventExtractUserID is emitted before extracting/parsing the userID claim.
-	EventExtractUserID = "extract_user_id"
-
-	// EventGetTokenFromStore is emitted before fetching the token from the cache.
-	EventGetTokenFromStore = "get_token_from_store"
-
-	// EventCompareToken is emitted before comparing the provided token with the stored one.
-	EventCompareToken = "compare_token"
-
-	// EventTokenValidated is emitted after successful validation.
-	EventTokenValidated = "token_validated"
 )

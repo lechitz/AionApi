@@ -1,73 +1,111 @@
 package usecase
 
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
+
 // TracerName identifies the OpenTelemetry tracer for the Tag usecase package.
-const TracerName = "aion.tag.usecase"
+// Format: aionapi.<domain>.<layer> .
+const TracerName = "aionapi.tag.usecase"
 
-// SpanCreateTag is the span name used when creating a new Tag.
-const SpanCreateTag = "tag.create"
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
 
-// SpanGetTagByName is the span name for getting a tag by name.
-const SpanGetTagByName = "GetTagByName"
+const (
+	// SpanCreateTag is the span name used when creating a new Tag.
+	SpanCreateTag = "tag.create"
 
-// SpanGetByCategory is the span name for retrieving tags by category.
-const SpanGetByCategory = "tag.get_by_category"
+	// SpanGetTagByName is the span name for getting a tag by name.
+	SpanGetTagByName = "tag.get_by_name"
 
-// SpanGetAll is the span name for listing all tags for a user.
-const SpanGetAll = "tag.list_all"
+	// SpanGetByCategory is the span name for retrieving tags by category.
+	SpanGetByCategory = "tag.get_by_category"
 
-// EventValidateInput marks the moment input validation starts/completes.
-const EventValidateInput = "validate_input"
+	// SpanGetAll is the span name for listing all tags for a user.
+	SpanGetAll = "tag.list_all"
+)
 
-// EventRepositoryCreate marks the step where the repository persistence happens.
-const EventRepositoryCreate = "repository_create"
+// -----------------------------------------------------------------------------
+// Event Names
+// Format: <domain>.<action>.<detail>
+// -----------------------------------------------------------------------------
 
-// EventRepositoryGet marks the repository single-get call.
-const EventRepositoryGet = "repository_get"
+const (
+	// EventValidateInput marks the moment input validation starts/completes.
+	EventValidateInput = "tag.input.validate"
 
-// EventRepositoryListAll marks the repository list-all call.
-const EventRepositoryListAll = "repository_list_all"
+	// EventRepositoryCreate marks the step where the repository persistence happens.
+	EventRepositoryCreate = "tag.repository.create"
 
-// EventCheckUniqueness marks the uniqueness-check step.
-const EventCheckUniqueness = "check_uniqueness"
+	// EventRepositoryGet marks the repository single-get call.
+	EventRepositoryGet = "tag.repository.get"
 
-// TagAlreadyExists is returned when trying to create a tag that already exists.
-const TagAlreadyExists = "tag already exists"
+	// EventRepositoryListAll marks the repository list-all call.
+	EventRepositoryListAll = "tag.repository.list_all"
 
-// EventSuccess marks the successful completion of the usecase logic.
-const EventSuccess = "success"
+	// EventCheckUniqueness marks the uniqueness-check step.
+	EventCheckUniqueness = "tag.uniqueness.check"
 
-// ErrToValidateTag is the status description used when input validation fails.
-const ErrToValidateTag = "failed_to_validate_tag"
+	// EventSuccess marks the successful completion of the usecase logic.
+	EventSuccess = "tag.success"
+)
 
-// FailedToCreateTag is the error prefix/message used when the repository fails to persist the tag.
-const FailedToCreateTag = "failed_to_create_tag"
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
 
-// FailedToGetTagByName indicates failure to retrieve a tag by its name.
-const FailedToGetTagByName = "failed to get tag by name"
+const (
+	// StatusCreated is the span status description used when the tag is successfully created.
+	StatusCreated = "created"
 
-// FailedToListTags indicates failure to list all tags for a user.
-const FailedToListTags = "failed_to_list_tags"
+	// StatusRetrievedByName indicates a resource was retrieved by name.
+	StatusRetrievedByName = "retrieved_by_name"
 
-// ErrFailedToListTags is the error message used when listing tags fails.
-const ErrFailedToListTags = "failed to list tags"
+	// StatusListedAll indicates all tags were listed successfully.
+	StatusListedAll = "listed_all"
+)
 
-// StatusCreated is the span status description used when the tag is successfully created.
-const StatusCreated = "created"
+// =============================================================================
+// BUSINESS LOGIC - Error and Success Messages
+// =============================================================================
 
-// StatusRetrievedByName indicates a resource was retrieved by name.
-const StatusRetrievedByName = "retrieved_by_name"
+// Error messages.
+const (
+	// ErrToValidateTag is the status description used when input validation fails.
+	ErrToValidateTag = "failed_to_validate_tag"
 
-// StatusListedAll indicates all tags were listed successfully.
-const StatusListedAll = "listed_all"
+	// FailedToCreateTag is the error prefix/message used when the repository fails to persist the tag.
+	FailedToCreateTag = "failed_to_create_tag"
 
-// SuccessfullyCreatedTag is a structured log message used after a successful creation (expects tag name).
-const SuccessfullyCreatedTag = "tag successfully created: %s"
+	// FailedToGetTagByName indicates failure to retrieve a tag by its name.
+	FailedToGetTagByName = "failed to get tag by name"
 
-// UserIDIsRequired is the validation message when the user ID is missing.
-const UserIDIsRequired = "user ID is required"
+	// FailedToListTags indicates failure to list all tags for a user.
+	FailedToListTags = "failed_to_list_tags"
 
-// TagNameIsRequired is the validation message when the tag name is missing.
-const TagNameIsRequired = "tag name is required"
+	// ErrFailedToListTags is the error message used when listing tags fails.
+	ErrFailedToListTags = "failed to list tags"
 
-// TagDescriptionIsTooLong is the validation message when description exceeds the maximum length.
-const TagDescriptionIsTooLong = "tag description is too long"
+	// TagAlreadyExists is returned when trying to create a tag that already exists.
+	TagAlreadyExists = "tag already exists"
+)
+
+// Success messages.
+const (
+	// SuccessfullyCreatedTag is a structured log message used after a successful creation.
+	SuccessfullyCreatedTag = "tag successfully created: %s"
+)
+
+// Validation messages.
+const (
+	// UserIDIsRequired is the validation message when the user ID is missing.
+	UserIDIsRequired = "user ID is required"
+
+	// TagNameIsRequired is the validation message when the tag name is missing.
+	TagNameIsRequired = "tag name is required"
+
+	// TagDescriptionIsTooLong is the validation message when description exceeds the maximum length.
+	TagDescriptionIsTooLong = "tag description is too long"
+)

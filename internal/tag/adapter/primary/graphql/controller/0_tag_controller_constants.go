@@ -1,25 +1,37 @@
 // Package controller contains GraphQL-facing controllers for the Tag context.
 package controller
 
-// Tracing spans used for OpenTelemetry instrumentation.
-const (
-	// TracerName is the name of the tracer for Tag GraphQL controllers.
-	TracerName = "aionapi.graphql.tag"
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
 
+// TracerName is the name of the tracer for Tag GraphQL controllers.
+// Format: aionapi.<domain>.<layer> .
+const TracerName = "aionapi.tag.controller"
+
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
+const (
 	// SpanCreate is the span name for creating a tag.
-	SpanCreate = "tag.create"
+	SpanCreate = "tag.controller.create"
 
 	// SpanGetByName is the span name for retrieving a tag by name.
-	SpanGetByName = "tag.get_by_name"
+	SpanGetByName = "tag.controller.get_by_name"
 
 	// SpanGetByCategory is the span name for retrieving tags by category.
-	SpanGetByCategory = "tag.get_by_category"
+	SpanGetByCategory = "tag.controller.get_by_category"
 
 	// SpanListAll is the span name for listing all tags for a user.
-	SpanListAll = "tag.list_all"
+	SpanListAll = "tag.controller.list_all"
 )
 
-// Status messages represent the outcome of controller operations.
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
+
 const (
 	// StatusCreated indicates that a tag has been successfully created.
 	StatusCreated = "created"
@@ -28,7 +40,10 @@ const (
 	StatusFetched = "fetched"
 )
 
-// Log/messages and error strings used in logging and error reporting.
+// =============================================================================
+// BUSINESS LOGIC - Error and Log Messages
+// =============================================================================
+
 const (
 	// MsgCreated is the log message for when a tag is created.
 	MsgCreated = "tag created"

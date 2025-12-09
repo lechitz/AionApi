@@ -39,7 +39,7 @@
 
 ## Observability
 
-* Tracer & span names in `repository/0_user_repository_constants.go` (e.g., `TracerUserRepository`, `SpanCreate`, `SpanGetByID`, …).
+* Tracer & span names in `repository/0_user_repository_constants.go` (e.g., `TracerName`, `SpanCreate`, `SpanGetByID`, …).
 * Add canonical attributes such as:
 
     * `user_id`, `username`, `email` (when available)

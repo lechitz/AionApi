@@ -16,7 +16,7 @@ import (
 
 // Create inserts a new user. Returns a ValidationError if username/email is already in use.
 func (up UserRepository) Create(ctx context.Context, userDomain domain.User) (domain.User, error) {
-	tr := otel.Tracer(TracerUserRepository)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanCreate, trace.WithAttributes(
 		attribute.String(commonkeys.Username, userDomain.Username),
 		attribute.String(commonkeys.Email, userDomain.Email),

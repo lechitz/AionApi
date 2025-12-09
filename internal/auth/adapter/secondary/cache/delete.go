@@ -14,7 +14,7 @@ import (
 
 // Delete removes the token for the given user and token type.
 func (s *Store) Delete(ctx context.Context, tokenKey uint64, tokenType string) error {
-	tr := otel.Tracer(SpanTracerTokenStore)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanNameTokenDelete, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(tokenKey, 10)),
 		attribute.String(commonkeys.Operation, OperationDelete),

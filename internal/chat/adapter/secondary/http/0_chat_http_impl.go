@@ -1,5 +1,9 @@
 // Package http provides the HTTP client adapter for communicating with Aion-Chat service.
+//
+//revive:disable:var-naming // package name intentionally mirrors the protocol we integrate with
 package http
+
+//revive:enable:var-naming
 
 import (
 	"net/http"

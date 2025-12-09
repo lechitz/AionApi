@@ -1,129 +1,151 @@
 // Package repository holds repository-scoped constants to avoid magic strings.
 package repository
 
-// Tracing / Span names.
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
+
+// TracerName is the name of the tracer used in the user repository.
+// Format: aionapi.<domain>.<layer>.
+const TracerName = "aionapi.user.repository"
+
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
 const (
-	// TracerUserRepository is the name of the tracer used in the user repository.
-	TracerUserRepository = "UserRepository"
+	// SpanCreate is the span name for creation.
+	SpanCreate = "user.repository.create"
 
-	// SpanCreate is the name of the span for creation.
-	SpanCreate = "Create"
+	// SpanCheckUniqueness is the span name for checking uniqueness.
+	SpanCheckUniqueness = "user.repository.check_uniqueness"
 
-	// SpanCheckUniqueness is the name of the span for checking uniqueness.
-	SpanCheckUniqueness = "CheckUniqueness"
+	// SpanGetByID is the span name for getting by ID.
+	SpanGetByID = "user.repository.get_by_id"
 
-	// SpanGetByID is the name of the span for getting by ID.
-	SpanGetByID = "GetByID"
+	// SpanGetByUsername is the span name for getting by username.
+	SpanGetByUsername = "user.repository.get_by_username"
 
-	// SpanGetByUsername is the name of the span for getting by username.
-	SpanGetByUsername = "GetByUsername"
+	// SpanListAll is the span name for list all.
+	SpanListAll = "user.repository.list_all"
 
-	// SpanListAll is the name of the span for list all.
-	SpanListAll = "ListAll"
+	// SpanUpdate is the span name for update.
+	SpanUpdate = "user.repository.update"
 
-	// SpanUpdate is the name of the span for update.
-	SpanUpdate = "Update"
-
-	// SpanSoftDelete is the name of the span for soft delete.
-	SpanSoftDelete = "SoftDelete"
+	// SpanSoftDelete is the span name for soft delete.
+	SpanSoftDelete = "user.repository.soft_delete"
 )
 
-// Operation names (attributes).
+// -----------------------------------------------------------------------------
+// Span Attributes
+// Format: aion.<domain>.<attribute>
+// -----------------------------------------------------------------------------
+
 const (
-	// OperationCreate is the name of the operation for creating a user.
+	// OperationCreate is the attribute value for creating a user.
 	OperationCreate = "create"
 
-	// OperationCheckUniqueness is the name of the operation for checking uniqueness.
+	// OperationCheckUniqueness is the attribute value for checking uniqueness.
 	OperationCheckUniqueness = "check_uniqueness"
 
-	// OperationGetByID is the name of the operation for getting a user by ID.
+	// OperationGetByID is the attribute value for getting a user by ID.
 	OperationGetByID = "get_by_id"
 
-	// OperationGetByUsername is the name of the operation for getting a user by username.
+	// OperationGetByUsername is the attribute value for getting a user by username.
 	OperationGetByUsername = "get_by_username"
 
-	// OperationListAll is the name of the operation for getting all users.
+	// OperationListAll is the attribute value for getting all users.
 	OperationListAll = "get_all"
 
-	// OperationUpdate is the name of the operation for updating a user.
+	// OperationUpdate is the attribute value for updating a user.
 	OperationUpdate = "update"
 
-	// OperationSoftDelete is the name of the operation for soft deleting a user.
+	// OperationSoftDelete is the attribute value for soft deleting a user.
 	OperationSoftDelete = "soft_delete"
 )
 
 // Attribute keys (repository-scoped).
 const (
-	// AttrHTTPErrorReason is the name of the attribute for the HTTP error reason.
+	// AttrHTTPErrorReason is the attribute key for the HTTP error reason.
 	AttrHTTPErrorReason = "http.error_reason"
 
-	// LogField is the name of the attribute for the log field.
+	// LogField is the attribute key for the log field.
 	LogField = "field"
 )
 
-// Postgres constraint identifiers.
+// =============================================================================
+// BUSINESS LOGIC - Postgres Constraints
+// =============================================================================
+
 const (
-	// PgConstraintUsersUsernameKey is the name of the Postgres constraint for username uniqueness.
+	// PgConstraintUsersUsernameKey is the Postgres constraint for username uniqueness.
 	PgConstraintUsersUsernameKey = "users_username_key"
 
-	// PgConstraintUsersEmailKey is the name of the Postgres constraint for email uniqueness.
+	// PgConstraintUsersEmailKey is the Postgres constraint for email uniqueness.
 	PgConstraintUsersEmailKey = "users_email_key"
 )
 
-// Log messages.
+// =============================================================================
+// BUSINESS LOGIC - Log Messages
+// =============================================================================
+
 const (
-	// LogUniqueViolationOnCreate is the message used when a unique constraint is violated on creation.
+	// LogUniqueViolationOnCreate is logged when a unique constraint is violated on creation.
 	LogUniqueViolationOnCreate = "unique constraint violation on create user"
 
-	// LogFailedCreateUser is the message used when a user creation fails.
+	// LogFailedCreateUser is logged when a user creation fails.
 	LogFailedCreateUser = "failed to create user"
 
-	// LogUserCreated is the message used when a user is created.
+	// LogUserCreated is logged when a user is created.
 	LogUserCreated = "user created successfully"
 
-	// LogFailedCheckUsername is the message used when a username uniqueness check fails.
+	// LogFailedCheckUsername is logged when a username uniqueness check fails.
 	LogFailedCheckUsername = "failed to check username uniqueness"
 
-	// LogFailedCheckEmail is the message used when an email uniqueness check fails.
+	// LogFailedCheckEmail is logged when an email uniqueness check fails.
 	LogFailedCheckEmail = "failed to check email uniqueness"
 
-	// LogFailedGetByID is the message used when a user retrieval by ID fails.
+	// LogFailedGetByID is logged when a user retrieval by ID fails.
 	LogFailedGetByID = "failed to get user by id"
 
-	// LogUserRetrievedByID is the message used when ID retrieves a user.
+	// LogUserRetrievedByID is logged when ID retrieves a user.
 	LogUserRetrievedByID = "user retrieved by id successfully"
 
-	// LogUserNotFoundByUsername is the message used when a username does not find a user.
+	// LogUserNotFoundByUsername is logged when a username does not find a user.
 	LogUserNotFoundByUsername = "user not found by username"
 
-	// LogFailedGetByUsername is the message used when a user retrieval by username fails.
+	// LogFailedGetByUsername is logged when a user retrieval by username fails.
 	LogFailedGetByUsername = "failed to get user by username"
 
-	// LogUserRetrievedByUsername is the message used when a username retrieves a user.
+	// LogUserRetrievedByUsername is logged when a username retrieves a user.
 	LogUserRetrievedByUsername = "user retrieved by username successfully"
 
-	// LogFailedListAll is the message used when a user retrieval by email fails.
+	// LogFailedListAll is logged when listing all users fails.
 	LogFailedListAll = "failed to get all users"
 
-	// LogUsersRetrieved is the message used when all users are retrieved.
+	// LogUsersRetrieved is logged when all users are retrieved.
 	LogUsersRetrieved = "all users retrieved successfully"
 
-	// LogFailedUpdateUser is the message used when a user update fails.
+	// LogFailedUpdateUser is logged when a user update fails.
 	LogFailedUpdateUser = "failed to update user"
 
-	// LogUserUpdated is the message used when a user is updated.
+	// LogUserUpdated is logged when a user is updated.
 	LogUserUpdated = "user updated successfully"
 
-	// LogFailedSoftDelete is the message used when a user soft delete fails.
+	// LogFailedSoftDelete is logged when a user soft delete fails.
 	LogFailedSoftDelete = "failed to soft delete user"
 
-	// LogUserSoftDeleted is the message used when a user is soft deleted.
+	// LogUserSoftDeleted is logged when a user is soft deleted.
 	LogUserSoftDeleted = "user soft deleted successfully"
 )
 
-// Status / span status messages.
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
+
 const (
-	// StatusValidationDuplicate is the status message for a duplicate validation error.
+	// StatusValidationDuplicate is the status for a duplicate validation error.
 	StatusValidationDuplicate = "validation: duplicate"
 
 	// SuffixAlreadyExists is the suffix for a duplicate error.

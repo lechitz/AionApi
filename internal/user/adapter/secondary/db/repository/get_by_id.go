@@ -16,7 +16,7 @@ import (
 
 // GetByID retrieves a user by ID.
 func (up UserRepository) GetByID(ctx context.Context, userID uint64) (domain.User, error) {
-	tr := otel.Tracer(TracerUserRepository)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanGetByID, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(commonkeys.Operation, OperationGetByID),

@@ -17,7 +17,7 @@ import (
 // Get returns the token for a user or empty if not present.
 func (s *Store) Get(ctx context.Context, tokenKey uint64, tokenType string) (domain.Auth, error) {
 	_ = tokenType // explicit usage to satisfy static analyzers when tokenType may be conditionally used
-	tr := otel.Tracer(SpanTracerTokenStore)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanNameTokenGet, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(tokenKey, 10)),
 		attribute.String(commonkeys.Operation, OperationGet),

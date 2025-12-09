@@ -1,45 +1,61 @@
 package usecase
 
-// Tracing.
-const (
-	// TracerName is the name of the tracer.
-	TracerName = "aionapi.handler"
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
 
+// TracerName is the name of the tracer.
+// Format: aionapi.<domain>.<layer> .
+const TracerName = "aionapi.category.usecase"
+
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
+const (
 	// SpanCreateCategory is the span name for creating a category.
-	SpanCreateCategory = "CreateCategory"
+	SpanCreateCategory = "category.create"
 	// SpanGetCategoryByID is the span name for getting a category by ID.
-	SpanGetCategoryByID = "GetCategoryByID"
+	SpanGetCategoryByID = "category.get_by_id"
 	// SpanGetCategoryByName is the span name for getting a category by name.
-	SpanGetCategoryByName = "GetCategoryByName"
+	SpanGetCategoryByName = "category.get_by_name"
 	// SpanListAllCategories is the span name for listing all categories.
-	SpanListAllCategories = "ListAllCategories"
+	SpanListAllCategories = "category.list_all"
 	// SpanUpdateCategory is the span name for updating a category.
-	SpanUpdateCategory = "UpdateCategory"
+	SpanUpdateCategory = "category.update"
 	// SpanSoftDeleteCategory is the span name for soft-deleting a category.
-	SpanSoftDeleteCategory = "SoftDeleteCategory"
+	SpanSoftDeleteCategory = "category.soft_delete"
 )
 
-// Events.
+// -----------------------------------------------------------------------------
+// Event Names
+// Format: <domain>.<action>.<detail>
+// -----------------------------------------------------------------------------
+
 const (
 	// EventValidateInput marks the input-validation step.
-	EventValidateInput = "validate_input"
+	EventValidateInput = "category.input.validate"
 	// EventCheckUniqueness marks the uniqueness-check step.
-	EventCheckUniqueness = "check_uniqueness"
+	EventCheckUniqueness = "category.uniqueness.check"
 	// EventRepositoryCreate marks the repository create call.
-	EventRepositoryCreate = "repository_create"
+	EventRepositoryCreate = "category.repository.create"
 	// EventRepositoryGet marks the repository single-get call.
-	EventRepositoryGet = "repository_get"
+	EventRepositoryGet = "category.repository.get"
 	// EventRepositoryListAll marks the repository list-all call.
-	EventRepositoryListAll = "repository_list_all"
+	EventRepositoryListAll = "category.repository.list_all"
 	// EventRepositoryUpdate marks the repository update call.
-	EventRepositoryUpdate = "repository_update"
+	EventRepositoryUpdate = "category.repository.update"
 	// EventRepositoryDelete marks the repository delete/soft-delete call.
-	EventRepositoryDelete = "repository_delete"
+	EventRepositoryDelete = "category.repository.delete"
 	// EventSuccess marks a successful outcome.
-	EventSuccess = "success"
+	EventSuccess = "category.success"
 )
 
-// Span status messages (used with span.SetStatus).
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
+
 const (
 	// StatusCreated indicates a resource was created.
 	StatusCreated = "created"
@@ -55,7 +71,11 @@ const (
 	StatusSoftDeleted = "deleted"
 )
 
-// Domain/user-facing error/status messages.
+// =============================================================================
+// BUSINESS LOGIC - Error and Success Messages
+// =============================================================================
+
+// Error messages.
 const (
 	// ErrToValidateCategory indicates a validation error in a category operation.
 	ErrToValidateCategory = "category validation error"
@@ -65,12 +85,6 @@ const (
 	FailedToCreateCategory = "failed to create category"
 	// FailedToUpdateCategory indicates failure to update a category.
 	FailedToUpdateCategory = "failed to update category"
-	// SuccessfullyCreatedCategory formats a success message when a category is created.
-	SuccessfullyCreatedCategory = "successfully created category %s"
-	// SuccessfullyUpdatedCategory formats a success message when a category is updated.
-	SuccessfullyUpdatedCategory = "successfully updated category %s"
-	// SuccessfullySoftDeletedCategory formats a success message when a category is soft-deleted.
-	SuccessfullySoftDeletedCategory = "successfully soft deleted category %s"
 	// FailedToGetCategoryByID indicates failure to retrieve a category by its ID.
 	FailedToGetCategoryByID = "failed to get category by id"
 	// FailedToGetCategoryByName indicates failure to retrieve a category by its name.
@@ -79,6 +93,20 @@ const (
 	FailedToGetAllCategories = "failed to get all categories"
 	// FailedToSoftDeleteCategory indicates failure to soft-delete a category.
 	FailedToSoftDeleteCategory = "failed to soft delete category"
+)
+
+// Success messages.
+const (
+	// SuccessfullyCreatedCategory formats a success message when a category is created.
+	SuccessfullyCreatedCategory = "successfully created category %s"
+	// SuccessfullyUpdatedCategory formats a success message when a category is updated.
+	SuccessfullyUpdatedCategory = "successfully updated category %s"
+	// SuccessfullySoftDeletedCategory formats a success message when a category is soft-deleted.
+	SuccessfullySoftDeletedCategory = "successfully soft deleted category %s"
+)
+
+// Validation messages.
+const (
 	// CategoryIDIsRequired indicates the category ID is required.
 	CategoryIDIsRequired = "category id is required"
 	// CategoryNameIsRequired indicates the category name is required.

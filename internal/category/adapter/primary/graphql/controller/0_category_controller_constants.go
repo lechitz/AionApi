@@ -1,31 +1,43 @@
 // Package controller contains GraphQL-facing controllers for the Category context.
 package controller
 
-// Tracing spans used for OpenTelemetry instrumentation.
-const (
-	// TracerName is the name of the tracer for Category GraphQL controllers.
-	TracerName = "aionapi.graphql.category"
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
 
+// TracerName is the name of the tracer for Category GraphQL controllers.
+// Format: aionapi.<domain>.<layer>.
+const TracerName = "aionapi.category.controller"
+
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
+const (
 	// SpanCreate is the span name for creating a category.
-	SpanCreate = "category.create"
+	SpanCreate = "category.controller.create"
 
 	// SpanUpdate is the span name for updating a category.
-	SpanUpdate = "category.update"
+	SpanUpdate = "category.controller.update"
 
 	// SpanSoftDelete is the span name for soft-deleting a category.
-	SpanSoftDelete = "category.soft_delete"
+	SpanSoftDelete = "category.controller.soft_delete"
 
 	// SpanListAll is the span name for listing all categories.
-	SpanListAll = "category.list_all"
+	SpanListAll = "category.controller.list_all"
 
 	// SpanGetByID is the span name for retrieving a category by ID.
-	SpanGetByID = "category.get_by_id"
+	SpanGetByID = "category.controller.get_by_id"
 
 	// SpanGetByName is the span name for retrieving a category by name.
-	SpanGetByName = "category.get_by_name"
+	SpanGetByName = "category.controller.get_by_name"
 )
 
-// Status messages represent the outcome of controller operations.
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
+
 const (
 	// StatusCreated indicates that a category has been successfully created.
 	StatusCreated = "created"
@@ -43,7 +55,10 @@ const (
 	StatusFetched = "fetched"
 )
 
-// Log/messages and error strings used in logging and error reporting.
+// =============================================================================
+// BUSINESS LOGIC - Error and Log Messages
+// =============================================================================
+
 const (
 	// MsgCreated is the log message for when a category is created.
 	MsgCreated = "category created"

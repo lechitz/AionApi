@@ -1,32 +1,54 @@
 // Package handler implements HTTP handlers for chat endpoints.
 package handler
 
-// Tracing and span names.
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
+
+// TracerChatHandler is the tracer name for chat handler.
+// Format: aionapi.<domain>.<layer> .
+const TracerChatHandler = "aionapi.chat.handler"
+
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
 const (
-	// TracerChatHandler is the tracer name for chat handler.
-	TracerChatHandler = "chat.handler"
 	// SpanChatHandler is the span name for handling chat requests.
-	SpanChatHandler = "HandleChat"
+	SpanChatHandler = "chat.handler.handle"
 )
 
-// Events for tracing.
+// -----------------------------------------------------------------------------
+// Event Names
+// Format: <domain>.<action>.<detail>
+// -----------------------------------------------------------------------------
+
 const (
 	// EventDecodeRequest indicates the decoding of the chat request.
-	EventDecodeRequest = "decode_request"
+	EventDecodeRequest = "chat.handler.decode_request"
 	// EventValidateRequest indicates the validation of the chat request.
-	EventValidateRequest = "validate_request"
+	EventValidateRequest = "chat.handler.validate_request"
 	// EventCallService indicates the call to the chat service.
-	EventCallService = "call_chat_service"
+	EventCallService = "chat.handler.call_service"
 	// EventChatSuccess indicates successful chat processing.
-	EventChatSuccess = "chat_success"
+	EventChatSuccess = "chat.handler.success"
 	// EventChatError indicates an error occurred during chat processing.
-	EventChatError = "chat_error"
+	EventChatError = "chat.handler.error"
 )
+
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
 
 const (
 	// StatusChatSuccess indicates successful chat processing.
 	StatusChatSuccess = "chat processed successfully"
 )
+
+// =============================================================================
+// BUSINESS LOGIC - Error and Success Messages
+// =============================================================================
 
 // Error messages.
 const (

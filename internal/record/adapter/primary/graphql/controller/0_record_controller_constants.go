@@ -1,38 +1,51 @@
 // Package controller contains GraphQL-facing controllers for the Record context.
 package controller
 
-// Tracing spans used for OpenTelemetry instrumentation.
-const (
-	// TracerName is the name of the tracer for record GraphQL controllers.
-	TracerName = "aionapi.graphql.record"
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
 
+// TracerName is the name of the tracer for record GraphQL controllers.
+// Format: aionapi.<domain>.<layer> .
+const TracerName = "aionapi.record.controller"
+
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
+const (
 	// SpanCreate is the span name for creating a record.
-	SpanCreate = "record.create"
+	SpanCreate = "record.controller.create"
 
 	// SpanGetByName is the span name for retrieving a record by name.
-	SpanGetByName = "record.get_by_name"
+	SpanGetByName = "record.controller.get_by_name"
 
 	// SpanGetByCategory is the span name for retrieving records by category.
-	SpanGetByCategory = "record.get_by_category"
+	SpanGetByCategory = "record.controller.get_by_category"
 
 	// SpanGetByTag is the span name for retrieving a record by tag.
-	SpanGetByTag = "record.get_by_tag"
+	SpanGetByTag = "record.controller.get_by_tag"
 
 	// SpanListAll is the span name for listing all records for a user.
-	SpanListAll = "record.list_all"
+	SpanListAll = "record.controller.list_all"
 
 	// SpanListByTag is the span name for listing records by tag.
-	SpanListByTag = "record.list_by_tag"
+	SpanListByTag = "record.controller.list_by_tag"
 
 	// SpanListByDay is the span name for listing records by day.
-	SpanListByDay = "record.list_by_day"
+	SpanListByDay = "record.controller.list_by_day"
 
 	// SpanListAllUntil is the span name for listing records until a timestamp.
-	SpanListAllUntil = "record.list_all_until"
+	SpanListAllUntil = "record.controller.list_all_until"
 
 	// SpanListAllBetween is the span name for listing records between dates.
-	SpanListAllBetween = "record.list_all_between"
+	SpanListAllBetween = "record.controller.list_all_between"
 )
+
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
 
 const (
 	// MsgCreated is the log message for when a record is created.
@@ -43,7 +56,13 @@ const (
 
 	// StatusFetched is the human-readable status used in responses/logs when records are retrieved.
 	StatusFetched = "fetched"
+)
 
+// =============================================================================
+// BUSINESS LOGIC - Error Messages
+// =============================================================================
+
+const (
 	// MsgCreateError is the log message for when a create operation fails.
 	MsgCreateError = "error creating record"
 

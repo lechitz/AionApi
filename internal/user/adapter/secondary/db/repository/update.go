@@ -15,7 +15,7 @@ import (
 
 // Update updates fields for a user and returns the updated entity.
 func (up UserRepository) Update(ctx context.Context, userID uint64, fields map[string]interface{}) (domain.User, error) {
-	tr := otel.Tracer(TracerUserRepository)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanUpdate, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(commonkeys.Operation, OperationUpdate),

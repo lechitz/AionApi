@@ -1,28 +1,44 @@
 // Package usecase contains the business logic for the Chat context.
 package usecase
 
-// Tracing.
-const (
-	// TracerChatService is the name of the tracer for the chat service.
-	TracerChatService = "chat.service"
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
 
+// TracerName is the name of the tracer for the chat service.
+// Format: aionapi.<domain>.<layer> .
+const TracerName = "aionapi.chat.usecase"
+
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
+const (
 	// SpanProcessMessage is the span name for processing a chat message.
-	SpanProcessMessage = "ProcessMessage"
+	SpanProcessMessage = "chat.message.process"
 )
 
-// Span attributes.
+// -----------------------------------------------------------------------------
+// Span Attributes
+// Format: aion.<domain>.<attribute>
+// -----------------------------------------------------------------------------
+
 const (
 	// AttrUserID is the attribute key for user ID.
-	AttrUserID = "user_id"
+	AttrUserID = "aion.user_id"
 	// AttrMessageLength is the attribute key for message length.
-	AttrMessageLength = "message_length"
+	AttrMessageLength = "aion.chat.message_length"
 	// AttrTokensUsed is the attribute key for tokens used.
-	AttrTokensUsed = "tokens_used"
+	AttrTokensUsed = "aion.chat.tokens_used"
 	// AttrFunctionCallsCount is the attribute key for function calls count.
-	AttrFunctionCallsCount = "function_calls_count"
+	AttrFunctionCallsCount = "aion.chat.function_calls_count"
 )
 
-// Span status messages.
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
+
 const (
 	// StatusMessageProcessedSuccessfully indicates a message was processed successfully.
 	StatusMessageProcessedSuccessfully = "message processed successfully"
@@ -30,7 +46,10 @@ const (
 	StatusFailedToCallAionChat = "failed to call aion-chat service"
 )
 
-// Log messages.
+// =============================================================================
+// BUSINESS LOGIC - Log Messages
+// =============================================================================
+
 const (
 	// LogProcessingChatMessage is the log message for processing a chat message.
 	LogProcessingChatMessage = "Processing chat message"

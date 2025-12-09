@@ -1,50 +1,68 @@
-// Package handler contains constants used throughout the auth handler.middleware
+// Package handler contains constants used throughout the auth handler.
 package handler
 
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
+
 // TracerAuthHandler is the tracer name for auth handler operations in OpenTelemetry.
+// Format: aionapi.<domain>.<layer> .
 const TracerAuthHandler = "aionapi.auth.handler"
 
-// Span names for OpenTelemetry auth handler operations.
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
+// Span names for auth handler operations.
 const (
-	SpanLoginHandler   = "auth.login"
-	SpanLogoutHandler  = "auth.logout"
-	SpanRefreshHandler = "auth.refresh"
+	SpanLoginHandler   = "auth.handler.login"
+	SpanLogoutHandler  = "auth.handler.logout"
+	SpanRefreshHandler = "auth.handler.refresh"
 )
 
-// Attribute keys used in spans for auth handlers.
+// -----------------------------------------------------------------------------
+// Event Names
+// Format: <domain>.<action>.<detail>
+// -----------------------------------------------------------------------------
+
+// Event names for auth handler tracing.
 const (
-	AttrRefreshTokenPresent = "refresh_token_present"
+	EventDecodeRequest     = "auth.handler.decode_request"
+	EventAuthServiceLogin  = "auth.handler.service_login"
+	EventAuthServiceLogout = "auth.handler.service_logout"
+	EventLoginSuccess      = "auth.handler.login_success"
+	EventLogoutSuccess     = "auth.handler.logout_success"
 )
 
-// Event names for key points within auth handler spans.
-const (
-	EventDecodeRequest     = "decode_request"
-	EventAuthServiceLogin  = "auth_service.login"
-	EventAuthServiceLogout = "auth_service.logout"
-	EventLoginSuccess      = "auth.login.success"
-	EventLogoutSuccess     = "auth.logout.success"
-)
+// -----------------------------------------------------------------------------
+// Status Names
+// -----------------------------------------------------------------------------
 
-// Status names for semantic span states.
+// Status descriptions for auth handler spans.
 const (
 	StatusLoginSuccess  = "login_success"
 	StatusLogoutSuccess = "logout_success"
 )
 
-// Error messages used in auth handler (for response, tracing and logs).
+// =============================================================================
+// BUSINESS LOGIC - Error and Success Messages
+// =============================================================================
+
+// Error messages.
 const (
 	ErrMissingUserID = "missing user id in context"
 	ErrLogin         = "error on login"
 	ErrLogout        = "error on logout"
 )
 
-// Success messages used in auth handler.
+// Success messages.
 const (
 	MsgLoginSuccess  = "user logged in successfully"
 	MsgLogoutSuccess = "user logged out successfully"
 )
 
-// Log message keys for structured and leveled logging.
+// Log message keys.
 const (
 	LogMissingUserID = "missing user id"
 	LogLogoutFailed  = "logout failed"

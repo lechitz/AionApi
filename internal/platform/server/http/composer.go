@@ -1,5 +1,9 @@
 // Package http provides the HTTP server composition for all adapters and routes.
+//
+//revive:disable:var-naming // keep using http to clearly denote the server layer
 package http
+
+//revive:enable:var-naming
 
 import (
 	"fmt"

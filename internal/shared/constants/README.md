@@ -17,7 +17,11 @@
     * `token_commonkeys.go` — token fields (e.g., `Token`, `TokenKey`, `AuthTokenCookieName`).
     * `category_commonkeys.go` — category fields (e.g., `Category`, `CategoryID`, `CategoryName`).
 * `ctxkeys/` — **type-safe context keys** (custom type `contextKey`) for values injected into `context.Context` (e.g., `UserID`, `Token`, `RequestID`, `TraceID`, `SpanID`).
-* `tracingkeys/` — OpenTelemetry span attribute keys (e.g., `HTTPStatusCodeKey`, `RequestIPKey`, `RequestUserAgentKey`).
+* `tracingkeys/` — OpenTelemetry constants organized by purpose:
+    * `tracer_names.go` — Tracer names for each domain/layer (e.g., `TracerAuthUsecase`, `TracerTagRepository`).
+    * `attributes.go` — Semantic attributes for spans (HTTP, DB, and custom `aion.*` attributes).
+    * `events.go` — Common event names for tracing (e.g., `EventAuthUserLookup`, `EventRepositoryCreate`).
+    * `span_keys.go` — Status descriptions and legacy HTTP/request keys.
 
 ## How it’s used
 

@@ -15,7 +15,7 @@ import (
 
 // SoftDelete marks a user as deleted by setting DeletedAt and UpdatedAt.
 func (up UserRepository) SoftDelete(ctx context.Context, userID uint64) error {
-	tr := otel.Tracer(TracerUserRepository)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanSoftDelete, trace.WithAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(commonkeys.Operation, OperationSoftDelete),

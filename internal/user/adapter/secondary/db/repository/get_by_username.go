@@ -17,7 +17,7 @@ import (
 
 // GetByUsername retrieves a user by username. Returns a zero-value user if not found.
 func (up UserRepository) GetByUsername(ctx context.Context, username string) (domain.User, error) {
-	tr := otel.Tracer(TracerUserRepository)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanGetByUsername, trace.WithAttributes(
 		attribute.String(commonkeys.Username, username),
 		attribute.String(commonkeys.Operation, OperationGetByUsername),
