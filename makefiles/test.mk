@@ -2,33 +2,39 @@
 #                         TESTING
 # ============================================================
 
+GO_CACHE := $(CURDIR)/.cache/go-build
+
 .PHONY: test test-cover test-html-report test-ci test-clean test-checks
 
 # Execute unit tests
 test:
 	@echo "Running unit tests with race detector..."
-	go test ./... -v -race
+	@mkdir -p $(GO_CACHE)
+	GOCACHE=$(GO_CACHE) go test ./... -v -race
 
 # Run tests with coverage, filter mocks, and generate HTML coverage report
 test-cover:
 	@echo "Running tests with coverage report..."
-	go test ./... -race -coverprofile=$(COVERAGE_DIR)/coverage_tmp.out -v
+	@mkdir -p $(GO_CACHE)
+	GOCACHE=$(GO_CACHE) go test ./... -race -coverprofile=$(COVERAGE_DIR)/coverage_tmp.out -v
 	@echo "Filtering out mock files from coverage..."
 	grep -v "Mock" $(COVERAGE_DIR)/coverage_tmp.out > $(COVERAGE_DIR)/coverage.out
 	@rm -f $(COVERAGE_DIR)/coverage_tmp.out
 	@echo "Generating HTML coverage report..."
-	go tool cover -html=$(COVERAGE_DIR)/coverage.out -o $(COVERAGE_DIR)/coverage.html
+	GOCACHE=$(GO_CACHE) go tool cover -html=$(COVERAGE_DIR)/coverage.out -o $(COVERAGE_DIR)/coverage.html
 
 # Generate JUnit XML test report via gotestsum
 test-html-report:
 	@echo "Running tests and generating JUnit XML report..."
-	gotestsum --junitfile $(COVERAGE_DIR)/junit-report.xml -- -race ./...
+	@mkdir -p $(GO_CACHE)
+	GOCACHE=$(GO_CACHE) gotestsum --junitfile $(COVERAGE_DIR)/junit-report.xml -- -race ./...
 	@echo "✅ JUnit report generated at $(COVERAGE_DIR)/junit-report.xml"
 
 # CI target: tests with coverage but no HTML UI
 test-ci:
 	@echo "Running CI tests with coverage output..."
-	go test ./... -race -coverprofile=$(COVERAGE_DIR)/coverage.out -v
+	@mkdir -p $(GO_CACHE)
+	GOCACHE=$(GO_CACHE) go test ./... -race -coverprofile=$(COVERAGE_DIR)/coverage.out -v
 
 # Check tests for common anti-patterns and fail early with actionable message
 # Currently checks for uses of context.Background() inside _test.go files.

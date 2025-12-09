@@ -21,7 +21,7 @@ import (
 // Validate verifies signature/exp, extracts userID from claims, and checks cache consistency.
 // Returns the resolved userID and the decoded claims on success.
 func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[string]any, error) {
-	tracer := otel.Tracer(SpanValidateToken)
+	tracer := otel.Tracer(TracerName)
 	ctx, span := tracer.Start(
 		ctx,
 		SpanValidateToken,

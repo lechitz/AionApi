@@ -1,5 +1,9 @@
 // Package http provides the HTTP client adapter for communicating with Aion-Chat service.
+//
+//revive:disable:var-naming // package name deliberately matches HTTP adapter naming
 package http
+
+//revive:enable:var-naming
 
 import (
 	"bytes"
@@ -19,7 +23,7 @@ import (
 
 // SendMessage sends a chat message to the Aion-Chat service.
 func (c *AionChatClient) SendMessage(ctx context.Context, req *dto.InternalChatRequest) (*dto.InternalChatResponse, error) {
-	tr := otel.Tracer(TracerAionChatClient)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanSendMessage)
 	defer span.End()
 

@@ -1005,7 +1005,9 @@ func (ec *executionContext) _Category_id(ctx context.Context, field graphql.Coll
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Category_id,
-		func(ctx context.Context) (any, error) { return obj.ID, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
 		nil,
 		ec.marshalNID2string,
 		true,
@@ -1032,7 +1034,9 @@ func (ec *executionContext) _Category_userId(ctx context.Context, field graphql.
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Category_userId,
-		func(ctx context.Context) (any, error) { return obj.UserID, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.UserID, nil
+		},
 		nil,
 		ec.marshalNID2string,
 		true,
@@ -1059,7 +1063,9 @@ func (ec *executionContext) _Category_name(ctx context.Context, field graphql.Co
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Category_name,
-		func(ctx context.Context) (any, error) { return obj.Name, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -1086,7 +1092,9 @@ func (ec *executionContext) _Category_description(ctx context.Context, field gra
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Category_description,
-		func(ctx context.Context) (any, error) { return obj.Description, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Description, nil
+		},
 		nil,
 		ec.marshalOString2ᚖstring,
 		true,
@@ -1113,7 +1121,9 @@ func (ec *executionContext) _Category_colorHex(ctx context.Context, field graphq
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Category_colorHex,
-		func(ctx context.Context) (any, error) { return obj.ColorHex, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.ColorHex, nil
+		},
 		nil,
 		ec.marshalOString2ᚖstring,
 		true,
@@ -1140,7 +1150,9 @@ func (ec *executionContext) _Category_icon(ctx context.Context, field graphql.Co
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Category_icon,
-		func(ctx context.Context) (any, error) { return obj.Icon, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Icon, nil
+		},
 		nil,
 		ec.marshalOString2ᚖstring,
 		true,
@@ -1197,10 +1209,11 @@ func (ec *executionContext) _Mutation_createCategory(ctx context.Context, field 
 		field,
 		ec.fieldContext_Mutation_createCategory,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Mutation().CreateCategory(ctx, fc.Args["input"].(model.CreateCategoryInput))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateCategory(ctx, fc.Args["input"].(model.CreateCategoryInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -1215,19 +1228,9 @@ func (ec *executionContext) _Mutation_createCategory(ctx context.Context, field 
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(*model.Category); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Category`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
 		true,
 		true,
@@ -1279,10 +1282,11 @@ func (ec *executionContext) _Mutation_updateCategory(ctx context.Context, field 
 		field,
 		ec.fieldContext_Mutation_updateCategory,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Mutation().UpdateCategory(ctx, fc.Args["input"].(model.UpdateCategoryInput))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateCategory(ctx, fc.Args["input"].(model.UpdateCategoryInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -1297,19 +1301,9 @@ func (ec *executionContext) _Mutation_updateCategory(ctx context.Context, field 
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(*model.Category); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Category`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
 		true,
 		true,
@@ -1361,10 +1355,11 @@ func (ec *executionContext) _Mutation_softDeleteCategory(ctx context.Context, fi
 		field,
 		ec.fieldContext_Mutation_softDeleteCategory,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Mutation().SoftDeleteCategory(ctx, fc.Args["input"].(model.DeleteCategoryInput))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().SoftDeleteCategory(ctx, fc.Args["input"].(model.DeleteCategoryInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -1379,19 +1374,9 @@ func (ec *executionContext) _Mutation_softDeleteCategory(ctx context.Context, fi
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(bool); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNBoolean2bool,
 		true,
 		true,
@@ -1429,10 +1414,11 @@ func (ec *executionContext) _Mutation_createRecord(ctx context.Context, field gr
 		field,
 		ec.fieldContext_Mutation_createRecord,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Mutation().CreateRecord(ctx, fc.Args["input"].(model.CreateRecordInput))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateRecord(ctx, fc.Args["input"].(model.CreateRecordInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -1447,19 +1433,9 @@ func (ec *executionContext) _Mutation_createRecord(ctx context.Context, field gr
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(*model.Record); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Record`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord,
 		true,
 		true,
@@ -1529,10 +1505,11 @@ func (ec *executionContext) _Mutation_updateRecord(ctx context.Context, field gr
 		field,
 		ec.fieldContext_Mutation_updateRecord,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Mutation().UpdateRecord(ctx, fc.Args["input"].(model.UpdateRecordInput))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateRecord(ctx, fc.Args["input"].(model.UpdateRecordInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -1547,19 +1524,9 @@ func (ec *executionContext) _Mutation_updateRecord(ctx context.Context, field gr
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(*model.Record); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Record`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord,
 		true,
 		true,
@@ -1629,10 +1596,11 @@ func (ec *executionContext) _Mutation_softDeleteRecord(ctx context.Context, fiel
 		field,
 		ec.fieldContext_Mutation_softDeleteRecord,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Mutation().SoftDeleteRecord(ctx, fc.Args["input"].(model.DeleteRecordInput))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().SoftDeleteRecord(ctx, fc.Args["input"].(model.DeleteRecordInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -1647,19 +1615,9 @@ func (ec *executionContext) _Mutation_softDeleteRecord(ctx context.Context, fiel
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(bool); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNBoolean2bool,
 		true,
 		true,
@@ -1697,10 +1655,10 @@ func (ec *executionContext) _Mutation_softDeleteAllRecords(ctx context.Context, 
 		field,
 		ec.fieldContext_Mutation_softDeleteAllRecords,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-
-				return ec.resolvers.Mutation().SoftDeleteAllRecords(ctx)
-			}
+			return ec.resolvers.Mutation().SoftDeleteAllRecords(ctx)
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -1715,19 +1673,9 @@ func (ec *executionContext) _Mutation_softDeleteAllRecords(ctx context.Context, 
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(bool); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNBoolean2bool,
 		true,
 		true,
@@ -1754,10 +1702,11 @@ func (ec *executionContext) _Mutation_createTag(ctx context.Context, field graph
 		field,
 		ec.fieldContext_Mutation_createTag,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Mutation().CreateTag(ctx, fc.Args["input"].(model.CreateTagInput))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateTag(ctx, fc.Args["input"].(model.CreateTagInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -1772,19 +1721,9 @@ func (ec *executionContext) _Mutation_createTag(ctx context.Context, field graph
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(*model.Tag); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Tag`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
 		true,
 		true,
@@ -1867,10 +1806,10 @@ func (ec *executionContext) _Query_categories(ctx context.Context, field graphql
 		field,
 		ec.fieldContext_Query_categories,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-
-				return ec.resolvers.Query().Categories(ctx)
-			}
+			return ec.resolvers.Query().Categories(ctx)
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -1885,19 +1824,9 @@ func (ec *executionContext) _Query_categories(ctx context.Context, field graphql
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.([]*model.Category); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Category`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryᚄ,
 		true,
 		true,
@@ -1938,10 +1867,11 @@ func (ec *executionContext) _Query_categoryById(ctx context.Context, field graph
 		field,
 		ec.fieldContext_Query_categoryById,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().CategoryByID(ctx, fc.Args["id"].(string))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().CategoryByID(ctx, fc.Args["id"].(string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -1956,19 +1886,9 @@ func (ec *executionContext) _Query_categoryById(ctx context.Context, field graph
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(*model.Category); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Category`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
 		true,
 		false,
@@ -2020,10 +1940,11 @@ func (ec *executionContext) _Query_categoryByName(ctx context.Context, field gra
 		field,
 		ec.fieldContext_Query_categoryByName,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().CategoryByName(ctx, fc.Args["name"].(string))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().CategoryByName(ctx, fc.Args["name"].(string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2038,19 +1959,9 @@ func (ec *executionContext) _Query_categoryByName(ctx context.Context, field gra
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(*model.Category); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Category`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
 		true,
 		false,
@@ -2102,10 +2013,11 @@ func (ec *executionContext) _Query_recordById(ctx context.Context, field graphql
 		field,
 		ec.fieldContext_Query_recordById,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().RecordByID(ctx, fc.Args["id"].(string))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecordByID(ctx, fc.Args["id"].(string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2120,19 +2032,9 @@ func (ec *executionContext) _Query_recordById(ctx context.Context, field graphql
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(*model.Record); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Record`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalORecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord,
 		true,
 		false,
@@ -2202,10 +2104,11 @@ func (ec *executionContext) _Query_records(ctx context.Context, field graphql.Co
 		field,
 		ec.fieldContext_Query_records,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().Records(ctx, fc.Args["limit"].(*int32), fc.Args["afterEventTime"].(*string), fc.Args["afterId"].(*string))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().Records(ctx, fc.Args["limit"].(*int32), fc.Args["afterEventTime"].(*string), fc.Args["afterId"].(*string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2220,19 +2123,9 @@ func (ec *executionContext) _Query_records(ctx context.Context, field graphql.Co
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.([]*model.Record); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Record`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
@@ -2302,10 +2195,11 @@ func (ec *executionContext) _Query_recordsByTag(ctx context.Context, field graph
 		field,
 		ec.fieldContext_Query_recordsByTag,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().RecordsByTag(ctx, fc.Args["tagId"].(string), fc.Args["limit"].(*int32))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecordsByTag(ctx, fc.Args["tagId"].(string), fc.Args["limit"].(*int32))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2320,19 +2214,9 @@ func (ec *executionContext) _Query_recordsByTag(ctx context.Context, field graph
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.([]*model.Record); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Record`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
@@ -2402,10 +2286,11 @@ func (ec *executionContext) _Query_recordsByDay(ctx context.Context, field graph
 		field,
 		ec.fieldContext_Query_recordsByDay,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().RecordsByDay(ctx, fc.Args["date"].(string))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecordsByDay(ctx, fc.Args["date"].(string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2420,19 +2305,9 @@ func (ec *executionContext) _Query_recordsByDay(ctx context.Context, field graph
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.([]*model.Record); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Record`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
@@ -2502,10 +2377,11 @@ func (ec *executionContext) _Query_recordsUntil(ctx context.Context, field graph
 		field,
 		ec.fieldContext_Query_recordsUntil,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().RecordsUntil(ctx, fc.Args["until"].(string), fc.Args["limit"].(*int32))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecordsUntil(ctx, fc.Args["until"].(string), fc.Args["limit"].(*int32))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2520,19 +2396,9 @@ func (ec *executionContext) _Query_recordsUntil(ctx context.Context, field graph
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.([]*model.Record); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Record`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
@@ -2602,10 +2468,11 @@ func (ec *executionContext) _Query_recordsBetween(ctx context.Context, field gra
 		field,
 		ec.fieldContext_Query_recordsBetween,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().RecordsBetween(ctx, fc.Args["startDate"].(string), fc.Args["endDate"].(string), fc.Args["limit"].(*int32))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecordsBetween(ctx, fc.Args["startDate"].(string), fc.Args["endDate"].(string), fc.Args["limit"].(*int32))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2620,19 +2487,9 @@ func (ec *executionContext) _Query_recordsBetween(ctx context.Context, field gra
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.([]*model.Record); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Record`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
@@ -2702,10 +2559,11 @@ func (ec *executionContext) _Query_tagByName(ctx context.Context, field graphql.
 		field,
 		ec.fieldContext_Query_tagByName,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().TagByName(ctx, fc.Args["name"].(string))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().TagByName(ctx, fc.Args["name"].(string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2720,19 +2578,9 @@ func (ec *executionContext) _Query_tagByName(ctx context.Context, field graphql.
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(*model.Tag); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Tag`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalOTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
 		true,
 		false,
@@ -2786,10 +2634,11 @@ func (ec *executionContext) _Query_tagById(ctx context.Context, field graphql.Co
 		field,
 		ec.fieldContext_Query_tagById,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().TagByID(ctx, fc.Args["id"].(string))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().TagByID(ctx, fc.Args["id"].(string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2804,19 +2653,9 @@ func (ec *executionContext) _Query_tagById(ctx context.Context, field graphql.Co
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.(*model.Tag); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Tag`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalOTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
 		true,
 		false,
@@ -2870,10 +2709,10 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 		field,
 		ec.fieldContext_Query_tags,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-
-				return ec.resolvers.Query().Tags(ctx)
-			}
+			return ec.resolvers.Query().Tags(ctx)
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2888,19 +2727,9 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.([]*model.Tag); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Tag`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ,
 		true,
 		true,
@@ -2943,10 +2772,11 @@ func (ec *executionContext) _Query_tagsByCategoryId(ctx context.Context, field g
 		field,
 		ec.fieldContext_Query_tagsByCategoryId,
 		func(ctx context.Context) (any, error) {
-			directive0 := func(ctx context.Context) (any, error) {
-				fc := graphql.GetFieldContext(ctx)
-				return ec.resolvers.Query().TagsByCategoryID(ctx, fc.Args["categoryId"].(string))
-			}
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().TagsByCategoryID(ctx, fc.Args["categoryId"].(string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
 
 			directive1 := func(ctx context.Context) (any, error) {
 				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
@@ -2961,19 +2791,9 @@ func (ec *executionContext) _Query_tagsByCategoryId(ctx context.Context, field g
 				return ec.directives.Auth(ctx, nil, directive0, roles)
 			}
 
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return nil, graphql.ErrorOnPath(ctx, err)
-			}
-			if tmp == nil {
-				return nil, nil
-			}
-			if data, ok := tmp.([]*model.Tag); ok {
-				return data, nil
-			}
-			return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/lechitz/AionApi/internal/adapter/primary/graphql/model.Tag`, tmp)
+			next = directive1
+			return next
 		},
-		nil,
 		ec.marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ,
 		true,
 		true,
@@ -3134,7 +2954,9 @@ func (ec *executionContext) _Record_id(ctx context.Context, field graphql.Collec
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_id,
-		func(ctx context.Context) (any, error) { return obj.ID, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
 		nil,
 		ec.marshalNID2string,
 		true,
@@ -3161,7 +2983,9 @@ func (ec *executionContext) _Record_userId(ctx context.Context, field graphql.Co
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_userId,
-		func(ctx context.Context) (any, error) { return obj.UserID, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.UserID, nil
+		},
 		nil,
 		ec.marshalNID2string,
 		true,
@@ -3188,7 +3012,9 @@ func (ec *executionContext) _Record_categoryId(ctx context.Context, field graphq
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_categoryId,
-		func(ctx context.Context) (any, error) { return obj.CategoryID, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.CategoryID, nil
+		},
 		nil,
 		ec.marshalNID2string,
 		true,
@@ -3215,7 +3041,9 @@ func (ec *executionContext) _Record_title(ctx context.Context, field graphql.Col
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_title,
-		func(ctx context.Context) (any, error) { return obj.Title, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Title, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -3242,7 +3070,9 @@ func (ec *executionContext) _Record_description(ctx context.Context, field graph
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_description,
-		func(ctx context.Context) (any, error) { return obj.Description, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Description, nil
+		},
 		nil,
 		ec.marshalOString2ᚖstring,
 		true,
@@ -3269,7 +3099,9 @@ func (ec *executionContext) _Record_tagId(ctx context.Context, field graphql.Col
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_tagId,
-		func(ctx context.Context) (any, error) { return obj.TagID, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.TagID, nil
+		},
 		nil,
 		ec.marshalNID2string,
 		true,
@@ -3296,7 +3128,9 @@ func (ec *executionContext) _Record_eventTime(ctx context.Context, field graphql
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_eventTime,
-		func(ctx context.Context) (any, error) { return obj.EventTime, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.EventTime, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -3323,7 +3157,9 @@ func (ec *executionContext) _Record_recordedAt(ctx context.Context, field graphq
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_recordedAt,
-		func(ctx context.Context) (any, error) { return obj.RecordedAt, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.RecordedAt, nil
+		},
 		nil,
 		ec.marshalOString2ᚖstring,
 		true,
@@ -3350,7 +3186,9 @@ func (ec *executionContext) _Record_durationSeconds(ctx context.Context, field g
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_durationSeconds,
-		func(ctx context.Context) (any, error) { return obj.DurationSeconds, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.DurationSeconds, nil
+		},
 		nil,
 		ec.marshalOInt2ᚖint32,
 		true,
@@ -3377,7 +3215,9 @@ func (ec *executionContext) _Record_value(ctx context.Context, field graphql.Col
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_value,
-		func(ctx context.Context) (any, error) { return obj.Value, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Value, nil
+		},
 		nil,
 		ec.marshalOFloat2ᚖfloat64,
 		true,
@@ -3404,7 +3244,9 @@ func (ec *executionContext) _Record_source(ctx context.Context, field graphql.Co
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_source,
-		func(ctx context.Context) (any, error) { return obj.Source, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Source, nil
+		},
 		nil,
 		ec.marshalOString2ᚖstring,
 		true,
@@ -3431,7 +3273,9 @@ func (ec *executionContext) _Record_timezone(ctx context.Context, field graphql.
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_timezone,
-		func(ctx context.Context) (any, error) { return obj.Timezone, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Timezone, nil
+		},
 		nil,
 		ec.marshalOString2ᚖstring,
 		true,
@@ -3458,7 +3302,9 @@ func (ec *executionContext) _Record_status(ctx context.Context, field graphql.Co
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_status,
-		func(ctx context.Context) (any, error) { return obj.Status, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Status, nil
+		},
 		nil,
 		ec.marshalOString2ᚖstring,
 		true,
@@ -3485,7 +3331,9 @@ func (ec *executionContext) _Record_createdAt(ctx context.Context, field graphql
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_createdAt,
-		func(ctx context.Context) (any, error) { return obj.CreatedAt, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -3512,7 +3360,9 @@ func (ec *executionContext) _Record_updatedAt(ctx context.Context, field graphql
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Record_updatedAt,
-		func(ctx context.Context) (any, error) { return obj.UpdatedAt, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -3539,7 +3389,9 @@ func (ec *executionContext) _Tag_id(ctx context.Context, field graphql.Collected
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Tag_id,
-		func(ctx context.Context) (any, error) { return obj.ID, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
 		nil,
 		ec.marshalNID2string,
 		true,
@@ -3566,7 +3418,9 @@ func (ec *executionContext) _Tag_userId(ctx context.Context, field graphql.Colle
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Tag_userId,
-		func(ctx context.Context) (any, error) { return obj.UserID, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.UserID, nil
+		},
 		nil,
 		ec.marshalNID2string,
 		true,
@@ -3593,7 +3447,9 @@ func (ec *executionContext) _Tag_name(ctx context.Context, field graphql.Collect
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Tag_name,
-		func(ctx context.Context) (any, error) { return obj.Name, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -3620,7 +3476,9 @@ func (ec *executionContext) _Tag_categoryId(ctx context.Context, field graphql.C
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Tag_categoryId,
-		func(ctx context.Context) (any, error) { return obj.CategoryID, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.CategoryID, nil
+		},
 		nil,
 		ec.marshalNID2string,
 		true,
@@ -3647,7 +3505,9 @@ func (ec *executionContext) _Tag_description(ctx context.Context, field graphql.
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Tag_description,
-		func(ctx context.Context) (any, error) { return obj.Description, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Description, nil
+		},
 		nil,
 		ec.marshalOString2ᚖstring,
 		true,
@@ -3674,7 +3534,9 @@ func (ec *executionContext) _Tag_createdAt(ctx context.Context, field graphql.Co
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Tag_createdAt,
-		func(ctx context.Context) (any, error) { return obj.CreatedAt, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -3701,7 +3563,9 @@ func (ec *executionContext) _Tag_updatedAt(ctx context.Context, field graphql.Co
 		ec.OperationContext,
 		field,
 		ec.fieldContext_Tag_updatedAt,
-		func(ctx context.Context) (any, error) { return obj.UpdatedAt, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -3728,7 +3592,9 @@ func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql
 		ec.OperationContext,
 		field,
 		ec.fieldContext___Directive_name,
-		func(ctx context.Context) (any, error) { return obj.Name, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -3784,7 +3650,9 @@ func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field
 		ec.OperationContext,
 		field,
 		ec.fieldContext___Directive_isRepeatable,
-		func(ctx context.Context) (any, error) { return obj.IsRepeatable, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.IsRepeatable, nil
+		},
 		nil,
 		ec.marshalNBoolean2bool,
 		true,
@@ -3811,7 +3679,9 @@ func (ec *executionContext) ___Directive_locations(ctx context.Context, field gr
 		ec.OperationContext,
 		field,
 		ec.fieldContext___Directive_locations,
-		func(ctx context.Context) (any, error) { return obj.Locations, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Locations, nil
+		},
 		nil,
 		ec.marshalN__DirectiveLocation2ᚕstringᚄ,
 		true,
@@ -3838,7 +3708,9 @@ func (ec *executionContext) ___Directive_args(ctx context.Context, field graphql
 		ec.OperationContext,
 		field,
 		ec.fieldContext___Directive_args,
-		func(ctx context.Context) (any, error) { return obj.Args, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Args, nil
+		},
 		nil,
 		ec.marshalN__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ,
 		true,
@@ -3890,7 +3762,9 @@ func (ec *executionContext) ___EnumValue_name(ctx context.Context, field graphql
 		ec.OperationContext,
 		field,
 		ec.fieldContext___EnumValue_name,
-		func(ctx context.Context) (any, error) { return obj.Name, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -4004,7 +3878,9 @@ func (ec *executionContext) ___Field_name(ctx context.Context, field graphql.Col
 		ec.OperationContext,
 		field,
 		ec.fieldContext___Field_name,
-		func(ctx context.Context) (any, error) { return obj.Name, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -4060,7 +3936,9 @@ func (ec *executionContext) ___Field_args(ctx context.Context, field graphql.Col
 		ec.OperationContext,
 		field,
 		ec.fieldContext___Field_args,
-		func(ctx context.Context) (any, error) { return obj.Args, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Args, nil
+		},
 		nil,
 		ec.marshalN__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ,
 		true,
@@ -4112,7 +3990,9 @@ func (ec *executionContext) ___Field_type(ctx context.Context, field graphql.Col
 		ec.OperationContext,
 		field,
 		ec.fieldContext___Field_type,
-		func(ctx context.Context) (any, error) { return obj.Type, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Type, nil
+		},
 		nil,
 		ec.marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType,
 		true,
@@ -4221,7 +4101,9 @@ func (ec *executionContext) ___InputValue_name(ctx context.Context, field graphq
 		ec.OperationContext,
 		field,
 		ec.fieldContext___InputValue_name,
-		func(ctx context.Context) (any, error) { return obj.Name, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
 		nil,
 		ec.marshalNString2string,
 		true,
@@ -4277,7 +4159,9 @@ func (ec *executionContext) ___InputValue_type(ctx context.Context, field graphq
 		ec.OperationContext,
 		field,
 		ec.fieldContext___InputValue_type,
-		func(ctx context.Context) (any, error) { return obj.Type, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.Type, nil
+		},
 		nil,
 		ec.marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType,
 		true,
@@ -4328,7 +4212,9 @@ func (ec *executionContext) ___InputValue_defaultValue(ctx context.Context, fiel
 		ec.OperationContext,
 		field,
 		ec.fieldContext___InputValue_defaultValue,
-		func(ctx context.Context) (any, error) { return obj.DefaultValue, nil },
+		func(ctx context.Context) (any, error) {
+			return obj.DefaultValue, nil
+		},
 		nil,
 		ec.marshalOString2ᚖstring,
 		true,
@@ -6549,7 +6435,7 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	res := graphql.MarshalBoolean(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
 	return res
@@ -6606,7 +6492,7 @@ func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAion
 func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -6648,7 +6534,7 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	res := graphql.MarshalID(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
 	return res
@@ -6705,7 +6591,7 @@ func (ec *executionContext) marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionAp
 func (ec *executionContext) marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v *model.Record) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -6722,7 +6608,7 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
 	return res
@@ -6779,7 +6665,7 @@ func (ec *executionContext) marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApi�
 func (ec *executionContext) marshalNTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx context.Context, sel ast.SelectionSet, v *model.Tag) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -6854,7 +6740,7 @@ func (ec *executionContext) marshalN__DirectiveLocation2string(ctx context.Conte
 	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
 	return res
@@ -7026,7 +6912,7 @@ func (ec *executionContext) marshalN__Type2ᚕgithubᚗcomᚋ99designsᚋgqlgen�
 func (ec *executionContext) marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx context.Context, sel ast.SelectionSet, v *introspection.Type) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -7043,7 +6929,7 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
 	return res

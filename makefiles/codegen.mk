@@ -37,6 +37,7 @@ SHELL := /usr/bin/env bash
 
 # Repository root (works from subdirectories too)
 ROOT_DIR := $(shell git rev-parse --show-toplevel 2>/dev/null || pwd)
+GO_CACHE := $(ROOT_DIR)/.cache/go-build
 
 # Output (FLAT): all mocks live directly under tests/mocks/
 MOCKS_DIR := $(ROOT_DIR)/tests/mocks
@@ -102,8 +103,9 @@ GRAPHQL_SOURCES := $(shell find "$(GRAPH_DIR)/schema" -type f -name "*.graphqls"
 graphql:
 	@echo "Generating GraphQL code with gqlgen..."
 	@echo "Schemas found:"; if [ -n "$(GRAPHQL_SOURCES)" ]; then printf "  %s\n" $(GRAPHQL_SOURCES); else echo "  (no .graphqls found)"; fi
-	cd "$(GRAPH_DIR)" && go run github.com/99designs/gqlgen generate
-	cd "$(ROOT_DIR)" && go mod tidy
+	@mkdir -p "$(GO_CACHE)"
+	cd "$(GRAPH_DIR)" && GOCACHE=$(GO_CACHE) go run github.com/99designs/gqlgen generate
+	cd "$(ROOT_DIR)" && GOCACHE=$(GO_CACHE) go mod tidy
 	@echo "✅  GraphQL code generated successfully."
 
 # --------------------------------------------------------------------

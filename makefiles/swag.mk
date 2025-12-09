@@ -7,10 +7,11 @@
 # ============================================================
 
 SWAG_VERSION ?= v1.16.6
-SWAG_BIN     ?= $(shell command -v swag || echo "$$(go env GOPATH)/bin/swag")
+SWAG_BIN     ?= $(shell [ -x "$(CURDIR)/.cache/bin/swag" ] && echo "$(CURDIR)/.cache/bin/swag" || command -v swag || echo "$$(go env GOPATH)/bin/swag")
 SWAG_OUT     ?= docs/swagger
 SWAG_MAIN    ?= ./cmd/aion-api/main.go
 SWAG_PKG     ?= docs
+GO_CACHE     ?= $(CURDIR)/.cache/go-build
 
 PERL_BIN     ?= $(shell command -v perl)
 
@@ -20,8 +21,21 @@ tools.s:
 	@echo ">> ensuring tools"
 
 swag: tools.s
-	@echo ">> installing swag $(SWAG_VERSION)"
-	@GOBIN=$$(go env GOPATH)/bin go install github.com/swaggo/swag/cmd/swag@$(SWAG_VERSION)
+	@echo ">> ensuring swag $(SWAG_VERSION)"
+	@mkdir -p "$(GO_CACHE)"
+	@if [ -x "$(SWAG_BIN)" ]; then \
+		INSTALLED_VERSION=$$($(SWAG_BIN) --version | awk '{print $$3}'); \
+		echo ">> swag already present at $(SWAG_BIN) (version: $$INSTALLED_VERSION)"; \
+		if [ "$$INSTALLED_VERSION" != "$(SWAG_VERSION)" ]; then \
+			echo "⚠️  using installed swag $$INSTALLED_VERSION (wanted $(SWAG_VERSION))"; \
+		fi; \
+	else \
+		echo ">> installing swag $(SWAG_VERSION)"; \
+		GOCACHE=$(GO_CACHE) GOBIN=$$(go env GOPATH)/bin go install github.com/swaggo/swag/cmd/swag@$(SWAG_VERSION) || { \
+			echo "❌ failed to install swag (likely offline). Install manually if needed: go install github.com/swaggo/swag/cmd/swag@$(SWAG_VERSION)"; \
+			exit 1; \
+		}; \
+	fi
 
 docs.gen: swag
 	@echo ">> generating swagger docs"

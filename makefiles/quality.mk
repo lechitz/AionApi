@@ -2,7 +2,10 @@
 #                                CODE QUALITY
 # ============================================================
 
-.PHONY: format lint lint-fix fieldalignment fieldalignment-report verify verify-ci
+GO_CACHE := $(CURDIR)/.cache/go-build
+GOLANGCI_CACHE := $(CURDIR)/.cache/golangci-lint
+
+.PHONY: format lint lint-fix fieldalignment fieldalignment-report go-check verify verify-ci
 
 # Run goimports and golines to format code
 format:
@@ -23,8 +26,9 @@ format:
 # Run golangci-lint checks
 lint: format
 	@echo "Running golangci-lint check..."
+	@mkdir -p $(GO_CACHE) $(GOLANGCI_CACHE)
 	@if command -v golangci-lint >/dev/null 2>&1; then \
-		golangci-lint run --config=.golangci.yml ./... || { \
+		GOCACHE=$(GO_CACHE) GOLANGCI_LINT_CACHE=$(GOLANGCI_CACHE) golangci-lint run --config=.golangci.yml ./... || { \
 			echo "golangci-lint failed. If this is due to unknown linters, try installing a compatible version:"; \
 			echo "  go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.0"; \
 			exit 1; \
@@ -37,7 +41,8 @@ lint: format
 fieldalignment:
 	@if command -v fieldalignment >/dev/null 2>&1; then \
 		echo "Running fieldalignment on critical paths..."; \
-		fieldalignment ./internal/platform/config ./internal/chat/core/domain || exit 1; \
+		mkdir -p $(GO_CACHE); \
+		GOCACHE=$(GO_CACHE) fieldalignment ./internal/platform/config ./internal/chat/core/domain || exit 1; \
 	else \
 		echo "warning: 'fieldalignment' not found, skipping (install with: make tools-install)"; \
 	fi
@@ -46,10 +51,17 @@ fieldalignment:
 fieldalignment-report:
 	@if command -v fieldalignment >/dev/null 2>&1; then \
 		echo "Running fieldalignment across entire repository..."; \
-		fieldalignment ./... || echo "⚠️  fieldalignment found issues (advisory only)"; \
+		mkdir -p $(GO_CACHE); \
+		GOCACHE=$(GO_CACHE) fieldalignment ./... || echo "⚠️  fieldalignment found issues (advisory only)"; \
 	else \
 		echo "warning: 'fieldalignment' not found, skipping (install with: make tools-install)"; \
 	fi
+
+# Fast sanity check to catch broken imports or modules before heavier steps
+go-check:
+	@echo "Checking if all Go packages compile (imports/modules)..."
+	@mkdir -p $(GO_CACHE)
+	@GOCACHE=$(GO_CACHE) go test ./... -run=^$ -count=0 >/dev/null
 
 # Auto-fix lint issues where possible
 lint-fix:
@@ -61,7 +73,7 @@ lint-fix:
 	fi
 
 # General verify (checks code quality, but does not enforce committed artifacts)
-verify: lint fieldalignment graphql mocks docs.validate test test-cover test-ci test-clean
+verify: go-check lint fieldalignment graphql mocks docs.validate test test-cover test-ci test-clean
 	@echo "Running test checks..."
 	@$(MAKE) -s test-checks
 	@echo "✅  Verify passed successfully!"
