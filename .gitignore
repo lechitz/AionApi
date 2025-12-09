@@ -43,3 +43,7 @@ notes/
 
 # Go build cache
 .gotmp/
+
+# Local caches
+/.cache/
+.cache/
