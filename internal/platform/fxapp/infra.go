@@ -1,22 +1,37 @@
+// Package fxapp wires the application using Uber Fx modules.
 package fxapp
 
 import (
 	"context"
-	"errors"
-	"fmt"
+	"time"
 
-	"go.uber.org/fx"
-
+	cacheRedis "github.com/lechitz/AionApi/internal/adapter/secondary/cache/redis"
 	"github.com/lechitz/AionApi/internal/adapter/secondary/contextlogger"
 	"github.com/lechitz/AionApi/internal/adapter/secondary/crypto"
-	"github.com/lechitz/AionApi/internal/platform/bootstrap"
+	"github.com/lechitz/AionApi/internal/adapter/secondary/db/postgres"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/observability/metric"
 	"github.com/lechitz/AionApi/internal/platform/observability/tracer"
+	"github.com/lechitz/AionApi/internal/platform/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/keygen"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/platform/server"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"go.uber.org/fx"
+	"gorm.io/gorm"
+)
+
+// InfraModule bundles core infrastructure providers (logger, config, tracer/metrics, redis, postgres).
+//
+//nolint:gochecknoglobals // Fx modules are intended as package-level options.
+var InfraModule = fx.Options(
+	fx.Provide(
+		ProvideLogger,
+		ProvideKeyGenerator,
+		ProvideConfig,
+		ProvideRedisClient,
+		ProvidePostgres,
+	),
+	fx.Invoke(InitObservability),
 )
 
 // ProvideLogger builds the structured logger and registers its cleanup on shutdown.
@@ -69,62 +84,44 @@ func InitObservability(lc fx.Lifecycle, cfg *config.Config, logs logger.ContextL
 	})
 }
 
-// ProvideDependencies composes repositories/usecases and ensures they are cleaned up gracefully.
-func ProvideDependencies(lc fx.Lifecycle, cfg *config.Config, logs logger.ContextLogger) (*bootstrap.AppDependencies, error) {
-	deps, cleanup, err := bootstrap.InitializeDependencies(context.Background(), cfg, logs)
+// ProvideRedisClient initializes the Redis client and closes it on shutdown.
+func ProvideRedisClient(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogger) (cache.Cache, error) {
+	client, err := cacheRedis.NewConnection(context.Background(), cfg.Cache, log)
 	if err != nil {
+		log.Errorw("failed to connect to Redis", commonkeys.Error, err)
+		return nil, err
+	}
+
+	lc.Append(fx.Hook{
+		OnStop: func(context.Context) error {
+			return client.Close()
+		},
+	})
+	return client, nil
+}
+
+// ProvidePostgres initializes the DB connection and closes it on shutdown.
+func ProvidePostgres(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogger) (*gorm.DB, error) {
+	conn, err := postgres.NewConnection(context.Background(), cfg.DB, log)
+	if err != nil {
+		log.Errorw("failed to connect to postgres", commonkeys.Error, err)
 		return nil, err
 	}
 
 	lc.Append(fx.Hook{
 		OnStop: func(ctx context.Context) error {
-			shutdownCtx, cancel := context.WithTimeout(ctx, cfg.Application.Timeout)
+			// Respect shutdown timeout if provided
+			timeout := cfg.DB.ConnMaxLifetime
+			if timeout <= 0 {
+				timeout = 5 * time.Second
+			}
+			shutdownCtx, cancel := context.WithTimeout(ctx, timeout)
 			defer cancel()
-			cleanup(shutdownCtx)
+			postgres.Close(conn, log)
+			<-shutdownCtx.Done()
 			return nil
 		},
 	})
 
-	logs.Infow("dependencies initialized")
-	return deps, nil
-}
-
-// RunServers starts all servers (REST/GraphQL) and stops them on shutdown.
-func RunServers(lc fx.Lifecycle, cfg *config.Config, deps *bootstrap.AppDependencies, logs logger.ContextLogger) {
-	var (
-		cancel context.CancelFunc
-		done   chan error
-	)
-
-	lc.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
-			runCtx, c := context.WithCancel(ctx)
-			cancel = c
-			done = make(chan error, 1)
-
-			go func() {
-				done <- server.RunAll(runCtx, cfg, deps, logs)
-			}()
-			return nil
-		},
-		OnStop: func(ctx context.Context) error {
-			if cancel != nil {
-				cancel()
-			}
-
-			if done == nil {
-				return nil
-			}
-
-			select {
-			case err := <-done:
-				if err != nil && !errors.Is(err, context.Canceled) {
-					return fmt.Errorf("server run failed: %w", err)
-				}
-			case <-ctx.Done():
-				return ctx.Err()
-			}
-			return nil
-		},
-	})
+	return conn, nil
 }

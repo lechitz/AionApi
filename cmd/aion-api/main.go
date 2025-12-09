@@ -48,16 +48,11 @@ func main() {
 // run is the main application logic.
 func run() int {
 	app := fx.New(
-		fx.Provide(
-			fxapp.ProvideLogger,
-			fxapp.ProvideKeyGenerator,
-			fxapp.ProvideConfig,
-			fxapp.ProvideDependencies,
-		),
-		fx.Invoke(
-			configureSwagger,
-			fxapp.InitObservability,
-			fxapp.RunServers,
+		fx.Options(
+			fx.Invoke(configureSwagger),
+			fxapp.InfraModule,
+			fxapp.DomainModule,
+			fxapp.ServerModule,
 		),
 	)
 	if err := app.Start(context.Background()); err != nil {
