@@ -35,6 +35,7 @@ func NewConnection(appCtx context.Context, cfg config.CacheConfig, logger logger
 
 	if err := client.Ping(ctx).Err(); err != nil {
 		logger.Errorw(FailedToConnectToRedis, commonkeys.Error, err)
+		_ = client.Close()
 		return nil, err
 	}
 

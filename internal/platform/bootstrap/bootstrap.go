@@ -52,11 +52,19 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger l
 		return nil, nil, err
 	}
 	logger.Infow(MsgCacheConnected, commonkeys.CacheAddr, cfg.Cache.Addr)
+	closeOnErr := func() {
+		if cacheClient != nil {
+			if errCache := cacheClient.Close(); errCache != nil {
+				logger.Errorw(ErrCloseCacheConnection, commonkeys.Error, errCache)
+			}
+		}
+	}
 
 	// Infrastructure: database
 	dbConn, err := postgres.NewConnection(appCtx, cfg.DB, logger)
 	if err != nil {
 		logger.Errorw(ErrConnectToDatabase, commonkeys.Error, err)
+		closeOnErr()
 		return nil, nil, err
 	}
 	logger.Infow(MsgPostgresConnected)
@@ -86,9 +94,7 @@ func InitializeDependencies(appCtx context.Context, cfg *config.Config, logger l
 		done := make(chan struct{})
 		go func() {
 			postgres.Close(dbConn, logger)
-			if err := cacheClient.Close(); err != nil {
-				logger.Errorw(ErrCloseCacheConnection, commonkeys.Error, err)
-			}
+			_ = cacheClient.Close()
 			close(done)
 		}()
 		select {
