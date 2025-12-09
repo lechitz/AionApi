@@ -43,6 +43,9 @@ help:
 	@echo ""
 	@echo "    \033[0m build-dev          \033[1;37m      →  Build the development Docker image"
 	@echo "    \033[0m dev-up             \033[1;37m      →  Start the development environment (resets DB)"
+	@echo "    \033[0m dev                \033[1;37m      →  Build + start dev (clean: aion-api only)"
+	@echo "    \033[0m dev-logs           \033[1;37m      →  Build + start dev (shows all logs)"
+	@echo "    \033[0m dev-clean          \033[1;37m      →  Build + start dev (clean logs, aion-api only)"
 	@echo "    \033[0m dev-down           \033[1;37m      →  Stop and remove dev environment containers/volumes"
 	@echo "    \033[0m clean-dev          \033[1;37m      →  Clean all dev containers, volumes, and images"
 	@echo ""
@@ -118,7 +121,7 @@ install-tools: tools-install
 
 .PHONY: \
 	help tools-install tools.check \
-	build-dev dev-up dev-down dev clean-dev \
+	build-dev dev-up dev-down dev dev-clean clean-dev \
 	build-prod prod-up prod-down prod clean-prod \
 	docker-clean-all \
 	graphql mocks \

@@ -22,10 +22,16 @@ const (
 // Auth implements the @auth(role: String) directive.
 // It enforces that a user is present in the context (populated by the HTTP auth middleware)
 // and, optionally, that the user has the required "role".
+// Service accounts (S2S) bypass role checks as they are pre-authenticated trusted services.
 func Auth() func(ctx context.Context, obj any, next graphql.Resolver, roles *string) (res any, err error) {
 	return func(ctx context.Context, _ any, next graphql.Resolver, roles *string) (any, error) {
 		if ctx.Value(ctxkeys.UserID) == nil {
 			return nil, sharederrors.ErrUnauthorized(ErrMissingUserIDInContext)
+		}
+
+		// Service accounts (S2S) bypass role checks - they are trusted internal services
+		if svc, ok := ctx.Value(ctxkeys.ServiceAccount).(bool); ok && svc {
+			return next(ctx)
 		}
 
 		if roles != nil && *roles != "" {

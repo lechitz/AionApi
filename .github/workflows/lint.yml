@@ -95,9 +95,9 @@ jobs:
       - name: Install fieldalignment
         run: go install golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest
 
-      # 10) Run fieldalignment on config structs (advisory)
+      # 10) Run fieldalignment on critical paths
       - name: Run fieldalignment
-        run: fieldalignment ./internal/platform/config
+        run: make fieldalignment
 
       # 11) Run native go vet across the repo
       - name: Run go vet
