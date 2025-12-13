@@ -51,7 +51,7 @@ func run() int {
 		fx.Options(
 			fx.Invoke(configureSwagger),
 			fxapp.InfraModule,
-			fxapp.DomainModule,
+			fxapp.ApplicationModule,
 			fxapp.ServerModule,
 		),
 	)

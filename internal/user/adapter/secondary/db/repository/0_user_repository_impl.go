@@ -4,21 +4,22 @@ package repository
 import (
 	"strings"
 
+	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"gorm.io/gorm"
 )
 
 // UserRepository handles interactions with the user database.
+// Depends on db.DB interface (not *gorm.DB) following Hexagonal Architecture.
 type UserRepository struct {
-	db     *gorm.DB
+	db     db.DB
 	logger logger.ContextLogger
 }
 
 // New initializes a new UserRepository with the provided database connection and logger.
-func New(db *gorm.DB, logger logger.ContextLogger) *UserRepository {
+func New(database db.DB, logger logger.ContextLogger) *UserRepository {
 	return &UserRepository{
-		db:     db,
+		db:     database,
 		logger: logger,
 	}
 }

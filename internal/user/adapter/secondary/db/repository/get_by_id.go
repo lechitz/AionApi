@@ -27,7 +27,7 @@ func (up UserRepository) GetByID(ctx context.Context, userID uint64) (domain.Use
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
 		Where(commonkeys.UserID+" = ?", userID).
-		First(&userDB).Error; err != nil {
+		First(&userDB).Error(); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 		up.logger.ErrorwCtx(ctx, LogFailedGetByID, commonkeys.UserID, userID, commonkeys.Error, err.Error())

@@ -2,21 +2,21 @@
 package repository
 
 import (
+	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"gorm.io/gorm"
 )
 
 // CategoryRepository manages database operations related to category entities.
-// It uses gorm.DB for ORM and output.ContextLogger for logging operations.
+// Depends on db.DB interface (not *gorm.DB) following Hexagonal Architecture.
 type CategoryRepository struct {
-	db     *gorm.DB
+	db     db.DB
 	logger logger.ContextLogger
 }
 
-// New creates a new instance of CategoryRepository with a given gorm.DB and contextlogger.
-func New(db *gorm.DB, logger logger.ContextLogger) *CategoryRepository {
+// New creates a new instance of CategoryRepository with a given database connection and logger.
+func New(database db.DB, logger logger.ContextLogger) *CategoryRepository {
 	return &CategoryRepository{
-		db:     db,
+		db:     database,
 		logger: logger,
 	}
 }

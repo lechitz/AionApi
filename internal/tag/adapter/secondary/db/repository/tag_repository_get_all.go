@@ -29,7 +29,7 @@ func (r TagRepository) GetAll(ctx context.Context, userID uint64) ([]domain.Tag,
 	var tagsDB []model.TagDB
 	err := r.db.WithContext(ctx).
 		Where("user_id = ?", userID).
-		Find(&tagsDB).Error
+		Find(&tagsDB).Error()
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, ErrNoTagsFoundMsg)

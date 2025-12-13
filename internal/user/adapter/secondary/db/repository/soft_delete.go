@@ -30,7 +30,7 @@ func (up UserRepository) SoftDelete(ctx context.Context, userID uint64) error {
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
 		Where(commonkeys.UserID+" = ?", userID).
-		Updates(fields).Error; err != nil {
+		Updates(fields).Error(); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 		up.logger.ErrorwCtx(ctx, LogFailedSoftDelete, commonkeys.UserID, userID, commonkeys.Error, err.Error())

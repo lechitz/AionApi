@@ -31,7 +31,7 @@ func (c CategoryRepository) SoftDelete(ctx context.Context, categoryID uint64, u
 	if err := c.db.WithContext(ctx).
 		Model(&model.CategoryDB{}).
 		Where("category_id = ? AND user_id = ?", categoryID, userID).
-		Updates(fields).Error; err != nil {
+		Updates(fields).Error(); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 		return err

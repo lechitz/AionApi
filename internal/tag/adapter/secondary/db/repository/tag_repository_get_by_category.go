@@ -27,7 +27,7 @@ func (r TagRepository) GetByCategoryID(ctx context.Context, categoryID uint64, u
 	var tagsDB []model.TagDB
 	err := r.db.WithContext(ctx).
 		Where("tags.category_id = ? AND tags.user_id = ?", categoryID, userID).
-		Find(&tagsDB).Error
+		Find(&tagsDB).Error()
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, OpGetByCategory)

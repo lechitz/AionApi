@@ -30,7 +30,7 @@ func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint6
 	if err := c.db.WithContext(ctx).
 		Model(&categoryDB).
 		Where("category_id = ? AND user_id = ?", categoryID, userID).
-		Updates(updateFields).Error; err != nil {
+		Updates(updateFields).Error(); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 		return domain.Category{}, err
@@ -38,7 +38,7 @@ func (c CategoryRepository) UpdateCategory(ctx context.Context, categoryID uint6
 
 	if err := c.db.WithContext(ctx).
 		Where("category_id = ? AND user_id = ?", categoryID, userID).
-		First(&categoryDB).Error; err != nil {
+		First(&categoryDB).Error(); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 		return domain.Category{}, err

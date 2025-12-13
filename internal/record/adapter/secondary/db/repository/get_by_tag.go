@@ -16,7 +16,7 @@ func (r *RecordRepository) ListByTag(ctx context.Context, tagID uint64, userID u
 		Where("tag_id = ? AND user_id = ? AND deleted_at IS NULL", tagID, userID).
 		Order("event_time DESC, id DESC").
 		Limit(limit).
-		Find(&recordsDB).Error; err != nil {
+		Find(&recordsDB).Error(); err != nil {
 		return nil, err
 	}
 

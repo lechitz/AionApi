@@ -27,7 +27,7 @@ func (up UserRepository) Update(ctx context.Context, userID uint64, fields map[s
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
 		Where(commonkeys.UserID+" = ?", userID).
-		Updates(fields).Error; err != nil {
+		Updates(fields).Error(); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 		up.logger.ErrorwCtx(ctx, LogFailedUpdateUser, commonkeys.UserID, userID, commonkeys.Error, err.Error())

@@ -12,5 +12,5 @@ func (r *RecordRepository) Delete(ctx context.Context, recordID uint64, userID u
 	return r.db.WithContext(ctx).
 		Model(&model.Record{}).
 		Where("id = ? AND user_id = ?", recordID, userID).
-		Update("deleted_at", time.Now()).Error
+		Update("deleted_at", time.Now()).Error()
 }

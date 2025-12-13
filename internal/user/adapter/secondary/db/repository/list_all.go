@@ -25,7 +25,7 @@ func (up UserRepository) ListAll(ctx context.Context) ([]domain.User, error) {
 	if err := up.db.WithContext(ctx).
 		Model(&model.UserDB{}).
 		Select(SelectListAllColumns).
-		Find(&usersDB).Error; err != nil {
+		Find(&usersDB).Error(); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 		up.logger.ErrorwCtx(ctx, LogFailedListAll, commonkeys.Error, err.Error())

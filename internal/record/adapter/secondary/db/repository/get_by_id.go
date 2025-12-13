@@ -14,7 +14,7 @@ func (r *RecordRepository) GetByID(ctx context.Context, recordID uint64, userID 
 
 	if err := r.db.WithContext(ctx).
 		Where("id = ? AND user_id = ? AND deleted_at IS NULL", recordID, userID).
-		First(&recordDB).Error; err != nil {
+		First(&recordDB).Error(); err != nil {
 		return domain.Record{}, err
 	}
 

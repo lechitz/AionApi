@@ -29,7 +29,7 @@ func (c CategoryRepository) GetByName(ctx context.Context, categoryName string, 
 	var categoryDB model.CategoryDB
 	err := c.db.WithContext(ctx).
 		Where("user_id = ? AND name = ?", userID, categoryName).
-		First(&categoryDB).Error
+		First(&categoryDB).Error()
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, ErrCategoryNotFoundMsg)

@@ -27,7 +27,7 @@ func (up UserRepository) Create(ctx context.Context, userDomain domain.User) (do
 
 	userDB := mapper.UserToDB(userDomain)
 
-	if err := up.db.WithContext(ctx).Create(&userDB).Error; err != nil {
+	if err := up.db.WithContext(ctx).Create(&userDB).Error(); err != nil {
 		if field, ok := isUniqueViolation(err); ok {
 			span.SetStatus(codes.Error, StatusValidationDuplicate)
 			span.SetAttributes(attribute.String(AttrHTTPErrorReason, field+SuffixAlreadyExists))

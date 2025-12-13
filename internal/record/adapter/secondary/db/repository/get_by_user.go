@@ -20,7 +20,7 @@ func (r *RecordRepository) ListByUser(ctx context.Context, userID uint64, limit 
 		q = q.Where("event_time < ? OR (event_time = ? AND id < ?)", *afterEventTime, *afterEventTime, *afterID)
 	}
 
-	if err := q.Find(&recordsDB).Error; err != nil {
+	if err := q.Find(&recordsDB).Error(); err != nil {
 		return nil, err
 	}
 

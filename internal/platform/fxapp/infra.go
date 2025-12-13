@@ -10,14 +10,16 @@ import (
 	"github.com/lechitz/AionApi/internal/adapter/secondary/crypto"
 	"github.com/lechitz/AionApi/internal/adapter/secondary/db/postgres"
 	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/AionApi/internal/platform/httpclient"
 	"github.com/lechitz/AionApi/internal/platform/observability/metric"
 	"github.com/lechitz/AionApi/internal/platform/observability/tracer"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/cache"
+	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
+	httpclientPort "github.com/lechitz/AionApi/internal/platform/ports/output/httpclient"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/keygen"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.uber.org/fx"
-	"gorm.io/gorm"
 )
 
 // InfraModule bundles core infrastructure providers (logger, config, tracer/metrics, redis, postgres).
@@ -30,6 +32,7 @@ var InfraModule = fx.Options(
 		ProvideConfig,
 		ProvideRedisClient,
 		ProvidePostgres,
+		ProvideHTTPClient,
 	),
 	fx.Invoke(InitObservability),
 )
@@ -101,12 +104,16 @@ func ProvideRedisClient(lc fx.Lifecycle, cfg *config.Config, log logger.ContextL
 }
 
 // ProvidePostgres initializes the DB connection and closes it on shutdown.
-func ProvidePostgres(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogger) (*gorm.DB, error) {
+// Returns db.DB interface (not concrete *gorm.DB) following Dependency Inversion Principle.
+func ProvidePostgres(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogger) (db.DB, error) {
 	conn, err := postgres.NewConnection(context.Background(), cfg.DB, log)
 	if err != nil {
 		log.Errorw("failed to connect to postgres", commonkeys.Error, err)
 		return nil, err
 	}
+
+	// Wrap gorm.DB with adapter to return interface
+	dbAdapter := postgres.NewDBAdapter(conn)
 
 	lc.Append(fx.Hook{
 		OnStop: func(ctx context.Context) error {
@@ -123,5 +130,25 @@ func ProvidePostgres(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogg
 		},
 	})
 
-	return conn, nil
+	return dbAdapter, nil
+}
+
+// ProvideHTTPClient creates an instrumented outbound HTTP client and returns it as the HTTPClient interface.
+// Uses timeout from AionChat config if available, otherwise defaults to 15s.
+// The returned client is instrumented with OTEL for automatic tracing and context propagation.
+func ProvideHTTPClient(cfg *config.Config) httpclientPort.HTTPClient {
+	timeout := 15 * time.Second
+	if cfg.AionChat.Timeout > 0 {
+		timeout = cfg.AionChat.Timeout
+	}
+
+	opts := httpclient.Options{
+		Timeout: timeout,
+	}
+
+	// NewInstrumentedClient returns *http.Client with OTEL instrumentation
+	instrumentedHTTPClient := httpclient.NewInstrumentedClient(opts)
+
+	// Wrap with adapter that implements HTTPClient interface
+	return httpclient.NewClient(instrumentedHTTPClient)
 }

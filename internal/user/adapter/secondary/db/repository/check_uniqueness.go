@@ -39,7 +39,7 @@ func (up UserRepository) CheckUniqueness(ctx context.Context, username, email st
 			Model(&model.UserDB{}).
 			Select(commonkeys.UserID).
 			Where(field+" = ?", value).
-			First(&u).Error
+			First(&u).Error()
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return 0, false, nil

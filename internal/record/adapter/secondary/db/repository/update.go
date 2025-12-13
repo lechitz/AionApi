@@ -13,14 +13,14 @@ func (r *RecordRepository) Update(ctx context.Context, rec domain.Record) (domai
 	recDB := mapper.RecordToDB(rec)
 	if err := r.db.WithContext(ctx).Model(&model.Record{}).
 		Where("id = ? AND user_id = ? AND deleted_at IS NULL", rec.ID, rec.UserID).
-		Updates(recDB).Error; err != nil {
+		Updates(recDB).Error(); err != nil {
 		return domain.Record{}, err
 	}
 
 	var out model.Record
 	if err := r.db.WithContext(ctx).
 		Where("id = ? AND user_id = ? AND deleted_at IS NULL", rec.ID, rec.UserID).
-		First(&out).Error; err != nil {
+		First(&out).Error(); err != nil {
 		return domain.Record{}, err
 	}
 	return mapper.RecordFromDB(out), nil

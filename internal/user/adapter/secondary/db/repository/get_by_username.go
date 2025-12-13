@@ -28,7 +28,7 @@ func (up UserRepository) GetByUsername(ctx context.Context, username string) (do
 	err := up.db.WithContext(ctx).
 		Select(SelectByUsernameColumns).
 		Where(commonkeys.Username+" = ?", username).
-		First(&userDB).Error
+		First(&userDB).Error()
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, StatusUserNotFoundOK)

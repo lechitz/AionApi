@@ -2,17 +2,18 @@
 package repository
 
 import (
+	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"gorm.io/gorm"
 )
 
-// RecordRepository implements persistence using GORM and Postgres.
+// RecordRepository implements persistence using database operations.
+// Depends on db.DB interface (not *gorm.DB) following Hexagonal Architecture.
 type RecordRepository struct {
-	db     *gorm.DB
+	db     db.DB
 	logger logger.ContextLogger
 }
 
 // New creates a new RecordRepository.
-func New(db *gorm.DB, logger logger.ContextLogger) *RecordRepository {
-	return &RecordRepository{db: db, logger: logger}
+func New(database db.DB, logger logger.ContextLogger) *RecordRepository {
+	return &RecordRepository{db: database, logger: logger}
 }

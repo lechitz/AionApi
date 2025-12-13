@@ -28,7 +28,7 @@ func (c CategoryRepository) ListAll(ctx context.Context, userID uint64) ([]domai
 	if err := c.db.WithContext(ctx).
 		Select("category_id, user_id, name, description, color_hex, icon, created_at, updated_at").
 		Where("user_id = ?", userID).
-		Find(&categoriesDB).Error; err != nil {
+		Find(&categoriesDB).Error(); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
 		return nil, err
