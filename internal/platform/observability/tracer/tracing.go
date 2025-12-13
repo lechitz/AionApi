@@ -9,12 +9,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/observability"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	otlptrace "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	trace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.32.0"
@@ -59,6 +62,9 @@ func InitTracer(cfg *config.Config, logger logger.ContextLogger) func() {
 	traceProvider := trace.NewTracerProvider(providerOpts...)
 
 	otel.SetTracerProvider(traceProvider)
+
+	// Set global propagators (W3C TraceContext + Baggage) so spans are propagated across services
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
 	return func() {
 		if err := traceProvider.Shutdown(context.Background()); err != nil {
@@ -122,10 +128,17 @@ func buildOTLPExporter(cfg *config.Config, logger logger.ContextLogger) (trace.S
 
 // buildResource constructs service resource attributes used by the tracer provider.
 func buildResource(cfg *config.Config) *resource.Resource {
+	// Resolve host name and a stable instance id for this process
+	hostname, _ := os.Hostname()
+	instanceID := uuid.NewString()
+
 	return resource.NewWithAttributes(
 		semconv.SchemaURL,
 		semconv.ServiceNameKey.String(cfg.Observability.OtelServiceName),
 		semconv.ServiceVersionKey.String(cfg.Observability.OtelServiceVersion),
+		attribute.String("deployment.environment", cfg.General.Env),
+		attribute.String("host.name", hostname),
+		attribute.String("service.instance.id", instanceID),
 	)
 }
 

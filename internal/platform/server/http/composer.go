@@ -41,8 +41,8 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 
 	// Global middlewares
 	router.Use(
-		recovery.New(genericHandlers),
 		requestid.New(),
+		recovery.New(genericHandlers),
 		cors.New(),
 	)
 
@@ -135,13 +135,16 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 	pathClean := path.Clean(apiContext + "/" + strings.TrimPrefix(routeHealth, "/"))
 
 	corsMiddleware := cors.New()
-	mux.Handle(pathClean, corsMiddleware(http.HandlerFunc(genericHandlers.HealthCheck)))
-	mux.Handle(pathClean+"/", corsMiddleware(http.HandlerFunc(genericHandlers.HealthCheck)))
+	requestIDMiddleware := requestid.New()
+	healthHandler := requestIDMiddleware(http.HandlerFunc(genericHandlers.HealthCheck))
+
+	mux.Handle(pathClean, corsMiddleware(healthHandler))
+	mux.Handle(pathClean+"/", corsMiddleware(healthHandler))
 
 	// Backwards compatibility: also expose health under {apiContext}{APIRoot}{routeHealth} (e.g., /aion/api/v1/health)
 	altHealth := path.Clean(apiContext + "/" + strings.TrimPrefix(cfg.ServerHTTP.APIRoot, "/") + "/" + strings.TrimPrefix(routeHealth, "/"))
-	mux.Handle(altHealth, corsMiddleware(http.HandlerFunc(genericHandlers.HealthCheck)))
-	mux.Handle(altHealth+"/", corsMiddleware(http.HandlerFunc(genericHandlers.HealthCheck)))
+	mux.Handle(altHealth, corsMiddleware(healthHandler))
+	mux.Handle(altHealth+"/", corsMiddleware(healthHandler))
 
 	mux.Handle("/", instrumented)
 

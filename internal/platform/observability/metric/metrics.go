@@ -4,14 +4,17 @@ package metric
 import (
 	"context"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/observability"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -42,12 +45,19 @@ func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 		panic(err)
 	}
 
+	// Build resource with common attributes
+	hostname, _ := os.Hostname()
+	instanceID := uuid.NewString()
+
 	provider := metric.NewMeterProvider(
 		metric.WithReader(metric.NewPeriodicReader(exporter)),
 		metric.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
 			semconv.ServiceNameKey.String(cfg.Observability.OtelServiceName),
 			semconv.ServiceVersionKey.String(cfg.Observability.OtelServiceVersion),
+			attribute.String("deployment.environment", cfg.General.Env),
+			attribute.String("host.name", hostname),
+			attribute.String("service.instance.id", instanceID),
 		)),
 	)
 
