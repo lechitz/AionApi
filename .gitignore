@@ -24,6 +24,8 @@ go.work.sum
 # env file
 .env.dev
 .env.prod
+.env.local
+**/seed/.env.local
 
 # IDE files
 .idea
@@ -36,6 +38,7 @@ site/
 # Personal, local-only docs (private workspace for notes/ideas)
 docs/personal/
 notes/
+**/docs.md
 
 # Local module cache used by Go
 .gocache
@@ -47,3 +50,8 @@ notes/
 # Local caches
 /.cache/
 .cache/
+
+# Local seed env and generated files
+/infrastructure/db/seed/.env
+/infrastructure/db/seed/api_success.log
+/bin/seed-helper
