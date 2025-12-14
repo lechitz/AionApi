@@ -65,6 +65,7 @@ type ComplexityRoot struct {
 		SoftDeleteAllRecords func(childComplexity int) int
 		SoftDeleteCategory   func(childComplexity int, input model.DeleteCategoryInput) int
 		SoftDeleteRecord     func(childComplexity int, input model.DeleteRecordInput) int
+		SoftDeleteTag        func(childComplexity int, input model.DeleteTagInput) int
 		UpdateCategory       func(childComplexity int, input model.UpdateCategoryInput) int
 		UpdateRecord         func(childComplexity int, input model.UpdateRecordInput) int
 	}
@@ -125,6 +126,7 @@ type MutationResolver interface {
 	SoftDeleteRecord(ctx context.Context, input model.DeleteRecordInput) (bool, error)
 	SoftDeleteAllRecords(ctx context.Context) (bool, error)
 	CreateTag(ctx context.Context, input model.CreateTagInput) (*model.Tag, error)
+	SoftDeleteTag(ctx context.Context, input model.DeleteTagInput) (bool, error)
 }
 type QueryResolver interface {
 	Empty(ctx context.Context) (*bool, error)
@@ -266,6 +268,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.SoftDeleteRecord(childComplexity, args["input"].(model.DeleteRecordInput)), true
+	case "Mutation.softDeleteTag":
+		if e.complexity.Mutation.SoftDeleteTag == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_softDeleteTag_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SoftDeleteTag(childComplexity, args["input"].(model.DeleteTagInput)), true
 	case "Mutation.updateCategory":
 		if e.complexity.Mutation.UpdateCategory == nil {
 			break
@@ -576,6 +589,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateTagInput,
 		ec.unmarshalInputDeleteCategoryInput,
 		ec.unmarshalInputDeleteRecordInput,
+		ec.unmarshalInputDeleteTagInput,
 		ec.unmarshalInputUpdateCategoryInput,
 		ec.unmarshalInputUpdateRecordInput,
 	)
@@ -756,6 +770,17 @@ func (ec *executionContext) field_Mutation_softDeleteRecord_args(ctx context.Con
 	var err error
 	args := map[string]any{}
 	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteRecordInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteRecordInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_softDeleteTag_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteTagInput)
 	if err != nil {
 		return nil, err
 	}
@@ -1764,6 +1789,65 @@ func (ec *executionContext) fieldContext_Mutation_createTag(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_softDeleteTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_softDeleteTag,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().SoftDeleteTag(ctx, fc.Args["input"].(model.DeleteTagInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal bool
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal bool
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_softDeleteTag(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_softDeleteTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -5272,6 +5356,33 @@ func (ec *executionContext) unmarshalInputDeleteRecordInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputDeleteTagInput(ctx context.Context, obj any) (model.DeleteTagInput, error) {
+	var it model.DeleteTagInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateCategoryInput(ctx context.Context, obj any) (model.UpdateCategoryInput, error) {
 	var it model.UpdateCategoryInput
 	asMap := map[string]any{}
@@ -5569,6 +5680,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "createTag":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createTag(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "softDeleteTag":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_softDeleteTag(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -6521,6 +6639,11 @@ func (ec *executionContext) unmarshalNDeleteCategoryInput2githubᚗcomᚋlechitz
 
 func (ec *executionContext) unmarshalNDeleteRecordInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteRecordInput(ctx context.Context, v any) (model.DeleteRecordInput, error) {
 	res, err := ec.unmarshalInputDeleteRecordInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNDeleteTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteTagInput(ctx context.Context, v any) (model.DeleteTagInput, error) {
+	res, err := ec.unmarshalInputDeleteTagInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

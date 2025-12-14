@@ -2,12 +2,29 @@
 
 This directory contains seed data for populating the database with test/development data.
 
+> Note: all seeded users share the same bcrypt password hash, provided at runtime via env var `USER_TOKEN_TEST`. The value is not stored in the repo; export it before running any seed command.
+
 ## 📋 Overview
 
 The seed structure follows a hierarchical relationship:
 ```
 Users → Categories → Tags → Records
 ```
+
+### 🔧 Seed Helper Tool
+
+This project includes a Go-based CLI tool (`cmd/seed-helper`) that generates:
+- Bcrypt hashes for user passwords
+- JWT tokens for API testing
+- Complete `.env.local` configuration files
+
+**Why Go instead of Python?**
+- Consistent with project tech stack (no external dependencies)
+- Uses the same JWT/bcrypt libraries as the main application
+- Ensures token compatibility with the running API
+- No need to install Python packages in a Go project
+
+**Deprecated:** `generate_users.py` and `generate_records.py` are no longer used. Use `user_generate.sql` (pgcrypto) for mass user generation instead.
 
 ## 🗂️ Seed Files
 
@@ -17,6 +34,7 @@ Creates test users in the system.
 **Users:**
 - User ID 1: Primary test user (focus of category/tag/record seeds)
 - User ID 2-5: Additional test users
+- Password for all seeded users is injected via env var `USER_TOKEN_TEST` (bcrypt hash, not stored in repo)
 
 ### 2. `category.sql`
 Creates tag categories for organizing tags.
@@ -72,26 +90,142 @@ Seeds must be applied in this order due to foreign key constraints:
 
 ## 🚀 How to Apply Seeds
 
-### Option 1: Using Make Command
+### Quick Start (Recommended)
+
+The easiest way to seed your database is using the `seed-helper` tool:
+
 ```bash
-make seed
+# 1. Setup seed environment (generates .env.local with all credentials)
+make seed-setup
+
+# 2. Seed the database
+make seed-quick
 ```
 
-### Option 2: Manual psql
+That's it! The setup will ask how many users you want to generate, and create all necessary credentials automatically.
+
+**How it works:**
+1. `seed-setup` builds the Go-based `seed-helper` binary
+2. It generates a `.env.local` file with properly quoted values (shell-safe)
+3. Bcrypt hashes are wrapped in single quotes to prevent shell variable expansion (`$2a$` → `'$2a$...'`)
+4. The SECRET_KEY is read from your `infrastructure/docker/environments/dev/.env.dev` file
+5. JWT tokens are generated using the same libraries as your main application
+6. `seed-quick` loads these values and populates the database
+
+### Advanced: Custom Configuration
+
+#### Generate specific number of users
 ```bash
-psql -U aion_user -d aion_db -f infrastructure/db/seed/user.sql
-psql -U aion_user -d aion_db -f infrastructure/db/seed/category.sql
-psql -U aion_user -d aion_db -f infrastructure/db/seed/tags.sql
-psql -U aion_user -d aion_db -f infrastructure/db/seed/records.sql
+# Generate .env.local for 100 users
+make seed-helper
+./bin/seed-helper generate-env 100
+
+# Then seed
+make seed-all-local
 ```
 
-### Option 3: Docker Exec
+#### Generate only a JWT token for API testing
 ```bash
-docker exec -i aion-postgres psql -U aion_user -d aion_db < infrastructure/db/seed/user.sql
-docker exec -i aion-postgres psql -U aion_user -d aion_db < infrastructure/db/seed/category.sql
-docker exec -i aion-postgres psql -U aion_user -d aion_db < infrastructure/db/seed/tags.sql
-docker exec -i aion-postgres psql -U aion_user -d aion_db < infrastructure/db/seed/records.sql
+make seed-helper
+./bin/seed-helper generate-token 1
 ```
+
+#### Generate only a bcrypt hash
+```bash
+make seed-helper
+./bin/seed-helper generate-bcrypt mypassword
+```
+
+### Manual Method (Advanced Users)
+
+If you prefer to manage credentials yourself:
+
+```bash
+# Export the bcrypt hash
+export USER_TOKEN_TEST='$2a$10$...'
+
+# Seed all tables
+make seed-all
+```
+
+### Docker Direct Method
+
+```bash
+USER_TOKEN_TEST='$2a$10$...' docker exec -i postgres-dev psql -U aion -d aionapi -v user_seed_password_hash="$USER_TOKEN_TEST" < infrastructure/db/seed/user.sql
+docker exec -i postgres-dev psql -U aion -d aionapi < infrastructure/db/seed/category.sql
+docker exec -i postgres-dev psql -U aion -d aionapi < infrastructure/db/seed/tags.sql
+docker exec -i postgres-dev psql -U aion -d aionapi < infrastructure/db/seed/records.sql
+```
+
+### Understanding the .env.local file
+
+The `seed-helper generate-env` command creates a `.env.local` file with:
+
+- `USER_TOKEN_TEST`: bcrypt hash for all seeded users (wrapped in single quotes)
+- `SEED_USER_COUNT`: number of users to generate
+- `DEV_PASSWORD`: plaintext password (for your reference only, wrapped in single quotes)
+- `SECRET_KEY`: your JWT secret (read from .env.dev, wrapped in single quotes)
+- `JWT_TOKEN`: a valid JWT token for user 1 (for API testing, wrapped in single quotes)
+
+**Important:** 
+- `.env.local` is gitignored. Never commit it!
+- All values are wrapped in single quotes to prevent shell variable expansion issues
+- Bcrypt hashes start with `$2a$` which would be interpreted as shell variables without quoting
+
+To use it locally, copy the example and fill the bcrypt hash (never commit `.env`):
+
+```bash
+cp infrastructure/db/seed/.env.example infrastructure/db/seed/.env
+# edit infrastructure/db/seed/.env and replace <bcrypt-hash-placeholder>
+```
+
+Alternatively, you can run the Makefile target that loads the `.env` if present:
+
+```bash
+# Loads infrastructure/db/seed/.env (if present) and runs the user seed
+make seed-users-local
+# or: USER_TOKEN_TEST=<bcrypt-hash> make seed-users-local
+```
+
+### Quick ways to generate a bcrypt hash locally
+
+Use the Go-based `seed-helper` tool (recommended):
+
+```bash
+make seed-helper
+./bin/seed-helper generate-bcrypt testpassword123
+```
+
+This ensures compatibility with the main application's bcrypt implementation.
+
+### In-database bcrypt hashing (no Python required)
+
+To avoid adding language runtime dependencies, we support generating users directly in Postgres using `pgcrypto`. This hashes the password server-side using `crypt()` and `gen_salt()`.
+
+Usage (example):
+
+```bash
+# generate 60 users using plain password 'testpassword123' (hashed inside Postgres)
+SEED_USER_COUNT=60 DEV_PASSWORD=testpassword123 make seed-users-local
+```
+
+This uses the SQL file `infrastructure/db/seed/user_generate.sql` which requires the Postgres `pgcrypto` extension (the script will create it if missing).
+
+If you prefer to provide an explicit bcrypt hash instead, keep using `USER_TOKEN_TEST` in `.env` or export it and run `make seed-users-local` or `make seed-users`.
+
+### Seeding variable-sized user sets
+
+The example `.env` includes `SEED_USER_COUNT` which your seed scripts can read (if implemented) to generate a variable number of users (e.g., 100, 60, 43). If you prefer, write a small wrapper script (Bash/Python) that reads `SEED_USER_COUNT` and generates a `user.sql` with the requested number of INSERTs before running the seeds.
+
+Example workflow to generate 60 users then seed:
+
+```bash
+# set desired count in env file or export variable
+export SEED_USER_COUNT=60
+make seed-users-local
+```
+
+If you want, I can help add a small Python script `generate_users.py` that creates `user.sql` with N users reading `SEED_USER_COUNT` from the environment. This makes end-to-end seeding easy and reproducible.
 
 ## 🧪 Testing Queries
 
@@ -229,4 +363,3 @@ When adding new seeds:
 **Last Updated:** 2025-01-14  
 **Total Records (User 1):** 128  
 **Date Range:** 2025-01-01 to 2025-01-16
-
