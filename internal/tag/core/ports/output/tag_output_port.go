@@ -20,8 +20,14 @@ type TagRetriever interface {
 	GetAll(ctx context.Context, userID uint64) ([]domain.Tag, error)
 }
 
+// TagDeleter defines an interface for soft-deleting a tag.
+type TagDeleter interface {
+	SoftDelete(ctx context.Context, tagID, userID uint64) error
+}
+
 // TagRepository represents a composite interface for managing tags, combining creation, retrieval, updating, and soft-deletion functionalities.
 type TagRepository interface {
 	TagCreator
 	TagRetriever
+	TagDeleter
 }

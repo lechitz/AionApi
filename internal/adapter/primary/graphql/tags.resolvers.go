@@ -14,6 +14,19 @@ func (m *mutationResolver) CreateTag(ctx context.Context, input model.CreateTagI
 	return m.TagController().Create(ctx, input, uid)
 }
 
+// SoftDeleteTag is the resolver for the softDeleteTag field.
+func (m *mutationResolver) SoftDeleteTag(ctx context.Context, input model.DeleteTagInput) (bool, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	tagID, err := strconv.ParseUint(input.ID, 10, 64)
+	if err != nil {
+		return false, err
+	}
+	if err := m.TagController().SoftDelete(ctx, tagID, uid); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // TagByName is the resolve for the tagByName field.
 func (q *queryResolver) TagByName(ctx context.Context, tagName string) (*model.Tag, error) {
 	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)

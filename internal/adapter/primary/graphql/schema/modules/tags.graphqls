@@ -16,6 +16,10 @@ input CreateTagInput {
     description: String
 }
 
+input DeleteTagInput {
+    id: ID!
+}
+
 extend type Query {
     tagByName(name: String!): Tag @auth(roles: "user")
     tagById(id: ID!): Tag @auth(roles: "user")
@@ -25,5 +29,5 @@ extend type Query {
 
 extend type Mutation {
     createTag(input: CreateTagInput!): Tag! @auth(roles: "user")
+    softDeleteTag(input: DeleteTagInput!): Boolean! @auth(roles: "user")
 }
-

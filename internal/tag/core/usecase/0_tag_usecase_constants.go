@@ -25,6 +25,9 @@ const (
 
 	// SpanGetAll is the span name for listing all tags for a user.
 	SpanGetAll = "tag.list_all"
+
+	// SpanSoftDeleteTag is the span name for soft-deleting a tag.
+	SpanSoftDeleteTag = "tag.soft_delete"
 )
 
 // -----------------------------------------------------------------------------
@@ -65,6 +68,9 @@ const (
 
 	// StatusListedAll indicates all tags were listed successfully.
 	StatusListedAll = "listed_all"
+
+	// StatusSoftDeleted indicates a resource was soft-deleted.
+	StatusSoftDeleted = "deleted"
 )
 
 // =============================================================================
@@ -90,12 +96,18 @@ const (
 
 	// TagAlreadyExists is returned when trying to create a tag that already exists.
 	TagAlreadyExists = "tag already exists"
+
+	// FailedToSoftDeleteTag indicates failure to soft-delete a tag.
+	FailedToSoftDeleteTag = "failed to soft delete tag"
 )
 
 // Success messages.
 const (
 	// SuccessfullyCreatedTag is a structured log message used after a successful creation.
 	SuccessfullyCreatedTag = "tag successfully created: %s"
+
+	// SuccessfullySoftDeletedTag formats a success message when a tag is soft-deleted.
+	SuccessfullySoftDeletedTag = "successfully soft deleted tag %s"
 )
 
 // Validation messages.

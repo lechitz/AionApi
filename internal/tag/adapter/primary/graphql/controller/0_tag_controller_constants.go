@@ -26,6 +26,9 @@ const (
 
 	// SpanListAll is the span name for listing all tags for a user.
 	SpanListAll = "tag.controller.list_all"
+
+	// SpanSoftDelete is the span name for soft-deleting a tag.
+	SpanSoftDelete = "tag.controller.soft_delete"
 )
 
 // -----------------------------------------------------------------------------
@@ -38,6 +41,9 @@ const (
 
 	// StatusFetched indicates that a single tag has been successfully fetched.
 	StatusFetched = "fetched"
+
+	// StatusSoftDeleted indicates that a tag has been successfully soft-deleted.
+	StatusSoftDeleted = "soft_deleted"
 )
 
 // =============================================================================
@@ -68,4 +74,10 @@ const (
 
 	// ErrFailedToListTags is the error message when listing tags fails.
 	ErrFailedToListTags = "failed to list tags"
+
+	// MsgSoftDeleted is the log message for when a tag is soft-deleted.
+	MsgSoftDeleted = "tag soft-deleted"
+
+	// MsgSoftDeleteError is the log message for when a soft-delete operation fails.
+	MsgSoftDeleteError = "error soft deleting tag"
 )

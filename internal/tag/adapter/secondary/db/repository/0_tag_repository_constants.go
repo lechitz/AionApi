@@ -27,6 +27,9 @@ const (
 
 	// SpanGetByCategoryRepo is the span name for fetching Tags by category.
 	SpanGetByCategoryRepo = "tag.repository.get_by_category"
+
+	// SpanSoftDeleteRepo is the span name for soft-deleting a Tag.
+	SpanSoftDeleteRepo = "tag.repository.soft_delete"
 )
 
 // -----------------------------------------------------------------------------
@@ -49,6 +52,9 @@ const (
 
 	// OpGetByCategory is the attribute value for the "get by category" operation.
 	OpGetByCategory = "get_by_category"
+
+	// OpSoftDelete is the attribute value for the "soft delete" operation.
+	OpSoftDelete = "soft_delete"
 )
 
 // -----------------------------------------------------------------------------
