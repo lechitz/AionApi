@@ -9,7 +9,7 @@
 \endif
 
 -- Generate categories for each user (8 categories per user)
-INSERT INTO aion_api.tag_categories (user_id, name, description, color_hex, icon, deleted_at)
+INSERT INTO aion_api.categories (user_id, name, description, color_hex, icon, deleted_at)
 SELECT
   user_id,
   category_name || '_' || user_id AS name,

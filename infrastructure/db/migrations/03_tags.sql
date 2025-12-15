@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS aion_api.tags (
     updated_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at    TIMESTAMP DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES aion_api.users (user_id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES aion_api.tag_categories (category_id) ON DELETE SET NULL
+    FOREIGN KEY (category_id) REFERENCES aion_api.categories (category_id) ON DELETE SET NULL
     );
 
 CREATE UNIQUE INDEX IF NOT EXISTS ux_tags_user_name_ci

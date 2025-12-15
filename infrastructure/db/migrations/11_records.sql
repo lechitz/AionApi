@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS aion_api.records (
     id                BIGSERIAL PRIMARY KEY,
     user_id           BIGINT NOT NULL REFERENCES aion_api.users (user_id) ON DELETE CASCADE,
-    category_id       BIGINT NOT NULL REFERENCES aion_api.tag_categories (category_id) ON DELETE RESTRICT,
+    category_id       BIGINT NOT NULL REFERENCES aion_api.categories (category_id) ON DELETE RESTRICT,
     tag_id            BIGINT NOT NULL REFERENCES aion_api.tags (tag_id) ON DELETE RESTRICT,
     title             VARCHAR(255) NOT NULL,
     description       TEXT,
