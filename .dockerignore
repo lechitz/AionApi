@@ -1,16 +1,61 @@
+# Git
 .git
 .gitignore
+.gitattributes
+
+# IDE
 .idea
 .vscode
-node_modules
-tests/coverage
-__pycache__
-*.pyc
-*.pyo
 *.swp
-.DS_Store
-venv
-.venv
-coverage/
+*.swo
+*~
+
+# Build artifacts
+bin/
+dist/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test artifacts
+tests/coverage/
+tests/mocks/
+*.test
+*.out
+
+# Cache
+.cache/
 *.log
+
+# Documentation (keep docs/swagger for build)
+notes/
+*.md
+!README.md
+!docs/swagger/
+
+# Infrastructure (not needed in build context)
+infrastructure/observability/
+infrastructure/db/seed/
+infrastructure/db/scripts/
+infrastructure/docker/environments/
+
+# Makefiles (not needed in build)
+Makefile
+makefiles/
+
+# Config files
+.env*
+!.env.example
+docker-compose*.yaml
+mkdocs.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
 
