@@ -83,11 +83,35 @@ definitions:
     type: object
   github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserRequest:
     properties:
+      avatar_url:
+        description: |-
+          AvatarURL is an optional URL for the user's avatar.
+          Example: "https://example.com/avatar.png"
+        example: https://example.com/avatar.png
+        type: string
+      bio:
+        description: |-
+          Bio is an optional short bio for the user.
+          Example: "Backend engineer passionate about observability."
+        example: Backend engineer passionate about observability.
+        type: string
       email:
         description: |-
           Email is the user's contact email address.
           Example: "dev@aion.local"
         example: dev@aion.local
+        type: string
+      locale:
+        description: |-
+          Locale is the optional user locale (e.g., "en-US").
+          Example: "en-US"
+        example: en-US
+        type: string
+      location:
+        description: |-
+          Location is the optional user location.
+          Example: "São Paulo, BR"
+        example: São Paulo, BR
         type: string
       name:
         description: |-
@@ -100,6 +124,12 @@ definitions:
           Password is the user's credential (minimum length: 8).
           Example: "P@ssw0rd123"
         example: P@ssw0rd123
+        type: string
+      timezone:
+        description: |-
+          Timezone is the optional user timezone (IANA format).
+          Example: "America/Sao_Paulo"
+        example: America/Sao_Paulo
         type: string
       username:
         description: |-
@@ -185,17 +215,37 @@ definitions:
     type: object
   github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserRequest:
     properties:
+      avatar_url:
+        description: AvatarURL is an optional URL for the user's avatar.
+        example: https://example.com/avatar.png
+        type: string
+      bio:
+        description: Bio is an optional short bio for the user.
+        example: Backend engineer passionate about observability.
+        type: string
       email:
         description: |-
           Email is the new email address for the user.
           Example: "alice@example.com"
         example: alice@example.com
         type: string
+      locale:
+        description: Locale is the optional locale (e.g., "en-US").
+        example: en-US
+        type: string
+      location:
+        description: Location is an optional city/country description.
+        example: São Paulo, BR
+        type: string
       name:
         description: |-
           Name is the new display name for the user.
           Example: "Alice Doe"
         example: Alice Doe
+        type: string
+      timezone:
+        description: Timezone is the optional timezone (IANA).
+        example: America/Sao_Paulo
         type: string
       username:
         description: |-
@@ -206,17 +256,37 @@ definitions:
     type: object
   github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserResponse:
     properties:
+      avatar_url:
+        description: AvatarURL returned after update.
+        example: https://example.com/avatar.png
+        type: string
+      bio:
+        description: Bio returned after update.
+        example: Backend engineer passionate about observability.
+        type: string
       email:
         description: |-
           Email is the current email after the update (if changed).
           Example: "alice@example.com"
         example: alice@example.com
         type: string
+      locale:
+        description: Locale returned after update.
+        example: en-US
+        type: string
+      location:
+        description: Location returned after update.
+        example: São Paulo, BR
+        type: string
       name:
         description: |-
           Name is the current display name after the update (if changed).
           Example: "Alice Doe"
         example: Alice Doe
+        type: string
+      timezone:
+        description: Timezone returned after update.
+        example: America/Sao_Paulo
         type: string
       updated_at:
         description: |-

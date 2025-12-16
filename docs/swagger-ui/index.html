@@ -4,7 +4,8 @@
   <meta charset="utf-8"/>
   <title>AionApi — Swagger UI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css"/>
+  <!-- Local swagger-ui-dist assets (v5.31.0) to avoid CDN/outbound requests. -->
+  <link rel="stylesheet" href="./swagger-ui.css"/>
   <style>
     body { margin: 0; }
     #swagger-ui { height: 100vh; }
@@ -12,7 +13,7 @@
 </head>
 <body>
   <div id="swagger-ui"></div>
-  <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
+  <script src="./swagger-ui-bundle.js"></script>
   <script>
     window.onload = function() {
       SwaggerUIBundle({

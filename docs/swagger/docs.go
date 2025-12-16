@@ -643,10 +643,30 @@ const docTemplate = `{
         "github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.CreateUserRequest": {
             "type": "object",
             "properties": {
+                "avatar_url": {
+                    "description": "AvatarURL is an optional URL for the user's avatar.\nExample: \"https://example.com/avatar.png\"",
+                    "type": "string",
+                    "example": "https://example.com/avatar.png"
+                },
+                "bio": {
+                    "description": "Bio is an optional short bio for the user.\nExample: \"Backend engineer passionate about observability.\"",
+                    "type": "string",
+                    "example": "Backend engineer passionate about observability."
+                },
                 "email": {
                     "description": "Email is the user's contact email address.\nExample: \"dev@aion.local\"",
                     "type": "string",
                     "example": "dev@aion.local"
+                },
+                "locale": {
+                    "description": "Locale is the optional user locale (e.g., \"en-US\").\nExample: \"en-US\"",
+                    "type": "string",
+                    "example": "en-US"
+                },
+                "location": {
+                    "description": "Location is the optional user location.\nExample: \"São Paulo, BR\"",
+                    "type": "string",
+                    "example": "São Paulo, BR"
                 },
                 "name": {
                     "description": "Name is the human-friendly display name of the user.\nExample: \"João Pereira\"",
@@ -657,6 +677,11 @@ const docTemplate = `{
                     "description": "Password is the user's credential (minimum length: 8).\nExample: \"P@ssw0rd123\"",
                     "type": "string",
                     "example": "P@ssw0rd123"
+                },
+                "timezone": {
+                    "description": "Timezone is the optional user timezone (IANA format).\nExample: \"America/Sao_Paulo\"",
+                    "type": "string",
+                    "example": "America/Sao_Paulo"
                 },
                 "username": {
                     "description": "Username is the unique handle for login and identification.\nExample: \"lechitz\"",
@@ -738,15 +763,40 @@ const docTemplate = `{
         "github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserRequest": {
             "type": "object",
             "properties": {
+                "avatar_url": {
+                    "description": "AvatarURL is an optional URL for the user's avatar.",
+                    "type": "string",
+                    "example": "https://example.com/avatar.png"
+                },
+                "bio": {
+                    "description": "Bio is an optional short bio for the user.",
+                    "type": "string",
+                    "example": "Backend engineer passionate about observability."
+                },
                 "email": {
                     "description": "Email is the new email address for the user.\nExample: \"alice@example.com\"",
                     "type": "string",
                     "example": "alice@example.com"
                 },
+                "locale": {
+                    "description": "Locale is the optional locale (e.g., \"en-US\").",
+                    "type": "string",
+                    "example": "en-US"
+                },
+                "location": {
+                    "description": "Location is an optional city/country description.",
+                    "type": "string",
+                    "example": "São Paulo, BR"
+                },
                 "name": {
                     "description": "Name is the new display name for the user.\nExample: \"Alice Doe\"",
                     "type": "string",
                     "example": "Alice Doe"
+                },
+                "timezone": {
+                    "description": "Timezone is the optional timezone (IANA).",
+                    "type": "string",
+                    "example": "America/Sao_Paulo"
                 },
                 "username": {
                     "description": "Username is the new unique handle for the user.\nExample: \"alice\"",
@@ -758,15 +808,40 @@ const docTemplate = `{
         "github_com_lechitz_AionApi_internal_user_adapter_primary_http_dto.UpdateUserResponse": {
             "type": "object",
             "properties": {
+                "avatar_url": {
+                    "description": "AvatarURL returned after update.",
+                    "type": "string",
+                    "example": "https://example.com/avatar.png"
+                },
+                "bio": {
+                    "description": "Bio returned after update.",
+                    "type": "string",
+                    "example": "Backend engineer passionate about observability."
+                },
                 "email": {
                     "description": "Email is the current email after the update (if changed).\nExample: \"alice@example.com\"",
                     "type": "string",
                     "example": "alice@example.com"
                 },
+                "locale": {
+                    "description": "Locale returned after update.",
+                    "type": "string",
+                    "example": "en-US"
+                },
+                "location": {
+                    "description": "Location returned after update.",
+                    "type": "string",
+                    "example": "São Paulo, BR"
+                },
                 "name": {
                     "description": "Name is the current display name after the update (if changed).\nExample: \"Alice Doe\"",
                     "type": "string",
                     "example": "Alice Doe"
+                },
+                "timezone": {
+                    "description": "Timezone returned after update.",
+                    "type": "string",
+                    "example": "America/Sao_Paulo"
                 },
                 "updated_at": {
                     "description": "UpdatedAt is the timestamp when the user was updated.\nExample: \"2025-09-14T22:01:02Z\"",
