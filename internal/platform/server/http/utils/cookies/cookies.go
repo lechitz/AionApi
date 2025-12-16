@@ -18,7 +18,7 @@ func SetAuthCookie(w http.ResponseWriter, token string, cfg config.CookieConfig)
 		Path:     cfg.Path,
 		Domain:   cfg.Domain,
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   secureFlag(cfg),
 		SameSite: mapSameSite(cfg.SameSite),
 		MaxAge:   cfg.MaxAge,
 	})
@@ -33,7 +33,7 @@ func ClearAuthCookie(w http.ResponseWriter, cfg config.CookieConfig) {
 		MaxAge:   -1,
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   secureFlag(cfg),
 		SameSite: http.SameSiteStrictMode,
 	})
 }
@@ -46,7 +46,7 @@ func SetRefreshCookie(w http.ResponseWriter, token string, cfg config.CookieConf
 		Path:     cfg.Path,
 		Domain:   cfg.Domain,
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   secureFlag(cfg),
 		SameSite: mapSameSite(cfg.SameSite),
 		MaxAge:   cfg.MaxAge * 7,
 	})
@@ -73,4 +73,10 @@ func mapSameSite(sameSite string) http.SameSite {
 	default:
 		return http.SameSiteDefaultMode
 	}
+}
+
+// secureFlag allows disabling Secure in dev/local when HTTPS is not available.
+// Respects config-driven value (default true via envconfig).
+func secureFlag(cfg config.CookieConfig) bool {
+	return cfg.Secure
 }
