@@ -30,19 +30,23 @@ dev-logs: build-dev dev-up
 
 dev-clean: build-dev
 	@echo "\033[1;36m[DEV-CLEAN]\033[0m Starting DEV (detached, following aion-api only)..."
-	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down -v 2>/dev/null || true
-	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres 2>/dev/null || true
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down -v || true
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) rm -f -v postgres || true
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d
 	@echo "\033[1;32m✓\033[0m Services started in background. Following aion-api logs..."
 	@echo "\033[1;33m→\033[0m Use 'docker compose -f $(COMPOSE_FILE_DEV) logs -f' to see all logs"
-	@echo "\033[1;33m→\033[0m Use 'make dev-down' to stop\n"
-	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f aion-api
+	@echo "\033[1;33m→\033[0m Use 'Ctrl+C' to stop following logs (containers will keep running)"
+	@echo "\033[1;33m→\033[0m Use 'make dev-down' to stop all services\n"
+	@trap 'echo ""; echo "Logs interrupted. Containers still running. Use \"make dev-down\" to stop."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f aion-api
 
 clean-dev:
 	@echo "\033[1;33m[CLEAN-DEV]\033[0m Cleaning DEV containers, volumes, images..."
-	@docker ps -a --filter "name=dev" -q | xargs -r docker rm -f
-	@docker volume ls --filter "name=dev" -q | xargs -r docker volume rm
-	@docker images --filter "reference=$(APPLICATION_NAME):dev" -q | xargs -r docker rmi -f
+	@echo "\033[1;90m→ Stopping and removing compose stack...\033[0m"
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down -v --remove-orphans || true
+	@echo "\033[1;90m→ Removing dev image...\033[0m"
+	@docker images --filter "reference=$(APPLICATION_NAME):dev" -q | xargs -r docker rmi -f || true
+	@echo "\033[1;32m✓ Cleanup complete\033[0m"
 
 build-prod: clean-prod
 	@echo "\033[1;36m[BUILD-PROD]\033[0m Building PROD image..."
