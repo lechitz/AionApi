@@ -26,12 +26,12 @@ import (
 // @Tags         Auth
 // @Accept       json
 // @Produce      json
-// @Param        login  body      dto.LoginUserRequest  true  "Login payload"
+// @Param        login  body      dto.LoginUserRequest   true  "Login payload"
 // @Success      200    {object}  dto.LoginUserResponse  "Login succeeded"
-// @Header       200    {string}  Set-Cookie  "auth_token=<opaque or JWT>; Path=/; HttpOnly; Secure (if enabled)"
-// @Failure      400    {string}  string  "Invalid request payload or validation error"
-// @Failure      401    {string}  string  "Invalid credentials"
-// @Failure      500    {string}  string  "Internal server error"
+// @Header       200    {string}  Set-Cookie             "auth_token=<opaque or JWT>; Path=/; HttpOnly; Secure (if enabled)"
+// @Failure      400    {string}  string                 "Invalid request payload or validation error"
+// @Failure      401    {string}  string                 "Invalid credentials"
+// @Failure      500    {string}  string                 "Internal server error"
 // @Router       /auth/login [post].
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerAuthHandler).

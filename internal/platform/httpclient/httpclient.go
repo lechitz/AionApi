@@ -9,11 +9,11 @@ import (
 
 // Options configures the instrumented HTTP client.
 type Options struct {
-	Timeout                time.Duration //nolint:nolint lint,golines,goimports
+	Timeout                time.Duration
 	BaseTransport          http.RoundTripper
 	DefaultHeaders         map[string]string
 	DisableInstrumentation bool
-	OtelOptions            []otelhttp.Option //nolint:goimports
+	OtelOptions            []otelhttp.Option
 }
 
 // NewInstrumentedClient returns an *http.Client which uses an instrumented transport

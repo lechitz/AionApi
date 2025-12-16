@@ -138,6 +138,17 @@ func WriteDecodeErrorSpan(ctx context.Context, w http.ResponseWriter, span trace
 	WriteDecodeError(w, err, log)
 }
 
+// WriteValidationErrorSpan records trace/log metadata for a validation error, then writes the HTTP response.
+func WriteValidationErrorSpan(ctx context.Context, w http.ResponseWriter, span trace.Span, err error, log logger.ContextLogger) {
+	span.RecordError(err)
+	span.SetStatus(codes.Error, err.Error())
+	span.SetAttributes(attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusBadRequest))
+	if log != nil {
+		log.ErrorwCtx(ctx, logMsgDomainError, commonkeys.Error, err.Error())
+	}
+	WriteError(w, err, err.Error(), log)
+}
+
 // WriteDomainErrorSpan records trace/log metadata for a domain error, then writes the HTTP response.
 func WriteDomainErrorSpan(ctx context.Context, w http.ResponseWriter, span trace.Span, err error, message string, log logger.ContextLogger) {
 	statusCode := sharederrors.MapErrorToHTTPStatus(err)

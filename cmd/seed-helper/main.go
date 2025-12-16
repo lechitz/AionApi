@@ -43,14 +43,14 @@ func main() {
 	case "generate-env":
 		generateEnvFile()
 	default:
-		fmt.Printf("Unknown command: %s\n", command)
+		_, _ = fmt.Fprintf(os.Stdout, "Unknown command: %s\n", command)
 		printUsage()
 		os.Exit(1)
 	}
 }
 
 func printUsage() {
-	fmt.Println(`Seed Helper - Generate tokens and hashes for database seeding
+	_, _ = fmt.Fprintf(os.Stdout, `Seed Helper - Generate tokens and hashes for database seeding
 
 Usage:
   seed-helper generate-token [userID] [secretKey]
@@ -98,8 +98,8 @@ func generateToken() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("JWT Token for user %d:\n%s\n\n", userID, tokenString)
-	fmt.Printf("Export to environment:\nexport JWT_TOKEN='%s'\n", tokenString)
+	_, _ = fmt.Fprintf(os.Stdout, "JWT Token for user %d:\n%s\n\n", userID, tokenString)
+	_, _ = fmt.Fprintf(os.Stdout, "Export to environment:\nexport JWT_TOKEN='%s'\n", tokenString)
 }
 
 func generateBcrypt() {
@@ -114,8 +114,8 @@ func generateBcrypt() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Bcrypt hash for password '%s':\n%s\n\n", password, string(hash))
-	fmt.Printf("Export to environment:\nexport USER_TOKEN_TEST='%s'\n", string(hash))
+	_, _ = fmt.Fprintf(os.Stdout, "Bcrypt hash for password '%s':\n%s\n\n", password, string(hash))
+	_, _ = fmt.Fprintf(os.Stdout, "Export to environment:\nexport USER_TOKEN_TEST='%s'\n", string(hash))
 }
 
 func generateEnvFile() {
@@ -171,20 +171,20 @@ func generateEnvFile() {
 
 	// Write to file
 	filePath := "infrastructure/db/seed/.env.local"
-	if err := os.WriteFile(filePath, []byte(envContent), 0600); err != nil {
+	if err := os.WriteFile(filePath, []byte(envContent), 0o600); err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing file: %v\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("✅ Generated %s\n\n", filePath)
-	fmt.Println("Configuration:")
-	fmt.Printf("  Users to seed: %d\n", userCount)
-	fmt.Printf("  Password: %s\n", password)
-	fmt.Printf("  Bcrypt hash: %s\n", string(hash))
-	fmt.Printf("\nTo use:\n")
-	fmt.Printf("  make seed-all-local\n")
-	fmt.Printf("\nOr export manually:\n")
-	fmt.Printf("  source %s\n", filePath)
+	_, _ = fmt.Fprintf(os.Stdout, "✅ Generated %s\n\n", filePath)
+	_, _ = fmt.Fprintln(os.Stdout, "Configuration:")
+	_, _ = fmt.Fprintf(os.Stdout, "  Users to seed: %d\n", userCount)
+	_, _ = fmt.Fprintf(os.Stdout, "  Password: %s\n", password)
+	_, _ = fmt.Fprintf(os.Stdout, "  Bcrypt hash: %s\n", string(hash))
+	_, _ = fmt.Fprintf(os.Stdout, "\nTo use:\n")
+	_, _ = fmt.Fprintf(os.Stdout, "  make seed-all-local\n")
+	_, _ = fmt.Fprintf(os.Stdout, "\nOr export manually:\n")
+	_, _ = fmt.Fprintf(os.Stdout, "  source %s\n", filePath)
 
 	// Also print the JWT token info for API testing
 	printTokenInfo(tokenString, secretKey)
@@ -218,8 +218,8 @@ func getSecretKey() string {
 func splitLines(s string) []string {
 	var lines []string
 	start := 0
-	for i := 0; i < len(s); i++ {
-		if s[i] == '\n' {
+	for i, ch := range []byte(s) {
+		if ch == '\n' {
 			lines = append(lines, s[start:i])
 			start = i + 1
 		}
@@ -235,20 +235,19 @@ func printTokenInfo(tokenString, secretKey string) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
 	})
-
 	if err != nil {
 		return
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		fmt.Println("\n📋 JWT Token Info:")
+		_, _ = fmt.Fprintln(os.Stdout, "\n📋 JWT Token Info:")
 		pretty, _ := json.MarshalIndent(claims, "  ", "  ")
-		fmt.Printf("  %s\n", string(pretty))
+		_, _ = fmt.Fprintf(os.Stdout, "  %s\n", string(pretty))
 
 		if exp, ok := claims[claimskeys.Exp].(float64); ok {
 			expTime := time.Unix(int64(exp), 0)
-			fmt.Printf("\n  Expires: %s\n", expTime.Format(time.RFC3339))
-			fmt.Printf("  Valid for: %s\n", time.Until(expTime).Round(time.Second))
+			_, _ = fmt.Fprintf(os.Stdout, "\n  Expires: %s\n", expTime.Format(time.RFC3339))
+			_, _ = fmt.Fprintf(os.Stdout, "  Valid for: %s\n", time.Until(expTime).Round(time.Second))
 		}
 	}
 }

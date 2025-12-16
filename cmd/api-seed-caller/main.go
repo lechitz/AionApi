@@ -112,6 +112,7 @@ type recordPayload struct {
 	Value           float64
 }
 
+//nolint:gocognit,funlen,nestif // main orchestrates seed workflow; refactor left for future
 func main() {
 	ctx := context.Background()
 	config := loadConfig()
@@ -125,15 +126,23 @@ func main() {
 
 	usernames := buildUsernames(config)
 
-	fmt.Printf("▶️  run_id=%s host=%s users=%d strict=%v clean=%v\n", config.runID, config.host, len(usernames), !config.autoCreate, config.cleanBefore)
+	_, _ = fmt.Fprintf(
+		os.Stdout,
+		"▶️  run_id=%s host=%s users=%d strict=%v clean=%v\n",
+		config.runID,
+		config.host,
+		len(usernames),
+		!config.autoCreate,
+		config.cleanBefore,
+	)
 
 	for idx, baseUsername := range usernames {
 		userRunID := buildUserRunID(config.runID, baseUsername)
-		fmt.Printf("\n👤 [%d/%d] user=%s run_id=%s\n", idx+1, len(usernames), baseUsername, userRunID)
+		_, _ = fmt.Fprintf(os.Stdout, "\n👤 [%d/%d] user=%s run_id=%s\n", idx+1, len(usernames), baseUsername, userRunID)
 
 		token, username, err := loginOrCreateUser(ctx, client, loginURL, createUserURL, config, baseUsername, userRunID)
 		if err != nil {
-			exitWithErr("%v", err)
+			exitWithErrf("%v", err)
 		}
 		logSuccess(config.successLog, fmt.Sprintf("login success user=%s run_id=%s", username, userRunID))
 
@@ -142,7 +151,7 @@ func main() {
 			headers["X-Seed-Run-Id"] = userRunID
 		}
 		if debugOn() {
-			fmt.Printf("debug: token_len=%d run_id=%s user=%s\n", len(token), userRunID, username)
+			_, _ = fmt.Fprintf(os.Stdout, "debug: token_len=%d run_id=%s user=%s\n", len(token), userRunID, username)
 		}
 
 		categoryInputs := []categoryPayload{
@@ -161,7 +170,14 @@ func main() {
 		}
 
 		recordInputs := []recordPayload{
-			{Title: "Alongamento matinal", Description: "Rotina curta de alongamento", CategoryKey: "saude_fisica", TagKey: "alongamento", DurationSeconds: 900, Value: 15},
+			{
+				Title:           "Alongamento matinal",
+				Description:     "Rotina curta de alongamento",
+				CategoryKey:     "saude_fisica",
+				TagKey:          "alongamento",
+				DurationSeconds: 900,
+				Value:           15,
+			},
 			{Title: "Corrida leve", Description: "Corrida de 3km no parque", CategoryKey: "saude_fisica", TagKey: "corrida", DurationSeconds: 1800, Value: 3},
 			{Title: "Diário", Description: "Notas rápidas do dia", CategoryKey: "saude_mental", TagKey: "diario", DurationSeconds: 600, Value: 1},
 			{Title: "Leitura", Description: "Capítulo de livro técnico", CategoryKey: "saude_mental", TagKey: "leitura", DurationSeconds: 1800, Value: 20},
@@ -170,31 +186,31 @@ func main() {
 		}
 
 		if config.cleanBefore {
-			fmt.Println("🧹 Limpando registros anteriores via GraphQL...")
+			_, _ = fmt.Fprintln(os.Stdout, "🧹 Limpando registros anteriores via GraphQL...")
 			if err := softDeleteAllRecords(ctx, client, graphqlURL, token, headers); err != nil {
-				exitWithErr("clean failed: %v", err)
+				exitWithErrf("clean failed: %v", err)
 			}
 			logSuccess(config.successLog, fmt.Sprintf("clean records success run_id=%s", userRunID))
 
 			if config.cleanOnly {
-				fmt.Println("🧹 Limpando tags...")
+				_, _ = fmt.Fprintln(os.Stdout, "🧹 Limpando tags...")
 				if err := softDeleteAllTags(ctx, client, graphqlURL, token, headers); err != nil {
-					exitWithErr("clean tags failed: %v", err)
+					exitWithErrf("clean tags failed: %v", err)
 				}
 				logSuccess(config.successLog, fmt.Sprintf("clean tags success run_id=%s", userRunID))
 
-				fmt.Println("🧹 Limpando categorias...")
+				_, _ = fmt.Fprintln(os.Stdout, "🧹 Limpando categorias...")
 				if err := softDeleteAllCategories(ctx, client, graphqlURL, token, headers); err != nil {
-					exitWithErr("clean categories failed: %v", err)
+					exitWithErrf("clean categories failed: %v", err)
 				}
 				logSuccess(config.successLog, fmt.Sprintf("clean categories success run_id=%s", userRunID))
 
-				fmt.Println("🧹 Soft deleting user...")
+				_, _ = fmt.Fprintln(os.Stdout, "🧹 Soft deleting user...")
 				if err := softDeleteUser(ctx, client, deleteUserURL, token, headers); err != nil {
-					exitWithErr("clean user failed: %v", err)
+					exitWithErrf("clean user failed: %v", err)
 				}
 				logSuccess(config.successLog, fmt.Sprintf("clean user success user=%s run_id=%s", username, userRunID))
-				fmt.Println("✅ Clean-only finalizado para usuário", username)
+				_, _ = fmt.Fprintf(os.Stdout, "✅ Clean-only finalizado para usuário %s\n", username)
 				continue
 			}
 		}
@@ -204,61 +220,64 @@ func main() {
 			name := appendRunID(cat.Name, userRunID)
 			created, err := ensureCategory(ctx, client, graphqlURL, token, headers, cat, name)
 			if err != nil {
-				exitWithErr("category failed for %s: %v", cat.Key, err)
+				exitWithErrf("category failed for %s: %v", cat.Key, err)
 			}
 			categories[cat.Key] = created
 			logSuccess(config.successLog, fmt.Sprintf("category key=%s id=%s name=%s run_id=%s", cat.Key, created.ID, created.Name, userRunID))
-			fmt.Println("✅ category:", created.Name)
+			_, _ = fmt.Fprintf(os.Stdout, "✅ category: %s\n", created.Name)
 		}
 
 		tags := make(map[string]createdTag)
 		for _, tg := range tagInputs {
 			category, ok := categories[tg.CategoryKey]
 			if !ok {
-				exitWithErr("category key not found for tag %s", tg.CategoryKey)
+				exitWithErrf("category key not found for tag %s", tg.CategoryKey)
 			}
 			name := appendRunID(tg.Name, userRunID)
 			created, err := ensureTag(ctx, client, graphqlURL, token, headers, tg, name, category.ID)
 			if err != nil {
-				exitWithErr("tag failed for %s: %v", tg.Key, err)
+				exitWithErrf("tag failed for %s: %v", tg.Key, err)
 			}
 			tags[tg.Key] = created
-			logSuccess(config.successLog, fmt.Sprintf("tag key=%s id=%s name=%s categoryId=%s run_id=%s", tg.Key, created.ID, created.Name, created.CategoryID, userRunID))
-			fmt.Println("✅ tag:", created.Name)
+			logSuccess(
+				config.successLog,
+				fmt.Sprintf("tag key=%s id=%s name=%s categoryId=%s run_id=%s", tg.Key, created.ID, created.Name, created.CategoryID, userRunID),
+			)
+			_, _ = fmt.Fprintf(os.Stdout, "✅ tag: %s\n", created.Name)
 		}
 
 		for i, rc := range recordInputs {
 			category, ok := categories[rc.CategoryKey]
 			if !ok {
-				exitWithErr("category key not found for record %s", rc.CategoryKey)
+				exitWithErrf("category key not found for record %s", rc.CategoryKey)
 			}
 
 			tag, ok := tags[rc.TagKey]
 			if !ok {
-				exitWithErr("tag key not found for record %s", rc.TagKey)
+				exitWithErrf("tag key not found for record %s", rc.TagKey)
 			}
 
 			eventTime := time.Now().UTC().Add(-time.Duration(i) * time.Hour).Format(time.RFC3339)
 			title := fmt.Sprintf("%s %d", rc.Title, i+1)
 			created, err := createRecord(ctx, client, graphqlURL, token, headers, rc, title, category.ID, tag.ID, eventTime)
 			if err != nil {
-				exitWithErr("createRecord failed for %s: %v", rc.Title, err)
+				exitWithErrf("createRecord failed for %s: %v", rc.Title, err)
 			}
 			if id := strings.TrimSpace(created.ID); id == "" || id == "0" {
-				exitWithErr("createRecord retornou ID vazio para %s", title)
+				exitWithErrf("createRecord retornou ID vazio para %s", title)
 			}
 			logSuccess(config.successLog, fmt.Sprintf("record id=%s title=%s tagId=%s run_id=%s", created.ID, created.Title, created.TagID, userRunID))
-			fmt.Println("✅ record:", created.Title)
+			_, _ = fmt.Fprintf(os.Stdout, "✅ record: %s\n", created.Title)
 		}
 
 		if err := verifyArtifacts(ctx, client, graphqlURL, token, headers, categoryInputs, tagInputs, recordInputs, userRunID); err != nil {
-			exitWithErr("verificação falhou: %v", err)
+			exitWithErrf("verificação falhou: %v", err)
 		}
 
 		logSuccess(config.successLog, fmt.Sprintf("user seed completed user=%s run_id=%s", username, userRunID))
 	}
 
-	fmt.Println("📄 Success log written to", config.successLog)
+	_, _ = fmt.Fprintf(os.Stdout, "📄 Success log written to %s\n", config.successLog)
 }
 
 func loadConfig() cfg {
@@ -375,9 +394,9 @@ func appendRunID(base, runID string) string {
 
 func loginOrCreateUser(ctx context.Context, client *http.Client, loginURL, createUserURL string, config cfg, baseUsername, runID string) (string, string, error) {
 	username := baseUsername
-	email := fmt.Sprintf("%s@aionapi.dev", username)
+	var email string
 
-	fmt.Println("🔑 Logging in via", loginURL)
+	_, _ = fmt.Fprintf(os.Stdout, "🔑 Logging in via %s\n", loginURL)
 	token, err := login(ctx, client, loginURL, username, config.password)
 	if err == nil {
 		return token, username, nil
@@ -387,7 +406,7 @@ func loginOrCreateUser(ctx context.Context, client *http.Client, loginURL, creat
 		return "", "", fmt.Errorf("login failed for %s: %w (garanta credenciais válidas ou exporte API_CALLER_AUTO_CREATE=true)", username, err)
 	}
 
-	fmt.Printf("⚠️  login falhou para %s, criando usuário e tentando novamente: %v\n", username, err)
+	_, _ = fmt.Fprintf(os.Stdout, "⚠️  login falhou para %s, criando usuário e tentando novamente: %v\n", username, err)
 	username = appendRunID(baseUsername, runID)
 	email = fmt.Sprintf("%s@aionapi.dev", username)
 	if err := createUser(ctx, client, createUserURL, username, email, config.password, runID); err != nil {
@@ -421,7 +440,9 @@ func login(ctx context.Context, client *http.Client, url, user, pass string) (st
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("unexpected status %d", resp.StatusCode)
@@ -465,7 +486,9 @@ func createUser(ctx context.Context, client *http.Client, url, username, email, 
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode == http.StatusCreated {
 		return nil
@@ -533,7 +556,14 @@ query($name: String!) {
 	return out, nil
 }
 
-func createCategory(ctx context.Context, client *http.Client, url, token string, headers map[string]string, cat categoryPayload, finalName string) (createdCategory, error) {
+func createCategory(
+	ctx context.Context,
+	client *http.Client,
+	url, token string,
+	headers map[string]string,
+	cat categoryPayload,
+	finalName string,
+) (createdCategory, error) {
 	const mutation = `
 mutation($input: CreateCategoryInput!) {
   createCategory(input: $input) { id name }
@@ -572,7 +602,14 @@ mutation($input: CreateTagInput!) {
 	return out, nil
 }
 
-func createRecord(ctx context.Context, client *http.Client, url, token string, headers map[string]string, rc recordPayload, title, categoryID, tagID, eventTime string) (createdRecord, error) {
+func createRecord(
+	ctx context.Context,
+	client *http.Client,
+	url, token string,
+	headers map[string]string,
+	rc recordPayload,
+	title, categoryID, tagID, eventTime string,
+) (createdRecord, error) {
 	const mutation = `
 mutation($input: CreateRecordInput!) {
   createRecord(input: $input) { id title tagId }
@@ -668,13 +705,25 @@ mutation($input: DeleteTagInput!) {
 	return doGraphQL(ctx, client, url, token, headers, mutation, input, &out)
 }
 
-func verifyArtifacts(ctx context.Context, client *http.Client, url, token string, headers map[string]string, cats []categoryPayload, tags []tagPayload, records []recordPayload, runID string) error {
+func verifyArtifacts(
+	ctx context.Context,
+	client *http.Client,
+	url, token string,
+	headers map[string]string,
+	cats []categoryPayload,
+	tags []tagPayload,
+	records []recordPayload,
+	runID string,
+) error {
 	// Verify categories
 	for _, cat := range cats {
 		name := appendRunID(cat.Name, runID)
 		got, err := getCategoryByName(ctx, client, url, token, headers, name)
-		if err != nil || got.ID == "" {
-			return fmt.Errorf("categoria não encontrada pós-seed: %s (%v)", name, err)
+		if err != nil {
+			return fmt.Errorf("categoria não encontrada pós-seed: %s: %w", name, err)
+		}
+		if got.ID == "" {
+			return fmt.Errorf("categoria não encontrada pós-seed: %s (empty id)", name)
 		}
 	}
 
@@ -682,8 +731,11 @@ func verifyArtifacts(ctx context.Context, client *http.Client, url, token string
 	for _, tg := range tags {
 		name := appendRunID(tg.Name, runID)
 		got, err := getTagByName(ctx, client, url, token, headers, name)
-		if err != nil || got.ID == "" {
-			return fmt.Errorf("tag não encontrada pós-seed: %s (%v)", name, err)
+		if err != nil {
+			return fmt.Errorf("tag não encontrada pós-seed: %s: %w", name, err)
+		}
+		if got.ID == "" {
+			return fmt.Errorf("tag não encontrada pós-seed: %s (empty id)", name)
 		}
 	}
 
@@ -726,7 +778,15 @@ query($limit: Int) {
 	return out, nil
 }
 
-func doGraphQL(ctx context.Context, client *http.Client, url, token string, headers map[string]string, query string, variables map[string]interface{}, target interface{}) error {
+func doGraphQL(
+	ctx context.Context,
+	client *http.Client,
+	url, token string,
+	headers map[string]string,
+	query string,
+	variables map[string]interface{},
+	target interface{},
+) error {
 	payload := gqlRequest{
 		Query:     query,
 		Variables: variables,
@@ -749,7 +809,9 @@ func doGraphQL(ctx context.Context, client *http.Client, url, token string, head
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("graphql status %d", resp.StatusCode)
@@ -762,7 +824,7 @@ func doGraphQL(ctx context.Context, client *http.Client, url, token string, head
 
 	if len(parsed.Errors) > 0 {
 		if debugOn() {
-			fmt.Printf("debug: graphql errors: %+v\n", parsed.Errors)
+			_, _ = fmt.Fprintf(os.Stdout, "debug: graphql errors: %+v\n", parsed.Errors)
 		}
 		return fmt.Errorf("graphql error: %s", parsed.Errors[0].Message)
 	}
@@ -773,10 +835,10 @@ func doGraphQL(ctx context.Context, client *http.Client, url, token string, head
 
 	for _, raw := range parsed.Data {
 		if bytes.Equal(raw, []byte("null")) {
-			return fmt.Errorf("graphql returned null payload")
+			return errors.New("graphql returned null payload")
 		}
 		if debugOn() {
-			fmt.Printf("debug: raw graphql data: %s\n", string(raw))
+			_, _ = fmt.Fprintf(os.Stdout, "debug: raw graphql data: %s\n", string(raw))
 		}
 		if err := json.Unmarshal(raw, target); err != nil {
 			return err
@@ -816,7 +878,9 @@ func softDeleteUser(ctx context.Context, client *http.Client, url, token string,
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, _ := io.ReadAll(resp.Body)
@@ -830,24 +894,26 @@ func logSuccess(path, msg string) {
 		return
 	}
 
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		fmt.Fprintf(os.Stderr, "warn: cannot create log dir: %v\n", err)
+	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "warn: cannot create log dir: %v\n", err)
 		return
 	}
 
-	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+	f, err := os.OpenFile(filepath.Clean(path), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "warn: cannot open log file: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "warn: cannot open log file: %v\n", err)
 		return
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	_, _ = fmt.Fprintf(f, "%s %s\n", timestamp, msg)
 }
 
-func exitWithErr(format string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, "❌ "+format+"\n", args...)
+func exitWithErrf(format string, args ...interface{}) {
+	_, _ = fmt.Fprintf(os.Stderr, "❌ "+format+"\n", args...)
 	os.Exit(1)
 }
 

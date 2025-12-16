@@ -34,6 +34,8 @@ import (
 )
 
 // ComposeHandler assembles the HTTP handler with platform middlewares, domain routes, Swagger UI and GraphQL.
+//
+//nolint:funlen // composition of routes/middleware is naturally verbose
 func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log logger.ContextLogger) (http.Handler, error) {
 	router := chi.New()
 
