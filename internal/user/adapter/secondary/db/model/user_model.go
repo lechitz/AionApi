@@ -19,6 +19,11 @@ type UserDB struct {
 	Email     string         `gorm:"column:email"`
 	Password  string         `gorm:"column:password"`
 	Roles     string         `gorm:"column:roles;not null;default:'user'"`
+	Locale    *string        `gorm:"column:locale"`
+	Timezone  *string        `gorm:"column:timezone"`
+	Location  *string        `gorm:"column:location"`
+	Bio       *string        `gorm:"column:bio"`
+	AvatarURL *string        `gorm:"column:avatar_url"`
 	CreatedAt time.Time      `gorm:"column:created_at"`
 	UpdatedAt time.Time      `gorm:"column:updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`

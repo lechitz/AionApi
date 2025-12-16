@@ -51,11 +51,16 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateUserCommand) (doma
 	}
 
 	user := domain.User{
-		Name:     cmd.Name,
-		Username: cmd.Username,
-		Email:    cmd.Email,
-		Password: hashed,
-		Roles:    []string{UserRoles},
+		Name:      cmd.Name,
+		Username:  cmd.Username,
+		Email:     cmd.Email,
+		Password:  hashed,
+		Roles:     []string{UserRoles},
+		Locale:    cmd.Locale,
+		Timezone:  cmd.Timezone,
+		Location:  cmd.Location,
+		Bio:       cmd.Bio,
+		AvatarURL: cmd.AvatarURL,
 	}
 
 	userDomain, err := s.userRepository.Create(ctx, user)

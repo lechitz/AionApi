@@ -46,6 +46,21 @@ func (s *Service) UpdateUser(ctx context.Context, userID uint64, cmd input.Updat
 	if cmd.Email != nil {
 		fields[commonkeys.Email] = *cmd.Email
 	}
+	if cmd.Locale != nil {
+		fields[commonkeys.Locale] = *cmd.Locale
+	}
+	if cmd.Timezone != nil {
+		fields[commonkeys.Timezone] = *cmd.Timezone
+	}
+	if cmd.Location != nil {
+		fields[commonkeys.Location] = *cmd.Location
+	}
+	if cmd.Bio != nil {
+		fields[commonkeys.Bio] = *cmd.Bio
+	}
+	if cmd.AvatarURL != nil {
+		fields[commonkeys.AvatarURL] = *cmd.AvatarURL
+	}
 	fields[commonkeys.UserUpdatedAt] = time.Now().UTC()
 
 	updatedUser, err := s.userRepository.Update(ctx, userID, fields)

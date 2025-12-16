@@ -10,9 +10,14 @@ type User struct {
 	UpdatedAt time.Time  // Timestamp of the last update
 	DeletedAt *time.Time // Soft delete marker (nil if active)
 	Roles     []string
-	Name      string // Full name of the user
-	Username  string // Username used for login
-	Email     string // Email address
-	Password  string // Hashed password
-	ID        uint64 // Unique identifier for the user
+	Name      string  // Full name of the user
+	Username  string  // Username used for login
+	Email     string  // Email address
+	Password  string  // Hashed password
+	ID        uint64  // Unique identifier for the user
+	Locale    *string // Optional locale (e.g., en-US)
+	Timezone  *string // Optional timezone (e.g., America/Sao_Paulo)
+	Location  *string // Optional city/country description
+	Bio       *string // Optional short bio
+	AvatarURL *string // Optional avatar URL
 }
