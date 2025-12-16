@@ -46,7 +46,7 @@ FROM
 INNER JOIN aion_api.tags t
   ON t.user_id = u.user_id
   AND t.deleted_at IS NULL
-INNER JOIN aion_api.tag_categories c
+INNER JOIN aion_api.categories c
   ON c.category_id = t.category_id
   AND c.deleted_at IS NULL
 CROSS JOIN LATERAL generate_series(0, 5) AS rec_idx

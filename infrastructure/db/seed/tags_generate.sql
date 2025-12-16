@@ -85,7 +85,7 @@ CROSS JOIN (
     ('Bank', 'Banking errands', 'outros'),
     ('Market', 'Grocery shopping', 'outros')
 ) AS t(tag_name, description, category_name)
-INNER JOIN aion_api.tag_categories c
+INNER JOIN aion_api.categories c
   ON c.user_id = u.user_id
   AND c.name = category_name || '_' || u.user_id
   AND c.deleted_at IS NULL

@@ -238,3 +238,17 @@ func (mr *MockTagRepositoryMockRecorder) GetByName(ctx, tagName, userID any) *go
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByName", reflect.TypeOf((*MockTagRepository)(nil).GetByName), ctx, tagName, userID)
 }
+
+// SoftDelete mocks base method.
+func (m *MockTagRepository) SoftDelete(ctx context.Context, tagID, userID uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SoftDelete", ctx, tagID, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SoftDelete indicates an expected call of SoftDelete.
+func (mr *MockTagRepositoryMockRecorder) SoftDelete(ctx, tagID, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftDelete", reflect.TypeOf((*MockTagRepository)(nil).SoftDelete), ctx, tagID, userID)
+}

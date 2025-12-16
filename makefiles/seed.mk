@@ -177,8 +177,8 @@ seed-clean-users:
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.users RESTART IDENTITY CASCADE;"
 
 seed-clean-categories:
-	@echo "🧹 Truncating tag_categories (dev only)..."
-	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.tag_categories RESTART IDENTITY CASCADE;"
+	@echo "🧹 Truncating categories (dev only)..."
+	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.categories RESTART IDENTITY CASCADE;"
 
 seed-clean-tags:
 	@echo "🧹 Truncating tags (dev only)..."
