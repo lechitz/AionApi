@@ -17,7 +17,7 @@
 
 * `model/` — GORM models that mirror the database schema.
 
-    * `CategoryTable = "aion_api.tag_categories"`.
+    * `CategoryTable = "aion_api.categories"`.
     * Timestamps and soft‐delete fields (`created_at`, `updated_at`, `deleted_at`) match the migrations.
 * `mapper/` — pure functions to convert **DB ⇄ domain**:
 
@@ -39,7 +39,7 @@
 **DB schema source of truth**
 
 * Migrations live under `infrastructure/db/migrations`.
-* Category rows are stored in `aion_api.tag_categories` (see `model.CategoryTable`).
+* Category rows are stored in `aion_api.categories` (see `model.CategoryTable`).
 
 ---
 
@@ -89,7 +89,7 @@
 ## Performance & operational tips
 
 * Queries typically filter by `(user_id, name)` or `(user_id, id)` — ensure appropriate DB indexes if needed.
-* Keep migrations aligned with the model tags and table names (`aion_api.tag_categories`).
+* Keep migrations aligned with the model tags and table names (`aion_api.categories`).
 * Use transactions in the repository layer if a future operation spans multiple statements.
 
 ---

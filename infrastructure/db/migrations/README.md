@@ -15,7 +15,7 @@
 * Tables model the core features:
 
     * `users`
-    * `tag_categories`, `tags`
+    * `categories`, `tags`
     * `days`
     * Journals: `personal_diaries`, `professional_diaries`
     * Daily data: `day_tag_summary`, `day_moods`, `day_energy`, `day_water_intake`, `day_intentions`
