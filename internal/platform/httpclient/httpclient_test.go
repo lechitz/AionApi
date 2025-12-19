@@ -1,6 +1,8 @@
 package httpclient_test
 
 import (
+	"context"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,17 +23,24 @@ func TestNewInstrumentedClient_InjectsTraceparent(t *testing.T) {
 		_ = tp.Shutdown(t.Context())
 	}()
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	var lc net.ListenConfig
+	listener, err := lc.Listen(ctx, "tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Skipf("cannot start test listener: %v", err)
+	}
+	server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Traceparent") == "" && r.Header.Get("traceparent") == "" {
 			t.Errorf("expected traceparent header to be present")
 		}
 		w.WriteHeader(http.StatusOK)
 	}))
+	server.Listener = listener
+	server.Start()
 	defer server.Close()
 
 	client := httpclient.NewInstrumentedClient(httpclient.Options{Timeout: 5 * time.Second})
-	ctx := t.Context()
-
 	tr := otel.Tracer("test")
 	ctx, span := tr.Start(ctx, "unit-test")
 	defer span.End()

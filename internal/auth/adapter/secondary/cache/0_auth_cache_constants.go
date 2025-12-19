@@ -25,6 +25,12 @@ const (
 
 	// SpanNameTokenDelete is the span name for deleting a token.
 	SpanNameTokenDelete = "auth.cache.token_delete" //nolint:gosec // span name, not a credential
+
+	// SpanNameTokenSaveWithKey is the span name for saving a token with custom key.
+	SpanNameTokenSaveWithKey = "auth.cache.token_save_with_key" //nolint:gosec // span name, not a credential
+
+	// SpanNameTokenGetByKey is the span name for retrieving a token by custom key.
+	SpanNameTokenGetByKey = "auth.cache.token_get_by_key" //nolint:gosec // span name, not a credential
 )
 
 // -----------------------------------------------------------------------------
@@ -41,6 +47,15 @@ const (
 
 	// OperationDelete is the name of the delete operation.
 	OperationDelete = "delete"
+)
+
+// Attribute keys for tracing and logging.
+const (
+	// AttributeCacheKey is the attribute key for cache keys.
+	AttributeCacheKey = "cache_key"
+
+	// AttributeTTL is the attribute key for time-to-live values.
+	AttributeTTL = "ttl"
 )
 
 // =============================================================================
@@ -66,6 +81,14 @@ const (
 	// TokenSavedSuccessfully is the message used when a token is saved successfully.
 	//nolint:gosec // Static log/message string; contains the word "token" but is not a credential/secret.
 	TokenSavedSuccessfully = "token saved successfully"
+
+	// TokenRetrievedByCustomKey is the message used when a token is retrieved by custom key.
+	//nolint:gosec // Static log/message string; contains the word "token" but is not a credential/secret.
+	TokenRetrievedByCustomKey = "token retrieved by custom key"
+
+	// TokenSavedWithCustomKey is the message used when a token is saved with custom key.
+	//nolint:gosec // Static log/message string; contains the word "token" but is not a credential/secret.
+	TokenSavedWithCustomKey = "token saved with custom key"
 )
 
 // Error messages.
@@ -78,4 +101,8 @@ const (
 
 	// ErrorToDeleteTokenFromRedis indicates a failure to delete a token from Redis.
 	ErrorToDeleteTokenFromRedis = "error to delete token from Redis"
+
+	// ErrorTokenNotFoundInGracePeriod indicates a token was not found in grace period cache.
+	//nolint:gosec // Static error message string; contains the word "token" but is not a credential/secret.
+	ErrorTokenNotFoundInGracePeriod = "token not found in grace period"
 )

@@ -1,5 +1,18 @@
 package usecase
 
+import "time"
+
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
+
+// GracePeriodDuration defines how long an old token remains valid after refresh.
+// This prevents race conditions in multi-tab scenarios where multiple refreshes
+// happen simultaneously. The old token is moved to a grace period cache key
+// and remains valid for this duration before expiring.
+// Increased to 60s to handle slower tab synchronization and network delays.
+const GracePeriodDuration = 60 * time.Second
+
 // =============================================================================
 // TRACING - OpenTelemetry Instrumentation
 // =============================================================================
