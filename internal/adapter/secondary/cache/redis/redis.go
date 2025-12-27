@@ -16,17 +16,18 @@ import (
 // FailedToConnectToRedis is the error message for when the Redis client fails to connect.
 const FailedToConnectToRedis = "failed to connect to Redis"
 
+// redisClient wraps go-redis Client and implements output.Cache.
 type redisClient struct {
 	client *redis.Client
 	logger logger.ContextLogger
 }
 
-// NewConnection initializes a new Redis cache connection.
-func NewConnection(appCtx context.Context, cfg config.CacheConfig, logger logger.ContextLogger) (output.Cache, error) {
+// NewConnection initializes a new Redis cache connection for a specific database.
+func NewConnection(appCtx context.Context, cfg config.CacheConfig, db int, logger logger.ContextLogger) (output.Cache, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,
 		Password: cfg.Password,
-		DB:       cfg.DB,
+		DB:       db,
 		PoolSize: cfg.PoolSize,
 	})
 

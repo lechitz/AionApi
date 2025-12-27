@@ -11,6 +11,7 @@ import (
 // Service provides authentication operations including login, logout, and user token management.
 type Service struct {
 	userRepository userOutput.UserRepository
+	userCache      userOutput.UserCache
 	authStore      authOutput.AuthStore
 	authProvider   authOutput.AuthProvider
 	hasher         hasher.Hasher
@@ -20,6 +21,7 @@ type Service struct {
 // NewService creates and returns a new instance of Service with dependencies for user retrieval, token management, and security operations.
 func NewService(
 	userRepository userOutput.UserRepository,
+	userCache userOutput.UserCache,
 	authStore authOutput.AuthStore,
 	authProvider authOutput.AuthProvider,
 	hasher hasher.Hasher,
@@ -27,6 +29,7 @@ func NewService(
 ) *Service {
 	return &Service{
 		userRepository: userRepository,
+		userCache:      userCache,
 		authStore:      authStore,
 		authProvider:   authProvider,
 		hasher:         hasher,

@@ -12,13 +12,15 @@ import (
 // Service provides operations for managing categories including creation, retrieval, updates, and soft deletion, using a repository and contextlogger.
 type Service struct {
 	CategoryRepository output.CategoryRepository
+	CategoryCache      output.CategoryCache
 	Logger             logger.ContextLogger
 }
 
 // NewService creates and returns a new instance of Service with the given repository and contextlogger dependencies.
-func NewService(repository output.CategoryRepository, logger logger.ContextLogger) *Service {
+func NewService(repository output.CategoryRepository, cache output.CategoryCache, logger logger.ContextLogger) *Service {
 	return &Service{
 		CategoryRepository: repository,
+		CategoryCache:      cache,
 		Logger:             logger,
 	}
 }

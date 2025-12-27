@@ -15,14 +15,16 @@ import (
 // Service implements the record use cases.
 type Service struct {
 	RecordRepository output.RecordRepository
+	RecordCache      output.RecordCache
 	TagRepository    tagoutput.TagRepository
 	Logger           logger.ContextLogger
 }
 
 // NewService is a convention wrapper used by bootstrap to instantiate the record service.
-func NewService(repo output.RecordRepository, tagRepo tagoutput.TagRepository, logger logger.ContextLogger) *Service {
+func NewService(recordRepo output.RecordRepository, cache output.RecordCache, tagRepo tagoutput.TagRepository, logger logger.ContextLogger) *Service {
 	return &Service{
-		RecordRepository: repo,
+		RecordRepository: recordRepo,
+		RecordCache:      cache,
 		TagRepository:    tagRepo,
 		Logger:           logger,
 	}
@@ -32,19 +34,19 @@ func NewService(repo output.RecordRepository, tagRepo tagoutput.TagRepository, l
 func getUserIDFromContext(ctx context.Context) (uint64, error) {
 	v := ctx.Value(ctxkeys.UserID)
 	if v == nil {
-		return 0, errors.New("user not authenticated")
+		return 0, errors.New(UserNotAuthenticated)
 	}
 	switch id := v.(type) {
 	case uint64:
 		return id, nil
 	case int64:
 		if id < 0 {
-			return 0, errors.New("user id negative")
+			return 0, errors.New(UserIDNegative)
 		}
 		return uint64(id), nil
 	case int:
 		if id < 0 {
-			return 0, errors.New("user id negative")
+			return 0, errors.New(UserIDNegative)
 		}
 		return uint64(id), nil
 	case string:
@@ -52,8 +54,8 @@ func getUserIDFromContext(ctx context.Context) (uint64, error) {
 		if u, err := strconv.ParseUint(id, 10, 64); err == nil {
 			return u, nil
 		}
-		return 0, errors.New("user id string not supported")
+		return 0, errors.New(UserIDStringNotSupported)
 	default:
-		return 0, errors.New("invalid user id in context")
+		return 0, errors.New(InvalidUserIDInContext)
 	}
 }
