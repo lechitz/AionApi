@@ -33,6 +33,12 @@ const (
 	// SpanListByTag is the span name for listing records by tag.
 	SpanListByTag = "record.controller.list_by_tag"
 
+	// SpanListByCategory is the span name for listing records by category.
+	SpanListByCategory = "record.controller.list_by_category"
+
+	// SpanListLatest is the span name for listing latest records.
+	SpanListLatest = "record.controller.list_latest"
+
 	// SpanListByDay is the span name for listing records by day.
 	SpanListByDay = "record.controller.list_by_day"
 
