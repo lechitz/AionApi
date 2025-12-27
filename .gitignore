@@ -49,6 +49,10 @@ notes/
 
 # Local caches
 /.cache/
+
+# Air hot-reload temporary directory
+tmp/
+build-errors.log
 .cache/
 
 # Local seed env and generated files
