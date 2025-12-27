@@ -27,11 +27,17 @@ type ObservabilityConfig struct {
 }
 
 // CacheConfig holds Redis cache configuration.
+// Each bounded context uses a separate Redis database for isolation.
 type CacheConfig struct {
 	Addr     string `envconfig:"CACHE_ADDR"     default:"redis-aion:6379"`
 	Password string `envconfig:"CACHE_PASSWORD"`
 
-	DB             int           `envconfig:"CACHE_REPO"            default:"0"`
+	AuthDB     int `envconfig:"CACHE_AUTH_DB" default:"0"`
+	CategoryDB int `envconfig:"CACHE_CATEGORY_DB" default:"1"`
+	TagDB      int `envconfig:"CACHE_TAG_DB" default:"2"`
+	RecordDB   int `envconfig:"CACHE_RECORD_DB" default:"3"`
+	UserDB     int `envconfig:"CACHE_USER_DB" default:"4"`
+
 	PoolSize       int           `envconfig:"CACHE_POOL_SIZE"       default:"10"`
 	ConnectTimeout time.Duration `envconfig:"CACHE_CONNECT_TIMEOUT" default:"5s"`
 }

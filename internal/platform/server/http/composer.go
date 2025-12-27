@@ -18,7 +18,7 @@ import (
 	chathandler "github.com/lechitz/AionApi/internal/chat/adapter/primary/http/handler"
 	userhandler "github.com/lechitz/AionApi/internal/user/adapter/primary/http/handler"
 
-	"github.com/lechitz/AionApi/internal/platform/bootstrap"
+	"github.com/lechitz/AionApi/internal/platform/app"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	genericHandler "github.com/lechitz/AionApi/internal/platform/server/http/generic/handler"
@@ -36,7 +36,7 @@ import (
 // ComposeHandler assembles the HTTP handler with platform middlewares, domain routes, Swagger UI and GraphQL.
 //
 //nolint:funlen // composition of routes/middleware is naturally verbose
-func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log logger.ContextLogger) (http.Handler, error) {
+func ComposeHandler(cfg *config.Config, deps *app.Dependencies, log logger.ContextLogger) (http.Handler, error) {
 	router := chi.New()
 
 	genericHandlers := genericHandler.New(log, cfg.General)

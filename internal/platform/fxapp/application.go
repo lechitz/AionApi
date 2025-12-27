@@ -6,57 +6,77 @@ import (
 	"github.com/lechitz/AionApi/internal/adapter/secondary/token"
 	authCache "github.com/lechitz/AionApi/internal/auth/adapter/secondary/cache"
 	auth "github.com/lechitz/AionApi/internal/auth/core/usecase"
+	categoryCache "github.com/lechitz/AionApi/internal/category/adapter/secondary/cache"
 	categoryRepo "github.com/lechitz/AionApi/internal/category/adapter/secondary/db/repository"
 	category "github.com/lechitz/AionApi/internal/category/core/usecase"
 	chatClient "github.com/lechitz/AionApi/internal/chat/adapter/secondary/http"
 	chat "github.com/lechitz/AionApi/internal/chat/core/usecase"
-	"github.com/lechitz/AionApi/internal/platform/bootstrap"
+	"github.com/lechitz/AionApi/internal/platform/app"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/cache"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/httpclient"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	recordCache "github.com/lechitz/AionApi/internal/record/adapter/secondary/cache"
 	recordRepo "github.com/lechitz/AionApi/internal/record/adapter/secondary/db/repository"
 	record "github.com/lechitz/AionApi/internal/record/core/usecase"
+	tagCache "github.com/lechitz/AionApi/internal/tag/adapter/secondary/cache"
 	tagRepo "github.com/lechitz/AionApi/internal/tag/adapter/secondary/db/repository"
 	tag "github.com/lechitz/AionApi/internal/tag/core/usecase"
+	userCache "github.com/lechitz/AionApi/internal/user/adapter/secondary/cache"
 	userRepo "github.com/lechitz/AionApi/internal/user/adapter/secondary/db/repository"
 	user "github.com/lechitz/AionApi/internal/user/core/usecase"
 	"go.uber.org/fx"
 )
 
-// ApplicationModule wires the application layer (use cases, repositories, adapters) and exposes AppDependencies for HTTP composition.
+// ApplicationModule wires the application layer (use cases, repositories, adapters) and exposes Dependencies for HTTP composition.
 //
 //nolint:gochecknoglobals // Fx modules are intended as package-level options.
-var ApplicationModule = fx.Options(
-	fx.Provide(
-		ProvideAppDependencies,
-	),
-)
+var ApplicationModule = fx.Options(fx.Provide(ProvideAppDependencies))
 
-// AppDependencies reuses the bootstrap contract for API composition.
-type AppDependencies = bootstrap.AppDependencies
+// AppDependencies is a type alias for app.Dependencies for backwards compatibility.
+type AppDependencies = app.Dependencies
+
+// appDepsParams groups all dependencies needed for application wiring.
+type appDepsParams struct {
+	fx.In
+
+	Cfg           *config.Config
+	DB            db.DB
+	AuthCache     cache.Cache `name:"authCache"`
+	CategoryCache cache.Cache `name:"categoryCache"`
+	TagCache      cache.Cache `name:"tagCache"`
+	RecordCache   cache.Cache `name:"recordCache"`
+	UserCache     cache.Cache `name:"userCache"`
+	HTTPClient    httpclient.HTTPClient
+	Log           logger.ContextLogger
+}
 
 // ProvideAppDependencies composes repositories and use cases using shared infrastructure.
 // Receives db.DB interface (not *gorm.DB) from InfraModule, following Dependency Inversion Principle.
-func ProvideAppDependencies(cfg *config.Config, database db.DB, cacheClient cache.Cache, httpClient httpclient.HTTPClient, log logger.ContextLogger) *AppDependencies {
-	passwordHasher := hasher.New()
-	tokenProvider := token.NewProvider(cfg.Secret.Key)
-	tokenStore := authCache.NewStore(cacheClient, log)
+// Each bounded context uses its own Redis database for cache isolation.
+func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
+	hasherProvider := hasher.New()
+	tokenProvider := token.NewProvider(deps.Cfg.Secret.Key)
 
-	userRepository := userRepo.New(database, log)
-	categoryRepository := categoryRepo.New(database, log)
-	tagRepository := tagRepo.New(database, log)
-	recordRepository := recordRepo.New(database, log)
+	userRepository := userRepo.New(deps.DB, deps.Log)
+	categoryRepository := categoryRepo.New(deps.DB, deps.Log)
+	tagRepository := tagRepo.New(deps.DB, deps.Log)
+	recordRepository := recordRepo.New(deps.DB, deps.Log)
 
-	chatHTTPClient := chatClient.NewClient(httpClient, cfg.AionChat.BaseURL, log)
+	authCacheStore := authCache.NewStore(deps.AuthCache, deps.Log)
+	userCacheStore := userCache.NewStore(deps.UserCache, deps.Log)
+	categoryCacheStore := categoryCache.NewStore(deps.CategoryCache, deps.Log)
+	tagCacheStore := tagCache.NewStore(deps.TagCache, deps.Log)
+	recordCacheStore := recordCache.NewStore(deps.RecordCache, deps.Log)
+	chatHTTPClient := chatClient.New(deps.HTTPClient, deps.Cfg.AionChat.BaseURL, deps.Log)
 
-	authService := auth.NewService(userRepository, tokenStore, tokenProvider, passwordHasher, log)
-	userService := user.NewService(userRepository, tokenStore, tokenProvider, passwordHasher, log)
-	categoryService := category.NewService(categoryRepository, log)
-	tagService := tag.NewService(tagRepository, log)
-	recordService := record.NewService(recordRepository, tagRepository, log)
-	chatService := chat.NewService(chatHTTPClient, log)
+	authService := auth.NewService(userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
+	userService := user.NewService(userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
+	categoryService := category.NewService(categoryRepository, categoryCacheStore, deps.Log)
+	tagService := tag.NewService(tagRepository, tagCacheStore, deps.Log)
+	recordService := record.NewService(recordRepository, recordCacheStore, tagRepository, deps.Log)
+	chatService := chat.NewService(chatHTTPClient, deps.Log)
 
 	return &AppDependencies{
 		AuthService:     authService,
@@ -65,6 +85,6 @@ func ProvideAppDependencies(cfg *config.Config, database db.DB, cacheClient cach
 		TagService:      tagService,
 		RecordService:   recordService,
 		ChatService:     chatService,
-		Logger:          log,
+		Logger:          deps.Log,
 	}
 }
