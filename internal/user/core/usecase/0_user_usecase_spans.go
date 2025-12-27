@@ -45,6 +45,9 @@ const (
 	// StatusDBErrorUsernameOrEmail is the status for when a username check fails.
 	StatusDBErrorUsernameOrEmail = "db_error_checking_username_or_email"
 
+	// StatusUsernameOrEmailInUse is the status for when username or email already exists.
+	StatusUsernameOrEmailInUse = "username_or_email_in_use"
+
 	// StatusHashPasswordFailed is the status for when a password hash fails.
 	StatusHashPasswordFailed = "hash_password_failed"
 
