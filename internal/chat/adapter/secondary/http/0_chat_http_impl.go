@@ -19,10 +19,10 @@ type AionChatClient struct {
 	logger     logger.ContextLogger
 }
 
-// NewClient creates a new AionChatClient instance.
+// New creates a new AionChatClient instance.
 // Accepts an HTTPClient interface as a dependency (Dependency Inversion Principle).
 // The caller should provide an instrumented client with appropriate timeout, transport, and OTEL instrumentation.
-func NewClient(httpClient httpclient.HTTPClient, baseURL string, log logger.ContextLogger) output.AionChatClient {
+func New(httpClient httpclient.HTTPClient, baseURL string, log logger.ContextLogger) output.AionChatClient {
 	if httpClient == nil {
 		panic("http client cannot be nil - ensure platform provider is registered in Fx")
 	}
