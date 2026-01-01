@@ -79,15 +79,12 @@ const (
 	TokenDeletedSuccessfully = "token deleted successfully"
 
 	// TokenSavedSuccessfully is the message used when a token is saved successfully.
-	//nolint:gosec // Static log/message string; contains the word "token" but is not a credential/secret.
-	TokenSavedSuccessfully = "token saved successfully"
+	TokenSavedSuccessfully = "token saved successfully" // #nosec G101 - false positive, this is a log message not a credential
 
 	// TokenRetrievedByCustomKey is the message used when a token is retrieved by custom key.
-	//nolint:gosec // Static log/message string; contains the word "token" but is not a credential/secret.
 	TokenRetrievedByCustomKey = "token retrieved by custom key"
 
 	// TokenSavedWithCustomKey is the message used when a token is saved with custom key.
-	//nolint:gosec // Static log/message string; contains the word "token" but is not a credential/secret.
 	TokenSavedWithCustomKey = "token saved with custom key"
 )
 
@@ -103,6 +100,5 @@ const (
 	ErrorToDeleteTokenFromRedis = "error to delete token from Redis"
 
 	// ErrorTokenNotFoundInGracePeriod indicates a token was not found in grace period cache.
-	//nolint:gosec // Static error message string; contains the word "token" but is not a credential/secret.
 	ErrorTokenNotFoundInGracePeriod = "token not found in grace period"
 )

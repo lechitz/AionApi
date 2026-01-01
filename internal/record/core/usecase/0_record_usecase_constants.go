@@ -1,5 +1,7 @@
 package usecase
 
+import "errors"
+
 // =============================================================================
 // TRACING - OpenTelemetry Instrumentation
 // =============================================================================
@@ -180,4 +182,67 @@ const (
 
 	// InvalidUserIDInContext indicates invalid user ID format in context.
 	InvalidUserIDInContext = "invalid user id in context"
+)
+
+// =============================================================================
+// SENTINEL ERRORS - For errors.Is() comparisons
+// =============================================================================
+
+var (
+	// ErrValidateRecord is a sentinel error for record validation failures.
+	ErrValidateRecord = errors.New(ErrToValidateRecord)
+
+	// ErrCreateRecord is a sentinel error for record creation failures.
+	ErrCreateRecord = errors.New(FailedToCreateRecord)
+
+	// ErrGetRecord is a sentinel error for record retrieval failures.
+	ErrGetRecord = errors.New(FailedToGetRecord)
+
+	// ErrListRecords is a sentinel error for listing records.
+	ErrListRecords = errors.New(FailedToListRecords)
+
+	// ErrUpdateRecord is a sentinel error for record update failures.
+	ErrUpdateRecord = errors.New(FailedToUpdateRecord)
+
+	// ErrDeleteRecord is a sentinel error for record deletion failures.
+	ErrDeleteRecord = errors.New(FailedToDeleteRecord)
+
+	// ErrRecordNotFound is a sentinel error when record is not found.
+	ErrRecordNotFound = errors.New(RecordNotFound)
+
+	// ErrUserIDIsRequired is a sentinel error when user ID is missing.
+	ErrUserIDIsRequired = errors.New(UserIDIsRequired)
+
+	// ErrRecordIDIsRequired is a sentinel error when record ID is missing.
+	ErrRecordIDIsRequired = errors.New(RecordIDIsRequired)
+
+	// ErrTagIDIsRequired is a sentinel error when tag ID is missing.
+	ErrTagIDIsRequired = errors.New(TagIDIsRequired)
+
+	// ErrTagIDCannotBeZero is a sentinel error when tag ID is zero.
+	ErrTagIDCannotBeZero = errors.New(TagIDCannotBeZero)
+
+	// ErrTitleRequired is a sentinel error when title is missing.
+	ErrTitleRequired = errors.New(TitleRequired)
+
+	// ErrRecordedAtFuture is a sentinel error when recordedAt is in future.
+	ErrRecordedAtFuture = errors.New(RecordedAtCannotBeInTheFuture)
+
+	// ErrStartDateAfterEndDate is a sentinel error for date range validation.
+	ErrStartDateAfterEndDate = errors.New(StartDateMustBeBeforeEndDate)
+
+	// ErrInvalidRecordIDOrUserID is a sentinel error for invalid IDs.
+	ErrInvalidRecordIDOrUserID = errors.New(InvalidRecordIDOrUserID)
+
+	// ErrUserNotAuthenticated is a sentinel error when user is not authenticated.
+	ErrUserNotAuthenticated = errors.New(UserNotAuthenticated)
+
+	// ErrUserIDNegative is a sentinel error when user ID is negative.
+	ErrUserIDNegative = errors.New(UserIDNegative)
+
+	// ErrUserIDStringNotSupported is a sentinel error for string user IDs.
+	ErrUserIDStringNotSupported = errors.New(UserIDStringNotSupported)
+
+	// ErrInvalidUserIDInContext is a sentinel error for invalid user ID in context.
+	ErrInvalidUserIDInContext = errors.New(InvalidUserIDInContext)
 )

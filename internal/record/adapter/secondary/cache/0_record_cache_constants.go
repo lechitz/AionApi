@@ -10,7 +10,7 @@ import "time"
 // TracerName is the name of the tracer for record cache operations.
 const TracerName = "aionapi.record.cache"
 
-// Span Names
+// Span Names.
 const (
 	SpanNameRecordSave       = "record.cache.save"
 	SpanNameRecordGet        = "record.cache.get"
@@ -20,7 +20,7 @@ const (
 	SpanNameRecordListDelete = "record.cache.list_delete"
 )
 
-// Operations
+// Operations.
 const (
 	OperationSave   = "save"
 	OperationGet    = "get"
@@ -44,18 +44,18 @@ const RecordExpirationDefault = 30 * time.Minute
 // Shorter than individual records due to high mutation rate.
 const RecordListExpirationDefault = 15 * time.Minute
 
-// Key formats
+// Key formats.
 const (
-	// RecordIDKeyFormat: record:user:{userID}:id:{recordID}
+	// RecordIDKeyFormat : record:user:{userID}:id:{recordID}.
 	RecordIDKeyFormat = "record:user:%d:id:%d"
 
-	// RecordDayKeyFormat: record:user:{userID}:day:{YYYY-MM-DD}
+	// RecordDayKeyFormat : record:user:{userID}:day:{YYYY-MM-DD}.
 	RecordDayKeyFormat = "record:user:%d:day:%s"
 
-	// RecordByCategoryKeyFormat: record:category:{categoryID}:user:{userID}
+	// RecordByCategoryKeyFormat : record:category:{categoryID}:user:{userID}.
 	RecordByCategoryKeyFormat = "record:category:%d:user:%d"
 
-	// RecordByTagKeyFormat: record:tag:{tagID}:user:{userID}
+	// RecordByTagKeyFormat : record:tag:{tagID}:user:{userID}.
 	RecordByTagKeyFormat = "record:tag:%d:user:%d"
 )
 
@@ -63,9 +63,9 @@ const (
 const (
 	RecordRetrievedSuccessfully     = "record retrieved successfully from cache"
 	RecordDeletedSuccessfully       = "record deleted successfully from cache"
-	RecordSavedSuccessfully         = "record saved successfully to cache"
+	RecordSavedSuccessfully         = "record saved successfully to cache" // #nosec G101 - false positive, this is a log message
 	RecordListRetrievedSuccessfully = "record list retrieved successfully from cache"
-	RecordListSavedSuccessfully     = "record list saved successfully to cache"
+	RecordListSavedSuccessfully     = "record list saved successfully to cache" // #nosec G101 - false positive, this is a log message
 	RecordListDeletedSuccessfully   = "record list deleted successfully from cache"
 )
 

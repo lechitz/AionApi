@@ -19,6 +19,9 @@ const (
 	// SpanCreateRepo is the span name for creating a Tag.
 	SpanCreateRepo = "tag.repository.create"
 
+	// SpanUpdateRepo is the span name for updating a Tag.
+	SpanUpdateRepo = "tag.repository.update"
+
 	// SpanGetByNameRepo is the span name for fetching a Tag by name.
 	SpanGetByNameRepo = "tag.repository.get_by_name"
 
@@ -40,6 +43,9 @@ const (
 const (
 	// OpCreate is the attribute value for the "create" operation.
 	OpCreate = "create"
+
+	// OpUpdate is the attribute value for the "update" operation.
+	OpUpdate = "update"
 
 	// OpGetByName is the attribute value for the "get by name" operation.
 	OpGetByName = "get_by_name"

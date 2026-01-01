@@ -37,7 +37,7 @@ const (
 )
 
 // -----------------------------------------------------------------------------
-// Span Attributes
+// Span Attributes.
 // -----------------------------------------------------------------------------
 
 const (
@@ -61,7 +61,7 @@ const (
 )
 
 // =============================================================================
-// BUSINESS LOGIC - Configuration and Messages
+// BUSINESS LOGIC - Configuration and Messages.
 // =============================================================================
 
 // CategoryExpirationDefault defines the default expiration for categories (1 hour).
@@ -71,15 +71,15 @@ const CategoryExpirationDefault = 1 * time.Hour
 const CategoryListExpirationDefault = 1 * time.Hour
 
 // CategoryIDKeyFormat defines the format for category keys by ID.
-// Format: category:user:{userID}:id:{categoryID}
+// Format: category:user:{userID}:id:{categoryID}.
 const CategoryIDKeyFormat = "category:user:%d:id:%d"
 
 // CategoryNameKeyFormat defines the format for category keys by name.
-// Format: category:user:{userID}:name:{categoryName}
+// Format: category:user:{userID}:name:{categoryName}.
 const CategoryNameKeyFormat = "category:user:%d:name:%s"
 
 // CategoryListKeyFormat defines the format for category list keys.
-// Format: category:user:{userID}:list
+// Format: category:user:{userID}:list.
 const CategoryListKeyFormat = "category:user:%d:list"
 
 // Success messages.
@@ -91,13 +91,13 @@ const (
 	CategoryDeletedSuccessfully = "category deleted successfully from cache"
 
 	// CategorySavedSuccessfully is the message used when a category is saved successfully.
-	CategorySavedSuccessfully = "category saved successfully to cache"
+	CategorySavedSuccessfully = "category saved successfully to cache" // #nosec G101 - false positive, this is a log message
 
 	// CategoryListRetrievedSuccessfully is the message used when a category list is retrieved successfully.
 	CategoryListRetrievedSuccessfully = "category list retrieved successfully from cache"
 
 	// CategoryListSavedSuccessfully is the message used when a category list is saved successfully.
-	CategoryListSavedSuccessfully = "category list saved successfully to cache"
+	CategoryListSavedSuccessfully = "category list saved successfully to cache" // #nosec G101 - false positive, this is a log message
 
 	// CategoryListDeletedSuccessfully is the message used when a category list is deleted successfully.
 	CategoryListDeletedSuccessfully = "category list deleted successfully from cache"

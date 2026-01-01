@@ -10,7 +10,7 @@ import "time"
 // TracerName is the name of the tracer for tag cache operations.
 const TracerName = "aionapi.tag.cache"
 
-// Span Names
+// Span Names.
 const (
 	SpanNameTagSave       = "tag.cache.save"
 	SpanNameTagGet        = "tag.cache.get"
@@ -20,7 +20,7 @@ const (
 	SpanNameTagListDelete = "tag.cache.list_delete"
 )
 
-// Operations
+// Operations.
 const (
 	OperationSave   = "save"
 	OperationGet    = "get"
@@ -43,18 +43,18 @@ const TagExpirationDefault = 1 * time.Hour
 // TagListExpirationDefault defines the default expiration for tag lists (1 hour).
 const TagListExpirationDefault = 1 * time.Hour
 
-// Key formats
+// Key formats.
 const (
-	// TagIDKeyFormat: tag:user:{userID}:id:{tagID}
+	// TagIDKeyFormat : tag:user:{userID}:id:{tagID}.
 	TagIDKeyFormat = "tag:user:%d:id:%d"
 
-	// TagNameKeyFormat: tag:user:{userID}:name:{tagName}
+	// TagNameKeyFormat : tag:user:{userID}:name:{tagName}.
 	TagNameKeyFormat = "tag:user:%d:name:%s"
 
-	// TagListKeyFormat: tag:user:{userID}:list
+	// TagListKeyFormat : tag:user:{userID}:list.
 	TagListKeyFormat = "tag:user:%d:list"
 
-	// TagByCategoryKeyFormat: tag:category:{categoryID}:user:{userID}
+	// TagByCategoryKeyFormat : tag:category:{categoryID}:user:{userID}.
 	TagByCategoryKeyFormat = "tag:category:%d:user:%d"
 )
 
@@ -62,9 +62,9 @@ const (
 const (
 	TagRetrievedSuccessfully     = "tag retrieved successfully from cache"
 	TagDeletedSuccessfully       = "tag deleted successfully from cache"
-	TagSavedSuccessfully         = "tag saved successfully to cache"
+	TagSavedSuccessfully         = "tag saved successfully to cache" //nolint:nolintlint,goimports    // #nosec G101 - false positive, this is a log message.
 	TagListRetrievedSuccessfully = "tag list retrieved successfully from cache"
-	TagListSavedSuccessfully     = "tag list saved successfully to cache"
+	TagListSavedSuccessfully     = "tag list saved successfully to cache" //nolint:nolintlint,goimports    // #nosec G101 - false positive, this is a log message.
 	TagListDeletedSuccessfully   = "tag list deleted successfully from cache"
 )
 

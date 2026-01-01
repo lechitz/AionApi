@@ -1,6 +1,9 @@
 package usecase
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 // =============================================================================
 // CONFIGURATION
@@ -64,8 +67,11 @@ const (
 	// EventLoginSuccess is emitted after successful login.
 	EventLoginSuccess = "auth.login.success"
 
-	// EventRevokeToken is emitted before revoking the token.
-	EventRevokeToken = "auth.token.revoke" // #nosec G101: event name, not a credential
+	// EventRevokeAccessToken is emitted before revoking the token.
+	EventRevokeAccessToken = "auth.token.revoke.access_token" // #nosec G101: event name, not a credential
+
+	// EventRevokeRefreshToken is emitted before revoking the refresh token.
+	EventRevokeRefreshToken = "auth.token.revoke.refresh_token" // #nosec G101: event name, not a credential
 
 	// EventVerifyToken is emitted before verifying token signature/exp.
 	EventVerifyToken = "auth.token.verify" // #nosec G101: event name, not a credential
@@ -130,4 +136,40 @@ const (
 
 	// SuccessUserLoggedOut is the success message when the user logs out.
 	SuccessUserLoggedOut = "user logged out successfully"
+)
+
+// =============================================================================
+// SENTINEL ERRORS - For errors.Is() comparisons
+// =============================================================================
+
+var (
+	// ErrInvalidToken is a sentinel error for invalid tokens.
+	ErrInvalidToken = errors.New(ErrorInvalidToken)
+
+	// ErrInvalidUserIDClaim is a sentinel error for invalid user ID claims.
+	ErrInvalidUserIDClaim = errors.New(ErrorInvalidUserIDClaim)
+
+	// ErrTokenRetrievalFromCache is a sentinel error for cache retrieval failures.
+	ErrTokenRetrievalFromCache = errors.New(ErrorToRetrieveTokenFromCache)
+
+	// ErrTokenMismatch is a sentinel error for token mismatch.
+	ErrTokenMismatch = errors.New(ErrorTokenMismatch)
+
+	// ErrInvalidCredentials is a sentinel error for invalid credentials.
+	ErrInvalidCredentials = errors.New(InvalidCredentials)
+
+	// ErrUserNotFoundOrInvalidCredentials is a sentinel error for user not found or invalid credentials.
+	ErrUserNotFoundOrInvalidCredentials = errors.New(UserNotFoundOrInvalidCredentials)
+
+	// ErrTokenCreation is a sentinel error for token creation failures.
+	ErrTokenCreation = errors.New(ErrorToCreateToken)
+
+	// ErrTokenDeletion is a sentinel error for token deletion failures.
+	ErrTokenDeletion = errors.New(ErrorToDeleteToken)
+
+	// ErrGetUserByUsername is a sentinel error for user retrieval failures.
+	ErrGetUserByUsername = errors.New(ErrorToGetUserByUserName)
+
+	// ErrCompareHashAndPassword is a sentinel error for password comparison failures.
+	ErrCompareHashAndPassword = errors.New(ErrorToCompareHashAndPassword)
 )

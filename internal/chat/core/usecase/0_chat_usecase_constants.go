@@ -17,6 +17,15 @@ const TracerName = "aionapi.chat.usecase"
 const (
 	// SpanProcessMessage is the span name for processing a chat message.
 	SpanProcessMessage = "chat.message.process"
+
+	// SpanSaveChatHistory is the span name for saving chat history.
+	SpanSaveChatHistory = "chat.history.save"
+
+	// SpanGetChatHistory is the span name for getting chat history.
+	SpanGetChatHistory = "chat.history.get"
+
+	// SpanGetChatContext is the span name for getting chat context.
+	SpanGetChatContext = "chat.context.get"
 )
 
 // -----------------------------------------------------------------------------
@@ -44,6 +53,12 @@ const (
 	StatusMessageProcessedSuccessfully = "message processed successfully"
 	// StatusFailedToCallAionChat indicates a failure to call the Aion-Chat service.
 	StatusFailedToCallAionChat = "failed to call aion-chat service"
+	// StatusChatHistorySaved indicates chat history was saved successfully.
+	StatusChatHistorySaved = "chat history saved successfully"
+	// StatusChatHistoryRetrieved indicates chat history was retrieved successfully.
+	StatusChatHistoryRetrieved = "chat history retrieved successfully"
+	// StatusChatContextRetrieved indicates chat context was retrieved successfully.
+	StatusChatContextRetrieved = "chat context retrieved successfully"
 )
 
 // =============================================================================
@@ -57,6 +72,22 @@ const (
 	LogChatMessageProcessedSuccessfully = "Chat message processed successfully"
 	// LogFailedToCallAionChat is the log message for a failed call to Aion-Chat.
 	LogFailedToCallAionChat = "Failed to call Aion-Chat service"
+	// LogSavingChatHistory is the log message for saving chat history.
+	LogSavingChatHistory = "Saving chat history"
+	// LogChatHistorySaved is the log message for successfully saved chat history.
+	LogChatHistorySaved = "Chat history saved successfully"
+	// LogFailedToSaveChatHistory is the log message for failed to save chat history.
+	LogFailedToSaveChatHistory = "Failed to save chat history"
+	// LogGettingChatHistory is the log message for getting chat history.
+	LogGettingChatHistory = "Getting chat history"
+	// LogChatHistoryRetrieved is the log message for successfully retrieved chat history.
+	LogChatHistoryRetrieved = "Chat history retrieved successfully"
+	// LogFailedToGetChatHistory is the log message for failed to get chat history.
+	LogFailedToGetChatHistory = "Failed to get chat history"
+	// LogGettingChatContext is the log message for getting chat context.
+	LogGettingChatContext = "Getting chat context"
+	// LogChatContextRetrieved is the log message for successfully retrieved chat context.
+	LogChatContextRetrieved = "Chat context retrieved successfully"
 )
 
 // Log keys.

@@ -1,6 +1,8 @@
 // Package controller contains GraphQL-facing controllers for the Category context.
 package controller
 
+import "errors"
+
 // =============================================================================
 // TRACING - OpenTelemetry Instrumentation
 // =============================================================================
@@ -59,6 +61,10 @@ const (
 // BUSINESS LOGIC - Error and Log Messages
 // =============================================================================
 
+// -----------------------------------------------------------------------------
+// Log Messages
+// -----------------------------------------------------------------------------
+
 const (
 	// MsgCreated is the log message for when a category is created.
 	MsgCreated = "category created"
@@ -77,19 +83,26 @@ const (
 
 	// MsgUpdateError is the log message for when an update operation fails.
 	MsgUpdateError = "error updating category"
+)
 
-	// ErrUserIDNotFound is the error message when the user ID is missing or invalid.
-	ErrUserIDNotFound = "user id not found"
+// -----------------------------------------------------------------------------
+// Sentinel Errors
+// Use errors.Is() for type-safe error comparison
+// -----------------------------------------------------------------------------
 
-	// ErrCategoryIDNotFound is the error message when the category ID is missing or invalid.
-	ErrCategoryIDNotFound = "category id not found"
+var (
+	// ErrUserIDNotFound is the error when the user ID is missing or invalid.
+	ErrUserIDNotFound = errors.New("user id not found")
 
-	// ErrInvalidCategoryID is the error message when the category ID cannot be parsed or is invalid.
-	ErrInvalidCategoryID = "invalid category id"
+	// ErrCategoryIDNotFound is the error when the category ID is missing or invalid.
+	ErrCategoryIDNotFound = errors.New("category id not found")
 
-	// ErrCategoryNotFound is the error message when a category cannot be found.
-	ErrCategoryNotFound = "category not found"
+	// ErrInvalidCategoryID is the error when the category ID cannot be parsed or is invalid.
+	ErrInvalidCategoryID = errors.New("invalid category id")
 
-	// ErrCategoriesNotFound is the error message when no categories can be found for a user.
-	ErrCategoriesNotFound = "categories not found"
+	// ErrCategoryNotFound is the error when a category cannot be found.
+	ErrCategoryNotFound = errors.New("category not found")
+
+	// ErrCategoriesNotFound is the error when no categories can be found for a user.
+	ErrCategoriesNotFound = errors.New("categories not found")
 )

@@ -1,6 +1,8 @@
 // Package usecase constants contains constants related to user operations.
 package usecase
 
+import "errors"
+
 // =============================================================================
 // BUSINESS LOGIC - Roles
 // =============================================================================
@@ -64,4 +66,40 @@ const (
 
 	// SuccessUserSoftDeleted indicates a user was softly deleted successfully.
 	SuccessUserSoftDeleted = "user soft deleted successfully"
+)
+
+// =============================================================================
+// SENTINEL ERRORS - For errors.Is() comparisons
+// =============================================================================
+
+var (
+	// ErrHashPassword is a sentinel error for password hashing failures.
+	ErrHashPassword = errors.New(ErrorToHashPassword)
+
+	// ErrCreateUser is a sentinel error for user creation failures.
+	ErrCreateUser = errors.New(ErrorToCreateUser)
+
+	// ErrCompareHashAndPassword is a sentinel error for password comparison failures.
+	ErrCompareHashAndPassword = errors.New(ErrorToCompareHashAndPassword)
+
+	// ErrCreateToken is a sentinel error for token creation failures.
+	ErrCreateToken = errors.New(ErrorToCreateToken)
+
+	// ErrGetSelf is a sentinel error for retrieving user by ID.
+	ErrGetSelf = errors.New(ErrorToGetSelf)
+
+	// ErrNoFieldsToUpdate is a sentinel error when no fields are provided for update.
+	ErrNoFieldsToUpdate = errors.New(ErrorNoFieldsToUpdate)
+
+	// ErrUpdatePassword is a sentinel error for password update failures.
+	ErrUpdatePassword = errors.New(ErrorToUpdatePassword)
+
+	// ErrUpdateUser is a sentinel error for user update failures.
+	ErrUpdateUser = errors.New(ErrorToUpdateUser)
+
+	// ErrGetUserByUsername is a sentinel error for retrieving user by username.
+	ErrGetUserByUsername = errors.New(ErrorToGetUserByUsername)
+
+	// ErrSoftDeleteUser is a sentinel error for soft delete failures.
+	ErrSoftDeleteUser = errors.New(ErrorToSoftDeleteUser)
 )

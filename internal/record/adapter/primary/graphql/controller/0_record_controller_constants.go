@@ -1,6 +1,8 @@
 // Package controller contains GraphQL-facing controllers for the Record context.
 package controller
 
+import "errors"
+
 // =============================================================================
 // TRACING - OpenTelemetry Instrumentation
 // =============================================================================
@@ -68,28 +70,39 @@ const (
 // BUSINESS LOGIC - Error Messages
 // =============================================================================
 
+// -----------------------------------------------------------------------------
+// Log Messages
+// -----------------------------------------------------------------------------
+
 const (
 	// MsgCreateError is the log message for when a create operation fails.
 	MsgCreateError = "error creating record"
+)
 
-	// ErrUserIDNotFound is the error message when the user ID is missing or invalid.
-	ErrUserIDNotFound = "user id not found"
+// -----------------------------------------------------------------------------
+// Sentinel Errors
+// Use errors.Is() for type-safe error comparison
+// -----------------------------------------------------------------------------
 
-	// ErrRecordNotFound is the error message when the record ID is missing or invalid.
-	ErrRecordNotFound = "record id not found"
+var (
+	// ErrUserIDNotFound is the error when the user ID is missing or invalid.
+	ErrUserIDNotFound = errors.New("user id not found")
 
-	// ErrInvalidRecordID is the error message when the record ID cannot be parsed or is invalid.
-	ErrInvalidRecordID = "invalid record id"
+	// ErrRecordNotFound is the error when the record ID is missing or invalid.
+	ErrRecordNotFound = errors.New("record id not found")
 
-	// ErrInvalidCategoryID is the error message when the category ID cannot be parsed or is invalid.
-	ErrInvalidCategoryID = "invalid record id"
+	// ErrInvalidRecordID is the error when the record ID cannot be parsed or is invalid.
+	ErrInvalidRecordID = errors.New("invalid record id")
 
-	// ErrInvalidTagID is the error message when the tag ID cannot be parsed or is invalid.
-	ErrInvalidTagID = "invalid tag id"
+	// ErrInvalidCategoryID is the error when the category ID cannot be parsed or is invalid.
+	ErrInvalidCategoryID = errors.New("invalid category id")
 
-	// ErrTagNotFound is the error message when a record cannot be found.
-	ErrTagNotFound = "tag not found"
+	// ErrInvalidTagID is the error when the tag ID cannot be parsed or is invalid.
+	ErrInvalidTagID = errors.New("invalid tag id")
 
-	// ErrFailedToListRecords is the error message when listing records fails.
-	ErrFailedToListRecords = "failed to list records"
+	// ErrTagNotFound is the error when a tag cannot be found.
+	ErrTagNotFound = errors.New("tag not found")
+
+	// ErrFailedToListRecords is the error when listing records fails.
+	ErrFailedToListRecords = errors.New("failed to list records")
 )

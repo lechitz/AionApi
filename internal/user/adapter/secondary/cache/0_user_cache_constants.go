@@ -10,14 +10,14 @@ import "time"
 // TracerName is the name of the tracer for user cache operations.
 const TracerName = "aionapi.user.cache"
 
-// Span Names
+// Span Names.
 const (
 	SpanNameUserSave   = "user.cache.save"
 	SpanNameUserGet    = "user.cache.get"
 	SpanNameUserDelete = "user.cache.delete"
 )
 
-// Operations
+// Operations.
 const (
 	OperationSave   = "save"
 	OperationGet    = "get"
@@ -38,15 +38,15 @@ const (
 // User data is relatively stable, so we can cache longer than categories/tags.
 const UserExpirationDefault = 60 * time.Minute
 
-// Key formats
+// Key formats.
 const (
-	// UserIDKeyFormat: user:id:{userID}
+	// UserIDKeyFormat : user:id:{userID}.
 	UserIDKeyFormat = "user:id:%d"
 
-	// UserUsernameKeyFormat: user:username:{username}
+	// UserUsernameKeyFormat : user:username:{username}.
 	UserUsernameKeyFormat = "user:username:%s"
 
-	// UserEmailKeyFormat: user:email:{email}
+	// UserEmailKeyFormat : user:email:{email}.
 	UserEmailKeyFormat = "user:email:%s"
 )
 
@@ -54,7 +54,7 @@ const (
 const (
 	UserRetrievedSuccessfully = "user retrieved successfully from cache"
 	UserDeletedSuccessfully   = "user deleted successfully from cache"
-	UserSavedSuccessfully     = "user saved successfully to cache"
+	UserSavedSuccessfully     = "user saved successfully to cache" // #nosec G101 - false positive, this is a log message
 )
 
 // Error messages.

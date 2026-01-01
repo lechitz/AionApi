@@ -1,5 +1,7 @@
 package usecase
 
+import "errors"
+
 // =============================================================================
 // TRACING - OpenTelemetry Instrumentation
 // =============================================================================
@@ -117,4 +119,49 @@ const (
 	CategoryColorIsTooLong = "category color cannot exceed 7 characters"
 	// CategoryIconIsTooLong indicates the category icon is too long.
 	CategoryIconIsTooLong = "category icon cannot exceed 50 characters"
+)
+
+// =============================================================================
+// SENTINEL ERRORS - For errors.Is() comparisons
+// =============================================================================
+
+var (
+	// ErrValidateCategory is a sentinel error for category validation failures.
+	ErrValidateCategory = errors.New(ErrToValidateCategory)
+
+	// ErrCategoryAlreadyExists is a sentinel error when a category already exists.
+	ErrCategoryAlreadyExists = errors.New(CategoryAlreadyExists)
+
+	// ErrCreateCategory is a sentinel error for category creation failures.
+	ErrCreateCategory = errors.New(FailedToCreateCategory)
+
+	// ErrUpdateCategory is a sentinel error for category update failures.
+	ErrUpdateCategory = errors.New(FailedToUpdateCategory)
+
+	// ErrGetCategoryByID is a sentinel error for retrieving category by ID.
+	ErrGetCategoryByID = errors.New(FailedToGetCategoryByID)
+
+	// ErrGetCategoryByName is a sentinel error for retrieving category by name.
+	ErrGetCategoryByName = errors.New(FailedToGetCategoryByName)
+
+	// ErrGetAllCategories is a sentinel error for listing all categories.
+	ErrGetAllCategories = errors.New(FailedToGetAllCategories)
+
+	// ErrSoftDeleteCategory is a sentinel error for soft delete failures.
+	ErrSoftDeleteCategory = errors.New(FailedToSoftDeleteCategory)
+
+	// ErrCategoryIDRequired is a sentinel error when category ID is missing.
+	ErrCategoryIDRequired = errors.New(CategoryIDIsRequired)
+
+	// ErrCategoryNameRequired is a sentinel error when category name is missing.
+	ErrCategoryNameRequired = errors.New(CategoryNameIsRequired)
+
+	// ErrCategoryDescriptionTooLong is a sentinel error when description exceeds limit.
+	ErrCategoryDescriptionTooLong = errors.New(CategoryDescriptionIsTooLong)
+
+	// ErrCategoryColorTooLong is a sentinel error when color exceeds limit.
+	ErrCategoryColorTooLong = errors.New(CategoryColorIsTooLong)
+
+	// ErrCategoryIconTooLong is a sentinel error when icon exceeds limit.
+	ErrCategoryIconTooLong = errors.New(CategoryIconIsTooLong)
 )
