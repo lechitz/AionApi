@@ -10,6 +10,9 @@ const (
 	// TagName is the key for a tag name.
 	TagName = "tag_name"
 
+	// TagDescription is the key for a tag description.
+	TagDescription = "description"
+
 	// TagCreatedAt is the key for the tag created at.
 	TagCreatedAt = "created_at"
 

@@ -33,6 +33,9 @@ const (
 	// AvatarURL is the key for the user's avatar URL.
 	AvatarURL = "avatar_url"
 
+	// Role is the key for a single user's role.
+	Role = "role"
+
 	// Roles is the key for the user's role.
 	Roles = "roles"
 
