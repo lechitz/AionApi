@@ -65,8 +65,12 @@ type DB interface {
 	// Scan scans the result into the dest variable.
 	Scan(dest interface{}) DB
 
-	// Exec executes a raw SQL query.
+	// Exec executes a raw SQL query (without returning rows).
 	Exec(sql string, values ...interface{}) DB
+
+	// Raw executes a raw SQL query and returns rows (for SELECT statements).
+	// This allows complex queries like full-text search with ts_rank, JOINs, and GROUP BY.
+	Raw(sql string, values ...interface{}) DB
 
 	// Error returns the error from the last operation (if any).
 	Error() error
