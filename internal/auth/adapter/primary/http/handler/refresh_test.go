@@ -11,6 +11,9 @@ import (
 	handlerpkg "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/handler"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/AionApi/tests/setup"
+	"go.uber.org/mock/gomock"
 )
 
 // minimalAuthService is a test stub implementing the expected AuthService interface.
@@ -44,27 +47,8 @@ func (m *minimalAuthService) Logout(_ context.Context, _ uint64) error {
 	return nil
 }
 
-// simpleLogger satisfies logger.ContextLogger used by handler.New; it discards logs.
-// Implement all methods from the interface to keep tests focused on handler behavior.
-type simpleLogger struct{}
-
-func (s *simpleLogger) Infof(_ string, _ ...any)  {}
-func (s *simpleLogger) Errorf(_ string, _ ...any) {}
-func (s *simpleLogger) Debugf(_ string, _ ...any) {}
-func (s *simpleLogger) Warnf(_ string, _ ...any)  {}
-
-func (s *simpleLogger) Infow(_ string, _ ...any)  {}
-func (s *simpleLogger) Errorw(_ string, _ ...any) {}
-func (s *simpleLogger) Debugw(_ string, _ ...any) {}
-func (s *simpleLogger) Warnw(_ string, _ ...any)  {}
-
-func (s *simpleLogger) InfowCtx(_ context.Context, _ string, _ ...any)  {}
-func (s *simpleLogger) ErrorwCtx(_ context.Context, _ string, _ ...any) {}
-func (s *simpleLogger) WarnwCtx(_ context.Context, _ string, _ ...any)  {}
-func (s *simpleLogger) DebugwCtx(_ context.Context, _ string, _ ...any) {}
-
 func TestRefresh_CookieMissing(t *testing.T) {
-	// Setup a simple in-memory tracer provider so handler can start spans and we can inspect them.
+	// Set up a simple in-memory tracer provider so handler can start spans and we can inspect them.
 	tt := NewTestTracer(t)
 	defer func() {
 		if err := tt.Shutdown(t.Context()); err != nil {
@@ -72,9 +56,20 @@ func TestRefresh_CookieMissing(t *testing.T) {
 		}
 	}()
 
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
 	cfg := &config.Config{}
 	svc := &minimalAuthService{}
-	h := handlerpkg.New(svc, cfg, &simpleLogger{})
+	log := mocks.NewMockContextLogger(ctrl)
+	setup.ExpectLoggerDefaultBehavior(log)
+	// refresh also may call non-ctx logging in future; keep relaxed.
+	log.EXPECT().Infow(gomock.Any(), gomock.Any()).AnyTimes()
+	log.EXPECT().Errorw(gomock.Any(), gomock.Any()).AnyTimes()
+	log.EXPECT().Warnw(gomock.Any(), gomock.Any()).AnyTimes()
+	log.EXPECT().Debugw(gomock.Any(), gomock.Any()).AnyTimes()
+
+	h := handlerpkg.New(svc, cfg, log)
 
 	req := httptest.NewRequest(http.MethodPost, "/", nil)
 	w := httptest.NewRecorder()
@@ -122,10 +117,20 @@ func TestRefresh_CookiePresent_Success(t *testing.T) {
 		}
 	}()
 
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
 	cfg := &config.Config{}
 	// prepare service to return tokens
 	svc := &minimalAuthService{respAccess: "access-123", respRefresh: "refresh-456", respErr: nil}
-	h := handlerpkg.New(svc, cfg, &simpleLogger{})
+	log := mocks.NewMockContextLogger(ctrl)
+	setup.ExpectLoggerDefaultBehavior(log)
+	log.EXPECT().Infow(gomock.Any(), gomock.Any()).AnyTimes()
+	log.EXPECT().Errorw(gomock.Any(), gomock.Any()).AnyTimes()
+	log.EXPECT().Warnw(gomock.Any(), gomock.Any()).AnyTimes()
+	log.EXPECT().Debugw(gomock.Any(), gomock.Any()).AnyTimes()
+
+	h := handlerpkg.New(svc, cfg, log)
 
 	// build request with cookie
 	req := httptest.NewRequest(http.MethodPost, "/", nil)
@@ -161,9 +166,19 @@ func TestRefresh_ServiceError(t *testing.T) {
 		}
 	}()
 
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
 	cfg := &config.Config{}
 	svc := &minimalAuthService{respErr: errors.New("service failure")}
-	h := handlerpkg.New(svc, cfg, &simpleLogger{})
+	log := mocks.NewMockContextLogger(ctrl)
+	setup.ExpectLoggerDefaultBehavior(log)
+	log.EXPECT().Infow(gomock.Any(), gomock.Any()).AnyTimes()
+	log.EXPECT().Errorw(gomock.Any(), gomock.Any()).AnyTimes()
+	log.EXPECT().Warnw(gomock.Any(), gomock.Any()).AnyTimes()
+	log.EXPECT().Debugw(gomock.Any(), gomock.Any()).AnyTimes()
+
+	h := handlerpkg.New(svc, cfg, log)
 
 	req := httptest.NewRequest(http.MethodPost, "/", nil)
 	token := "some"

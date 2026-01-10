@@ -29,6 +29,7 @@ func (s *Store) SaveWithKey(ctx context.Context, key string, token domain.Auth, 
 		expiration = TokenExpirationDefault
 	}
 
+	span.AddEvent(EventSaveTokenToCacheByKey)
 	if err := s.cache.Set(ctx, key, token.Token, expiration); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)

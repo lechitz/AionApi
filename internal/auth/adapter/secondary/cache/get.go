@@ -27,6 +27,7 @@ func (s *Store) Get(ctx context.Context, tokenKey uint64, tokenType string) (dom
 
 	cacheKey := fmt.Sprintf(TokenUserKeyFormat, tokenKey, tokenType)
 
+	span.AddEvent(EventGetTokenFromCache)
 	tokenValue, err := s.cache.Get(ctx, cacheKey)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())

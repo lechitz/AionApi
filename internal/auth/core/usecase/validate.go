@@ -4,13 +4,11 @@ package usecase
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"math"
 	"strconv"
 	"strings"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
@@ -21,6 +19,8 @@ import (
 
 // Validate verifies signature/exp, extracts userID from claims, and checks cache consistency.
 // Returns the resolved userID and the decoded claims on success.
+//
+//nolint:funlen // Token validation with grace period requires comprehensive checking (52 statements)
 func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[string]any, error) {
 	tracer := otel.Tracer(TracerName)
 	ctx, span := tracer.Start(
@@ -40,7 +40,7 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorInvalidToken)
 		s.logger.ErrorwCtx(ctx, ErrorInvalidToken, commonkeys.Error, err.Error())
-		return 0, nil, sharederrors.ErrUnauthorized(ErrorInvalidToken)
+		return 0, nil, fmt.Errorf("%w: %w", ErrInvalidToken, err)
 	}
 
 	span.AddEvent(EventExtractUserID)
@@ -49,7 +49,7 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorInvalidUserIDClaim)
 		s.logger.ErrorwCtx(ctx, ErrorInvalidUserIDClaim, commonkeys.Error, err.Error())
-		return 0, nil, sharederrors.ErrUnauthorized(ErrorInvalidUserIDClaim)
+		return 0, nil, fmt.Errorf("%w: %w", ErrInvalidUserIDClaim, err)
 	}
 	span.SetAttributes(attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)))
 
@@ -59,7 +59,7 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToRetrieveTokenFromCache)
 		s.logger.ErrorwCtx(ctx, ErrorToRetrieveTokenFromCache, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(userID, 10))
-		return 0, nil, errors.New(ErrorToRetrieveTokenFromCache)
+		return 0, nil, fmt.Errorf("%w: %w", ErrTokenRetrievalFromCache, err)
 	}
 
 	span.AddEvent(EventCompareToken)
@@ -72,34 +72,44 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 	}
 
 	// Primary token doesn't match - check grace period
-	s.logger.DebugwCtx(ctx, "token mismatch with primary, checking grace period",
-		commonkeys.UserID, strconv.FormatUint(userID, 10),
-		"provided_prefix", sanitized[:minInt(16, len(sanitized))],
-		"cached_prefix", cached.Token[:minInt(16, len(cached.Token))])
+	// Safe prefix extraction for logging
+	providedPrefix := sanitized
+	if len(sanitized) > 16 {
+		providedPrefix = sanitized[:16]
+	}
+	cachedPrefix := cached.Token
+	if len(cached.Token) > 16 {
+		cachedPrefix = cached.Token[:16]
+	}
 
-	span.AddEvent("auth.token.check_grace_period")
+	s.logger.DebugwCtx(ctx, LogTokenMismatchCheckingGrace,
+		commonkeys.UserID, strconv.FormatUint(userID, 10),
+		commonkeys.ProvidedTokenPrefix, providedPrefix,
+		commonkeys.CachedTokenPrefix, cachedPrefix)
+
+	span.AddEvent(EventCheckGracePeriod)
 	graceKey := buildGraceKeyForValidation(userID, sanitized)
 	gracedToken, err := s.authStore.GetByKey(ctx, graceKey)
 	if err == nil && gracedToken.Token == sanitized {
 		// Token found in grace period and matches
-		span.AddEvent("auth.token.validated_via_grace")
-		span.SetStatus(codes.Ok, "token validated via grace period")
+		span.AddEvent(EventValidatedViaGrace)
+		span.SetStatus(codes.Ok, LogTokenValidatedViaGrace)
 		span.SetAttributes(attribute.Bool("grace_period_used", true))
-		s.logger.InfowCtx(ctx, "token validated via grace period",
+		s.logger.InfowCtx(ctx, LogTokenValidatedViaGrace,
 			commonkeys.UserID, strconv.FormatUint(userID, 10),
-			"grace_key", graceKey)
+			commonkeys.GraceKey, graceKey)
 		return userID, claims, nil
 	}
 
 	// Token not found in primary or grace period - reject
-	s.logger.DebugwCtx(ctx, "token not found in grace period",
+	s.logger.DebugwCtx(ctx, LogTokenNotFoundInGrace,
 		commonkeys.UserID, strconv.FormatUint(userID, 10),
-		"grace_key", graceKey,
-		"grace_lookup_error", err)
+		commonkeys.GraceKey, graceKey,
+		commonkeys.GraceLookupError, err)
 
 	span.SetStatus(codes.Error, ErrorTokenMismatch)
 	s.logger.ErrorwCtx(ctx, ErrorTokenMismatch, commonkeys.UserID, strconv.FormatUint(userID, 10))
-	return 0, nil, sharederrors.ErrUnauthorized(ErrorTokenMismatch)
+	return 0, nil, ErrTokenMismatch
 }
 
 // sanitizeTokenValue strips "Bearer " prefix (case-insensitive) and trims spaces.
@@ -120,7 +130,7 @@ func extractUserIDFromClaims(claims map[string]any) (uint64, error) {
 	if v, ok := claims["sub"]; ok {
 		return parseUserIDValue(v)
 	}
-	return 0, errors.New(ErrorInvalidUserIDClaim)
+	return 0, ErrInvalidUserIDClaim
 }
 
 // parseUserIDValue converts a claim value to uint64 safely.
@@ -132,18 +142,18 @@ func parseUserIDValue(v any) (uint64, error) {
 		return strconv.ParseUint(t.String(), 10, 64)
 	case float64:
 		if t < 0 || t != math.Trunc(t) {
-			return 0, errors.New(ErrorInvalidUserIDClaim)
+			return 0, ErrInvalidUserIDClaim
 		}
 		return uint64(t), nil
 	default:
-		return 0, errors.New(ErrorInvalidUserIDClaim)
+		return 0, ErrInvalidUserIDClaim
 	}
 }
 
 // buildGraceKeyForValidation constructs a Redis key for retrieving a token from grace period.
 // Format: auth:grace:{userID}:{tokenHash}.
 func buildGraceKeyForValidation(userID uint64, token string) string {
-	return fmt.Sprintf("auth:grace:%d:%s", userID, hashTokenForValidation(token))
+	return fmt.Sprintf(AuthGraceKeyPrefix+":%d:%s", userID, hashTokenForValidation(token))
 }
 
 // hashTokenForValidation creates a short hash of the token for use in Redis keys.
@@ -153,12 +163,4 @@ func hashTokenForValidation(token string) string {
 		return token
 	}
 	return token[:16] + token[len(token)-16:]
-}
-
-// minInt returns the minimum of two integers.
-func minInt(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }

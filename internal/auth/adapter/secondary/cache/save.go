@@ -26,11 +26,11 @@ func (s *Store) Save(ctx context.Context, token domain.Auth, expiration time.Dur
 
 	cacheKey := fmt.Sprintf(TokenUserKeyFormat, token.Key, token.Type)
 
-	// if no expiration passed, fall back to default
 	if expiration <= 0 {
 		expiration = TokenExpirationDefault
 	}
 
+	span.AddEvent(EventSaveTokenToCache)
 	if err := s.cache.Set(ctx, cacheKey, token.Token, expiration); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)

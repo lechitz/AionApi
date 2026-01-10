@@ -28,11 +28,13 @@ const (
 
 // Event names for auth handler tracing.
 const (
-	EventDecodeRequest     = "auth.handler.decode_request"
-	EventAuthServiceLogin  = "auth.handler.service_login"
-	EventAuthServiceLogout = "auth.handler.service_logout"
-	EventLoginSuccess      = "auth.handler.login_success"
-	EventLogoutSuccess     = "auth.handler.logout_success"
+	EventDecodeRequest      = "auth.handler.decode_request"
+	EventAuthServiceLogin   = "auth.handler.service_login"
+	EventAuthServiceLogout  = "auth.handler.service_logout"
+	EventAuthServiceRefresh = "auth.handler.service_refresh"
+	EventLoginSuccess       = "auth.handler.login_success"
+	EventLogoutSuccess      = "auth.handler.logout_success"
+	EventRefreshSuccess     = "auth.handler.refresh_success"
 )
 
 // -----------------------------------------------------------------------------
@@ -41,8 +43,9 @@ const (
 
 // Status descriptions for auth handler spans.
 const (
-	StatusLoginSuccess  = "login_success"
-	StatusLogoutSuccess = "logout_success"
+	StatusLoginSuccess   = "login_success"
+	StatusLogoutSuccess  = "logout_success"
+	StatusRefreshSuccess = "refresh_success"
 )
 
 // =============================================================================
@@ -54,12 +57,14 @@ const (
 	ErrMissingUserID = "missing user id in context"
 	ErrLogin         = "error on login"
 	ErrLogout        = "error on logout"
+	ErrRefresh       = "error on refresh"
 )
 
 // Success messages.
 const (
-	MsgLoginSuccess  = "user logged in successfully"
-	MsgLogoutSuccess = "user logged out successfully"
+	MsgLoginSuccess   = "user logged in successfully"
+	MsgLogoutSuccess  = "user logged out successfully"
+	MsgRefreshSuccess = "token refreshed successfully"
 )
 
 // Log message keys.
@@ -75,4 +80,28 @@ const (
 	ErrMinPasswordLength = "password must have at least 8 characters"
 	MinUsernameLength    = 3
 	MinPasswordLength    = 8
+)
+
+// =============================================================================
+// HTTP - Request limits and validation field names
+// =============================================================================
+
+const (
+	// LoginMaxBodyBytes limits the /auth/login payload size.
+	LoginMaxBodyBytes int64 = 1 << 20 // 1MB
+
+	// ValidationFieldCredentials is the field name used in validation errors for login credentials.
+	ValidationFieldCredentials = "credentials"
+)
+
+// =============================================================================
+// REFRESH - Errors and tracing attribute keys
+// =============================================================================
+
+const (
+	// ErrMissingRefreshToken is returned when refresh cookie is missing or empty.
+	ErrMissingRefreshToken = "missing refresh token"
+
+	// AttrRefreshTokenPresent records whether refresh token cookie was present. Never store the token value.
+	AttrRefreshTokenPresent = "refresh_token_present" // #nosec G101: attribute name, not a credential
 )

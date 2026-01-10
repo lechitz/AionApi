@@ -58,6 +58,28 @@ const (
 	AttributeTTL = "ttl"
 )
 
+// -----------------------------------------------------------------------------
+// Event Names
+// Format: <domain>.<action>.<detail>
+// -----------------------------------------------------------------------------
+
+const (
+	// EventSaveTokenToCache is emitted before saving a token into cache.
+	EventSaveTokenToCache = "auth.cache.token_save" //nolint:gosec // event name, not a credential
+
+	// EventGetTokenFromCache is emitted before fetching a token from cache.
+	EventGetTokenFromCache = "auth.cache.token_get" //nolint:gosec // event name, not a credential
+
+	// EventDeleteTokenFromCache is emitted before deleting a token from cache.
+	EventDeleteTokenFromCache = "auth.cache.token_delete" //nolint:gosec // event name, not a credential
+
+	// EventSaveTokenToCacheByKey is emitted before saving a token into cache using a custom key.
+	EventSaveTokenToCacheByKey = "auth.cache.token_save_with_key" //nolint:gosec // event name, not a credential
+
+	// EventGetTokenFromCacheByKey is emitted before fetching a token from cache using a custom key.
+	EventGetTokenFromCacheByKey = "auth.cache.token_get_by_key" //nolint:gosec // event name, not a credential
+)
+
 // =============================================================================
 // BUSINESS LOGIC - Configuration and Messages
 // =============================================================================

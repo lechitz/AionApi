@@ -47,7 +47,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	)
 
 	span.AddEvent(EventDecodeRequest)
-	r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1MB
+	r.Body = http.MaxBytesReader(w, r.Body, LoginMaxBodyBytes)
 	var loginReq dto.LoginUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
 		httpresponse.WriteDecodeErrorSpan(ctx, w, span, err, h.Logger)
@@ -55,7 +55,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := validateLoginRequest(loginReq); err != nil {
-		httpresponse.WriteDecodeErrorSpan(ctx, w, span, sharederrors.NewValidationError("credentials", err.Error()), h.Logger)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span, sharederrors.NewValidationError(ValidationFieldCredentials, err.Error()), h.Logger)
 		return
 	}
 	span.SetAttributes(attribute.String(commonkeys.Username, loginReq.Username))

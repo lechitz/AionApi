@@ -24,6 +24,7 @@ func (s *Store) Delete(ctx context.Context, tokenKey uint64, tokenType string) e
 
 	cacheKey := fmt.Sprintf(TokenUserKeyFormat, tokenKey, tokenType)
 
+	span.AddEvent(EventDeleteTokenFromCache)
 	if err := s.cache.Del(ctx, cacheKey); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)

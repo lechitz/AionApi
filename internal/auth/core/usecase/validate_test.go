@@ -22,10 +22,9 @@ const (
 	bearerPrefix = "Bearer "
 )
 
-func requireUnauthorizedWith(t *testing.T, err error, contains string) {
+func requireErrorWith(t *testing.T, err error, contains string) {
 	t.Helper()
 	require.Error(t, err)
-	require.Contains(t, err.Error(), "unauthorized")
 	require.Contains(t, err.Error(), contains)
 }
 
@@ -229,7 +228,7 @@ func TestValidate_Error_InvalidToken(t *testing.T) {
 		Return(nil, errors.New(usecase.ErrorInvalidToken))
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
-	requireUnauthorizedWith(t, err, usecase.ErrorInvalidToken)
+	requireErrorWith(t, err, usecase.ErrorInvalidToken)
 	requireZeroAndNilClaims(t, uid, claims)
 }
 
@@ -248,7 +247,7 @@ func TestValidate_Error_MissingUserIDAndSub(t *testing.T) {
 		Return(map[string]any{"foo": "bar"}, nil)
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
-	requireUnauthorizedWith(t, err, usecase.ErrorInvalidUserIDClaim)
+	requireErrorWith(t, err, usecase.ErrorInvalidUserIDClaim)
 	requireZeroAndNilClaims(t, uid, claims)
 }
 
@@ -267,7 +266,7 @@ func TestValidate_Error_Float64NonIntegral(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: 123.5}, nil)
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
-	requireUnauthorizedWith(t, err, usecase.ErrorInvalidUserIDClaim)
+	requireErrorWith(t, err, usecase.ErrorInvalidUserIDClaim)
 	requireZeroAndNilClaims(t, uid, claims)
 }
 
@@ -286,7 +285,7 @@ func TestValidate_Error_Float64Negative(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: -1.0}, nil)
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
-	requireUnauthorizedWith(t, err, usecase.ErrorInvalidUserIDClaim)
+	requireErrorWith(t, err, usecase.ErrorInvalidUserIDClaim)
 	requireZeroAndNilClaims(t, uid, claims)
 }
 
@@ -305,7 +304,7 @@ func TestValidate_Error_UserIDUnsupportedType(t *testing.T) {
 		Return(map[string]any{claimskeys.UserID: int(123)}, nil)
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
-	requireUnauthorizedWith(t, err, usecase.ErrorInvalidUserIDClaim)
+	requireErrorWith(t, err, usecase.ErrorInvalidUserIDClaim)
 	requireZeroAndNilClaims(t, uid, claims)
 }
 
@@ -330,7 +329,7 @@ func TestValidate_Error_StoreGet(t *testing.T) {
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
 	require.Error(t, err)
-	require.Equal(t, usecase.ErrorToRetrieveTokenFromCache, err.Error())
+	require.Contains(t, err.Error(), usecase.ErrorToRetrieveTokenFromCache)
 	requireZeroAndNilClaims(t, uid, claims)
 }
 
@@ -354,8 +353,12 @@ func TestValidate_Error_Mismatch(t *testing.T) {
 		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
 		Return(domain.AccessToken{Key: userIDWant, Token: cachedTokenDifferent}.ToAuth(), nil)
 
+	suite.TokenStore.EXPECT().
+		GetByKey(gomock.Any(), gomock.Any()).
+		Return(domain.Auth{}, errors.New("not found"))
+
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
-	requireUnauthorizedWith(t, err, usecase.ErrorTokenMismatch)
+	requireErrorWith(t, err, usecase.ErrorTokenMismatch)
 	requireZeroAndNilClaims(t, uid, claims)
 }
 
@@ -378,8 +381,12 @@ func TestValidate_Error_EmptyTokenInCache(t *testing.T) {
 		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
 		Return(domain.AccessToken{Key: userIDWant, Token: ""}.ToAuth(), nil)
 
+	suite.TokenStore.EXPECT().
+		GetByKey(gomock.Any(), gomock.Any()).
+		Return(domain.Auth{}, errors.New("not found"))
+
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
-	requireUnauthorizedWith(t, err, usecase.ErrorTokenMismatch)
+	requireErrorWith(t, err, usecase.ErrorTokenMismatch)
 	requireZeroAndNilClaims(t, uid, claims)
 }
 
@@ -398,6 +405,6 @@ func TestValidate_Error_SubClaimInvalidJSONNumber(t *testing.T) {
 		Return(map[string]any{"sub": json.Number("abc")}, nil)
 
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
-	requireUnauthorizedWith(t, err, usecase.ErrorInvalidUserIDClaim)
+	requireErrorWith(t, err, usecase.ErrorInvalidUserIDClaim)
 	requireZeroAndNilClaims(t, uid, claims)
 }

@@ -41,6 +41,12 @@ const (
 
 	// SpanValidateToken is the span name for token validation.
 	SpanValidateToken = "auth.token.validate" // #nosec G101: span name, not a credential
+
+	// SpanGenerateAndStoreTokens is the span name for generating and storing tokens.
+	SpanGenerateAndStoreTokens = "auth.token.generate_and_store" // #nosec G101: span name, not a credential
+
+	// SpanRefreshTokenRenewal is the span name for refresh token renewal.
+	SpanRefreshTokenRenewal = "auth.token.refresh" // #nosec G101: span name, not a credential
 )
 
 // -----------------------------------------------------------------------------
@@ -87,6 +93,24 @@ const (
 
 	// EventTokenValidated is emitted when token validation succeeds.
 	EventTokenValidated = "auth.token.validated" // #nosec G101: event name, not a credential
+
+	// EventCacheUserProfile is emitted before caching user profile on login.
+	EventCacheUserProfile = "auth.user.cache_profile"
+
+	// EventGenerateRefreshToken is emitted before generating refresh token.
+	EventGenerateRefreshToken = "auth.token.generate.refresh" // #nosec G101: event name, not a credential
+
+	// EventCheckGracePeriod is emitted when primary token doesn't match and grace period will be checked.
+	EventCheckGracePeriod = "auth.token.check_grace_period" // #nosec G101: event name, not a credential
+
+	// EventValidatedViaGrace is emitted when token validation succeeds via grace period.
+	EventValidatedViaGrace = "auth.token.validated_via_grace" // #nosec G101: event name, not a credential
+
+	// EventValidateRefreshToken is emitted before validating the refresh token and checking the store.
+	EventValidateRefreshToken = "auth.token.refresh.validate" // #nosec G101: event name, not a credential
+
+	// EventGenerateAndSaveNewTokens is emitted before generating and persisting new access/refresh tokens.
+	EventGenerateAndSaveNewTokens = "auth.token.refresh.generate_and_save" // #nosec G101: event name, not a credential
 )
 
 // =============================================================================
@@ -127,6 +151,9 @@ const (
 
 	// InvalidCredentials is the error message when the credentials are invalid.
 	InvalidCredentials = "invalid credentials" // #nosec G101
+
+	// ErrorInvalidRefreshToken is the error message when refresh token verification or store match fails.
+	ErrorInvalidRefreshToken = "invalid refresh token"
 )
 
 // Success messages.
@@ -136,6 +163,61 @@ const (
 
 	// SuccessUserLoggedOut is the success message when the user logs out.
 	SuccessUserLoggedOut = "user logged out successfully"
+)
+
+// Log messages.
+const (
+	// LogFailedToCacheUserProfile is logged when user profile caching fails on login.
+	LogFailedToCacheUserProfile = "failed to cache user profile on login"
+
+	// =============================================================================
+	// Refresh/Grace period logs.
+	// =============================================================================.
+
+	// LogNoPreviousTokenForGrace is logged when no previous token is found for grace period.
+	LogNoPreviousTokenForGrace = "no previous token found for grace period"
+
+	// LogSkippingGraceNoOldToken is logged when grace period is skipped due to no old token.
+	LogSkippingGraceNoOldToken = "skipping grace period: no old token"
+
+	// LogSkippingGraceTokensIdentical is logged when grace period is skipped due to identical tokens.
+	LogSkippingGraceTokensIdentical = "skipping grace period: tokens are identical"
+
+	// LogMovingTokenToGrace is logged when moving old token to grace period.
+	LogMovingTokenToGrace = "moving token to grace period"
+
+	// LogFailedToSaveTokenToGrace is logged when saving token to grace period fails.
+	LogFailedToSaveTokenToGrace = "failed to save token to grace period"
+
+	// LogTokenMovedToGraceSuccess is logged when token is moved to grace period successfully.
+	LogTokenMovedToGraceSuccess = "token moved to grace period successfully"
+
+	// =============================================================================
+	// Validate/grace period logs.
+	// =============================================================================.
+
+	LogTokenMismatchCheckingGrace = "token mismatch with primary, checking grace period"
+	LogTokenValidatedViaGrace     = "token validated via grace period"
+	LogTokenNotFoundInGrace       = "token not found in grace period"
+
+	// =============================================================================
+	// Log/trace operation name for refresh token renewal.
+	// =============================================================================.
+
+	// OperationRefreshTokenRenewal is the operation name for refresh token renewal.
+	OperationRefreshTokenRenewal = "RefreshTokenRenewal"
+)
+
+// =============================================================================
+// BUSINESS LOGIC - Refresh Token
+// =============================================================================
+
+const (
+	// SuccessRefreshTokenRenewed indicates refresh token renewal succeeded.
+	SuccessRefreshTokenRenewed = "refresh token renewed successfully"
+
+	// AuthGraceKeyPrefix Redis key prefix for grace period tokens.
+	AuthGraceKeyPrefix = "auth:grace"
 )
 
 // =============================================================================
@@ -170,6 +252,6 @@ var (
 	// ErrGetUserByUsername is a sentinel error for user retrieval failures.
 	ErrGetUserByUsername = errors.New(ErrorToGetUserByUserName)
 
-	// ErrCompareHashAndPassword is a sentinel error for password comparison failures.
-	ErrCompareHashAndPassword = errors.New(ErrorToCompareHashAndPassword)
+	// ErrInvalidRefreshToken is a sentinel error for invalid refresh token.
+	ErrInvalidRefreshToken = errors.New(ErrorInvalidRefreshToken)
 )

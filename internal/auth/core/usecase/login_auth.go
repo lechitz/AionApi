@@ -4,8 +4,8 @@ package usecase
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"strconv"
+	"strings"
 	"time"
 
 	authDomain "github.com/lechitz/AionApi/internal/auth/core/domain"
@@ -24,6 +24,8 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 	ctx, span := tracer.Start(ctx, SpanLogin)
 	defer span.End()
 
+	usernameReq = strings.ToLower(strings.TrimSpace(usernameReq))
+
 	span.SetAttributes(
 		attribute.String(commonkeys.Operation, SpanLogin),
 		attribute.String(commonkeys.Username, usernameReq),
@@ -35,12 +37,12 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToGetUserByUserName)
 		s.logger.ErrorwCtx(ctx, ErrorToGetUserByUserName, commonkeys.Error, err.Error())
-		return userDomain.User{}, "", "", errors.New(ErrorToGetUserByUserName)
+		return userDomain.User{}, "", "", ErrGetUserByUsername
 	}
 	if user.ID == 0 {
 		span.SetStatus(codes.Error, UserNotFoundOrInvalidCredentials)
 		s.logger.WarnwCtx(ctx, UserNotFoundOrInvalidCredentials, commonkeys.Username, usernameReq)
-		return userDomain.User{}, "", "", errors.New(UserNotFoundOrInvalidCredentials)
+		return userDomain.User{}, "", "", ErrUserNotFoundOrInvalidCredentials
 	}
 
 	span.AddEvent(EventComparePassword)
@@ -48,7 +50,7 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 		span.RecordError(err)
 		span.SetStatus(codes.Error, InvalidCredentials)
 		s.logger.WarnwCtx(ctx, ErrorToCompareHashAndPassword, commonkeys.Username, user.Username)
-		return userDomain.User{}, "", "", errors.New(InvalidCredentials)
+		return userDomain.User{}, "", "", ErrInvalidCredentials
 	}
 
 	roles := user.Roles
@@ -57,13 +59,20 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 		claimskeys.Name:  user.Name,
 	}
 
-	// Delegate token generation and storage to reduce function length.
 	accessToken, refreshToken, err := s.generateAndStoreTokens(ctx, user.ID, claims)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToCreateToken)
 		s.logger.ErrorwCtx(ctx, ErrorToCreateToken, commonkeys.Error, err.Error())
-		return userDomain.User{}, "", "", errors.New(ErrorToCreateToken)
+		return userDomain.User{}, "", "", ErrTokenCreation
+	}
+
+	span.AddEvent(EventCacheUserProfile)
+	if err := s.userCache.SaveUser(ctx, user, 0); err != nil {
+		s.logger.WarnwCtx(ctx, LogFailedToCacheUserProfile,
+			commonkeys.UserID, user.ID,
+			commonkeys.Error, err,
+		)
 	}
 
 	span.AddEvent(EventLoginSuccess)
@@ -113,7 +122,7 @@ func claimsTTLFromVerifyResult(claims map[string]any) time.Duration {
 // observability and error handling.
 func (s *Service) generateAndStoreTokens(ctx context.Context, userID uint64, claims map[string]any) (string, string, error) {
 	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(ctx, "generateAndStoreTokens")
+	ctx, span := tracer.Start(ctx, SpanGenerateAndStoreTokens)
 	defer span.End()
 
 	span.AddEvent(EventGenerateToken)
@@ -138,7 +147,7 @@ func (s *Service) generateAndStoreTokens(ctx context.Context, userID uint64, cla
 		}
 	}
 
-	span.AddEvent("generate_refresh_token")
+	span.AddEvent(EventGenerateRefreshToken)
 	refreshValue, err := s.authProvider.GenerateRefreshToken(userID)
 	if err != nil {
 		return "", "", err

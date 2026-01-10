@@ -2,7 +2,7 @@ package cache
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/lechitz/AionApi/internal/auth/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -23,6 +23,7 @@ func (s *Store) GetByKey(ctx context.Context, key string) (domain.Auth, error) {
 	))
 	defer span.End()
 
+	span.AddEvent(EventGetTokenFromCacheByKey)
 	tokenValue, err := s.cache.Get(ctx, key)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
@@ -33,11 +34,9 @@ func (s *Store) GetByKey(ctx context.Context, key string) (domain.Auth, error) {
 
 	if tokenValue == "" {
 		span.SetStatus(codes.Ok, ErrorTokenNotFoundInGracePeriod)
-		return domain.Auth{}, fmt.Errorf(ErrorTokenNotFoundInGracePeriod)
+		return domain.Auth{}, errors.New(ErrorTokenNotFoundInGracePeriod)
 	}
 
-	// Return a generic Auth with the token value
-	// The Key and Type are not critical for grace period validation
 	tokenDomain := domain.Auth{
 		Token: tokenValue,
 	}
