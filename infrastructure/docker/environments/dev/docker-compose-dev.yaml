@@ -14,9 +14,10 @@ services:
       - rede_local
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
 
   redis:
     image: redis:7.2
@@ -27,9 +28,10 @@ services:
       - rede_local
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.101.0
@@ -43,6 +45,9 @@ services:
     networks:
       - rede_local
     restart: unless-stopped
+    depends_on:
+      jaeger:
+        condition: service_healthy
 
   prometheus:
     image: prom/prometheus:v2.53.0
@@ -79,11 +84,72 @@ services:
     image: jaegertracing/all-in-one:1.57
     container_name: jaeger-dev
     restart: unless-stopped
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+      - COLLECTOR_OTLP_ENABLED=true
     ports:
       - "16686:16686"   # UI Web
-      - "9411:9411"     # Zipkin ingest
+      - "4317:4317"     # OTLP gRPC (otel-collector)
     networks:
       - rede_local
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:16686/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-dev
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    networks:
+      - rede_local
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    # GPU support enabled - NVIDIA RTX 3050 6GB
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  aion-chat:
+    build:
+      context: ../../../../../aion-chat
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: aion-chat-dev
+    restart: unless-stopped
+    env_file:
+      - ../../../../../aion-chat/infrastructure/docker/environments/dev/.env.dev
+    ports:
+      - "8000:8000"
+    networks:
+      - rede_local
+    depends_on:
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   aion-api:
     image: aion-api:dev
@@ -104,19 +170,42 @@ services:
         condition: service_healthy
       otel-collector:
         condition: service_started
+      aion-chat:
+        condition: service_healthy
     networks:
       - rede_local
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- \"http://localhost:$$HTTP_PORT$$HTTP_CONTEXT$$HTTP_API_ROOT$$HTTP_HEALTH_ROUTE\" >/dev/null 2>&1"]
-      interval: 600s
+      interval: 10s
       timeout: 5s
-      start_period: 30s
-      retries: 3
+      start_period: 40s
+      retries: 5
+
+  aionapi-dashboard:
+    build:
+      context: ../../../../../aionapi-dashboard
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: aionapi-dashboard-dev
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - VITE_API_URL=http://localhost:5001/aion/api/v1
+      - VITE_AUTH_URL=http://localhost:5001/aion/api/v1/auth
+      - VITE_HEALTHCHECK_ENABLED=true
+    networks:
+      - rede_local
+    depends_on:
+      aion-api:
+        condition: service_healthy
 
 networks:
   rede_local:
+    name: rede_local
+    driver: bridge
 
 volumes:
   postgres-data-dev:
   grafana-data:
+  ollama-models:
