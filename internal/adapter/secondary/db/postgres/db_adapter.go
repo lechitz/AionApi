@@ -103,9 +103,15 @@ func (g *gormDB) Scan(dest interface{}) db.DB {
 	return &gormDB{db: g.db.Scan(dest)}
 }
 
-// Exec executes a raw SQL query.
+// Exec executes a raw SQL query (without returning rows).
 func (g *gormDB) Exec(sql string, values ...interface{}) db.DB {
 	return &gormDB{db: g.db.Exec(sql, values...)}
+}
+
+// Raw executes a raw SQL query and returns rows (for SELECT statements).
+// This allows complex queries like full-text search, JOINs, and GROUP BY.
+func (g *gormDB) Raw(sql string, values ...interface{}) db.DB {
+	return &gormDB{db: g.db.Raw(sql, values...)}
 }
 
 // Error returns the error from the last operation (if any).
