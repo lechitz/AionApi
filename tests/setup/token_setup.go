@@ -33,10 +33,11 @@ func TokenServiceTest(t *testing.T) *TokenServiceTestSuite {
 	hasher := mocks.NewMockHasher(ctrl)
 	authStore := mocks.NewMockAuthStore(ctrl)
 	authProvider := mocks.NewMockAuthProvider(ctrl)
+	rolesReader := mocks.NewMockRolesReader(ctrl)
 
 	ExpectLoggerDefaultBehavior(logger)
 
-	svc := usecase.NewService(userRepository, userCache, authStore, authProvider, hasher, logger)
+	svc := usecase.NewService(rolesReader, userRepository, userCache, authStore, authProvider, hasher, logger)
 
 	return &TokenServiceTestSuite{
 		Ctrl:           ctrl,

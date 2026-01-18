@@ -8,3 +8,172 @@
 
 // Package mocks is a generated GoMock package.
 package mocks
+
+import (
+	context "context"
+	reflect "reflect"
+
+	domain "github.com/lechitz/AionApi/internal/admin/core/domain"
+	gomock "go.uber.org/mock/gomock"
+)
+
+// MockUserRoleUpdater is a mock of UserRoleUpdater interface.
+type MockUserRoleUpdater struct {
+	ctrl     *gomock.Controller
+	recorder *MockUserRoleUpdaterMockRecorder
+	isgomock struct{}
+}
+
+// MockUserRoleUpdaterMockRecorder is the mock recorder for MockUserRoleUpdater.
+type MockUserRoleUpdaterMockRecorder struct {
+	mock *MockUserRoleUpdater
+}
+
+// NewMockUserRoleUpdater creates a new mock instance.
+func NewMockUserRoleUpdater(ctrl *gomock.Controller) *MockUserRoleUpdater {
+	mock := &MockUserRoleUpdater{ctrl: ctrl}
+	mock.recorder = &MockUserRoleUpdaterMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUserRoleUpdater) EXPECT() *MockUserRoleUpdaterMockRecorder {
+	return m.recorder
+}
+
+// UpdateRoles mocks base method.
+func (m *MockUserRoleUpdater) UpdateRoles(ctx context.Context, userID uint64, roles []string) (domain.AdminUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateRoles", ctx, userID, roles)
+	ret0, _ := ret[0].(domain.AdminUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateRoles indicates an expected call of UpdateRoles.
+func (mr *MockUserRoleUpdaterMockRecorder) UpdateRoles(ctx, userID, roles any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRoles", reflect.TypeOf((*MockUserRoleUpdater)(nil).UpdateRoles), ctx, userID, roles)
+}
+
+// MockAdminUserFinder is a mock of AdminUserFinder interface.
+type MockAdminUserFinder struct {
+	ctrl     *gomock.Controller
+	recorder *MockAdminUserFinderMockRecorder
+	isgomock struct{}
+}
+
+// MockAdminUserFinderMockRecorder is the mock recorder for MockAdminUserFinder.
+type MockAdminUserFinderMockRecorder struct {
+	mock *MockAdminUserFinder
+}
+
+// NewMockAdminUserFinder creates a new mock instance.
+func NewMockAdminUserFinder(ctrl *gomock.Controller) *MockAdminUserFinder {
+	mock := &MockAdminUserFinder{ctrl: ctrl}
+	mock.recorder = &MockAdminUserFinderMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockAdminUserFinder) EXPECT() *MockAdminUserFinderMockRecorder {
+	return m.recorder
+}
+
+// GetByID mocks base method.
+func (m *MockAdminUserFinder) GetByID(ctx context.Context, userID uint64) (domain.AdminUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByID", ctx, userID)
+	ret0, _ := ret[0].(domain.AdminUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockAdminUserFinderMockRecorder) GetByID(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockAdminUserFinder)(nil).GetByID), ctx, userID)
+}
+
+// MockAdminRepository is a mock of AdminRepository interface.
+type MockAdminRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockAdminRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockAdminRepositoryMockRecorder is the mock recorder for MockAdminRepository.
+type MockAdminRepositoryMockRecorder struct {
+	mock *MockAdminRepository
+}
+
+// NewMockAdminRepository creates a new mock instance.
+func NewMockAdminRepository(ctrl *gomock.Controller) *MockAdminRepository {
+	mock := &MockAdminRepository{ctrl: ctrl}
+	mock.recorder = &MockAdminRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockAdminRepository) EXPECT() *MockAdminRepositoryMockRecorder {
+	return m.recorder
+}
+
+// AssignDefaultRole mocks base method.
+func (m *MockAdminRepository) AssignDefaultRole(ctx context.Context, userID uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AssignDefaultRole", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AssignDefaultRole indicates an expected call of AssignDefaultRole.
+func (mr *MockAdminRepositoryMockRecorder) AssignDefaultRole(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignDefaultRole", reflect.TypeOf((*MockAdminRepository)(nil).AssignDefaultRole), ctx, userID)
+}
+
+// GetByID mocks base method.
+func (m *MockAdminRepository) GetByID(ctx context.Context, userID uint64) (domain.AdminUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByID", ctx, userID)
+	ret0, _ := ret[0].(domain.AdminUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockAdminRepositoryMockRecorder) GetByID(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockAdminRepository)(nil).GetByID), ctx, userID)
+}
+
+// UpdateRoles mocks base method.
+func (m *MockAdminRepository) UpdateRoles(ctx context.Context, userID uint64, roles []string) (domain.AdminUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateRoles", ctx, userID, roles)
+	ret0, _ := ret[0].(domain.AdminUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateRoles indicates an expected call of UpdateRoles.
+func (mr *MockAdminRepositoryMockRecorder) UpdateRoles(ctx, userID, roles any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRoles", reflect.TypeOf((*MockAdminRepository)(nil).UpdateRoles), ctx, userID, roles)
+}
+
+// GetRolesByUserID mocks base method.
+func (m *MockAdminRepository) GetRolesByUserID(ctx context.Context, userID uint64) ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRolesByUserID", ctx, userID)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRolesByUserID indicates an expected call of GetRolesByUserID.
+func (mr *MockAdminRepositoryMockRecorder) GetRolesByUserID(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRolesByUserID", reflect.TypeOf((*MockAdminRepository)(nil).GetRolesByUserID), ctx, userID)
+}

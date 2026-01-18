@@ -238,6 +238,25 @@ func (mr *MockDBMockRecorder) Order(value any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Order", reflect.TypeOf((*MockDB)(nil).Order), value)
 }
 
+// Raw mocks base method.
+func (m *MockDB) Raw(sql string, values ...any) db.DB {
+	m.ctrl.T.Helper()
+	varargs := []any{sql}
+	for _, a := range values {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Raw", varargs...)
+	ret0, _ := ret[0].(db.DB)
+	return ret0
+}
+
+// Raw indicates an expected call of Raw.
+func (mr *MockDBMockRecorder) Raw(sql any, values ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{sql}, values...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Raw", reflect.TypeOf((*MockDB)(nil).Raw), varargs...)
+}
+
 // Rollback mocks base method.
 func (m *MockDB) Rollback() db.DB {
 	m.ctrl.T.Helper()

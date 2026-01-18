@@ -140,6 +140,45 @@ func (mr *MockTagRetrieverMockRecorder) GetByName(ctx, tagName, userID any) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByName", reflect.TypeOf((*MockTagRetriever)(nil).GetByName), ctx, tagName, userID)
 }
 
+// MockTagUpdater is a mock of TagUpdater interface.
+type MockTagUpdater struct {
+	ctrl     *gomock.Controller
+	recorder *MockTagUpdaterMockRecorder
+	isgomock struct{}
+}
+
+// MockTagUpdaterMockRecorder is the mock recorder for MockTagUpdater.
+type MockTagUpdaterMockRecorder struct {
+	mock *MockTagUpdater
+}
+
+// NewMockTagUpdater creates a new mock instance.
+func NewMockTagUpdater(ctrl *gomock.Controller) *MockTagUpdater {
+	mock := &MockTagUpdater{ctrl: ctrl}
+	mock.recorder = &MockTagUpdaterMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTagUpdater) EXPECT() *MockTagUpdaterMockRecorder {
+	return m.recorder
+}
+
+// UpdateTag mocks base method.
+func (m *MockTagUpdater) UpdateTag(ctx context.Context, tagID, userID uint64, fieldsToUpdate map[string]any) (domain.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTag", ctx, tagID, userID, fieldsToUpdate)
+	ret0, _ := ret[0].(domain.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateTag indicates an expected call of UpdateTag.
+func (mr *MockTagUpdaterMockRecorder) UpdateTag(ctx, tagID, userID, fieldsToUpdate any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTag", reflect.TypeOf((*MockTagUpdater)(nil).UpdateTag), ctx, tagID, userID, fieldsToUpdate)
+}
+
 // MockTagDeleter is a mock of TagDeleter interface.
 type MockTagDeleter struct {
 	ctrl     *gomock.Controller
@@ -289,4 +328,19 @@ func (m *MockTagRepository) SoftDelete(ctx context.Context, tagID, userID uint64
 func (mr *MockTagRepositoryMockRecorder) SoftDelete(ctx, tagID, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftDelete", reflect.TypeOf((*MockTagRepository)(nil).SoftDelete), ctx, tagID, userID)
+}
+
+// UpdateTag mocks base method.
+func (m *MockTagRepository) UpdateTag(ctx context.Context, tagID, userID uint64, fieldsToUpdate map[string]any) (domain.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTag", ctx, tagID, userID, fieldsToUpdate)
+	ret0, _ := ret[0].(domain.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateTag indicates an expected call of UpdateTag.
+func (mr *MockTagRepositoryMockRecorder) UpdateTag(ctx, tagID, userID, fieldsToUpdate any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTag", reflect.TypeOf((*MockTagRepository)(nil).UpdateTag), ctx, tagID, userID, fieldsToUpdate)
 }

@@ -205,6 +205,36 @@ func (mr *MockRecordRepositoryMockRecorder) ListByUser(ctx, userID, limit, after
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByUser", reflect.TypeOf((*MockRecordRepository)(nil).ListByUser), ctx, userID, limit, afterEventTime, afterID)
 }
 
+// ListLatest mocks base method.
+func (m *MockRecordRepository) ListLatest(ctx context.Context, userID uint64, limit int) ([]domain.Record, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListLatest", ctx, userID, limit)
+	ret0, _ := ret[0].([]domain.Record)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListLatest indicates an expected call of ListLatest.
+func (mr *MockRecordRepositoryMockRecorder) ListLatest(ctx, userID, limit any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLatest", reflect.TypeOf((*MockRecordRepository)(nil).ListLatest), ctx, userID, limit)
+}
+
+// SearchRecords mocks base method.
+func (m *MockRecordRepository) SearchRecords(ctx context.Context, userID uint64, filters domain.SearchFilters) ([]domain.Record, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SearchRecords", ctx, userID, filters)
+	ret0, _ := ret[0].([]domain.Record)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SearchRecords indicates an expected call of SearchRecords.
+func (mr *MockRecordRepositoryMockRecorder) SearchRecords(ctx, userID, filters any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchRecords", reflect.TypeOf((*MockRecordRepository)(nil).SearchRecords), ctx, userID, filters)
+}
+
 // Update mocks base method.
 func (m *MockRecordRepository) Update(ctx context.Context, r domain.Record) (domain.Record, error) {
 	m.ctrl.T.Helper()

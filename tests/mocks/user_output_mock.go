@@ -302,6 +302,21 @@ func (mr *MockUserRepositoryMockRecorder) GetByUsername(ctx, username any) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUsername", reflect.TypeOf((*MockUserRepository)(nil).GetByUsername), ctx, username)
 }
 
+// GetUserStats mocks base method.
+func (m *MockUserRepository) GetUserStats(ctx context.Context, userID uint64) (domain.UserStats, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserStats", ctx, userID)
+	ret0, _ := ret[0].(domain.UserStats)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserStats indicates an expected call of GetUserStats.
+func (mr *MockUserRepositoryMockRecorder) GetUserStats(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserStats", reflect.TypeOf((*MockUserRepository)(nil).GetUserStats), ctx, userID)
+}
+
 // ListAll mocks base method.
 func (m *MockUserRepository) ListAll(ctx context.Context) ([]domain.User, error) {
 	m.ctrl.T.Helper()

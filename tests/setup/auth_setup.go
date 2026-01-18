@@ -15,6 +15,7 @@ import (
 type AuthServiceTestSuite struct {
 	Ctrl           *gomock.Controller
 	Logger         *mocks.MockContextLogger
+	RolesReader    *mocks.MockRolesReader
 	UserRepository *mocks.MockUserRepository
 	UserCache      *mocks.MockUserCache
 	Hasher         *mocks.MockHasher
@@ -35,12 +36,14 @@ func AuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 	hasher := mocks.NewMockHasher(ctrl)
 	tokenStore := mocks.NewMockAuthStore(ctrl)
 	tokenProvider := mocks.NewMockAuthProvider(ctrl)
+	rolesReader := mocks.NewMockRolesReader(ctrl)
 	log := mocks.NewMockContextLogger(ctrl)
 
 	// Set default, non-intrusive expectations for the logger (no-ops).
 	ExpectLoggerDefaultBehavior(log)
 
 	authService := usecase.NewService(
+		rolesReader,
 		userRepo,
 		userCache,
 		tokenStore,
@@ -52,6 +55,7 @@ func AuthServiceTest(t *testing.T) *AuthServiceTestSuite {
 	return &AuthServiceTestSuite{
 		Ctrl:           ctrl,
 		Logger:         log,
+		RolesReader:    rolesReader,
 		UserRepository: userRepo,
 		UserCache:      userCache,
 		Hasher:         hasher,
