@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strconv"
 
@@ -36,7 +35,6 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateTagCommand) (domai
 		return domain.Tag{}, err
 	}
 
-	// Build domain entity from the command (no GraphQL types here).
 	newTag := domain.Tag{
 		UserID:      cmd.UserID,
 		CategoryID:  cmd.CategoryID,
@@ -49,7 +47,7 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateTagCommand) (domai
 	if err == nil && existingCategory.Name != "" {
 		span.SetStatus(codes.Error, TagAlreadyExists)
 		s.Logger.ErrorwCtx(ctx, TagAlreadyExists, commonkeys.CategoryName, newTag.Name)
-		return domain.Tag{}, errors.New(TagAlreadyExists)
+		return domain.Tag{}, ErrTagAlreadyExists
 	}
 
 	span.AddEvent(EventRepositoryCreate)
@@ -58,7 +56,26 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateTagCommand) (domai
 		span.RecordError(err)
 		span.SetStatus(codes.Error, FailedToCreateTag)
 		s.Logger.ErrorwCtx(ctx, FailedToCreateTag, commonkeys.Tag, newTag, commonkeys.Error, err)
-		return domain.Tag{}, fmt.Errorf("%s: %w", FailedToCreateTag, err)
+		return domain.Tag{}, fmt.Errorf("%w: %w", ErrCreateTag, err)
+	}
+
+	span.AddEvent(EventInvalidateCache)
+	err = s.TagCache.DeleteTagList(ctx, createdTag.UserID)
+	if err != nil {
+		s.Logger.InfowCtx(ctx, FailedToInvalidateTagListCache, commonkeys.UserID, createdTag.UserID, commonkeys.Error, err)
+	}
+	err = s.TagCache.DeleteTagsByCategory(ctx, createdTag.CategoryID, createdTag.UserID)
+	if err != nil {
+		s.Logger.InfowCtx(
+			ctx,
+			FailedToInvalidateTagsByCategoryCache,
+			commonkeys.CategoryID,
+			createdTag.CategoryID,
+			commonkeys.UserID,
+			createdTag.UserID,
+			commonkeys.Error,
+			err,
+		)
 	}
 
 	span.AddEvent(EventSuccess)
@@ -71,13 +88,13 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateTagCommand) (domai
 // validateCreateCommand checks required fields and length constraints for CreateCategoryCommand.
 func (s *Service) validateCreateCommand(cmd input.CreateTagCommand) error {
 	if cmd.UserID == 0 {
-		return errors.New(UserIDIsRequired)
+		return ErrUserIDRequired
 	}
 	if cmd.Name == "" {
-		return errors.New(TagNameIsRequired)
+		return ErrTagNameRequired
 	}
 	if cmd.Description != nil && len(*cmd.Description) > 200 {
-		return errors.New(TagDescriptionIsTooLong)
+		return ErrTagDescriptionTooLong
 	}
 	return nil
 }

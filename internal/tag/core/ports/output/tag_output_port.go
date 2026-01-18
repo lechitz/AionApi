@@ -20,6 +20,11 @@ type TagRetriever interface {
 	GetAll(ctx context.Context, userID uint64) ([]domain.Tag, error)
 }
 
+// TagUpdater defines an interface for updating a tag.
+type TagUpdater interface {
+	UpdateTag(ctx context.Context, tagID, userID uint64, fieldsToUpdate map[string]interface{}) (domain.Tag, error)
+}
+
 // TagDeleter defines an interface for soft-deleting a tag.
 type TagDeleter interface {
 	SoftDelete(ctx context.Context, tagID, userID uint64) error
@@ -29,5 +34,6 @@ type TagDeleter interface {
 type TagRepository interface {
 	TagCreator
 	TagRetriever
+	TagUpdater
 	TagDeleter
 }

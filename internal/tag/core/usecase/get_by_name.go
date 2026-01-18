@@ -28,6 +28,14 @@ func (s *Service) GetByName(ctx context.Context, tagName string, userID uint64) 
 		return domain.Tag{}, errors.New(TagNameIsRequired)
 	}
 
+	span.AddEvent("CheckCache")
+	cachedTag, err := s.TagCache.GetTagByName(ctx, tagName, userID)
+	if err == nil && cachedTag.ID != 0 {
+		span.AddEvent("CacheHit")
+		span.SetStatus(codes.Ok, StatusRetrievedByName)
+		return cachedTag, nil
+	}
+
 	span.AddEvent(EventRepositoryGet)
 	tag, err := s.TagRepository.GetByName(ctx, tagName, userID)
 	if err != nil {
@@ -35,6 +43,18 @@ func (s *Service) GetByName(ctx context.Context, tagName string, userID uint64) 
 		span.SetStatus(codes.Error, FailedToGetTagByName)
 		s.Logger.ErrorwCtx(ctx, FailedToGetTagByName, commonkeys.TagName, tagName, commonkeys.Error, err)
 		return domain.Tag{}, err
+	}
+
+	span.AddEvent("SaveToCache")
+	err = s.TagCache.SaveTagByName(ctx, tag, 0) // use default TTL
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, "failed to save tag by name to cache", commonkeys.TagName, tagName, commonkeys.Error, err.Error())
+	}
+	if tag.ID != 0 {
+		err = s.TagCache.SaveTag(ctx, tag, 0) // also cache by ID
+		if err != nil {
+			s.Logger.WarnwCtx(ctx, "failed to save tag by ID to cache", commonkeys.TagID, tag.ID, commonkeys.Error, err.Error())
+		}
 	}
 
 	span.AddEvent(EventSuccess)

@@ -13,8 +13,6 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-// ---------- Helpers ----------
-
 func perfectTag() domain.Tag {
 	return domain.Tag{
 		UserID:      1,
@@ -36,8 +34,6 @@ func makeCreateTagCmdFromDomain(d domain.Tag) input.CreateTagCommand {
 		Description: desc,
 	}
 }
-
-// ---------- Tests ----------
 
 func TestCreateTag_ErrorToValidateCreateTagRequired_Name(t *testing.T) {
 	suite := setup.TagServiceTest(t)
@@ -139,6 +135,14 @@ func TestCreateTag_PtrOrEmpty_NilPointersBecomeEmptyStrings(t *testing.T) {
 		Create(gomock.Any(), expectedCreate).
 		Return(expectedCreate, nil)
 
+	suite.TagCache.EXPECT().
+		DeleteTagList(gomock.Any(), tag.UserID).
+		Return(nil)
+
+	suite.TagCache.EXPECT().
+		DeleteTagsByCategory(gomock.Any(), tag.CategoryID, tag.UserID).
+		Return(nil)
+
 	created, err := suite.TagService.Create(suite.Ctx, cmd)
 	require.NoError(t, err)
 	require.Empty(t, created.Description)
@@ -163,6 +167,14 @@ func TestCreateTag_Success(t *testing.T) {
 			Description: tag.Description,
 		}).
 		Return(tag, nil)
+
+	suite.TagCache.EXPECT().
+		DeleteTagList(gomock.Any(), tag.UserID).
+		Return(nil)
+
+	suite.TagCache.EXPECT().
+		DeleteTagsByCategory(gomock.Any(), tag.CategoryID, tag.UserID).
+		Return(nil)
 
 	created, err := suite.TagService.Create(suite.Ctx, cmd)
 

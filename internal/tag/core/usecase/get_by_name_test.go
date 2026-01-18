@@ -30,6 +30,10 @@ func TestGetByName_Error_RepositoryFailure(t *testing.T) {
 
 	repoErr := errors.New(usecase.FailedToGetTagByName)
 
+	suite.TagCache.EXPECT().
+		GetTagByName(gomock.Any(), tagName, userID).
+		Return(domain.Tag{}, errors.New("cache miss"))
+
 	suite.TagRepository.EXPECT().
 		GetByName(gomock.Any(), tagName, userID).
 		Return(domain.Tag{}, repoErr)
@@ -55,9 +59,21 @@ func TestGetByName_Success_Found(t *testing.T) {
 		Description: "Daily reading practice",
 	}
 
+	suite.TagCache.EXPECT().
+		GetTagByName(gomock.Any(), tagName, userID).
+		Return(domain.Tag{}, errors.New("cache miss"))
+
 	suite.TagRepository.EXPECT().
 		GetByName(gomock.Any(), tagName, userID).
 		Return(want, nil)
+
+	suite.TagCache.EXPECT().
+		SaveTagByName(gomock.Any(), want, gomock.Any()).
+		Return(nil)
+
+	suite.TagCache.EXPECT().
+		SaveTag(gomock.Any(), want, gomock.Any()).
+		Return(nil)
 
 	got, err := suite.TagService.GetByName(suite.Ctx, tagName, userID)
 
@@ -72,9 +88,17 @@ func TestGetByName_Success_NotFoundReturnsZeroValue(t *testing.T) {
 	const userID uint64 = 1
 	const tagName = "UnknownTag"
 
+	suite.TagCache.EXPECT().
+		GetTagByName(gomock.Any(), tagName, userID).
+		Return(domain.Tag{}, errors.New("cache miss"))
+
 	suite.TagRepository.EXPECT().
 		GetByName(gomock.Any(), tagName, userID).
 		Return(domain.Tag{}, nil)
+
+	suite.TagCache.EXPECT().
+		SaveTagByName(gomock.Any(), domain.Tag{}, gomock.Any()).
+		Return(nil)
 
 	got, err := suite.TagService.GetByName(suite.Ctx, tagName, userID)
 

@@ -8,3 +8,12 @@ type CreateTagCommand struct {
 	CategoryID  uint64
 	Description *string
 }
+
+// UpdateTagCommand represents the data required to update an existing tag.
+type UpdateTagCommand struct {
+	Name        *string
+	Description *string
+	CategoryID  *uint64
+	ID          uint64
+	UserID      uint64
+}

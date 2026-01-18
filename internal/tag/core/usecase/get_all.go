@@ -29,6 +29,14 @@ func (s *Service) GetAll(ctx context.Context, userID uint64) ([]domain.Tag, erro
 		return []domain.Tag{}, errors.New(UserIDIsRequired)
 	}
 
+	span.AddEvent("CheckCache")
+	cachedTags, err := s.TagCache.GetTagList(ctx, userID)
+	if err == nil && cachedTags != nil {
+		span.AddEvent("CacheHit")
+		span.SetStatus(codes.Ok, StatusListedAll)
+		return cachedTags, nil
+	}
+
 	span.AddEvent(EventRepositoryListAll)
 	tags, err := s.TagRepository.GetAll(ctx, userID)
 	if err != nil {
@@ -36,6 +44,12 @@ func (s *Service) GetAll(ctx context.Context, userID uint64) ([]domain.Tag, erro
 		span.SetStatus(codes.Error, FailedToListTags)
 		s.Logger.ErrorwCtx(ctx, FailedToListTags, commonkeys.UserID, strconv.FormatUint(userID, 10), commonkeys.Error, err)
 		return []domain.Tag{}, err
+	}
+
+	span.AddEvent("SaveToCache")
+	err = s.TagCache.SaveTagList(ctx, userID, tags, 0) // use default TTL
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, "failed to save tag list to cache", commonkeys.UserID, strconv.FormatUint(userID, 10), commonkeys.Error, err)
 	}
 
 	span.AddEvent(EventSuccess)

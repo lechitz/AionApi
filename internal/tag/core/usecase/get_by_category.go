@@ -22,12 +22,25 @@ func (s *Service) GetByCategoryID(ctx context.Context, categoryID uint64, userID
 		attribute.String(commonkeys.CategoryID, strconv.FormatUint(categoryID, 10)),
 	)
 
+	span.AddEvent("CheckCache")
+	cachedTags, err := s.TagCache.GetTagsByCategory(ctx, categoryID, userID)
+	if err == nil && cachedTags != nil {
+		span.AddEvent("CacheHit")
+		return cachedTags, nil
+	}
+
 	span.AddEvent(EventRepositoryGet)
 	tags, err := s.TagRepository.GetByCategoryID(ctx, categoryID, userID)
 	if err != nil {
 		span.RecordError(err)
 		s.Logger.ErrorwCtx(ctx, ErrFailedToListTags, commonkeys.Error, err.Error(), commonkeys.UserID, userID, commonkeys.CategoryID, categoryID)
 		return []domain.Tag{}, err
+	}
+
+	span.AddEvent("SaveToCache")
+	err = s.TagCache.SaveTagsByCategory(ctx, categoryID, userID, tags, 0) // use default TTL
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, "failed to save tags to cache", commonkeys.Error, err.Error(), commonkeys.UserID, userID, commonkeys.CategoryID, categoryID)
 	}
 
 	span.AddEvent(EventSuccess)

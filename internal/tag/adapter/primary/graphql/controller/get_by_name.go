@@ -3,7 +3,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -28,25 +27,25 @@ func (h *controller) GetByName(ctx context.Context, tagName string, userID uint6
 
 	// Controller-level preconditions.
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	if tagName == "" {
-		span.SetStatus(codes.Error, ErrTagNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrTagNotFound, commonkeys.TagName, tagName)
-		return nil, errors.New(ErrTagNotFound)
+		span.SetStatus(codes.Error, ErrTagNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrTagNotFound.Error(), commonkeys.TagName, tagName)
+		return nil, ErrTagNotFound
 	}
 
 	// Delegate to use case (input port).
 	tag, err := h.TagService.GetByName(ctx, tagName, userID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, ErrTagNotFound)
+		span.SetStatus(codes.Error, ErrTagNotFound.Error())
 		h.Logger.ErrorwCtx(
 			ctx,
-			ErrTagNotFound,
+			ErrTagNotFound.Error(),
 			commonkeys.Error, err.Error(),
 			commonkeys.UserID, userID,
 			commonkeys.TagName, tagName,

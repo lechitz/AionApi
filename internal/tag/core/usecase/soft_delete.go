@@ -33,6 +33,26 @@ func (s *Service) SoftDelete(ctx context.Context, tagID uint64, userID uint64) e
 		return errors.New(FailedToSoftDeleteTag)
 	}
 
+	span.AddEvent("InvalidateCache")
+	err := s.TagCache.DeleteTag(ctx, tagID, userID)
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, "failed to invalidate tag cache after soft delete",
+			commonkeys.TagID, strconv.FormatUint(tagID, 10),
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.Error, err,
+		)
+	}
+
+	err = s.TagCache.DeleteTagList(ctx, userID)
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, "failed to invalidate tag list cache after soft delete",
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.Error, err,
+		)
+	}
+	// Note: We can't invalidate by category here as we don't have the categoryID
+	// The cache will expire naturally or be invalidated when the category is modified
+
 	span.SetStatus(codes.Ok, StatusSoftDeleted)
 	s.Logger.InfowCtx(ctx, SuccessfullySoftDeletedTag, commonkeys.TagID, strconv.FormatUint(tagID, 10))
 	return nil
