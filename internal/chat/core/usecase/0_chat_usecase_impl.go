@@ -12,14 +12,23 @@ import (
 
 // ChatService provides operations for processing chat messages using the Aion-Chat AI service.
 type ChatService struct {
-	aionChatClient output.AionChatClient
-	logger         logger.ContextLogger
+	aionChatClient   output.AionChatClient
+	chatHistoryRepo  output.ChatHistoryRepository
+	chatHistoryCache output.ChatHistoryCache // Redis cache for fast history access
+	logger           logger.ContextLogger
 }
 
 // NewService creates and returns a new instance of ChatService with the given client and logger dependencies.
-func NewService(client output.AionChatClient, log logger.ContextLogger) input.ChatService {
+func NewService(
+	client output.AionChatClient,
+	historyRepo output.ChatHistoryRepository,
+	historyCache output.ChatHistoryCache,
+	log logger.ContextLogger,
+) input.ChatService {
 	return &ChatService{
-		aionChatClient: client,
-		logger:         log,
+		aionChatClient:   client,
+		chatHistoryRepo:  historyRepo,
+		chatHistoryCache: historyCache,
+		logger:           log,
 	}
 }

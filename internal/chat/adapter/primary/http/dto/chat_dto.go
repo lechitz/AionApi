@@ -20,11 +20,18 @@ type TokenUsage struct {
 	TotalTokens      int `json:"total_tokens"                example:"150"`
 }
 
+// ConversationMessage represents a single message in the conversation history.
+type ConversationMessage struct {
+	Role    string `json:"role"`    // "user" or "assistant"
+	Content string `json:"content"` // Message content
+}
+
 // InternalChatRequest represents the request sent to the Aion-Chat service (Python).
 type InternalChatRequest struct {
-	UserID  uint64                 `json:"user_id"`
-	Message string                 `json:"message"`
-	Context map[string]interface{} `json:"context,omitempty"`
+	UserID              uint64                 `json:"user_id"`
+	Message             string                 `json:"message"`
+	ConversationHistory []ConversationMessage  `json:"conversation_history,omitempty"`
+	Context             map[string]interface{} `json:"context,omitempty"`
 }
 
 // InternalChatResponse represents the response from the Aion-Chat service.

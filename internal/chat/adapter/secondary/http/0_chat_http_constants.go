@@ -28,8 +28,9 @@ const (
 // -----------------------------------------------------------------------------
 
 const (
-	// DefaultTimeout is the default timeout for HTTP requests.
-	DefaultTimeout = 30 * time.Second
+	// DefaultTimeout is the default timeout for HTTP requests to Aion-Chat.
+	// Increased to 60s to handle larger conversation histories with LLM processing.
+	DefaultTimeout = 60 * time.Second
 )
 
 // HTTP path(s) used by Aion-Chat service.
