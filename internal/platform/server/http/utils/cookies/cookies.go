@@ -52,9 +52,33 @@ func SetRefreshCookie(w http.ResponseWriter, token string, cfg config.CookieConf
 	})
 }
 
+// ClearRefreshCookie invalidates the refresh token cookie by setting its value to empty and expiration to a past timestamp.
+// Used by auth logout to prevent stale refresh tokens in browsers.
+func ClearRefreshCookie(w http.ResponseWriter, cfg config.CookieConfig) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    "",
+		Path:     cfg.Path,
+		MaxAge:   -1,
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+		Secure:   secureFlag(cfg),
+		SameSite: http.SameSiteStrictMode,
+	})
+}
+
 // ExtractRefreshToken retrieves the refresh token from the request cookies.
 func ExtractRefreshToken(r *http.Request) (string, error) {
 	c, err := r.Cookie("refresh_token")
+	if err != nil || c == nil || c.Value == "" {
+		return "", err
+	}
+	return c.Value, nil
+}
+
+// ExtractAuthToken retrieves the authentication (access) token from the request cookies.
+func ExtractAuthToken(r *http.Request) (string, error) {
+	c, err := r.Cookie(commonkeys.AuthTokenCookieName)
 	if err != nil || c == nil || c.Value == "" {
 		return "", err
 	}

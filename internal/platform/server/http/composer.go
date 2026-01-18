@@ -14,6 +14,7 @@ import (
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql"
 	httpSwagger "github.com/swaggo/http-swagger"
 
+	adminhandler "github.com/lechitz/AionApi/internal/admin/adapter/primary/http/handler"
 	authhandler "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/handler"
 	chathandler "github.com/lechitz/AionApi/internal/chat/adapter/primary/http/handler"
 	userhandler "github.com/lechitz/AionApi/internal/user/adapter/primary/http/handler"
@@ -37,6 +38,7 @@ import (
 //
 //nolint:funlen // composition of routes/middleware is naturally verbose
 func ComposeHandler(cfg *config.Config, deps *app.Dependencies, log logger.ContextLogger) (http.Handler, error) {
+	// Define the main router for the HTTP server
 	router := chi.New()
 
 	genericHandlers := genericHandler.New(log, cfg.General)
@@ -104,6 +106,11 @@ func ComposeHandler(cfg *config.Config, deps *app.Dependencies, log logger.Conte
 				userhandler.RegisterHTTP(v1, uh, deps.AuthService, log)
 			}
 
+			if deps.AdminService != nil {
+				ah := adminhandler.New(deps.AdminService, cfg, log)
+				adminhandler.RegisterHTTP(v1, ah, deps.AuthService, log)
+			}
+
 			if deps.ChatService != nil {
 				ch := chathandler.New(deps.ChatService, cfg, log)
 				chathandler.RegisterHTTP(v1, ch, deps.AuthService, log)
@@ -115,6 +122,8 @@ func ComposeHandler(cfg *config.Config, deps *app.Dependencies, log logger.Conte
 				deps.CategoryService,
 				deps.TagService,
 				deps.RecordService,
+				deps.ChatService,
+				deps.UserService,
 				log,
 				cfg,
 			)

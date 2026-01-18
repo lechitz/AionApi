@@ -2,6 +2,7 @@
 package app
 
 import (
+	inputAdmin "github.com/lechitz/AionApi/internal/admin/core/ports/input"
 	inputAuth "github.com/lechitz/AionApi/internal/auth/core/ports/input"
 	inputCategory "github.com/lechitz/AionApi/internal/category/core/ports/input"
 	inputChat "github.com/lechitz/AionApi/internal/chat/core/ports/input"
@@ -16,6 +17,7 @@ import (
 type Dependencies struct {
 	AuthService     inputAuth.AuthService
 	UserService     inputUser.UserService
+	AdminService    inputAdmin.AdminService
 	CategoryService inputCategory.CategoryService
 	TagService      inputTag.TagService
 	RecordService   inputRecord.RecordService

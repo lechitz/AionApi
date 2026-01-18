@@ -96,6 +96,7 @@ type CacheOut struct {
 	TagCache      cache.Cache `name:"tagCache"`
 	RecordCache   cache.Cache `name:"recordCache"`
 	UserCache     cache.Cache `name:"userCache"`
+	ChatCache     cache.Cache `name:"chatCache"`
 }
 
 // ProvideCache initializes all cache instances for bounded contexts.
@@ -149,6 +150,11 @@ func ProvideCache(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogger)
 		return CacheOut{}, err
 	}
 
+	chatCache, err := createCache("chat", cfg.Cache.ChatDB)
+	if err != nil {
+		return CacheOut{}, err
+	}
+
 	// Register shutdown hook to close all caches
 	lc.Append(fx.Hook{
 		OnStop: func(context.Context) error {
@@ -164,6 +170,7 @@ func ProvideCache(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogger)
 		TagCache:      tagCache,
 		RecordCache:   recordCache,
 		UserCache:     userCache,
+		ChatCache:     chatCache,
 	}, nil
 }
 

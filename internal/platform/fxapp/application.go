@@ -4,11 +4,15 @@ package fxapp
 import (
 	"github.com/lechitz/AionApi/internal/adapter/secondary/hasher"
 	"github.com/lechitz/AionApi/internal/adapter/secondary/token"
+	adminRepo "github.com/lechitz/AionApi/internal/admin/adapter/secondary/db/repository"
+	admin "github.com/lechitz/AionApi/internal/admin/core/usecase"
 	authCache "github.com/lechitz/AionApi/internal/auth/adapter/secondary/cache"
 	auth "github.com/lechitz/AionApi/internal/auth/core/usecase"
 	categoryCache "github.com/lechitz/AionApi/internal/category/adapter/secondary/cache"
 	categoryRepo "github.com/lechitz/AionApi/internal/category/adapter/secondary/db/repository"
 	category "github.com/lechitz/AionApi/internal/category/core/usecase"
+	chatHistoryCache "github.com/lechitz/AionApi/internal/chat/adapter/secondary/cache/repository"
+	chatHistoryRepo "github.com/lechitz/AionApi/internal/chat/adapter/secondary/db/repository"
 	chatClient "github.com/lechitz/AionApi/internal/chat/adapter/secondary/http"
 	chat "github.com/lechitz/AionApi/internal/chat/core/usecase"
 	"github.com/lechitz/AionApi/internal/platform/app"
@@ -48,6 +52,7 @@ type appDepsParams struct {
 	TagCache      cache.Cache `name:"tagCache"`
 	RecordCache   cache.Cache `name:"recordCache"`
 	UserCache     cache.Cache `name:"userCache"`
+	ChatCache     cache.Cache `name:"chatCache"`
 	HTTPClient    httpclient.HTTPClient
 	Log           logger.ContextLogger
 }
@@ -59,28 +64,37 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 	hasherProvider := hasher.New()
 	tokenProvider := token.NewProvider(deps.Cfg.Secret.Key)
 
-	userRepository := userRepo.New(deps.DB, deps.Log)
+	// Admin repository - must be created first as UserRepository depends on it
+	adminRepository := adminRepo.New(deps.DB, deps.Log)
+
+	// User repository - receives adminRepository for role assignment delegation
+	userRepository := userRepo.New(deps.DB, deps.Log, adminRepository)
+
 	categoryRepository := categoryRepo.New(deps.DB, deps.Log)
 	tagRepository := tagRepo.New(deps.DB, deps.Log)
 	recordRepository := recordRepo.New(deps.DB, deps.Log)
+	chatHistoryRepository := chatHistoryRepo.New(deps.DB, deps.Log)
 
 	authCacheStore := authCache.NewStore(deps.AuthCache, deps.Log)
 	userCacheStore := userCache.NewStore(deps.UserCache, deps.Log)
 	categoryCacheStore := categoryCache.NewStore(deps.CategoryCache, deps.Log)
 	tagCacheStore := tagCache.NewStore(deps.TagCache, deps.Log)
 	recordCacheStore := recordCache.NewStore(deps.RecordCache, deps.Log)
+	chatHistoryCacheStore := chatHistoryCache.NewChatHistoryCache(deps.ChatCache, deps.Log)
 	chatHTTPClient := chatClient.New(deps.HTTPClient, deps.Cfg.AionChat.BaseURL, deps.Log)
 
-	authService := auth.NewService(userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
+	authService := auth.NewService(adminRepository, userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
 	userService := user.NewService(userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
+	adminService := admin.NewService(adminRepository, deps.Log)
 	categoryService := category.NewService(categoryRepository, categoryCacheStore, deps.Log)
 	tagService := tag.NewService(tagRepository, tagCacheStore, deps.Log)
 	recordService := record.NewService(recordRepository, recordCacheStore, tagRepository, deps.Log)
-	chatService := chat.NewService(chatHTTPClient, deps.Log)
+	chatService := chat.NewService(chatHTTPClient, chatHistoryRepository, chatHistoryCacheStore, deps.Log)
 
 	return &AppDependencies{
 		AuthService:     authService,
 		UserService:     userService,
+		AdminService:    adminService,
 		CategoryService: categoryService,
 		TagService:      tagService,
 		RecordService:   recordService,

@@ -13,10 +13,10 @@ type Config struct {
 	Observability ObservabilityConfig
 	AionChat      AionChatConfig
 	Cookie        CookieConfig
-	Cache         CacheConfig
 	ServerHTTP    ServerHTTP
 	DB            DBConfig
 	ServerGraphql ServerGraphql
+	Cache         CacheConfig
 	Application   Application
 }
 
