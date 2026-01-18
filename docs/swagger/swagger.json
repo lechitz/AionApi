@@ -21,6 +21,366 @@
     },
     "basePath": "/api/v1",
     "paths": {
+        "/admin/users/{user_id}/block": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Blocks a user by assigning blocked role. Cannot block users with equal or higher privilege.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Block user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User blocked",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - cannot block user with equal/higher privilege",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{user_id}/demote-admin": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Removes admin role from a user. Only admins and owners can demote.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Demote user from admin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User demoted from admin",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - insufficient privileges",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{user_id}/promote-admin": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Adds admin role to a user. Only admins and owners can promote to admin.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Promote user to admin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User promoted to admin",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - insufficient privileges",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{user_id}/roles": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Generic role update endpoint with minimal hierarchy validation.\n**DEPRECATED**: Prefer specific endpoints for better validation:\n- PUT /admin/users/{id}/promote-admin (adds admin role)\n- PUT /admin/users/{id}/demote-admin (removes admin role)\n- PUT /admin/users/{id}/block (blocks user)\n- PUT /admin/users/{id}/unblock (unblocks user)\nThis endpoint provides maximum flexibility but less validation.\nUse only for special administrative operations or bulk scripts.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update user roles (Legacy)",
+                "deprecated": true,
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New roles to assign",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Roles updated",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - not an admin",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{user_id}/unblock": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Unblocks a user by restoring default user role.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Unblock user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User unblocked",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - insufficient privileges",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Validates credentials and issues a session token (JWT or cookie). On success, returns user-facing info and sets `auth_token` cookie.",
@@ -121,6 +481,40 @@
                     },
                     "500": {
                         "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/session": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Returns the authenticated user's session snapshot (user identity + roles). Intended for UIs.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get current session",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.SessionResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "type": "string"
                         }
@@ -541,6 +935,59 @@
         }
     },
     "definitions": {
+        "github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesRequest": {
+            "type": "object",
+            "properties": {
+                "roles": {
+                    "description": "Roles is the list of roles to assign to the user.\nValid roles: \"user\", \"admin\", \"blocked\"\nExample: [\"user\", \"admin\"]",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "user",
+                        "admin"
+                    ]
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email is the user's email.\nExample: \"alice@example.com\"",
+                    "type": "string",
+                    "example": "alice@example.com"
+                },
+                "roles": {
+                    "description": "Roles is the updated list of roles.\nExample: [\"user\", \"admin\"]",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "user",
+                        "admin"
+                    ]
+                },
+                "updated_at": {
+                    "description": "UpdatedAt is the timestamp when the user was updated.\nExample: \"2025-09-14T22:01:02Z\"",
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-09-14T22:01:02Z"
+                },
+                "user_id": {
+                    "description": "ID is the user's unique identifier.\nExample: 42",
+                    "type": "integer",
+                    "example": 42
+                },
+                "username": {
+                    "description": "Username is the user's username.\nExample: \"alice\"",
+                    "type": "string",
+                    "example": "alice"
+                }
+            }
+        },
         "github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserRequest": {
             "type": "object",
             "properties": {
@@ -569,21 +1016,56 @@
                     "type": "string",
                     "example": "João Pereira"
                 },
+                "token": {
+                    "description": "Token is the JSON Web Token used for authenticating subsequent requests.\nExample: \"eyJhbGciOi...\"",
+                    "type": "string",
+                    "example": "eyJhbGciOi..."
+                }
+            }
+        },
+        "github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.SessionResponse": {
+            "type": "object",
+            "properties": {
+                "authenticated": {
+                    "description": "Authenticated indicates whether the request is authenticated.",
+                    "type": "boolean",
+                    "example": true
+                },
+                "email": {
+                    "description": "Email is the email address of the authenticated user.",
+                    "type": "string",
+                    "example": "joao@example.com"
+                },
+                "expires_at": {
+                    "description": "ExpiresAt is the access token expiration time (if available).",
+                    "type": "string",
+                    "example": "2026-01-10T20:05:00Z"
+                },
+                "name": {
+                    "description": "Name is a friendly display name for the authenticated user.",
+                    "type": "string",
+                    "example": "João Pereira"
+                },
                 "roles": {
-                    "description": "Roles are the permissions or roles assigned to the user.\nExample: [\"admin\", \"user\"]",
+                    "description": "Roles are the user's role names (authorization snapshot).",
                     "type": "array",
                     "items": {
                         "type": "string"
                     },
                     "example": [
-                        "admin",
-                        "user"
+                        "user",
+                        "admin"
                     ]
                 },
-                "token": {
-                    "description": "Token is the JSON Web Token used for authenticating subsequent requests.\nExample: \"eyJhbGciOi...\"",
+                "user_id": {
+                    "description": "UserID is the unique identifier for the authenticated user.",
+                    "type": "integer",
+                    "example": 42
+                },
+                "username": {
+                    "description": "Username is the unique username for the authenticated user.",
                     "type": "string",
-                    "example": "eyJhbGciOi..."
+                    "example": "joaopereira"
                 }
             }
         },

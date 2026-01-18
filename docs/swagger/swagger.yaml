@@ -1,5 +1,57 @@
 basePath: /api/v1
 definitions:
+  github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesRequest:
+    properties:
+      roles:
+        description: |-
+          Roles is the list of roles to assign to the user.
+          Valid roles: "user", "admin", "blocked"
+          Example: ["user", "admin"]
+        example:
+        - user
+        - admin
+        items:
+          type: string
+        type: array
+    type: object
+  github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse:
+    properties:
+      email:
+        description: |-
+          Email is the user's email.
+          Example: "alice@example.com"
+        example: alice@example.com
+        type: string
+      roles:
+        description: |-
+          Roles is the updated list of roles.
+          Example: ["user", "admin"]
+        example:
+        - user
+        - admin
+        items:
+          type: string
+        type: array
+      updated_at:
+        description: |-
+          UpdatedAt is the timestamp when the user was updated.
+          Example: "2025-09-14T22:01:02Z"
+        example: "2025-09-14T22:01:02Z"
+        format: date-time
+        type: string
+      user_id:
+        description: |-
+          ID is the user's unique identifier.
+          Example: 42
+        example: 42
+        type: integer
+      username:
+        description: |-
+          Username is the user's username.
+          Example: "alice"
+        example: alice
+        type: string
+    type: object
   github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.LoginUserRequest:
     properties:
       password:
@@ -29,21 +81,46 @@ definitions:
           Example: "João Pereira"
         example: João Pereira
         type: string
-      roles:
-        description: |-
-          Roles are the permissions or roles assigned to the user.
-          Example: ["admin", "user"]
-        example:
-        - admin
-        - user
-        items:
-          type: string
-        type: array
       token:
         description: |-
           Token is the JSON Web Token used for authenticating subsequent requests.
           Example: "eyJhbGciOi..."
         example: eyJhbGciOi...
+        type: string
+    type: object
+  github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.SessionResponse:
+    properties:
+      authenticated:
+        description: Authenticated indicates whether the request is authenticated.
+        example: true
+        type: boolean
+      email:
+        description: Email is the email address of the authenticated user.
+        example: joao@example.com
+        type: string
+      expires_at:
+        description: ExpiresAt is the access token expiration time (if available).
+        example: "2026-01-10T20:05:00Z"
+        type: string
+      name:
+        description: Name is a friendly display name for the authenticated user.
+        example: João Pereira
+        type: string
+      roles:
+        description: Roles are the user's role names (authorization snapshot).
+        example:
+        - user
+        - admin
+        items:
+          type: string
+        type: array
+      user_id:
+        description: UserID is the unique identifier for the authenticated user.
+        example: 42
+        type: integer
+      username:
+        description: Username is the unique username for the authenticated user.
+        example: joaopereira
         type: string
     type: object
   github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatRequest:
@@ -322,6 +399,243 @@ info:
   title: AionAPI — REST API Documentation
   version: 0.1.0
 paths:
+  /admin/users/{user_id}/block:
+    put:
+      consumes:
+      - application/json
+      description: Blocks a user by assigning blocked role. Cannot block users with
+        equal or higher privilege.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User blocked
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse'
+        "400":
+          description: Invalid user_id
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden - cannot block user with equal/higher privilege
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Block user
+      tags:
+      - Admin
+  /admin/users/{user_id}/demote-admin:
+    put:
+      consumes:
+      - application/json
+      description: Removes admin role from a user. Only admins and owners can demote.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User demoted from admin
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse'
+        "400":
+          description: Invalid user_id
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden - insufficient privileges
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Demote user from admin
+      tags:
+      - Admin
+  /admin/users/{user_id}/promote-admin:
+    put:
+      consumes:
+      - application/json
+      description: Adds admin role to a user. Only admins and owners can promote to
+        admin.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User promoted to admin
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse'
+        "400":
+          description: Invalid user_id
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden - insufficient privileges
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Promote user to admin
+      tags:
+      - Admin
+  /admin/users/{user_id}/roles:
+    put:
+      consumes:
+      - application/json
+      deprecated: true
+      description: |-
+        Generic role update endpoint with minimal hierarchy validation.
+        **DEPRECATED**: Prefer specific endpoints for better validation:
+        - PUT /admin/users/{id}/promote-admin (adds admin role)
+        - PUT /admin/users/{id}/demote-admin (removes admin role)
+        - PUT /admin/users/{id}/block (blocks user)
+        - PUT /admin/users/{id}/unblock (unblocks user)
+        This endpoint provides maximum flexibility but less validation.
+        Use only for special administrative operations or bulk scripts.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: New roles to assign
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Roles updated
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse'
+        "400":
+          description: Invalid request or user_id
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden - not an admin
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Update user roles (Legacy)
+      tags:
+      - Admin
+  /admin/users/{user_id}/unblock:
+    put:
+      consumes:
+      - application/json
+      description: Unblocks a user by restoring default user role.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User unblocked
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_admin_adapter_primary_http_dto.UpdateUserRolesResponse'
+        "400":
+          description: Invalid user_id
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden - insufficient privileges
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Unblock user
+      tags:
+      - Admin
   /auth/login:
     post:
       consumes:
@@ -392,6 +706,27 @@ paths:
       - BearerAuth: []
       - CookieAuth: []
       summary: Logout current user
+      tags:
+      - Auth
+  /auth/session:
+    get:
+      description: Returns the authenticated user's session snapshot (user identity
+        + roles). Intended for UIs.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lechitz_AionApi_internal_auth_adapter_primary_http_dto.SessionResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Get current session
       tags:
       - Auth
   /chat:
