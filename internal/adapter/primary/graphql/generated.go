@@ -57,6 +57,30 @@ type ComplexityRoot struct {
 		UserID      func(childComplexity int) int
 	}
 
+	CategoryCount struct {
+		Count func(childComplexity int) int
+		ID    func(childComplexity int) int
+		Name  func(childComplexity int) int
+	}
+
+	ChatContext struct {
+		RecentChats     func(childComplexity int) int
+		TotalCategories func(childComplexity int) int
+		TotalRecords    func(childComplexity int) int
+		TotalTags       func(childComplexity int) int
+	}
+
+	ChatMessage struct {
+		CreatedAt     func(childComplexity int) int
+		FunctionCalls func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Message       func(childComplexity int) int
+		Response      func(childComplexity int) int
+		TokensUsed    func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		UserID        func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CreateCategory       func(childComplexity int, input model.CreateCategoryInput) int
 		CreateRecord         func(childComplexity int, input model.CreateRecordInput) int
@@ -68,27 +92,33 @@ type ComplexityRoot struct {
 		SoftDeleteTag        func(childComplexity int, input model.DeleteTagInput) int
 		UpdateCategory       func(childComplexity int, input model.UpdateCategoryInput) int
 		UpdateRecord         func(childComplexity int, input model.UpdateRecordInput) int
+		UpdateTag            func(childComplexity int, input model.UpdateTagInput) int
 	}
 
 	Query struct {
-		Categories       func(childComplexity int) int
-		CategoryByID     func(childComplexity int, id string) int
-		CategoryByName   func(childComplexity int, name string) int
-		Empty            func(childComplexity int) int
-		RecordByID       func(childComplexity int, id string) int
-		Records          func(childComplexity int, limit *int32, afterEventTime *string, afterID *string) int
-		RecordsBetween   func(childComplexity int, startDate string, endDate string, limit *int32) int
-		RecordsByDay     func(childComplexity int, date string) int
-		RecordsByTag     func(childComplexity int, tagID string, limit *int32) int
-		RecordsUntil     func(childComplexity int, until string, limit *int32) int
-		TagByID          func(childComplexity int, id string) int
-		TagByName        func(childComplexity int, name string) int
-		Tags             func(childComplexity int) int
-		TagsByCategoryID func(childComplexity int, categoryID string) int
+		Categories        func(childComplexity int) int
+		CategoryByID      func(childComplexity int, id string) int
+		CategoryByName    func(childComplexity int, name string) int
+		ChatContext       func(childComplexity int) int
+		ChatHistory       func(childComplexity int, limit *int32, offset *int32) int
+		Empty             func(childComplexity int) int
+		RecordByID        func(childComplexity int, id string) int
+		Records           func(childComplexity int, limit *int32, afterEventTime *string, afterID *string) int
+		RecordsBetween    func(childComplexity int, startDate string, endDate string, limit *int32) int
+		RecordsByCategory func(childComplexity int, categoryID string, limit *int32) int
+		RecordsByDay      func(childComplexity int, date string) int
+		RecordsByTag      func(childComplexity int, tagID string, limit *int32) int
+		RecordsLatest     func(childComplexity int, limit *int32) int
+		RecordsUntil      func(childComplexity int, until string, limit *int32) int
+		SearchRecords     func(childComplexity int, filters model.SearchFilters) int
+		TagByID           func(childComplexity int, id string) int
+		TagByName         func(childComplexity int, name string) int
+		Tags              func(childComplexity int) int
+		TagsByCategoryID  func(childComplexity int, categoryID string) int
+		UserStats         func(childComplexity int) int
 	}
 
 	Record struct {
-		CategoryID      func(childComplexity int) int
 		CreatedAt       func(childComplexity int) int
 		Description     func(childComplexity int) int
 		DurationSeconds func(childComplexity int) int
@@ -99,7 +129,6 @@ type ComplexityRoot struct {
 		Status          func(childComplexity int) int
 		TagID           func(childComplexity int) int
 		Timezone        func(childComplexity int) int
-		Title           func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
 		UserID          func(childComplexity int) int
 		Value           func(childComplexity int) int
@@ -114,6 +143,22 @@ type ComplexityRoot struct {
 		UpdatedAt   func(childComplexity int) int
 		UserID      func(childComplexity int) int
 	}
+
+	TagCount struct {
+		Count func(childComplexity int) int
+		ID    func(childComplexity int) int
+		Name  func(childComplexity int) int
+	}
+
+	UserStats struct {
+		MostUsedCategory func(childComplexity int) int
+		MostUsedTag      func(childComplexity int) int
+		RecordsThisMonth func(childComplexity int) int
+		RecordsThisWeek  func(childComplexity int) int
+		TotalCategories  func(childComplexity int) int
+		TotalRecords     func(childComplexity int) int
+		TotalTags        func(childComplexity int) int
+	}
 }
 
 type MutationResolver interface {
@@ -126,6 +171,7 @@ type MutationResolver interface {
 	SoftDeleteRecord(ctx context.Context, input model.DeleteRecordInput) (bool, error)
 	SoftDeleteAllRecords(ctx context.Context) (bool, error)
 	CreateTag(ctx context.Context, input model.CreateTagInput) (*model.Tag, error)
+	UpdateTag(ctx context.Context, input model.UpdateTagInput) (*model.Tag, error)
 	SoftDeleteTag(ctx context.Context, input model.DeleteTagInput) (bool, error)
 }
 type QueryResolver interface {
@@ -133,16 +179,22 @@ type QueryResolver interface {
 	Categories(ctx context.Context) ([]*model.Category, error)
 	CategoryByID(ctx context.Context, id string) (*model.Category, error)
 	CategoryByName(ctx context.Context, name string) (*model.Category, error)
+	ChatHistory(ctx context.Context, limit *int32, offset *int32) ([]*model.ChatMessage, error)
+	ChatContext(ctx context.Context) (*model.ChatContext, error)
 	RecordByID(ctx context.Context, id string) (*model.Record, error)
 	Records(ctx context.Context, limit *int32, afterEventTime *string, afterID *string) ([]*model.Record, error)
+	RecordsLatest(ctx context.Context, limit *int32) ([]*model.Record, error)
 	RecordsByTag(ctx context.Context, tagID string, limit *int32) ([]*model.Record, error)
+	RecordsByCategory(ctx context.Context, categoryID string, limit *int32) ([]*model.Record, error)
 	RecordsByDay(ctx context.Context, date string) ([]*model.Record, error)
 	RecordsUntil(ctx context.Context, until string, limit *int32) ([]*model.Record, error)
 	RecordsBetween(ctx context.Context, startDate string, endDate string, limit *int32) ([]*model.Record, error)
+	SearchRecords(ctx context.Context, filters model.SearchFilters) ([]*model.Record, error)
 	TagByName(ctx context.Context, name string) (*model.Tag, error)
 	TagByID(ctx context.Context, id string) (*model.Tag, error)
 	Tags(ctx context.Context) ([]*model.Tag, error)
 	TagsByCategoryID(ctx context.Context, categoryID string) ([]*model.Tag, error)
+	UserStats(ctx context.Context) (*model.UserStats, error)
 }
 
 type executableSchema struct {
@@ -200,6 +252,99 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Category.UserID(childComplexity), true
+
+	case "CategoryCount.count":
+		if e.complexity.CategoryCount.Count == nil {
+			break
+		}
+
+		return e.complexity.CategoryCount.Count(childComplexity), true
+	case "CategoryCount.id":
+		if e.complexity.CategoryCount.ID == nil {
+			break
+		}
+
+		return e.complexity.CategoryCount.ID(childComplexity), true
+	case "CategoryCount.name":
+		if e.complexity.CategoryCount.Name == nil {
+			break
+		}
+
+		return e.complexity.CategoryCount.Name(childComplexity), true
+
+	case "ChatContext.recentChats":
+		if e.complexity.ChatContext.RecentChats == nil {
+			break
+		}
+
+		return e.complexity.ChatContext.RecentChats(childComplexity), true
+	case "ChatContext.totalCategories":
+		if e.complexity.ChatContext.TotalCategories == nil {
+			break
+		}
+
+		return e.complexity.ChatContext.TotalCategories(childComplexity), true
+	case "ChatContext.totalRecords":
+		if e.complexity.ChatContext.TotalRecords == nil {
+			break
+		}
+
+		return e.complexity.ChatContext.TotalRecords(childComplexity), true
+	case "ChatContext.totalTags":
+		if e.complexity.ChatContext.TotalTags == nil {
+			break
+		}
+
+		return e.complexity.ChatContext.TotalTags(childComplexity), true
+
+	case "ChatMessage.createdAt":
+		if e.complexity.ChatMessage.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.CreatedAt(childComplexity), true
+	case "ChatMessage.functionCalls":
+		if e.complexity.ChatMessage.FunctionCalls == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.FunctionCalls(childComplexity), true
+	case "ChatMessage.id":
+		if e.complexity.ChatMessage.ID == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.ID(childComplexity), true
+	case "ChatMessage.message":
+		if e.complexity.ChatMessage.Message == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.Message(childComplexity), true
+	case "ChatMessage.response":
+		if e.complexity.ChatMessage.Response == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.Response(childComplexity), true
+	case "ChatMessage.tokensUsed":
+		if e.complexity.ChatMessage.TokensUsed == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.TokensUsed(childComplexity), true
+	case "ChatMessage.updatedAt":
+		if e.complexity.ChatMessage.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.UpdatedAt(childComplexity), true
+	case "ChatMessage.userId":
+		if e.complexity.ChatMessage.UserID == nil {
+			break
+		}
+
+		return e.complexity.ChatMessage.UserID(childComplexity), true
 
 	case "Mutation.createCategory":
 		if e.complexity.Mutation.CreateCategory == nil {
@@ -301,6 +446,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateRecord(childComplexity, args["input"].(model.UpdateRecordInput)), true
+	case "Mutation.updateTag":
+		if e.complexity.Mutation.UpdateTag == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateTag_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateTag(childComplexity, args["input"].(model.UpdateTagInput)), true
 
 	case "Query.categories":
 		if e.complexity.Query.Categories == nil {
@@ -330,6 +486,23 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.CategoryByName(childComplexity, args["name"].(string)), true
+	case "Query.chatContext":
+		if e.complexity.Query.ChatContext == nil {
+			break
+		}
+
+		return e.complexity.Query.ChatContext(childComplexity), true
+	case "Query.chatHistory":
+		if e.complexity.Query.ChatHistory == nil {
+			break
+		}
+
+		args, err := ec.field_Query_chatHistory_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ChatHistory(childComplexity, args["limit"].(*int32), args["offset"].(*int32)), true
 	case "Query._empty":
 		if e.complexity.Query.Empty == nil {
 			break
@@ -369,6 +542,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.RecordsBetween(childComplexity, args["startDate"].(string), args["endDate"].(string), args["limit"].(*int32)), true
+	case "Query.recordsByCategory":
+		if e.complexity.Query.RecordsByCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Query_recordsByCategory_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RecordsByCategory(childComplexity, args["categoryId"].(string), args["limit"].(*int32)), true
 	case "Query.recordsByDay":
 		if e.complexity.Query.RecordsByDay == nil {
 			break
@@ -391,6 +575,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.RecordsByTag(childComplexity, args["tagId"].(string), args["limit"].(*int32)), true
+	case "Query.recordsLatest":
+		if e.complexity.Query.RecordsLatest == nil {
+			break
+		}
+
+		args, err := ec.field_Query_recordsLatest_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RecordsLatest(childComplexity, args["limit"].(*int32)), true
 	case "Query.recordsUntil":
 		if e.complexity.Query.RecordsUntil == nil {
 			break
@@ -402,6 +597,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.RecordsUntil(childComplexity, args["until"].(string), args["limit"].(*int32)), true
+	case "Query.searchRecords":
+		if e.complexity.Query.SearchRecords == nil {
+			break
+		}
+
+		args, err := ec.field_Query_searchRecords_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.SearchRecords(childComplexity, args["filters"].(model.SearchFilters)), true
 	case "Query.tagById":
 		if e.complexity.Query.TagByID == nil {
 			break
@@ -441,13 +647,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.TagsByCategoryID(childComplexity, args["categoryId"].(string)), true
-
-	case "Record.categoryId":
-		if e.complexity.Record.CategoryID == nil {
+	case "Query.userStats":
+		if e.complexity.Query.UserStats == nil {
 			break
 		}
 
-		return e.complexity.Record.CategoryID(childComplexity), true
+		return e.complexity.Query.UserStats(childComplexity), true
+
 	case "Record.createdAt":
 		if e.complexity.Record.CreatedAt == nil {
 			break
@@ -508,12 +714,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Record.Timezone(childComplexity), true
-	case "Record.title":
-		if e.complexity.Record.Title == nil {
-			break
-		}
-
-		return e.complexity.Record.Title(childComplexity), true
 	case "Record.updatedAt":
 		if e.complexity.Record.UpdatedAt == nil {
 			break
@@ -576,6 +776,68 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Tag.UserID(childComplexity), true
 
+	case "TagCount.count":
+		if e.complexity.TagCount.Count == nil {
+			break
+		}
+
+		return e.complexity.TagCount.Count(childComplexity), true
+	case "TagCount.id":
+		if e.complexity.TagCount.ID == nil {
+			break
+		}
+
+		return e.complexity.TagCount.ID(childComplexity), true
+	case "TagCount.name":
+		if e.complexity.TagCount.Name == nil {
+			break
+		}
+
+		return e.complexity.TagCount.Name(childComplexity), true
+
+	case "UserStats.mostUsedCategory":
+		if e.complexity.UserStats.MostUsedCategory == nil {
+			break
+		}
+
+		return e.complexity.UserStats.MostUsedCategory(childComplexity), true
+	case "UserStats.mostUsedTag":
+		if e.complexity.UserStats.MostUsedTag == nil {
+			break
+		}
+
+		return e.complexity.UserStats.MostUsedTag(childComplexity), true
+	case "UserStats.recordsThisMonth":
+		if e.complexity.UserStats.RecordsThisMonth == nil {
+			break
+		}
+
+		return e.complexity.UserStats.RecordsThisMonth(childComplexity), true
+	case "UserStats.recordsThisWeek":
+		if e.complexity.UserStats.RecordsThisWeek == nil {
+			break
+		}
+
+		return e.complexity.UserStats.RecordsThisWeek(childComplexity), true
+	case "UserStats.totalCategories":
+		if e.complexity.UserStats.TotalCategories == nil {
+			break
+		}
+
+		return e.complexity.UserStats.TotalCategories(childComplexity), true
+	case "UserStats.totalRecords":
+		if e.complexity.UserStats.TotalRecords == nil {
+			break
+		}
+
+		return e.complexity.UserStats.TotalRecords(childComplexity), true
+	case "UserStats.totalTags":
+		if e.complexity.UserStats.TotalTags == nil {
+			break
+		}
+
+		return e.complexity.UserStats.TotalTags(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -590,8 +852,10 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputDeleteCategoryInput,
 		ec.unmarshalInputDeleteRecordInput,
 		ec.unmarshalInputDeleteTagInput,
+		ec.unmarshalInputSearchFilters,
 		ec.unmarshalInputUpdateCategoryInput,
 		ec.unmarshalInputUpdateRecordInput,
+		ec.unmarshalInputUpdateTagInput,
 	)
 	first := true
 
@@ -688,7 +952,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
 }
 
-//go:embed "schema/modules/category.graphqls" "schema/modules/record.graphqls" "schema/modules/tags.graphqls" "schema/root.graphqls"
+//go:embed "schema/modules/category.graphqls" "schema/modules/chat.graphqls" "schema/modules/record.graphqls" "schema/modules/tags.graphqls" "schema/modules/user.graphqls" "schema/root.graphqls"
 var sourcesFS embed.FS
 
 func sourceData(filename string) string {
@@ -701,8 +965,10 @@ func sourceData(filename string) string {
 
 var sources = []*ast.Source{
 	{Name: "schema/modules/category.graphqls", Input: sourceData("schema/modules/category.graphqls"), BuiltIn: false},
+	{Name: "schema/modules/chat.graphqls", Input: sourceData("schema/modules/chat.graphqls"), BuiltIn: false},
 	{Name: "schema/modules/record.graphqls", Input: sourceData("schema/modules/record.graphqls"), BuiltIn: false},
 	{Name: "schema/modules/tags.graphqls", Input: sourceData("schema/modules/tags.graphqls"), BuiltIn: false},
+	{Name: "schema/modules/user.graphqls", Input: sourceData("schema/modules/user.graphqls"), BuiltIn: false},
 	{Name: "schema/root.graphqls", Input: sourceData("schema/root.graphqls"), BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -810,6 +1076,17 @@ func (ec *executionContext) field_Mutation_updateRecord_args(ctx context.Context
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateTag_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateTagInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -840,6 +1117,22 @@ func (ec *executionContext) field_Query_categoryByName_args(ctx context.Context,
 		return nil, err
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_chatHistory_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint32)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "offset", ec.unmarshalOInt2ᚖint32)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg1
 	return args, nil
 }
 
@@ -875,6 +1168,22 @@ func (ec *executionContext) field_Query_recordsBetween_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_recordsByCategory_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "categoryId", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
+	}
+	args["categoryId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint32)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_recordsByDay_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -899,6 +1208,17 @@ func (ec *executionContext) field_Query_recordsByTag_args(ctx context.Context, r
 		return nil, err
 	}
 	args["limit"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_recordsLatest_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint32)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
 	return args, nil
 }
 
@@ -936,6 +1256,17 @@ func (ec *executionContext) field_Query_records_args(ctx context.Context, rawArg
 		return nil, err
 	}
 	args["afterId"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_searchRecords_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "filters", ec.unmarshalNSearchFilters2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSearchFilters)
+	if err != nil {
+		return nil, err
+	}
+	args["filters"] = arg0
 	return args, nil
 }
 
@@ -1188,6 +1519,459 @@ func (ec *executionContext) _Category_icon(ctx context.Context, field graphql.Co
 func (ec *executionContext) fieldContext_Category_icon(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Category",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CategoryCount_id(ctx context.Context, field graphql.CollectedField, obj *model.CategoryCount) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CategoryCount_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CategoryCount_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CategoryCount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CategoryCount_name(ctx context.Context, field graphql.CollectedField, obj *model.CategoryCount) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CategoryCount_name,
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CategoryCount_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CategoryCount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CategoryCount_count(ctx context.Context, field graphql.CollectedField, obj *model.CategoryCount) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CategoryCount_count,
+		func(ctx context.Context) (any, error) {
+			return obj.Count, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CategoryCount_count(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CategoryCount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatContext_recentChats(ctx context.Context, field graphql.CollectedField, obj *model.ChatContext) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatContext_recentChats,
+		func(ctx context.Context) (any, error) {
+			return obj.RecentChats, nil
+		},
+		nil,
+		ec.marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessageᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatContext_recentChats(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ChatMessage_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_ChatMessage_userId(ctx, field)
+			case "message":
+				return ec.fieldContext_ChatMessage_message(ctx, field)
+			case "response":
+				return ec.fieldContext_ChatMessage_response(ctx, field)
+			case "tokensUsed":
+				return ec.fieldContext_ChatMessage_tokensUsed(ctx, field)
+			case "functionCalls":
+				return ec.fieldContext_ChatMessage_functionCalls(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_ChatMessage_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_ChatMessage_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ChatMessage", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatContext_totalRecords(ctx context.Context, field graphql.CollectedField, obj *model.ChatContext) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatContext_totalRecords,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalRecords, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatContext_totalRecords(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatContext_totalCategories(ctx context.Context, field graphql.CollectedField, obj *model.ChatContext) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatContext_totalCategories,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalCategories, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatContext_totalCategories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatContext_totalTags(ctx context.Context, field graphql.CollectedField, obj *model.ChatContext) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatContext_totalTags,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalTags, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatContext_totalTags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_id(ctx context.Context, field graphql.CollectedField, obj *model.ChatMessage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatMessage_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_userId(ctx context.Context, field graphql.CollectedField, obj *model.ChatMessage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatMessage_userId,
+		func(ctx context.Context) (any, error) {
+			return obj.UserID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_message(ctx context.Context, field graphql.CollectedField, obj *model.ChatMessage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatMessage_message,
+		func(ctx context.Context) (any, error) {
+			return obj.Message, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_message(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_response(ctx context.Context, field graphql.CollectedField, obj *model.ChatMessage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatMessage_response,
+		func(ctx context.Context) (any, error) {
+			return obj.Response, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_response(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_tokensUsed(ctx context.Context, field graphql.CollectedField, obj *model.ChatMessage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatMessage_tokensUsed,
+		func(ctx context.Context) (any, error) {
+			return obj.TokensUsed, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_tokensUsed(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_functionCalls(ctx context.Context, field graphql.CollectedField, obj *model.ChatMessage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatMessage_functionCalls,
+		func(ctx context.Context) (any, error) {
+			return obj.FunctionCalls, nil
+		},
+		nil,
+		ec.marshalOJSON2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_functionCalls(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.ChatMessage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatMessage_createdAt,
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ChatMessage_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.ChatMessage) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_ChatMessage_updatedAt,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_ChatMessage_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ChatMessage",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1479,14 +2263,10 @@ func (ec *executionContext) fieldContext_Mutation_createRecord(ctx context.Conte
 				return ec.fieldContext_Record_id(ctx, field)
 			case "userId":
 				return ec.fieldContext_Record_userId(ctx, field)
-			case "categoryId":
-				return ec.fieldContext_Record_categoryId(ctx, field)
-			case "title":
-				return ec.fieldContext_Record_title(ctx, field)
-			case "description":
-				return ec.fieldContext_Record_description(ctx, field)
 			case "tagId":
 				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
 			case "eventTime":
 				return ec.fieldContext_Record_eventTime(ctx, field)
 			case "recordedAt":
@@ -1570,14 +2350,10 @@ func (ec *executionContext) fieldContext_Mutation_updateRecord(ctx context.Conte
 				return ec.fieldContext_Record_id(ctx, field)
 			case "userId":
 				return ec.fieldContext_Record_userId(ctx, field)
-			case "categoryId":
-				return ec.fieldContext_Record_categoryId(ctx, field)
-			case "title":
-				return ec.fieldContext_Record_title(ctx, field)
-			case "description":
-				return ec.fieldContext_Record_description(ctx, field)
 			case "tagId":
 				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
 			case "eventTime":
 				return ec.fieldContext_Record_eventTime(ctx, field)
 			case "recordedAt":
@@ -1789,6 +2565,81 @@ func (ec *executionContext) fieldContext_Mutation_createTag(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updateTag,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateTag(ctx, fc.Args["input"].(model.UpdateTagInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.Tag
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.Tag
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateTag(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Tag_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Tag_userId(ctx, field)
+			case "name":
+				return ec.fieldContext_Tag_name(ctx, field)
+			case "categoryId":
+				return ec.fieldContext_Tag_categoryId(ctx, field)
+			case "description":
+				return ec.fieldContext_Tag_description(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Tag_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Tag_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Tag", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2090,6 +2941,140 @@ func (ec *executionContext) fieldContext_Query_categoryByName(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_chatHistory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_chatHistory,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().ChatHistory(ctx, fc.Args["limit"].(*int32), fc.Args["offset"].(*int32))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.ChatMessage
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.ChatMessage
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessageᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_chatHistory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ChatMessage_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_ChatMessage_userId(ctx, field)
+			case "message":
+				return ec.fieldContext_ChatMessage_message(ctx, field)
+			case "response":
+				return ec.fieldContext_ChatMessage_response(ctx, field)
+			case "tokensUsed":
+				return ec.fieldContext_ChatMessage_tokensUsed(ctx, field)
+			case "functionCalls":
+				return ec.fieldContext_ChatMessage_functionCalls(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_ChatMessage_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_ChatMessage_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ChatMessage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_chatHistory_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_chatContext(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_chatContext,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().ChatContext(ctx)
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.ChatContext
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.ChatContext
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNChatContext2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatContext,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_chatContext(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "recentChats":
+				return ec.fieldContext_ChatContext_recentChats(ctx, field)
+			case "totalRecords":
+				return ec.fieldContext_ChatContext_totalRecords(ctx, field)
+			case "totalCategories":
+				return ec.fieldContext_ChatContext_totalCategories(ctx, field)
+			case "totalTags":
+				return ec.fieldContext_ChatContext_totalTags(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ChatContext", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_recordById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -2137,14 +3122,10 @@ func (ec *executionContext) fieldContext_Query_recordById(ctx context.Context, f
 				return ec.fieldContext_Record_id(ctx, field)
 			case "userId":
 				return ec.fieldContext_Record_userId(ctx, field)
-			case "categoryId":
-				return ec.fieldContext_Record_categoryId(ctx, field)
-			case "title":
-				return ec.fieldContext_Record_title(ctx, field)
-			case "description":
-				return ec.fieldContext_Record_description(ctx, field)
 			case "tagId":
 				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
 			case "eventTime":
 				return ec.fieldContext_Record_eventTime(ctx, field)
 			case "recordedAt":
@@ -2228,14 +3209,10 @@ func (ec *executionContext) fieldContext_Query_records(ctx context.Context, fiel
 				return ec.fieldContext_Record_id(ctx, field)
 			case "userId":
 				return ec.fieldContext_Record_userId(ctx, field)
-			case "categoryId":
-				return ec.fieldContext_Record_categoryId(ctx, field)
-			case "title":
-				return ec.fieldContext_Record_title(ctx, field)
-			case "description":
-				return ec.fieldContext_Record_description(ctx, field)
 			case "tagId":
 				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
 			case "eventTime":
 				return ec.fieldContext_Record_eventTime(ctx, field)
 			case "recordedAt":
@@ -2266,6 +3243,93 @@ func (ec *executionContext) fieldContext_Query_records(ctx context.Context, fiel
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_records_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_recordsLatest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_recordsLatest,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecordsLatest(ctx, fc.Args["limit"].(*int32))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.Record
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.Record
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_recordsLatest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Record_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Record_userId(ctx, field)
+			case "tagId":
+				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
+			case "eventTime":
+				return ec.fieldContext_Record_eventTime(ctx, field)
+			case "recordedAt":
+				return ec.fieldContext_Record_recordedAt(ctx, field)
+			case "durationSeconds":
+				return ec.fieldContext_Record_durationSeconds(ctx, field)
+			case "value":
+				return ec.fieldContext_Record_value(ctx, field)
+			case "source":
+				return ec.fieldContext_Record_source(ctx, field)
+			case "timezone":
+				return ec.fieldContext_Record_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_Record_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Record_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Record_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Record", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_recordsLatest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2319,14 +3383,10 @@ func (ec *executionContext) fieldContext_Query_recordsByTag(ctx context.Context,
 				return ec.fieldContext_Record_id(ctx, field)
 			case "userId":
 				return ec.fieldContext_Record_userId(ctx, field)
-			case "categoryId":
-				return ec.fieldContext_Record_categoryId(ctx, field)
-			case "title":
-				return ec.fieldContext_Record_title(ctx, field)
-			case "description":
-				return ec.fieldContext_Record_description(ctx, field)
 			case "tagId":
 				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
 			case "eventTime":
 				return ec.fieldContext_Record_eventTime(ctx, field)
 			case "recordedAt":
@@ -2357,6 +3417,93 @@ func (ec *executionContext) fieldContext_Query_recordsByTag(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_recordsByTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_recordsByCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_recordsByCategory,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecordsByCategory(ctx, fc.Args["categoryId"].(string), fc.Args["limit"].(*int32))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.Record
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.Record
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_recordsByCategory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Record_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Record_userId(ctx, field)
+			case "tagId":
+				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
+			case "eventTime":
+				return ec.fieldContext_Record_eventTime(ctx, field)
+			case "recordedAt":
+				return ec.fieldContext_Record_recordedAt(ctx, field)
+			case "durationSeconds":
+				return ec.fieldContext_Record_durationSeconds(ctx, field)
+			case "value":
+				return ec.fieldContext_Record_value(ctx, field)
+			case "source":
+				return ec.fieldContext_Record_source(ctx, field)
+			case "timezone":
+				return ec.fieldContext_Record_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_Record_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Record_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Record_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Record", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_recordsByCategory_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2410,14 +3557,10 @@ func (ec *executionContext) fieldContext_Query_recordsByDay(ctx context.Context,
 				return ec.fieldContext_Record_id(ctx, field)
 			case "userId":
 				return ec.fieldContext_Record_userId(ctx, field)
-			case "categoryId":
-				return ec.fieldContext_Record_categoryId(ctx, field)
-			case "title":
-				return ec.fieldContext_Record_title(ctx, field)
-			case "description":
-				return ec.fieldContext_Record_description(ctx, field)
 			case "tagId":
 				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
 			case "eventTime":
 				return ec.fieldContext_Record_eventTime(ctx, field)
 			case "recordedAt":
@@ -2501,14 +3644,10 @@ func (ec *executionContext) fieldContext_Query_recordsUntil(ctx context.Context,
 				return ec.fieldContext_Record_id(ctx, field)
 			case "userId":
 				return ec.fieldContext_Record_userId(ctx, field)
-			case "categoryId":
-				return ec.fieldContext_Record_categoryId(ctx, field)
-			case "title":
-				return ec.fieldContext_Record_title(ctx, field)
-			case "description":
-				return ec.fieldContext_Record_description(ctx, field)
 			case "tagId":
 				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
 			case "eventTime":
 				return ec.fieldContext_Record_eventTime(ctx, field)
 			case "recordedAt":
@@ -2592,14 +3731,10 @@ func (ec *executionContext) fieldContext_Query_recordsBetween(ctx context.Contex
 				return ec.fieldContext_Record_id(ctx, field)
 			case "userId":
 				return ec.fieldContext_Record_userId(ctx, field)
-			case "categoryId":
-				return ec.fieldContext_Record_categoryId(ctx, field)
-			case "title":
-				return ec.fieldContext_Record_title(ctx, field)
-			case "description":
-				return ec.fieldContext_Record_description(ctx, field)
 			case "tagId":
 				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
 			case "eventTime":
 				return ec.fieldContext_Record_eventTime(ctx, field)
 			case "recordedAt":
@@ -2630,6 +3765,93 @@ func (ec *executionContext) fieldContext_Query_recordsBetween(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_recordsBetween_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_searchRecords(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_searchRecords,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().SearchRecords(ctx, fc.Args["filters"].(model.SearchFilters))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.Record
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.Record
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_searchRecords(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Record_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Record_userId(ctx, field)
+			case "tagId":
+				return ec.fieldContext_Record_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_Record_description(ctx, field)
+			case "eventTime":
+				return ec.fieldContext_Record_eventTime(ctx, field)
+			case "recordedAt":
+				return ec.fieldContext_Record_recordedAt(ctx, field)
+			case "durationSeconds":
+				return ec.fieldContext_Record_durationSeconds(ctx, field)
+			case "value":
+				return ec.fieldContext_Record_value(ctx, field)
+			case "source":
+				return ec.fieldContext_Record_source(ctx, field)
+			case "timezone":
+				return ec.fieldContext_Record_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_Record_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Record_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Record_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Record", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_searchRecords_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2924,6 +4146,69 @@ func (ec *executionContext) fieldContext_Query_tagsByCategoryId(ctx context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_userStats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_userStats,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().UserStats(ctx)
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.UserStats
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.UserStats
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNUserStats2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_userStats(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "totalRecords":
+				return ec.fieldContext_UserStats_totalRecords(ctx, field)
+			case "totalCategories":
+				return ec.fieldContext_UserStats_totalCategories(ctx, field)
+			case "totalTags":
+				return ec.fieldContext_UserStats_totalTags(ctx, field)
+			case "recordsThisWeek":
+				return ec.fieldContext_UserStats_recordsThisWeek(ctx, field)
+			case "recordsThisMonth":
+				return ec.fieldContext_UserStats_recordsThisMonth(ctx, field)
+			case "mostUsedCategory":
+				return ec.fieldContext_UserStats_mostUsedCategory(ctx, field)
+			case "mostUsedTag":
+				return ec.fieldContext_UserStats_mostUsedTag(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserStats", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3090,14 +4375,14 @@ func (ec *executionContext) fieldContext_Record_userId(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Record_categoryId(ctx context.Context, field graphql.CollectedField, obj *model.Record) (ret graphql.Marshaler) {
+func (ec *executionContext) _Record_tagId(ctx context.Context, field graphql.CollectedField, obj *model.Record) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Record_categoryId,
+		ec.fieldContext_Record_tagId,
 		func(ctx context.Context) (any, error) {
-			return obj.CategoryID, nil
+			return obj.TagID, nil
 		},
 		nil,
 		ec.marshalNID2string,
@@ -3106,7 +4391,7 @@ func (ec *executionContext) _Record_categoryId(ctx context.Context, field graphq
 	)
 }
 
-func (ec *executionContext) fieldContext_Record_categoryId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Record_tagId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Record",
 		Field:      field,
@@ -3114,35 +4399,6 @@ func (ec *executionContext) fieldContext_Record_categoryId(_ context.Context, fi
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Record_title(ctx context.Context, field graphql.CollectedField, obj *model.Record) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Record_title,
-		func(ctx context.Context) (any, error) {
-			return obj.Title, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Record_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Record",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3172,35 +4428,6 @@ func (ec *executionContext) fieldContext_Record_description(_ context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Record_tagId(ctx context.Context, field graphql.CollectedField, obj *model.Record) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Record_tagId,
-		func(ctx context.Context) (any, error) {
-			return obj.TagID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Record_tagId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Record",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3665,6 +4892,312 @@ func (ec *executionContext) fieldContext_Tag_updatedAt(_ context.Context, field 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TagCount_id(ctx context.Context, field graphql.CollectedField, obj *model.TagCount) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TagCount_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TagCount_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TagCount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TagCount_name(ctx context.Context, field graphql.CollectedField, obj *model.TagCount) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TagCount_name,
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TagCount_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TagCount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TagCount_count(ctx context.Context, field graphql.CollectedField, obj *model.TagCount) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TagCount_count,
+		func(ctx context.Context) (any, error) {
+			return obj.Count, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TagCount_count(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TagCount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserStats_totalRecords(ctx context.Context, field graphql.CollectedField, obj *model.UserStats) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_UserStats_totalRecords,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalRecords, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_UserStats_totalRecords(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserStats_totalCategories(ctx context.Context, field graphql.CollectedField, obj *model.UserStats) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_UserStats_totalCategories,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalCategories, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_UserStats_totalCategories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserStats_totalTags(ctx context.Context, field graphql.CollectedField, obj *model.UserStats) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_UserStats_totalTags,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalTags, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_UserStats_totalTags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserStats_recordsThisWeek(ctx context.Context, field graphql.CollectedField, obj *model.UserStats) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_UserStats_recordsThisWeek,
+		func(ctx context.Context) (any, error) {
+			return obj.RecordsThisWeek, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_UserStats_recordsThisWeek(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserStats_recordsThisMonth(ctx context.Context, field graphql.CollectedField, obj *model.UserStats) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_UserStats_recordsThisMonth,
+		func(ctx context.Context) (any, error) {
+			return obj.RecordsThisMonth, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_UserStats_recordsThisMonth(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserStats_mostUsedCategory(ctx context.Context, field graphql.CollectedField, obj *model.UserStats) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_UserStats_mostUsedCategory,
+		func(ctx context.Context) (any, error) {
+			return obj.MostUsedCategory, nil
+		},
+		nil,
+		ec.marshalOCategoryCount2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryCount,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_UserStats_mostUsedCategory(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_CategoryCount_id(ctx, field)
+			case "name":
+				return ec.fieldContext_CategoryCount_name(ctx, field)
+			case "count":
+				return ec.fieldContext_CategoryCount_count(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CategoryCount", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserStats_mostUsedTag(ctx context.Context, field graphql.CollectedField, obj *model.UserStats) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_UserStats_mostUsedTag,
+		func(ctx context.Context) (any, error) {
+			return obj.MostUsedTag, nil
+		},
+		nil,
+		ec.marshalOTagCount2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagCount,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_UserStats_mostUsedTag(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserStats",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TagCount_id(ctx, field)
+			case "name":
+				return ec.fieldContext_TagCount_name(ctx, field)
+			case "count":
+				return ec.fieldContext_TagCount_count(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TagCount", field.Name)
 		},
 	}
 	return fc, nil
@@ -5171,34 +6704,13 @@ func (ec *executionContext) unmarshalInputCreateRecordInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "description", "categoryId", "tagId", "eventTime", "recordedAt", "durationSeconds", "value", "source", "timezone", "status"}
+	fieldsInOrder := [...]string{"tagId", "description", "eventTime", "recordedAt", "durationSeconds", "value", "source", "timezone", "status"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "title":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Title = data
-		case "description":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Description = data
-		case "categoryId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryId"))
-			data, err := ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CategoryID = data
 		case "tagId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tagId"))
 			data, err := ec.unmarshalNID2string(ctx, v)
@@ -5206,6 +6718,13 @@ func (ec *executionContext) unmarshalInputCreateRecordInput(ctx context.Context,
 				return it, err
 			}
 			it.TagID = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
 		case "eventTime":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventTime"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -5383,6 +6902,75 @@ func (ec *executionContext) unmarshalInputDeleteTagInput(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSearchFilters(ctx context.Context, obj any) (model.SearchFilters, error) {
+	var it model.SearchFilters
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"query", "categoryIds", "tagIds", "startDate", "endDate", "limit", "offset"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "query":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("query"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Query = data
+		case "categoryIds":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryIds"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CategoryIds = data
+		case "tagIds":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tagIds"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TagIds = data
+		case "startDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDate = data
+		case "endDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDate"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EndDate = data
+		case "limit":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+			data, err := ec.unmarshalOInt2ᚖint32(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Limit = data
+		case "offset":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+			data, err := ec.unmarshalOInt2ᚖint32(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Offset = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateCategoryInput(ctx context.Context, obj any) (model.UpdateCategoryInput, error) {
 	var it model.UpdateCategoryInput
 	asMap := map[string]any{}
@@ -5445,7 +7033,7 @@ func (ec *executionContext) unmarshalInputUpdateRecordInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "title", "description", "categoryId", "tagId", "eventTime", "recordedAt", "durationSeconds", "value", "source", "timezone", "status"}
+	fieldsInOrder := [...]string{"id", "description", "tagId", "eventTime", "recordedAt", "durationSeconds", "value", "source", "timezone", "status"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5459,13 +7047,6 @@ func (ec *executionContext) unmarshalInputUpdateRecordInput(ctx context.Context,
 				return it, err
 			}
 			it.ID = data
-		case "title":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Title = data
 		case "description":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -5473,13 +7054,6 @@ func (ec *executionContext) unmarshalInputUpdateRecordInput(ctx context.Context,
 				return it, err
 			}
 			it.Description = data
-		case "categoryId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryId"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CategoryID = data
 		case "tagId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tagId"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -5542,6 +7116,54 @@ func (ec *executionContext) unmarshalInputUpdateRecordInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateTagInput(ctx context.Context, obj any) (model.UpdateTagInput, error) {
+	var it model.UpdateTagInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "name", "categoryId", "description"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "categoryId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryId"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CategoryID = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -5582,6 +7204,180 @@ func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._Category_colorHex(ctx, field, obj)
 		case "icon":
 			out.Values[i] = ec._Category_icon(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var categoryCountImplementors = []string{"CategoryCount"}
+
+func (ec *executionContext) _CategoryCount(ctx context.Context, sel ast.SelectionSet, obj *model.CategoryCount) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, categoryCountImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CategoryCount")
+		case "id":
+			out.Values[i] = ec._CategoryCount_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._CategoryCount_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "count":
+			out.Values[i] = ec._CategoryCount_count(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var chatContextImplementors = []string{"ChatContext"}
+
+func (ec *executionContext) _ChatContext(ctx context.Context, sel ast.SelectionSet, obj *model.ChatContext) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chatContextImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChatContext")
+		case "recentChats":
+			out.Values[i] = ec._ChatContext_recentChats(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalRecords":
+			out.Values[i] = ec._ChatContext_totalRecords(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCategories":
+			out.Values[i] = ec._ChatContext_totalCategories(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalTags":
+			out.Values[i] = ec._ChatContext_totalTags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var chatMessageImplementors = []string{"ChatMessage"}
+
+func (ec *executionContext) _ChatMessage(ctx context.Context, sel ast.SelectionSet, obj *model.ChatMessage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chatMessageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChatMessage")
+		case "id":
+			out.Values[i] = ec._ChatMessage_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "userId":
+			out.Values[i] = ec._ChatMessage_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "message":
+			out.Values[i] = ec._ChatMessage_message(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "response":
+			out.Values[i] = ec._ChatMessage_response(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "tokensUsed":
+			out.Values[i] = ec._ChatMessage_tokensUsed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "functionCalls":
+			out.Values[i] = ec._ChatMessage_functionCalls(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._ChatMessage_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._ChatMessage_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5680,6 +7476,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "createTag":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createTag(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateTag":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateTag(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -5812,6 +7615,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "chatHistory":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_chatHistory(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "chatContext":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_chatContext(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "recordById":
 			field := field
 
@@ -5853,6 +7700,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "recordsLatest":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_recordsLatest(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "recordsByTag":
 			field := field
 
@@ -5863,6 +7732,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_recordsByTag(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "recordsByCategory":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_recordsByCategory(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -5929,6 +7820,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_recordsBetween(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "searchRecords":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_searchRecords(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -6023,6 +7936,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "userStats":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userStats(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -6075,23 +8010,13 @@ func (ec *executionContext) _Record(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "categoryId":
-			out.Values[i] = ec._Record_categoryId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "title":
-			out.Values[i] = ec._Record_title(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "description":
-			out.Values[i] = ec._Record_description(ctx, field, obj)
 		case "tagId":
 			out.Values[i] = ec._Record_tagId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "description":
+			out.Values[i] = ec._Record_description(ctx, field, obj)
 		case "eventTime":
 			out.Values[i] = ec._Record_eventTime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -6185,6 +8110,118 @@ func (ec *executionContext) _Tag(ctx context.Context, sel ast.SelectionSet, obj 
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var tagCountImplementors = []string{"TagCount"}
+
+func (ec *executionContext) _TagCount(ctx context.Context, sel ast.SelectionSet, obj *model.TagCount) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tagCountImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TagCount")
+		case "id":
+			out.Values[i] = ec._TagCount_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._TagCount_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "count":
+			out.Values[i] = ec._TagCount_count(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userStatsImplementors = []string{"UserStats"}
+
+func (ec *executionContext) _UserStats(ctx context.Context, sel ast.SelectionSet, obj *model.UserStats) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userStatsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserStats")
+		case "totalRecords":
+			out.Values[i] = ec._UserStats_totalRecords(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCategories":
+			out.Values[i] = ec._UserStats_totalCategories(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalTags":
+			out.Values[i] = ec._UserStats_totalTags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "recordsThisWeek":
+			out.Values[i] = ec._UserStats_recordsThisWeek(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "recordsThisMonth":
+			out.Values[i] = ec._UserStats_recordsThisMonth(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "mostUsedCategory":
+			out.Values[i] = ec._UserStats_mostUsedCategory(ctx, field, obj)
+		case "mostUsedTag":
+			out.Values[i] = ec._UserStats_mostUsedTag(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6617,6 +8654,74 @@ func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApi
 	return ec._Category(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNChatContext2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatContext(ctx context.Context, sel ast.SelectionSet, v model.ChatContext) graphql.Marshaler {
+	return ec._ChatContext(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNChatContext2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatContext(ctx context.Context, sel ast.SelectionSet, v *model.ChatContext) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ChatContext(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ChatMessage) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNChatMessage2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessage(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNChatMessage2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessage(ctx context.Context, sel ast.SelectionSet, v *model.ChatMessage) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ChatMessage(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNCreateCategoryInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateCategoryInput(ctx context.Context, v any) (model.CreateCategoryInput, error) {
 	res, err := ec.unmarshalInputCreateCategoryInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6655,6 +8760,22 @@ func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (str
 func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	_ = sel
 	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNInt2int32(ctx context.Context, v any) (int32, error) {
+	res, err := graphql.UnmarshalInt32(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int32(ctx context.Context, sel ast.SelectionSet, v int32) graphql.Marshaler {
+	_ = sel
+	res := graphql.MarshalInt32(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -6719,6 +8840,11 @@ func (ec *executionContext) marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋAionApi�
 		return graphql.Null
 	}
 	return ec._Record(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNSearchFilters2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSearchFilters(ctx context.Context, v any) (model.SearchFilters, error) {
+	res, err := ec.unmarshalInputSearchFilters(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v any) (string, error) {
@@ -6803,6 +8929,25 @@ func (ec *executionContext) unmarshalNUpdateCategoryInput2githubᚗcomᚋlechitz
 func (ec *executionContext) unmarshalNUpdateRecordInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateRecordInput(ctx context.Context, v any) (model.UpdateRecordInput, error) {
 	res, err := ec.unmarshalInputUpdateRecordInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateTagInput(ctx context.Context, v any) (model.UpdateTagInput, error) {
+	res, err := ec.unmarshalInputUpdateTagInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUserStats2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats(ctx context.Context, sel ast.SelectionSet, v model.UserStats) graphql.Marshaler {
+	return ec._UserStats(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserStats2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats(ctx context.Context, sel ast.SelectionSet, v *model.UserStats) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UserStats(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -7095,6 +9240,13 @@ func (ec *executionContext) marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApi
 	return ec._Category(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOCategoryCount2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryCount(ctx context.Context, sel ast.SelectionSet, v *model.CategoryCount) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._CategoryCount(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v any) (*float64, error) {
 	if v == nil {
 		return nil, nil
@@ -7110,6 +9262,42 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	_ = sel
 	res := graphql.MarshalFloatContext(*v)
 	return graphql.WrapContextMarshaler(ctx, res)
+}
+
+func (ec *executionContext) unmarshalOID2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNID2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOID2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNID2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v any) (*string, error) {
@@ -7148,6 +9336,24 @@ func (ec *executionContext) marshalOInt2ᚖint32(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalOJSON2ᚖstring(ctx context.Context, v any) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalString(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOJSON2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	_ = sel
+	_ = ctx
+	res := graphql.MarshalString(*v)
+	return res
+}
+
 func (ec *executionContext) marshalORecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v *model.Record) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -7178,6 +9384,13 @@ func (ec *executionContext) marshalOTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋin
 		return graphql.Null
 	}
 	return ec._Tag(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOTagCount2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagCount(ctx context.Context, sel ast.SelectionSet, v *model.TagCount) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._TagCount(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

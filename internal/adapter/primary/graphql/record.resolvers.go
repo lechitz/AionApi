@@ -89,6 +89,35 @@ func (q *queryResolver) Records(ctx context.Context, limit *int32, afterEventTim
 	return q.RecordController().ListByUser(ctx, uid, lim, afterEventTime, afterIDInt)
 }
 
+// RecordsLatest is the resolver for the recordsLatest field.
+func (q *queryResolver) RecordsLatest(ctx context.Context, limit *int32) ([]*model.Record, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+
+	lim := 10 // default for latest
+	if limit != nil && *limit > 0 {
+		lim = int(*limit)
+	}
+
+	return q.RecordController().ListLatest(ctx, uid, lim)
+}
+
+// RecordsByCategory is the resolver for the recordsByCategory field.
+func (q *queryResolver) RecordsByCategory(ctx context.Context, categoryID string, limit *int32) ([]*model.Record, error) {
+	cid, err := strconv.ParseUint(categoryID, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+
+	lim := 50 // default
+	if limit != nil && *limit > 0 {
+		lim = int(*limit)
+	}
+
+	return q.RecordController().ListByCategory(ctx, cid, uid, lim)
+}
+
 // UpdateRecord is the resolver for the updateRecord field.
 func (m *mutationResolver) UpdateRecord(ctx context.Context, input model.UpdateRecordInput) (*model.Record, error) {
 	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
@@ -115,6 +144,12 @@ func (m *mutationResolver) SoftDeleteAllRecords(ctx context.Context) (bool, erro
 		return false, err
 	}
 	return true, nil
+}
+
+// SearchRecords is the resolver for the searchRecords field.
+func (q *queryResolver) SearchRecords(ctx context.Context, filters model.SearchFilters) ([]*model.Record, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.RecordController().SearchRecords(ctx, filters, uid)
 }
 
 // Additional unimplemented resolvers can be added below as needed.

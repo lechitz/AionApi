@@ -16,6 +16,13 @@ input CreateTagInput {
     description: String
 }
 
+input UpdateTagInput {
+    id: ID!
+    name: String
+    categoryId: ID
+    description: String
+}
+
 input DeleteTagInput {
     id: ID!
 }
@@ -29,5 +36,6 @@ extend type Query {
 
 extend type Mutation {
     createTag(input: CreateTagInput!): Tag! @auth(roles: "user")
+    updateTag(input: UpdateTagInput!): Tag! @auth(roles: "user")
     softDeleteTag(input: DeleteTagInput!): Boolean! @auth(roles: "user")
 }

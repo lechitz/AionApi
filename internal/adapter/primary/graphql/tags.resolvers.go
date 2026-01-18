@@ -14,6 +14,12 @@ func (m *mutationResolver) CreateTag(ctx context.Context, input model.CreateTagI
 	return m.TagController().Create(ctx, input, uid)
 }
 
+// UpdateTag is the resolver for the updateTag field.
+func (m *mutationResolver) UpdateTag(ctx context.Context, input model.UpdateTagInput) (*model.Tag, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return m.TagController().Update(ctx, input, uid)
+}
+
 // SoftDeleteTag is the resolver for the softDeleteTag field.
 func (m *mutationResolver) SoftDeleteTag(ctx context.Context, input model.DeleteTagInput) (bool, error) {
 	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)

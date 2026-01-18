@@ -11,6 +11,30 @@ type Category struct {
 	Icon        *string `json:"icon,omitempty"`
 }
 
+type CategoryCount struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Count int32  `json:"count"`
+}
+
+type ChatContext struct {
+	RecentChats     []*ChatMessage `json:"recentChats"`
+	TotalRecords    int32          `json:"totalRecords"`
+	TotalCategories int32          `json:"totalCategories"`
+	TotalTags       int32          `json:"totalTags"`
+}
+
+type ChatMessage struct {
+	ID            string  `json:"id"`
+	UserID        string  `json:"userId"`
+	Message       string  `json:"message"`
+	Response      string  `json:"response"`
+	TokensUsed    int32   `json:"tokensUsed"`
+	FunctionCalls *string `json:"functionCalls,omitempty"`
+	CreatedAt     string  `json:"createdAt"`
+	UpdatedAt     string  `json:"updatedAt"`
+}
+
 type CreateCategoryInput struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description,omitempty"`
@@ -19,10 +43,8 @@ type CreateCategoryInput struct {
 }
 
 type CreateRecordInput struct {
-	Title           string   `json:"title"`
-	Description     *string  `json:"description,omitempty"`
-	CategoryID      string   `json:"categoryId"`
 	TagID           string   `json:"tagId"`
+	Description     *string  `json:"description,omitempty"`
 	EventTime       *string  `json:"eventTime,omitempty"`
 	RecordedAt      *string  `json:"recordedAt,omitempty"`
 	DurationSeconds *int32   `json:"durationSeconds,omitempty"`
@@ -59,10 +81,8 @@ type Query struct {
 type Record struct {
 	ID              string   `json:"id"`
 	UserID          string   `json:"userId"`
-	CategoryID      string   `json:"categoryId"`
-	Title           string   `json:"title"`
-	Description     *string  `json:"description,omitempty"`
 	TagID           string   `json:"tagId"`
+	Description     *string  `json:"description,omitempty"`
 	EventTime       string   `json:"eventTime"`
 	RecordedAt      *string  `json:"recordedAt,omitempty"`
 	DurationSeconds *int32   `json:"durationSeconds,omitempty"`
@@ -72,6 +92,16 @@ type Record struct {
 	Status          *string  `json:"status,omitempty"`
 	CreatedAt       string   `json:"createdAt"`
 	UpdatedAt       string   `json:"updatedAt"`
+}
+
+type SearchFilters struct {
+	Query       string   `json:"query"`
+	CategoryIds []string `json:"categoryIds,omitempty"`
+	TagIds      []string `json:"tagIds,omitempty"`
+	StartDate   *string  `json:"startDate,omitempty"`
+	EndDate     *string  `json:"endDate,omitempty"`
+	Limit       *int32   `json:"limit,omitempty"`
+	Offset      *int32   `json:"offset,omitempty"`
 }
 
 type Tag struct {
@@ -84,6 +114,12 @@ type Tag struct {
 	UpdatedAt   string  `json:"updatedAt"`
 }
 
+type TagCount struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Count int32  `json:"count"`
+}
+
 type UpdateCategoryInput struct {
 	ID          string  `json:"id"`
 	Name        *string `json:"name,omitempty"`
@@ -94,9 +130,7 @@ type UpdateCategoryInput struct {
 
 type UpdateRecordInput struct {
 	ID              string   `json:"id"`
-	Title           *string  `json:"title,omitempty"`
 	Description     *string  `json:"description,omitempty"`
-	CategoryID      *string  `json:"categoryId,omitempty"`
 	TagID           *string  `json:"tagId,omitempty"`
 	EventTime       *string  `json:"eventTime,omitempty"`
 	RecordedAt      *string  `json:"recordedAt,omitempty"`
@@ -105,4 +139,21 @@ type UpdateRecordInput struct {
 	Source          *string  `json:"source,omitempty"`
 	Timezone        *string  `json:"timezone,omitempty"`
 	Status          *string  `json:"status,omitempty"`
+}
+
+type UpdateTagInput struct {
+	ID          string  `json:"id"`
+	Name        *string `json:"name,omitempty"`
+	CategoryID  *string `json:"categoryId,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+type UserStats struct {
+	TotalRecords     int32          `json:"totalRecords"`
+	TotalCategories  int32          `json:"totalCategories"`
+	TotalTags        int32          `json:"totalTags"`
+	RecordsThisWeek  int32          `json:"recordsThisWeek"`
+	RecordsThisMonth int32          `json:"recordsThisMonth"`
+	MostUsedCategory *CategoryCount `json:"mostUsedCategory,omitempty"`
+	MostUsedTag      *TagCount      `json:"mostUsedTag,omitempty"`
 }

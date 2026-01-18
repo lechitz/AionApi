@@ -1,0 +1,28 @@
+# User domain schema (extends root types defined in root.graphqls)
+
+type UserStats {
+    totalRecords: Int!
+    totalCategories: Int!
+    totalTags: Int!
+    recordsThisWeek: Int!
+    recordsThisMonth: Int!
+    mostUsedCategory: CategoryCount
+    mostUsedTag: TagCount
+}
+
+type CategoryCount {
+    id: ID!
+    name: String!
+    count: Int!
+}
+
+type TagCount {
+    id: ID!
+    name: String!
+    count: Int!
+}
+
+extend type Query {
+    userStats: UserStats! @auth(roles: "user")
+}
+
