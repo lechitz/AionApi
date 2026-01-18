@@ -8,7 +8,7 @@ const (
 	TagID = "tag_id"
 
 	// TagName is the key for a tag name.
-	TagName = "tag_name"
+	TagName = "name"
 
 	// TagDescription is the key for a tag description.
 	TagDescription = "description"
