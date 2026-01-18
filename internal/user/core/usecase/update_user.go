@@ -3,12 +3,11 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/user/core/domain"
 	"github.com/lechitz/AionApi/internal/user/core/ports/input"
 	"go.opentelemetry.io/otel/codes"
@@ -30,21 +29,57 @@ func (s *Service) UpdateUser(ctx context.Context, userID uint64, cmd input.Updat
 	)
 
 	if !cmd.HasUpdates() {
-		span.RecordError(sharederrors.ErrNoFieldsToUpdate)
+		span.RecordError(ErrNoFieldsToUpdate)
 		span.SetStatus(codes.Error, ErrorNoFieldsToUpdate)
 		s.logger.ErrorwCtx(ctx, ErrorNoFieldsToUpdate, commonkeys.UserID, strconv.FormatUint(userID, 10))
-		return domain.User{}, errors.New(ErrorNoFieldsToUpdate)
+		return domain.User{}, ErrNoFieldsToUpdate
 	}
 
-	fields := map[string]interface{}{}
+	fields := buildUpdateFields(cmd)
+
+	updatedUser, err := s.userRepository.Update(ctx, userID, fields)
+	if err != nil {
+		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToUpdateUser))
+		span.RecordError(err)
+		s.logger.ErrorwCtx(ctx, ErrorToUpdateUser, commonkeys.Error, err.Error())
+		return domain.User{}, fmt.Errorf("%w: %w", ErrUpdateUser, err)
+	}
+
+	span.AddEvent(SpanEventInvalidateCache)
+	if err := s.userCache.DeleteUser(ctx, updatedUser.ID, updatedUser.Username, updatedUser.Email); err != nil {
+		s.logger.WarnwCtx(ctx, WarnFailedToInvalidateUserCache,
+			commonkeys.UserID, updatedUser.ID,
+			commonkeys.Username, updatedUser.Username,
+			commonkeys.Email, updatedUser.Email,
+			commonkeys.Error, err,
+		)
+	}
+
+	span.SetAttributes(
+		attribute.String(commonkeys.Status, commonkeys.StatusSuccess),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10)),
+	)
+	s.logger.InfowCtx(ctx, SuccessUserUpdated, commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10), commonkeys.UserUpdatedFields, updatedUser)
+
+	return updatedUser, nil
+}
+
+// buildUpdateFields constructs a map of fields to update from the command.
+// Only non-nil fields from the command are included in the update.
+// Username and email are normalized to lowercase to maintain consistency.
+func buildUpdateFields(cmd input.UpdateUserCommand) map[string]interface{} {
+	fields := map[string]interface{}{
+		commonkeys.UserUpdatedAt: time.Now().UTC(),
+	}
+
 	if cmd.Name != nil {
-		fields[commonkeys.Name] = *cmd.Name
+		fields[commonkeys.Name] = strings.TrimSpace(*cmd.Name)
 	}
 	if cmd.Username != nil {
-		fields[commonkeys.Username] = *cmd.Username
+		fields[commonkeys.Username] = strings.ToLower(strings.TrimSpace(*cmd.Username))
 	}
 	if cmd.Email != nil {
-		fields[commonkeys.Email] = *cmd.Email
+		fields[commonkeys.Email] = strings.ToLower(strings.TrimSpace(*cmd.Email))
 	}
 	if cmd.Locale != nil {
 		fields[commonkeys.Locale] = *cmd.Locale
@@ -61,21 +96,6 @@ func (s *Service) UpdateUser(ctx context.Context, userID uint64, cmd input.Updat
 	if cmd.AvatarURL != nil {
 		fields[commonkeys.AvatarURL] = *cmd.AvatarURL
 	}
-	fields[commonkeys.UserUpdatedAt] = time.Now().UTC()
 
-	updatedUser, err := s.userRepository.Update(ctx, userID, fields)
-	if err != nil {
-		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToUpdateUser))
-		span.RecordError(err)
-		s.logger.ErrorwCtx(ctx, ErrorToUpdateUser, commonkeys.Error, err.Error())
-		return domain.User{}, fmt.Errorf("%s: %w", ErrorToUpdateUser, err)
-	}
-
-	span.SetAttributes(
-		attribute.String(commonkeys.Status, commonkeys.StatusSuccess),
-		attribute.String(commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10)),
-	)
-	s.logger.InfowCtx(ctx, SuccessUserUpdated, commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10), commonkeys.UserUpdatedFields, updatedUser)
-
-	return updatedUser, nil
+	return fields
 }

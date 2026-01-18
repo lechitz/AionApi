@@ -3,6 +3,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
@@ -22,7 +23,14 @@ func (s *Service) SoftDeleteUser(ctx context.Context, userID uint64) error {
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 	)
 
-	// Delete associated tokens
+	user, err := s.userRepository.GetByID(ctx, userID)
+	if err != nil {
+		span.RecordError(err)
+		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToGetSelf))
+		s.logger.ErrorwCtx(ctx, ErrorToGetSelf, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(userID, 10))
+		return fmt.Errorf("%w: %w", ErrGetSelf, err)
+	}
+
 	if err := s.authStore.Delete(ctx, userID, commonkeys.TokenTypeAccess); err != nil {
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgDeleteToken))
@@ -30,7 +38,6 @@ func (s *Service) SoftDeleteUser(ctx context.Context, userID uint64) error {
 		return err
 	}
 
-	// Delete refresh token
 	if err := s.authStore.Delete(ctx, userID, commonkeys.TokenTypeRefresh); err != nil {
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgDeleteToken))
@@ -38,12 +45,21 @@ func (s *Service) SoftDeleteUser(ctx context.Context, userID uint64) error {
 		return err
 	}
 
-	// Perform soft delete on user
 	if err := s.userRepository.SoftDelete(ctx, userID); err != nil {
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToSoftDeleteUser))
 		s.logger.ErrorwCtx(ctx, ErrorToSoftDeleteUser, commonkeys.Error, err.Error())
-		return err
+		return fmt.Errorf("%w: %w", ErrSoftDeleteUser, err)
+	}
+
+	span.AddEvent(SpanEventInvalidateCache)
+	if err := s.userCache.DeleteUser(ctx, userID, user.Username, user.Email); err != nil {
+		s.logger.WarnwCtx(ctx, WarnFailedToInvalidateUserCacheAfterDelete,
+			commonkeys.UserID, userID,
+			commonkeys.Username, user.Username,
+			commonkeys.Email, user.Email,
+			commonkeys.Error, err,
+		)
 	}
 
 	span.SetAttributes(

@@ -34,7 +34,9 @@ func (up UserRepository) GetByID(ctx context.Context, userID uint64) (domain.Use
 		return domain.User{}, err
 	}
 
+	user := mapper.UserFromDB(userDB)
+
 	span.SetStatus(codes.Ok, StatusUserRetrievedByID)
 	up.logger.InfowCtx(ctx, LogUserRetrievedByID, commonkeys.UserID, userDB.ID)
-	return mapper.UserFromDB(userDB), nil
+	return user, nil
 }

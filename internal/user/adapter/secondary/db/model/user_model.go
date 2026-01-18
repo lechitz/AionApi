@@ -18,7 +18,6 @@ type UserDB struct {
 	Username  string         `gorm:"column:username"`
 	Email     string         `gorm:"column:email"`
 	Password  string         `gorm:"column:password"`
-	Roles     string         `gorm:"column:roles;not null;default:'user'"`
 	Locale    *string        `gorm:"column:locale"`
 	Timezone  *string        `gorm:"column:timezone"`
 	Location  *string        `gorm:"column:location"`

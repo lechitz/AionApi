@@ -45,4 +45,7 @@ type UserRepository interface {
 	UserFinder
 	UserUpdater
 	UserDeleter
+
+	// GetUserStats retrieves aggregated statistics for a user
+	GetUserStats(ctx context.Context, userID uint64) (domain.UserStats, error)
 }

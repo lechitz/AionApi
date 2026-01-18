@@ -4,6 +4,7 @@ package repository
 import (
 	"strings"
 
+	adminoutput "github.com/lechitz/AionApi/internal/admin/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -11,16 +12,19 @@ import (
 
 // UserRepository handles interactions with the user database.
 // Depends on db.DB interface (not *gorm.DB) following Hexagonal Architecture.
+// Delegates role assignment to admin context via RoleAssigner interface.
 type UserRepository struct {
-	db     db.DB
-	logger logger.ContextLogger
+	db           db.DB
+	logger       logger.ContextLogger
+	roleAssigner adminoutput.RoleAssigner // Dependency injection from /admin context
 }
 
-// New initializes a new UserRepository with the provided database connection and logger.
-func New(database db.DB, logger logger.ContextLogger) *UserRepository {
+// New initializes a new UserRepository with the provided dependencies.
+func New(database db.DB, logger logger.ContextLogger, roleAssigner adminoutput.RoleAssigner) *UserRepository {
 	return &UserRepository{
-		db:     database,
-		logger: logger,
+		db:           database,
+		logger:       logger,
+		roleAssigner: roleAssigner,
 	}
 }
 

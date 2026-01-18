@@ -17,6 +17,7 @@ type UserReader interface {
 	GetByID(ctx context.Context, userID uint64) (domain.User, error)
 	GetUserByUsername(ctx context.Context, username string) (domain.User, error)
 	ListAll(ctx context.Context) ([]domain.User, error)
+	GetUserStats(ctx context.Context, userID uint64) (domain.UserStats, error)
 }
 
 // UserUpdater defines methods for updating user information and user passwords in the system.

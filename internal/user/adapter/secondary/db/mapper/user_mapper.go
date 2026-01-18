@@ -2,7 +2,6 @@
 package mapper
 
 import (
-	"strings"
 	"time"
 
 	"github.com/lechitz/AionApi/internal/user/adapter/secondary/db/model"
@@ -11,21 +10,11 @@ import (
 	"gorm.io/gorm"
 )
 
-// UserFromDB converts a model.UserDB object into a domain.User object. It extracts and maps all user properties including timestamps.
+// UserFromDB converts a model.UserDB object into a domain.User object.
 func UserFromDB(user model.UserDB) domain.User {
 	var deletedAt *time.Time
 	if user.DeletedAt.Valid {
 		deletedAt = &user.DeletedAt.Time
-	}
-
-	// Convert comma-separated roles string to slice
-	var roles []string
-	if user.Roles != "" {
-		roles = strings.Split(user.Roles, ",")
-		// Trim spaces from each role
-		for i := range roles {
-			roles[i] = strings.TrimSpace(roles[i])
-		}
 	}
 
 	return domain.User{
@@ -34,7 +23,6 @@ func UserFromDB(user model.UserDB) domain.User {
 		Username:  user.Username,
 		Email:     user.Email,
 		Password:  user.Password,
-		Roles:     roles,
 		Locale:    user.Locale,
 		Timezone:  user.Timezone,
 		Location:  user.Location,
@@ -46,7 +34,8 @@ func UserFromDB(user model.UserDB) domain.User {
 	}
 }
 
-// UserToDB converts a domain.User object into a model.UserDB object for database storage. It maps all relevant fields including timestamps.
+// UserToDB converts a domain.User object into a model.UserDB object for database storage.
+// Roles are managed by /admin context and are not part of user domain.
 func UserToDB(user domain.User) model.UserDB {
 	var deleted gorm.DeletedAt
 	if user.DeletedAt != nil {
@@ -54,19 +43,13 @@ func UserToDB(user domain.User) model.UserDB {
 		deleted.Valid = true
 	}
 
-	// Convert roles slice to comma-separated string
-	rolesStr := "user" // default value
-	if len(user.Roles) > 0 {
-		rolesStr = strings.Join(user.Roles, ",")
-	}
-
 	return model.UserDB{
-		ID:        user.ID,
-		Name:      user.Name,
-		Username:  user.Username,
-		Email:     user.Email,
-		Password:  user.Password,
-		Roles:     rolesStr,
+		ID:       user.ID,
+		Name:     user.Name,
+		Username: user.Username,
+		Email:    user.Email,
+		Password: user.Password,
+		// Roles are NOT mapped - managed separately in user_roles table
 		Locale:    user.Locale,
 		Timezone:  user.Timezone,
 		Location:  user.Location,

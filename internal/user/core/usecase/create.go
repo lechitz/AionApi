@@ -39,6 +39,11 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateUserCommand) (doma
 	}
 
 	if err := validateUniquenessConflicts(ctx, span, conflict.UsernameTaken, conflict.EmailTaken); err != nil {
+		span.SetAttributes(attribute.String(commonkeys.Status, StatusUsernameOrEmailInUse))
+		s.logger.WarnwCtx(ctx, WarnUsernameOrEmailInUse,
+			commonkeys.Username, cmd.Username,
+			commonkeys.Email, cmd.Email,
+		)
 		return domain.User{}, err
 	}
 
@@ -47,7 +52,7 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateUserCommand) (doma
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, StatusHashPasswordFailed))
 		s.logger.ErrorwCtx(ctx, ErrorToHashPassword, commonkeys.Error, err.Error())
-		return domain.User{}, err
+		return domain.User{}, ErrHashPassword
 	}
 
 	user := domain.User{
@@ -55,7 +60,6 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateUserCommand) (doma
 		Username:  cmd.Username,
 		Email:     cmd.Email,
 		Password:  hashed,
-		Roles:     []string{UserRoles},
 		Locale:    cmd.Locale,
 		Timezone:  cmd.Timezone,
 		Location:  cmd.Location,
@@ -68,7 +72,15 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateUserCommand) (doma
 		span.RecordError(err)
 		span.SetAttributes(attribute.String(commonkeys.Status, StatusDBErrorCreateUser))
 		s.logger.ErrorwCtx(ctx, ErrorToCreateUser, commonkeys.Error, err.Error())
-		return domain.User{}, err
+		return domain.User{}, ErrCreateUser
+	}
+
+	span.AddEvent(SpanEventSaveToCache)
+	if err := s.userCache.SaveUser(ctx, userDomain, 0); err != nil {
+		s.logger.WarnwCtx(ctx, WarnFailedToSaveUserToCache,
+			commonkeys.UserID, userDomain.ID,
+			commonkeys.Error, err,
+		)
 	}
 
 	span.SetAttributes(
@@ -95,9 +107,10 @@ func validateUniquenessConflicts(_ context.Context, span trace.Span, usernameTak
 	return nil
 }
 
-// normalizeCreateCmd trims whitespace and normalizes a case for user creation input fields.
+// normalizeCreateCmd trims whitespace and normalizes case for user creation input fields.
+// Username and email are converted to lowercase to prevent case-sensitive duplicates.
 func normalizeCreateCmd(c *input.CreateUserCommand) {
 	c.Name = strings.TrimSpace(c.Name)
-	c.Username = strings.TrimSpace(c.Username)
+	c.Username = strings.ToLower(strings.TrimSpace(c.Username))
 	c.Email = strings.ToLower(strings.TrimSpace(c.Email))
 }

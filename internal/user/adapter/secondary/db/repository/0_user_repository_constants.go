@@ -182,8 +182,8 @@ const (
 // Column selections (kept here to avoid scattered literals).
 const (
 	// SelectByUsernameColumns is the columns to select when getting a user by username.
-	SelectByUsernameColumns = "user_id, name, username, email, password, roles, created_at, updated_at, deleted_at"
+	SelectByUsernameColumns = "user_id, name, username, email, password, created_at, updated_at, deleted_at"
 
 	// SelectListAllColumns is the columns to select when listing all users.
-	SelectListAllColumns = "user_id, name, username, email, roles, created_at, updated_at, deleted_at"
+	SelectListAllColumns = "user_id, name, username, email, created_at, updated_at, deleted_at"
 )
