@@ -4,7 +4,7 @@ package input
 import "time"
 
 // CreateRecordCommand represents input for creating a record via usecase.
-// Note: category is obtained via Tag relationship (Record → Tag → Category)
+// Note: category is obtained via Tag relationship (Record → Tag → Category).
 type CreateRecordCommand struct {
 	UserID       uint64     `json:"userId"                    validate:"required"`
 	TagID        uint64     `json:"tagId"                     validate:"required"`

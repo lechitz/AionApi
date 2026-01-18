@@ -14,8 +14,6 @@ import (
 )
 
 // ListByTag fetches all Records for a specific tag for the authenticated user.
-//
-//nolint:dupl // Similar to ListByCategory but with different entity - duplication improves clarity
 func (h *controller) ListByTag(ctx context.Context, tagID, userID uint64, limit int) ([]*gmodel.Record, error) {
 	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanListByTag)
@@ -60,8 +58,6 @@ func (h *controller) ListByTag(ctx context.Context, tagID, userID uint64, limit 
 
 // ListByCategory fetches all Records for a specific category for the authenticated user.
 // Records are retrieved via JOIN (records → tags → categories).
-//
-//nolint:dupl // Similar to ListByTag but with different entity - duplication improves clarity
 func (h *controller) ListByCategory(ctx context.Context, categoryID, userID uint64, limit int) ([]*gmodel.Record, error) {
 	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, "record.list_by_category")

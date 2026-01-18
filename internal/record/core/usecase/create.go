@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -139,7 +140,7 @@ func resolveTimezone(timezone *string) *string {
 // resolveTagID validates that the tag exists and belongs to the user.
 func (s *Service) resolveTagID(ctx context.Context, tagID uint64, userID uint64) (uint64, error) {
 	if tagID == 0 {
-		return 0, fmt.Errorf("tagID is required")
+		return 0, errors.New("tagID is required")
 	}
 
 	// Validate tag exists and belongs to user
@@ -149,7 +150,7 @@ func (s *Service) resolveTagID(ctx context.Context, tagID uint64, userID uint64)
 	}
 
 	if tagObj.ID == 0 {
-		return 0, fmt.Errorf("tag not found")
+		return 0, errors.New("tag not found")
 	}
 
 	return tagID, nil
