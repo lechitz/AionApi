@@ -83,9 +83,9 @@ type createdTag struct {
 }
 
 type createdRecord struct {
-	ID    string `json:"id"`
-	Title string `json:"title"`
-	TagID string `json:"tagId"`
+	ID          string `json:"id"`
+	Description string `json:"description"`
+	TagID       string `json:"tagId"`
 }
 
 type categoryPayload struct {
@@ -247,7 +247,7 @@ func main() {
 		}
 
 		for i, rc := range recordInputs {
-			category, ok := categories[rc.CategoryKey]
+			_, ok := categories[rc.CategoryKey]
 			if !ok {
 				exitWithErrf("category key not found for record %s", rc.CategoryKey)
 			}
@@ -259,15 +259,15 @@ func main() {
 
 			eventTime := time.Now().UTC().Add(-time.Duration(i) * time.Hour).Format(time.RFC3339)
 			title := fmt.Sprintf("%s %d", rc.Title, i+1)
-			created, err := createRecord(ctx, client, graphqlURL, token, headers, rc, title, category.ID, tag.ID, eventTime)
+			created, err := createRecord(ctx, client, graphqlURL, token, headers, rc, title, tag.ID, eventTime)
 			if err != nil {
 				exitWithErrf("createRecord failed for %s: %v", rc.Title, err)
 			}
 			if id := strings.TrimSpace(created.ID); id == "" || id == "0" {
-				exitWithErrf("createRecord retornou ID vazio para %s", title)
+				exitWithErrf("createRecord returned empty ID for %s", title)
 			}
-			logSuccess(config.successLog, fmt.Sprintf("record id=%s title=%s tagId=%s run_id=%s", created.ID, created.Title, created.TagID, userRunID))
-			_, _ = fmt.Fprintf(os.Stdout, "✅ record: %s\n", created.Title)
+			logSuccess(config.successLog, fmt.Sprintf("record id=%s description=%s tagId=%s run_id=%s", created.ID, created.Description, created.TagID, userRunID))
+			_, _ = fmt.Fprintf(os.Stdout, "✅ record: %s\n", created.Description)
 		}
 
 		if err := verifyArtifacts(ctx, client, graphqlURL, token, headers, categoryInputs, tagInputs, recordInputs, userRunID); err != nil {
@@ -608,18 +608,19 @@ func createRecord(
 	url, token string,
 	headers map[string]string,
 	rc recordPayload,
-	title, categoryID, tagID, eventTime string,
+	title, tagID, eventTime string,
 ) (createdRecord, error) {
 	const mutation = `
 mutation($input: CreateRecordInput!) {
-  createRecord(input: $input) { id title tagId }
+  createRecord(input: $input) { id description tagId }
 }`
 
+	// Note: title is prepended to description since CreateRecordInput doesn't have a title field
+	// categoryId is not needed since tag already belongs to a category
+	description := fmt.Sprintf("%s - %s", title, rc.Description)
 	input := map[string]interface{}{
-		"title":           title,
-		"description":     rc.Description,
-		"categoryId":      categoryID,
 		"tagId":           tagID,
+		"description":     description,
 		"eventTime":       eventTime,
 		"recordedAt":      eventTime,
 		"durationSeconds": rc.DurationSeconds,
@@ -739,11 +740,12 @@ func verifyArtifacts(
 		}
 	}
 
-	// Verify records presence by title fragment
-	expectedTitles := make(map[string]struct{})
+	// Verify records presence by description fragment
+	expectedDescriptions := make(map[string]struct{})
 	for i, rc := range records {
 		title := fmt.Sprintf("%s %d", rc.Title, i+1)
-		expectedTitles[title] = struct{}{}
+		description := fmt.Sprintf("%s - %s", title, rc.Description)
+		expectedDescriptions[description] = struct{}{}
 	}
 
 	found, err := listRecords(ctx, client, url, token, headers, len(records)*3)
@@ -752,12 +754,12 @@ func verifyArtifacts(
 	}
 
 	for _, rec := range found {
-		delete(expectedTitles, rec.Title)
+		delete(expectedDescriptions, rec.Description)
 	}
 
-	if len(expectedTitles) > 0 {
-		missing := make([]string, 0, len(expectedTitles))
-		for t := range expectedTitles {
+	if len(expectedDescriptions) > 0 {
+		missing := make([]string, 0, len(expectedDescriptions))
+		for t := range expectedDescriptions {
 			missing = append(missing, t)
 		}
 		return fmt.Errorf("records ausentes: %s", strings.Join(missing, ", "))
@@ -769,7 +771,7 @@ func verifyArtifacts(
 func listRecords(ctx context.Context, client *http.Client, url, token string, headers map[string]string, limit int) ([]createdRecord, error) {
 	const query = `
 query($limit: Int) {
-  records(limit: $limit) { id title tagId }
+  records(limit: $limit) { id description tagId }
 }`
 	var out []createdRecord
 	if err := doGraphQL(ctx, client, url, token, headers, query, map[string]interface{}{"limit": limit}, &out); err != nil {
