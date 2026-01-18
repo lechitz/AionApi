@@ -17,12 +17,12 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 \set seed_count 10
 \endif
 
-INSERT INTO aion_api.users (name, username, password, email, roles)
+INSERT INTO aion_api.users (name, username, password, email)
 SELECT
   ('user_name_' || i) AS name,
   ('user' || i) AS username,
   crypt(:'user_seed_password_plain', gen_salt('bf', 10)) AS password,
-  ('user' || i || '@aion.com') AS email,
-  'user' AS roles
+  ('user' || i || '@aion.com') AS email
 FROM generate_series(1, :seed_count) AS s(i)
 ON CONFLICT (username) DO NOTHING;
+
