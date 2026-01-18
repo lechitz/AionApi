@@ -3,7 +3,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	gmodel "github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -28,24 +27,24 @@ func (h *controller) GetByID(ctx context.Context, recordID, userID uint64) (*gmo
 
 	// Controller-level preconditions.
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	if recordID == 0 {
-		span.SetStatus(codes.Error, ErrRecordNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrRecordNotFound, commonkeys.RecordID, recordID)
-		return nil, errors.New(ErrRecordNotFound)
+		span.SetStatus(codes.Error, ErrRecordNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrRecordNotFound.Error(), commonkeys.RecordID, recordID)
+		return nil, ErrRecordNotFound
 	}
 
 	record, err := h.RecordService.GetByID(ctx, recordID, userID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, ErrRecordNotFound)
+		span.SetStatus(codes.Error, ErrRecordNotFound.Error())
 		h.Logger.ErrorwCtx(
 			ctx,
-			ErrRecordNotFound,
+			ErrRecordNotFound.Error(),
 			"error", err.Error(),
 			commonkeys.UserID, userID,
 			commonkeys.RecordID, recordID,

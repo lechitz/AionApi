@@ -19,9 +19,13 @@ type RecordRepository interface {
 	ListByCategory(ctx context.Context, categoryID uint64, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]domain.Record, error)
 	ListByTag(ctx context.Context, tagID uint64, userID uint64, limit int) ([]domain.Record, error)
 	ListByDay(ctx context.Context, userID uint64, date time.Time) ([]domain.Record, error)
+	ListLatest(ctx context.Context, userID uint64, limit int) ([]domain.Record, error)
 	ListAllUntil(ctx context.Context, userID uint64, until time.Time, limit int) ([]domain.Record, error)
 	ListAllBetween(ctx context.Context, userID uint64, startDate time.Time, endDate time.Time, limit int) ([]domain.Record, error)
 
 	Delete(ctx context.Context, id uint64, userID uint64) error
 	DeleteAllByUser(ctx context.Context, userID uint64) error
+
+	// SearchRecords performs text search with filters
+	SearchRecords(ctx context.Context, userID uint64, filters domain.SearchFilters) ([]domain.Record, error)
 }

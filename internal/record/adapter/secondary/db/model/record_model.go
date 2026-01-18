@@ -9,9 +9,7 @@ import (
 type Record struct {
 	ID           uint64     `gorm:"column:id;primaryKey;autoIncrement"`
 	UserID       uint64     `gorm:"column:user_id;not null;index:idx_records_user_event,priority:1"`
-	Title        string     `gorm:"column:title;type:varchar(255);not null"`
 	Description  *string    `gorm:"column:description;type:text"`
-	CategoryID   uint64     `gorm:"column:category_id;not null;index:idx_records_category_user"`
 	TagID        uint64     `gorm:"column:tag_id;not null;index:idx_records_tag_user"`
 	EventTime    time.Time  `gorm:"column:event_time;not null;index:idx_records_user_event,priority:2"`
 	RecordedAt   *time.Time `gorm:"column:recorded_at"`

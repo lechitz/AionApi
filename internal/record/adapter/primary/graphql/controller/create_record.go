@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	gmodel "github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -17,23 +16,23 @@ func (h *controller) Create(ctx context.Context, in gmodel.CreateRecordInput, us
 	ctx, span := tr.Start(ctx, SpanCreate)
 	defer span.End()
 
-	categoryID, err := strconv.ParseUint(in.CategoryID, 10, 64)
+	tagID, err := strconv.ParseUint(in.TagID, 10, 64)
 	if err != nil {
-		span.SetStatus(codes.Error, ErrInvalidRecordID)
-		h.Logger.ErrorwCtx(ctx, ErrInvalidRecordID, "category_id", in.CategoryID, "error", err.Error())
-		return nil, errors.New(ErrInvalidRecordID)
+		span.SetStatus(codes.Error, ErrInvalidRecordID.Error())
+		h.Logger.ErrorwCtx(ctx, ErrInvalidRecordID.Error(), "tag_id", in.TagID, "error", err.Error())
+		return nil, ErrInvalidRecordID
 	}
 
 	span.SetAttributes(
 		attribute.String("operation", SpanCreate),
 		attribute.String("user_id", strconv.FormatUint(userID, 10)),
-		attribute.String("category_id", strconv.FormatUint(categoryID, 10)),
+		attribute.String("tag_id", strconv.FormatUint(tagID, 10)),
 	)
 
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, "user_id", userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), "user_id", userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	cmd := toCreateCommand(in, userID)
@@ -48,7 +47,7 @@ func (h *controller) Create(ctx context.Context, in gmodel.CreateRecordInput, us
 			MsgCreateError,
 			"error", err.Error(),
 			"user_id", strconv.FormatUint(userID, 10),
-			"category_id", in.CategoryID,
+			"tag_id", in.TagID,
 		)
 		return nil, err
 	}
@@ -56,7 +55,7 @@ func (h *controller) Create(ctx context.Context, in gmodel.CreateRecordInput, us
 	out := toModelOut(domainOut)
 	span.SetAttributes(
 		attribute.String("record_id", out.ID),
-		attribute.String("category_id", out.CategoryID),
+		attribute.String("tag_id", out.TagID),
 	)
 	span.SetStatus(codes.Ok, StatusCreated)
 
@@ -65,7 +64,7 @@ func (h *controller) Create(ctx context.Context, in gmodel.CreateRecordInput, us
 		MsgCreated,
 		"user_id", strconv.FormatUint(userID, 10),
 		"record_id", out.ID,
-		"category_id", out.CategoryID,
+		"tag_id", out.TagID,
 	)
 	return out, nil
 }

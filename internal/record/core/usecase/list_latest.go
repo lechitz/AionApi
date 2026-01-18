@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -13,31 +12,30 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-// ListAllUntil returns records with event_time up to (and including) the given timestamp.
-func (s *Service) ListAllUntil(ctx context.Context, userID uint64, until time.Time, limit int) ([]domain.Record, error) {
+// ListLatest returns the N most recent records for the authenticated user, ordered by event_time DESC.
+func (s *Service) ListLatest(ctx context.Context, userID uint64, limit int) ([]domain.Record, error) {
 	tr := otel.Tracer(TracerName)
-	ctx, span := tr.Start(ctx, SpanListAllUntil)
+	ctx, span := tr.Start(ctx, SpanListLatest)
 	defer span.End()
 
 	span.SetAttributes(
-		attribute.String(commonkeys.Operation, SpanListAllUntil),
+		attribute.String(commonkeys.Operation, SpanListLatest),
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String("until", until.Format("2006-01-02")),
 		attribute.Int("limit", limit),
 	)
 
 	if limit <= 0 || limit > 100 {
-		limit = 50 // default limit
+		limit = 10 // default limit for latest
 	}
 
 	span.AddEvent(EventRepositoryList)
-	records, err := s.RecordRepository.ListAllUntil(ctx, userID, until, limit)
+	records, err := s.RecordRepository.ListLatest(ctx, userID, limit)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, FailedToListRecords)
 		s.Logger.ErrorwCtx(ctx, FailedToListRecords,
 			commonkeys.UserID, userID,
-			"until", until.Format(time.RFC3339),
+			"limit", limit,
 			commonkeys.Error, err,
 		)
 		return nil, fmt.Errorf("%s: %w", FailedToListRecords, err)
@@ -45,9 +43,9 @@ func (s *Service) ListAllUntil(ctx context.Context, userID uint64, until time.Ti
 
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusListedAll)
-	s.Logger.InfowCtx(ctx, "records listed until timestamp successfully",
+	s.Logger.InfowCtx(ctx, "latest records listed successfully",
 		commonkeys.UserID, userID,
-		"until", until.Format(time.RFC3339),
+		"limit", limit,
 		"count", len(records),
 	)
 

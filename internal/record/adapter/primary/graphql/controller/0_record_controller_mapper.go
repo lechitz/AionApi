@@ -13,13 +13,12 @@ import (
 // toModelOut converts a domain.Record to a GraphQL model.Record.
 func toModelOut(t domain.Record) *gmodel.Record {
 	out := &gmodel.Record{
-		ID:         strconv.FormatUint(t.ID, 10),
-		UserID:     strconv.FormatUint(t.UserID, 10),
-		CategoryID: strconv.FormatUint(t.CategoryID, 10),
-		Title:      t.Title,
-		EventTime:  t.EventTime.UTC().Format(time.RFC3339),
-		CreatedAt:  t.CreatedAt.UTC().Format(time.RFC3339),
-		UpdatedAt:  t.UpdatedAt.UTC().Format(time.RFC3339),
+		ID:        strconv.FormatUint(t.ID, 10),
+		UserID:    strconv.FormatUint(t.UserID, 10),
+		TagID:     strconv.FormatUint(t.TagID, 10),
+		EventTime: t.EventTime.UTC().Format(time.RFC3339),
+		CreatedAt: t.CreatedAt.UTC().Format(time.RFC3339),
+		UpdatedAt: t.UpdatedAt.UTC().Format(time.RFC3339),
 	}
 	if t.Description != nil {
 		out.Description = t.Description
@@ -47,20 +46,21 @@ func toModelOut(t domain.Record) *gmodel.Record {
 	if t.Status != nil {
 		out.Status = t.Status
 	}
-	// TagID is required
-	outTag := strconv.FormatUint(t.TagID, 10)
-	out.TagID = outTag
 	return out
+}
+
+// toModelOutSlice converts a slice of domain.Record to a slice of GraphQL model.Record pointers.
+func toModelOutSlice(records []domain.Record) []*gmodel.Record {
+	result := make([]*gmodel.Record, len(records))
+	for i, rec := range records {
+		result[i] = toModelOut(rec)
+	}
+	return result
 }
 
 // toCreateCommand converts a GraphQL CreateRecordInput into an input.CreateRecordCommand.
 func toCreateCommand(in gmodel.CreateRecordInput, userID uint64) input.CreateRecordCommand {
 	uid := userID
-
-	var categoryID uint64
-	if v, err := strconv.ParseUint(in.CategoryID, 10, 64); err == nil {
-		categoryID = v
-	}
 
 	// parse eventTime
 	var eventTime time.Time
@@ -94,8 +94,6 @@ func toCreateCommand(in gmodel.CreateRecordInput, userID uint64) input.CreateRec
 
 	return input.CreateRecordCommand{
 		UserID:       uid,
-		CategoryID:   categoryID,
-		Title:        in.Title,
 		Description:  in.Description,
 		TagID:        tagID,
 		EventTime:    eventTime,

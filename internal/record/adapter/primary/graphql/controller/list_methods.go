@@ -14,6 +14,8 @@ import (
 )
 
 // ListByTag fetches all Records for a specific tag for the authenticated user.
+//
+//nolint:dupl // Similar to ListByCategory but with different entity - duplication improves clarity
 func (h *controller) ListByTag(ctx context.Context, tagID, userID uint64, limit int) ([]*gmodel.Record, error) {
 	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanListByTag)
@@ -27,9 +29,9 @@ func (h *controller) ListByTag(ctx context.Context, tagID, userID uint64, limit 
 	)
 
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	if tagID == 0 {
@@ -56,6 +58,52 @@ func (h *controller) ListByTag(ctx context.Context, tagID, userID uint64, limit 
 	return out, nil
 }
 
+// ListByCategory fetches all Records for a specific category for the authenticated user.
+// Records are retrieved via JOIN (records → tags → categories).
+//
+//nolint:dupl // Similar to ListByTag but with different entity - duplication improves clarity
+func (h *controller) ListByCategory(ctx context.Context, categoryID, userID uint64, limit int) ([]*gmodel.Record, error) {
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, "record.list_by_category")
+	defer span.End()
+
+	span.SetAttributes(
+		attribute.String(commonkeys.Operation, "list_by_category"),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String("category_id", strconv.FormatUint(categoryID, 10)),
+		attribute.Int("limit", limit),
+	)
+
+	if userID == 0 {
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
+	}
+
+	if categoryID == 0 {
+		span.SetStatus(codes.Error, "category id cannot be zero")
+		h.Logger.ErrorwCtx(ctx, "category id cannot be zero", "category_id", categoryID)
+		return nil, errors.New("category id cannot be zero")
+	}
+
+	records, err := h.RecordService.ListByCategory(ctx, categoryID, userID, limit)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error listing records by category")
+		h.Logger.ErrorwCtx(ctx, "error listing records by category", "error", err.Error(), "category_id", categoryID, commonkeys.UserID, userID)
+		return nil, err
+	}
+
+	out := make([]*gmodel.Record, len(records))
+	for i, rec := range records {
+		out[i] = toModelOut(rec)
+	}
+
+	span.SetAttributes(attribute.Int("count", len(out)))
+	span.SetStatus(codes.Ok, StatusFetched)
+	return out, nil
+}
+
 // ListByDay fetches all Records for a specific day for the authenticated user.
 func (h *controller) ListByDay(ctx context.Context, userID uint64, dateStr string) ([]*gmodel.Record, error) {
 	tr := otel.Tracer(TracerName)
@@ -69,9 +117,9 @@ func (h *controller) ListByDay(ctx context.Context, userID uint64, dateStr strin
 	)
 
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	// Parse date string (expected format: YYYY-MM-DD or RFC3339)
@@ -118,9 +166,9 @@ func (h *controller) ListAllUntil(ctx context.Context, userID uint64, untilStr s
 	)
 
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	until, err := time.Parse(time.RFC3339, untilStr)
@@ -163,9 +211,9 @@ func (h *controller) ListAllBetween(ctx context.Context, userID uint64, startDat
 	)
 
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	startDate, err := time.Parse(time.RFC3339, startDateStr)
@@ -224,16 +272,56 @@ func (h *controller) ListByUser(ctx context.Context, userID uint64, limit int, a
 	)
 
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	records, err := h.RecordService.ListByUser(ctx, userID, limit, afterEventTime, afterID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, ErrFailedToListRecords)
-		h.Logger.ErrorwCtx(ctx, ErrFailedToListRecords, commonkeys.Error, err.Error())
+		span.SetStatus(codes.Error, ErrFailedToListRecords.Error())
+		h.Logger.ErrorwCtx(ctx, ErrFailedToListRecords.Error(), commonkeys.Error, err.Error())
+		return nil, err
+	}
+
+	out := make([]*gmodel.Record, len(records))
+	for i, rec := range records {
+		out[i] = toModelOut(rec)
+	}
+
+	span.SetAttributes(attribute.Int("count", len(out)))
+	span.SetStatus(codes.Ok, StatusFetched)
+	return out, nil
+}
+
+// ListLatest fetches the N most recent records for the authenticated user.
+func (h *controller) ListLatest(ctx context.Context, userID uint64, limit int) ([]*gmodel.Record, error) {
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanListLatest)
+	defer span.End()
+
+	span.SetAttributes(
+		attribute.String(commonkeys.Operation, SpanListLatest),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+		attribute.Int("limit", limit),
+	)
+
+	if userID == 0 {
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
+	}
+
+	if limit <= 0 || limit > 100 {
+		limit = 10 // default limit for latest
+	}
+
+	records, err := h.RecordService.ListLatest(ctx, userID, limit)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "error listing latest records")
+		h.Logger.ErrorwCtx(ctx, "error listing latest records", "error", err.Error(), commonkeys.UserID, userID)
 		return nil, err
 	}
 

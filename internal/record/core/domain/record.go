@@ -7,9 +7,8 @@ import "time"
 type Record struct {
 	ID          uint64  `json:"id"                    db:"id"`
 	UserID      uint64  `json:"userId"                db:"user_id"`
-	Title       string  `json:"title"                 db:"title"`
+	TagID       uint64  `json:"tagId"                 db:"tag_id"`
 	Description *string `json:"description,omitempty" db:"description"`
-	CategoryID  uint64  `json:"categoryId"            db:"category_id"`
 
 	EventTime time.Time `json:"eventTime" db:"event_time"` // when the event was planned/scheduled to occur
 
@@ -24,6 +23,4 @@ type Record struct {
 	CreatedAt time.Time  `json:"createdAt"           db:"created_at"`
 	UpdatedAt time.Time  `json:"updatedAt"           db:"updated_at"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty" db:"deleted_at"`
-
-	TagID uint64 `json:"tagId" db:"tag_id"`
 }

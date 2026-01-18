@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 	"time"
 
@@ -21,16 +20,16 @@ func (h *controller) Update(ctx context.Context, in gmodel.UpdateRecordInput, us
 	defer span.End()
 
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	recID, err := strconv.ParseUint(in.ID, 10, 64)
 	if err != nil {
-		span.SetStatus(codes.Error, ErrInvalidRecordID)
-		h.Logger.ErrorwCtx(ctx, ErrInvalidRecordID, "record_id", in.ID, commonkeys.Error, err.Error())
-		return nil, errors.New(ErrInvalidRecordID)
+		span.SetStatus(codes.Error, ErrInvalidRecordID.Error())
+		h.Logger.ErrorwCtx(ctx, ErrInvalidRecordID.Error(), "record_id", in.ID, commonkeys.Error, err.Error())
+		return nil, ErrInvalidRecordID
 	}
 
 	cmd := buildUpdateCommand(in)
@@ -55,7 +54,6 @@ func (h *controller) Update(ctx context.Context, in gmodel.UpdateRecordInput, us
 // buildUpdateCommand constructs an UpdateRecordCommand from GraphQL input.
 func buildUpdateCommand(in gmodel.UpdateRecordInput) input.UpdateRecordCommand {
 	cmd := input.UpdateRecordCommand{
-		Title:       in.Title,
 		Description: in.Description,
 		Value:       in.Value,
 		Source:      in.Source,
@@ -63,7 +61,6 @@ func buildUpdateCommand(in gmodel.UpdateRecordInput) input.UpdateRecordCommand {
 		Status:      in.Status,
 	}
 
-	parseUint64Field(in.CategoryID, &cmd.CategoryID)
 	parseUint64Field(in.TagID, &cmd.TagID)
 	parseTimeField(in.EventTime, &cmd.EventTime)
 	parseTimeField(in.RecordedAt, &cmd.RecordedAt)

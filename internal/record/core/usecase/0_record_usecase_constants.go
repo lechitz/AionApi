@@ -159,9 +159,6 @@ const (
 	// TagIDCannotBeZero indicates the tag ID cannot be zero.
 	TagIDCannotBeZero = "tag id cannot be zero"
 
-	// TitleRequired indicates the title field is required.
-	TitleRequired = "title required"
-
 	// RecordedAtCannotBeInTheFuture indicates recordedAt must not be a future timestamp.
 	RecordedAtCannotBeInTheFuture = "recordedAt cannot be in the future"
 
@@ -182,6 +179,18 @@ const (
 
 	// InvalidUserIDInContext indicates invalid user ID format in context.
 	InvalidUserIDInContext = "invalid user id in context"
+)
+
+// =============================================================================
+// DEFAULT VALUES - Business defaults for optional fields
+// =============================================================================
+
+const (
+	// DefaultRecordStatus is the default status for new records.
+	DefaultRecordStatus = "published"
+
+	// DefaultTimezone is the default timezone when not provided.
+	DefaultTimezone = "America/Sao_Paulo"
 )
 
 // =============================================================================
@@ -221,9 +230,6 @@ var (
 
 	// ErrTagIDCannotBeZero is a sentinel error when tag ID is zero.
 	ErrTagIDCannotBeZero = errors.New(TagIDCannotBeZero)
-
-	// ErrTitleRequired is a sentinel error when title is missing.
-	ErrTitleRequired = errors.New(TitleRequired)
 
 	// ErrRecordedAtFuture is a sentinel error when recordedAt is in future.
 	ErrRecordedAtFuture = errors.New(RecordedAtCannotBeInTheFuture)
