@@ -3,7 +3,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -27,17 +26,17 @@ func (h *controller) Update(ctx context.Context, in model.UpdateCategoryInput, u
 
 	// Basic guards (controller-level preconditions).
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	cmd, err := toUpdateCommand(in, userID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, ErrInvalidCategoryID)
-		h.Logger.ErrorwCtx(ctx, ErrInvalidCategoryID, commonkeys.Error, err.Error())
-		return nil, errors.New(ErrInvalidCategoryID)
+		span.SetStatus(codes.Error, ErrInvalidCategoryID.Error())
+		h.Logger.ErrorwCtx(ctx, ErrInvalidCategoryID.Error(), commonkeys.Error, err.Error())
+		return nil, ErrInvalidCategoryID
 	}
 
 	// Delegate to the input port (use case).

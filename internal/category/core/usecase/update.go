@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"strconv"
+	"strings"
 
 	"github.com/lechitz/AionApi/internal/category/core/domain"
 	"github.com/lechitz/AionApi/internal/category/core/ports/input"
@@ -25,6 +26,36 @@ func (s *Service) Update(ctx context.Context, cmd input.UpdateCategoryCommand) (
 		attribute.String(commonkeys.UserID, strconv.FormatUint(cmd.UserID, 10)),
 	)
 
+	// If name change is requested, enforce uniqueness (same behavior as Create).
+	newName := ""
+	if cmd.Name != nil {
+		newName = strings.TrimSpace(*cmd.Name)
+	}
+	if newName != "" {
+		span.AddEvent(EventCheckUniqueness)
+		existing, err := s.CategoryRepository.GetByName(ctx, newName, cmd.UserID)
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, FailedToGetCategoryByName)
+			s.Logger.ErrorwCtx(ctx, FailedToGetCategoryByName,
+				commonkeys.CategoryName, newName,
+				commonkeys.UserID, strconv.FormatUint(cmd.UserID, 10),
+				commonkeys.Error, err,
+			)
+			return domain.Category{}, err
+		}
+
+		// If another category exists with same name for this user, block.
+		if existing.Name != "" && existing.ID != cmd.ID {
+			span.SetStatus(codes.Error, CategoryAlreadyExists)
+			s.Logger.ErrorwCtx(ctx, CategoryAlreadyExists,
+				commonkeys.CategoryName, newName,
+				commonkeys.UserID, strconv.FormatUint(cmd.UserID, 10),
+			)
+			return domain.Category{}, ErrCategoryAlreadyExists
+		}
+	}
+
 	fieldsToUpdate := extractUpdateFields(cmd)
 
 	span.AddEvent(EventRepositoryUpdate)
@@ -39,6 +70,33 @@ func (s *Service) Update(ctx context.Context, cmd input.UpdateCategoryCommand) (
 			commonkeys.Error, err,
 		)
 		return domain.Category{}, err
+	}
+
+	span.AddEvent("InvalidateCache")
+	err = s.CategoryCache.DeleteCategory(ctx, updatedCategory.ID, updatedCategory.UserID)
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, "failed to delete category cache after update",
+			commonkeys.CategoryID, updatedCategory.ID,
+			commonkeys.UserID, updatedCategory.UserID,
+			commonkeys.Error, err,
+		)
+	}
+
+	err = s.CategoryCache.DeleteCategoryByName(ctx, updatedCategory.Name, updatedCategory.UserID)
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, "failed to delete category-by-name cache after update",
+			commonkeys.CategoryName, updatedCategory.Name,
+			commonkeys.UserID, updatedCategory.UserID,
+			commonkeys.Error, err,
+		)
+	}
+
+	err = s.CategoryCache.DeleteCategoryList(ctx, updatedCategory.UserID)
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, "failed to invalidate category list cache after updating category",
+			commonkeys.UserID, updatedCategory.UserID,
+			commonkeys.Error, err,
+		)
 	}
 
 	span.AddEvent(EventSuccess)

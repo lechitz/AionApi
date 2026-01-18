@@ -34,6 +34,14 @@ func TestSoftDeleteCategory_Success(t *testing.T) {
 		SoftDelete(gomock.Any(), category.ID, category.UserID).
 		Return(nil)
 
+	suite.CategoryCache.EXPECT().
+		DeleteCategory(gomock.Any(), category.ID, category.UserID).
+		Return(nil)
+
+	suite.CategoryCache.EXPECT().
+		DeleteCategoryList(gomock.Any(), category.UserID).
+		Return(nil)
+
 	err := suite.CategoryService.SoftDelete(suite.Ctx, category.ID, category.UserID)
 	assert.NoError(t, err)
 }

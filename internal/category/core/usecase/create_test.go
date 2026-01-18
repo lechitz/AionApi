@@ -152,6 +152,10 @@ func TestCreateCategory_PtrOrEmpty_NilPointersBecomeEmptyStrings(t *testing.T) {
 			Icon:        "",
 		}, nil)
 
+	suite.CategoryCache.EXPECT().
+		DeleteCategoryList(gomock.Any(), category.UserID).
+		Return(nil)
+
 	created, err := suite.CategoryService.Create(suite.Ctx, cmd)
 	require.NoError(t, err)
 	require.Empty(t, created.Description)
@@ -179,6 +183,10 @@ func TestCreateCategory_Success(t *testing.T) {
 			Icon:        category.Icon,
 		}).
 		Return(category, nil)
+
+	suite.CategoryCache.EXPECT().
+		DeleteCategoryList(gomock.Any(), category.UserID).
+		Return(nil)
 
 	createdCategory, err := suite.CategoryService.Create(suite.Ctx, cmd)
 

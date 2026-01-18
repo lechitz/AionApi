@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/lechitz/AionApi/internal/category/core/domain"
@@ -47,7 +46,7 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateCategoryCommand) (
 	if err == nil && existingCategory.Name != "" {
 		span.SetStatus(codes.Error, CategoryAlreadyExists)
 		s.Logger.ErrorwCtx(ctx, CategoryAlreadyExists, commonkeys.CategoryName, newCategory.Name)
-		return domain.Category{}, errors.New(CategoryAlreadyExists)
+		return domain.Category{}, ErrCategoryAlreadyExists
 	}
 
 	span.AddEvent(EventRepositoryCreate)
@@ -56,7 +55,16 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateCategoryCommand) (
 		span.RecordError(err)
 		span.SetStatus(codes.Error, FailedToCreateCategory)
 		s.Logger.ErrorwCtx(ctx, FailedToCreateCategory, commonkeys.Category, newCategory, commonkeys.Error, err)
-		return domain.Category{}, fmt.Errorf("%s: %w", FailedToCreateCategory, err)
+		return domain.Category{}, fmt.Errorf("%w: %w", ErrCreateCategory, err)
+	}
+
+	span.AddEvent("InvalidateCache")
+	err = s.CategoryCache.DeleteCategoryList(ctx, createdCategory.UserID)
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, "failed to invalidate category list cache after creating category",
+			commonkeys.UserID, createdCategory.UserID,
+			commonkeys.Error, err,
+		)
 	}
 
 	span.AddEvent(EventSuccess)
@@ -69,16 +77,16 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateCategoryCommand) (
 // validateCreateCommand checks required fields and length constraints for CreateCategoryCommand.
 func (s *Service) validateCreateCommand(cmd input.CreateCategoryCommand) error {
 	if cmd.Name == "" {
-		return errors.New(CategoryNameIsRequired)
+		return ErrCategoryNameRequired
 	}
 	if cmd.Description != nil && len(*cmd.Description) > 200 {
-		return errors.New(CategoryDescriptionIsTooLong)
+		return ErrCategoryDescriptionTooLong
 	}
 	if cmd.ColorHex != nil && len(*cmd.ColorHex) > 7 {
-		return errors.New(CategoryColorIsTooLong)
+		return ErrCategoryColorTooLong
 	}
 	if cmd.Icon != nil && len(*cmd.Icon) > 50 {
-		return errors.New(CategoryIconIsTooLong)
+		return ErrCategoryIconTooLong
 	}
 	return nil
 }

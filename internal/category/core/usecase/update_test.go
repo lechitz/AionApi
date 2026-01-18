@@ -53,6 +53,11 @@ func TestUpdateCategory_ErrorToUpdateCategory(t *testing.T) {
 		commonkeys.CategoryIcon:        c.Icon,
 	}
 
+	// Uniqueness check (same behavior as Create).
+	suite.CategoryRepository.EXPECT().
+		GetByName(gomock.Any(), c.Name, c.UserID).
+		Return(domain.Category{}, nil)
+
 	suite.CategoryRepository.EXPECT().
 		UpdateCategory(gomock.Any(), c.ID, c.UserID, updateFields).
 		Return(domain.Category{}, errors.New(usecase.FailedToUpdateCategory))
@@ -78,9 +83,26 @@ func TestUpdateCategory_Success(t *testing.T) {
 		commonkeys.CategoryIcon:        c.Icon,
 	}
 
+	// Uniqueness check (same behavior as Create).
+	suite.CategoryRepository.EXPECT().
+		GetByName(gomock.Any(), c.Name, c.UserID).
+		Return(domain.Category{}, nil)
+
 	suite.CategoryRepository.EXPECT().
 		UpdateCategory(gomock.Any(), c.ID, c.UserID, updateFields).
 		Return(c, nil)
+
+	suite.CategoryCache.EXPECT().
+		DeleteCategory(gomock.Any(), c.ID, c.UserID).
+		Return(nil)
+
+	suite.CategoryCache.EXPECT().
+		DeleteCategoryByName(gomock.Any(), c.Name, c.UserID).
+		Return(nil)
+
+	suite.CategoryCache.EXPECT().
+		DeleteCategoryList(gomock.Any(), c.UserID).
+		Return(nil)
 
 	categoryDB, err := suite.CategoryService.Update(suite.Ctx, cmd)
 
@@ -91,4 +113,28 @@ func TestUpdateCategory_Success(t *testing.T) {
 	require.Equal(t, c.Description, categoryDB.Description)
 	require.Equal(t, c.Color, categoryDB.Color)
 	require.Equal(t, c.Icon, categoryDB.Icon)
+}
+
+func TestUpdateCategory_NameAlreadyExists(t *testing.T) {
+	suite := setup.CategoryServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	c := testdata.PerfectCategory
+	targetID := c.ID
+	differentID := c.ID + 1
+	name := c.Name
+	cmd := input.UpdateCategoryCommand{
+		ID:     targetID,
+		UserID: c.UserID,
+		Name:   &name,
+	}
+
+	suite.CategoryRepository.EXPECT().
+		GetByName(gomock.Any(), name, c.UserID).
+		Return(domain.Category{ID: differentID, UserID: c.UserID, Name: name}, nil)
+
+	updated, err := suite.CategoryService.Update(suite.Ctx, cmd)
+	require.Error(t, err)
+	require.Equal(t, usecase.CategoryAlreadyExists, err.Error())
+	require.Equal(t, domain.Category{}, updated)
 }

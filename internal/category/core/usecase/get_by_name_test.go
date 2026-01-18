@@ -31,6 +31,10 @@ func TestGetCategoryByName_ErrorToGetCategoryByName(t *testing.T) {
 
 	category := testdata.PerfectCategory
 
+	suite.CategoryCache.EXPECT().
+		GetCategoryByName(gomock.Any(), category.Name, category.UserID).
+		Return(domain.Category{}, errors.New("cache miss"))
+
 	suite.CategoryRepository.EXPECT().
 		GetByName(gomock.Any(), category.Name, category.UserID).
 		Return(domain.Category{}, errors.New(usecase.FailedToGetCategoryByName))
@@ -48,9 +52,21 @@ func TestGetCategoryByName_Success(t *testing.T) {
 
 	category := testdata.PerfectCategory
 
+	suite.CategoryCache.EXPECT().
+		GetCategoryByName(gomock.Any(), category.Name, category.UserID).
+		Return(domain.Category{}, errors.New("cache miss"))
+
 	suite.CategoryRepository.EXPECT().
 		GetByName(gomock.Any(), category.Name, category.UserID).
 		Return(category, nil)
+
+	suite.CategoryCache.EXPECT().
+		SaveCategoryByName(gomock.Any(), category, gomock.Any()).
+		Return(nil)
+
+	suite.CategoryCache.EXPECT().
+		SaveCategory(gomock.Any(), category, gomock.Any()).
+		Return(nil)
 
 	categoryDB, err := suite.CategoryService.GetByName(suite.Ctx, category.Name, category.UserID)
 

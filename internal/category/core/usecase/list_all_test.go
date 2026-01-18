@@ -18,6 +18,10 @@ func TestListAll_ErrorToGetAllCategories(t *testing.T) {
 
 	userID := testdata.PerfectCategory.UserID
 
+	suite.CategoryCache.EXPECT().
+		GetCategoryList(gomock.Any(), userID).
+		Return(nil, errors.New("cache miss"))
+
 	suite.CategoryRepository.EXPECT().
 		ListAll(gomock.Any(), userID).
 		Return(nil, errors.New(usecase.FailedToGetAllCategories))
@@ -36,9 +40,17 @@ func TestListAll_Success(t *testing.T) {
 	userID := testdata.PerfectCategory.UserID
 	exp := []domain.Category{testdata.PerfectCategory}
 
+	suite.CategoryCache.EXPECT().
+		GetCategoryList(gomock.Any(), userID).
+		Return(nil, errors.New("cache miss"))
+
 	suite.CategoryRepository.EXPECT().
 		ListAll(gomock.Any(), userID).
 		Return(exp, nil)
+
+	suite.CategoryCache.EXPECT().
+		SaveCategoryList(gomock.Any(), userID, exp, gomock.Any()).
+		Return(nil)
 
 	categories, err := suite.CategoryService.ListAll(suite.Ctx, userID)
 
