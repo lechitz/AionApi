@@ -19,6 +19,7 @@ const (
 	SpanLoginHandler   = "auth.handler.login"
 	SpanLogoutHandler  = "auth.handler.logout"
 	SpanRefreshHandler = "auth.handler.refresh"
+	SpanSessionHandler = "auth.handler.session"
 )
 
 // -----------------------------------------------------------------------------
@@ -35,6 +36,7 @@ const (
 	EventLoginSuccess       = "auth.handler.login_success"
 	EventLogoutSuccess      = "auth.handler.logout_success"
 	EventRefreshSuccess     = "auth.handler.refresh_success"
+	EventSessionSuccess     = "auth.handler.session_success"
 )
 
 // -----------------------------------------------------------------------------
@@ -46,6 +48,7 @@ const (
 	StatusLoginSuccess   = "login_success"
 	StatusLogoutSuccess  = "logout_success"
 	StatusRefreshSuccess = "refresh_success"
+	StatusSessionSuccess = "session_success"
 )
 
 // =============================================================================
@@ -58,6 +61,7 @@ const (
 	ErrLogin         = "error on login"
 	ErrLogout        = "error on logout"
 	ErrRefresh       = "error on refresh"
+	ErrSession       = "error on session"
 )
 
 // Success messages.
@@ -65,6 +69,7 @@ const (
 	MsgLoginSuccess   = "user logged in successfully"
 	MsgLogoutSuccess  = "user logged out successfully"
 	MsgRefreshSuccess = "token refreshed successfully"
+	MsgSessionSuccess = "session fetched successfully"
 )
 
 // Log message keys.
@@ -92,6 +97,18 @@ const (
 
 	// ValidationFieldCredentials is the field name used in validation errors for login credentials.
 	ValidationFieldCredentials = "credentials"
+)
+
+// =============================================================================
+// SESSION - Errors and tracing attribute keys
+// =============================================================================
+
+const (
+	// ErrMissingAccessToken is returned when access cookie is missing or empty.
+	ErrMissingAccessToken = "missing access token"
+
+	// AttrAccessTokenPresent records whether access token cookie was present. Never store the token value.
+	AttrAccessTokenPresent = "access_token_present" // #nosec G101: attribute name, not a credential
 )
 
 // =============================================================================

@@ -74,14 +74,43 @@ func (s *Service) generateAndSaveTokens(ctx context.Context, userID uint64) (str
 		s.logger.DebugwCtx(ctx, LogNoPreviousTokenForGrace, commonkeys.UserID, userID)
 	}
 
-	// Generate new access token
-	claimsForAccess := map[string]any{claimskeys.UserID: userID}
+	user, err := s.userCache.GetUserByID(ctx, userID)
+	if err != nil {
+		user, err = s.userRepository.GetByID(ctx, userID)
+		if err != nil {
+			return "", "", fmt.Errorf("failed to get user data: %w", err)
+		}
+
+		err = s.userCache.SaveUser(ctx, user, 0)
+		if err != nil {
+			s.logger.WarnwCtx(ctx, LogFailedToCacheUserData,
+				commonkeys.UserID, userID,
+				commonkeys.Error, err.Error(),
+			)
+		}
+	}
+
+	roles, err := s.rolesReader.GetRolesByUserID(ctx, userID)
+	if err != nil {
+		return "", "", err
+	}
+	claimsForAccess := map[string]any{
+		claimskeys.UserID:   userID,
+		claimskeys.Username: user.Username,
+		claimskeys.Email:    user.Email,
+		claimskeys.Name:     user.Name,
+		claimskeys.Roles:    roles,
+	}
+
+	span := trace.SpanFromContext(ctx)
+	span.AddEvent(EventGenerateToken)
 	access, err := s.authProvider.GenerateAccessToken(userID, claimsForAccess)
 	if err != nil {
 		return "", "", err
 	}
 
 	// Save new access token as primary
+	span.AddEvent(EventSaveAccessTokenToStore)
 	if err := s.saveAuthIfTTL(ctx, authDomain.NewAccessToken(access, userID).ToAuth(), access); err != nil {
 		return "", "", err
 	}
@@ -99,11 +128,12 @@ func (s *Service) generateAndSaveTokens(ctx context.Context, userID uint64) (str
 		s.moveTokenToGracePeriod(ctx, userID, oldAuth, access)
 	}
 
-	// Generate and save new refresh token
+	span.AddEvent(EventGenerateRefreshToken)
 	refresh, err := s.authProvider.GenerateRefreshToken(userID)
 	if err != nil {
 		return "", "", err
 	}
+	span.AddEvent(EventSaveRefreshTokenToStore)
 	if err := s.saveAuthIfTTL(ctx, authDomain.NewRefreshToken(refresh, userID).ToAuth(), refresh); err != nil {
 		return "", "", err
 	}

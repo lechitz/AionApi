@@ -111,6 +111,12 @@ const (
 
 	// EventGenerateAndSaveNewTokens is emitted before generating and persisting new access/refresh tokens.
 	EventGenerateAndSaveNewTokens = "auth.token.refresh.generate_and_save" // #nosec G101: event name, not a credential
+
+	// EventSaveAccessTokenToStore is emitted before saving the access token to the store.
+	EventSaveAccessTokenToStore = "auth.token.save.access" // #nosec G101: event name, not a credential
+
+	// EventSaveRefreshTokenToStore is emitted before saving the refresh token to the store.
+	EventSaveRefreshTokenToStore = "auth.token.save.refresh" // #nosec G101: event name, not a credential
 )
 
 // =============================================================================
@@ -169,6 +175,9 @@ const (
 const (
 	// LogFailedToCacheUserProfile is logged when user profile caching fails on login.
 	LogFailedToCacheUserProfile = "failed to cache user profile on login"
+
+	// LogFailedToCacheUserData is logged when user caching fails during refresh token renewal.
+	LogFailedToCacheUserData = "failed to cache user data"
 
 	// =============================================================================
 	// Refresh/Grace period logs.

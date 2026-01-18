@@ -75,7 +75,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		Token: accessToken,
 		ID:    user.ID,
 		Name:  user.Name,
-		Roles: user.Roles,
 	}
 
 	span.AddEvent(EventLoginSuccess)

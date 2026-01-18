@@ -33,6 +33,10 @@ func TestLogin_Success(t *testing.T) {
 		Compare("hashed", "test123").
 		Return(nil)
 
+	suite.RolesReader.EXPECT().
+		GetRolesByUserID(gomock.Any(), uint64(1)).
+		Return([]string{"user"}, nil)
+
 	suite.TokenProvider.EXPECT().
 		GenerateAccessToken(uint64(1), gomock.AssignableToTypeOf(map[string]any{})).
 		Return("token-string", nil)
@@ -57,7 +61,7 @@ func TestLogin_Success(t *testing.T) {
 	userOut, accessTokenOut, refreshTokenOut, err := suite.AuthService.Login(suite.Ctx, "lechitz", "test123")
 
 	require.NoError(t, err)
-	require.Equal(t, mockUser, userOut)
+	require.Equal(t, authDomain.AuthenticatedUser{ID: 1, Username: "lechitz", Roles: []string{"user"}}, userOut)
 	require.Equal(t, "token-string", accessTokenOut)
 	require.Empty(t, refreshTokenOut)
 }
@@ -121,6 +125,10 @@ func TestLogin_ProviderGenerateFails(t *testing.T) {
 		Compare("hashed", "123456").
 		Return(nil)
 
+	suite.RolesReader.EXPECT().
+		GetRolesByUserID(gomock.Any(), uint64(1)).
+		Return([]string{"user"}, nil)
+
 	suite.TokenProvider.EXPECT().
 		GenerateAccessToken(uint64(1), gomock.AssignableToTypeOf(map[string]any{})).
 		Return("", errors.New(usecase.ErrorToCreateToken))
@@ -148,6 +156,10 @@ func TestLogin_SaveTokenFails(t *testing.T) {
 	suite.Hasher.EXPECT().
 		Compare("hashed", "123456").
 		Return(nil)
+
+	suite.RolesReader.EXPECT().
+		GetRolesByUserID(gomock.Any(), uint64(1)).
+		Return([]string{"user"}, nil)
 
 	suite.TokenProvider.EXPECT().
 		GenerateAccessToken(uint64(1), gomock.AssignableToTypeOf(map[string]any{})).
@@ -203,6 +215,10 @@ func TestLogin_Success_WithRefreshToken(t *testing.T) {
 		Compare("hashed", "test123").
 		Return(nil)
 
+	suite.RolesReader.EXPECT().
+		GetRolesByUserID(gomock.Any(), uint64(1)).
+		Return([]string{"user"}, nil)
+
 	suite.TokenProvider.EXPECT().
 		GenerateAccessToken(uint64(1), gomock.AssignableToTypeOf(map[string]any{})).
 		Return("access-token", nil)
@@ -232,7 +248,7 @@ func TestLogin_Success_WithRefreshToken(t *testing.T) {
 	userOut, accessTokenOut, refreshTokenOut, err := suite.AuthService.Login(suite.Ctx, "lechitz", "test123")
 
 	require.NoError(t, err)
-	require.Equal(t, mockUser, userOut)
+	require.Equal(t, authDomain.AuthenticatedUser{ID: 1, Username: "lechitz", Roles: []string{"user"}}, userOut)
 	require.Equal(t, "access-token", accessTokenOut)
 	require.Equal(t, "refresh-token", refreshTokenOut)
 }
@@ -257,6 +273,20 @@ func TestRefreshTokenRenewal_Success(t *testing.T) {
 	suite.TokenStore.EXPECT().
 		Get(gomock.Any(), userID, commonkeys.TokenTypeAccess).
 		Return(authDomain.Auth{}, nil)
+
+	// Mock user cache to return user data (needed for username, email, name in JWT claims)
+	suite.UserCache.EXPECT().
+		GetUserByID(gomock.Any(), userID).
+		Return(userDomain.User{
+			ID:       userID,
+			Username: "testuser",
+			Email:    "test@example.com",
+			Name:     "Test User",
+		}, nil)
+
+	suite.RolesReader.EXPECT().
+		GetRolesByUserID(gomock.Any(), userID).
+		Return([]string{"user"}, nil)
 
 	suite.TokenProvider.EXPECT().
 		GenerateAccessToken(userID, gomock.AssignableToTypeOf(map[string]any{})).

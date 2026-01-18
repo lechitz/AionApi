@@ -72,6 +72,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cookies.ClearAuthCookie(w, h.Config.Cookie)
+	cookies.ClearRefreshCookie(w, h.Config.Cookie)
 
 	span.SetAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),

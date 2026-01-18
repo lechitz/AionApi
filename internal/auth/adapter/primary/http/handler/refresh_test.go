@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	handlerpkg "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/handler"
+	authdomain "github.com/lechitz/AionApi/internal/auth/core/domain"
 	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/user/core/domain"
 	"github.com/lechitz/AionApi/tests/mocks"
 	"github.com/lechitz/AionApi/tests/setup"
 	"go.uber.org/mock/gomock"
@@ -34,9 +34,9 @@ func (m *minimalAuthService) RefreshTokenRenewal(_ context.Context, refreshToken
 }
 
 // ---- stubs to satisfy the rest of input.AuthService.
-func (m *minimalAuthService) Login(_ context.Context, _ string, _ string) (domain.User, string, string, error) {
+func (m *minimalAuthService) Login(_ context.Context, _ string, _ string) (authdomain.AuthenticatedUser, string, string, error) {
 	// not used by these tests.
-	return domain.User{}, "", "", nil
+	return authdomain.AuthenticatedUser{}, "", "", nil
 }
 
 func (m *minimalAuthService) Validate(_ context.Context, _ string) (uint64, map[string]any, error) {

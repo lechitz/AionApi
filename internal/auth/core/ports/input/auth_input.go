@@ -4,7 +4,7 @@ package input
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/user/core/domain"
+	authdomain "github.com/lechitz/AionApi/internal/auth/core/domain"
 )
 
 // Validator validates a raw token and returns the resolved userID and claims.
@@ -14,7 +14,7 @@ type Validator interface {
 
 // Authenticator defines methods for authentication users and generating access tokens.
 type Authenticator interface {
-	Login(ctx context.Context, username, password string) (domain.User, string, string, error)
+	Login(ctx context.Context, username, password string) (authdomain.AuthenticatedUser, string, string, error)
 }
 
 // SessionRevoker provides a method to invalidate user sessions by revoking tokens.
