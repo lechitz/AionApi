@@ -62,7 +62,8 @@
 ### Testing & coverage
 
 * `test` — run unit tests with `-race`.
-* `test-cover` — run coverage, **filter out** `Mock` files, and produce `$(COVERAGE_DIR)/coverage.html`.
+* `test-cover` — run tests with coverage summary (package + %).
+* `test-cover-detail` — run coverage, **filter out** `Mock` files, and produce `$(COVERAGE_DIR)/coverage.html`.
 * `test-html-report` — run tests with JUnit XML via `gotestsum` → `$(COVERAGE_DIR)/junit-report.xml`.
 * `test-ci` — coverage to `$(COVERAGE_DIR)/coverage.out` (no HTML).
 * `test-clean` — clean coverage artifacts.
@@ -85,7 +86,7 @@ POSTGRES_DB=aionapi
 
 * `format` — `goimports` + `golines (gofumpt)`.
 * `lint` / `lint-fix` — `golangci-lint` (check/fix).
-* `verify` — local pipeline: `graphql → mocks → lint → test → test-cover → test-ci → test-clean`.
+* `verify` — local pipeline: `graphql → mocks → lint → test → test-cover-detail → test-ci → test-clean`.
 
 ---
 

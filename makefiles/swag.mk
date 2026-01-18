@@ -44,7 +44,8 @@ docs.gen: swag
 		-o "$(SWAG_OUT)" \
 		--packageName "$(SWAG_PKG)" \
 		--parseDependency \
-		--parseInternal
+		--parseInternal \
+		-d ./,internal/admin/adapter/primary/http/dto,internal/admin/adapter/primary/http/handler
 
 	@echo ">> patching generated docs.go for lint (godot + nolintlint, with reasons; idempotent)"
 	@[ -n "$(PERL_BIN)" ] || (echo "Perl not found. Please install Perl to patch generated docs."; exit 1)
@@ -72,7 +73,8 @@ docs.validate: swag
 		-o "$(SWAG_OUT)" \
 		--packageName "$(SWAG_PKG)" \
 		--parseDependency \
-		--parseInternal
+		--parseInternal \
+		-d ./,internal/admin/adapter/primary/http/dto,internal/admin/adapter/primary/http/handler
 	@echo ">> patching generated docs.go for lint (godot + nolintlint, with reasons; idempotent)"
 	@[ -n "$(PERL_BIN)" ] || (echo "Perl not found. Please install Perl to patch generated docs."; exit 1)
 	@[ -f "$(SWAG_OUT)/docs.go" ] || (echo "$(SWAG_OUT)/docs.go not found"; exit 1)

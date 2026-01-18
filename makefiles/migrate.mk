@@ -2,7 +2,16 @@
 #                         MIGRATIONS
 # ============================================================
 
-.PHONY: migrate-up migrate-down migrate-force migrate-new
+# Default dev database URL (used by migrate-dev-* commands)
+DEV_MIGRATION_DB ?= postgres://aion:aion123@localhost:5432/aionapi?sslmode=disable
+
+.PHONY: migrate-up migrate-down migrate-force migrate-new migrate-dev-up migrate-dev-down migrate-dev-status migrate-install
+
+# Install golang-migrate CLI
+migrate-install:
+	@echo "📦 Installing golang-migrate..."
+	@go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+	@echo "✅ golang-migrate installed"
 
 migrate-up:
 	@if [ -z "$(MIGRATE_BIN)" ]; then \
@@ -55,3 +64,45 @@ migrate-new:
 		exit 1; \
 	fi; \
 	$(MIGRATE_BIN) create -ext sql -dir "$(MIGRATION_PATH)" "$$name"
+
+# ============================================================
+#                 DEV ENVIRONMENT MIGRATIONS
+# ============================================================
+# These commands use DEV_MIGRATION_DB by default (localhost:5432)
+# Requires: postgres container running (make dev or make dev-fast)
+
+migrate-dev-up:
+	@if [ -z "$(MIGRATE_BIN)" ]; then \
+		echo "❌ 'migrate' CLI not found. Run: make migrate-install"; \
+		exit 1; \
+	fi
+	@echo "🚀 Running all migrations on DEV database..."
+	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(DEV_MIGRATION_DB)" up
+	@echo "✅ Migrations applied successfully"
+
+migrate-dev-down:
+	@if [ -z "$(MIGRATE_BIN)" ]; then \
+		echo "❌ 'migrate' CLI not found. Run: make migrate-install"; \
+		exit 1; \
+	fi
+	@echo "↩️  Rolling back last migration on DEV database..."
+	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(DEV_MIGRATION_DB)" down 1
+
+migrate-dev-status:
+	@if [ -z "$(MIGRATE_BIN)" ]; then \
+		echo "❌ 'migrate' CLI not found. Run: make migrate-install"; \
+		exit 1; \
+	fi
+	@echo "📊 Migration status on DEV database..."
+	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(DEV_MIGRATION_DB)" version
+
+migrate-dev-reset:
+	@if [ -z "$(MIGRATE_BIN)" ]; then \
+		echo "❌ 'migrate' CLI not found. Run: make migrate-install"; \
+		exit 1; \
+	fi
+	@echo "⚠️  Resetting DEV database (dropping all and re-applying)..."
+	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(DEV_MIGRATION_DB)" drop -f || true
+	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(DEV_MIGRATION_DB)" up
+	@echo "✅ DEV database reset complete"
+

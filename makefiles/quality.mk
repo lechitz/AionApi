@@ -73,7 +73,7 @@ lint-fix:
 	fi
 
 # General verify (checks code quality, but does not enforce committed artifacts)
-verify: go-check lint fieldalignment graphql mocks docs.validate test test-cover test-ci test-clean
+verify: go-check lint fieldalignment graphql mocks docs.validate test test-cover-detail test-ci test-clean
 	@echo "Running test checks..."
 	@$(MAKE) -s test-checks
 	@echo "✅  Verify passed successfully!"

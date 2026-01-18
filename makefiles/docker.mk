@@ -2,11 +2,55 @@
 #                DOCKER ENVIRONMENT TARGETS
 # ============================================================
 
-.PHONY: build-dev dev-up dev-down dev dev-clean clean-dev
+.PHONY: build-dev dev-up dev-down dev dev-fast dev-clean clean-dev
+.PHONY: rebuild-dashboard rebuild-chat rebuild-api
 .PHONY: build-prod prod-up prod-down prod clean-prod
 .PHONY: docker-clean-all
 
 APPLICATION_NAME := aion-api
+
+# ============================================================
+#         REBUILD INDIVIDUAL SERVICES (without full restart)
+# ============================================================
+
+rebuild-dashboard:
+	@echo "Stopping and removing old aionapi-dashboard container..."
+	@docker stop aionapi-dashboard-dev 2>/dev/null || true
+	@docker rm aionapi-dashboard-dev 2>/dev/null || true
+	@echo "Removing old aionapi-dashboard image..."
+	@docker rmi aionapi-dashboard:dev 2>/dev/null || true
+	@echo "Rebuilding aionapi-dashboard..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) build aionapi-dashboard
+	@echo "🔄 Starting aionapi-dashboard..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d aionapi-dashboard
+	@echo "✅ aionapi-dashboard rebuilt and restarted!"
+	@echo "   → http://localhost:5000"
+
+rebuild-chat:
+	@echo "Stopping and removing old aion-chat container..."
+	@docker stop aion-chat-dev 2>/dev/null || true
+	@docker rm aion-chat-dev 2>/dev/null || true
+	@echo "Removing old aion-chat image..."
+	@docker rmi aion-chat:dev 2>/dev/null || true
+	@echo "Rebuilding aion-chat..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) build aion-chat
+	@echo "🔄 Starting aion-chat..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d aion-chat
+	@echo "✅ aion-chat rebuilt and restarted!"
+	@echo "   → http://localhost:8000/health"
+
+rebuild-api:
+	@echo "Stopping and removing old aion-api container..."
+	@docker stop aion-api-dev 2>/dev/null || true
+	@docker rm aion-api-dev 2>/dev/null || true
+	@echo "Removing old aion-api image..."
+	@docker rmi aion-api:dev 2>/dev/null || true
+	@echo "Rebuilding aion-api..."
+	@make build-dev
+	@echo "🔄 Starting aion-api..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d aion-api
+	@echo "✅ aion-api rebuilt and restarted!"
+	@echo "   → http://localhost:5001/aion/api/v1/health"
 
 build-dev: clean-dev
 	@echo "[BUILD-DEV] Building DEV image..."
@@ -18,22 +62,97 @@ dev-up: dev-down
 	export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up
 
 dev-down:
-	@echo "[DEV-DOWN] Stopping DEV environment..."
-	export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down -v
+	@echo "[DEV-DOWN] Stopping DEV environment (preserving volumes)..."
+	export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down --remove-orphans
 
 dev: build-dev
-	@echo "[DEV] Starting DEV environment (detached)..."
-	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down -v || true
-	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d
-	@echo "✓ Services started in background"
-	@echo "→ Use 'make dev-logs' or 'make dev-attach' to view logs"
-	@echo "→ Use 'make dev-down' to stop all services"
+	@echo "[DEV] Starting FULL STACK environment (detached)..."
+	@echo "      → AionApi + aion-chat + dashboard + infrastructure"
+	@echo "      ℹ️  Volumes preserved (Ollama models + PostgreSQL data)"
+	@echo "      💡 Use 'make rebuild-chat' or 'make rebuild-dashboard' to force rebuild"
 	@echo ""
-	@echo "ℹ️  Quick commands:"
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down --remove-orphans || true
+	@echo ""
+	@echo "🚀 Starting all services (using cache for chat/dashboard)..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d --build
+	@echo ""
+	@echo "⏳ Waiting for PostgreSQL to be ready..."
+	@for i in $$(seq 1 30); do \
+		if docker exec postgres-dev pg_isready -U aion -d aionapi >/dev/null 2>&1; then \
+			echo "✅ PostgreSQL is ready!"; \
+			break; \
+		fi; \
+		if [ $$i -eq 30 ]; then \
+			echo "⚠️  Timeout waiting for PostgreSQL"; \
+		fi; \
+		sleep 1; \
+	done
+	@echo ""
+	@echo "🗄️  Running database migrations..."
+	@if command -v migrate >/dev/null 2>&1; then \
+		migrate -path infrastructure/db/migrations -database "postgres://aion:aion123@localhost:5432/aionapi?sslmode=disable" up && \
+		echo "✅ Migrations applied successfully"; \
+	else \
+		echo "⚠️  'migrate' CLI not found. Run: make migrate-install"; \
+		echo "   Then run: make migrate-dev-up"; \
+	fi
+	@echo ""
+	@echo "🔧 Checking Ollama model setup..."
+	@bash scripts/check-and-setup-ollama.sh || echo "⚠️  Ollama setup had issues but continuing..."
+	@echo ""
+	@echo "⏳ Waiting for services to be healthy..."
+	@for i in $$(seq 1 60); do \
+		if docker compose -f $(COMPOSE_FILE_DEV) ps | grep -q "aion-chat.*healthy"; then \
+			echo "✅ aion-chat is healthy!"; \
+			break; \
+		fi; \
+		if [ $$i -eq 60 ]; then \
+			echo "⚠️  Timeout waiting for aion-chat health check"; \
+		fi; \
+		sleep 1; \
+	done
+	@echo ""
+	@echo "✅ All services started in background"
+	@echo ""
+	@echo "📍 Service URLs:"
+	@echo "   • Dashboard:  http://localhost:5000"
+	@echo "   • API:        http://localhost:5001/aion/api/v1/health"
+	@echo "   • Chat AI:    http://localhost:8000/health"
+	@echo "   • Grafana:    http://localhost:3000 (aion/aion)"
+	@echo "   • Jaeger:     http://localhost:16686"
+	@echo ""
+	@echo "Quick commands:"
+	@echo "   make dev-fast     → Start without rebuilding (faster if no code changes)"
 	@echo "   make dev-attach   → Attach to aion-api logs (without rebuild)"
 	@echo "   make dev-logs     → Show all services logs"
 	@echo "   make migrate-up   → Run database migrations"
 	@echo "   make seed-caller n=1 → Seed data via API"
+
+dev-fast: build-dev
+	@echo "[DEV-FAST] Starting services WITHOUT rebuilding other images..."
+	@echo "      ⚡ Use this when you haven't changed aion-chat or dashboard code"
+	@echo ""
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down || true
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d
+	@echo ""
+	@echo "⏳ Waiting for PostgreSQL..."
+	@for i in $$(seq 1 20); do \
+		if docker exec postgres-dev pg_isready -U aion -d aionapi >/dev/null 2>&1; then \
+			break; \
+		fi; \
+		sleep 1; \
+	done
+	@echo "🗄️  Applying migrations..."
+	@if command -v migrate >/dev/null 2>&1; then \
+		migrate -path infrastructure/db/migrations -database "postgres://aion:aion123@localhost:5432/aionapi?sslmode=disable" up 2>&1 | grep -v "no change" || true; \
+	fi
+	@echo ""
+	@echo "✓ Services started (using existing images)"
+	@echo ""
+	@echo "📍 Service URLs:"
+	@echo "   • Dashboard:  http://localhost:5000"
+	@echo "   • API:        http://localhost:5001/aion/api/v1/health"
+	@echo "   • Chat AI:    http://localhost:8000/health"
 
 dev-attach:
 	@echo "[DEV-ATTACH] Attaching to aion-api logs..."
@@ -49,15 +168,29 @@ dev-logs:
 	@trap 'echo ""; echo "✓ Stopped viewing logs. Containers still running."; exit 0' INT; \
 		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f
 
-dev-clean: clean-dev dev
+# Alias for backwards compatibility (use clean-dev instead)
+dev-clean: clean-dev
 
 clean-dev:
 	@echo "[CLEAN-DEV] Cleaning DEV containers, volumes, images..."
-	@echo "→ Stopping and removing compose stack..."
-	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down -v --remove-orphans || true
-	@echo "→ Removing dev image..."
+	@echo "      ⚠️  This will remove:"
+	@echo "         • Ollama models (~4-5GB)"
+	@echo "         • PostgreSQL data"
+	@echo "         • Redis cache"
+	@echo "         • aion-api:dev image"
+	@echo ""
+	@echo "→ Stopping and removing compose stack (with volumes)..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down --volumes --remove-orphans || true
+	@echo "→ Removing dev images..."
 	@docker images --filter "reference=$(APPLICATION_NAME):dev" -q | xargs -r docker rmi -f || true
-	@echo "✓ Cleanup complete"
+	@echo "✅ Cleanup complete"
+	@echo ""
+	@echo "Next 'make dev' will download Ollama model again"
+
+# ============================================================
+#                PRODUCTION BUILD
+# ============================================================
+
 
 build-prod: clean-prod
 	@echo "[BUILD-PROD] Building PROD image..."
@@ -84,3 +217,84 @@ docker-clean-all:
 	@docker ps -a -q | xargs -r docker rm -f
 	@docker volume ls -q | xargs -r docker volume rm
 	@docker images -a -q | xargs -r docker rmi -f
+
+# ============================================================
+#         DOCKER CLEANUP & DIAGNOSTICS (Disk Management)
+# ============================================================
+
+.PHONY: docker-disk docker-prune-aion docker-prune-dangling docker-prune-build-cache
+
+# Show Docker disk usage (quick diagnostic)
+docker-disk:
+	@echo "Docker Disk Usage Summary"
+	@echo "=============================="
+	@docker system df
+	@echo ""
+	@echo "Aion-related images:"
+	@docker images | grep -E "(aion|dashboard)" || echo "   (none found)"
+	@echo ""
+	@echo "Aion-related containers (all states):"
+	@docker ps -a | grep -E "(aion|dashboard)" || echo "   (none found)"
+	@echo ""
+	@echo "Tips:"
+	@echo "   make docker-prune-aion       → Clean only AionApi images/containers"
+	@echo "   make docker-prune-dangling   → Remove dangling images (safe)"
+	@echo "   make docker-prune-build-cache → Clear Docker build cache"
+
+# Clean ONLY AionApi-related images and containers (safe, preserves volumes)
+docker-prune-aion:
+	@echo "Cleaning AionApi-related images and containers..."
+	@echo "   ⚠️  This will NOT delete volumes (PostgreSQL data, Ollama models)"
+	@echo ""
+	@echo "→ Stopping Aion containers..."
+	@docker stop aion-api-dev aion-chat-dev aionapi-dashboard-dev 2>/dev/null || true
+	@echo "→ Removing Aion containers..."
+	@docker rm aion-api-dev aion-chat-dev aionapi-dashboard-dev 2>/dev/null || true
+	@echo "→ Removing Aion images..."
+	@docker rmi aion-api:dev aion-chat:dev aionapi-dashboard:dev 2>/dev/null || true
+	@echo ""
+	@echo "→ Removing dangling images from Aion builds..."
+	@docker images --filter "dangling=true" -q | xargs -r docker rmi 2>/dev/null || true
+	@echo ""
+	@echo "✅ AionApi cleanup complete!"
+	@echo "   Next 'make dev' will rebuild images from scratch (using cache)"
+
+# Remove dangling images only (safe, no data loss)
+docker-prune-dangling:
+	@echo "Removing dangling images..."
+	@docker image prune -f
+	@echo ""
+	@echo "✅ Dangling images removed!"
+
+# Clear Docker build cache (frees significant space after many rebuilds)
+docker-prune-build-cache:
+	@echo "Clearing Docker build cache..."
+	@echo "   ⚠️  Next builds will be slower (no cache)"
+	@docker builder prune -f
+	@echo ""
+	@echo "✅ Build cache cleared!"
+
+# Full prune for AionApi stack (containers + images + build cache, preserves volumes)
+docker-prune-full:
+	@echo "Full AionApi Docker cleanup..."
+	@echo "   ⚠️  This will remove:"
+	@echo "      • All Aion containers"
+	@echo "      • All Aion images"
+	@echo "      • Docker build cache"
+	@echo "   ✅ This will PRESERVE:"
+	@echo "      • PostgreSQL data"
+	@echo "      • Ollama models"
+	@echo ""
+	@read -p "Continue? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		$(MAKE) docker-prune-aion; \
+		$(MAKE) docker-prune-build-cache; \
+		$(MAKE) docker-prune-dangling; \
+		echo ""; \
+		echo "📊 Space after cleanup:"; \
+		docker system df; \
+	else \
+		echo "❌ Cancelled"; \
+	fi
+

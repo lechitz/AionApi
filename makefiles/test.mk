@@ -4,7 +4,7 @@
 
 GO_CACHE := $(CURDIR)/.cache/go-build
 
-.PHONY: test test-cover test-html-report test-ci test-clean test-checks
+.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks
 
 # Execute unit tests
 test:
@@ -12,8 +12,50 @@ test:
 	@mkdir -p $(GO_CACHE)
 	GOCACHE=$(GO_CACHE) go test ./... -v -race
 
-# Run tests with coverage, filter mocks, and generate HTML coverage report
+# Run tests with coverage and print package summary plus:
+# - total project coverage (from coverprofile)
+# - number of source files without tests (by directory heuristic)
+# This is intentionally lightweight and meant for quick feedback.
 test-cover:
+	@echo "Running tests with coverage (summary)..."
+	@mkdir -p $(GO_CACHE) $(COVERAGE_DIR)
+	@tmpout=$$(mktemp); \
+	GOCACHE=$(GO_CACHE) go test ./... -race -coverprofile=$(COVERAGE_DIR)/coverage_summary_tmp.out -count=1 2>&1 | tee $$tmpout; \
+	status=$$?; \
+	echo ""; \
+	echo "--- Coverage summary (package + %) ---"; \
+	grep -E "^ok\s+|^\?\s+" $$tmpout || true; \
+	rm -f $$tmpout; \
+	echo ""; \
+	echo "--- Total project coverage (from coverprofile) ---"; \
+	if [ -f $(COVERAGE_DIR)/coverage_summary_tmp.out ]; then \
+		go tool cover -func=$(COVERAGE_DIR)/coverage_summary_tmp.out | tail -n 1 | awk '{print "TOTAL:", $$3}'; \
+		mv -f $(COVERAGE_DIR)/coverage_summary_tmp.out $(COVERAGE_DIR)/coverage.out; \
+	else \
+		echo "TOTAL: n/a (coverprofile not generated; likely due to packages with no test files)"; \
+	fi; \
+	echo ""; \
+	echo "--- Files without tests (dir heuristic) ---"; \
+	echo "Counting .go files (excluding *_test.go, mocks, generated) in directories that have zero *_test.go"; \
+	notest_files=$$( \
+		find . -type f -name "*.go" \
+			! -name "*_test.go" \
+			! -path "./tests/mocks/*" \
+			! -path "./docs/swagger/*" \
+			! -path "./vendor/*" \
+			! -path "./.gomodcache/*" \
+			! -name "*.gen.go" \
+			! -name "*_gen.go" \
+			! -name "mock_*.go" \
+			! -name "*_mock.go" \
+			-print0 | \
+		xargs -0 -I {} sh -c 'd=$$(dirname "{}" ); if ! ls "$$d"/*_test.go >/dev/null 2>&1; then echo "{}"; fi' | wc -l | tr -d ' ' \
+	); \
+	echo "FILES_WITHOUT_TESTS: $$notest_files"; \
+	exit $$status
+
+# Run tests with coverage, filter mocks, and generate HTML coverage report (detailed).
+test-cover-detail:
 	@echo "Running tests with coverage report..."
 	@mkdir -p $(GO_CACHE)
 	GOCACHE=$(GO_CACHE) go test ./... -race -coverprofile=$(COVERAGE_DIR)/coverage_tmp.out -v
