@@ -7,7 +7,6 @@ services:
       - .env.dev
     volumes:
       - postgres-data-dev:/var/lib/postgresql/data
-      - ../../../db/migrations:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
@@ -183,6 +182,7 @@ services:
       retries: 5
 
   aionapi-dashboard:
+    image: aionapi-dashboard:dev
     build:
       context: ../../../../../aionapi-dashboard
       dockerfile: infrastructure/docker/Dockerfile
