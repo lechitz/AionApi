@@ -18,6 +18,8 @@ type AdminServiceTestSuite struct {
 	Ctrl            *gomock.Controller
 	Logger          *mocks.MockContextLogger
 	AdminRepository *mocks.MockAdminRepository
+	RoleCache       *mocks.MockRoleCache
+	SessionRevoker  *mocks.MockSessionRevoker
 	AdminService    *usecase.Service
 	Ctx             context.Context
 }
@@ -28,6 +30,8 @@ func AdminServiceTest(t *testing.T) *AdminServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	adminRepo := mocks.NewMockAdminRepository(ctrl)
+	roleCache := mocks.NewMockRoleCache(ctrl)
+	sessionRevoker := mocks.NewMockSessionRevoker(ctrl)
 	log := mocks.NewMockContextLogger(ctrl)
 
 	// Set default, non-intrusive expectations for the logger (no-ops).
@@ -35,6 +39,8 @@ func AdminServiceTest(t *testing.T) *AdminServiceTestSuite {
 
 	svc := usecase.NewService(
 		adminRepo,
+		roleCache,
+		sessionRevoker,
 		log,
 	)
 
@@ -42,6 +48,8 @@ func AdminServiceTest(t *testing.T) *AdminServiceTestSuite {
 		Ctrl:            ctrl,
 		Logger:          log,
 		AdminRepository: adminRepo,
+		RoleCache:       roleCache,
+		SessionRevoker:  sessionRevoker,
 		AdminService:    svc,
 		Ctx:             t.Context(),
 	}

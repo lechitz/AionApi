@@ -33,6 +33,12 @@ func TestUpdateUserRoles_Success(t *testing.T) {
 	suite.AdminRepository.EXPECT().
 		UpdateRoles(gomock.Any(), uid, cmd.Roles).
 		Return(expectedUser, nil)
+	suite.RoleCache.EXPECT().
+		InvalidateRoles(gomock.Any(), uid).
+		Return(nil)
+	suite.SessionRevoker.EXPECT().
+		RevokeUserSessions(gomock.Any(), uid).
+		Return(nil)
 
 	got, err := suite.AdminService.UpdateUserRoles(suite.Ctx, cmd)
 	require.NoError(t, err)
@@ -61,6 +67,12 @@ func TestUpdateUserRoles_BlockUser(t *testing.T) {
 	suite.AdminRepository.EXPECT().
 		UpdateRoles(gomock.Any(), uid, cmd.Roles).
 		Return(expectedUser, nil)
+	suite.RoleCache.EXPECT().
+		InvalidateRoles(gomock.Any(), uid).
+		Return(nil)
+	suite.SessionRevoker.EXPECT().
+		RevokeUserSessions(gomock.Any(), uid).
+		Return(nil)
 
 	got, err := suite.AdminService.UpdateUserRoles(suite.Ctx, cmd)
 	require.NoError(t, err)
@@ -191,6 +203,12 @@ func TestUpdateUserRoles_PromoteToAdmin(t *testing.T) {
 	suite.AdminRepository.EXPECT().
 		UpdateRoles(gomock.Any(), uid, cmd.Roles).
 		Return(expectedUser, nil)
+	suite.RoleCache.EXPECT().
+		InvalidateRoles(gomock.Any(), uid).
+		Return(nil)
+	suite.SessionRevoker.EXPECT().
+		RevokeUserSessions(gomock.Any(), uid).
+		Return(nil)
 
 	got, err := suite.AdminService.UpdateUserRoles(suite.Ctx, cmd)
 	require.NoError(t, err)

@@ -84,6 +84,26 @@ func (s *Service) UpdateUserRoles(ctx context.Context, cmd input.UpdateUserRoles
 		return domain.AdminUser{}, fmt.Errorf("%w: %w", ErrUpdateUserRoles, err)
 	}
 
+	if s.roleCache != nil {
+		span.AddEvent(SpanEventInvalidateRoleCache)
+		if err := s.roleCache.InvalidateRoles(ctx, cmd.UserID); err != nil {
+			s.logger.WarnwCtx(ctx, WarnFailedToInvalidateRoleCache,
+				commonkeys.UserID, strconv.FormatUint(cmd.UserID, 10),
+				commonkeys.Error, err.Error(),
+			)
+		}
+	}
+
+	if s.sessionRevoker != nil {
+		span.AddEvent(SpanEventRevokeSessions)
+		if err := s.sessionRevoker.RevokeUserSessions(ctx, cmd.UserID); err != nil {
+			s.logger.WarnwCtx(ctx, WarnFailedToRevokeUserSessions,
+				commonkeys.UserID, strconv.FormatUint(cmd.UserID, 10),
+				commonkeys.Error, err.Error(),
+			)
+		}
+	}
+
 	span.SetAttributes(
 		attribute.String(commonkeys.Status, commonkeys.StatusSuccess),
 		attribute.String(commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10)),

@@ -11,6 +11,7 @@ import (
 // Service provides authentication operations including login, logout, and user token management.
 type Service struct {
 	rolesReader    authOutput.RolesReader
+	roleCache      authOutput.RoleCache
 	userRepository userOutput.UserRepository
 	userCache      userOutput.UserCache
 	authStore      authOutput.AuthStore
@@ -22,6 +23,7 @@ type Service struct {
 // NewService creates and returns a new instance of Service with dependencies for user retrieval, token management, and security operations.
 func NewService(
 	rolesReader authOutput.RolesReader,
+	roleCache authOutput.RoleCache,
 	userRepository userOutput.UserRepository,
 	userCache userOutput.UserCache,
 	authStore authOutput.AuthStore,
@@ -31,6 +33,7 @@ func NewService(
 ) *Service {
 	return &Service{
 		rolesReader:    rolesReader,
+		roleCache:      roleCache,
 		userRepository: userRepository,
 		userCache:      userCache,
 		authStore:      authStore,

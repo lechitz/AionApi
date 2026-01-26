@@ -56,6 +56,12 @@ const (
 
 	// SpanEventUpdateRoles is the event name for updating roles.
 	SpanEventUpdateRoles = "UpdateRoles"
+
+	// SpanEventInvalidateRoleCache is the event name for invalidating role cache.
+	SpanEventInvalidateRoleCache = "InvalidateRoleCache"
+
+	// SpanEventRevokeSessions is the event name for revoking user sessions.
+	SpanEventRevokeSessions = "RevokeUserSessions"
 )
 
 // -----------------------------------------------------------------------------
@@ -191,6 +197,12 @@ const (
 
 	// WarnUnauthorizedBlockAttempt is a warning when a block attempt is unauthorized.
 	WarnUnauthorizedBlockAttempt = "unauthorized block attempt"
+
+	// WarnFailedToInvalidateRoleCache is a warning when role cache invalidation fails.
+	WarnFailedToInvalidateRoleCache = "failed to invalidate role cache"
+
+	// WarnFailedToRevokeUserSessions is a warning when session revocation fails.
+	WarnFailedToRevokeUserSessions = "failed to revoke user sessions"
 )
 
 // =============================================================================

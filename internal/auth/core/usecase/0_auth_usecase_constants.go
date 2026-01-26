@@ -97,11 +97,20 @@ const (
 	// EventCacheUserProfile is emitted before caching user profile on login.
 	EventCacheUserProfile = "auth.user.cache_profile"
 
+	// EventGetRolesFromCache is emitted before reading roles from cache.
+	EventGetRolesFromCache = "auth.roles.cache.get"
+
+	// EventSaveRolesToCache is emitted before saving roles to cache.
+	EventSaveRolesToCache = "auth.roles.cache.save"
+
 	// EventGenerateRefreshToken is emitted before generating refresh token.
 	EventGenerateRefreshToken = "auth.token.generate.refresh" // #nosec G101: event name, not a credential
 
 	// EventCheckGracePeriod is emitted when primary token doesn't match and grace period will be checked.
 	EventCheckGracePeriod = "auth.token.check_grace_period" // #nosec G101: event name, not a credential
+
+	// EventSkipGraceMissingPrimary is emitted when grace period is skipped because no primary token exists.
+	EventSkipGraceMissingPrimary = "auth.token.skip_grace_no_primary" // #nosec G101: event name, not a credential
 
 	// EventValidatedViaGrace is emitted when token validation succeeds via grace period.
 	EventValidatedViaGrace = "auth.token.validated_via_grace" // #nosec G101: event name, not a credential
@@ -160,6 +169,9 @@ const (
 
 	// ErrorInvalidRefreshToken is the error message when refresh token verification or store match fails.
 	ErrorInvalidRefreshToken = "invalid refresh token"
+
+	// ErrorToGetRoles is the error message when the user roles cannot be found.
+	ErrorToGetRoles = "failed to get roles"
 )
 
 // Success messages.
@@ -178,6 +190,12 @@ const (
 
 	// LogFailedToCacheUserData is logged when user caching fails during refresh token renewal.
 	LogFailedToCacheUserData = "failed to cache user data"
+
+	// WarnFailedToGetRolesFromCache is logged when roles cache retrieval fails.
+	WarnFailedToGetRolesFromCache = "failed to get roles from cache"
+
+	// WarnFailedToCacheRoles is logged when saving roles to cache fails.
+	WarnFailedToCacheRoles = "failed to cache roles"
 
 	// =============================================================================
 	// Refresh/Grace period logs.

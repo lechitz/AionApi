@@ -52,11 +52,11 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (a
 		return authDomain.AuthenticatedUser{}, "", "", ErrInvalidCredentials
 	}
 
-	roles, err := s.rolesReader.GetRolesByUserID(ctx, user.ID)
+	roles, err := s.getRolesWithCache(ctx, user.ID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, "failed to get roles")
-		s.logger.ErrorwCtx(ctx, "failed to get roles",
+		span.SetStatus(codes.Error, ErrorToGetRoles)
+		s.logger.ErrorwCtx(ctx, ErrorToGetRoles,
 			commonkeys.UserID, strconv.FormatUint(user.ID, 10),
 			commonkeys.Error, err.Error(),
 		)

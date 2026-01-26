@@ -90,7 +90,7 @@ func (s *Service) generateAndSaveTokens(ctx context.Context, userID uint64) (str
 		}
 	}
 
-	roles, err := s.rolesReader.GetRolesByUserID(ctx, userID)
+	roles, err := s.getRolesWithCache(ctx, userID)
 	if err != nil {
 		return "", "", err
 	}

@@ -63,6 +63,12 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 	}
 
 	span.AddEvent(EventCompareToken)
+	if cached.Token == "" {
+		span.AddEvent(EventSkipGraceMissingPrimary)
+		span.SetStatus(codes.Error, ErrorTokenMismatch)
+		s.logger.ErrorwCtx(ctx, ErrorTokenMismatch, commonkeys.UserID, strconv.FormatUint(userID, 10))
+		return 0, nil, ErrTokenMismatch
+	}
 	if cached.Token == sanitized {
 		// Token matches the primary (current) token
 		span.AddEvent(EventTokenValidated)

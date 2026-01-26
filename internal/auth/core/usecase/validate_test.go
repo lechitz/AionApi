@@ -381,10 +381,6 @@ func TestValidate_Error_EmptyTokenInCache(t *testing.T) {
 		Get(gomock.Any(), userIDWant, commonkeys.TokenTypeAccess).
 		Return(domain.AccessToken{Key: userIDWant, Token: ""}.ToAuth(), nil)
 
-	suite.TokenStore.EXPECT().
-		GetByKey(gomock.Any(), gomock.Any()).
-		Return(domain.Auth{}, errors.New("not found"))
-
 	uid, claims, err := suite.TokenService.Validate(suite.Ctx, raw)
 	requireErrorWith(t, err, usecase.ErrorTokenMismatch)
 	requireZeroAndNilClaims(t, uid, claims)
