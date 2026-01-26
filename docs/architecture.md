@@ -197,6 +197,4 @@ flowchart LR
 - Keep handlers thin: validation, tracing, DTO mapping, usecase invocation, response mapping.  
 - Keep usecases pure from infra concerns; use small interfaces for side effects.  
 - Avoid magic strings — centralize keys in `internal/shared/constants`.
-
 ---
-

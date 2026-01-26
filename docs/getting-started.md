@@ -103,6 +103,22 @@ curl -s http://localhost:8080/aion/health | jq
 
 ---
 
+## DEV commands and persistent volumes
+
+The DEV stack uses Docker volumes to persist Postgres, Redis, and Ollama models.
+Use the following commands based on your need:
+
+```bash
+make dev       # rebuild images and start services (keeps volumes)
+make dev-fast  # start without rebuilding other images (keeps volumes)
+make dev-down  # stop services (keeps volumes)
+make dev-clean # stop services and remove volumes
+```
+
+If you enable GPU acceleration for Ollama, see `docs/ollama-gpu.md`.
+
+---
+
 ## Database: migrations & seeds
 
 ### Install `migrate` (once)
@@ -289,4 +305,3 @@ Useful files:
 * **API Reference**: details for each REST route and GraphQL operation.
 
 > These pages will be published in the next sections of the documentation.
-
