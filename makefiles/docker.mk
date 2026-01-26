@@ -44,9 +44,9 @@ rebuild-api:
 	@docker stop aion-api-dev 2>/dev/null || true
 	@docker rm aion-api-dev 2>/dev/null || true
 	@echo "Removing old aion-api image..."
-	@docker rmi aion-api:dev 2>/dev/null || true
+	@docker rmi $(APPLICATION_NAME):dev 2>/dev/null || true
 	@echo "Rebuilding aion-api..."
-	@make build-dev
+	@DOCKER_BUILDKIT=1 docker build --progress=plain --build-arg BUILD_LDFLAGS="" -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):dev .
 	@echo "🔄 Starting aion-api..."
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d aion-api
 	@echo "✅ aion-api rebuilt and restarted!"
