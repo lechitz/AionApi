@@ -40,6 +40,7 @@ docs/personal/
 notes/
 **/docs.md
 ai/
+scripts/
 
 # Local module cache used by Go
 .gocache
