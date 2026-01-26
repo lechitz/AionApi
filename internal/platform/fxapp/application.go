@@ -11,7 +11,7 @@ import (
 	categoryCache "github.com/lechitz/AionApi/internal/category/adapter/secondary/cache"
 	categoryRepo "github.com/lechitz/AionApi/internal/category/adapter/secondary/db/repository"
 	category "github.com/lechitz/AionApi/internal/category/core/usecase"
-	chatHistoryCache "github.com/lechitz/AionApi/internal/chat/adapter/secondary/cache/repository"
+	chatCache "github.com/lechitz/AionApi/internal/chat/adapter/secondary/cache"
 	chatHistoryRepo "github.com/lechitz/AionApi/internal/chat/adapter/secondary/db/repository"
 	chatClient "github.com/lechitz/AionApi/internal/chat/adapter/secondary/http"
 	chat "github.com/lechitz/AionApi/internal/chat/core/usecase"
@@ -80,12 +80,12 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 	categoryCacheStore := categoryCache.NewStore(deps.CategoryCache, deps.Log)
 	tagCacheStore := tagCache.NewStore(deps.TagCache, deps.Log)
 	recordCacheStore := recordCache.NewStore(deps.RecordCache, deps.Log)
-	chatHistoryCacheStore := chatHistoryCache.NewChatHistoryCache(deps.ChatCache, deps.Log)
+	chatHistoryCacheStore := chatCache.NewStore(deps.ChatCache, deps.Log)
 	chatHTTPClient := chatClient.New(deps.HTTPClient, deps.Cfg.AionChat.BaseURL, deps.Log)
 
-	authService := auth.NewService(adminRepository, userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
+	authService := auth.NewService(adminRepository, authCacheStore, userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
 	userService := user.NewService(userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
-	adminService := admin.NewService(adminRepository, deps.Log)
+	adminService := admin.NewService(adminRepository, authCacheStore, authCacheStore, deps.Log)
 	categoryService := category.NewService(categoryRepository, categoryCacheStore, deps.Log)
 	tagService := tag.NewService(tagRepository, tagCacheStore, deps.Log)
 	recordService := record.NewService(recordRepository, recordCacheStore, tagRepository, deps.Log)
