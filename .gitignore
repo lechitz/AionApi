@@ -39,6 +39,7 @@ site/
 docs/personal/
 notes/
 **/docs.md
+ai/
 
 # Local module cache used by Go
 .gocache
