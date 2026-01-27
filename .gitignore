@@ -35,7 +35,7 @@ go.work.sum
 site/
 /infrastructure/docker/environments/dev/.env
 
-# Personal, local-only docs (private workspace for notes/ideas)
+# Personal, local-only docs (private workspace for docs/ideas)
 docs/personal/
 notes/
 **/docs.md
