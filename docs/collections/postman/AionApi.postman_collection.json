@@ -361,9 +361,9 @@
 							"options": {"raw": {"language": "json"}}
 						},
 						"url": {
-							"raw": "{{baseURL}}/chat",
+							"raw": "{{baseURL}}/chat/text",
 							"host": ["{{baseURL}}"],
-							"path": ["chat"]
+							"path": ["chat", "text"]
 						}
 					},
 					"response": []

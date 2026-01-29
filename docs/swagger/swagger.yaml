@@ -729,7 +729,61 @@ paths:
       summary: Get current session
       tags:
       - Auth
-  /chat:
+  /chat/audio:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Sends an audio file to be transcribed and processed by the AI assistant.
+        Requires authentication.
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Audio file (webm, wav, mp3, max 10MB, max 60s)
+        in: formData
+        name: audio
+        required: true
+        type: file
+      - description: Language code (pt, en, es) or auto-detect if empty
+        in: formData
+        name: language
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Voice chat response with transcription and AI response
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid audio file or validation error
+          schema:
+            type: string
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            type: string
+        "413":
+          description: Audio file too large
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+        "503":
+          description: Service unavailable - AI service is down
+          schema:
+            type: string
+      security:
+      - BearerAuth.: []
+      summary: Send voice chat message
+      tags:
+      - Chat
+  /chat/text:
     post:
       consumes:
       - application/json
