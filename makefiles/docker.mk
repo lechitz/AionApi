@@ -52,7 +52,7 @@ rebuild-api:
 	@echo "✅ aion-api rebuilt and restarted!"
 	@echo "   → http://localhost:5001/aion/api/v1/health"
 
-build-dev: clean-dev
+build-dev:
 	@echo "[BUILD-DEV] Building DEV image..."
 	DOCKER_BUILDKIT=1 docker build --progress=plain --build-arg BUILD_LDFLAGS="" -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):dev .
 
@@ -71,10 +71,9 @@ dev: build-dev
 	@echo "      ℹ️  Volumes preserved (Ollama models + PostgreSQL data)"
 	@echo "      💡 Use 'make rebuild-chat' or 'make rebuild-dashboard' to force rebuild"
 	@echo ""
-	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down --remove-orphans || true
-	@echo ""
-	@echo "🚀 Starting all services (using cache for chat/dashboard)..."
-	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d --build
+	@echo "🔄 Restarting services (preserving volumes)..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d --build --no-recreate 2>/dev/null || \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d --build
 	@echo ""
 	@echo "⏳ Waiting for PostgreSQL to be ready..."
 	@for i in $$(seq 1 30); do \
@@ -122,15 +121,15 @@ dev: build-dev
 	@echo "   • Jaeger:     http://localhost:16686"
 	@echo ""
 	@echo "Quick commands:"
-	@echo "   make dev-fast     → Start without rebuilding (faster if no code changes)"
-	@echo "   make dev-attach   → Attach to aion-api logs (without rebuild)"
-	@echo "   make dev-logs     → Show all services logs"
-	@echo "   make migrate-up   → Run database migrations"
-	@echo "   make seed-caller n=1 → Seed data via API"
+	@echo "   make dev-fast              → Start without rebuilding ANY images (fastest)"
+	@echo "   make rebuild-api           → Rebuild only aion-api (smart rebuild)"
+	@echo "   make dev-attach            → Attach to aion-api logs"
+	@echo "   make migrate-up            → Run database migrations"
+	@echo "   make docker-prune-dangling → Clean temp images (run weekly)"
 
-dev-fast: build-dev
-	@echo "[DEV-FAST] Starting services WITHOUT rebuilding other images..."
-	@echo "      ⚡ Use this when you haven't changed aion-chat or dashboard code"
+dev-fast:
+	@echo "[DEV-FAST] Starting services WITHOUT rebuilding images..."
+	@echo "      ⚡ Use this when you haven't changed ANY code (fastest option)"
 	@echo ""
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down || true
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d
@@ -192,7 +191,7 @@ clean-dev:
 # ============================================================
 
 
-build-prod: clean-prod
+build-prod:
 	@echo "[BUILD-PROD] Building PROD image..."
 	DOCKER_BUILDKIT=1 docker build --progress=plain --build-arg BUILD_LDFLAGS="-s -w" -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):prod .
 
