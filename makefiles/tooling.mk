@@ -13,7 +13,7 @@ tools-install:
 	go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 	go install github.com/99designs/gqlgen@latest
 	go install go.uber.org/mock/mockgen@latest
-	go install github.com/swaggo/swag/cmd/swag@latest
+	go install github.com/swaggo/swag/cmd/swag@v1.16.6
 	@echo "✅  Tools installed successfully."
 
 # Check for required development tools and fail if any are missing.
