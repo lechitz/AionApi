@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -16,6 +17,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // ChatVoice processes an audio message from the user and returns the AI response.
@@ -37,26 +39,11 @@ import (
 // @Router       /chat/audio [post]
 // @Security     BearerAuth.
 func (h *Handler) ChatVoice(w http.ResponseWriter, r *http.Request) {
-	ctx, span := otel.Tracer(TracerChatHandler).
-		Start(r.Context(), SpanChatVoice)
+	ctx, span := otel.Tracer(TracerChatHandler).Start(r.Context(), SpanChatVoice)
 	defer span.End()
 
-	// Extract user ID from context
-	userIDValue := ctx.Value(ctxkeys.UserID)
-	if userIDValue == nil {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound)
-		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
-			sharederrors.NewAuthenticationError(ErrUserIDNotFound), h.Logger)
-		return
-	}
-
-	userID, ok := userIDValue.(uint64)
+	userID, ok := h.extractUserID(ctx, w, span)
 	if !ok {
-		span.SetStatus(codes.Error, ErrInvalidUserIDType)
-		h.Logger.ErrorwCtx(ctx, LogInvalidUserIDType, "value", userIDValue)
-		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
-			sharederrors.NewAuthenticationError(ErrInvalidUserID), h.Logger)
 		return
 	}
 
@@ -65,135 +52,232 @@ func (h *Handler) ChatVoice(w http.ResponseWriter, r *http.Request) {
 		attribute.String(tracingkeys.RequestIPKey, r.RemoteAddr),
 	)
 
-	// Parse multipart form (max 10MB)
-	span.AddEvent(EventParseMultipartForm)
-	if err := r.ParseMultipartForm(MaxAudioSize); err != nil {
-		span.SetStatus(codes.Error, ErrFailedParseMultipartForm)
-		h.Logger.ErrorwCtx(ctx, LogFailedParseMultipartForm, commonkeys.Error, err)
-		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
-			sharederrors.NewValidationError(FormFieldAudio, ErrInvalidMultipartForm), h.Logger)
+	file, header, language, ok := h.parseVoiceRequest(ctx, w, r, span)
+	if !ok {
 		return
 	}
-
-	// Get audio file
-	file, header, err := r.FormFile(FormFieldAudio)
-	if err != nil {
-		span.SetStatus(codes.Error, ErrMissingAudioFile)
-		h.Logger.ErrorwCtx(ctx, LogMissingAudioFile, commonkeys.Error, err)
-		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
-			sharederrors.NewValidationError(FormFieldAudio, ErrAudioFileRequired), h.Logger)
-		return
-	}
-	defer file.Close()
-
-	// Validate file size
-	if header.Size > MaxAudioSize {
-		span.SetStatus(codes.Error, ErrAudioFileTooLarge)
-		h.Logger.ErrorwCtx(ctx, LogAudioFileTooLarge,
-			"size", header.Size, "max", MaxAudioSize)
-		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
-			sharederrors.NewValidationError(FormFieldAudio,
-				fmt.Sprintf("Audio file too large: %d bytes (max: %d)", header.Size, MaxAudioSize)), h.Logger)
-		return
-	}
+	defer func() {
+		if closeErr := file.Close(); closeErr != nil {
+			h.Logger.WarnwCtx(ctx, "failed to close audio file", commonkeys.Error, closeErr)
+		}
+	}()
 
 	span.SetAttributes(
 		attribute.String(AttrAudioFilename, header.Filename),
 		attribute.Int64(AttrAudioSizeBytes, header.Size),
 		attribute.String(AttrAudioContentType, header.Header.Get(HeaderContentType)),
 	)
-
-	// Get optional language parameter
-	language := r.FormValue(FormFieldLanguage)
 	if language != "" {
 		span.SetAttributes(attribute.String(AttrAudioLanguage, language))
 	}
 
-	// Forward to aion-chat service
 	span.AddEvent(EventForwardToAionChat)
+	buf, contentType, ok := h.buildMultipartRequest(ctx, w, span, file, header, userID, language)
+	if !ok {
+		return
+	}
 
-	aionChatURL := h.Config.AionChat.BaseURL + PathProcessAudio
+	responseBody, statusCode, ok := h.forwardToAionChat(ctx, w, span, buf, contentType)
+	if !ok {
+		return
+	}
 
-	// Create new multipart form
+	if statusCode != http.StatusOK {
+		h.writeErrorResponse(ctx, w, span, statusCode, responseBody)
+		return
+	}
+
+	h.writeSuccessResponse(ctx, w, span, userID, header.Size, statusCode, responseBody)
+}
+
+func (h *Handler) extractUserID(ctx context.Context, w http.ResponseWriter, span trace.Span) (uint64, bool) {
+	userIDValue := ctx.Value(ctxkeys.UserID)
+	if userIDValue == nil {
+		span.SetStatus(codes.Error, ErrUserIDNotFound)
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
+			sharederrors.NewAuthenticationError(ErrUserIDNotFound), h.Logger)
+		return 0, false
+	}
+
+	userID, ok := userIDValue.(uint64)
+	if !ok {
+		span.SetStatus(codes.Error, ErrInvalidUserIDType)
+		h.Logger.ErrorwCtx(ctx, LogInvalidUserIDType, "value", userIDValue)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
+			sharederrors.NewAuthenticationError(ErrInvalidUserID), h.Logger)
+		return 0, false
+	}
+
+	return userID, true
+}
+
+func (h *Handler) parseVoiceRequest(
+	ctx context.Context,
+	w http.ResponseWriter,
+	r *http.Request,
+	span trace.Span,
+) (multipart.File, *multipart.FileHeader, string, bool) {
+	span.AddEvent(EventParseMultipartForm)
+	if err := r.ParseMultipartForm(MaxAudioSize); err != nil {
+		span.SetStatus(codes.Error, ErrFailedParseMultipartForm)
+		h.Logger.ErrorwCtx(ctx, LogFailedParseMultipartForm, commonkeys.Error, err)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
+			sharederrors.NewValidationError(FormFieldAudio, ErrInvalidMultipartForm), h.Logger)
+		return nil, nil, "", false
+	}
+
+	file, header, err := r.FormFile(FormFieldAudio)
+	if err != nil {
+		span.SetStatus(codes.Error, ErrMissingAudioFile)
+		h.Logger.ErrorwCtx(ctx, LogMissingAudioFile, commonkeys.Error, err)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
+			sharederrors.NewValidationError(FormFieldAudio, ErrAudioFileRequired), h.Logger)
+		return nil, nil, "", false
+	}
+
+	if header.Size > MaxAudioSize {
+		span.SetStatus(codes.Error, ErrAudioFileTooLarge)
+		h.Logger.ErrorwCtx(ctx, LogAudioFileTooLarge, "size", header.Size, "max", MaxAudioSize)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
+			sharederrors.NewValidationError(FormFieldAudio,
+				fmt.Sprintf("Audio file too large: %d bytes (max: %d)", header.Size, MaxAudioSize)), h.Logger)
+		return nil, nil, "", false
+	}
+
+	language := r.FormValue(FormFieldLanguage)
+	return file, header, language, true
+}
+
+func (h *Handler) buildMultipartRequest(
+	ctx context.Context,
+	w http.ResponseWriter,
+	span trace.Span,
+	file multipart.File,
+	header *multipart.FileHeader,
+	userID uint64,
+	language string,
+) (*bytes.Buffer, string, bool) {
 	var buf bytes.Buffer
 	writer := multipart.NewWriter(&buf)
 
-	// Add audio file
 	part, err := writer.CreateFormFile(FormFieldAudio, header.Filename)
 	if err != nil {
 		span.SetStatus(codes.Error, ErrFailedCreateFormFile)
 		h.Logger.ErrorwCtx(ctx, LogFailedCreateFormFile, commonkeys.Error, err)
 		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgFailedProcessAudio, h.Logger)
-		return
+		return nil, "", false
 	}
 
 	if _, err := io.Copy(part, file); err != nil {
 		span.SetStatus(codes.Error, ErrFailedCopyAudioData)
 		h.Logger.ErrorwCtx(ctx, LogFailedCopyAudioData, commonkeys.Error, err)
 		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgFailedProcessAudio, h.Logger)
-		return
+		return nil, "", false
 	}
 
-	// Add form fields
-	writer.WriteField(FormFieldUserID, strconv.FormatUint(userID, 10))
+	if err := writer.WriteField(FormFieldUserID, strconv.FormatUint(userID, 10)); err != nil {
+		span.SetStatus(codes.Error, "failed to write user_id field")
+		h.Logger.ErrorwCtx(ctx, "failed to write user_id field", commonkeys.Error, err)
+		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgFailedProcessAudio, h.Logger)
+		return nil, "", false
+	}
+
 	if language != "" {
-		writer.WriteField(FormFieldLanguage, language)
+		if err := writer.WriteField(FormFieldLanguage, language); err != nil {
+			span.SetStatus(codes.Error, "failed to write language field")
+			h.Logger.ErrorwCtx(ctx, "failed to write language field", commonkeys.Error, err)
+			httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgFailedProcessAudio, h.Logger)
+			return nil, "", false
+		}
 	}
 
-	writer.Close()
+	if err := writer.Close(); err != nil {
+		span.SetStatus(codes.Error, "failed to close multipart writer")
+		h.Logger.ErrorwCtx(ctx, "failed to close multipart writer", commonkeys.Error, err)
+		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgFailedProcessAudio, h.Logger)
+		return nil, "", false
+	}
 
-	// Create HTTP request
-	req, err := http.NewRequestWithContext(ctx, HTTPMethodPost, aionChatURL, &buf)
+	return &buf, writer.FormDataContentType(), true
+}
+
+func (h *Handler) forwardToAionChat(
+	ctx context.Context,
+	w http.ResponseWriter,
+	span trace.Span,
+	buf *bytes.Buffer,
+	contentType string,
+) ([]byte, int, bool) {
+	aionChatURL := h.Config.AionChat.BaseURL + PathProcessAudio
+	req, err := http.NewRequestWithContext(ctx, HTTPMethodPost, aionChatURL, buf)
 	if err != nil {
 		span.SetStatus(codes.Error, ErrFailedCreateRequest)
 		h.Logger.ErrorwCtx(ctx, LogFailedCreateRequest, commonkeys.Error, err)
 		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgInternalServerError, h.Logger)
-		return
+		return nil, 0, false
 	}
 
-	req.Header.Set(HeaderContentType, writer.FormDataContentType())
+	req.Header.Set(HeaderContentType, contentType)
 
-	// Send request to aion-chat
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		span.SetStatus(codes.Error, ErrFailedCallAionChat)
 		h.Logger.ErrorwCtx(ctx, LogFailedCallAionChat, commonkeys.Error, err)
 		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgAIServiceUnavailable, h.Logger)
-		return
+		return nil, 0, false
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			h.Logger.WarnwCtx(ctx, "failed to close response body", commonkeys.Error, closeErr)
+		}
+	}()
 
 	span.SetAttributes(attribute.Int(AttrAionChatStatusCode, resp.StatusCode))
 
-	// Read response
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		span.SetStatus(codes.Error, ErrFailedReadResponse)
 		h.Logger.ErrorwCtx(ctx, LogFailedReadResponse, commonkeys.Error, err)
 		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgInternalServerError, h.Logger)
-		return
+		return nil, 0, false
 	}
 
-	// Forward response status and body
-	if resp.StatusCode != http.StatusOK {
-		span.SetStatus(codes.Error, ErrAionChatReturnedError)
-		h.Logger.ErrorwCtx(ctx, LogAionChatError,
-			"status_code", resp.StatusCode, "response", string(responseBody))
-		w.Header().Set(HeaderContentType, ContentTypeJSON)
-		w.WriteHeader(resp.StatusCode)
-		w.Write(responseBody)
-		return
-	}
+	return responseBody, resp.StatusCode, true
+}
 
-	// Success
+func (h *Handler) writeErrorResponse(
+	ctx context.Context,
+	w http.ResponseWriter,
+	span trace.Span,
+	statusCode int,
+	responseBody []byte,
+) {
+	span.SetStatus(codes.Error, ErrAionChatReturnedError)
+	h.Logger.ErrorwCtx(ctx, LogAionChatError, "status_code", statusCode, "response", string(responseBody))
+	w.Header().Set(HeaderContentType, ContentTypeJSON)
+	w.WriteHeader(statusCode)
+	if _, writeErr := w.Write(responseBody); writeErr != nil {
+		h.Logger.ErrorwCtx(ctx, "failed to write error response", commonkeys.Error, writeErr)
+	}
+}
+
+func (h *Handler) writeSuccessResponse(
+	ctx context.Context,
+	w http.ResponseWriter,
+	span trace.Span,
+	userID uint64,
+	audioSize int64,
+	statusCode int,
+	responseBody []byte,
+) {
 	span.SetStatus(codes.Ok, StatusVoiceChatSuccess)
 	h.Logger.InfowCtx(ctx, LogVoiceChatSuccess,
-		commonkeys.UserID, userID,
-		"audio_size", header.Size,
-		"status_code", resp.StatusCode)
-
+		commonkeys.UserID, userID, "audio_size", audioSize, "status_code", statusCode)
 	w.Header().Set(HeaderContentType, ContentTypeJSON)
 	w.WriteHeader(http.StatusOK)
-	w.Write(responseBody)
+	if _, err := w.Write(responseBody); err != nil {
+		h.Logger.ErrorwCtx(ctx, "failed to write success response", commonkeys.Error, err)
+	}
 }

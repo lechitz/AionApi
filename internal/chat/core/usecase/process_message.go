@@ -3,7 +3,6 @@ package usecase
 
 import (
 	"context"
-	"encoding/json"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/chat/adapter/primary/http/dto"
@@ -26,51 +25,14 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 
 	s.logger.InfowCtx(ctx, LogProcessingChatMessage, LogKeyUserID, userID, LogKeyMessageLength, len(message))
 
-	// Fetch recent conversation history from CACHE (Redis) for fast access
-	// Retrieve last 6 messages (3 exchanges) for context
-	// Cache is much faster than database and perfect for volatile conversation context
+	// Fetch recent conversation history from cache (6 messages = 3 exchanges for context)
 	const historyLimit = 6
-	conversationHistory := []dto.ConversationMessage{}
+	conversationHistory := s.fetchConversationHistory(ctx, userID, historyLimit)
 
-	history, err := s.chatHistoryCache.GetLatest(ctx, userID, historyLimit)
-	if err != nil {
-		// Don't fail on cache retrieval error, just log and continue without history
-		s.logger.WarnwCtx(ctx, "Failed to retrieve conversation history from cache (non-blocking)",
-			LogKeyError, err.Error(),
-			LogKeyUserID, userID,
-		)
-	} else if len(history) > 0 {
-		// Convert history to conversation messages format (reverse order - oldest first)
-		// History comes DESC (newest first), we need ASC (oldest first) for LLM context
-		for i := len(history) - 1; i >= 0; i-- {
-			h := history[i]
-			// Add user message
-			conversationHistory = append(conversationHistory, dto.ConversationMessage{
-				Role:    "user",
-				Content: h.Message,
-			})
-			// Add assistant response
-			conversationHistory = append(conversationHistory, dto.ConversationMessage{
-				Role:    "assistant",
-				Content: h.Response,
-			})
-		}
+	// Build request with conversation context
+	req := buildChatRequest(userID, message, conversationHistory)
 
-		s.logger.InfowCtx(ctx, "Including conversation history from cache",
-			LogKeyUserID, userID,
-			"history_messages", len(conversationHistory),
-		)
-	}
-
-	req := &dto.InternalChatRequest{
-		UserID:              userID,
-		Message:             message,
-		ConversationHistory: conversationHistory,
-		Context: map[string]interface{}{
-			ContextKeyTimezone: DefaultTimezone, // TODO: Get from user settings
-		},
-	}
-
+	// Call external Aion-Chat service
 	resp, err := s.aionChatClient.SendMessage(ctx, req)
 	if err != nil {
 		span.RecordError(err)
@@ -82,6 +44,7 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 		return nil, err
 	}
 
+	// Build result
 	result := &domain.ChatResult{
 		Response:      resp.Response,
 		Sources:       convertSources(resp.Sources),
@@ -101,27 +64,8 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 		LogKeyResponseLength, len(resp.Response),
 	)
 
-	// Save chat history asynchronously (don't block on errors)
-	go func() {
-		functionCallsMap := make(map[string]string)
-		for _, call := range resp.FunctionCalls {
-			// Convert Args map to JSON string for storage
-			argsJSON := ""
-			if len(call.Args) > 0 {
-				if jsonBytes, err := json.Marshal(call.Args); err == nil {
-					argsJSON = string(jsonBytes)
-				}
-			}
-			functionCallsMap[call.Name] = argsJSON
-		}
-
-		if err := s.SaveChatHistory(context.Background(), userID, message, resp.Response, resp.TokensUsed, functionCallsMap); err != nil {
-			s.logger.ErrorwCtx(context.Background(), "Failed to save chat history (non-blocking)",
-				LogKeyError, err.Error(),
-				LogKeyUserID, userID,
-			)
-		}
-	}()
+	// Save chat history asynchronously (non-blocking)
+	go s.saveChatInteraction(context.Background(), userID, message, resp.Response, resp.TokensUsed, resp.FunctionCalls)
 
 	return result, nil
 }
