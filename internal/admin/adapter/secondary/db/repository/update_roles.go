@@ -9,6 +9,7 @@ import (
 	adminmapper "github.com/lechitz/AionApi/internal/admin/adapter/secondary/db/mapper"
 	adminmodel "github.com/lechitz/AionApi/internal/admin/adapter/secondary/db/model"
 	admindomain "github.com/lechitz/AionApi/internal/admin/core/domain"
+	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	usermapper "github.com/lechitz/AionApi/internal/user/adapter/secondary/db/mapper"
 	usermodel "github.com/lechitz/AionApi/internal/user/adapter/secondary/db/model"
@@ -110,84 +111,66 @@ func (r *AdminRepository) UpdateRoles(ctx context.Context, userID uint64, roles 
 		commonkeys.Roles, roles,
 	)
 
-	// Start a transaction
-	tx := r.db.WithContext(ctx).Begin()
-	if tx.Error() != nil {
-		span.SetStatus(codes.Error, tx.Error().Error())
-		span.RecordError(tx.Error())
-		return admindomain.AdminUser{}, tx.Error()
-	}
-
-	// Delete existing roles for user
-	if err := tx.Where("user_id = ?", userID).
-		Delete(&adminmodel.UserRoleDB{}).Error(); err != nil {
-		tx.Rollback()
-		span.SetStatus(codes.Error, err.Error())
-		span.RecordError(err)
-		r.logger.ErrorwCtx(ctx, LogFailedUpdateRoles,
-			commonkeys.UserID, userID,
-			commonkeys.Error, err.Error(),
-		)
-		return admindomain.AdminUser{}, err
-	}
-
-	// Get role IDs for the new roles
-	var roleDBs []adminmodel.RoleDB
-	if err := tx.Where("name IN ?", roles).
-		Where("is_active = ?", true).
-		Find(&roleDBs).Error(); err != nil {
-		tx.Rollback()
-		span.SetStatus(codes.Error, err.Error())
-		span.RecordError(err)
-		r.logger.ErrorwCtx(ctx, LogFailedUpdateRoles,
-			commonkeys.UserID, userID,
-			commonkeys.Error, err.Error(),
-		)
-		return admindomain.AdminUser{}, err
-	}
-
-	// Insert new role assignments
-	now := time.Now().UTC()
-	for _, roleDB := range roleDBs {
-		userRole := adminmodel.UserRoleDB{
-			UserID:     userID,
-			RoleID:     roleDB.ID,
-			AssignedAt: now,
-		}
-		if err := tx.Create(&userRole).Error(); err != nil {
-			tx.Rollback()
-			span.SetStatus(codes.Error, err.Error())
+	// Use closure-based transaction (auto-commit on success, auto-rollback on error)
+	err := r.db.WithContext(ctx).Transaction(func(tx db.DB) error {
+		// Delete existing roles for user
+		if err := tx.Where("user_id = ?", userID).
+			Delete(&adminmodel.UserRoleDB{}).Error(); err != nil {
 			span.RecordError(err)
 			r.logger.ErrorwCtx(ctx, LogFailedUpdateRoles,
 				commonkeys.UserID, userID,
 				commonkeys.Error, err.Error(),
 			)
-			return admindomain.AdminUser{}, err
+			return err
 		}
-	}
 
-	// Update user's updated_at timestamp
-	if err := tx.Model(&usermodel.UserDB{}).
-		Where(commonkeys.UserID+" = ?", userID).
-		Update(commonkeys.UserUpdatedAt, now).Error(); err != nil {
-		tx.Rollback()
-		span.SetStatus(codes.Error, err.Error())
-		span.RecordError(err)
-		r.logger.ErrorwCtx(ctx, LogFailedUpdateRoles,
-			commonkeys.UserID, userID,
-			commonkeys.Error, err.Error(),
-		)
-		return admindomain.AdminUser{}, err
-	}
+		// Get role IDs for the new roles
+		var roleDBs []adminmodel.RoleDB
+		if err := tx.Where("name IN ?", roles).
+			Where("is_active = ?", true).
+			Find(&roleDBs).Error(); err != nil {
+			span.RecordError(err)
+			r.logger.ErrorwCtx(ctx, LogFailedUpdateRoles,
+				commonkeys.UserID, userID,
+				commonkeys.Error, err.Error(),
+			)
+			return err
+		}
 
-	// Commit transaction
-	if err := tx.Commit().Error(); err != nil {
+		// Insert new role assignments
+		now := time.Now().UTC()
+		for _, roleDB := range roleDBs {
+			userRole := adminmodel.UserRoleDB{
+				UserID:     userID,
+				RoleID:     roleDB.ID,
+				AssignedAt: now,
+			}
+			if err := tx.Create(&userRole).Error(); err != nil {
+				span.RecordError(err)
+				r.logger.ErrorwCtx(ctx, LogFailedUpdateRoles,
+					commonkeys.UserID, userID,
+					commonkeys.Error, err.Error(),
+				)
+				return err
+			}
+		}
+
+		// Update user's updated_at timestamp
+		if err := tx.Model(&usermodel.UserDB{}).
+			Where(commonkeys.UserID+" = ?", userID).
+			Update(commonkeys.UserUpdatedAt, now).Error(); err != nil {
+			span.RecordError(err)
+			r.logger.ErrorwCtx(ctx, LogFailedUpdateRoles,
+				commonkeys.UserID, userID,
+				commonkeys.Error, err.Error(),
+			)
+			return err
+		}
+
+		return nil // Success - auto commit
+	})
+	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
-		span.RecordError(err)
-		r.logger.ErrorwCtx(ctx, LogFailedUpdateRoles,
-			commonkeys.UserID, userID,
-			commonkeys.Error, err.Error(),
-		)
 		return admindomain.AdminUser{}, err
 	}
 

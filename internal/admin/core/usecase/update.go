@@ -112,9 +112,7 @@ func (s *Service) UpdateUserRoles(ctx context.Context, cmd input.UpdateUserRoles
 	span.SetStatus(codes.Ok, StatusRolesUpdated)
 
 	s.logger.InfowCtx(ctx, InfoUserRolesUpdated,
-		commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10),
-		commonkeys.Roles, updatedUser.Roles,
-	)
+		commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10), commonkeys.Roles, updatedUser.Roles)
 
 	return updatedUser, nil
 }
