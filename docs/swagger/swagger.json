@@ -537,7 +537,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Chat"
+                    "ChatText"
                 ],
                 "summary": "Send voice chat message",
                 "parameters": [
@@ -618,7 +618,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Chat"
+                    "ChatText"
                 ],
                 "summary": "Send chat message",
                 "parameters": [
@@ -630,7 +630,7 @@
                         "required": true
                     },
                     {
-                        "description": "Chat message",
+                        "description": "ChatText message",
                         "name": "chat",
                         "in": "body",
                         "required": true,
@@ -641,7 +641,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Chat response",
+                        "description": "ChatText response",
                         "schema": {
                             "$ref": "#/definitions/github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatResponse"
                         }

@@ -782,7 +782,7 @@ paths:
       - BearerAuth.: []
       summary: Send voice chat message
       tags:
-      - Chat
+      - ChatText
   /chat/text:
     post:
       consumes:
@@ -795,7 +795,7 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: Chat message
+      - description: ChatText message
         in: body
         name: chat
         required: true
@@ -805,7 +805,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Chat response
+          description: ChatText response
           schema:
             $ref: '#/definitions/github_com_lechitz_AionApi_internal_chat_adapter_primary_http_dto.ChatResponse'
         "400":
@@ -828,7 +828,7 @@ paths:
       - BearerAuth.: []
       summary: Send chat message
       tags:
-      - Chat
+      - ChatText
   /user:
     delete:
       consumes:
