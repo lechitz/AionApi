@@ -63,7 +63,24 @@ dev-up: dev-down
 
 dev-down:
 	@echo "[DEV-DOWN] Stopping DEV environment (preserving volumes)..."
-	export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down --remove-orphans
+	@echo "      ℹ️  Ollama will be kept RUNNING (models preserved)"
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
+		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana 2>/dev/null || true
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
+		docker compose -f $(COMPOSE_FILE_DEV) rm -f aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana 2>/dev/null || true
+	@echo ""
+	@if docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
+		echo "✅ Services stopped (Ollama still running)"; \
+		echo ""; \
+		echo "💡 Ollama is still RUNNING to preserve models"; \
+		echo "   • To stop Ollama: make ollama-down"; \
+		echo "   • To check status: make ollama-status"; \
+	else \
+		echo "✅ Services stopped"; \
+		echo ""; \
+		echo "ℹ️  Ollama is not running"; \
+		echo "   • To start Ollama: make ollama-up"; \
+	fi
 
 dev: build-dev
 	@echo "[DEV] Starting FULL STACK environment (detached)..."
@@ -71,7 +88,12 @@ dev: build-dev
 	@echo "      ℹ️  Volumes preserved (Ollama models + PostgreSQL data)"
 	@echo "      💡 Use 'make rebuild-chat' or 'make rebuild-dashboard' to force rebuild"
 	@echo ""
-	@echo "🔄 Restarting services (preserving volumes)..."
+	@echo "🔄 Starting/restarting services (preserving volumes)..."
+	@if ! docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
+		echo "🚀 Starting Ollama..."; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d ollama; \
+		sleep 2; \
+	fi
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d --build --no-recreate 2>/dev/null || \
 		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d --build
 	@echo ""
@@ -122,16 +144,22 @@ dev: build-dev
 	@echo ""
 	@echo "Quick commands:"
 	@echo "   make dev-fast              → Start without rebuilding ANY images (fastest)"
+	@echo "   make dev-down              → Stop services (Ollama stays running)"
 	@echo "   make rebuild-api           → Rebuild only aion-api (smart rebuild)"
 	@echo "   make dev-attach            → Attach to aion-api logs"
-	@echo "   make migrate-up            → Run database migrations"
+	@echo "   make ollama-status         → Check Ollama status and models"
+	@echo "   make ollama-down           → Stop Ollama (models preserved)"
 	@echo "   make docker-prune-dangling → Clean temp images (run weekly)"
 
 dev-fast:
 	@echo "[DEV-FAST] Starting services WITHOUT rebuilding images..."
 	@echo "      ⚡ Use this when you haven't changed ANY code (fastest option)"
 	@echo ""
-	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down || true
+	@if ! docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
+		echo "🚀 Starting Ollama..."; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d ollama; \
+		sleep 2; \
+	fi
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d
 	@echo ""
 	@echo "⏳ Waiting for PostgreSQL..."

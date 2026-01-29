@@ -46,11 +46,21 @@ help:
 	@echo "                                  Rebuilds: aion-api, aion-chat, aionapi-dashboard"
 	@echo "                                  Preserves: Ollama models + PostgreSQL data (no re-download!)"
 	@echo "     dev-fast                 →  Start FULL STACK without rebuilding (faster, use when no code changes)"
-	@echo "     dev-attach               →  Attach to aion-api logs (no rebuild)"
-	@echo "     dev-logs                 →  Show all services logs (no rebuild)"
+	@echo "     dev-down                 →  Stop services (keeps Ollama running, preserves all volumes)"
 	@echo "     dev-attach               →  Attach to aion-api logs (no rebuild)"
 	@echo "     dev-logs                 →  Show all services logs (no rebuild)"
 	@echo "     clean-dev                →  ⚠️ Remove ALL dev containers/volumes/images (Ollama + DB data)"
+	@echo ""
+	@echo "  - [DEV - Ollama LLM Management]"
+	@echo ""
+	@echo "     ollama-up                →  Start Ollama service (if not running)"
+	@echo "     ollama-down              →  Stop Ollama (models preserved in volume)"
+	@echo "     ollama-status            →  Show Ollama status and installed models"
+	@echo "     ollama-restart           →  Restart Ollama service"
+	@echo "     ollama-logs              →  View Ollama logs"
+	@echo "     ollama-models            →  List installed models"
+	@echo "     ollama-pull              →  Download default model (or use MODEL=name)"
+	@echo "     ollama-clean             →  ⚠️ Remove Ollama volumes (deletes all models!)"
 	@echo ""
 	@echo "  - [DEV - Rebuild Individual Services (removes old image before rebuild)]"
 	@echo ""
@@ -171,7 +181,8 @@ install-tools: tools-install
 
 .PHONY: \
 	help tools-install tools.check \
-	build-dev dev-up dev-down dev dev-attach dev-logs dev-clean clean-dev \
+	build-dev dev-up dev-down dev dev-fast dev-attach dev-logs dev-clean clean-dev \
+	ollama-up ollama-down ollama-status ollama-restart ollama-logs ollama-models ollama-pull ollama-clean \
 	dev-local dev-local-deps dev-local-full dev-local-stop dev-local-down air-install \
 	build-prod prod-up prod-down prod clean-prod \
 	docker-clean-all docker-disk docker-prune-aion docker-prune-dangling docker-prune-build-cache docker-prune-full \
