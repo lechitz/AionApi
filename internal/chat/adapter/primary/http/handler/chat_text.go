@@ -18,23 +18,23 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-// Chat processes a chat message from the user and returns the AI response.
+// ChatText processes a chat message from the user and returns the AI response.
 //
 // @Summary      Send chat message
 // @Description  Sends a message to the AI assistant and receives a response. Requires authentication.
-// @Tags         Chat
+// @Tags         ChatText
 // @Accept       json
 // @Produce      json
 // @Param        Authorization  header    string              true  "Bearer token"
-// @Param        chat           body      dto.ChatRequest     true  "Chat message"
-// @Success      200            {object}  dto.ChatResponse    "Chat response"
+// @Param        chat           body      dto.ChatRequest     true  "ChatText message"
+// @Success      200            {object}  dto.ChatResponse    "ChatText response"
 // @Failure      400            {string}  string              "Invalid request payload or validation error"
 // @Failure      401            {string}  string              "Unauthorized - missing or invalid token"
 // @Failure      500            {string}  string              "Internal server error"
 // @Failure      503            {string}  string              "Service unavailable - AI service is down"
-// @Router       /chat [post]
+// @Router       /chat/text [post]
 // @Security     BearerAuth.
-func (h *Handler) Chat(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ChatText(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerChatHandler).
 		Start(r.Context(), SpanChatHandler)
 	defer span.End()
