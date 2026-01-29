@@ -1,4 +1,390 @@
 basePath: /api/v1
+definitions:
+  dto.ChatRequest:
+    properties:
+      message:
+        example: Quanto de água eu bebi hoje?
+        maxLength: 2000
+        minLength: 1
+        type: string
+    required:
+    - message
+    type: object
+  dto.ChatResponse:
+    properties:
+      response:
+        example: Você bebeu 2.5 litros de água hoje...
+        type: string
+      sources:
+        items:
+          additionalProperties: true
+          type: object
+        type: array
+      usage:
+        $ref: '#/definitions/dto.TokenUsage'
+    type: object
+  dto.CreateUserRequest:
+    properties:
+      avatar_url:
+        description: |-
+          AvatarURL is an optional URL for the user's avatar.
+          Example: "https://example.com/avatar.png"
+        example: https://example.com/avatar.png
+        type: string
+      bio:
+        description: |-
+          Bio is an optional short bio for the user.
+          Example: "Backend engineer passionate about observability."
+        example: Backend engineer passionate about observability.
+        type: string
+      email:
+        description: |-
+          Email is the user's contact email address.
+          Example: "dev@aion.local"
+        example: dev@aion.local
+        type: string
+      locale:
+        description: |-
+          Locale is the optional user locale (e.g., "en-US").
+          Example: "en-US"
+        example: en-US
+        type: string
+      location:
+        description: |-
+          Location is the optional user location.
+          Example: "São Paulo, BR"
+        example: São Paulo, BR
+        type: string
+      name:
+        description: |-
+          Name is the human-friendly display name of the user.
+          Example: "João Pereira"
+        example: João Pereira
+        type: string
+      password:
+        description: |-
+          Password is the user's credential (minimum length: 8).
+          Example: "P@ssw0rd123"
+        example: P@ssw0rd123
+        type: string
+      timezone:
+        description: |-
+          Timezone is the optional user timezone (IANA format).
+          Example: "America/Sao_Paulo"
+        example: America/Sao_Paulo
+        type: string
+      username:
+        description: |-
+          Username is the unique handle for login and identification.
+          Example: "lechitz"
+        example: lechitz
+        type: string
+    type: object
+  dto.CreateUserResponse:
+    properties:
+      email:
+        description: |-
+          Email is the created user's email address.
+          Example: "dev@aion.local"
+        example: dev@aion.local
+        type: string
+      id:
+        description: |-
+          ID is the created user's identifier.
+          Example: 42
+        example: 42
+        type: integer
+      name:
+        description: |-
+          Name is the created user's display name.
+          Example: "João Pereira"
+        example: João Pereira
+        type: string
+      username:
+        description: |-
+          Username is the created user's unique handle.
+          Example: "lechitz"
+        example: lechitz
+        type: string
+    type: object
+  dto.GetUserResponse:
+    properties:
+      created_at:
+        description: |-
+          CreatedAt is the timestamp when the user was created.
+          Format: date-time. Example: "2024-01-02T15:04:05Z".
+        example: "2024-01-02T15:04:05Z"
+        type: string
+      email:
+        description: |-
+          Email is the user's email address.
+          Example: "joaopereira@aion.local".
+        example: joaopereira@aion.local
+        type: string
+      name:
+        description: |-
+          Name is the user's display name.
+          Example: "João Pereira".
+        example: João Pereira
+        type: string
+      user_id:
+        description: |-
+          ID is the user's identifier.
+          Example: 42.
+        example: 42
+        type: integer
+      username:
+        description: |-
+          Username is the user's unique handle.
+          Example: "joaopereira".
+        example: joaopereira
+        type: string
+    type: object
+  dto.LoginUserRequest:
+    properties:
+      password:
+        description: |-
+          Password is the credential paired with the username.
+          Example: "P@ssw0rd123"
+        example: P@ssw0rd123
+        type: string
+      username:
+        description: |-
+          Username is the unique identifier used to authenticate the user.
+          Example: "joaopereira"
+        example: joaopereira
+        type: string
+    type: object
+  dto.LoginUserResponse:
+    properties:
+      id:
+        description: |-
+          ID is the unique identifier for the authenticated user.
+          Example: 42
+        example: 42
+        type: integer
+      name:
+        description: |-
+          Name is a friendly display name for the authenticated user.
+          Example: "João Pereira"
+        example: João Pereira
+        type: string
+      token:
+        description: |-
+          Token is the JSON Web Token used for authenticating subsequent requests.
+          Example: "eyJhbGciOi..."
+        example: eyJhbGciOi...
+        type: string
+    type: object
+  dto.SessionResponse:
+    properties:
+      authenticated:
+        description: Authenticated indicates whether the request is authenticated.
+        example: true
+        type: boolean
+      email:
+        description: Email is the email address of the authenticated user.
+        example: joao@example.com
+        type: string
+      expires_at:
+        description: ExpiresAt is the access token expiration time (if available).
+        example: "2026-01-10T20:05:00Z"
+        type: string
+      name:
+        description: Name is a friendly display name for the authenticated user.
+        example: João Pereira
+        type: string
+      roles:
+        description: Roles are the user's role names (authorization snapshot).
+        example:
+        - user
+        - admin
+        items:
+          type: string
+        type: array
+      user_id:
+        description: UserID is the unique identifier for the authenticated user.
+        example: 42
+        type: integer
+      username:
+        description: Username is the unique username for the authenticated user.
+        example: joaopereira
+        type: string
+    type: object
+  dto.TokenUsage:
+    properties:
+      completion_tokens:
+        example: 100
+        type: integer
+      prompt_tokens:
+        example: 50
+        type: integer
+      total_tokens:
+        example: 150
+        type: integer
+    type: object
+  dto.UpdatePasswordUserRequest:
+    properties:
+      new_password:
+        description: |-
+          NewPassword is the new password to be set.
+          Example: "N3wP@ssw0rd456"
+        example: N3wP@ssw0rd456
+        type: string
+      password:
+        description: |-
+          Password is the current password for the user.
+          Example: "P@ssw0rd123"
+        example: P@ssw0rd123
+        type: string
+    type: object
+  dto.UpdateUserRequest:
+    properties:
+      avatar_url:
+        description: AvatarURL is an optional URL for the user's avatar.
+        example: https://example.com/avatar.png
+        type: string
+      bio:
+        description: Bio is an optional short bio for the user.
+        example: Backend engineer passionate about observability.
+        type: string
+      email:
+        description: |-
+          Email is the new email address for the user.
+          Example: "alice@example.com"
+        example: alice@example.com
+        type: string
+      locale:
+        description: Locale is the optional locale (e.g., "en-US").
+        example: en-US
+        type: string
+      location:
+        description: Location is an optional city/country description.
+        example: São Paulo, BR
+        type: string
+      name:
+        description: |-
+          Name is the new display name for the user.
+          Example: "Alice Doe"
+        example: Alice Doe
+        type: string
+      timezone:
+        description: Timezone is the optional timezone (IANA).
+        example: America/Sao_Paulo
+        type: string
+      username:
+        description: |-
+          Username is the new unique handle for the user.
+          Example: "alice"
+        example: alice
+        type: string
+    type: object
+  dto.UpdateUserResponse:
+    properties:
+      avatar_url:
+        description: AvatarURL returned after update.
+        example: https://example.com/avatar.png
+        type: string
+      bio:
+        description: Bio returned after update.
+        example: Backend engineer passionate about observability.
+        type: string
+      email:
+        description: |-
+          Email is the current email after the update (if changed).
+          Example: "alice@example.com"
+        example: alice@example.com
+        type: string
+      locale:
+        description: Locale returned after update.
+        example: en-US
+        type: string
+      location:
+        description: Location returned after update.
+        example: São Paulo, BR
+        type: string
+      name:
+        description: |-
+          Name is the current display name after the update (if changed).
+          Example: "Alice Doe"
+        example: Alice Doe
+        type: string
+      timezone:
+        description: Timezone returned after update.
+        example: America/Sao_Paulo
+        type: string
+      updated_at:
+        description: |-
+          UpdatedAt is the timestamp when the user was updated.
+          Example: "2025-09-14T22:01:02Z"
+        example: "2025-09-14T22:01:02Z"
+        format: date-time
+        type: string
+      user_id:
+        description: |-
+          ID is the user's unique identifier.
+          Example: 42
+        example: 42
+        type: integer
+      username:
+        description: |-
+          Username is the current username after the update (if changed).
+          Example: "alice"
+        example: alice
+        type: string
+    type: object
+  dto.UpdateUserRolesRequest:
+    properties:
+      roles:
+        description: |-
+          Roles is the list of roles to assign to the user.
+          Valid roles: "user", "admin", "blocked"
+          Example: ["user", "admin"]
+        example:
+        - user
+        - admin
+        items:
+          type: string
+        type: array
+    type: object
+  dto.UpdateUserRolesResponse:
+    properties:
+      email:
+        description: |-
+          Email is the user's email.
+          Example: "alice@example.com"
+        example: alice@example.com
+        type: string
+      roles:
+        description: |-
+          Roles is the updated list of roles.
+          Example: ["user", "admin"]
+        example:
+        - user
+        - admin
+        items:
+          type: string
+        type: array
+      updated_at:
+        description: |-
+          UpdatedAt is the timestamp when the user was updated.
+          Example: "2025-09-14T22:01:02Z"
+        example: "2025-09-14T22:01:02Z"
+        format: date-time
+        type: string
+      user_id:
+        description: |-
+          ID is the user's unique identifier.
+          Example: 42
+        example: 42
+        type: integer
+      username:
+        description: |-
+          Username is the user's username.
+          Example: "alice"
+        example: alice
+        type: string
+    type: object
 info:
   contact:
     email: felipe.lechitz@gmail.com
@@ -12,7 +398,654 @@ info:
   termsOfService: https://github.com/lechitz/AionApi
   title: AionAPI — REST API Documentation
   version: 0.1.0
-paths: {}
+paths:
+  /admin/users/{user_id}/block:
+    put:
+      consumes:
+      - application/json
+      description: Blocks a user by assigning blocked role. Cannot block users with
+        equal or higher privilege.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User blocked
+          schema:
+            $ref: '#/definitions/dto.UpdateUserRolesResponse'
+        "400":
+          description: Invalid user_id
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden - cannot block user with equal/higher privilege
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Block user
+      tags:
+      - Admin
+  /admin/users/{user_id}/demote-admin:
+    put:
+      consumes:
+      - application/json
+      description: Removes admin role from a user. Only admins and owners can demote.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User demoted from admin
+          schema:
+            $ref: '#/definitions/dto.UpdateUserRolesResponse'
+        "400":
+          description: Invalid user_id
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden - insufficient privileges
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Demote user from admin
+      tags:
+      - Admin
+  /admin/users/{user_id}/promote-admin:
+    put:
+      consumes:
+      - application/json
+      description: Adds admin role to a user. Only admins and owners can promote to
+        admin.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User promoted to admin
+          schema:
+            $ref: '#/definitions/dto.UpdateUserRolesResponse'
+        "400":
+          description: Invalid user_id
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden - insufficient privileges
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Promote user to admin
+      tags:
+      - Admin
+  /admin/users/{user_id}/roles:
+    put:
+      consumes:
+      - application/json
+      deprecated: true
+      description: |-
+        Generic role update endpoint with minimal hierarchy validation.
+        **DEPRECATED**: Prefer specific endpoints for better validation:
+        - PUT /admin/users/{id}/promote-admin (adds admin role)
+        - PUT /admin/users/{id}/demote-admin (removes admin role)
+        - PUT /admin/users/{id}/block (blocks user)
+        - PUT /admin/users/{id}/unblock (unblocks user)
+        This endpoint provides maximum flexibility but less validation.
+        Use only for special administrative operations or bulk scripts.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: New roles to assign
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserRolesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Roles updated
+          schema:
+            $ref: '#/definitions/dto.UpdateUserRolesResponse'
+        "400":
+          description: Invalid request or user_id
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden - not an admin
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Update user roles (Legacy)
+      tags:
+      - Admin
+  /admin/users/{user_id}/unblock:
+    put:
+      consumes:
+      - application/json
+      description: Unblocks a user by restoring default user role.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User unblocked
+          schema:
+            $ref: '#/definitions/dto.UpdateUserRolesResponse'
+        "400":
+          description: Invalid user_id
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden - insufficient privileges
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Unblock user
+      tags:
+      - Admin
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Validates credentials and issues a session token (JWT or cookie).
+        On success, returns user-facing info and sets `auth_token` cookie.
+      parameters:
+      - description: Login payload
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login succeeded
+          headers:
+            Set-Cookie:
+              description: auth_token=<opaque or JWT>; Path=/; HttpOnly; Secure (if
+                enabled)
+              type: string
+          schema:
+            $ref: '#/definitions/dto.LoginUserResponse'
+        "400":
+          description: Invalid request payload or validation error
+          schema:
+            type: string
+        "401":
+          description: Invalid credentials
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Authenticate user (login)
+      tags:
+      - Auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Invalidates the current authenticated session (token or cookie)
+        and clears the auth cookie.
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Logout succeeded (no content)
+          headers:
+            Set-Cookie:
+              description: auth_token=deleted; Path=/; Max-Age=0; HttpOnly; Secure
+                (if enabled)
+              type: string
+          schema:
+            type: string
+        "401":
+          description: Unauthorized or missing user context
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Logout current user
+      tags:
+      - Auth
+  /auth/session:
+    get:
+      description: Returns the authenticated user's session snapshot (user identity
+        + roles). Intended for UIs.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SessionResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Get current session
+      tags:
+      - Auth
+  /chat/audio:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Sends an audio file to be transcribed and processed by the AI assistant.
+        Requires authentication.
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Audio file (webm, wav, mp3, max 10MB, max 60s)
+        in: formData
+        name: audio
+        required: true
+        type: file
+      - description: Language code (pt, en, es) or auto-detect if empty
+        in: formData
+        name: language
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Voice chat response with transcription and AI response
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid audio file or validation error
+          schema:
+            type: string
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            type: string
+        "413":
+          description: Audio file too large
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+        "503":
+          description: Service unavailable - AI service is down
+          schema:
+            type: string
+      security:
+      - BearerAuth.: []
+      summary: Send voice chat message
+      tags:
+      - ChatText
+  /chat/text:
+    post:
+      consumes:
+      - application/json
+      description: Sends a message to the AI assistant and receives a response. Requires
+        authentication.
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ChatText message
+        in: body
+        name: chat
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ChatText response
+          schema:
+            $ref: '#/definitions/dto.ChatResponse'
+        "400":
+          description: Invalid request payload or validation error
+          schema:
+            type: string
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+        "503":
+          description: Service unavailable - AI service is down
+          schema:
+            type: string
+      security:
+      - BearerAuth.: []
+      summary: Send chat message
+      tags:
+      - ChatText
+  /user:
+    delete:
+      consumes:
+      - application/json
+      description: Marks the current authenticated user as soft-deleted and clears
+        the auth cookie. Returns 204 No Content.
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: User soft-deleted (no content)
+          headers:
+            Set-Cookie:
+              description: auth_token=deleted; Path=/; Max-Age=0; HttpOnly; Secure
+                (if enabled)
+              type: string
+          schema:
+            type: string
+        "401":
+          description: Unauthorized or missing user context
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Soft-delete current user
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Updates the authenticated user's profile fields. At least one field
+        must be provided.
+      parameters:
+      - description: Fields to update
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated
+          schema:
+            $ref: '#/definitions/dto.UpdateUserResponse'
+        "400":
+          description: Invalid request or no fields to update
+          schema:
+            type: string
+        "401":
+          description: Unauthorized or missing user context
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "409":
+          description: Conflict updating user
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Update current user
+      tags:
+      - Users
+  /user/{user_id}:
+    get:
+      description: Returns a single user resource by its unique identifier.
+      parameters:
+      - description: User ID (uint64)
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User fetched
+          schema:
+            $ref: '#/definitions/dto.GetUserResponse'
+        "400":
+          description: Invalid user_id
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Get user by ID
+      tags:
+      - Users
+  /user/all:
+    get:
+      description: Returns a list containing all user resources.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Users fetched
+          schema:
+            items:
+              $ref: '#/definitions/dto.GetUserResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: List all users
+      tags:
+      - Users
+  /user/create:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new user account. On success, returns basic user information.
+      parameters:
+      - description: User payload
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created
+          schema:
+            $ref: '#/definitions/dto.CreateUserResponse'
+        "400":
+          description: Invalid request payload or validation error
+          schema:
+            type: string
+        "409":
+          description: Username or email already exists
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create user
+      tags:
+      - Users
+  /user/password:
+    put:
+      consumes:
+      - application/json
+      description: Validates the current password and updates it to a new one. On
+        success, the auth cookie is refreshed.
+      parameters:
+      - description: Current and new passwords
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdatePasswordUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password updated; auth cookie refreshed
+          headers:
+            Set-Cookie:
+              description: auth_token=<new>; Path=/; HttpOnly; Secure (if enabled)
+              type: string
+          schema:
+            type: string
+        "400":
+          description: Invalid request payload or validation error
+          schema:
+            type: string
+        "401":
+          description: Unauthorized or missing user context
+          schema:
+            type: string
+        "409":
+          description: Conflict updating password
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Update current user's password
+      tags:
+      - Users
 schemes:
 - http
 - https

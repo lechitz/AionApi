@@ -23,7 +23,1408 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {},
+    "paths": {
+        "/admin/users/{user_id}/block": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Blocks a user by assigning blocked role. Cannot block users with equal or higher privilege.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Block user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User blocked",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserRolesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - cannot block user with equal/higher privilege",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{user_id}/demote-admin": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Removes admin role from a user. Only admins and owners can demote.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Demote user from admin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User demoted from admin",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserRolesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - insufficient privileges",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{user_id}/promote-admin": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Adds admin role to a user. Only admins and owners can promote to admin.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Promote user to admin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User promoted to admin",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserRolesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - insufficient privileges",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{user_id}/roles": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Generic role update endpoint with minimal hierarchy validation.\n**DEPRECATED**: Prefer specific endpoints for better validation:\n- PUT /admin/users/{id}/promote-admin (adds admin role)\n- PUT /admin/users/{id}/demote-admin (removes admin role)\n- PUT /admin/users/{id}/block (blocks user)\n- PUT /admin/users/{id}/unblock (unblocks user)\nThis endpoint provides maximum flexibility but less validation.\nUse only for special administrative operations or bulk scripts.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update user roles (Legacy)",
+                "deprecated": true,
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New roles to assign",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserRolesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Roles updated",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserRolesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - not an admin",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{user_id}/unblock": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Unblocks a user by restoring default user role.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Unblock user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User unblocked",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserRolesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - insufficient privileges",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "description": "Validates credentials and issues a session token (JWT or cookie). On success, returns user-facing info and sets ` + "`" + `auth_token` + "`" + ` cookie.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Authenticate user (login)",
+                "parameters": [
+                    {
+                        "description": "Login payload",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login succeeded",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginUserResponse"
+                        },
+                        "headers": {
+                            "Set-Cookie": {
+                                "type": "string",
+                                "description": "auth_token=\u003copaque or JWT\u003e; Path=/; HttpOnly; Secure (if enabled)"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Invalidates the current authenticated session (token or cookie) and clears the auth cookie.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout current user",
+                "responses": {
+                    "204": {
+                        "description": "Logout succeeded (no content)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "Set-Cookie": {
+                                "type": "string",
+                                "description": "auth_token=deleted; Path=/; Max-Age=0; HttpOnly; Secure (if enabled)"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized or missing user context",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/session": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Returns the authenticated user's session snapshot (user identity + roles). Intended for UIs.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get current session",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.SessionResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/chat/audio": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth.": []
+                    }
+                ],
+                "description": "Sends an audio file to be transcribed and processed by the AI assistant. Requires authentication.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChatText"
+                ],
+                "summary": "Send voice chat message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Audio file (webm, wav, mp3, max 10MB, max 60s)",
+                        "name": "audio",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Language code (pt, en, es) or auto-detect if empty",
+                        "name": "language",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Voice chat response with transcription and AI response",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid audio file or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "413": {
+                        "description": "Audio file too large",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "503": {
+                        "description": "Service unavailable - AI service is down",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/chat/text": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth.": []
+                    }
+                ],
+                "description": "Sends a message to the AI assistant and receives a response. Requires authentication.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChatText"
+                ],
+                "summary": "Send chat message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "ChatText message",
+                        "name": "chat",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ChatRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ChatText response",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ChatResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "503": {
+                        "description": "Service unavailable - AI service is down",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Updates the authenticated user's profile fields. At least one field must be provided.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update current user",
+                "parameters": [
+                    {
+                        "description": "Fields to update",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User updated",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or no fields to update",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized or missing user context",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict updating user",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Marks the current authenticated user as soft-deleted and clears the auth cookie. Returns 204 No Content.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Soft-delete current user",
+                "responses": {
+                    "204": {
+                        "description": "User soft-deleted (no content)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "Set-Cookie": {
+                                "type": "string",
+                                "description": "auth_token=deleted; Path=/; Max-Age=0; HttpOnly; Secure (if enabled)"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized or missing user context",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Returns a list containing all user resources.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List all users",
+                "responses": {
+                    "200": {
+                        "description": "Users fetched",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.GetUserResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/create": {
+            "post": {
+                "description": "Registers a new user account. On success, returns basic user information.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create user",
+                "parameters": [
+                    {
+                        "description": "User payload",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Username or email already exists",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/password": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Validates the current password and updates it to a new one. On success, the auth cookie is refreshed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update current user's password",
+                "parameters": [
+                    {
+                        "description": "Current and new passwords",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdatePasswordUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password updated; auth cookie refreshed",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "Set-Cookie": {
+                                "type": "string",
+                                "description": "auth_token=\u003cnew\u003e; Path=/; HttpOnly; Secure (if enabled)"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized or missing user context",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict updating password",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{user_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Returns a single user resource by its unique identifier.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID (uint64)",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User fetched",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.ChatRequest": {
+            "type": "object",
+            "required": [
+                "message"
+            ],
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "maxLength": 2000,
+                    "minLength": 1,
+                    "example": "Quanto de água eu bebi hoje?"
+                }
+            }
+        },
+        "dto.ChatResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string",
+                    "example": "Você bebeu 2.5 litros de água hoje..."
+                },
+                "sources": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                },
+                "usage": {
+                    "$ref": "#/definitions/dto.TokenUsage"
+                }
+            }
+        },
+        "dto.CreateUserRequest": {
+            "type": "object",
+            "properties": {
+                "avatar_url": {
+                    "description": "AvatarURL is an optional URL for the user's avatar.\nExample: \"https://example.com/avatar.png\"",
+                    "type": "string",
+                    "example": "https://example.com/avatar.png"
+                },
+                "bio": {
+                    "description": "Bio is an optional short bio for the user.\nExample: \"Backend engineer passionate about observability.\"",
+                    "type": "string",
+                    "example": "Backend engineer passionate about observability."
+                },
+                "email": {
+                    "description": "Email is the user's contact email address.\nExample: \"dev@aion.local\"",
+                    "type": "string",
+                    "example": "dev@aion.local"
+                },
+                "locale": {
+                    "description": "Locale is the optional user locale (e.g., \"en-US\").\nExample: \"en-US\"",
+                    "type": "string",
+                    "example": "en-US"
+                },
+                "location": {
+                    "description": "Location is the optional user location.\nExample: \"São Paulo, BR\"",
+                    "type": "string",
+                    "example": "São Paulo, BR"
+                },
+                "name": {
+                    "description": "Name is the human-friendly display name of the user.\nExample: \"João Pereira\"",
+                    "type": "string",
+                    "example": "João Pereira"
+                },
+                "password": {
+                    "description": "Password is the user's credential (minimum length: 8).\nExample: \"P@ssw0rd123\"",
+                    "type": "string",
+                    "example": "P@ssw0rd123"
+                },
+                "timezone": {
+                    "description": "Timezone is the optional user timezone (IANA format).\nExample: \"America/Sao_Paulo\"",
+                    "type": "string",
+                    "example": "America/Sao_Paulo"
+                },
+                "username": {
+                    "description": "Username is the unique handle for login and identification.\nExample: \"lechitz\"",
+                    "type": "string",
+                    "example": "lechitz"
+                }
+            }
+        },
+        "dto.CreateUserResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email is the created user's email address.\nExample: \"dev@aion.local\"",
+                    "type": "string",
+                    "example": "dev@aion.local"
+                },
+                "id": {
+                    "description": "ID is the created user's identifier.\nExample: 42",
+                    "type": "integer",
+                    "example": 42
+                },
+                "name": {
+                    "description": "Name is the created user's display name.\nExample: \"João Pereira\"",
+                    "type": "string",
+                    "example": "João Pereira"
+                },
+                "username": {
+                    "description": "Username is the created user's unique handle.\nExample: \"lechitz\"",
+                    "type": "string",
+                    "example": "lechitz"
+                }
+            }
+        },
+        "dto.GetUserResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt is the timestamp when the user was created.\nFormat: date-time. Example: \"2024-01-02T15:04:05Z\".",
+                    "type": "string",
+                    "example": "2024-01-02T15:04:05Z"
+                },
+                "email": {
+                    "description": "Email is the user's email address.\nExample: \"joaopereira@aion.local\".",
+                    "type": "string",
+                    "example": "joaopereira@aion.local"
+                },
+                "name": {
+                    "description": "Name is the user's display name.\nExample: \"João Pereira\".",
+                    "type": "string",
+                    "example": "João Pereira"
+                },
+                "user_id": {
+                    "description": "ID is the user's identifier.\nExample: 42.",
+                    "type": "integer",
+                    "example": 42
+                },
+                "username": {
+                    "description": "Username is the user's unique handle.\nExample: \"joaopereira\".",
+                    "type": "string",
+                    "example": "joaopereira"
+                }
+            }
+        },
+        "dto.LoginUserRequest": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "description": "Password is the credential paired with the username.\nExample: \"P@ssw0rd123\"",
+                    "type": "string",
+                    "example": "P@ssw0rd123"
+                },
+                "username": {
+                    "description": "Username is the unique identifier used to authenticate the user.\nExample: \"joaopereira\"",
+                    "type": "string",
+                    "example": "joaopereira"
+                }
+            }
+        },
+        "dto.LoginUserResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID is the unique identifier for the authenticated user.\nExample: 42",
+                    "type": "integer",
+                    "example": 42
+                },
+                "name": {
+                    "description": "Name is a friendly display name for the authenticated user.\nExample: \"João Pereira\"",
+                    "type": "string",
+                    "example": "João Pereira"
+                },
+                "token": {
+                    "description": "Token is the JSON Web Token used for authenticating subsequent requests.\nExample: \"eyJhbGciOi...\"",
+                    "type": "string",
+                    "example": "eyJhbGciOi..."
+                }
+            }
+        },
+        "dto.SessionResponse": {
+            "type": "object",
+            "properties": {
+                "authenticated": {
+                    "description": "Authenticated indicates whether the request is authenticated.",
+                    "type": "boolean",
+                    "example": true
+                },
+                "email": {
+                    "description": "Email is the email address of the authenticated user.",
+                    "type": "string",
+                    "example": "joao@example.com"
+                },
+                "expires_at": {
+                    "description": "ExpiresAt is the access token expiration time (if available).",
+                    "type": "string",
+                    "example": "2026-01-10T20:05:00Z"
+                },
+                "name": {
+                    "description": "Name is a friendly display name for the authenticated user.",
+                    "type": "string",
+                    "example": "João Pereira"
+                },
+                "roles": {
+                    "description": "Roles are the user's role names (authorization snapshot).",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "user",
+                        "admin"
+                    ]
+                },
+                "user_id": {
+                    "description": "UserID is the unique identifier for the authenticated user.",
+                    "type": "integer",
+                    "example": 42
+                },
+                "username": {
+                    "description": "Username is the unique username for the authenticated user.",
+                    "type": "string",
+                    "example": "joaopereira"
+                }
+            }
+        },
+        "dto.TokenUsage": {
+            "type": "object",
+            "properties": {
+                "completion_tokens": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "prompt_tokens": {
+                    "type": "integer",
+                    "example": 50
+                },
+                "total_tokens": {
+                    "type": "integer",
+                    "example": 150
+                }
+            }
+        },
+        "dto.UpdatePasswordUserRequest": {
+            "type": "object",
+            "properties": {
+                "new_password": {
+                    "description": "NewPassword is the new password to be set.\nExample: \"N3wP@ssw0rd456\"",
+                    "type": "string",
+                    "example": "N3wP@ssw0rd456"
+                },
+                "password": {
+                    "description": "Password is the current password for the user.\nExample: \"P@ssw0rd123\"",
+                    "type": "string",
+                    "example": "P@ssw0rd123"
+                }
+            }
+        },
+        "dto.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "avatar_url": {
+                    "description": "AvatarURL is an optional URL for the user's avatar.",
+                    "type": "string",
+                    "example": "https://example.com/avatar.png"
+                },
+                "bio": {
+                    "description": "Bio is an optional short bio for the user.",
+                    "type": "string",
+                    "example": "Backend engineer passionate about observability."
+                },
+                "email": {
+                    "description": "Email is the new email address for the user.\nExample: \"alice@example.com\"",
+                    "type": "string",
+                    "example": "alice@example.com"
+                },
+                "locale": {
+                    "description": "Locale is the optional locale (e.g., \"en-US\").",
+                    "type": "string",
+                    "example": "en-US"
+                },
+                "location": {
+                    "description": "Location is an optional city/country description.",
+                    "type": "string",
+                    "example": "São Paulo, BR"
+                },
+                "name": {
+                    "description": "Name is the new display name for the user.\nExample: \"Alice Doe\"",
+                    "type": "string",
+                    "example": "Alice Doe"
+                },
+                "timezone": {
+                    "description": "Timezone is the optional timezone (IANA).",
+                    "type": "string",
+                    "example": "America/Sao_Paulo"
+                },
+                "username": {
+                    "description": "Username is the new unique handle for the user.\nExample: \"alice\"",
+                    "type": "string",
+                    "example": "alice"
+                }
+            }
+        },
+        "dto.UpdateUserResponse": {
+            "type": "object",
+            "properties": {
+                "avatar_url": {
+                    "description": "AvatarURL returned after update.",
+                    "type": "string",
+                    "example": "https://example.com/avatar.png"
+                },
+                "bio": {
+                    "description": "Bio returned after update.",
+                    "type": "string",
+                    "example": "Backend engineer passionate about observability."
+                },
+                "email": {
+                    "description": "Email is the current email after the update (if changed).\nExample: \"alice@example.com\"",
+                    "type": "string",
+                    "example": "alice@example.com"
+                },
+                "locale": {
+                    "description": "Locale returned after update.",
+                    "type": "string",
+                    "example": "en-US"
+                },
+                "location": {
+                    "description": "Location returned after update.",
+                    "type": "string",
+                    "example": "São Paulo, BR"
+                },
+                "name": {
+                    "description": "Name is the current display name after the update (if changed).\nExample: \"Alice Doe\"",
+                    "type": "string",
+                    "example": "Alice Doe"
+                },
+                "timezone": {
+                    "description": "Timezone returned after update.",
+                    "type": "string",
+                    "example": "America/Sao_Paulo"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt is the timestamp when the user was updated.\nExample: \"2025-09-14T22:01:02Z\"",
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-09-14T22:01:02Z"
+                },
+                "user_id": {
+                    "description": "ID is the user's unique identifier.\nExample: 42",
+                    "type": "integer",
+                    "example": 42
+                },
+                "username": {
+                    "description": "Username is the current username after the update (if changed).\nExample: \"alice\"",
+                    "type": "string",
+                    "example": "alice"
+                }
+            }
+        },
+        "dto.UpdateUserRolesRequest": {
+            "type": "object",
+            "properties": {
+                "roles": {
+                    "description": "Roles is the list of roles to assign to the user.\nValid roles: \"user\", \"admin\", \"blocked\"\nExample: [\"user\", \"admin\"]",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "user",
+                        "admin"
+                    ]
+                }
+            }
+        },
+        "dto.UpdateUserRolesResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email is the user's email.\nExample: \"alice@example.com\"",
+                    "type": "string",
+                    "example": "alice@example.com"
+                },
+                "roles": {
+                    "description": "Roles is the updated list of roles.\nExample: [\"user\", \"admin\"]",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "user",
+                        "admin"
+                    ]
+                },
+                "updated_at": {
+                    "description": "UpdatedAt is the timestamp when the user was updated.\nExample: \"2025-09-14T22:01:02Z\"",
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-09-14T22:01:02Z"
+                },
+                "user_id": {
+                    "description": "ID is the user's unique identifier.\nExample: 42",
+                    "type": "integer",
+                    "example": 42
+                },
+                "username": {
+                    "description": "Username is the user's username.\nExample: \"alice\"",
+                    "type": "string",
+                    "example": "alice"
+                }
+            }
+        }
+    },
     "securityDefinitions": {
         "BearerAuth": {
             "description": "Use \"Bearer {token}\" (JWT).",
