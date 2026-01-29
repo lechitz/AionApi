@@ -39,7 +39,7 @@ site/
 docs/personal/
 notes/
 **/docs.md
-ai/
+agents/
 scripts/
 
 # Local module cache used by Go

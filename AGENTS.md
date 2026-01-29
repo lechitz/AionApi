@@ -38,9 +38,9 @@ AionAPI is a professional Go backend built with Hexagonal (Ports & Adapters) and
 - **Migrations:** add SQL migrations under `infrastructure/db/migrations` and keep them reversible.
 
 ## 7. AI control center (local)
-- The `/ai` folder is the AI control center (Codex, Copilot, etc.). Everything must follow what is defined there.
-- Always select the correct persona from `/ai/personas` before proposing changes.
-- If `/ai` does not exist in the current environment, follow this `AGENTS.md` as the default.
+- The `/agents` folder is the AI control center (Codex, Copilot, etc.). Everything must follow what is defined there.
+- Always select the correct persona from `/agents/personas` before proposing changes.
+- If `/agents` does not exist in the current environment, follow this `AGENTS.md` as the default.
 - Never cite private paths or content in public docs or PRs.
 
 ## 8. Review checklist
