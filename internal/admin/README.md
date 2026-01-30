@@ -14,10 +14,6 @@ Administrative domain for privileged operations separated from end-user flows.
   - Admin domain models, ports, and usecases.
 - `adapter/`
   - HTTP handlers and persistence adapters for admin workflows.
-- `ROLES_ARCHITECTURE.md`
-  - Role model structure and intent.
-- `ROLES_SUMMARY.md`
-  - Quick reference for role behavior.
 
 ## Flow (Where it comes from -> Where it goes)
 
