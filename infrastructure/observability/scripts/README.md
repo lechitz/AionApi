@@ -1,17 +1,40 @@
-# Observability Scripts
+# infrastructure/observability/scripts
 
-Automates applying and validating observability improvements (Prometheus with exemplars, Jaeger datasource, and provisioned RED dashboard).
+Automation scripts for applying and validating observability improvements in the dev stack.
 
-## Main script
-- `setup-improvements.sh`: validates config files, restarts the dev Docker stack, and checks health/endpoints (Prometheus, Grafana, Jaeger, and OTel).
+## Package Composition
 
-## Prerequisites
-- Docker Desktop/Engine running with access to the daemon.
-- Docker Compose plugin (`docker compose`).
-- `.env.dev` in `infrastructure/docker/environments/dev`.
-- `curl`; `jq` is optional for parsing API responses.
+- `setup-improvements.sh`
+  - Validates configs, restarts the Docker stack, and checks endpoints.
 
-## How to run
-1. From the project root: `./infrastructure/observability/scripts/setup-improvements.sh`
-2. Wait for the script to restart the stack and finish validations.
-3. Open Grafana at `http://localhost:3000` (aion/aion) and load the **AionAPI - RED Metrics Dashboard (Professional)**.
+## Flow (Where it comes from -> Where it goes)
+
+Developer run -> script validation -> docker compose restart -> observability endpoints
+
+## Why It Was Designed This Way
+
+- Make observability setup repeatable.
+- Reduce manual steps and drift.
+- Provide fast feedback on health and wiring.
+
+## Recommended Practices Visible Here
+
+- Keep scripts idempotent and safe to re-run.
+- Validate endpoints before declaring success.
+- Avoid embedding credentials in scripts.
+
+## Differentials
+
+- Automated validation of Grafana/Prometheus/Jaeger/OTel wiring.
+
+## What Should NOT Live Here
+
+- Production deployment logic.
+- Environment secrets or tokens.
+- Application runtime logic.
+
+## How to Run
+
+```bash
+./infrastructure/observability/scripts/setup-improvements.sh
+```
