@@ -1,168 +1,45 @@
-# Docker
+# infrastructure/docker
 
-**Folder:** `infrastructure/docker`
+Docker assets for building and running the AionAPI stack. This folder defines how images and compose profiles are structured.
 
-## Responsibility
+## Package Composition
 
-* Containerize the **Aion API** and its infra dependencies.
-* Separate **dev** and **prod** orchestration with clear, environment-specific config.
-* Provide a repeatable workflow for **building images**, **running compose**, and **bootstrapping the DB** (migrations).
+- `Dockerfile`
+  - Multi-stage build for the API binary.
+- `environments/`
+  - Compose overlays and env files for dev/prod/example.
+- `scripts/`
+  - Container entrypoints and helper scripts.
 
----
+## Flow (Where it comes from -> Where it goes)
 
-## Layout
+Dockerfile + env profiles -> docker compose -> running services
 
-```
-infrastructure/docker/
-├── Dockerfile                     # Multi-stage build (Go -> Alpine)
-├── environments/
-│   ├── dev/
-│   │   ├── docker-compose-dev.yaml
-│   │   └── .env.dev               # NOT for production; developer defaults
-│   ├── example/
-│   │   └── .env.example           # Template of required vars
-│   └── prod/
-│       ├── docker-compose-prod.yaml
-│       └── .env.prod              # Example of production variables (do not commit secrets)
-└── scripts/
-    └── entrypoint.sh              # Starts the compiled binary in the runtime image
-```
+## Why It Was Designed This Way
 
----
+- Keep runtime profiles isolated (dev vs prod).
+- Keep Docker concerns out of application code.
+- Use reproducible builds and consistent startup.
 
-## How it works
+## Recommended Practices Visible Here
 
-* **Dockerfile (multi-stage):**
+- Multi-stage build for small images.
+- Per-environment env files and compose overlays.
+- Entry-point scripts are simple and explicit.
 
-    * Stage 1: builds a static `aion-api` binary from `./cmd/aion-api`.
-    * Stage 2: minimal **Alpine** runtime that runs `./aion-api` via `scripts/entrypoint.sh`.
+## Common Commands
 
-* **Compose (dev/prod):**
-
-    * Brings up **Postgres** with a persistent volume.
-    * On first boot, Postgres executes any `.sql` files mounted at `/docker-entrypoint-initdb.d`.
-    * We mount the project’s migrations directory so the schema is initialized automatically:
-
-        * Dev: `infrastructure/db/migrations` → `/docker-entrypoint-initdb.d`
-
-* **Environment files (`.env.*`):**
-
-    * Consumed by `docker-compose` (`env_file:`) and Make targets.
-    * Keep **secrets out of VCS**. Use `.env.example` as a reference and provide real values locally/CI.
-
-> Today the provided compose files focus on **Postgres**. The API container is built with the Dockerfile and can be added to compose when desired (see “Extending compose with the API” below).
-
----
-
-## Common workflows (via root Makefile)
-
-* **Build DEV image**
-
-  ```bash
-  make build-dev
-  ```
-
-* **Start DEV stack (compose)**
-
-  ```bash
-  # Exports variables from environments/dev/.env.dev and runs docker compose
-  make dev-up
-  ```
-
-* **Stop & remove DEV stack (volumes included)**
-
-  ```bash
-  make dev-down
-  ```
-
-* **Clean leftover DEV resources (containers/volumes/images)**
-
-  ```bash
-  make clean-dev
-  ```
-
-* **Build/Start PROD stack**
-
-  ```bash
-  make build-prod
-  make prod-up
-  ```
-
-* **Global clean**
-
-  ```bash
-  make docker-clean-all
-  ```
-
----
-
-## Dev specifics
-
-* **Postgres**
-
-    * Container name: `postgres-dev`
-    * Port: `5432:5432` (localhost exposure)
-    * Persistent volume: `postgres-data-dev`
-    * **Migrations:** `infrastructure/db/migrations` is mounted into `/docker-entrypoint-initdb.d` so tables, FKs, triggers, etc. are created at first boot.
-
-* **Typical local DSN**
-
-  ```
-  postgres://aion:<password>@localhost:5432/aionapi?sslmode=disable
-  ```
-
----
-
-## Prod specifics
-
-* **.env.prod** holds the **shape** of production settings (observability, server, etc.).
-  Do not store real secrets in Git. Use your platform’s secret store or CI/CD variable injection.
-
-* **Volumes and ports** are defined in `docker-compose-prod.yaml`. Adjust mounts so the DB can be initialized with the same `infrastructure/db/migrations` folder (path must be correct relative to that file).
-
----
-
-## Extending compose with the API
-
-If/when you want the API to run as a container alongside Postgres, add a service similar to:
-
-```yaml
-services:
-  aion-api:
-    image: aion-api:dev            # or :prod after make build-*
-    container_name: aion-api-dev
-    depends_on:
-      - postgres
-    env_file:
-      - ./.env.dev                 # or .env.prod
-    command: ["/bin/sh", "-c", "/scripts/entrypoint.sh"]
-    volumes:
-      - ../../scripts:/scripts
-    ports:
-      - "8080:8080"                # if your HTTP server runs on 8080
-    restart: on-failure
+```bash
+make build-dev
+make dev-up
+make dev-down
+make clean-dev
+make build-prod
+make prod-up
 ```
 
-> The multi-stage image already contains the compiled `aion-api` binary. The `entrypoint.sh` simply executes it.
+## What Should NOT Live Here
 
----
-
-## Tips & troubleshooting
-
-* **Fresh DB init:** remove the Postgres volume so `/docker-entrypoint-initdb.d` scripts run again:
-
-  ```bash
-  make dev-down && make clean-dev && make dev-up
-  ```
-* **Migrations didn’t run?** Check the **relative mount path** from your composition file to `infrastructure/db/migrations`.
-* **Port in use?** Ensure nothing else is bound to `5432` (or change the host port).
-* **Logs:** `docker compose logs -f` from the environment folder is your friend.
-
----
-
-## Conventions
-
-* Keep images small (multi-stage, static binary).
-* Keep env files **scoped per environment**; never commit real secrets.
-* Prefer **infrastructure/db/migrations** as the single source of truth for schema bootstrap.
-* Compose files should remain thin and environment-specific; use the root Make targets to orchestrate.
+- Business logic or app behavior.
+- Real secrets committed to git.
+- Environment-specific overrides in shared templates.
