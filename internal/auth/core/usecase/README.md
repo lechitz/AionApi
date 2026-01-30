@@ -1,71 +1,36 @@
-# Auth Use Cases (Core)
+# internal/auth/core/usecase
 
-## Responsibilities
+Auth usecase implementations for login, logout, validate, and refresh.
 
-* Implement the authentication business flows for the **auth** context.
-* Provide a single service that:
+## Purpose & Main Capabilities
 
-    * **Login**: verifies credentials, **issues a token**, and stores its reference.
-    * **Logout**: **revokes** the stored token reference.
-    * **Validate**: verifies token integrity, extracts `userID`, and checks **cache consistency** (mismatch protection).
+- Validate credentials and issue tokens.
+- Verify token integrity and claims.
+- Coordinate token storage for revocation checks.
 
-## What it provides (operations)
+## Package Composition
 
-* `Login(ctx, username, password) (user, token string, err error)`
-* `Logout(ctx, userID uint64) error`
-* `Validate(ctx, rawToken string) (userID uint64, claims map[string]any, err error)`
+- Usecase implementations and tests.
 
-## Dependencies (ports)
+## Flow (Where it comes from -> Where it goes)
 
-* `userOutput.UserRepository` — look up users (e.g., `GetByUsername`).
-* `authOutput.AuthProvider` — **issue/verify** tokens (e.g., JWT).
-* `authOutput.AuthStore` — **persist/retrieve/delete** token references (cache).
-* `hasher.Hasher` — password comparison.
-* `logger.ContextLogger` — structured logging with context.
+Input port -> usecase -> output ports -> adapters
 
-*All dependencies are **interfaces**; concrete adapters are injected by `internal/platform/bootstrap` (DIP).*
+## Why It Was Designed This Way
 
-## How it works (high-level)
+- Centralize auth policy enforcement.
+- Keep storage and JWT details behind ports.
 
-### Login
+## Recommended Practices Visible Here
 
-1. Lookup user by username.
-2. Compare stored hash vs. provided password.
-3. Generate token via `AuthProvider`.
-4. Save `{Key: userID, Token: <token>}` to `AuthStore`.
-5. Return `(user, token)`.
+- Sanitize bearer tokens and normalize claims.
+- Never log credentials or raw tokens.
+- Use semantic errors for invalid credentials or token mismatch.
 
-**Typical errors**: `error to get user by username`, `invalid credentials`, `error to create token`.
+## Differentials
 
-### Logout
+- Token validation with cache-backed reference checks.
 
-1. Delete token reference from `AuthStore` by `userID`.
-2. Return `nil` on success.
+## What Should NOT Live Here
 
-**Typical errors**: `error to delete token`.
-
-### Validate
-
-1. Sanitize header value (`Bearer <token>` → `<token>`).
-2. Verify signature/exp via `AuthProvider` → `claims`.
-3. Extract `userID` from claims (`userID` or fallback `sub`).
-4. Get stored token from `AuthStore` and **compare** with provided value.
-5. Return `(userID, claims)` on success.
-
-**Typical errors**: `invalid access reference`, `invalid userID in claims`,
-`error retrieving access reference from cache`, `provided reference does not match stored one`.
-
-## Observability
-
-* Tracer name: `aionapi.auth`.
-* Spans: `Login`, `Logout`, `ValidateToken`.
-* Emits events (e.g., `lookup_user`, `compare_password`, `generate_token`, `save_token_to_store`, `verify_token`, `compare_token`).
-* Logs use request context (request ID, trace/span IDs, user ID when available). **Never** log token values.
-
-## Notes & Reminders
-
-* **Stateless & concurrent**: the service keeps no mutable state; safe for concurrent use.
-* **Do not leak transport/infra**: no HTTP/GraphQL or ORM types here; only domain and ports.
-* **Error semantics**: return **meaningful**, domain-level errors; avoid raw strings from infra.
-* **Security**: never log secrets (tokens/passwords); log only minimal metadata.
-* **Testing**: favor unit tests with mocks of all ports; table-test edge cases (not found, bad password, provider/store failures, mismatch).
+- HTTP handlers or cache/JWT implementations.
