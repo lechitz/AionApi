@@ -31,11 +31,8 @@ package main
 import (
 	"context"
 	"os"
-	"path"
 	"time"
 
-	swagger "github.com/lechitz/AionApi/docs/swagger"
-	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/fxapp"
 	"go.uber.org/fx"
 )
@@ -66,11 +63,4 @@ func run() int {
 		return 1
 	}
 	return 0
-}
-
-// configureSwagger applies runtime metadata from the loaded application configuration to the generated Swagger/OpenAPI spec.
-func configureSwagger(cfg *config.Config) {
-	swagger.SwaggerInfo.BasePath = path.Clean(cfg.ServerHTTP.Context + cfg.ServerHTTP.APIRoot)
-	swagger.SwaggerInfo.Title = SwaggerTitle
-	swagger.SwaggerInfo.Version = cfg.General.Version
 }
