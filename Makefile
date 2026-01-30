@@ -47,7 +47,7 @@ help:
 	@echo "                                  Preserves: Ollama models + PostgreSQL data (no re-download!)"
 	@echo "     dev-fast                 →  Start FULL STACK without rebuilding (faster, use when no code changes)"
 	@echo "     dev-down                 →  Stop services (keeps Ollama running, preserves all volumes)"
-	@echo "     clean-dev                →  ⚠️ Remove ALL dev containers/volumes/images (Ollama + DB data)"
+	@echo "     clean-dev                →  ⚠️ Remove dev containers/volumes/images (keeps Ollama running)"
 	@echo ""
 	@echo "  - [DEV - Logs (individual services)]"
 	@echo ""

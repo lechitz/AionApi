@@ -269,18 +269,33 @@ dev-clean: clean-dev
 clean-dev:
 	@echo "[CLEAN-DEV] Cleaning DEV containers, volumes, images..."
 	@echo "      ⚠️  This will remove:"
-	@echo "         • Ollama models (~4-5GB)"
 	@echo "         • PostgreSQL data"
 	@echo "         • Redis cache"
 	@echo "         • aion-api:dev image"
+	@echo "         • aion-chat:dev image"
+	@echo "         • aionapi-dashboard:dev image"
 	@echo ""
-	@echo "→ Stopping and removing compose stack (with volumes)..."
-	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) down --volumes --remove-orphans || true
+	@echo "      ℹ️  Ollama will be kept RUNNING (models preserved)"
+	@echo ""
+	@echo "→ Stopping and removing services (except Ollama)..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
+		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana 2>/dev/null || true
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
+		docker compose -f $(COMPOSE_FILE_DEV) rm -f -v aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana 2>/dev/null || true
 	@echo "→ Removing dev images..."
 	@docker images --filter "reference=$(APPLICATION_NAME):dev" -q | xargs -r docker rmi -f || true
-	@echo "✅ Cleanup complete"
+	@docker images --filter "reference=aion-chat:dev" -q | xargs -r docker rmi -f || true
+	@docker images --filter "reference=aionapi-dashboard:dev" -q | xargs -r docker rmi -f || true
 	@echo ""
-	@echo "Next 'make dev' will download Ollama model again"
+	@if docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
+		echo "✅ Cleanup complete (Ollama still running)"; \
+		echo ""; \
+		echo "💡 Ollama is still RUNNING to preserve models (~4-5GB)"; \
+		echo "   To remove Ollama: make ollama-clean"; \
+	else \
+		echo "✅ Cleanup complete"; \
+	fi
+	@echo ""
 
 # ============================================================
 #                PRODUCTION BUILD
