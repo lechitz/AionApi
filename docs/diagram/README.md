@@ -9,6 +9,12 @@ All diagrams live in this folder as:
 - `cmd-aion-api.sequence.txt`
   - Image: `images/cmd-aion-api.svg`
   - Purpose: Entry-point flow for the AionAPI process
+- `cmd-api-seed-caller.sequence.txt`
+  - Image: `images/cmd-api-seed-caller.svg`
+  - Purpose: API seeding via authenticated endpoints
+- `cmd-seed-helper.sequence.txt`
+  - Image: `images/cmd-seed-helper.svg`
+  - Purpose: Local seed env, tokens, and bcrypt hashes
 
 ## How to View
 

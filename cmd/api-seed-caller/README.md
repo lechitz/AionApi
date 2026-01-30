@@ -13,6 +13,10 @@ This CLI generates authenticated API traffic to seed data and validate the end-t
 
 Operator -> CLI -> Auth login -> GraphQL mutations -> Success log
 
+![API Seed Caller Flow](../../docs/diagram/images/cmd-api-seed-caller.svg)
+
+Diagram source: `docs/diagram/cmd-api-seed-caller.sequence.txt`
+
 ## Why It Was Designed This Way
 
 - Seed through the same API paths used in production.

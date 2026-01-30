@@ -1,0 +1,15 @@
+title API Seed Caller Flow
+
+participant "Operator" as OP
+participant "api-seed-caller" as CLI
+participant "Auth Endpoint" as AUTH
+participant "GraphQL API" as GQL
+participant "Success Log" as LOG
+
+OP->CLI: Run seed caller
+CLI->AUTH: POST /auth/login
+AUTH->CLI: Access token
+CLI->GQL: Mutations (categories/tags/records)
+GQL->CLI: Results
+CLI->LOG: Write success entry
+CLI->OP: Exit

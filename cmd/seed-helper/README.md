@@ -1,210 +1,93 @@
-# Seed Helper Tool
+# cmd/seed-helper
 
-A Go-based CLI utility for generating seed data credentials and authentication tokens for the AionAPI project.
+This CLI generates seed credentials and auth tokens for local development. It is used by Make targets to prepare database seed variables and test tokens.
 
-## Purpose
+## Package Composition
 
-This tool helps developers quickly set up a local development database with test data by:
-- Generating bcrypt password hashes compatible with the database
-- Creating JWT tokens that work with the authentication system
-- Producing complete `.env.local` configuration files
+- `main.go`
+  - Implements the command parser and generators.
+  - Writes a local seed env file and prints tokens/hashes.
 
-## Why Go and not Python?
+## Flow (Where it comes from -> Where it goes)
 
-1. **Consistency**: Uses the same libraries as the main application (golang-jwt, bcrypt)
-2. **Compatibility**: Tokens generated are guaranteed to work with the API
-3. **No external dependencies**: No need to install Python/pip in a Go project
-4. **Maintainability**: Single tech stack for the entire project
+Operator -> seed-helper -> generate hashes/tokens -> .env.local / stdout
+
+![Seed Helper Flow](../../docs/diagram/images/cmd-seed-helper.svg)
+
+Diagram source: `docs/diagram/cmd-seed-helper.sequence.txt`
+
+## Why It Was Designed This Way
+
+- Keep seed tooling in Go to match production libraries.
+- Guarantee JWT/bcrypt compatibility with the API.
+- Provide a repeatable, deterministic local seed setup.
+
+## Recommended Practices Visible Here
+
+- Use the same auth libs as the API (jwt + bcrypt).
+- Produce local artifacts only (never commit).
+- Prefer Make targets for repeatable workflows.
+
+## Differentials (Rare but Valuable)
+
+- Single-stack tooling: same language and crypto libs as runtime.
+- Generates complete seed env with one command.
+- Works with SQL seed scripts and Make targets.
+
+## Quick Run
+
+```bash
+make seed-helper
+./bin/seed-helper generate-env 10
+```
 
 ## Commands
 
-### `generate-env` - Complete Setup (Recommended)
+### generate-env
 
-Generate a complete `.env.local` file with all seed variables:
+Creates `infrastructure/db/seed/.env.local` with seed variables.
 
 ```bash
 ./bin/seed-helper generate-env [userCount] [secretKey] [password]
 ```
 
-**Parameters:**
-- `userCount` (optional): Number of users to generate (default: 10)
-- `secretKey` (optional): JWT secret key (default: read from .env.dev)
-- `password` (optional): Password for all seeded users (default: testpassword123)
+Defaults:
+- `userCount`: 10
+- `secretKey`: read from `.env.dev` (if available)
+- `password`: `testpassword123`
 
-**Example:**
-```bash
-# Generate config for 100 users
-./bin/seed-helper generate-env 100
+### generate-token
 
-# Generate with custom password
-./bin/seed-helper generate-env 50 my-secret-key mypassword
-```
-
-**Output:**
-- Creates `infrastructure/db/seed/.env.local`
-- Contains: USER_TOKEN_TEST, SEED_USER_COUNT, DEV_PASSWORD, SECRET_KEY, JWT_TOKEN
-
-### `generate-token` - JWT Token Only
-
-Generate a JWT token for API testing:
+Generates a JWT token for a given user id.
 
 ```bash
 ./bin/seed-helper generate-token [userID] [secretKey]
 ```
 
-**Parameters:**
-- `userID` (optional): User ID for the token (default: 1)
-- `secretKey` (optional): JWT secret key (default: read from .env.dev)
+### generate-bcrypt
 
-**Example:**
-```bash
-# Generate token for user 1
-./bin/seed-helper generate-token 1
-
-# Generate for specific user
-./bin/seed-helper generate-token 42 my-secret-key
-```
-
-**Use case:**
-- Testing API endpoints with curl/Postman
-- Debugging authentication issues
-- Creating tokens for different users
-
-### `generate-bcrypt` - Password Hash Only
-
-Generate a bcrypt hash for a password:
+Generates a bcrypt hash for a password.
 
 ```bash
 ./bin/seed-helper generate-bcrypt [password]
 ```
 
-**Parameters:**
-- `password` (optional): Password to hash (default: testpassword123)
-
-**Example:**
-```bash
-# Hash default password
-./bin/seed-helper generate-bcrypt
-
-# Hash custom password
-./bin/seed-helper generate-bcrypt supersecret
-```
-
-**Use case:**
-- Manual database seeding
-- Testing password validation
-- Creating hashes for specific test scenarios
-
-## Usage with Make
-
-The easiest way to use this tool is through Make targets:
+## Make Targets
 
 ```bash
-# Build the tool
 make seed-helper
-
-# Interactive setup (builds + generates .env.local)
 make seed-setup
-
-# Quick seed (uses .env.local)
 make seed-quick
 ```
 
-## Workflow
+## Integration Notes
 
-### First Time Setup
+The generated values are used by SQL seed scripts:
+- `infrastructure/db/seed/user_generate.sql`
+- `infrastructure/db/seed/.env.example`
 
-```bash
-# 1. Setup seed environment (interactive)
-make seed-setup
-# Enter number of users when prompted (e.g., 100)
+## What Should NOT Live Here
 
-# 2. Seed the database
-make seed-quick
-
-# 3. (Optional) Get the JWT token for API testing
-cat infrastructure/db/seed/.env.local | grep JWT_TOKEN
-```
-
-### Subsequent Seeds
-
-```bash
-# Clean and reseed
-make seed-clean-all
-make seed-quick
-```
-
-### Custom Scenarios
-
-```bash
-# Build tool
-make seed-helper
-
-# Generate 1000 users with specific password
-./bin/seed-helper generate-env 1000 "" mypassword
-
-# Seed with custom config
-make seed-all-local
-```
-
-## Integration with Database
-
-The generated values are used by SQL scripts:
-
-- **user_generate.sql**: Uses `DEV_PASSWORD` via `user_seed_password_plain` variable to hash passwords server-side with pgcrypto
-- **user.sql**: Uses `USER_TOKEN_TEST` for pre-hashed passwords
-- **Make targets**: Source `.env.local` to pass variables to psql
-
-## Security Notes
-
-1. **Never commit `.env.local`**: It's gitignored for a reason
-2. **Development only**: These tools are for local development, not production
-3. **Bcrypt cost**: Uses cost factor of 10 (fast for testing, secure enough)
-4. **Token expiration**: JWT tokens expire in 24 hours by default
-
-## Troubleshooting
-
-### "SECRET_KEY not found" warning
-
-The tool tries to read SECRET_KEY from:
-1. Environment variable `SECRET_KEY`
-2. File `infrastructure/docker/environments/dev/.env.dev`
-
-If not found, it uses a placeholder. Provide it as an argument:
-```bash
-./bin/seed-helper generate-env 100 your-actual-secret-key
-```
-
-### File permission error
-
-The `.env.local` file is created with mode 0600 (read/write owner only). If you get permission errors:
-```bash
-rm infrastructure/db/seed/.env.local
-make seed-setup
-```
-
-### Token doesn't work with API
-
-Ensure the SECRET_KEY used to generate the token matches the one in your running API:
-```bash
-# Check API secret
-grep SECRET_KEY infrastructure/docker/environments/dev/.env.dev
-
-# Generate token with same secret
-./bin/seed-helper generate-token 1 <secret-from-above>
-```
-
-## Related Files
-
-- `infrastructure/db/seed/user_generate.sql` - Generates N users with pgcrypto
-- `infrastructure/db/seed/.env.example` - Example configuration file
-- `makefiles/seed.mk` - Make targets for seeding
-- `internal/adapter/secondary/token/jwt_impl.go` - JWT implementation used by API
-
-## Future Enhancements
-
-Potential additions:
-- Generate test data for categories/tags/records
-- Support for multiple authentication schemes
-- Export tokens in different formats (curl, Postman collection)
-- Database connectivity for direct seeding
+- Production credentials or secrets.
+- Any runtime business logic.
+- Direct API calls (use api-seed-caller for that).
