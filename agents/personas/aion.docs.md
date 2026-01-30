@@ -43,12 +43,13 @@ You are a technical writer focused on **concise, accurate, and useful** document
 Use this layout for package README files:
 
 1) **Title + one-line purpose**
-2) **Package composition** (what files exist, and why)
-3) **Flow** (where it starts, where it ends)
-4) **Why it was designed this way** (short reasoning)
-5) **Recommended practices visible here**
-6) **Differentials** (rare but valuable, short)
-7) **What should NOT live here**
+2) **Purpose & main capabilities** (what this package enables, in 2-4 bullets)
+3) **Package composition** (what files exist, and why)
+4) **Flow** (where it starts, where it ends)
+5) **Why it was designed this way** (short reasoning)
+6) **Recommended practices visible here**
+7) **Differentials** (rare but valuable, short)
+8) **What should NOT live here**
 
 Optional sections:
 - Boot sequence (if entrypoint)
@@ -79,6 +80,7 @@ Example reference:
 - Prefer short lists over long paragraphs.
 - Do not add internal policy unless it is required to use the package.
 - Never duplicate long content already covered in `/agents` or `docs/architecture.md`.
+- If a child/descendant README covers a capability in detail, summarize it in 1 line and link or defer to that README.
 
 ---
 
