@@ -1,71 +1,37 @@
-# GraphQL (Primary Adapter – Central)
+# internal/adapter/primary/graphql
 
-## Responsibilities
+Shared GraphQL infrastructure: schema, directives, and transport models used by all contexts.
 
-* Centralize the GraphQL **schema (gqlgen)**, **root resolvers**, and the **HTTP handler** for GraphQL.
-* Apply **domain middlewares** (e.g., Auth directive) before dispatching to context-specific controllers/use cases.
-* Stay **transport-only**: no business rules here—just mapping, orchestration, and delegation.
+## Package Composition
 
-## Where things live
+- `schema/`
+  - Schema definitions and module composition.
+- `directives/`
+  - Cross-cutting rules at schema level (auth, validation, tracing).
+- `model/`
+  - GraphQL transport models.
 
-* **Schema**
+## Flow (Where it comes from -> Where it goes)
 
-    * Root: `internal/adapter/primary/graphql/schema/root.graphqls`
-    * Modules: `internal/adapter/primary/graphql/schema/modules/*.graphqls`
-      (e.g., `category.graphqls`, `tags.graphqls`)
-    * Dev tooling: `.graphqlrc.yaml` / `.graphqlconfig` (this directory) configure IDEs/editors for autocomplete, validation, and navigation.
-* **Resolvers (root layer)**
+Schema + directives -> gqlgen -> resolvers/controllers -> usecases
 
-    * `internal/adapter/primary/graphql/root.resolvers.go`
-    * `internal/adapter/primary/graphql/category.resolvers.go`
-    * `internal/adapter/primary/graphql/tags.resolvers.go`
-    * `internal/adapter/primary/graphql/record.resolvers.go`
-* **Custom directives / middleware**
+## Why It Was Designed This Way
 
-    * `internal/adapter/primary/graphql/directives/auth.go` (`@auth`)
-* **GraphQL server (handler)**
+- Keep schema modular and composable.
+- Centralize cross-cutting GraphQL behavior.
+- Avoid duplication across contexts.
 
-    * `internal/adapter/primary/graphql/server.go`
-* **gqlgen config & generated code**
+## Recommended Practices Visible Here
 
-    * `internal/adapter/primary/graphql/gqlgen.yml`
-    * `internal/adapter/primary/graphql/generated.go`
-    * `internal/adapter/primary/graphql/model/models_gen.go`
-* **Resolver wiring**
+- Keep modules in `schema/modules` for clear ownership.
+- Use directives instead of duplicating policy in resolvers.
+- Align models with schema and controller mappings.
 
-    * `internal/adapter/primary/graphql/resolver.go`
-      Wires the GraphQL layer to context controllers, e.g.:
+## Differentials
 
-        * Category controller: `internal/category/adapter/primary/graphql/controller`
+- Modular schema + directive-driven policies.
 
-## Runtime shape
+## What Should NOT Live Here
 
-* A single GraphQL HTTP handler is exposed from the package (see `server.go`) and mounted by your HTTP platform server.
-* The **root resolvers** call the **Category/Tag controllers** (primary adapters for each bounded context), which then delegate to **use cases (input ports)**.
-
-## Extending the schema
-
-1. Add a `.graphqls` file under `internal/adapter/primary/graphql/schema/modules/`.
-2. Run gqlgen to re-generate code.
-3. Implement the new resolver(s) in this package and **delegate to the appropriate context controller** (e.g., `category/.../controller`).
-4. If you need a new directive, implement it under `directives/` and reference it in `schema/root.graphqls`.
-
-## Best practices
-
-* **Keep resolvers thin**: mapping + tracing + calling controllers; no domain logic.
-* **Auth/Authorization**: enforce via **directives** (e.g., `@auth`) and/or in controllers—not in resolvers.
-* **Trace & log** at the boundary; push domain decisions into use cases.
-
-## Codegen workflow
-
-* Configuration lives in `gqlgen.yml`.
-* Generated files:
-
-    * Execution glue: `generated.go`
-    * Go types for schema models: `model/models_gen.go`
-* Re-generate whenever the schema changes (your repo’s `make verify`/codegen steps already handle this).
-
-## Mounting
-
-* The HTTP platform mounts the GraphQL handler returned by this package (see your server integration) on the configured path.
-* No direct router logic here—**this package only provides the GraphQL handler** to be mounted by the platform server.
+- Domain logic or persistence.
+- Context-specific controllers (they live under each context).

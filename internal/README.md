@@ -7,7 +7,7 @@ Application code for AionAPI, organized by bounded contexts and the shared platf
 - `<context>/`
   - Domain-focused modules (auth, user, chat, etc.).
 - `adapter/`
-  - Central GraphQL layer delegating to context controllers.
+  - Shared primary adapters (GraphQL infrastructure) and shared secondary adapters (db/cache/crypto).
 - `platform/`
   - Cross-cutting runtime wiring: config, server, observability.
 - `shared/`
