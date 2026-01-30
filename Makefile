@@ -47,9 +47,21 @@ help:
 	@echo "                                  Preserves: Ollama models + PostgreSQL data (no re-download!)"
 	@echo "     dev-fast                 →  Start FULL STACK without rebuilding (faster, use when no code changes)"
 	@echo "     dev-down                 →  Stop services (keeps Ollama running, preserves all volumes)"
-	@echo "     dev-attach               →  Attach to aion-api logs (no rebuild)"
-	@echo "     dev-logs                 →  Show all services logs (no rebuild)"
 	@echo "     clean-dev                →  ⚠️ Remove ALL dev containers/volumes/images (Ollama + DB data)"
+	@echo ""
+	@echo "  - [DEV - Logs (individual services)]"
+	@echo ""
+	@echo "     logs-api                 →  Show aion-api logs"
+	@echo "     logs-chat                →  Show aion-chat logs"
+	@echo "     logs-dashboard           →  Show aionapi-dashboard logs"
+	@echo "     logs-postgres            →  Show PostgreSQL logs"
+	@echo "     logs-redis               →  Show Redis logs"
+	@echo "     logs-ollama              →  Show Ollama logs"
+	@echo "     logs-jaeger              →  Show Jaeger logs"
+	@echo "     logs-otel                →  Show OpenTelemetry Collector logs"
+	@echo "     logs-prometheus          →  Show Prometheus logs"
+	@echo "     logs-grafana             →  Show Grafana logs"
+	@echo "     logs-all                 →  Show all services logs"
 	@echo ""
 	@echo "  - [DEV - Ollama LLM Management]"
 	@echo ""
@@ -182,6 +194,7 @@ install-tools: tools-install
 .PHONY: \
 	help tools-install tools.check \
 	build-dev dev-up dev-down dev dev-fast dev-attach dev-logs dev-clean clean-dev \
+	logs-api logs-chat logs-dashboard logs-postgres logs-redis logs-ollama logs-jaeger logs-otel logs-prometheus logs-grafana logs-all \
 	ollama-up ollama-down ollama-status ollama-restart ollama-logs ollama-models ollama-pull ollama-clean \
 	dev-local dev-local-deps dev-local-full dev-local-stop dev-local-down air-install \
 	build-prod prod-up prod-down prod clean-prod \

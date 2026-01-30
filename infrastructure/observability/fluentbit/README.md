@@ -4,7 +4,10 @@ Fluent Bit configuration for collecting and forwarding logs from the AionAPI run
 
 ## Package Composition
 
-- (Reserved for Fluent Bit config, parsers, and output rules)
+- `fluent-bit.conf`
+  - Inputs, filters, and Loki output for Docker logs.
+- `parsers.conf`
+  - JSON parsing for container log payloads.
 
 ## Flow (Where it comes from -> Where it goes)
 

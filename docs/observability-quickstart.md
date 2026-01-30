@@ -13,7 +13,10 @@ Use this quick guide to load the new configs (Prometheus with exemplars, Jaeger 
 5. Quick validation:
    - Panels show metrics (latency, error rate, throughput).
    - Click a point/bar → “View Traces in Jaeger” opens Jaeger search with filters pre-filled.
-6. (Optional) Generate traffic to populate metrics:
+6. Logs (Loki):
+   - In Grafana, go to **Explore** → select **Loki** datasource.
+   - Example query: `{container_name="/aion-api-dev"}` and then apply `| json` to filter on fields like `trace_id` or `request_id`.
+7. (Optional) Generate traffic to populate metrics:
    ```bash
    for i in {1..50}; do curl -s http://localhost:5001/aion/health > /dev/null; done
    ```

@@ -139,8 +139,10 @@ dev: build-dev
 	@echo "   • Dashboard:  http://localhost:5000"
 	@echo "   • API:        http://localhost:5001/aion/api/v1/health"
 	@echo "   • Chat AI:    http://localhost:8000/health"
-	@echo "   • Grafana:    http://localhost:3000 (aion/aion)"
+	@echo "   • Grafana:    http://localhost:3000"
+	@echo "   • Logs (Loki): http://localhost:3000/explore"
 	@echo "   • Jaeger:     http://localhost:16686"
+	@echo "   • Loki:       http://localhost:3100"
 	@echo ""
 	@echo "Quick commands:"
 	@echo "   make dev-fast              → Start without rebuilding ANY images (fastest)"
@@ -180,20 +182,86 @@ dev-fast:
 	@echo "   • Dashboard:  http://localhost:5000"
 	@echo "   • API:        http://localhost:5001/aion/api/v1/health"
 	@echo "   • Chat AI:    http://localhost:8000/health"
+	@echo "   • Grafana:    http://localhost:3000"
+	@echo "   • Logs (Loki): http://localhost:3000/explore"
+	@echo "   • Jaeger:     http://localhost:16686"
+	@echo "   • Loki:       http://localhost:3100"
 
-dev-attach:
-	@echo "[DEV-ATTACH] Attaching to aion-api logs..."
-	@echo "(Press Ctrl+C to detach - containers will keep running)"
+# ============================================================
+#                     LOGS COMMANDS
+# ============================================================
+
+.PHONY: logs-api logs-chat logs-dashboard logs-postgres logs-redis logs-ollama logs-jaeger logs-otel logs-prometheus logs-grafana logs-all
+
+logs-api:
+	@echo "📋 aion-api logs (Ctrl+C to exit)"
 	@echo ""
-	@trap 'echo ""; echo "✓ Detached. Containers still running."; exit 0' INT; \
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
 		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f aion-api
 
-dev-logs:
-	@echo "[DEV-LOGS] Showing all services logs..."
-	@echo "(Press Ctrl+C to stop - containers will keep running)"
+logs-chat:
+	@echo "📋 aion-chat logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f aion-chat
+
+logs-dashboard:
+	@echo "📋 aionapi-dashboard logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f aionapi-dashboard
+
+logs-postgres:
+	@echo "📋 PostgreSQL logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f postgres
+
+logs-redis:
+	@echo "📋 Redis logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f redis
+
+logs-ollama:
+	@echo "📋 Ollama logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f ollama
+
+logs-jaeger:
+	@echo "📋 Jaeger logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f jaeger
+
+logs-otel:
+	@echo "📋 OpenTelemetry Collector logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f otel-collector
+
+logs-prometheus:
+	@echo "📋 Prometheus logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f prometheus
+
+logs-grafana:
+	@echo "📋 Grafana logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f grafana
+
+logs-all:
+	@echo "📋 All services logs (Ctrl+C to exit)"
 	@echo ""
 	@trap 'echo ""; echo "✓ Stopped viewing logs. Containers still running."; exit 0' INT; \
 		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f
+
+# Backwards compatibility aliases
+dev-attach: logs-api
+dev-logs: logs-all
 
 # Alias for backwards compatibility (use clean-dev instead)
 dev-clean: clean-dev
@@ -324,4 +392,3 @@ docker-prune-full:
 	else \
 		echo "❌ Cancelled"; \
 	fi
-

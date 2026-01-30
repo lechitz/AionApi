@@ -4,7 +4,8 @@ Loki configuration assets for log ingestion and querying. This folder is the tar
 
 ## Package Composition
 
-- (Reserved for Loki config files and storage settings)
+- `loki.yaml`
+  - Single-binary Loki config with filesystem storage and retention.
 
 ## Flow (Where it comes from -> Where it goes)
 

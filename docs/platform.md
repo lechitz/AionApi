@@ -241,7 +241,7 @@ AionApi is **tracing‑first**. Traces and metrics are exported via **OTLP/HTTP*
 * Set `OTEL_INSECURE=true` for plain HTTP in local setups.
 
 !!! note
-Logs are structured (Zap). Fluent Bit + Loki are optional and can be added later for log aggregation.
+Logs are structured (Zap). Fluent Bit + Loki are available in the Docker environments for log aggregation.
 
 ---
 

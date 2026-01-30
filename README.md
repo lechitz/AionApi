@@ -158,6 +158,7 @@ export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
 export OTEL_SERVICE_NAME="AionApi"
 export OTEL_SERVICE_VERSION="0.1.0"
 ```
+Loki + Fluent Bit are available in the Docker environments for log aggregation (Grafana Explore).
 
 
 
@@ -168,4 +169,3 @@ export OTEL_SERVICE_VERSION="0.1.0"
 This project is available under the MIT License — see the `LICENSE` file for details.
 
 ---
-

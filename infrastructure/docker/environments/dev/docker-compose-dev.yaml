@@ -98,6 +98,36 @@ services:
       retries: 3
       start_period: 5s
 
+  loki:
+    image: grafana/loki:2.9.8
+    container_name: loki-dev
+    command: ["-config.file=/etc/loki/loki.yaml"]
+    ports:
+      - "3100:3100"
+    volumes:
+      - ../../../observability/loki/loki.yaml:/etc/loki/loki.yaml:ro
+      - loki-data-dev:/loki
+    networks:
+      - rede_local
+    restart: unless-stopped
+
+  fluent-bit:
+    image: fluent/fluent-bit:2.2.2
+    container_name: fluent-bit-dev
+    depends_on:
+      - loki
+    env_file:
+      - .env.dev
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - fluentbit-data:/fluent-bit/state
+      - ../../../observability/fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - ../../../observability/fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
+    networks:
+      - rede_local
+    restart: unless-stopped
+
   ollama:
     image: ollama/ollama:latest
     container_name: ollama-dev
@@ -209,3 +239,5 @@ volumes:
   postgres-data-dev:
   grafana-data:
   ollama-models:
+  loki-data-dev:
+  fluentbit-data:
