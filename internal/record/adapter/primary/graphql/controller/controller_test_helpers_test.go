@@ -1,0 +1,129 @@
+package controller_test
+
+import (
+	"context"
+	"testing"
+	"time"
+
+	"github.com/lechitz/AionApi/internal/record/adapter/primary/graphql/controller"
+	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/AionApi/internal/record/core/ports/input"
+	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/AionApi/tests/setup"
+	"go.uber.org/mock/gomock"
+)
+
+type recordServiceStub struct {
+	createFn         func(context.Context, input.CreateRecordCommand) (domain.Record, error)
+	getByIDFn        func(context.Context, uint64, uint64) (domain.Record, error)
+	listByUserFn     func(context.Context, uint64, int, *string, *int64) ([]domain.Record, error)
+	listByTagFn      func(context.Context, uint64, uint64, int) ([]domain.Record, error)
+	listByCatFn      func(context.Context, uint64, uint64, int) ([]domain.Record, error)
+	listByDayFn      func(context.Context, uint64, time.Time) ([]domain.Record, error)
+	listAllUntilFn   func(context.Context, uint64, time.Time, int) ([]domain.Record, error)
+	listAllBetweenFn func(context.Context, uint64, time.Time, time.Time, int) ([]domain.Record, error)
+	listLatestFn     func(context.Context, uint64, int) ([]domain.Record, error)
+	updateFn         func(context.Context, uint64, uint64, input.UpdateRecordCommand) (domain.Record, error)
+	deleteFn         func(context.Context, uint64, uint64) error
+	deleteAllFn      func(context.Context, uint64) error
+	searchFn         func(context.Context, uint64, domain.SearchFilters) ([]domain.Record, error)
+}
+
+func newRecordController(t *testing.T, svc input.RecordService) (controller.RecordController, *gomock.Controller) {
+	t.Helper()
+	ctrl := gomock.NewController(t)
+	log := mocks.NewMockContextLogger(ctrl)
+	setup.ExpectLoggerDefaultBehavior(log)
+	return controller.NewController(svc, log), ctrl
+}
+
+func (s *recordServiceStub) Create(ctx context.Context, cmd input.CreateRecordCommand) (domain.Record, error) {
+	if s.createFn == nil {
+		panic("unexpected Create call")
+	}
+	return s.createFn(ctx, cmd)
+}
+
+func (s *recordServiceStub) GetByID(ctx context.Context, recordID uint64, userID uint64) (domain.Record, error) {
+	if s.getByIDFn == nil {
+		panic("unexpected GetByID call")
+	}
+	return s.getByIDFn(ctx, recordID, userID)
+}
+
+func (s *recordServiceStub) ListByUser(ctx context.Context, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]domain.Record, error) {
+	if s.listByUserFn == nil {
+		panic("unexpected ListByUser call")
+	}
+	return s.listByUserFn(ctx, userID, limit, afterEventTime, afterID)
+}
+
+func (s *recordServiceStub) ListByTag(ctx context.Context, tagID uint64, userID uint64, limit int) ([]domain.Record, error) {
+	if s.listByTagFn == nil {
+		panic("unexpected ListByTag call")
+	}
+	return s.listByTagFn(ctx, tagID, userID, limit)
+}
+
+func (s *recordServiceStub) ListByCategory(ctx context.Context, categoryID uint64, userID uint64, limit int) ([]domain.Record, error) {
+	if s.listByCatFn == nil {
+		panic("unexpected ListByCategory call")
+	}
+	return s.listByCatFn(ctx, categoryID, userID, limit)
+}
+
+func (s *recordServiceStub) ListByDay(ctx context.Context, userID uint64, date time.Time) ([]domain.Record, error) {
+	if s.listByDayFn == nil {
+		panic("unexpected ListByDay call")
+	}
+	return s.listByDayFn(ctx, userID, date)
+}
+
+func (s *recordServiceStub) ListAllUntil(ctx context.Context, userID uint64, until time.Time, limit int) ([]domain.Record, error) {
+	if s.listAllUntilFn == nil {
+		panic("unexpected ListAllUntil call")
+	}
+	return s.listAllUntilFn(ctx, userID, until, limit)
+}
+
+func (s *recordServiceStub) ListAllBetween(ctx context.Context, userID uint64, startDate time.Time, endDate time.Time, limit int) ([]domain.Record, error) {
+	if s.listAllBetweenFn == nil {
+		panic("unexpected ListAllBetween call")
+	}
+	return s.listAllBetweenFn(ctx, userID, startDate, endDate, limit)
+}
+
+func (s *recordServiceStub) ListLatest(ctx context.Context, userID uint64, limit int) ([]domain.Record, error) {
+	if s.listLatestFn == nil {
+		panic("unexpected ListLatest call")
+	}
+	return s.listLatestFn(ctx, userID, limit)
+}
+
+func (s *recordServiceStub) Update(ctx context.Context, recordID uint64, userID uint64, cmd input.UpdateRecordCommand) (domain.Record, error) {
+	if s.updateFn == nil {
+		panic("unexpected Update call")
+	}
+	return s.updateFn(ctx, recordID, userID, cmd)
+}
+
+func (s *recordServiceStub) Delete(ctx context.Context, recordID uint64, userID uint64) error {
+	if s.deleteFn == nil {
+		panic("unexpected Delete call")
+	}
+	return s.deleteFn(ctx, recordID, userID)
+}
+
+func (s *recordServiceStub) DeleteAll(ctx context.Context, userID uint64) error {
+	if s.deleteAllFn == nil {
+		panic("unexpected DeleteAll call")
+	}
+	return s.deleteAllFn(ctx, userID)
+}
+
+func (s *recordServiceStub) SearchRecords(ctx context.Context, userID uint64, filters domain.SearchFilters) ([]domain.Record, error) {
+	if s.searchFn == nil {
+		panic("unexpected SearchRecords call")
+	}
+	return s.searchFn(ctx, userID, filters)
+}
