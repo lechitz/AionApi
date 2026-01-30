@@ -1,6 +1,6 @@
 # internal/admin/adapter/primary/http
 
-HTTP handlers for admin operations.
+HTTP handlers for admin operations and transport mapping.
 
 ## Purpose & Main Capabilities
 
@@ -10,7 +10,9 @@ HTTP handlers for admin operations.
 
 ## Package Composition
 
-- Handlers, request/response DTOs, and routing helpers.
+- `dto/`
+  - Admin HTTP request/response shapes.
+- Handlers and routing helpers.
 
 ## Flow (Where it comes from -> Where it goes)
 
@@ -24,7 +26,7 @@ HTTP request -> handler -> core/usecase -> HTTP response
 ## Recommended Practices Visible Here
 
 - Validate admin claims early and log audit metadata.
-- Keep DTO mapping inside adapters.
+- Keep DTO mapping inside adapters (see `dto/` README).
 
 ## Differentials
 
