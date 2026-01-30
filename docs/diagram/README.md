@@ -4,11 +4,6 @@ All diagrams live in this folder as:
 - SVG images under `images/`
 - Editable sources as `*.sequence.txt` (sequencediagram.org compatible)
 
-## Quick Links
-
-- Quick Start: `./QUICK-START.md`
-- Syntax Guide: `./SYNTAX-GUIDE.md`
-
 ## Available Diagrams
 
 - `cmd-aion-api.sequence.txt`
@@ -19,3 +14,19 @@ All diagrams live in this folder as:
 
 1) Open `images/*.svg` in your browser or on GitHub.
 2) If you need to edit a diagram, open the matching `*.sequence.txt` file in a text editor.
+3) Paste into https://sequencediagram.org/ and export as SVG.
+
+## Syntax (Short)
+
+title Example Flow
+
+participant "User" as U
+participant "Service" as S
+
+U->S: Call endpoint
+S->U: Response
+
+Notes:
+- Use `title` for the diagram title.
+- Define participants with readable names.
+- Keep flows short and focused.
