@@ -1,85 +1,30 @@
-# Handler Helpers (Shared)
+# Platform HTTP Utils
 
-**Folder:** `internal/shared/handlerhelpers`
+**Folder:** `internal/platform/server/http/utils`
 
-## Responsibility
+## Purpose and Main Capabilities
 
-* Give HTTP/GQL controllers a **single, consistent way** to validate inputs and write responses.
-* Centralize **error → HTTP mapping**, **tracing attributes**, and **structured logs** so handlers stay thin.
-* Provide small **validation/parsing helpers** that are transport-agnostic.
+- Provide shared HTTP helpers for responses, errors, and cookies.
+- Keep handlers thin and consistent across contexts.
+- Centralize response envelopes and error mapping.
 
-## How it works
+## Package Composition
 
-* Response helpers wrap `httpresponse` and `sharederrors`, attaching **OTel attributes** from `tracingkeys` and logging metadata with `logger.ContextLogger` (using keys from `commonkeys`).
-* Validation helpers run at the **transport boundary** (controllers/DTOs), keeping the domain clean.
+- `httpresponse/`: JSON response writers and error mapping.
+- `sharederrors/`: shared semantic error helpers for HTTP mapping.
+- `cookies/`: auth/session cookie helpers driven by config.
 
-> No persistence/ORM or business logic here—only reusable, side-effect-light utilities.
+## Flow (Where it comes from -> Where it goes)
 
-## What’s inside
+Handler -> utils (httpresponse/sharederrors/cookies) -> HTTP response
 
-* `response.go` — helpers to standardize success/error responses and emit tracing/logs with canonical keys.
-* `validation.go` — small, reusable validators (e.g., required fields checker) intended for DTO/boundary validation.
+## Recommended Practices Visible Here
 
-## Conventions
+- Use semantic errors (`sharederrors`) and let `httpresponse` map to HTTP codes.
+- Avoid leaking sensitive data in logs or responses.
+- Keep cookie flags centralized and config-driven.
 
-* **Validate early** (in DTOs/handlers) and return **semantic domain errors** (`sharederrors`) instead of ad-hoc strings.
-* **Never** log sensitive payloads (passwords/tokens). Prefer **metadata** (IDs, counts, statuses).
-* Always set OTel attributes like status code, request ID, and operation name via `tracingkeys` + `commonkeys`.
+## What Should NOT Live Here
 
-## Examples
-
-### Required fields at the boundary
-
-```go
-if err := handlerhelpers.CheckRequiredFields(map[string]string{
-    "username": req.Username,
-    "password": req.Password,
-}); err != nil {
-    // Convert to a bad-request using your standard response writer
-    // (e.g., httpresponse + sharederrors) and return.
-    return
-}
-```
-
-### Logging + tracing-friendly error responses
-
-```go
-func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
-    ctx := r.Context()
-    // ... decode/validate ...
-
-    // On domain/validation error:
-    // handlerhelpers will (a) map to the proper HTTP status,
-    // (b) attach OTel span attributes (status_code, request_id, etc.),
-    // (c) write a standardized error body.
-    // Example usage mirrors your local helpers pattern.
-    // handlerhelpers.WriteDomainError(ctx, w, err, h.Logger)
-}
-```
-
-*(Use the exact helper(s) exposed in `response.go` per your project’s pattern.)*
-
-## Design notes
-
-* Keys come from `internal/shared/constants`:
-
-    * `commonkeys` for log/HTTP fields,
-    * `tracingkeys` for span attributes.
-* Keep helpers **pure and small** so they are easy to test and reuse across adapters (HTTP & GraphQL).
-
-## Testing hints
-
-* Use `httptest.NewRecorder()` to assert:
-
-    * status code mapping,
-    * error envelope shape,
-    * presence of request/trace IDs in headers (when applicable).
-* With gomock, assert **metadata keys** rather than free-form strings:
-
-```go
-logger.EXPECT().Errorw(gomock.Any(), commonkeys.UserID, gomock.Any()).AnyTimes()
-```
-
----
-
-Keep handlers **thin**: decode + validate → call input port → map/return response. These helpers make the “thin” part effortless and consistent.
+- Domain rules or persistence logic.
+- Context-specific DTOs or handlers.

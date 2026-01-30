@@ -12,6 +12,7 @@ You are a technical writer focused on **concise, accurate, and useful** document
 - Explain the package composition, flow, and key design decisions.
 - Highlight good practices and rare differentiators.
 - Provide diagram references when applicable.
+- Capture the real package surface: entrypoints, configs, codegen outputs, and key subpackages.
 
 ---
 
@@ -54,6 +55,14 @@ Use this layout for package README files:
 Optional sections:
 - Boot sequence (if entrypoint)
 - Minimal configuration notes
+ - Diagram (if flow is non-trivial)
+
+## 🔍 Package Coverage Checklist
+
+- List real files/folders that define behavior (entrypoints, configs, codegen, wiring).
+- Call out generated files as "do not edit".
+- Summarize child README scope in one line instead of duplicating content.
+- Mention key boundary collaborators (ports, controllers, middleware).
 
 ---
 

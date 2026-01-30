@@ -82,6 +82,15 @@ Warnw(msg string, keysAndValues ...any)
 * Output ports = things the **domain calls out to** (hashing, cache, logger, etc.).
 * Concrete packages must live outside the domain (e.g., `internal/platform/.../adapter/secondary`).
 
+## Flow (Where it comes from -> Where it goes)
+
+Usecase -> output port -> secondary adapter -> external system
+
+## What Should NOT Live Here
+
+- Concrete implementations or framework types.
+- Domain/business rules.
+
 ---
 
 ## Usage (example)

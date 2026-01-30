@@ -131,6 +131,7 @@ SECRET_KEY=super-long-random-hex
 * **Single source of truth**: only the config package should know env var names and normalization rules.
 * **No side effects** beyond reading env vars, generating an ephemeral dev secret, and logging validation issues.
 * Keep **platform concerns** (HTTP/GraphQL/DB/OTEL) here; domain packages receive values already parsed & validated.
+* When adding new config keys, update `.env` examples under `infrastructure/docker/environments/example/`.
 
 ---
 

@@ -86,4 +86,17 @@ chatHTTPClient := chatClient.NewClient(httpClient, cfg.AionChat.BaseURL, log)
 4. **Testability** — inject mock/test clients easily
 5. **Configuration centralized** — timeout/transport/headers in one place
 
+## Diagram
 
+![Platform HTTP Client Flow](../../docs/diagram/images/internal-platform-httpclient.svg)
+
+Source: `../../docs/diagram/internal-platform-httpclient.sequence.txt`
+
+## Flow (Where it comes from -> Where it goes)
+
+Adapter -> httpclient (instrumented) -> external HTTP service
+
+## What Should NOT Live Here
+
+- Domain logic or adapter orchestration.
+- Service-specific clients (those live in secondary adapters).

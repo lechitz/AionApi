@@ -92,6 +92,7 @@ defer span.End()
 * **No business logic** here; keep this package pure platform wiring.
 * **Global providers** are set once at bootstrap; downstream code just calls `otel.Tracer(...)` / `otel.Meter(...)`.
 * Reuse **common attributes/keys** from `internal/shared/constants` to keep telemetry consistent.
+* Keep label cardinality low; coordinate changes with dashboards.
 
 ---
 
@@ -108,3 +109,4 @@ defer span.End()
 * **No data arriving:** check endpoint (`http://host:4318`), headers, and network access.
 * **Empty service labels:** ensure `OTEL_SERVICE_NAME` and `OTEL_SERVICE_VERSION` are set in env/config.
 * **TLS errors:** use the insecure flag for local dev or configure proper HTTPS on the collector.
+* **Dashboard mismatch:** update `infrastructure/observability` when changing metric names/labels.

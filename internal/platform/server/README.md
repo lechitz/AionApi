@@ -2,14 +2,12 @@
 
 **Folder:** `internal/platform/server`
 
-**Subtrees:** `http/`, `graph/`
-
 ## Responsibility
 
-* Provide the platform **transport layer** for HTTP and GraphQL.
-* Own the **router port** (`internal/platform/server/http/ports.Router`) and concrete router adapters (e.g., **chi**).
-* Offer **cross-cutting handlers** (health check, 404/405, error/recovery) and **middleware** (request ID, panic recovery).
-* **Compose** primary adapters from each bounded context (Auth, Category, etc.) into one runnable server.
+* Provide the platform **transport layer** for HTTP (including GraphQL mounting).
+* Own the **router port** (`internal/platform/server/http/ports.Router`) and router adapters.
+* Offer **cross-cutting handlers** (health, 404/405, error/recovery) and middleware (request ID, recovery).
+* **Compose** primary adapters from each bounded context into one runnable server.
 
 ---
 
@@ -17,16 +15,21 @@
 
 ```
 internal/platform/server
-├─ http/
-│  ├─ ports/          # framework-agnostic Router contract
-│  ├─ router/chi/     # chi implementation of the Router port
-│  ├─ generic/        # platform controllers (health, 404/405, error, recovery)
-│  ├─ middleware/     # request ID, recovery middlewares
-│  ├─ composer.go     # mounts routes from contexts + platform endpoints
-│  └─ server.go       # HTTP server startup/shutdown
-└─ graph/
-   └─ schema/_modules # assembled GraphQL schema (via `make graphql`)
+└─ http/
+   ├─ ports/          # framework-agnostic Router contract
+   ├─ router/chi/     # chi implementation of the Router port
+   ├─ generic/        # platform handlers (health, 404/405, error)
+   ├─ middleware/     # request ID, recovery, cors, service token
+   ├─ utils/          # httpresponse, cookies, sharederrors helpers
+   ├─ composer.go     # mounts routes from contexts + platform endpoints
+   └─ server.go       # HTTP server startup/shutdown
 ```
+
+## Diagram
+
+![Platform HTTP Server Flow](../../../docs/diagram/images/internal-platform-server.svg)
+
+Source: `../../../docs/diagram/internal-platform-server.sequence.txt`
 
 ---
 
@@ -34,8 +37,8 @@ internal/platform/server
 
 * **Port + Adapter**
 
-    * Contexts (Auth/Category/…) depend only on `http/ports.Router`.
-    * We can swap the underlying router by providing a different adapter under `http/router/<impl>`.
+    * Contexts depend only on `http/ports.Router`.
+    * Swap the underlying router by providing another adapter under `http/router/<impl>`.
 
 * **Composition**
 
@@ -43,19 +46,19 @@ internal/platform/server
 
         * mounts **/health** and default **404/405** handlers,
         * calls each context’s `RegisterHTTP(r ports.Router, h *Handler)` (or equivalent),
-        * applies platform middlewares (request ID, recovery),
-        * mounts everything under `cfg.ServerHTTP.Context` (e.g., `/aion-api`) for a stable API prefix.
+        * applies platform middlewares (request ID, recovery, cors),
+        * mounts everything under `cfg.ServerHTTP.Context` (e.g., `/aion-api`).
 
 * **Server lifecycle**
 
     * `http/server.go` builds a standard `*http.Server` using timeouts/host/port from `internal/platform/config`.
-    * Exposes start/shutdown helpers respecting graceful shutdown timeouts.
+    * Start/shutdown are wired through Fx lifecycle for graceful shutdown.
 
 * **Observability**
 
-    * Generic handlers and router adapter include **OTel spans** and structured logs through the platform logger.
-    * Recovery middleware captures panics, tags spans as errors, and returns a consistent 500 response.
-    * Request-ID middleware guarantees a `X-Request-ID` header and context value for traceability.
+    * Generic handlers and middleware include **OTel spans** and structured logs.
+    * Recovery middleware captures panics and returns a consistent 500 response.
+    * Request-ID middleware guarantees a `X-Request-ID` header and context value.
 
 ---
 
@@ -65,7 +68,7 @@ internal/platform/server
 
 * `Use(mw ...Middleware)` — apply platform middlewares.
 * `Group(prefix string, fn func(ports.Router))` — mount subtrees.
-* `GroupWith(mw Middleware, fn func(ports.Router))` — mount protected subtrees (e.g., Auth).
+* `GroupWith(mw Middleware, fn func(ports.Router))` — mount protected subtrees.
 * `GET/POST/PUT/PATCH/DELETE(path string, h http.HandlerFunc)` — register handlers.
 * Setters for **NotFound/MethodNotAllowed** and a central **ErrorHandler**.
 
@@ -75,42 +78,26 @@ internal/platform/server
 
 ## GraphQL
 
-* The **schema is modular** per context (e.g., `internal/category/adapter/primary/graphql/schema/*.graphqls`).
-* `make graphql`:
-
-    * copies all context schemas into `internal/platform/server/graph/schema/_modules`,
-    * runs **gqlgen** to generate GraphQL types/resolvers near the platform graph server,
-    * runs `go mod tidy` to keep modules clean.
-* The GraphQL HTTP endpoint is composed by the platform alongside REST routes (see the project’s GraphQL server adapter).
+* The GraphQL HTTP handler is built in `internal/adapter/primary/graphql`.
+* The platform mounts that handler alongside REST routes via `http/composer.go`.
+* Schema composition and gqlgen generation are driven by `make graphql`.
 
 ---
 
 ## Conventions
 
-* **Primary adapters stay thin**: validate/decode, call input ports, map responses, standardize errors.
+* **Primary adapters stay thin**: decode/validate, call input ports, map responses, standardize errors.
 * Always register routes via the **router port**; never import `chi` (or any router) directly from contexts.
 * Apply **domain middleware** (e.g., Auth) with `GroupWith` only where required.
 * Log **metadata** (request ID, user ID, operation) — avoid sensitive payloads.
 
 ---
 
-## Testing hints
-
-* Use the **chi router adapter** with `httptest` to exercise real HTTP behavior while still going through the port.
-* For unit tests of handlers, inject fakes/mocks for input ports and assert:
-
-    * correct status codes and response envelopes,
-    * validation failures and error mapping,
-    * RBAC/auth middleware behavior when mounted behind `GroupWith`.
-* Platform endpoints (health, 404/405, recovery) can be validated with small black-box tests.
-
----
-
 ## Extending
 
-* **New context over HTTP**: create the primary adapter (`RegisterHTTP`, handlers, DTOs), then mount it in `http/composer.go`.
+* **New context over HTTP**: create the primary adapter and mount it in `http/composer.go`.
 * **New middleware**: implement `ports.Middleware` and add it via `Use` in the composer.
-* **Swap router**: implement `ports.Router` under `http/router/<impl>` and switch the binding in the platform bootstrap.
-* **Add GraphQL fields**: drop `.graphqls` files in your context module; run `make graphql`; wire resolvers in your context’s GraphQL handler and let the composer mount the server.
+* **Swap router**: implement `ports.Router` under `http/router/<impl>` and switch the binding in the composer.
+* **Add GraphQL fields**: drop `.graphqls` in your context module, run `make graphql`, and wire resolvers.
 
-> Keep the server package **framework-agnostic, observable, and composable**. The goal is to isolate infrastructure choices while giving every context a uniform, testable entry point.
+> Keep the server package **framework-agnostic, observable, and composable**.

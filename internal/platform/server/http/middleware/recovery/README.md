@@ -2,59 +2,30 @@
 
 **Folder:** `internal/platform/server/http/middleware/recovery`
 
-## Responsibility
+## Purpose and Main Capabilities
 
-* Catch **panics** anywhere in the HTTP pipeline and convert them into a safe **500 Internal Server Error**.
-* Guarantee a **request ID** on the response (generate one if missing) to aid correlation.
-* Delegate response formatting + logging to the platform **Generic Recovery Handler**.
-* Preserve **observability**: mark spans as error and attach useful attributes.
+- Catch panics in the HTTP pipeline and return a safe 500 response.
+- Delegate formatting/logging to the generic recovery handler.
+- Preserve observability by marking spans as error.
 
 ## How it works
 
-* Constructor: `New(recoveryHandler *generic.Handler) func(http.Handler) http.Handler`
-
-    * Wraps `next` with a `defer`/`recover()` guard.
-    * If a panic occurs:
-
-        * Ensures an `X-Request-ID` (creates a UUID when absent).
-        * Calls the platform **Generic Recovery** controller to:
-
-            * log with structure, include request ID
-            * capture stack (internally)
-            * emit an OTel span with `status=Error`
-            * return a standardized 500 JSON body.
-* Depends only on the **router port** middleware signature (`func(http.Handler) http.Handler`).
+- `New(recoveryHandler *handler.Handler)` wraps `next` with `defer`/`recover()`.
+- On panic, it generates an error ID (UUID) and calls `recoveryHandler.RecoveryHandler`.
 
 ## Usage
 
-Apply globally in the HTTP composer so it wraps **all** routes and middlewares:
+Apply globally as the **outermost** middleware:
 
 ```go
-// composer.go
-r.Use(recovery.New(genericHandler))  // <- outermost guard
+r.Use(recovery.New(genericHandler))
 ```
-
-> Order matters: keep Recovery **first** in the chain so it can catch panics from every subsequent middleware/handler.
-> If you also use `requestid` middleware, it can come after Recovery—Recovery will still generate a fallback request ID if needed.
 
 ## Observability
 
-* The Recovery handler:
+- Recovery handler records error details on spans and logs.
+- Client receives a sanitized 500 response only.
 
-    * starts/annotates an OTel span for the failing request
-    * sets canonical attributes (e.g., request ID)
-    * marks span `Error` and records the panic message/stack (without leaking it to clients).
+## What Should NOT Live Here
 
-## Conventions
-
-* Keep client messages **generic** (no internal details). Detailed error context goes to logs/spans.
-* Never perform domain logic here—this is a **platform** concern only.
-* Do not import concrete routers; wire via the **router port**.
-
-## Testing hints
-
-* Build a tiny handler that `panic`s and mount it behind the middleware:
-
-    * Assert response `500`, JSON envelope shape, and presence of `X-Request-ID`.
-    * Verify no server crash and that logs/spans mark the request as error.
-* When combined with `requestid` middleware, assert the **same** request ID flows through.
+- Domain logic or transport mapping.

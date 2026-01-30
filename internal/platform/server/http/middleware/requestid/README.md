@@ -2,26 +2,17 @@
 
 **Folder:** `internal/platform/server/http/middleware/requestid`
 
-## Responsibility
+## Purpose and Main Capabilities
 
-* Ensure **every request** carries a stable **`X-Request-ID`**.
-* Accept client-provided IDs (if present & non-empty) or **generate a UUIDv4**.
-* Propagate the ID to:
-
-    * the **request context** (for logs/traces/handlers), and
-    * the **response header** (so clients can correlate).
-* Stay framework-agnostic via the **router port** middleware signature.
+- Ensure every request carries a stable `X-Request-ID`.
+- Validate client-provided IDs and generate a UUID when invalid.
+- Propagate the ID to context and response headers.
 
 ## How it works
 
-* Constructor: `New() func(http.Handler) http.Handler`
-
-    * Reads `X-Request-ID` (header name from `commonkeys.XRequestID`).
-    * If missing/blank → `uuid.NewString()`.
-    * Stores in context under `ctxkeys.RequestID` and sets the header on both request (for downstream middlewares/handlers) and response.
-    * Calls `next.ServeHTTP` with the updated context.
-
-> No domain logic here—pure platform concern for correlation and observability.
+- `New()` reads `X-Request-ID` (`commonkeys.XRequestID`).
+- If missing, too long, or not a UUID, it generates a new UUID.
+- Injects the final value into `ctxkeys.RequestID` and sets the response header.
 
 ## Usage
 
@@ -55,9 +46,8 @@ Clients will also see the same value echoed back in the `X-Request-ID` response 
 
 ## Conventions
 
-* Prefer **UUIDv4** when generating new IDs.
-* Treat client-provided IDs as opaque values—**do not parse** or validate beyond non-empty.
-* Keep the middleware **stateless** and **idempotent**.
+- Prefer UUIDv4 when generating new IDs.
+- Keep the middleware stateless and idempotent.
 
 ## Testing hints
 

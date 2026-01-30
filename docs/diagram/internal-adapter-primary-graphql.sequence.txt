@@ -1,0 +1,26 @@
+title Primary GraphQL Adapter Flow
+
+participant "Client" as C
+participant "chi router" as CHI
+participant "auth middleware" as AUTH
+participant "gqlgen handler" as GQL
+participant "directives" as DIR
+participant "resolver" as RES
+participant "context controller" as CTRL
+participant "usecase input port" as UC
+participant "output port" as OP
+
+C->CHI: GraphQL HTTP request
+CHI->AUTH: Apply auth (if enabled)
+AUTH->GQL: Pass request
+GQL->DIR: Execute directives
+DIR->RES: Resolve field
+RES->CTRL: Delegate mapping/validation
+CTRL->UC: Call usecase
+UC->OP: Access persistence/external IO
+OP->UC: Result or error
+UC->CTRL: Result or semantic error
+CTRL->RES: Transport mapping
+RES->GQL: Response payload
+GQL->CHI: HTTP response
+CHI->C: GraphQL response

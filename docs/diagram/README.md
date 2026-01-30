@@ -15,6 +15,24 @@ All diagrams live in this folder as:
 - `cmd-seed-helper.sequence.txt`
   - Image: `images/cmd-seed-helper.svg`
   - Purpose: Local seed env, tokens, and bcrypt hashes
+- `internal-admin.sequence.txt`
+  - Image: `images/internal-admin.svg`
+  - Purpose: Admin domain flow and boundaries
+- `internal-auth.sequence.txt`
+  - Image: `images/internal-auth.svg`
+  - Purpose: Auth domain flow and boundaries
+- `internal-adapter-primary-graphql.sequence.txt`
+  - Image: `images/internal-adapter-primary-graphql.svg`
+  - Purpose: Primary GraphQL adapter flow and boundaries
+- `internal-platform.sequence.txt`
+  - Image: `images/internal-platform.svg`
+  - Purpose: Platform bootstrap flow (config -> observability -> server)
+- `internal-platform-server.sequence.txt`
+  - Image: `images/internal-platform-server.svg`
+  - Purpose: Platform HTTP server routing flow
+- `internal-platform-httpclient.sequence.txt`
+  - Image: `images/internal-platform-httpclient.svg`
+  - Purpose: Instrumented HTTP client outbound flow
 
 ## How to View
 

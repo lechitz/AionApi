@@ -1,16 +1,12 @@
-# Router Port (Platform → HTTP)
+# Router Port (Platform -> HTTP)
 
 **Path:** `internal/platform/server/http/ports`
 
-## Purpose
+## Purpose and Main Capabilities
 
-Defines the **framework-agnostic** routing contract (`Router`) used by all primary HTTP adapters (contexts like `auth`, `user`, etc.). This lets you swap the underlying router (chi/gin/echo) without touching domain code.
-
-## Why it matters
-
-* **Decoupling:** Contexts depend only on `ports.Router`, never on a concrete router package.
-* **Replaceability:** Swap routing engines by adding a new adapter under `router/<impl>` that implements this port.
-* **Consistency:** All contexts register routes the same way (`RegisterHTTP(r ports.Router, h *Handler)`).
+- Define the framework-agnostic routing contract (`Router`).
+- Keep contexts decoupled from concrete routers.
+- Standardize how routes and middleware are registered.
 
 ## Contract Overview
 
@@ -44,10 +40,10 @@ type Router interface {
 
 ### Key points
 
-* `Middleware` is plain `func(http.Handler) http.Handler)` — easy to reuse and test.
-* `GroupWith` scopes middleware to a **subtree** (ideal for auth-protected areas).
-* `Mount` attaches a fully built `http.Handler` (used to mount GraphQL under `cfg.ServerGraphql.Path`).
-* `SetError` is an optional platform sink for surfacing errors (paired with recovery).
+- `Middleware` is `func(http.Handler) http.Handler` (easy to reuse and test).
+- `GroupWith` scopes middleware to a subtree (ideal for auth-protected areas).
+- `Mount` attaches a fully built handler (GraphQL, etc.).
+- `SetError` is used by recovery/error flows (not called by the router itself).
 
 ## How contexts use it
 
@@ -79,9 +75,14 @@ func RegisterHTTPProtected(r ports.Router, h *Handler, mw ports.Middleware) {
 * Update the platform composer to instantiate your new router instead of chi.
 * No changes are required in context registrars.
 
-## Best practices
+## Recommended Practices Visible Here
 
-* **Do not** import `chi/gin/echo` in context packages; use only `ports.Router`.
-* Apply **global** platform middlewares in the HTTP composer; apply **domain** middlewares with `GroupWith` in the context registrar.
-* Mount GraphQL via `Mount(...)` instead of re-declaring GET/POST for it.
-* Keep `SetNotFound`, `SetMethodNotAllowed`, and `SetError` centralized in the platform to ensure consistent responses/telemetry.
+- Do not import `chi/gin/echo` in contexts; use only `ports.Router`.
+- Apply global middlewares in the composer; domain middlewares via `GroupWith`.
+- Mount GraphQL via `Mount(...)` instead of per-method handlers.
+- Keep NotFound/MethodNotAllowed/Error centralized for consistent responses.
+
+## What Should NOT Live Here
+
+- Concrete router implementations.
+- Domain logic or handler code.
