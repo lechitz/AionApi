@@ -24,9 +24,6 @@ Handler annotations -> swagger.{yaml,json} -> Swagger UI / client tooling
 - Keep error envelopes aligned with `internal/platform/server/http/utils`.
 - Version breaking changes explicitly.
 
-## Differentials (Rare but Valuable)
-
-- Contract artifacts are versioned and published.
 
 ## How to Generate
 

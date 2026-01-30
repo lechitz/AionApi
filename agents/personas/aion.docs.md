@@ -47,7 +47,7 @@ Use this layout for package README files:
 3) **Flow** (where it starts, where it ends)
 4) **Why it was designed this way** (short reasoning)
 5) **Recommended practices visible here**
-6) **Differentials (rare but valuable)**
+6) **Differentials** (rare but valuable, short)
 7) **What should NOT live here**
 
 Optional sections:

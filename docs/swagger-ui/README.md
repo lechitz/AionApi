@@ -26,9 +26,6 @@ Generated OpenAPI -> Swagger UI -> API exploration
 - Keep relative paths stable for GitHub Pages.
 - Validate compatibility when bumping Swagger UI versions.
 
-## Differentials (Rare but Valuable)
-
-- Fully static UI; no runtime dependencies.
 
 ## What Should NOT Live Here
 
