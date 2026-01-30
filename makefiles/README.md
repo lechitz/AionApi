@@ -1,12 +1,11 @@
-# Makefiles (child package)
+# makefiles
 
-**Folder:** `makefiles/`
-**Used by:** the root `Makefile` (includes these targets)
+Shared make targets included by the root `Makefile`.
 
-## Responsibility
+## Purpose and Main Capabilities
 
-* Provide a **reusable toolbox** of `make` targets for local dev, Docker orchestration, DB migrations, code-gen (mocks/GraphQL), testing/coverage, seeding, and code quality.
-* Keep **implementation** here and keep the root `Makefile` small (just variables + `include`).
+- Provide a reusable toolbox for local dev, Docker, migrations, codegen, tests, and quality.
+- Keep implementation details in `makefiles/` and the root `Makefile` minimal.
 
 ## How it works
 
