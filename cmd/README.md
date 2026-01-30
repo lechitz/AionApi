@@ -30,18 +30,10 @@ Each entrypoint builds the process graph and delegates real work to `internal/` 
 - Configuration loaded via `internal/platform/config`.
 - Graceful shutdown with context timeout.
 
-## Differentials (Rare but Valuable)
+## Differentials
 
 - Swagger metadata applied at runtime from config.
 - Seed tooling uses the same auth libraries as production.
-
-## Run Locally
-
-```bash
-make dev
-go build -o bin/aion-api ./cmd/aion-api
-APP_ENV=development ./bin/aion-api
-```
 
 ## What Should NOT Live Here
 
