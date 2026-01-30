@@ -159,4 +159,10 @@ make mocks
 make verify
 ```
 
+## Dev modes (Docker vs Air)
+
+- `make dev` (default): runs AionAPI in a container; other services (DB, OTEL, Ollama, Aion Chat, dashboard) are part of the same compose stack.
+- `make dev-local` (optional): runs AionAPI on the host with Air hot-reload, while dependencies stay in Docker (`dev-local-deps`).
+- Use `dev-local` when you need instant Go rebuilds; use `dev` for the most production-like setup.
+
 This keeps ops/dev flows consistent across contexts while the root `Makefile` only wires variables and includes.
