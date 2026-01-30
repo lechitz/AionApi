@@ -6,8 +6,6 @@ Shell scripts used by Docker workflows, Make targets, and CI to build/run/clean 
 
 - `entrypoint.sh`
   - Container entrypoint for the API image.
-- `README.md`
-  - Script conventions and usage notes.
 
 ## Flow (Where it comes from -> Where it goes)
 
