@@ -3,7 +3,7 @@ package dto
 
 // ChatRequest represents the incoming chat message from the client.
 type ChatRequest struct {
-	Message string                 `json:"message" validate:"required,min=1,max=2000" example:"Quanto de água eu bebi hoje?"`
+	Message string                 `json:"message"           validate:"required,min=1,max=2000" example:"Quanto de água eu bebi hoje?"`
 	Context map[string]interface{} `json:"context,omitempty"`
 }
 

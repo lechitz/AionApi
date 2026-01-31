@@ -2,6 +2,9 @@ basePath: /api/v1
 definitions:
   dto.ChatRequest:
     properties:
+      context:
+        additionalProperties: true
+        type: object
       message:
         example: Quanto de água eu bebi hoje?
         maxLength: 2000
@@ -20,6 +23,9 @@ definitions:
           additionalProperties: true
           type: object
         type: array
+      ui:
+        additionalProperties: true
+        type: object
       usage:
         $ref: '#/definitions/dto.TokenUsage'
     type: object

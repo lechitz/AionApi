@@ -1025,6 +1025,10 @@ const docTemplate = `{
                 "message"
             ],
             "properties": {
+                "context": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
                 "message": {
                     "type": "string",
                     "maxLength": 2000,
@@ -1046,6 +1050,10 @@ const docTemplate = `{
                         "type": "object",
                         "additionalProperties": true
                     }
+                },
+                "ui": {
+                    "type": "object",
+                    "additionalProperties": true
                 },
                 "usage": {
                     "$ref": "#/definitions/dto.TokenUsage"

@@ -33,7 +33,12 @@ func makeCreateTagCmdFromDomain(d domain.Tag) input.CreateTagCommand {
 		UserID:      d.UserID,
 		CategoryID:  d.CategoryID,
 		Description: desc,
-		Icon:        func() *string { if d.Icon != "" { return &d.Icon }; return nil }(),
+		Icon: func() *string {
+			if d.Icon != "" {
+				return &d.Icon
+			}
+			return nil
+		}(),
 	}
 }
 
