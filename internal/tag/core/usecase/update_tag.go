@@ -25,6 +25,15 @@ func (s *Service) Update(ctx context.Context, cmd input.UpdateTagCommand) (domai
 		attribute.String(commonkeys.UserID, strconv.FormatUint(cmd.UserID, 10)),
 	)
 
+	if cmd.Icon != nil {
+		icon := normalizeTagIcon(cmd.Icon)
+		if !isSingleEmoji(icon) {
+			span.SetStatus(codes.Error, ErrToValidateTag)
+			return domain.Tag{}, ErrTagIconInvalid
+		}
+		cmd.Icon = &icon
+	}
+
 	fieldsToUpdate := extractUpdateFields(cmd)
 
 	span.AddEvent(EventRepositoryUpdate)
@@ -100,6 +109,9 @@ func extractUpdateFields(cmd input.UpdateTagCommand) map[string]interface{} {
 	}
 	if cmd.CategoryID != nil {
 		updateFields[commonkeys.CategoryID] = *cmd.CategoryID
+	}
+	if cmd.Icon != nil && *cmd.Icon != "" {
+		updateFields[commonkeys.TagIcon] = *cmd.Icon
 	}
 
 	return updateFields

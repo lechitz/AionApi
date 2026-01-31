@@ -146,6 +146,12 @@ const (
 
 	// TagDescriptionIsTooLong is the validation message when description exceeds the maximum length.
 	TagDescriptionIsTooLong = "tag description is too long"
+
+	// TagIconInvalid is the validation message when the tag icon is invalid.
+	TagIconInvalid = "tag icon must be a single emoji"
+
+	// DefaultTagIcon is used when no icon is provided.
+	DefaultTagIcon = "⬜"
 )
 
 // =============================================================================
@@ -188,4 +194,7 @@ var (
 
 	// ErrTagDescriptionTooLong is a sentinel error when description exceeds limit.
 	ErrTagDescriptionTooLong = errors.New(TagDescriptionIsTooLong)
+
+	// ErrTagIconInvalid is a sentinel error when icon is invalid.
+	ErrTagIconInvalid = errors.New(TagIconInvalid)
 )

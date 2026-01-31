@@ -65,9 +65,9 @@ dev-down:
 	@echo "[DEV-DOWN] Stopping DEV environment (preserving volumes)..."
 	@echo "      ℹ️  Ollama will be kept RUNNING (models preserved)"
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) rm -f aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) rm -f aion-api aion-chat aionapi-dashboard postgres redis localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@echo ""
 	@if docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
 		echo "✅ Services stopped (Ollama still running)"; \
@@ -271,6 +271,7 @@ clean-dev:
 	@echo "      ⚠️  This will remove:"
 	@echo "         • PostgreSQL data"
 	@echo "         • Redis cache"
+	@echo "         • Localstack assets"
 	@echo "         • aion-api:dev image"
 	@echo "         • aion-chat:dev image"
 	@echo "         • aionapi-dashboard:dev image"
@@ -279,9 +280,9 @@ clean-dev:
 	@echo ""
 	@echo "→ Stopping and removing services (except Ollama)..."
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) rm -f -v aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) rm -f -v aion-api aion-chat aionapi-dashboard postgres redis localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@echo "→ Removing dev images..."
 	@docker images --filter "reference=$(APPLICATION_NAME):dev" -q | xargs -r docker rmi -f || true
 	@docker images --filter "reference=aion-chat:dev" -q | xargs -r docker rmi -f || true
@@ -291,6 +292,7 @@ clean-dev:
 	@docker volume ls -q | grep -E '(^|[-_])grafana-data$$' | xargs -r docker volume rm -f || true
 	@docker volume ls -q | grep -E '(^|[-_])loki-data-dev$$' | xargs -r docker volume rm -f || true
 	@docker volume ls -q | grep -E '(^|[-_])fluentbit-data$$' | xargs -r docker volume rm -f || true
+	@docker volume ls -q | grep -E '(^|[-_])localstack-data$$' | xargs -r docker volume rm -f || true
 	@echo ""
 	@if docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
 		echo "✅ Cleanup complete (Ollama still running)"; \

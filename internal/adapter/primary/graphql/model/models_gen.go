@@ -58,6 +58,7 @@ type CreateTagInput struct {
 	Name        string  `json:"name"`
 	CategoryID  string  `json:"categoryId"`
 	Description *string `json:"description,omitempty"`
+	Icon        *string `json:"icon,omitempty"`
 }
 
 type DeleteCategoryInput struct {
@@ -110,6 +111,7 @@ type Tag struct {
 	Name        string  `json:"name"`
 	CategoryID  string  `json:"categoryId"`
 	Description *string `json:"description,omitempty"`
+	Icon        *string `json:"icon,omitempty"`
 	CreatedAt   string  `json:"createdAt"`
 	UpdatedAt   string  `json:"updatedAt"`
 }
@@ -146,6 +148,7 @@ type UpdateTagInput struct {
 	Name        *string `json:"name,omitempty"`
 	CategoryID  *string `json:"categoryId,omitempty"`
 	Description *string `json:"description,omitempty"`
+	Icon        *string `json:"icon,omitempty"`
 }
 
 type UserStats struct {

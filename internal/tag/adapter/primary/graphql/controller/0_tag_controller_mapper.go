@@ -21,6 +21,9 @@ func toModelOut(t domain.Tag) *gmodel.Tag {
 	if t.Description != "" {
 		out.Description = &t.Description
 	}
+	if t.Icon != "" {
+		out.Icon = &t.Icon
+	}
 
 	out.CreatedAt = t.CreatedAt.Format(time.RFC3339)
 	out.UpdatedAt = t.UpdatedAt.Format(time.RFC3339)
@@ -33,6 +36,7 @@ func toCreateTagCommand(in gmodel.CreateTagInput, userID, categoryID uint64) inp
 	return input.CreateTagCommand{
 		Name:        in.Name,
 		Description: in.Description,
+		Icon:        in.Icon,
 		UserID:      userID,
 		CategoryID:  categoryID,
 	}
@@ -62,6 +66,9 @@ func toUpdateCommand(in gmodel.UpdateTagInput, userID uint64) (input.UpdateTagCo
 			return input.UpdateTagCommand{}, ErrInvalidCategoryID
 		}
 		cmd.CategoryID = &catID
+	}
+	if in.Icon != nil {
+		cmd.Icon = in.Icon
 	}
 
 	return cmd, nil

@@ -21,6 +21,7 @@ func TestUpdate_Success(t *testing.T) {
 	newName := "Updated Work"
 	newDesc := "Updated description"
 	newCatID := uint64(20)
+	newIcon := "🎯"
 
 	cmd := input.UpdateTagCommand{
 		ID:          tagID,
@@ -28,12 +29,14 @@ func TestUpdate_Success(t *testing.T) {
 		Name:        &newName,
 		Description: &newDesc,
 		CategoryID:  &newCatID,
+		Icon:        &newIcon,
 	}
 
 	updateFields := map[string]interface{}{
 		commonkeys.TagName:        newName,
 		commonkeys.TagDescription: newDesc,
 		commonkeys.CategoryID:     newCatID,
+		commonkeys.TagIcon:        newIcon,
 	}
 
 	expectedTag := domain.Tag{
@@ -42,6 +45,7 @@ func TestUpdate_Success(t *testing.T) {
 		Description: newDesc,
 		CategoryID:  newCatID,
 		UserID:      userID,
+		Icon:        newIcon,
 	}
 
 	suite.TagRepository.EXPECT().
@@ -98,6 +102,7 @@ func TestUpdate_PartialUpdate_OnlyName(t *testing.T) {
 			require.Contains(t, fields, commonkeys.TagName)
 			require.NotContains(t, fields, commonkeys.TagDescription)
 			require.NotContains(t, fields, commonkeys.CategoryID)
+			require.NotContains(t, fields, commonkeys.TagIcon)
 			return expectedTag, nil
 		})
 
@@ -121,6 +126,26 @@ func TestUpdate_PartialUpdate_OnlyName(t *testing.T) {
 
 	require.NoError(t, err)
 	require.Equal(t, expectedTag, tag)
+}
+
+func TestUpdate_ErrorToValidateTag_IconInvalid(t *testing.T) {
+	suite := setup.TagServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	tagID := uint64(1)
+	userID := uint64(100)
+	invalidIcon := "work"
+
+	cmd := input.UpdateTagCommand{
+		ID:     tagID,
+		UserID: userID,
+		Icon:   &invalidIcon,
+	}
+
+	tag, err := suite.TagService.Update(suite.Ctx, cmd)
+
+	require.Error(t, err)
+	require.Equal(t, domain.Tag{}, tag)
 }
 
 func TestUpdate_RepositoryError(t *testing.T) {

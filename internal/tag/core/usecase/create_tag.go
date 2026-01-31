@@ -20,11 +20,13 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateTagCommand) (domai
 	ctx, span := tr.Start(ctx, SpanCreateTag)
 	defer span.End()
 
+	icon := normalizeTagIcon(cmd.Icon)
 	span.SetAttributes(
 		attribute.String(commonkeys.Operation, SpanCreateTag),
 		attribute.String(commonkeys.TagName, cmd.Name),
 		attribute.String(commonkeys.CategoryID, strconv.FormatUint(cmd.CategoryID, 10)),
 		attribute.String(commonkeys.UserID, strconv.FormatUint(cmd.UserID, 10)),
+		attribute.String(commonkeys.TagIcon, icon),
 	)
 
 	span.AddEvent(EventValidateInput)
@@ -40,6 +42,7 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateTagCommand) (domai
 		CategoryID:  cmd.CategoryID,
 		Name:        cmd.Name,
 		Description: ptrOrEmpty(cmd.Description),
+		Icon:        icon,
 	}
 
 	span.AddEvent(EventCheckUniqueness)
@@ -95,6 +98,10 @@ func (s *Service) validateCreateCommand(cmd input.CreateTagCommand) error {
 	}
 	if cmd.Description != nil && len(*cmd.Description) > 200 {
 		return ErrTagDescriptionTooLong
+	}
+	icon := normalizeTagIcon(cmd.Icon)
+	if icon != "" && !isSingleEmoji(icon) {
+		return ErrTagIconInvalid
 	}
 	return nil
 }

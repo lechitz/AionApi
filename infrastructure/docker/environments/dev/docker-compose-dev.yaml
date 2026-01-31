@@ -32,6 +32,24 @@ services:
       retries: 5
       start_period: 10s
 
+  localstack:
+    image: localstack/localstack:3
+    container_name: localstack-dev
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - ./localstack/init:/etc/localstack/init/ready.d
+      - ../../../assets:/opt/localstack/assets:ro
+    networks:
+      - rede_local
+    restart: unless-stopped
+
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.101.0
     container_name: otel-collector
@@ -224,6 +242,7 @@ services:
       - VITE_API_URL=http://localhost:5001/aion/api/v1
       - VITE_AUTH_URL=http://localhost:5001/aion/api/v1/auth
       - VITE_HEALTHCHECK_ENABLED=true
+      - VITE_ASSETS_BASE_URL=http://localhost:4566/aion-assets/category-icons
     networks:
       - rede_local
     depends_on:
@@ -238,6 +257,7 @@ networks:
 volumes:
   postgres-data-dev:
   grafana-data:
+  localstack-data:
   ollama-models:
   loki-data-dev:
   fluentbit-data:

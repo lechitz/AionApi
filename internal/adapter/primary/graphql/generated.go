@@ -139,6 +139,7 @@ type ComplexityRoot struct {
 		CreatedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
+		Icon        func(childComplexity int) int
 		Name        func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		UserID      func(childComplexity int) int
@@ -757,6 +758,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Tag.ID(childComplexity), true
+	case "Tag.icon":
+		if e.complexity.Tag.Icon == nil {
+			break
+		}
+
+		return e.complexity.Tag.Icon(childComplexity), true
 	case "Tag.name":
 		if e.complexity.Tag.Name == nil {
 			break
@@ -2549,6 +2556,8 @@ func (ec *executionContext) fieldContext_Mutation_createTag(ctx context.Context,
 				return ec.fieldContext_Tag_categoryId(ctx, field)
 			case "description":
 				return ec.fieldContext_Tag_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Tag_icon(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Tag_createdAt(ctx, field)
 			case "updatedAt":
@@ -2624,6 +2633,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTag(ctx context.Context,
 				return ec.fieldContext_Tag_categoryId(ctx, field)
 			case "description":
 				return ec.fieldContext_Tag_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Tag_icon(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Tag_createdAt(ctx, field)
 			case "updatedAt":
@@ -3911,6 +3922,8 @@ func (ec *executionContext) fieldContext_Query_tagByName(ctx context.Context, fi
 				return ec.fieldContext_Tag_categoryId(ctx, field)
 			case "description":
 				return ec.fieldContext_Tag_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Tag_icon(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Tag_createdAt(ctx, field)
 			case "updatedAt":
@@ -3986,6 +3999,8 @@ func (ec *executionContext) fieldContext_Query_tagById(ctx context.Context, fiel
 				return ec.fieldContext_Tag_categoryId(ctx, field)
 			case "description":
 				return ec.fieldContext_Tag_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Tag_icon(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Tag_createdAt(ctx, field)
 			case "updatedAt":
@@ -4060,6 +4075,8 @@ func (ec *executionContext) fieldContext_Query_tags(_ context.Context, field gra
 				return ec.fieldContext_Tag_categoryId(ctx, field)
 			case "description":
 				return ec.fieldContext_Tag_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Tag_icon(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Tag_createdAt(ctx, field)
 			case "updatedAt":
@@ -4124,6 +4141,8 @@ func (ec *executionContext) fieldContext_Query_tagsByCategoryId(ctx context.Cont
 				return ec.fieldContext_Tag_categoryId(ctx, field)
 			case "description":
 				return ec.fieldContext_Tag_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Tag_icon(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Tag_createdAt(ctx, field)
 			case "updatedAt":
@@ -4827,6 +4846,35 @@ func (ec *executionContext) _Tag_description(ctx context.Context, field graphql.
 }
 
 func (ec *executionContext) fieldContext_Tag_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Tag",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Tag_icon(ctx context.Context, field graphql.CollectedField, obj *model.Tag) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Tag_icon,
+		func(ctx context.Context) (any, error) {
+			return obj.Icon, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Tag_icon(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Tag",
 		Field:      field,
@@ -6787,7 +6835,7 @@ func (ec *executionContext) unmarshalInputCreateTagInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "categoryId", "description"}
+	fieldsInOrder := [...]string{"name", "categoryId", "description", "icon"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6815,6 +6863,13 @@ func (ec *executionContext) unmarshalInputCreateTagInput(ctx context.Context, ob
 				return it, err
 			}
 			it.Description = data
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Icon = data
 		}
 	}
 
@@ -7123,7 +7178,7 @@ func (ec *executionContext) unmarshalInputUpdateTagInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "name", "categoryId", "description"}
+	fieldsInOrder := [...]string{"id", "name", "categoryId", "description", "icon"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7158,6 +7213,13 @@ func (ec *executionContext) unmarshalInputUpdateTagInput(ctx context.Context, ob
 				return it, err
 			}
 			it.Description = data
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Icon = data
 		}
 	}
 
@@ -8100,6 +8162,8 @@ func (ec *executionContext) _Tag(ctx context.Context, sel ast.SelectionSet, obj 
 			}
 		case "description":
 			out.Values[i] = ec._Tag_description(ctx, field, obj)
+		case "icon":
+			out.Values[i] = ec._Tag_icon(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._Tag_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

@@ -19,6 +19,7 @@ type TagDB struct {
 	CategoryID  uint64         `gorm:"column:category_id;not null;index"`
 	Name        string         `gorm:"column:name;type:text;not null;index"`
 	Description string         `gorm:"column:description;type:text"`
+	Icon        string         `gorm:"column:icon;type:text"`
 	CreatedAt   time.Time      `gorm:"column:created_at;autoCreateTime"`
 	UpdatedAt   time.Time      `gorm:"column:updated_at;autoUpdateTime"`
 	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at;index"`

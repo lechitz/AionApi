@@ -27,11 +27,11 @@ func (s *Service) Update(ctx context.Context, cmd input.UpdateCategoryCommand) (
 	)
 
 	if cmd.Icon != nil {
-		icon := normalizeIcon(cmd.Icon)
+		icon := normalizeIconKey(cmd.Icon)
 		if icon == "" {
 			cmd.Icon = nil
 		} else {
-			if !isSingleEmoji(icon) {
+			if !isValidIconKey(icon) {
 				span.SetStatus(codes.Error, ErrToValidateCategory)
 				return domain.Category{}, ErrCategoryIconInvalid
 			}

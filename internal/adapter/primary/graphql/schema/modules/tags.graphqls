@@ -6,6 +6,7 @@ type Tag {
     name: String!
     categoryId: ID!
     description: String
+    icon: String # single emoji
     createdAt: String!      # ISO8601 timestamp
     updatedAt: String!      # ISO8601 timestamp
 }
@@ -14,6 +15,7 @@ input CreateTagInput {
     name: String!
     categoryId: ID!
     description: String
+    icon: String # single emoji
 }
 
 input UpdateTagInput {
@@ -21,6 +23,7 @@ input UpdateTagInput {
     name: String
     categoryId: ID
     description: String
+    icon: String # single emoji
 }
 
 input DeleteTagInput {

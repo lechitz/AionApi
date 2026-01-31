@@ -118,7 +118,7 @@ const (
 	// CategoryColorIsTooLong indicates the category color is too long.
 	CategoryColorIsTooLong = "category color cannot exceed 7 characters"
 	// CategoryIconInvalid indicates the category icon is invalid.
-	CategoryIconInvalid = "category icon must be a single emoji"
+	CategoryIconInvalid = "category icon must be a valid svg key (ex: health/brain.svg)"
 )
 
 // =============================================================================

@@ -94,6 +94,7 @@ Expected services:
 
 * **Postgres**: `localhost:5432` (db `aionapi`, user `aion`, pass `aion`)
 * **API**: `localhost:8080` (REST base prefix: `/aion-api`, GraphQL: `/graphql`)
+* **Localstack (S3 assets)**: `localhost:4566` (bucket `aion-assets`)
 
 Health check:
 
@@ -105,7 +106,7 @@ curl -s http://localhost:8080/aion/health | jq
 
 ## DEV commands and persistent volumes
 
-The DEV stack uses Docker volumes to persist Postgres, Redis, and Ollama models.
+The DEV stack uses Docker volumes to persist Postgres, Redis, Localstack assets, and Ollama models.
 Use the following commands based on your need:
 
 ```bash

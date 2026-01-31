@@ -60,13 +60,13 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_ColorExceedLimit(t
 	require.Equal(t, domain.Category{}, createdCategory)
 }
 
-// Test for Icon not being a single emoji.
+// Test for Icon not being a valid SVG key.
 func TestCreateCategory_ErrorToValidateCreateCategoryRequired_IconInvalid(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
-	category.Icon = "work" // invalid (not emoji)
+	category.Icon = "work.png" // invalid (must be .svg key)
 
 	cmd := makeCreateCmdFromDomain(category)
 

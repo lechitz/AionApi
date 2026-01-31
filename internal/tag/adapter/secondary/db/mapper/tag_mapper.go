@@ -20,6 +20,7 @@ func TagFromDB(db model.TagDB) domain.Tag {
 		CategoryID:  db.CategoryID,
 		Name:        db.Name,
 		Description: db.Description,
+		Icon:        db.Icon,
 		CreatedAt:   db.CreatedAt,
 		UpdatedAt:   db.UpdatedAt,
 		DeletedAt:   deletedAt,
@@ -43,6 +44,7 @@ func TagToDB(t domain.Tag) model.TagDB {
 		CategoryID:  t.CategoryID,
 		Name:        t.Name,
 		Description: t.Description,
+		Icon:        t.Icon,
 		CreatedAt:   t.CreatedAt,
 		UpdatedAt:   t.UpdatedAt,
 	}

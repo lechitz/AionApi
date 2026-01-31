@@ -144,7 +144,7 @@ func TestUpdateCategory_ErrorToValidateCategory_IconInvalid(t *testing.T) {
 	defer suite.Ctrl.Finish()
 
 	c := testdata.PerfectCategory
-	invalidIcon := "work"
+	invalidIcon := "work.png"
 	cmd := input.UpdateCategoryCommand{
 		ID:     c.ID,
 		UserID: c.UserID,

@@ -13,6 +13,9 @@ const (
 	// TagDescription is the key for a tag description.
 	TagDescription = "description"
 
+	// TagIcon is the key for a tag icon.
+	TagIcon = "icon"
+
 	// TagCreatedAt is the key for the tag created at.
 	TagCreatedAt = "created_at"
 

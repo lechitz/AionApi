@@ -23,6 +23,7 @@ func fromDomainTag(t domain.Tag) tagCache {
 		DeletedAt:   t.DeletedAt,
 		Name:        t.Name,
 		Description: t.Description,
+		Icon:        t.Icon,
 		CategoryID:  t.CategoryID,
 		ID:          t.ID,
 		UserID:      t.UserID,

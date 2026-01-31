@@ -10,6 +10,7 @@ type Tag struct {
 	UpdatedAt   time.Time  // Timestamp of the last update
 	DeletedAt   *time.Time // Soft-delete marker (nil if active)
 	Description string     // Optional description for additional context
+	Icon        string     // Emoji icon for the tag (single emoji)
 	Name        string     // Name of the tag (e.g., "Morning", "High Priority")
 	ID          uint64     // Unique identifier for the tag
 	UserID      uint64     // ID of the user who owns the tag

@@ -22,6 +22,7 @@ type tagCache struct {
 	DeletedAt   *time.Time `json:"deleted_at,omitempty"`
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
+	Icon        string     `json:"icon"`
 	CategoryID  uint64     `json:"category_id"`
 	ID          uint64     `json:"id"`
 	UserID      uint64     `json:"user_id"`
@@ -35,6 +36,7 @@ func (t tagCache) toDomain() domain.Tag {
 		DeletedAt:   t.DeletedAt,
 		Name:        t.Name,
 		Description: t.Description,
+		Icon:        t.Icon,
 		CategoryID:  t.CategoryID,
 		ID:          t.ID,
 		UserID:      t.UserID,

@@ -307,6 +307,7 @@ query Tags {
     name
     categoryId
     description
+    icon
     createdAt
     updatedAt
   }
@@ -324,6 +325,7 @@ query TagById($id: ID!) {
     name
     categoryId
     description
+    icon
     createdAt
     updatedAt
   }
@@ -348,6 +350,7 @@ query TagByName($name: String!) {
     name
     categoryId
     description
+    icon
     createdAt
     updatedAt
   }
@@ -371,6 +374,7 @@ query TagsByCategoryId($categoryId: ID!) {
     name
     categoryId
     description
+    icon
     createdAt
   }
 }
@@ -395,6 +399,7 @@ mutation CreateTag($input: CreateTagInput!) {
     name
     categoryId
     description
+    icon
     createdAt
   }
 }
@@ -406,10 +411,13 @@ mutation CreateTag($input: CreateTagInput!) {
   "input": {
     "name": "Yoga",
     "categoryId": "1",
-    "description": "Yoga practice sessions"
+    "description": "Yoga practice sessions",
+    "icon": "🧘"
   }
 }
 ```
+
+**Observação:** `icon` é opcional. Se omitido, o backend salva o padrão "⬜" (sem emoji).
 
 ---
 
@@ -501,7 +509,7 @@ mutation CreateCategory($input: CreateCategoryInput!) {
     "name": "hobbies",
     "description": "Atividades recreativas",
     "colorHex": "#FF5722",
-    "icon": "🎨"
+    "icon": "leisure/palette.svg"
   }
 }
 ```
@@ -583,6 +591,7 @@ type Tag {
   name: String!
   categoryId: ID!
   description: String
+  icon: String # single emoji
   createdAt: String!
   updatedAt: String!
 }
@@ -596,7 +605,7 @@ type Category {
   name: String!
   description: String
   colorHex: String
-  icon: String # single emoji
+  icon: String # svg icon key (ex: work/briefcase.svg)
 }
 ```
 
