@@ -12,7 +12,7 @@ type Category struct {
 	Name        string     // Name of the handler (e.g., "Health", "Learning")
 	Description string     // Optional description providing context
 	Color       string     // Color code (hex or name) used for UI representation
-	Icon        string     // Icon name or identifier for handler visualization
+	Icon        string     // Single emoji used for visualization
 	ID          uint64     // Unique identifier for the handler
 	UserID      uint64     // ID of the user who owns this handler
 }

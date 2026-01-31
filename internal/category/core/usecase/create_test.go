@@ -60,13 +60,13 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_ColorExceedLimit(t
 	require.Equal(t, domain.Category{}, createdCategory)
 }
 
-// Test for Icon length exceeding the maximum allowed.
-func TestCreateCategory_ErrorToValidateCreateCategoryRequired_IconExceedLimit(t *testing.T) {
+// Test for Icon not being a single emoji.
+func TestCreateCategory_ErrorToValidateCreateCategoryRequired_IconInvalid(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
 	category := testdata.PerfectCategory
-	category.Icon = strings.Repeat("i", 51) // length > 50
+	category.Icon = "work" // invalid (not emoji)
 
 	cmd := makeCreateCmdFromDomain(category)
 

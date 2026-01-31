@@ -52,7 +52,7 @@ func TestProcessMessage_Success(t *testing.T) {
 		AnyTimes()
 
 	// Execute
-	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message)
+	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message, nil)
 
 	// Assert
 	require.NoError(t, err)
@@ -121,7 +121,7 @@ func TestProcessMessage_Success_WithConversationHistory(t *testing.T) {
 		AnyTimes()
 
 	// Execute
-	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message)
+	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message, nil)
 
 	// Assert
 	require.NoError(t, err)
@@ -166,7 +166,7 @@ func TestProcessMessage_Success_WithoutHistory_CacheError(t *testing.T) {
 		AnyTimes()
 
 	// Execute
-	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message)
+	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message, nil)
 
 	// Assert: Should succeed despite cache error (non-blocking)
 	require.NoError(t, err)
@@ -197,7 +197,7 @@ func TestProcessMessage_AionChatClientError(t *testing.T) {
 	// No SaveChatHistory mocks needed (never reaches that point)
 
 	// Execute
-	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message)
+	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message, nil)
 
 	// Assert: Should propagate error
 	require.Error(t, err)
@@ -236,7 +236,7 @@ func TestProcessMessage_EmptyMessage(t *testing.T) {
 		AnyTimes()
 
 	// Execute
-	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message)
+	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message, nil)
 
 	// Assert
 	require.NoError(t, err)
@@ -281,7 +281,7 @@ func TestProcessMessage_WithMultipleFunctionCalls(t *testing.T) {
 		AnyTimes()
 
 	// Execute
-	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message)
+	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, message, nil)
 
 	// Assert
 	require.NoError(t, err)

@@ -84,7 +84,7 @@ func (h *Handler) ChatText(w http.ResponseWriter, r *http.Request) {
 	h.Logger.InfowCtx(ctx, MsgChatRequestStart, commonkeys.UserID, strconv.FormatUint(userID, 10), "message_length", len(chatReq.Message))
 
 	span.AddEvent(EventCallService)
-	result, err := h.Service.ProcessMessage(ctx, userID, chatReq.Message)
+	result, err := h.Service.ProcessMessage(ctx, userID, chatReq.Message, chatReq.Context)
 	if err != nil {
 		span.AddEvent(EventChatError)
 		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, ErrChat, h.Logger)
@@ -93,6 +93,7 @@ func (h *Handler) ChatText(w http.ResponseWriter, r *http.Request) {
 
 	response := dto.ChatResponse{
 		Response: result.Response,
+		UI:       result.UI,
 		Sources:  convertToMapSlice(result.Sources),
 	}
 

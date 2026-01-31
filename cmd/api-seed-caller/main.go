@@ -155,9 +155,9 @@ func main() {
 		}
 
 		categoryInputs := []categoryPayload{
-			{Key: "saude_fisica", Name: "saude_fisica", Description: "Atividades físicas e condicionamento", ColorHex: "#E94F37", Icon: "dumbbell"},
-			{Key: "saude_mental", Name: "saude_mental", Description: "Saúde mental e reflexão", ColorHex: "#F8B400", Icon: "brain"},
-			{Key: "pessoal", Name: "pessoal", Description: "Momentos pessoais e lazer", ColorHex: "#FF6F00", Icon: "user"},
+			{Key: "saude_fisica", Name: "saude_fisica", Description: "Atividades físicas e condicionamento", ColorHex: "#E94F37", Icon: "🏋️"},
+			{Key: "saude_mental", Name: "saude_mental", Description: "Saúde mental e reflexão", ColorHex: "#F8B400", Icon: "🧠"},
+			{Key: "pessoal", Name: "pessoal", Description: "Momentos pessoais e lazer", ColorHex: "#FF6F00", Icon: "🎉"},
 		}
 
 		tagInputs := []tagPayload{

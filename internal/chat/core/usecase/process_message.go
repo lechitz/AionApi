@@ -13,7 +13,7 @@ import (
 )
 
 // ProcessMessage processes a chat message by forwarding it to the Aion-Chat service.
-func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message string) (*domain.ChatResult, error) {
+func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message string, requestContext map[string]interface{}) (*domain.ChatResult, error) {
 	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanProcessMessage)
 	defer span.End()
@@ -30,7 +30,7 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 	conversationHistory := s.fetchConversationHistory(ctx, userID, historyLimit)
 
 	// Build request with conversation context
-	req := buildChatRequest(userID, message, conversationHistory)
+	req := buildChatRequest(userID, message, conversationHistory, requestContext)
 
 	// Call external Aion-Chat service
 	resp, err := s.aionChatClient.SendMessage(ctx, req)
@@ -47,6 +47,7 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 	// Build result
 	result := &domain.ChatResult{
 		Response:      resp.Response,
+		UI:            resp.UI,
 		Sources:       convertSources(resp.Sources),
 		TokensUsed:    resp.TokensUsed,
 		FunctionCalls: extractFunctionNames(resp.FunctionCalls),

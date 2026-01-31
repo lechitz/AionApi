@@ -33,12 +33,13 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateCategoryCommand) (
 	}
 
 	// Build domain entity from the command (no GraphQL types here).
+	icon := normalizeIcon(cmd.Icon)
 	newCategory := domain.Category{
 		UserID:      cmd.UserID,
 		Name:        cmd.Name,
 		Description: ptrOrEmpty(cmd.Description),
 		Color:       ptrOrEmpty(cmd.ColorHex),
-		Icon:        ptrOrEmpty(cmd.Icon),
+		Icon:        icon,
 	}
 
 	span.AddEvent(EventCheckUniqueness)
@@ -85,8 +86,9 @@ func (s *Service) validateCreateCommand(cmd input.CreateCategoryCommand) error {
 	if cmd.ColorHex != nil && len(*cmd.ColorHex) > 7 {
 		return ErrCategoryColorTooLong
 	}
-	if cmd.Icon != nil && len(*cmd.Icon) > 50 {
-		return ErrCategoryIconTooLong
+	icon := normalizeIcon(cmd.Icon)
+	if icon != "" && !isSingleEmoji(icon) {
+		return ErrCategoryIconInvalid
 	}
 	return nil
 }

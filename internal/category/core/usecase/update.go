@@ -26,6 +26,19 @@ func (s *Service) Update(ctx context.Context, cmd input.UpdateCategoryCommand) (
 		attribute.String(commonkeys.UserID, strconv.FormatUint(cmd.UserID, 10)),
 	)
 
+	if cmd.Icon != nil {
+		icon := normalizeIcon(cmd.Icon)
+		if icon == "" {
+			cmd.Icon = nil
+		} else {
+			if !isSingleEmoji(icon) {
+				span.SetStatus(codes.Error, ErrToValidateCategory)
+				return domain.Category{}, ErrCategoryIconInvalid
+			}
+			cmd.Icon = &icon
+		}
+	}
+
 	// If name change is requested, enforce uniqueness (same behavior as Create).
 	newName := ""
 	if cmd.Name != nil {

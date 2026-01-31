@@ -54,14 +54,23 @@ func (s *ChatService) fetchConversationHistory(ctx context.Context, userID uint6
 }
 
 // buildChatRequest creates an InternalChatRequest from user input and conversation history.
-func buildChatRequest(userID uint64, message string, history []dto.ConversationMessage) *dto.InternalChatRequest {
+func buildChatRequest(
+	userID uint64,
+	message string,
+	history []dto.ConversationMessage,
+	context map[string]interface{},
+) *dto.InternalChatRequest {
+	payloadContext := map[string]interface{}{
+		ContextKeyTimezone: DefaultTimezone, // TODO: Get from user settings
+	}
+	for key, value := range context {
+		payloadContext[key] = value
+	}
 	return &dto.InternalChatRequest{
 		UserID:              userID,
 		Message:             message,
 		ConversationHistory: history,
-		Context: map[string]interface{}{
-			ContextKeyTimezone: DefaultTimezone, // TODO: Get from user settings
-		},
+		Context:             payloadContext,
 	}
 }
 

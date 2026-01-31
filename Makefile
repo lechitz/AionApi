@@ -98,6 +98,7 @@ help:
 	@echo ""
 	@echo "  - [CLEANUP & DIAGNOSTICS]"
 	@echo ""
+	@echo "     cache-reset              →  ⚠️ Flush Redis cache (dev)"
 	@echo "     docker-disk              →  Show Docker disk usage (quick diagnostic)"
 	@echo "     docker-prune-aion        →  Clean ONLY AionApi images/containers (safe, preserves volumes)"
 	@echo "     docker-prune-dangling    →  ⚠️ Remove dangling images (safe)"
@@ -199,6 +200,7 @@ install-tools: tools-install
 	dev-local dev-local-deps dev-local-full dev-local-stop dev-local-down air-install \
 	build-prod prod-up prod-down prod clean-prod \
 	docker-clean-all docker-disk docker-prune-aion docker-prune-dangling docker-prune-build-cache docker-prune-full \
+	cache-reset \
 	graphql mocks \
 	format lint lint-fix verify \
 	test test-cover test-cover-detail test-html-report test-ci test-clean \

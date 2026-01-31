@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS aion_api.day_intentions
     FOREIGN KEY (day_id) REFERENCES aion_api.days (id) ON DELETE CASCADE
 );
 
+DROP TRIGGER IF EXISTS update_day_intentions_updated_at ON aion_api.day_intentions;
 CREATE TRIGGER update_day_intentions_updated_at
     BEFORE UPDATE ON aion_api.day_intentions
     FOR EACH ROW

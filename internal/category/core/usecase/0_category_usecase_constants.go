@@ -117,8 +117,8 @@ const (
 	CategoryDescriptionIsTooLong = "category description cannot exceed 200 characters"
 	// CategoryColorIsTooLong indicates the category color is too long.
 	CategoryColorIsTooLong = "category color cannot exceed 7 characters"
-	// CategoryIconIsTooLong indicates the category icon is too long.
-	CategoryIconIsTooLong = "category icon cannot exceed 50 characters"
+	// CategoryIconInvalid indicates the category icon is invalid.
+	CategoryIconInvalid = "category icon must be a single emoji"
 )
 
 // =============================================================================
@@ -162,6 +162,6 @@ var (
 	// ErrCategoryColorTooLong is a sentinel error when color exceeds limit.
 	ErrCategoryColorTooLong = errors.New(CategoryColorIsTooLong)
 
-	// ErrCategoryIconTooLong is a sentinel error when icon exceeds limit.
-	ErrCategoryIconTooLong = errors.New(CategoryIconIsTooLong)
+	// ErrCategoryIconInvalid is a sentinel error when icon is invalid.
+	ErrCategoryIconInvalid = errors.New(CategoryIconInvalid)
 )

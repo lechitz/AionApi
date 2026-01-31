@@ -104,5 +104,5 @@ migrate-dev-reset:
 	@echo "⚠️  Resetting DEV database (dropping all and re-applying)..."
 	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(DEV_MIGRATION_DB)" drop -f || true
 	@$(MIGRATE_BIN) -path "$(MIGRATION_PATH)" -database "$(DEV_MIGRATION_DB)" up
+	@$(MAKE) seed-roles
 	@echo "✅ DEV database reset complete"
-

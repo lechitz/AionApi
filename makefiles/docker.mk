@@ -65,9 +65,9 @@ dev-down:
 	@echo "[DEV-DOWN] Stopping DEV environment (preserving volumes)..."
 	@echo "      ℹ️  Ollama will be kept RUNNING (models preserved)"
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) rm -f aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) rm -f aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@echo ""
 	@if docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
 		echo "✅ Services stopped (Ollama still running)"; \
@@ -279,13 +279,18 @@ clean-dev:
 	@echo ""
 	@echo "→ Stopping and removing services (except Ollama)..."
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) rm -f -v aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) rm -f -v aion-api aion-chat aionapi-dashboard postgres redis jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@echo "→ Removing dev images..."
 	@docker images --filter "reference=$(APPLICATION_NAME):dev" -q | xargs -r docker rmi -f || true
 	@docker images --filter "reference=aion-chat:dev" -q | xargs -r docker rmi -f || true
 	@docker images --filter "reference=aionapi-dashboard:dev" -q | xargs -r docker rmi -f || true
+	@echo "→ Removing dev volumes (Postgres/Redis/Observability)..."
+	@docker volume ls -q | grep -E '(^|[-_])postgres-data-dev$$' | xargs -r docker volume rm -f || true
+	@docker volume ls -q | grep -E '(^|[-_])grafana-data$$' | xargs -r docker volume rm -f || true
+	@docker volume ls -q | grep -E '(^|[-_])loki-data-dev$$' | xargs -r docker volume rm -f || true
+	@docker volume ls -q | grep -E '(^|[-_])fluentbit-data$$' | xargs -r docker volume rm -f || true
 	@echo ""
 	@if docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
 		echo "✅ Cleanup complete (Ollama still running)"; \
@@ -332,7 +337,13 @@ docker-clean-all:
 #         DOCKER CLEANUP & DIAGNOSTICS (Disk Management)
 # ============================================================
 
-.PHONY: docker-disk docker-prune-aion docker-prune-dangling docker-prune-build-cache
+.PHONY: docker-disk docker-prune-aion docker-prune-dangling docker-prune-build-cache cache-reset
+
+cache-reset:
+	@echo "🧹 Flushing Redis cache (dev)..."
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
+		docker compose -f $(COMPOSE_FILE_DEV) exec -T redis redis-cli FLUSHALL
+	@echo "✅ Redis cache cleared"
 
 # Show Docker disk usage (quick diagnostic)
 docker-disk:

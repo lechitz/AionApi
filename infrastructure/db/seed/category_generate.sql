@@ -20,13 +20,13 @@ SELECT
 FROM
   generate_series(1, :seed_count) AS user_id,
   (VALUES
-    ('saude_fisica', 'Atividades físicas e condicionamento', '#E94F37', 'dumbbell'),
-    ('meditacao', 'Práticas de meditação e atenção plena', '#9C27B0', 'spa'),
-    ('saude_mental', 'Saúde mental, planejamento e bem-estar', '#F8B400', 'brain'),
-    ('estudo_trabalho', 'Estudo, trabalho e desenvolvimento', '#1976D2', 'briefcase'),
-    ('idiomas', 'Atividades de aprendizado de idiomas', '#00ACC1', 'globe'),
-    ('pessoal', 'Assuntos pessoais, lazer e tempo livre', '#FF6F00', 'user'),
-    ('trabalho_de_casa', 'Tarefas domésticas e manutenção da casa', '#388E3C', 'home'),
-    ('outros', 'Atividades diversas / off / viagens', '#616161', 'ellipsis-h')
+    ('saude_fisica', 'Atividades físicas e condicionamento', '#E94F37', '🏋️'),
+    ('meditacao', 'Práticas de meditação e atenção plena', '#9C27B0', '🧘'),
+    ('saude_mental', 'Saúde mental, planejamento e bem-estar', '#F8B400', '🧠'),
+    ('estudo_trabalho', 'Estudo, trabalho e desenvolvimento', '#1976D2', '💼'),
+    ('idiomas', 'Atividades de aprendizado de idiomas', '#00ACC1', '🌍'),
+    ('pessoal', 'Assuntos pessoais, lazer e tempo livre', '#FF6F00', '🎉'),
+    ('trabalho_de_casa', 'Tarefas domésticas e manutenção da casa', '#388E3C', '🏠'),
+    ('outros', 'Atividades diversas / off / viagens', '#616161', '✨')
   ) AS categories(category_name, description, color_hex, icon)
 ON CONFLICT (user_id, lower(name)) WHERE deleted_at IS NULL DO NOTHING;

@@ -138,3 +138,21 @@ func TestUpdateCategory_NameAlreadyExists(t *testing.T) {
 	require.Equal(t, usecase.CategoryAlreadyExists, err.Error())
 	require.Equal(t, domain.Category{}, updated)
 }
+
+func TestUpdateCategory_ErrorToValidateCategory_IconInvalid(t *testing.T) {
+	suite := setup.CategoryServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	c := testdata.PerfectCategory
+	invalidIcon := "work"
+	cmd := input.UpdateCategoryCommand{
+		ID:     c.ID,
+		UserID: c.UserID,
+		Icon:   &invalidIcon,
+	}
+
+	updated, err := suite.CategoryService.Update(suite.Ctx, cmd)
+	require.Error(t, err)
+	require.Equal(t, usecase.CategoryIconInvalid, err.Error())
+	require.Equal(t, domain.Category{}, updated)
+}

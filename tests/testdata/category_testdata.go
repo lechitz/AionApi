@@ -13,7 +13,7 @@ var PerfectCategory = domain.Category{
 	Name:        "Work",
 	Description: "my work description",
 	Color:       "blue",
-	Icon:        "work",
+	Icon:        "💼",
 	CreatedAt:   time.Time{},
 	UpdatedAt:   time.Time{},
 	DeletedAt:   nil,

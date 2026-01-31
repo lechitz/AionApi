@@ -20,6 +20,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_categories_user_name_ci
 ON aion_api.categories (user_id, lower(name))
 WHERE deleted_at IS NULL;
 
+DROP TRIGGER IF EXISTS update_categories_updated_at ON aion_api.categories;
 CREATE TRIGGER update_categories_updated_at
     BEFORE UPDATE ON aion_api.categories
     FOR EACH ROW
@@ -55,6 +56,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_tags_user_name_ci
 ON aion_api.tags (user_id, lower(name))
 WHERE deleted_at IS NULL;
 
+DROP TRIGGER IF EXISTS update_tags_updated_at ON aion_api.tags;
 CREATE TRIGGER update_tags_updated_at
     BEFORE UPDATE ON aion_api.tags
     FOR EACH ROW

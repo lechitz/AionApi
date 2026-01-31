@@ -501,7 +501,7 @@ mutation CreateCategory($input: CreateCategoryInput!) {
     "name": "hobbies",
     "description": "Atividades recreativas",
     "colorHex": "#FF5722",
-    "icon": "palette"
+    "icon": "🎨"
   }
 }
 ```
@@ -596,7 +596,7 @@ type Category {
   name: String!
   description: String
   colorHex: String
-  icon: String
+  icon: String # single emoji
 }
 ```
 

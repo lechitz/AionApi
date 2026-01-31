@@ -484,7 +484,7 @@
 							"mode": "graphql",
 							"graphql": {
 								"query": "mutation CreateCategory($input: CreateCategoryInput!) {\n  createCategory(input: $input) {\n    id\n    name\n    description\n    colorHex\n    icon\n  }\n}",
-								"variables": "{\n  \"input\": {\n    \"name\": \"fitness\",\n    \"description\": \"Physical health activities\",\n    \"colorHex\": \"#FF5722\",\n    \"icon\": \"dumbbell\"\n  }\n}"
+								"variables": "{\n  \"input\": {\n    \"name\": \"fitness\",\n    \"description\": \"Physical health activities\",\n    \"colorHex\": \"#FF5722\",\n    \"icon\": \"🏋️\"\n  }\n}"
 							}
 						},
 						"url": {

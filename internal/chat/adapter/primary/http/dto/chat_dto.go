@@ -3,12 +3,14 @@ package dto
 
 // ChatRequest represents the incoming chat message from the client.
 type ChatRequest struct {
-	Message string `json:"message" validate:"required,min=1,max=2000" example:"Quanto de água eu bebi hoje?"`
+	Message string                 `json:"message" validate:"required,min=1,max=2000" example:"Quanto de água eu bebi hoje?"`
+	Context map[string]interface{} `json:"context,omitempty"`
 }
 
 // ChatResponse represents the response returned to the client.
 type ChatResponse struct {
 	Response string                   `json:"response"          example:"Você bebeu 2.5 litros de água hoje..."`
+	UI       map[string]interface{}   `json:"ui,omitempty"`
 	Sources  []map[string]interface{} `json:"sources,omitempty"`
 	Usage    *TokenUsage              `json:"usage,omitempty"`
 }
@@ -37,6 +39,7 @@ type InternalChatRequest struct {
 // InternalChatResponse represents the response from the Aion-Chat service.
 type InternalChatResponse struct {
 	Response      string                   `json:"response"`
+	UI            map[string]interface{}   `json:"ui,omitempty"`
 	FunctionCalls []FunctionCall           `json:"function_calls,omitempty"`
 	TokensUsed    int                      `json:"tokens_used,omitempty"`
 	Sources       []map[string]interface{} `json:"sources,omitempty"`
