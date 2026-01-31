@@ -65,7 +65,7 @@ func ProvideConfig(logs logger.ContextLogger, keyGen keygen.Generator) (*config.
 	}
 
 	logs.Infow(
-		"configuration loaded",
+		logMsgConfigLoaded,
 		commonkeys.APIName, cfg.General.Name,
 		commonkeys.AppEnv, cfg.General.Env,
 		commonkeys.AppVersion, cfg.General.Version,
@@ -116,41 +116,41 @@ func ProvideCache(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogger)
 	createCache := func(contextName string, dbNum int) (cache.Cache, error) {
 		cacheClient, err := cacheRedis.NewConnection(ctx, cfg.Cache, dbNum, log)
 		if err != nil {
-			log.Errorw("failed to create cache", commonkeys.Error, err, "context", contextName, "db", dbNum)
+			log.Errorw(logMsgCacheCreateFailed, commonkeys.Error, err, commonkeys.Context, contextName, commonkeys.DbNum, dbNum)
 			cleanup() // Cleanup any previously created caches
 			return nil, err
 		}
-		log.Infow("cache initialized", "context", contextName, "db", dbNum)
+		log.Infow(logMsgCacheInit, commonkeys.Context, contextName, commonkeys.DbNum, dbNum)
 		createdCaches = append(createdCaches, cacheClient)
 		return cacheClient, nil
 	}
 
-	authCache, err := createCache("auth", cfg.Cache.AuthDB)
+	authCache, err := createCache(contextNameAuth, cfg.Cache.AuthDB)
 	if err != nil {
 		return CacheOut{}, err
 	}
 
-	categoryCache, err := createCache("category", cfg.Cache.CategoryDB)
+	categoryCache, err := createCache(contextNameCategory, cfg.Cache.CategoryDB)
 	if err != nil {
 		return CacheOut{}, err
 	}
 
-	tagCache, err := createCache("tag", cfg.Cache.TagDB)
+	tagCache, err := createCache(contextNameTag, cfg.Cache.TagDB)
 	if err != nil {
 		return CacheOut{}, err
 	}
 
-	recordCache, err := createCache("record", cfg.Cache.RecordDB)
+	recordCache, err := createCache(contextNameRecord, cfg.Cache.RecordDB)
 	if err != nil {
 		return CacheOut{}, err
 	}
 
-	userCache, err := createCache("user", cfg.Cache.UserDB)
+	userCache, err := createCache(contextNameUser, cfg.Cache.UserDB)
 	if err != nil {
 		return CacheOut{}, err
 	}
 
-	chatCache, err := createCache("chat", cfg.Cache.ChatDB)
+	chatCache, err := createCache(contextNameChat, cfg.Cache.ChatDB)
 	if err != nil {
 		return CacheOut{}, err
 	}
@@ -159,7 +159,7 @@ func ProvideCache(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogger)
 	lc.Append(fx.Hook{
 		OnStop: func(context.Context) error {
 			cleanup()
-			log.Infow("all cache connections closed")
+			log.Infow(logMsgCacheAllClosed)
 			return nil
 		},
 	})
@@ -180,11 +180,10 @@ func ProvideCache(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogger)
 func ProvideDatabase(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogger) (db.DB, error) {
 	conn, err := postgres.NewConnection(context.Background(), cfg.DB, log)
 	if err != nil {
-		log.Errorw("failed to connect to database", commonkeys.Error, err)
+		log.Errorw(logMsgDBConnectFailed, commonkeys.Error, err)
 		return nil, err
 	}
 
-	// Wrap concrete DB with adapter to return interface
 	dbAdapter := postgres.NewDBAdapter(conn)
 
 	lc.Append(fx.Hook{
@@ -201,7 +200,7 @@ func ProvideDatabase(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogg
 		},
 	})
 
-	log.Infow("database connection initialized", "type", "postgresql")
+	log.Infow(logMsgDBInitialized, "type", dbTypePostgresql)
 	return dbAdapter, nil
 }
 
@@ -218,9 +217,7 @@ func ProvideHTTPClient(cfg *config.Config) httpclientPort.HTTPClient {
 		Timeout: timeout,
 	}
 
-	// NewInstrumentedClient returns *http.Client with OTEL instrumentation
 	instrumentedHTTPClient := httpclient.NewInstrumentedClient(opts)
 
-	// Wrap with adapter that implements HTTPClient interface
 	return httpclient.NewClient(instrumentedHTTPClient)
 }

@@ -67,12 +67,21 @@ const (
 
 	// DBTryConnectingWithRetries is the connection retry counter.
 	DBTryConnectingWithRetries = "try"
+
+	// DbNum is the database number (e.g., Redis DB index).
+	DbNum = "db"
 )
 
 // Cache keys.
 const (
 	// CacheAddr is the cache/Redis server address.
 	CacheAddr = "cache_addr"
+)
+
+// Context keys.
+const (
+	// Context is the bounded context name for logging and tracing.
+	Context = "context"
 )
 
 // Request/tracing identifiers.

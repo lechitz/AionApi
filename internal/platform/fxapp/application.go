@@ -64,10 +64,8 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 	hasherProvider := hasher.New()
 	tokenProvider := token.NewProvider(deps.Cfg.Secret.Key)
 
-	// Admin repository - must be created first as UserRepository depends on it
 	adminRepository := adminRepo.New(deps.DB, deps.Log)
 
-	// User repository - receives adminRepository for role assignment delegation
 	userRepository := userRepo.New(deps.DB, deps.Log, adminRepository)
 
 	categoryRepository := categoryRepo.New(deps.DB, deps.Log)

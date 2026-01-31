@@ -43,17 +43,17 @@ func RunHTTPServer(lc fx.Lifecycle, srv *http.Server, cfg *config.Config, log lo
 			_ = ctx
 			go func() {
 				if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-					log.Errorw("http server error", commonkeys.Error, err)
+					log.Errorw(logMsgServerError, commonkeys.Error, err)
 				}
 			}()
-			log.Infow("servers starting...", commonkeys.APIName, cfg.General.Name, commonkeys.AppEnv, cfg.General.Env)
+			log.Infow(logMsgServerStarting, commonkeys.APIName, cfg.General.Name, commonkeys.AppEnv, cfg.General.Env)
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
 			shutdownCtx, cancel := context.WithTimeout(ctx, cfg.Application.Timeout)
 			defer cancel()
 			if err := srv.Shutdown(shutdownCtx); err != nil {
-				return fmt.Errorf("http shutdown: %w", err)
+				return fmt.Errorf(errMsgHTTPShutdown, err)
 			}
 			return nil
 		},
