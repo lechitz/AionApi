@@ -35,7 +35,7 @@ func (c *instrumentedClient) Do(req *http.Request) (*http.Response, error) {
 func (c *instrumentedClient) Get(ctx context.Context, url string) (*http.Response, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create GET request: %w", err)
+		return nil, fmt.Errorf(errMsgCreateGETRequest, err)
 	}
 	return c.client.Do(req)
 }
@@ -46,7 +46,7 @@ func (c *instrumentedClient) Post(ctx context.Context, url, contentType string, 
 	if body != nil {
 		jsonData, err := json.Marshal(body)
 		if err != nil {
-			return nil, fmt.Errorf("failed to marshal request body: %w", err)
+			return nil, fmt.Errorf(errMsgMarshalBody, err)
 		}
 		bodyReader = bytes.NewBuffer(jsonData)
 	} else {
@@ -55,9 +55,9 @@ func (c *instrumentedClient) Post(ctx context.Context, url, contentType string, 
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bodyReader)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create POST request: %w", err)
+		return nil, fmt.Errorf(errMsgCreatePOSTRequest, err)
 	}
-	req.Header.Set("Content-Type", contentType)
+	req.Header.Set(headerContentType, contentType)
 
 	return c.client.Do(req)
 }

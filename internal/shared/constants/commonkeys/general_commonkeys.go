@@ -70,6 +70,9 @@ const (
 
 	// DbNum is the database number (e.g., Redis DB index).
 	DbNum = "db"
+
+	// Type is the database type.
+	Type = "type"
 )
 
 // Cache keys.

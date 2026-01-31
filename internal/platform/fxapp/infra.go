@@ -200,7 +200,7 @@ func ProvideDatabase(lc fx.Lifecycle, cfg *config.Config, log logger.ContextLogg
 		},
 	})
 
-	log.Infow(logMsgDBInitialized, "type", dbTypePostgresql)
+	log.Infow(logMsgDBInitialized, commonkeys.Type, dbTypePostgresql)
 	return dbAdapter, nil
 }
 
