@@ -53,6 +53,7 @@ func NewGraphqlHandler(
 		Directives: DirectiveRoot{
 			Auth: authdir.Auth(),
 		},
+		DisableIntrospection: false, // Enable introspection in DEV for LangChain
 	})
 
 	srv := handler.New(es)

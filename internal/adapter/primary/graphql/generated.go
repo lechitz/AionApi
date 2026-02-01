@@ -24,18 +24,20 @@ import (
 // NewExecutableSchema creates an ExecutableSchema from the ResolverRoot interface.
 func NewExecutableSchema(cfg Config) graphql.ExecutableSchema {
 	return &executableSchema{
-		schema:     cfg.Schema,
-		resolvers:  cfg.Resolvers,
-		directives: cfg.Directives,
-		complexity: cfg.Complexity,
+		schema:               cfg.Schema,
+		resolvers:            cfg.Resolvers,
+		directives:           cfg.Directives,
+		complexity:           cfg.Complexity,
+		disableIntrospection: cfg.DisableIntrospection,
 	}
 }
 
 type Config struct {
-	Schema     *ast.Schema
-	Resolvers  ResolverRoot
-	Directives DirectiveRoot
-	Complexity ComplexityRoot
+	Schema                *ast.Schema
+	Resolvers             ResolverRoot
+	Directives            DirectiveRoot
+	Complexity            ComplexityRoot
+	DisableIntrospection  bool  // Enable introspection in dev, disable in prod
 }
 
 type ResolverRoot interface {
@@ -199,10 +201,11 @@ type QueryResolver interface {
 }
 
 type executableSchema struct {
-	schema     *ast.Schema
-	resolvers  ResolverRoot
-	directives DirectiveRoot
-	complexity ComplexityRoot
+	schema                *ast.Schema
+	resolvers             ResolverRoot
+	directives            DirectiveRoot
+	complexity            ComplexityRoot
+	disableIntrospection  bool
 }
 
 func (e *executableSchema) Schema() *ast.Schema {
@@ -946,14 +949,14 @@ func (ec *executionContext) processDeferredGroup(dg graphql.DeferredGroup) {
 }
 
 func (ec *executionContext) introspectSchema() (*introspection.Schema, error) {
-	if ec.DisableIntrospection {
+	if ec.disableIntrospection {
 		return nil, errors.New("introspection disabled")
 	}
 	return introspection.WrapSchema(ec.Schema()), nil
 }
 
 func (ec *executionContext) introspectType(name string) (*introspection.Type, error) {
-	if ec.DisableIntrospection {
+	if ec.disableIntrospection {
 		return nil, errors.New("introspection disabled")
 	}
 	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
