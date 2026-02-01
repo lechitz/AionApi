@@ -147,6 +147,9 @@ const ErrorTokenMismatch = "provided reference does not match stored one"
 // SuccessTokenValidated indicates the access reference was validated successfully.
 const SuccessTokenValidated = "access reference validated successfully"
 
+// ErrorToGetUserData is the error message when user data cannot be retrieved during token generation.
+const ErrorToGetUserData = "failed to get user data"
+
 // Errors.
 const (
 	// ErrorToCompareHashAndPassword is the error message when the password is invalid.

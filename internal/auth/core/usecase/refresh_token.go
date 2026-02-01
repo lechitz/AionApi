@@ -78,7 +78,7 @@ func (s *Service) generateAndSaveTokens(ctx context.Context, userID uint64) (str
 	if err != nil {
 		user, err = s.userRepository.GetByID(ctx, userID)
 		if err != nil {
-			return "", "", fmt.Errorf("failed to get user data: %w", err)
+			return "", "", fmt.Errorf(ErrorToGetUserData+": %w", err)
 		}
 
 		err = s.userCache.SaveUser(ctx, user, 0)
