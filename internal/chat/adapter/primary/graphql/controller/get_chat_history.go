@@ -19,8 +19,8 @@ func (c *controller) GetChatHistory(ctx context.Context, userID uint64, limit, o
 
 	span.SetAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
-		attribute.Int("limit", limit),
-		attribute.Int("offset", offset),
+		attribute.Int(AttrLimit, limit),
+		attribute.Int(AttrOffset, offset),
 	)
 
 	// Delegate to the service (use case)
@@ -33,8 +33,8 @@ func (c *controller) GetChatHistory(ctx context.Context, userID uint64, limit, o
 			MsgFetchError,
 			commonkeys.Error, err.Error(),
 			commonkeys.UserID, strconv.FormatUint(userID, 10),
-			"limit", limit,
-			"offset", offset,
+			AttrLimit, limit,
+			AttrOffset, offset,
 		)
 		return nil, err
 	}
@@ -42,14 +42,14 @@ func (c *controller) GetChatHistory(ctx context.Context, userID uint64, limit, o
 	// Convert to GraphQL model
 	result := toModelOutSlice(histories)
 
-	span.SetAttributes(attribute.Int("count", len(result)))
+	span.SetAttributes(attribute.Int(AttrCount, len(result)))
 	span.SetStatus(codes.Ok, StatusFetched)
 
 	c.Logger.InfowCtx(
 		ctx,
 		MsgFetched,
 		commonkeys.UserID, strconv.FormatUint(userID, 10),
-		"count", len(result),
+		AttrCount, len(result),
 	)
 
 	return result, nil

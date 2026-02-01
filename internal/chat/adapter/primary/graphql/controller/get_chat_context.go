@@ -14,7 +14,7 @@ import (
 // GetChatContext retrieves aggregated context data for AI assistance.
 func (c *controller) GetChatContext(ctx context.Context, userID uint64) (*model.ChatContext, error) {
 	tr := otel.Tracer(TracerName)
-	ctx, span := tr.Start(ctx, "chat.controller.get_context")
+	ctx, span := tr.Start(ctx, SpanGetChatContext)
 	defer span.End()
 
 	span.SetAttributes(
@@ -25,10 +25,10 @@ func (c *controller) GetChatContext(ctx context.Context, userID uint64) (*model.
 	contextData, err := c.ChatService.GetChatContext(ctx, userID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, "error fetching chat context")
+		span.SetStatus(codes.Error, MsgContextFetchError)
 		c.Logger.ErrorwCtx(
 			ctx,
-			"error fetching chat context",
+			MsgContextFetchError,
 			commonkeys.Error, err.Error(),
 			commonkeys.UserID, strconv.FormatUint(userID, 10),
 		)
@@ -44,15 +44,15 @@ func (c *controller) GetChatContext(ctx context.Context, userID uint64) (*model.
 	}
 
 	span.SetAttributes(
-		attribute.Int("recent_chats_count", len(result.RecentChats)),
+		attribute.Int(AttrRecentChatsCount, len(result.RecentChats)),
 	)
-	span.SetStatus(codes.Ok, "chat context fetched")
+	span.SetStatus(codes.Ok, StatusContextFetched)
 
 	c.Logger.InfowCtx(
 		ctx,
-		"chat context fetched",
+		MsgContextFetched,
 		commonkeys.UserID, strconv.FormatUint(userID, 10),
-		"recent_chats", len(result.RecentChats),
+		AttrRecentChats, len(result.RecentChats),
 	)
 
 	return result, nil
