@@ -46,10 +46,10 @@ func (s *Service) GetByID(ctx context.Context, categoryID, userID uint64) (domai
 		return domain.Category{}, errors.New(FailedToGetCategoryByID)
 	}
 
-	span.AddEvent("SaveToCache")
+	span.AddEvent(EventSaveToCache)
 	err = s.CategoryCache.SaveCategory(ctx, categoryDB, 0) // use default TTL
 	if err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to save category to cache",
+		s.Logger.WarnwCtx(ctx, WarnFailedToSaveCategoryToCache,
 			commonkeys.CategoryID, categoryDB.ID,
 			commonkeys.Error, err.Error(),
 		)

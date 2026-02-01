@@ -45,10 +45,10 @@ func (s *Service) GetByName(ctx context.Context, categoryName string, userID uin
 		return domain.Category{}, err
 	}
 
-	span.AddEvent("SaveToCache")
+	span.AddEvent(EventSaveToCache)
 	err = s.CategoryCache.SaveCategoryByName(ctx, category, 0) // use default TTL
 	if err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to save category to cache by name",
+		s.Logger.WarnwCtx(ctx, WarnFailedToSaveCategoryToCacheByName,
 			commonkeys.CategoryName, category.Name,
 			commonkeys.Error, err,
 		)
@@ -56,7 +56,7 @@ func (s *Service) GetByName(ctx context.Context, categoryName string, userID uin
 	if category.ID != 0 {
 		err = s.CategoryCache.SaveCategory(ctx, category, 0) // also cache by ID
 		if err != nil {
-			s.Logger.WarnwCtx(ctx, "failed to save category to cache by ID",
+			s.Logger.WarnwCtx(ctx, WarnFailedToSaveCategoryToCacheByID,
 				commonkeys.CategoryID, category.ID,
 				commonkeys.Error, err,
 			)

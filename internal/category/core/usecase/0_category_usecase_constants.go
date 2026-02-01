@@ -50,6 +50,10 @@ const (
 	EventRepositoryUpdate = "category.repository.update"
 	// EventRepositoryDelete marks the repository delete/soft-delete call.
 	EventRepositoryDelete = "category.repository.delete"
+	// EventInvalidateCache marks cache invalidation operations.
+	EventInvalidateCache = "category.cache.invalidate"
+	// EventSaveToCache marks cache save operations.
+	EventSaveToCache = "category.cache.save"
 	// EventSuccess marks a successful outcome.
 	EventSuccess = "category.success"
 )
@@ -119,6 +123,26 @@ const (
 	CategoryColorIsTooLong = "category color cannot exceed 7 characters"
 	// CategoryIconInvalid indicates the category icon is invalid.
 	CategoryIconInvalid = "category icon must be a valid svg key (ex: health/brain.svg)"
+)
+
+// Cache operation messages.
+const (
+	// WarnFailedToInvalidateCategoryCache indicates failure to invalidate single category cache.
+	WarnFailedToInvalidateCategoryCache = "failed to invalidate category cache after soft delete"
+	// WarnFailedToInvalidateCategoryListCache indicates failure to invalidate category list cache.
+	WarnFailedToInvalidateCategoryListCache = "failed to invalidate category list cache after creating category"
+	// WarnFailedToDeleteCategoryCache indicates failure to delete category cache after update.
+	WarnFailedToDeleteCategoryCache = "failed to delete category cache after update"
+	// WarnFailedToDeleteCategoryByNameCache indicates failure to delete category-by-name cache.
+	WarnFailedToDeleteCategoryByNameCache = "failed to delete category-by-name cache after update"
+	// WarnFailedToSaveCategoryToCache indicates failure to save category to cache by ID.
+	WarnFailedToSaveCategoryToCache = "failed to save category to cache"
+	// WarnFailedToSaveCategoryToCacheByName indicates failure to save category to cache by name.
+	WarnFailedToSaveCategoryToCacheByName = "failed to save category to cache by name"
+	// WarnFailedToSaveCategoryToCacheByID indicates failure to save category to cache by ID.
+	WarnFailedToSaveCategoryToCacheByID = "failed to save category to cache by ID"
+	// WarnFailedToSaveCategoryListToCache indicates failure to save category list to cache.
+	WarnFailedToSaveCategoryListToCache = "failed to save category list to cache"
 )
 
 // =============================================================================

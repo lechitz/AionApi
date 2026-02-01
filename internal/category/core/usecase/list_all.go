@@ -40,10 +40,10 @@ func (s *Service) ListAll(ctx context.Context, userID uint64) ([]domain.Category
 		return nil, err
 	}
 
-	span.AddEvent("SaveToCache")
+	span.AddEvent(EventSaveToCache)
 	err = s.CategoryCache.SaveCategoryList(ctx, userID, categories, 0) // use default TTL
 	if err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to save category list to cache",
+		s.Logger.WarnwCtx(ctx, WarnFailedToSaveCategoryListToCache,
 			commonkeys.UserID, userID,
 			commonkeys.Error, err,
 		)

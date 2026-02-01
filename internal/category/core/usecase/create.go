@@ -59,10 +59,10 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateCategoryCommand) (
 		return domain.Category{}, fmt.Errorf("%w: %w", ErrCreateCategory, err)
 	}
 
-	span.AddEvent("InvalidateCache")
+	span.AddEvent(EventInvalidateCache)
 	err = s.CategoryCache.DeleteCategoryList(ctx, createdCategory.UserID)
 	if err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to invalidate category list cache after creating category",
+		s.Logger.WarnwCtx(ctx, WarnFailedToInvalidateCategoryListCache,
 			commonkeys.UserID, createdCategory.UserID,
 			commonkeys.Error, err,
 		)

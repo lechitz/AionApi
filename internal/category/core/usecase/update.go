@@ -58,7 +58,7 @@ func (s *Service) Update(ctx context.Context, cmd input.UpdateCategoryCommand) (
 		return domain.Category{}, err
 	}
 
-	span.AddEvent("InvalidateCache")
+	span.AddEvent(EventInvalidateCache)
 	s.invalidateCategoryCaches(ctx, updatedCategory)
 
 	span.AddEvent(EventSuccess)
@@ -134,7 +134,7 @@ func (s *Service) ensureUpdateNameUnique(
 func (s *Service) invalidateCategoryCaches(ctx context.Context, updatedCategory domain.Category) {
 	err := s.CategoryCache.DeleteCategory(ctx, updatedCategory.ID, updatedCategory.UserID)
 	if err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to delete category cache after update",
+		s.Logger.WarnwCtx(ctx, WarnFailedToDeleteCategoryCache,
 			commonkeys.CategoryID, updatedCategory.ID,
 			commonkeys.UserID, updatedCategory.UserID,
 			commonkeys.Error, err,
@@ -143,7 +143,7 @@ func (s *Service) invalidateCategoryCaches(ctx context.Context, updatedCategory 
 
 	err = s.CategoryCache.DeleteCategoryByName(ctx, updatedCategory.Name, updatedCategory.UserID)
 	if err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to delete category-by-name cache after update",
+		s.Logger.WarnwCtx(ctx, WarnFailedToDeleteCategoryByNameCache,
 			commonkeys.CategoryName, updatedCategory.Name,
 			commonkeys.UserID, updatedCategory.UserID,
 			commonkeys.Error, err,
@@ -152,7 +152,7 @@ func (s *Service) invalidateCategoryCaches(ctx context.Context, updatedCategory 
 
 	err = s.CategoryCache.DeleteCategoryList(ctx, updatedCategory.UserID)
 	if err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to invalidate category list cache after updating category",
+		s.Logger.WarnwCtx(ctx, WarnFailedToInvalidateCategoryListCache,
 			commonkeys.UserID, updatedCategory.UserID,
 			commonkeys.Error, err,
 		)
