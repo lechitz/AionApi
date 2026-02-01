@@ -9,7 +9,6 @@ import (
 	"github.com/lechitz/AionApi/internal/category/core/ports/input"
 	"github.com/lechitz/AionApi/internal/category/core/usecase"
 	"github.com/lechitz/AionApi/tests/setup"
-	"github.com/lechitz/AionApi/tests/testdata"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -18,8 +17,10 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_Name(t *testing.T)
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.PerfectCategory
-	category.Name = ""
+	category := domain.Category{
+		UserID: 3,
+		Name:   "", // Empty name - testing validation
+	}
 
 	cmd := makeCreateCmdFromDomain(category)
 
@@ -33,8 +34,11 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_DescriptionExceedL
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.PerfectCategory
-	category.Description = strings.Repeat("x", 201)
+	category := domain.Category{
+		UserID:      3,
+		Name:        "Work",
+		Description: strings.Repeat("x", 201), // Exceeds limit
+	}
 
 	cmd := makeCreateCmdFromDomain(category)
 
@@ -49,8 +53,11 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_ColorExceedLimit(t
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.PerfectCategory
-	category.Color = "#12345678" // length > 7
+	category := domain.Category{
+		UserID: 3,
+		Name:   "Work",
+		Color:  "#12345678", // length > 7
+	}
 
 	cmd := makeCreateCmdFromDomain(category)
 
@@ -65,8 +72,11 @@ func TestCreateCategory_ErrorToValidateCreateCategoryRequired_IconInvalid(t *tes
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.PerfectCategory
-	category.Icon = "work.png" // invalid (must be .svg key)
+	category := domain.Category{
+		UserID: 3,
+		Name:   "Work",
+		Icon:   "work.png", // invalid (must be .svg key)
+	}
 
 	cmd := makeCreateCmdFromDomain(category)
 
@@ -80,7 +90,10 @@ func TestCreateCategory_ErrorToGetCategoryByName(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.PerfectCategory
+	category := domain.Category{
+		UserID: 3,
+		Name:   "Work",
+	}
 	cmd := makeCreateCmdFromDomain(category)
 
 	suite.CategoryRepository.EXPECT().
@@ -97,7 +110,13 @@ func TestCreateCategory_ErrorToCreateCategory(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.PerfectCategory
+	category := domain.Category{
+		UserID:      3,
+		Name:        "Work",
+		Description: "my work description",
+		Color:       "blue",
+		Icon:        "work/briefcase.svg",
+	}
 	cmd := makeCreateCmdFromDomain(category)
 
 	suite.CategoryRepository.EXPECT().
@@ -167,7 +186,13 @@ func TestCreateCategory_Success(t *testing.T) {
 	suite := setup.CategoryServiceTest(t)
 	defer suite.Ctrl.Finish()
 
-	category := testdata.PerfectCategory
+	category := domain.Category{
+		UserID:      3,
+		Name:        "Work",
+		Description: "my work description",
+		Color:       "blue",
+		Icon:        "work/briefcase.svg",
+	}
 	cmd := makeCreateCmdFromDomain(category)
 
 	suite.CategoryRepository.EXPECT().

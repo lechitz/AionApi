@@ -1,59 +1,64 @@
 package usecase_test
 
 import (
-	"errors"
-	"testing"
+"errors"
+"testing"
 
-	"github.com/lechitz/AionApi/internal/category/core/domain"
-	"github.com/lechitz/AionApi/internal/category/core/usecase"
-	"github.com/lechitz/AionApi/tests/setup"
-	"github.com/lechitz/AionApi/tests/testdata"
-	"github.com/stretchr/testify/require"
-	"go.uber.org/mock/gomock"
+"github.com/lechitz/AionApi/internal/category/core/domain"
+"github.com/lechitz/AionApi/internal/category/core/usecase"
+"github.com/lechitz/AionApi/tests/setup"
+"github.com/stretchr/testify/require"
+"go.uber.org/mock/gomock"
 )
 
 func TestListAll_ErrorToGetAllCategories(t *testing.T) {
-	suite := setup.CategoryServiceTest(t)
-	defer suite.Ctrl.Finish()
+suite := setup.CategoryServiceTest(t)
+defer suite.Ctrl.Finish()
 
-	userID := testdata.PerfectCategory.UserID
+userID := uint64(3)
 
-	suite.CategoryCache.EXPECT().
-		GetCategoryList(gomock.Any(), userID).
-		Return(nil, errors.New("cache miss"))
+suite.CategoryCache.EXPECT().
+GetCategoryList(gomock.Any(), userID).
+Return(nil, errors.New("cache miss"))
 
-	suite.CategoryRepository.EXPECT().
-		ListAll(gomock.Any(), userID).
-		Return(nil, errors.New(usecase.FailedToGetAllCategories))
+suite.CategoryRepository.EXPECT().
+ListAll(gomock.Any(), userID).
+Return(nil, errors.New(usecase.FailedToGetAllCategories))
 
-	categories, err := suite.CategoryService.ListAll(suite.Ctx, userID)
+categories, err := suite.CategoryService.ListAll(suite.Ctx, userID)
 
-	require.Error(t, err)
-	require.Nil(t, categories)
-	require.Equal(t, usecase.FailedToGetAllCategories, err.Error())
+require.Error(t, err)
+require.Nil(t, categories)
+require.Equal(t, usecase.FailedToGetAllCategories, err.Error())
 }
 
 func TestListAll_Success(t *testing.T) {
-	suite := setup.CategoryServiceTest(t)
-	defer suite.Ctrl.Finish()
+suite := setup.CategoryServiceTest(t)
+defer suite.Ctrl.Finish()
 
-	userID := testdata.PerfectCategory.UserID
-	exp := []domain.Category{testdata.PerfectCategory}
+userID := uint64(3)
+expected := []domain.Category{
+{
+ID:     1,
+UserID: 3,
+Name:   "Work",
+},
+}
 
-	suite.CategoryCache.EXPECT().
-		GetCategoryList(gomock.Any(), userID).
-		Return(nil, errors.New("cache miss"))
+suite.CategoryCache.EXPECT().
+GetCategoryList(gomock.Any(), userID).
+Return(nil, errors.New("cache miss"))
 
-	suite.CategoryRepository.EXPECT().
-		ListAll(gomock.Any(), userID).
-		Return(exp, nil)
+suite.CategoryRepository.EXPECT().
+ListAll(gomock.Any(), userID).
+Return(expected, nil)
 
-	suite.CategoryCache.EXPECT().
-		SaveCategoryList(gomock.Any(), userID, exp, gomock.Any()).
-		Return(nil)
+suite.CategoryCache.EXPECT().
+SaveCategoryList(gomock.Any(), userID, expected, gomock.Any()).
+Return(nil)
 
-	categories, err := suite.CategoryService.ListAll(suite.Ctx, userID)
+categories, err := suite.CategoryService.ListAll(suite.Ctx, userID)
 
-	require.NoError(t, err)
-	require.Equal(t, exp, categories)
+require.NoError(t, err)
+require.Equal(t, expected, categories)
 }
