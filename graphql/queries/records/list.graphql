@@ -1,0 +1,1 @@
+query ListRecords($limit: Int) { records(limit: $limit) { id tagId } }

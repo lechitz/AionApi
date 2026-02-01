@@ -1,0 +1,231 @@
+# Aion GraphQL Schema
+# Category domain schema (extends root types defined in root.graphqls)
+
+type Category {
+    id: ID!
+    userId: ID!
+    name: String!
+    description: String
+    colorHex: String
+    icon: String # svg icon key (ex: work/briefcase.svg)
+}
+
+input CreateCategoryInput {
+    name: String!
+    description: String
+    colorHex: String
+    icon: String # svg icon key (ex: work/briefcase.svg)
+}
+
+input UpdateCategoryInput {
+    id: ID!
+    name: String
+    description: String
+    colorHex: String
+    icon: String # svg icon key (ex: work/briefcase.svg)
+}
+
+input DeleteCategoryInput {
+    id: ID!
+}
+
+extend type Query {
+    categories: [Category!]! @auth(roles: "user")
+    categoryById(id: ID!): Category @auth(roles: "user")
+    categoryByName(name: String!): Category @auth(roles: "user")
+}
+
+extend type Mutation {
+    createCategory(input: CreateCategoryInput!): Category! @auth(roles: "user")
+    updateCategory(input: UpdateCategoryInput!): Category! @auth(roles: "user")
+    softDeleteCategory(input: DeleteCategoryInput!): Boolean! @auth(roles: "user")
+}
+# Chat domain schema (extends root types defined in root.graphqls)
+
+type ChatMessage {
+    id: ID!
+    userId: ID!
+    message: String!
+    response: String!
+    tokensUsed: Int!
+    functionCalls: JSON
+    createdAt: String!      # ISO8601 timestamp
+    updatedAt: String!      # ISO8601 timestamp
+}
+
+type ChatContext {
+    recentChats: [ChatMessage!]!
+    totalRecords: Int!
+    totalCategories: Int!
+    totalTags: Int!
+}
+
+extend type Query {
+    chatHistory(limit: Int, offset: Int): [ChatMessage!]! @auth(roles: "user")
+    chatContext: ChatContext! @auth(roles: "user")
+}
+
+## Record domain schema (extends root types defined in root.graphqls)
+## Note: category is obtained via Tag relationship (Record → Tag → Category)
+
+type Record {
+    id: ID!
+    userId: ID!
+    tagId: ID!
+    description: String
+    eventTime: String!
+    recordedAt: String
+    durationSeconds: Int
+    value: Float
+    source: String
+    timezone: String
+    status: String
+    createdAt: String!
+    updatedAt: String!
+}
+
+input CreateRecordInput {
+    tagId: ID!
+    description: String
+    eventTime: String
+    recordedAt: String
+    durationSeconds: Int
+    value: Float
+    source: String
+    timezone: String
+    status: String
+}
+
+input UpdateRecordInput {
+    id: ID!
+    description: String
+    tagId: ID
+    eventTime: String
+    recordedAt: String
+    durationSeconds: Int
+    value: Float
+    source: String
+    timezone: String
+    status: String
+}
+
+input DeleteRecordInput {
+    id: ID!
+}
+
+input SearchFilters {
+    query: String!
+    categoryIds: [ID!]
+    tagIds: [ID!]
+    startDate: String
+    endDate: String
+    limit: Int
+    offset: Int
+}
+
+extend type Query {
+    recordById(id: ID!): Record @auth(roles: "user")
+    records(limit: Int, afterEventTime: String, afterId: ID): [Record!]! @auth(roles: "user")
+    recordsLatest(limit: Int): [Record!]! @auth(roles: "user")
+    recordsByTag(tagId: ID!, limit: Int): [Record!]! @auth(roles: "user")
+    recordsByCategory(categoryId: ID!, limit: Int): [Record!]! @auth(roles: "user")
+    recordsByDay(date: String!): [Record!]! @auth(roles: "user")
+    recordsUntil(until: String!, limit: Int): [Record!]! @auth(roles: "user")
+    recordsBetween(startDate: String!, endDate: String!, limit: Int): [Record!]! @auth(roles: "user")
+    searchRecords(filters: SearchFilters!): [Record!]! @auth(roles: "user")
+}
+
+extend type Mutation {
+    createRecord(input: CreateRecordInput!): Record! @auth(roles: "user")
+    updateRecord(input: UpdateRecordInput!): Record! @auth(roles: "user")
+    softDeleteRecord(input: DeleteRecordInput!): Boolean! @auth(roles: "user")
+    softDeleteAllRecords: Boolean! @auth(roles: "user")
+}
+# Tag domain schema (extends root types defined in root.graphqls)
+
+type Tag {
+    id: ID!
+    userId: ID!
+    name: String!
+    categoryId: ID!
+    description: String
+    icon: String # single emoji
+    createdAt: String!      # ISO8601 timestamp
+    updatedAt: String!      # ISO8601 timestamp
+}
+
+input CreateTagInput {
+    name: String!
+    categoryId: ID!
+    description: String
+    icon: String # single emoji
+}
+
+input UpdateTagInput {
+    id: ID!
+    name: String
+    categoryId: ID
+    description: String
+    icon: String # single emoji
+}
+
+input DeleteTagInput {
+    id: ID!
+}
+
+extend type Query {
+    tagByName(name: String!): Tag @auth(roles: "user")
+    tagById(id: ID!): Tag @auth(roles: "user")
+    tags: [Tag!]! @auth(roles: "user")
+    tagsByCategoryId(categoryId: ID!): [Tag!]! @auth(roles: "user")
+}
+
+extend type Mutation {
+    createTag(input: CreateTagInput!): Tag! @auth(roles: "user")
+    updateTag(input: UpdateTagInput!): Tag! @auth(roles: "user")
+    softDeleteTag(input: DeleteTagInput!): Boolean! @auth(roles: "user")
+}
+# User domain schema (extends root types defined in root.graphqls)
+
+type UserStats {
+    totalRecords: Int!
+    totalCategories: Int!
+    totalTags: Int!
+    recordsThisWeek: Int!
+    recordsThisMonth: Int!
+    mostUsedCategory: CategoryCount
+    mostUsedTag: TagCount
+}
+
+type CategoryCount {
+    id: ID!
+    name: String!
+    count: Int!
+}
+
+type TagCount {
+    id: ID!
+    name: String!
+    count: Int!
+}
+
+extend type Query {
+    userStats: UserStats! @auth(roles: "user")
+}
+
+# Root schema & reusable middleware live here.
+
+directive @auth(roles: String) on FIELD_DEFINITION
+
+scalar JSON
+
+# Base root types: include a placeholder field so parser accepts them and modules can `extend`.
+# The placeholder field is harmless and keeps the schema compatible with gqlgen.
+
+type Query {
+    _empty: Boolean
+}
+
+type Mutation {
+    _empty: Boolean
+}

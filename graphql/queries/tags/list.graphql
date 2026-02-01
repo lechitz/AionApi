@@ -1,0 +1,1 @@
+query ListTags { tags { id name categoryId icon } }
