@@ -52,7 +52,4 @@ const (
 
 	// ErrorID is the key for recording the error ID.
 	ErrorID = "error.id"
-
-	// ErrorMessage is the key for recording the error message.
-	ErrorMessage = "error.message"
 )
