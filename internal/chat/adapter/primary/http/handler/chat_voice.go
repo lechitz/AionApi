@@ -58,7 +58,7 @@ func (h *Handler) ChatVoice(w http.ResponseWriter, r *http.Request) {
 	}
 	defer func() {
 		if closeErr := file.Close(); closeErr != nil {
-			h.Logger.WarnwCtx(ctx, "failed to close audio file", commonkeys.Error, closeErr)
+			h.Logger.WarnwCtx(ctx, LogFailedCloseAudioFile, commonkeys.Error, closeErr)
 		}
 	}()
 
@@ -103,7 +103,7 @@ func (h *Handler) extractUserID(ctx context.Context, w http.ResponseWriter, span
 	userID, ok := userIDValue.(uint64)
 	if !ok {
 		span.SetStatus(codes.Error, ErrInvalidUserIDType)
-		h.Logger.ErrorwCtx(ctx, LogInvalidUserIDType, "value", userIDValue)
+		h.Logger.ErrorwCtx(ctx, LogInvalidUserIDType, LogKeyValue, userIDValue)
 		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
 			sharederrors.NewAuthenticationError(ErrInvalidUserID), h.Logger)
 		return 0, false
@@ -138,7 +138,7 @@ func (h *Handler) parseVoiceRequest(
 
 	if header.Size > MaxAudioSize {
 		span.SetStatus(codes.Error, ErrAudioFileTooLarge)
-		h.Logger.ErrorwCtx(ctx, LogAudioFileTooLarge, "size", header.Size, "max", MaxAudioSize)
+		h.Logger.ErrorwCtx(ctx, LogAudioFileTooLarge, LogKeySize, header.Size, LogKeyMax, MaxAudioSize)
 		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
 			sharederrors.NewValidationError(FormFieldAudio,
 				fmt.Sprintf("Audio file too large: %d bytes (max: %d)", header.Size, MaxAudioSize)), h.Logger)
@@ -177,24 +177,24 @@ func (h *Handler) buildMultipartRequest(
 	}
 
 	if err := writer.WriteField(FormFieldUserID, strconv.FormatUint(userID, 10)); err != nil {
-		span.SetStatus(codes.Error, "failed to write user_id field")
-		h.Logger.ErrorwCtx(ctx, "failed to write user_id field", commonkeys.Error, err)
+		span.SetStatus(codes.Error, ErrFailedWriteUserIDField)
+		h.Logger.ErrorwCtx(ctx, LogFailedWriteUserIDField, commonkeys.Error, err)
 		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgFailedProcessAudio, h.Logger)
 		return nil, "", false
 	}
 
 	if language != "" {
 		if err := writer.WriteField(FormFieldLanguage, language); err != nil {
-			span.SetStatus(codes.Error, "failed to write language field")
-			h.Logger.ErrorwCtx(ctx, "failed to write language field", commonkeys.Error, err)
+			span.SetStatus(codes.Error, ErrFailedWriteLanguageField)
+			h.Logger.ErrorwCtx(ctx, LogFailedWriteLanguageField, commonkeys.Error, err)
 			httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgFailedProcessAudio, h.Logger)
 			return nil, "", false
 		}
 	}
 
 	if err := writer.Close(); err != nil {
-		span.SetStatus(codes.Error, "failed to close multipart writer")
-		h.Logger.ErrorwCtx(ctx, "failed to close multipart writer", commonkeys.Error, err)
+		span.SetStatus(codes.Error, ErrFailedCloseMultipartWriter)
+		h.Logger.ErrorwCtx(ctx, LogFailedCloseMultipartWriter, commonkeys.Error, err)
 		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, MsgFailedProcessAudio, h.Logger)
 		return nil, "", false
 	}
@@ -230,7 +230,7 @@ func (h *Handler) forwardToAionChat(
 	}
 	defer func() {
 		if closeErr := resp.Body.Close(); closeErr != nil {
-			h.Logger.WarnwCtx(ctx, "failed to close response body", commonkeys.Error, closeErr)
+			h.Logger.WarnwCtx(ctx, LogFailedCloseResponseBody, commonkeys.Error, closeErr)
 		}
 	}()
 
@@ -255,11 +255,11 @@ func (h *Handler) writeErrorResponse(
 	responseBody []byte,
 ) {
 	span.SetStatus(codes.Error, ErrAionChatReturnedError)
-	h.Logger.ErrorwCtx(ctx, LogAionChatError, "status_code", statusCode, "response", string(responseBody))
+	h.Logger.ErrorwCtx(ctx, LogAionChatError, LogKeyStatusCode, statusCode, LogKeyResponse, string(responseBody))
 	w.Header().Set(HeaderContentType, ContentTypeJSON)
 	w.WriteHeader(statusCode)
 	if _, writeErr := w.Write(responseBody); writeErr != nil {
-		h.Logger.ErrorwCtx(ctx, "failed to write error response", commonkeys.Error, writeErr)
+		h.Logger.ErrorwCtx(ctx, LogFailedWriteErrorResponse, commonkeys.Error, writeErr)
 	}
 }
 
@@ -274,10 +274,10 @@ func (h *Handler) writeSuccessResponse(
 ) {
 	span.SetStatus(codes.Ok, StatusVoiceChatSuccess)
 	h.Logger.InfowCtx(ctx, LogVoiceChatSuccess,
-		commonkeys.UserID, userID, "audio_size", audioSize, "status_code", statusCode)
+		commonkeys.UserID, userID, LogKeyAudioSize, audioSize, LogKeyStatusCode, statusCode)
 	w.Header().Set(HeaderContentType, ContentTypeJSON)
 	w.WriteHeader(http.StatusOK)
 	if _, err := w.Write(responseBody); err != nil {
-		h.Logger.ErrorwCtx(ctx, "failed to write success response", commonkeys.Error, err)
+		h.Logger.ErrorwCtx(ctx, LogFailedWriteSuccessResponse, commonkeys.Error, err)
 	}
 }

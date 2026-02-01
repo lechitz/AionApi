@@ -126,6 +126,12 @@ const (
 	ErrFailedReadResponse = "failed to read response"
 	// ErrAionChatReturnedError indicates aion-chat service returned an error.
 	ErrAionChatReturnedError = "aion-chat returned error"
+	// ErrFailedWriteUserIDField indicates failure to write user_id field.
+	ErrFailedWriteUserIDField = "failed to write user_id field"
+	// ErrFailedWriteLanguageField indicates failure to write language field.
+	ErrFailedWriteLanguageField = "failed to write language field"
+	// ErrFailedCloseMultipartWriter indicates failure to close multipart writer.
+	ErrFailedCloseMultipartWriter = "failed to close multipart writer"
 )
 
 // User-facing messages for voice chat.
@@ -168,9 +174,23 @@ const (
 	LogAionChatError = "Aion-chat returned error"
 	// LogVoiceChatSuccess indicates successful voice chat processing.
 	LogVoiceChatSuccess = "Voice chat processed successfully"
+	// LogFailedCloseAudioFile indicates failure to close audio file.
+	LogFailedCloseAudioFile = "failed to close audio file"
+	// LogFailedCloseResponseBody indicates failure to close response body.
+	LogFailedCloseResponseBody = "failed to close response body"
+	// LogFailedWriteUserIDField indicates failure to write user_id field.
+	LogFailedWriteUserIDField = "failed to write user_id field"
+	// LogFailedWriteLanguageField indicates failure to write language field.
+	LogFailedWriteLanguageField = "failed to write language field"
+	// LogFailedCloseMultipartWriter indicates failure to close multipart writer.
+	LogFailedCloseMultipartWriter = "failed to close multipart writer"
+	// LogFailedWriteErrorResponse indicates failure to write error response.
+	LogFailedWriteErrorResponse = "failed to write error response"
+	// LogFailedWriteSuccessResponse indicates failure to write success response.
+	LogFailedWriteSuccessResponse = "failed to write success response"
 )
 
-// Form field names for voice chat.
+// Form field names.
 const (
 	// FormFieldAudio is the form field name for audio file.
 	FormFieldAudio = "audio"
@@ -178,6 +198,8 @@ const (
 	FormFieldUserID = "user_id"
 	// FormFieldLanguage is the form field name for language.
 	FormFieldLanguage = "language"
+	// FormFieldMessage is the form field name for chat message.
+	FormFieldMessage = "message"
 )
 
 // Attribute names for tracing.
@@ -192,6 +214,14 @@ const (
 	AttrAudioLanguage = "audio.language"
 	// AttrAionChatStatusCode is the attribute name for aion-chat status code.
 	AttrAionChatStatusCode = "aion_chat.status_code"
+	// AttrMessageLength is the attribute name for message length.
+	AttrMessageLength = "message_length"
+	// AttrTokensUsed is the attribute name for tokens used.
+	AttrTokensUsed = "tokens_used"
+	// AttrResponseLength is the attribute name for response length.
+	AttrResponseLength = "response_length"
+	// AttrSourcesCount is the attribute name for sources count.
+	AttrSourcesCount = "sources_count"
 )
 
 // HTTP methods.
@@ -212,4 +242,20 @@ const (
 const (
 	// PathProcessAudio is the path for processing audio in aion-chat service.
 	PathProcessAudio = "/internal/process-audio"
+)
+
+// Log keys for metadata.
+const (
+	// LogKeyValue is the log key for generic value.
+	LogKeyValue = "value"
+	// LogKeySize is the log key for size.
+	LogKeySize = "size"
+	// LogKeyMax is the log key for maximum value.
+	LogKeyMax = "max"
+	// LogKeyStatusCode is the log key for HTTP status code.
+	LogKeyStatusCode = "status_code"
+	// LogKeyResponse is the log key for response body.
+	LogKeyResponse = "response"
+	// LogKeyAudioSize is the log key for audio file size.
+	LogKeyAudioSize = "audio_size"
 )

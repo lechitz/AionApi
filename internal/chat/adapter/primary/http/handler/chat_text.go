@@ -50,10 +50,10 @@ func (h *Handler) ChatText(w http.ResponseWriter, r *http.Request) {
 
 	userID, ok := userIDValue.(uint64)
 	if !ok {
-		span.SetStatus(codes.Error, "invalid user ID type")
-		h.Logger.ErrorwCtx(ctx, "Invalid user ID type in context", "value", userIDValue)
+		span.SetStatus(codes.Error, ErrInvalidUserIDType)
+		h.Logger.ErrorwCtx(ctx, LogInvalidUserIDType, LogKeyValue, userIDValue)
 		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
-			sharederrors.NewAuthenticationError("invalid user ID"), h.Logger)
+			sharederrors.NewAuthenticationError(ErrInvalidUserID), h.Logger)
 		return
 	}
 
@@ -73,15 +73,15 @@ func (h *Handler) ChatText(w http.ResponseWriter, r *http.Request) {
 	span.AddEvent(EventValidateRequest)
 	if err := validateChatRequest(chatReq); err != nil {
 		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
-			sharederrors.NewValidationError("message", err.Error()), h.Logger)
+			sharederrors.NewValidationError(FormFieldMessage, err.Error()), h.Logger)
 		return
 	}
 
 	span.SetAttributes(
-		attribute.Int("message_length", len(chatReq.Message)),
+		attribute.Int(AttrMessageLength, len(chatReq.Message)),
 	)
 
-	h.Logger.InfowCtx(ctx, MsgChatRequestStart, commonkeys.UserID, strconv.FormatUint(userID, 10), "message_length", len(chatReq.Message))
+	h.Logger.InfowCtx(ctx, MsgChatRequestStart, commonkeys.UserID, strconv.FormatUint(userID, 10), AttrMessageLength, len(chatReq.Message))
 
 	span.AddEvent(EventCallService)
 	result, err := h.Service.ProcessMessage(ctx, userID, chatReq.Message, chatReq.Context)
@@ -104,17 +104,17 @@ func (h *Handler) ChatText(w http.ResponseWriter, r *http.Request) {
 	}
 
 	span.SetAttributes(
-		attribute.Int("tokens_used", result.TokensUsed),
-		attribute.Int("response_length", len(result.Response)),
-		attribute.Int("sources_count", len(result.Sources)),
+		attribute.Int(AttrTokensUsed, result.TokensUsed),
+		attribute.Int(AttrResponseLength, len(result.Response)),
+		attribute.Int(AttrSourcesCount, len(result.Sources)),
 	)
 	span.AddEvent(EventChatSuccess)
 	span.SetStatus(codes.Ok, StatusChatSuccess)
 
 	h.Logger.InfowCtx(ctx, MsgChatSuccess,
 		commonkeys.UserID, strconv.FormatUint(userID, 10),
-		"tokens_used", result.TokensUsed,
-		"response_length", len(result.Response),
+		AttrTokensUsed, result.TokensUsed,
+		AttrResponseLength, len(result.Response),
 	)
 
 	httpresponse.WriteSuccess(w, http.StatusOK, response, MsgChatSuccess)
