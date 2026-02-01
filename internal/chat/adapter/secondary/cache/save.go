@@ -26,7 +26,6 @@ func (s *Store) Add(ctx context.Context, userID uint64, history domain.ChatHisto
 
 	key := buildKey(userID)
 
-	// Get existing history.
 	existingHistory, err := s.GetLatest(ctx, userID, historyLimitDefault)
 	if err != nil {
 		// If error, start with empty history.
@@ -36,12 +35,10 @@ func (s *Store) Add(ctx context.Context, userID uint64, history domain.ChatHisto
 	// Prepend new entry (most recent first).
 	newHistory := append([]domain.ChatHistory{history}, existingHistory...)
 
-	// Limit to most recent entries.
 	if len(newHistory) > historyLimitDefault {
 		newHistory = newHistory[:historyLimitDefault]
 	}
 
-	// Marshal to JSON.
 	data, err := json.Marshal(newHistory)
 	if err != nil {
 		span.RecordError(err)
@@ -53,7 +50,6 @@ func (s *Store) Add(ctx context.Context, userID uint64, history domain.ChatHisto
 		return fmt.Errorf("%s: %w", ErrMarshalHistory, err)
 	}
 
-	// Set in cache with TTL.
 	if err := s.cache.Set(ctx, key, string(data), defaultTTL); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrSetHistory)

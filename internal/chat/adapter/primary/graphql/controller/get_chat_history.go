@@ -23,7 +23,6 @@ func (c *controller) GetChatHistory(ctx context.Context, userID uint64, limit, o
 		attribute.Int(AttrOffset, offset),
 	)
 
-	// Delegate to the service (use case)
 	histories, err := c.ChatService.GetChatHistory(ctx, userID, limit, offset)
 	if err != nil {
 		span.RecordError(err)
@@ -39,7 +38,6 @@ func (c *controller) GetChatHistory(ctx context.Context, userID uint64, limit, o
 		return nil, err
 	}
 
-	// Convert to GraphQL model
 	result := toModelOutSlice(histories)
 
 	span.SetAttributes(attribute.Int(AttrCount, len(result)))

@@ -10,20 +10,20 @@ import (
 )
 
 // toModelOut converts a domain.Category to a GraphQL model.Category.
-func toModelOut(c domain.Category) *gmodel.Category {
+func toModelOut(category domain.Category) *gmodel.Category {
 	out := &gmodel.Category{
-		ID:     strconv.FormatUint(c.ID, 10),
-		UserID: strconv.FormatUint(c.UserID, 10),
-		Name:   c.Name,
+		ID:     strconv.FormatUint(category.ID, 10),
+		UserID: strconv.FormatUint(category.UserID, 10),
+		Name:   category.Name,
 	}
-	if c.Description != "" {
-		out.Description = &c.Description
+	if category.Description != "" {
+		out.Description = &category.Description
 	}
-	if c.Color != "" {
-		out.ColorHex = &c.Color
+	if category.Color != "" {
+		out.ColorHex = &category.Color
 	}
-	if c.Icon != "" {
-		out.Icon = &c.Icon
+	if category.Icon != "" {
+		out.Icon = &category.Icon
 	}
 	return out
 }

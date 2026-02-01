@@ -21,7 +21,6 @@ func (c *controller) GetChatContext(ctx context.Context, userID uint64) (*model.
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 	)
 
-	// Delegate to the service (use case)
 	contextData, err := c.ChatService.GetChatContext(ctx, userID)
 	if err != nil {
 		span.RecordError(err)
@@ -35,7 +34,6 @@ func (c *controller) GetChatContext(ctx context.Context, userID uint64) (*model.
 		return nil, err
 	}
 
-	// Convert to GraphQL model
 	result := &model.ChatContext{
 		RecentChats:     toModelOutSlice(contextData.RecentChats),
 		TotalRecords:    safeInt32(contextData.TotalRecords),

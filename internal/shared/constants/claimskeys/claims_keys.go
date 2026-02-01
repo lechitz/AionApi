@@ -19,4 +19,7 @@ const (
 
 	// Exp is the JWT claim key for expiration time.
 	Exp = "exp"
+
+	// Sub is the JWT claim key for subject.
+	Sub = "sub"
 )

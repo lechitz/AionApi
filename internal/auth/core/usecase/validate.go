@@ -77,7 +77,6 @@ func (s *Service) Validate(ctx context.Context, tokenValue string) (uint64, map[
 		return userID, claims, nil
 	}
 
-	// Primary token doesn't match - check grace period
 	// Safe prefix extraction for logging
 	providedPrefix := sanitized
 	if len(sanitized) > 16 {
@@ -133,7 +132,7 @@ func extractUserIDFromClaims(claims map[string]any) (uint64, error) {
 	if v, ok := claims[claimskeys.UserID]; ok {
 		return parseUserIDValue(v)
 	}
-	if v, ok := claims["sub"]; ok {
+	if v, ok := claims[claimskeys.Sub]; ok {
 		return parseUserIDValue(v)
 	}
 	return 0, ErrInvalidUserIDClaim
