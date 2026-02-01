@@ -50,6 +50,10 @@ const (
 	EventRepositoryUpdate = "category.repository.update"
 	// EventRepositoryDelete marks the repository delete/soft-delete call.
 	EventRepositoryDelete = "category.repository.delete"
+	// EventCheckCache marks cache lookup operations.
+	EventCheckCache = "category.cache.check"
+	// EventCacheHit marks successful cache retrieval.
+	EventCacheHit = "category.cache.hit"
 	// EventInvalidateCache marks cache invalidation operations.
 	EventInvalidateCache = "category.cache.invalidate"
 	// EventSaveToCache marks cache save operations.

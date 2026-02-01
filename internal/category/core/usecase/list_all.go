@@ -23,10 +23,10 @@ func (s *Service) ListAll(ctx context.Context, userID uint64) ([]domain.Category
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 	)
 
-	span.AddEvent("CheckCache")
+	span.AddEvent(EventCheckCache)
 	cachedCategories, err := s.CategoryCache.GetCategoryList(ctx, userID)
 	if err == nil && cachedCategories != nil {
-		span.AddEvent("CacheHit")
+		span.AddEvent(EventCacheHit)
 		span.SetStatus(codes.Ok, StatusRetrievedAll)
 		return cachedCategories, nil
 	}

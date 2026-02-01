@@ -28,10 +28,10 @@ func (s *Service) GetByName(ctx context.Context, categoryName string, userID uin
 		return domain.Category{}, errors.New(CategoryNameIsRequired)
 	}
 
-	span.AddEvent("CheckCache")
+	span.AddEvent(EventCheckCache)
 	cachedCategory, err := s.CategoryCache.GetCategoryByName(ctx, categoryName, userID)
 	if err == nil && cachedCategory.ID != 0 {
-		span.AddEvent("CacheHit")
+		span.AddEvent(EventCacheHit)
 		span.SetStatus(codes.Ok, StatusRetrievedByName)
 		return cachedCategory, nil
 	}
