@@ -62,3 +62,4 @@ build-errors.log
 /infrastructure/db/seed/api_success.log
 /bin/seed-helper
 *.env.backup*
+tmp/
