@@ -184,8 +184,14 @@ services:
     restart: unless-stopped
     env_file:
       - ../../../../../aion-chat/infrastructure/docker/environments/dev/.env.dev
+    environment:
+      # HOT RELOAD: Ativa Uvicorn --reload
+      - DEV_MODE=true
     ports:
       - "8000:8000"
+    volumes:
+      # HOT RELOAD: Monta código Python
+      - ../../../../../aion-chat/src:/app/src
     networks:
       - rede_local
     depends_on:
@@ -202,12 +208,19 @@ services:
     image: aion-api:dev
     build:
       context: ../../../..
-      dockerfile: infrastructure/docker/Dockerfile
+      # HOT RELOAD: Use Dockerfile.dev com Air
+      dockerfile: infrastructure/docker/environments/dev/Dockerfile.dev
     container_name: aion-api-dev
     env_file:
       - .env.dev
     ports:
       - "5001:5001" # REST + GraphQL
+    volumes:
+      # HOT RELOAD: Monta código Go
+      - ../../../..:/app
+      # Preserva cache de módulos Go
+      - go-mod-cache:/go/pkg/mod
+      - go-build-cache:/root/.cache/go-build
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -243,6 +256,17 @@ services:
       - VITE_AUTH_URL=http://localhost:5001/aion/api/v1/auth
       - VITE_HEALTHCHECK_ENABLED=true
       - VITE_ASSETS_BASE_URL=http://localhost:4566/aion-assets/category-icons
+    volumes:
+      # HOT RELOAD: Monta código fonte para Vite HMR
+      - ../../../../../aionapi-dashboard/src:/app/src
+      - ../../../../../aionapi-dashboard/public:/app/public
+      - ../../../../../aionapi-dashboard/index.html:/app/index.html
+      - ../../../../../aionapi-dashboard/vite.config.ts:/app/vite.config.ts
+      - ../../../../../aionapi-dashboard/tsconfig.json:/app/tsconfig.json
+      - ../../../../../aionapi-dashboard/tsconfig.app.json:/app/tsconfig.app.json
+      - ../../../../../aionapi-dashboard/tsconfig.node.json:/app/tsconfig.node.json
+      # Preserva node_modules (NÃO sobrescrever!)
+      - aionapi-dashboard-node-modules:/app/node_modules
     networks:
       - rede_local
     depends_on:
@@ -261,3 +285,7 @@ volumes:
   ollama-models:
   loki-data-dev:
   fluentbit-data:
+  # HOT RELOAD: Named volumes para preservar dependências
+  aionapi-dashboard-node-modules:
+  go-mod-cache:
+  go-build-cache:
