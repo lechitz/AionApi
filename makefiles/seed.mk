@@ -4,7 +4,7 @@
 # All seeds use *_generate.sql (dynamic, parametrizable via N=count)
 # Usage: make seed-all N=10 | make populate N=100 | make seed-caller N=5
 # ============================================================
-.PHONY: seed-users seed-categories seed-all seed-tags seed-records seed-roles seed-user-roles seed-admin seed-user1-all seed-everybody seed-clean-users seed-clean-categories seed-clean-tags seed-clean-records seed-clean-roles seed-clean-user-roles seed-clean-all seed-helper seed-setup seed-quick seed-api-caller seed-api-caller-bootstrap seed-api-caller-clean seed-caller populate
+.PHONY: seed-users seed-categories seed-all seed-tags seed-records seed-roles seed-user-roles seed-admin seed-user1-all seed-everybody seed-clean-users seed-clean-categories seed-clean-tags seed-clean-records seed-clean-roles seed-clean-user-roles seed-clean-all seed-helper seed-setup seed-quick seed-api-caller seed-api-caller-bootstrap seed-api-caller-clean seed-caller populate reset-user-data
 
 POSTGRES_CONTAINER := postgres-dev
 POSTGRES_USER := aion
@@ -187,8 +187,40 @@ seed-clean-user-roles:
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.user_roles RESTART IDENTITY CASCADE;"
 
 seed-clean-roles:
-	@echo "Truncating roles (dev only)..."
+	@echo "🧹 Truncating roles (dev only)..."
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.roles RESTART IDENTITY CASCADE;"
 
 seed-clean-all: seed-clean-records seed-clean-tags seed-clean-categories seed-clean-user-roles seed-clean-users seed-clean-roles
 	@echo "✅ All seeded tables truncated (dev only)."
+
+# --- Missing seed targets (referenced by seed-all but not defined) ---
+seed-roles:
+	@echo "📋 Seeding system roles..."
+	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) < infrastructure/db/seed/roles.sql
+	@echo "✅ Roles seeded (owner, admin, user, blocked)"
+
+seed-user-roles:
+	@echo "📋 Assigning default roles to users without roles..."
+	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) < infrastructure/db/seed/user_roles.sql
+	@echo "✅ User roles assigned"
+
+# --- Reset user data (keeps system data like roles) ---
+# Deletes all user-generated data but preserves system configuration
+# Perfect for starting fresh without losing roles/permissions setup
+reset-user-data: seed-clean-records seed-clean-tags seed-clean-categories seed-clean-user-roles seed-clean-users
+	@echo "🔄 Resetting cache..."
+	@$(MAKE) cache-reset
+	@echo "📋 Re-seeding system roles..."
+	@$(MAKE) seed-roles
+	@echo ""
+	@echo "✅ User data reset complete!"
+	@echo "   ✓ Users deleted"
+	@echo "   ✓ Categories deleted"
+	@echo "   ✓ Tags deleted"
+	@echo "   ✓ Records deleted"
+	@echo "   ✓ Cache cleared"
+	@echo "   ✓ System roles preserved"
+	@echo ""
+	@echo "💡 Next steps:"
+	@echo "   → Create new user: make seed-admin (or signup via API)"
+	@echo "   → Seed test data: make seed-all N=10"

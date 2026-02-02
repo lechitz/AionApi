@@ -147,6 +147,7 @@ help:
 	@echo "     seed-user1-all           →  Seed full dataset for default user (id=1)"
 	@echo "     seed-everybody           →  Alias for seed-all"
 	@echo "     seed-clean-all           →  Truncate seeded tables (dev only)"
+	@echo "     reset-user-data          →  🔄 Delete all user data + reset cache (keeps roles)"
 	@echo "     seed-api-caller          →  Gera dados via chamadas HTTP/GraphQL (modo estrito, sem criar usuário)"
 	@echo "     seed-api-caller-bootstrap  →  Gera dados via API e cria usuário se login falhar"
 	@echo "     seed-api-caller-clean     →  Limpa registros via API e roda modo estrito"
