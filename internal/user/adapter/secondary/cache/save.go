@@ -30,7 +30,6 @@ func (s *Store) SaveUser(ctx context.Context, user domain.User, expiration time.
 		expiration = UserExpirationDefault
 	}
 
-	// Convert domain.User to UserCacheDTO (excludes PasswordHash)
 	dto := UserCacheDTO{
 		ID:        user.ID,
 		Name:      user.Name,
@@ -49,7 +48,6 @@ func (s *Store) SaveUser(ctx context.Context, user domain.User, expiration time.
 		return err
 	}
 
-	// Save by ID (primary key)
 	cacheKeyID := fmt.Sprintf(UserIDKeyFormat, user.ID)
 	if err := s.cache.Set(ctx, cacheKeyID, string(data), expiration); err != nil {
 		span.SetStatus(codes.Error, err.Error())
@@ -58,7 +56,6 @@ func (s *Store) SaveUser(ctx context.Context, user domain.User, expiration time.
 		return err
 	}
 
-	// Also save by username for username-based lookups
 	cacheKeyUsername := fmt.Sprintf(UserUsernameKeyFormat, user.Username)
 	if err := s.cache.Set(ctx, cacheKeyUsername, string(data), expiration); err != nil {
 		span.SetStatus(codes.Error, err.Error())
@@ -67,10 +64,8 @@ func (s *Store) SaveUser(ctx context.Context, user domain.User, expiration time.
 			AttributeCacheKey, cacheKeyUsername,
 			commonkeys.Error, err,
 		)
-		// Don't return error - primary key cache succeeded
 	}
 
-	// Also save by email for email-based lookups
 	cacheKeyEmail := fmt.Sprintf(UserEmailKeyFormat, user.Email)
 	if err := s.cache.Set(ctx, cacheKeyEmail, string(data), expiration); err != nil {
 		span.SetStatus(codes.Error, err.Error())
@@ -79,7 +74,6 @@ func (s *Store) SaveUser(ctx context.Context, user domain.User, expiration time.
 			AttributeCacheKey, cacheKeyEmail,
 			commonkeys.Error, err,
 		)
-		// Don't return error - primary key cache succeeded
 	}
 
 	span.SetStatus(codes.Ok, UserSavedSuccessfully)
