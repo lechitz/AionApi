@@ -4,7 +4,7 @@
 # All seeds use *_generate.sql (dynamic, parametrizable via N=count)
 # Usage: make seed-all N=10 | make populate N=100 | make seed-caller N=5
 # ============================================================
-.PHONY: seed-users seed-categories seed-all seed-tags seed-records seed-roles seed-user-roles seed-admin seed-user1-all seed-everybody seed-clean-users seed-clean-categories seed-clean-tags seed-clean-records seed-clean-roles seed-clean-user-roles seed-clean-all seed-helper seed-setup seed-quick seed-api-caller seed-api-caller-bootstrap seed-api-caller-clean seed-caller populate reset-user-data
+.PHONY: seed-users seed-categories seed-all seed-tags seed-records seed-roles seed-user-roles seed-admin seed-user1-all seed-everybody seed-clean-users seed-clean-categories seed-clean-tags seed-clean-records seed-clean-roles seed-clean-user-roles seed-clean-all seed-helper seed-setup seed-quick seed-api-caller seed-api-caller-bootstrap seed-api-caller-clean seed-caller populate reset-user-data seed-test-timeline seed-clean-test-timeline seed-essential db-full db-reset
 
 POSTGRES_CONTAINER := postgres-dev
 POSTGRES_USER := aion
@@ -224,3 +224,86 @@ reset-user-data: seed-clean-records seed-clean-tags seed-clean-categories seed-c
 	@echo "💡 Next steps:"
 	@echo "   → Create new user: make seed-admin (or signup via API)"
 	@echo "   → Seed test data: make seed-all N=10"
+
+# ============================================================
+# Hash generation helper
+# ============================================================
+.PHONY: hash-gen
+
+hash-gen:
+	@if [ -z "$(PASS)" ]; then \
+		echo "❌ Error: PASS parameter is required"; \
+		echo "Usage: make hash-gen PASS='yourpassword'"; \
+		exit 1; \
+	fi
+	@go run cmd/hash-gen/main.go "$(PASS)"
+
+
+# ============================================================
+#                   TIMELINE TEST DATA
+# ============================================================
+# Complete test profile seed
+# - Test user (username: testuser, password: Test@123)
+# - 8 categories + 22 tags (exact user structure)
+# - 50 realistic records across last 3 days
+# - Multiple event overlaps (tests multi-row rendering)
+# - Special rules: água/café 5-10min duration
+# - Dynamic dates (always works, uses CURRENT_DATE)
+# - Only runs in dev/local (user_id=999)
+# ============================================================
+
+.PHONY: seed-test seed-clean-test seed-essential db-full db-reset
+
+# Generate complete test profile
+seed-test:
+	@echo "🧪 Generating complete test profile..."
+	@echo "   • Test user (testuser / Test@123)"
+	@echo "   • 8 categories + 22 tags"
+	@echo "   • 50 records across last 3 days"
+	@echo "   • Multiple overlaps (events in parallel)"
+	@echo "   • Dynamic dates (uses CURRENT_DATE)"
+	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) \
+		< infrastructure/db/seed/test_data.sql
+	@echo "✅ Test profile generated!"
+	@echo ""
+	@echo "🔐 Test User Login:"
+	@echo "   username: testuser"
+	@echo "   password: Test@123"
+
+# Remove complete test profile
+seed-clean-test:
+	@echo "🧹 Removing test profile..."
+	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) \
+		-c "DELETE FROM aion_api.records WHERE user_id = 999;" \
+		-c "DELETE FROM aion_api.tags WHERE user_id = 999;" \
+		-c "DELETE FROM aion_api.categories WHERE user_id = 999;" \
+		-c "DELETE FROM aion_api.user_roles WHERE user_id = 999;" \
+		-c "DELETE FROM aion_api.users WHERE user_id = 999;"
+	@echo "✅ Test profile removed"
+
+# Seed only essential data (roles + admin user)
+seed-essential: seed-roles seed-admin
+	@echo "✅ Essential data seeded (roles + admin)"
+
+# Full database setup: migrations + essential + test profile
+db-full: migrate-dev-up seed-essential seed-test
+	@echo ""
+	@echo "✅ Database ready with test data!"
+	@echo ""
+	@echo "📊 Summary:"
+	@echo "   ✓ Migrations applied"
+	@echo "   ✓ System roles created"
+	@echo "   ✓ Admin user (username: aion, password: testpassword123)"
+	@echo "   ✓ Test user with complete profile (username: testuser, password: Test@123)"
+	@echo ""
+	@echo "🔐 Available Logins:"
+	@echo "   Admin:  username: aion      password: testpassword123"
+	@echo "   Test:   username: testuser  password: Test@123"
+	@echo ""
+	@echo "🎨 Timeline ready for testing!"
+
+# Reset database and apply migrations
+db-reset:
+	@echo "⚠️  Resetting database..."
+	@$(MAKE) migrate-dev-reset
+	@echo "✅ Database reset and migrations applied"
