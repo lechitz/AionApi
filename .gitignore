@@ -67,3 +67,6 @@ build-errors.log
 /bin/seed-helper
 *.env.backup*
 tmp/
+
+# Test data work tags
+infrastructure/db/seed/test_timeline_data.sql
