@@ -3,6 +3,7 @@
 # ============================================================
 
 .PHONY: build-dev dev-up dev-down dev dev-fast dev-clean clean-dev
+.PHONY: build-my my-up my-down my my-fast my-clean clean-my
 .PHONY: rebuild-dashboard rebuild-chat rebuild-api
 .PHONY: build-prod prod-up prod-down prod clean-prod
 .PHONY: docker-clean-all
@@ -295,6 +296,160 @@ clean-dev:
 	@docker volume ls -q | grep -E '(^|[-_])localstack-data$$' | xargs -r docker volume rm -f || true
 	@echo ""
 	@if docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
+		echo "✅ Cleanup complete (Ollama still running)"; \
+		echo ""; \
+		echo "💡 Ollama is still RUNNING to preserve models (~4-5GB)"; \
+		echo "   To remove Ollama: make ollama-clean"; \
+	else \
+		echo "✅ Cleanup complete"; \
+	fi
+	@echo ""
+
+# ============================================================
+#               PERSONAL/MY ENVIRONMENT (Isolated DB)
+# ============================================================
+
+build-my:
+	@echo "[BUILD-MY] Building MY image..."
+	DOCKER_BUILDKIT=1 docker build --progress=plain --build-arg BUILD_LDFLAGS="" -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):my .
+
+my-up: my-down
+	@echo "[MY-UP] Starting MY personal environment..."
+	export $$(cat $(ENV_FILE_MY) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_MY) rm -f -v postgres-my
+	export $$(cat $(ENV_FILE_MY) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_MY) up
+
+my-down:
+	@echo "[MY-DOWN] Stopping MY environment (preserving volumes)..."
+	@echo "      ℹ️  Ollama will be kept RUNNING (models preserved)"
+	@export $$(cat $(ENV_FILE_MY) | grep -v '^#' | xargs) && \
+		docker compose -f $(COMPOSE_FILE_MY) stop aion-api aion-chat aionapi-dashboard postgres-my redis-aion-my localstack-my jaeger otel-collector prometheus-my grafana-my loki fluent-bit 2>/dev/null || true
+	@export $$(cat $(ENV_FILE_MY) | grep -v '^#' | xargs) && \
+		docker compose -f $(COMPOSE_FILE_MY) rm -f aion-api aion-chat aionapi-dashboard postgres-my redis-aion-my localstack-my jaeger otel-collector prometheus-my grafana-my loki fluent-bit 2>/dev/null || true
+	@echo ""
+	@if docker ps --filter "name=ollama-my" --filter "status=running" -q | grep -q .; then \
+		echo "✅ Services stopped (Ollama still running)"; \
+		echo ""; \
+		echo "💡 Ollama is still RUNNING to preserve models"; \
+		echo "   • To stop Ollama: make ollama-down"; \
+		echo "   • To check status: make ollama-status"; \
+	else \
+		echo "✅ Services stopped"; \
+		echo ""; \
+	fi
+
+my:
+	@echo "=================================================="
+	@echo "🚀  BUILDING + STARTING PERSONAL ENVIRONMENT (MY)"
+	@echo "=================================================="
+	@echo ""
+	@echo "This will:"
+	@echo "  ✓ Build aion-api:my, aion-chat:dev, aionapi-dashboard:dev"
+	@echo "  ✓ Start ALL services (postgres-my, redis-my, etc.)"
+	@echo "  ✓ Use SEPARATE database (aionapi_my)"
+	@echo "  ✓ Share Ollama with dev environment (saves resources)"
+	@echo "  ✓ Enable hot-reload for all projects"
+	@echo ""
+	@echo "⚠️  Prerequisites:"
+	@echo "   • Ollama-dev must be running (shared between dev/my)"
+	@echo "   • Run 'make ollama-up' if not running"
+	@echo ""
+	@if ! docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
+		echo "❌ ERROR: ollama-dev is not running!"; \
+		echo ""; \
+		echo "Start it with: make ollama-up"; \
+		echo ""; \
+		exit 1; \
+	fi
+	@echo "✅ ollama-dev is running"
+	@echo ""
+	@echo "⏳ Building aion-api:my..."
+	@DOCKER_BUILDKIT=1 docker build --progress=plain --build-arg BUILD_LDFLAGS="" -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):my . || { echo "❌ Build failed"; exit 1; }
+	@echo ""
+	@echo "⏳ Starting services..."
+	@export $$(cat $(ENV_FILE_MY) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_MY) build
+	@export $$(cat $(ENV_FILE_MY) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_MY) up -d
+	@echo ""
+	@echo "✅ Personal environment started!"
+	@echo ""
+	@echo "📍 Services:"
+	@echo "   • AionAPI:       http://localhost:5001/aion/api/v1/health"
+	@echo "   • Dashboard:     http://localhost:5000"
+	@echo "   • Aion-Chat:     http://localhost:8000/health"
+	@echo "   • GraphQL:       http://localhost:5001/aion/graphql"
+	@echo "   • PostgreSQL:    localhost:5432 (DB: aionapi_my)"
+	@echo "   • Redis:         localhost:6379"
+	@echo "   • Ollama:        http://localhost:11434 (shared with dev)"
+	@echo "   • Jaeger UI:     http://localhost:16686"
+	@echo "   • Prometheus:    http://localhost:9090"
+	@echo "   • Grafana:       http://localhost:3001"
+	@echo ""
+	@echo "📋 Logs: make logs-all"
+	@echo "⏹️  Stop:  make my-down"
+	@echo ""
+
+my-fast:
+	@echo "=================================================="
+	@echo "🚀  STARTING PERSONAL ENVIRONMENT (MY) - NO REBUILD"
+	@echo "=================================================="
+	@echo ""
+	@echo "⚠️  Prerequisites:"
+	@echo "   • Ollama-dev must be running (shared between dev/my)"
+	@echo ""
+	@if ! docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
+		echo "❌ ERROR: ollama-dev is not running!"; \
+		echo ""; \
+		echo "Start it with: make ollama-up"; \
+		echo ""; \
+		exit 1; \
+	fi
+	@echo "✅ ollama-dev is running"
+	@echo ""
+	@echo "⏳ Starting services (using existing images)..."
+	@export $$(cat $(ENV_FILE_MY) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_MY) up -d
+	@echo ""
+	@echo "✅ Personal environment started!"
+	@echo ""
+	@echo "📍 Services:"
+	@echo "   • AionAPI:       http://localhost:5001/aion/api/v1/health"
+	@echo "   • Dashboard:     http://localhost:5000"
+	@echo "   • PostgreSQL:    localhost:5432 (DB: aionapi_my)"
+	@echo ""
+	@echo "📋 Logs: make logs-all"
+	@echo "⏹️  Stop:  make my-down"
+	@echo ""
+
+# Alias for backwards compatibility
+my-clean: clean-my
+
+clean-my:
+	@echo "[CLEAN-MY] Cleaning MY containers, volumes, images..."
+	@echo "      ⚠️  This will remove:"
+	@echo "         • PostgreSQL data (aionapi_my)"
+	@echo "         • Redis cache (redis-my)"
+	@echo "         • Localstack assets"
+	@echo "         • aion-api:my image"
+	@echo "         • aion-chat:dev image"
+	@echo "         • aionapi-dashboard:dev image"
+	@echo ""
+	@echo "      ℹ️  Ollama will be kept RUNNING (models preserved)"
+	@echo ""
+	@echo "→ Stopping and removing services (except Ollama)..."
+	@export $$(cat $(ENV_FILE_MY) | grep -v '^#' | xargs) && \
+		docker compose -f $(COMPOSE_FILE_MY) stop aion-api aion-chat aionapi-dashboard postgres-my redis-aion-my localstack-my jaeger otel-collector prometheus-my grafana-my loki fluent-bit 2>/dev/null || true
+	@export $$(cat $(ENV_FILE_MY) | grep -v '^#' | xargs) && \
+		docker compose -f $(COMPOSE_FILE_MY) rm -f -v aion-api aion-chat aionapi-dashboard postgres-my redis-aion-my localstack-my jaeger otel-collector prometheus-my grafana-my loki fluent-bit 2>/dev/null || true
+	@echo "→ Removing my images..."
+	@docker images --filter "reference=$(APPLICATION_NAME):my" -q | xargs -r docker rmi -f || true
+	@docker images --filter "reference=aion-chat:dev" -q | xargs -r docker rmi -f || true
+	@docker images --filter "reference=aionapi-dashboard:dev" -q | xargs -r docker rmi -f || true
+	@echo "→ Removing my volumes (Postgres/Redis/Observability)..."
+	@docker volume ls -q | grep -E '(^|[-_])postgres-data-my$$' | xargs -r docker volume rm -f || true
+	@docker volume ls -q | grep -E '(^|[-_])grafana-data$$' | xargs -r docker volume rm -f || true
+	@docker volume ls -q | grep -E '(^|[-_])loki-data-my$$' | xargs -r docker volume rm -f || true
+	@docker volume ls -q | grep -E '(^|[-_])fluentbit-data$$' | xargs -r docker volume rm -f || true
+	@docker volume ls -q | grep -E '(^|[-_])localstack-data$$' | xargs -r docker volume rm -f || true
+	@echo ""
+	@if docker ps --filter "name=ollama-my" --filter "status=running" -q | grep -q .; then \
 		echo "✅ Cleanup complete (Ollama still running)"; \
 		echo ""; \
 		echo "💡 Ollama is still RUNNING to preserve models (~4-5GB)"; \

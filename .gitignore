@@ -25,6 +25,7 @@ go.work.sum
 .env.dev
 .env.prod
 .env.local
+.env.my
 **/seed/.env.local
 
 # IDE files
@@ -34,6 +35,9 @@ go.work.sum
 .venv-docs/
 site/
 /infrastructure/docker/environments/dev/.env
+
+# Personal "my" environment - keep your local configs private
+/infrastructure/docker/environments/my/
 
 # Personal, local-only docs (private workspace for docs/ideas)
 docs/personal/

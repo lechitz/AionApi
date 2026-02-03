@@ -6,6 +6,8 @@ APPLICATION_NAME := aion-api
 
 COMPOSE_FILE_DEV  := infrastructure/docker/environments/dev/docker-compose-dev.yaml
 ENV_FILE_DEV      := infrastructure/docker/environments/dev/.env.dev
+COMPOSE_FILE_MY   := infrastructure/docker/environments/my/docker-compose-my.yaml
+ENV_FILE_MY       := infrastructure/docker/environments/my/.env.my
 COMPOSE_FILE_PROD := infrastructure/docker/environments/prod/docker-compose-prod.yaml
 ENV_FILE_PROD     := infrastructure/docker/environments/prod/.env.prod
 
@@ -38,6 +40,19 @@ help:
 	@echo ""
 	@echo ""
 	@echo " 🔶 ┃ DOCKER ENVIRONMENT COMMANDS ┃"
+	@echo ""
+	@echo "  - [MY - Personal Environment (Isolated DB)]"
+	@echo ""
+	@echo "     my                       →  Build ALL images + start FULL STACK (Personal Environment)"
+	@echo "                                  • Separate PostgreSQL database (aionapi_my)"
+	@echo "                                  • Separate Redis instance (redis-aion-my)"
+	@echo "                                  • Shares Ollama with dev (saves ~5GB+ per model)"
+	@echo "                                  • ⚠️  Requires ollama-dev running (make ollama-up)"
+	@echo "                                  • 🔥 HOT RELOAD enabled for all projects"
+	@echo "                                  • Config in: infrastructure/docker/environments/my/"
+	@echo "     my-fast                  →  Start Personal stack without rebuilding"
+	@echo "     my-down                  →  Stop Personal services (preserves volumes)"
+	@echo "     clean-my                 →  ⚠️ Remove Personal containers/volumes/images"
 	@echo ""
 	@echo "  - [DEV - Docker Full Stack]"
 	@echo ""
