@@ -41,7 +41,7 @@ test-cover:
 		find . -type f -name "*.go" \
 			! -name "*_test.go" \
 			! -path "./tests/mocks/*" \
-			! -path "./docs/swagger/*" \
+			! -path "./contracts/openapi/*" \
 			! -path "./vendor/*" \
 			! -path "./.gomodcache/*" \
 			! -name "*.gen.go" \

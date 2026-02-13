@@ -56,5 +56,5 @@ dev-local-full: dev-local-deps
 		DB_HOST=localhost \
 		CACHE_ADDR=localhost:6379 \
 		OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
-		go run ./cmd/aion-api
+		go run ./cmd/api
 

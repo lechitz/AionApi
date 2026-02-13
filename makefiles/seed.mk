@@ -21,8 +21,8 @@ endif
 
 # Build the seed-helper tool
 seed-helper:
-	@echo "🔨 Building seed-helper..."
-	@go build -o bin/seed-helper ./cmd/seed-helper
+	@echo "Building seed-helper..."
+	@go build -o bin/seed-helper ./hack/tools/seed-helper
 
 # Generate .env.local with all seed variables (interactive setup)
 seed-setup: seed-helper
@@ -124,19 +124,19 @@ seed-everybody: seed-all
 	@echo "✅ Everyone seeded."
 
 seed-api-caller:
-	@echo "🌐 Seeding via API (HTTP/GraphQL)..."
-	@go run ./cmd/api-seed-caller
+	@echo "Seeding via API (HTTP/GraphQL)..."
+	@go run ./hack/tools/seed-caller
 
 seed-api-caller-bootstrap:
-	@echo "🌐 Seeding via API (bootstrap: cria usuário se necessário)..."
-	@API_CALLER_AUTO_CREATE=true go run ./cmd/api-seed-caller
+	@echo "Seeding via API (bootstrap: cria usuário se necessário)..."
+	@API_CALLER_AUTO_CREATE=true go run ./hack/tools/seed-caller
 
 seed-api-caller-clean:
-	@echo "🧹 Limpando via API (soft delete de records, sem criar nada)..."
-	@API_CALLER_CLEAN=true API_CALLER_ONLY_CLEAN=true go run ./cmd/api-seed-caller
+	@echo "Limpando via API (soft delete de records, sem criar nada)..."
+	@API_CALLER_CLEAN=true API_CALLER_ONLY_CLEAN=true go run ./hack/tools/seed-caller
 
 seed-caller:
-	@echo "🌐 Seeding via API (multi-user: count=$(N))..."
+	@echo "Seeding via API (multi-user: count=$(N))..."
 	@echo "📋 Step 0/4: Ensuring migrations are applied..."
 	@if command -v migrate >/dev/null 2>&1; then \
 		migrate -path infrastructure/db/migrations -database "postgres://aion:aion123@localhost:5432/aionapi?sslmode=disable" up 2>&1 | grep -v "no change" || true; \
@@ -152,14 +152,14 @@ seed-caller:
 		curl -sf http://localhost:5001/aion/api/v1/health > /dev/null 2>&1 && break || sleep 2; \
 	done
 	@echo "📋 Step 4/4: Running API seed caller..."
-	@API_CALLER_COUNT=$(N) API_CALLER_AUTO_CREATE=true go run ./cmd/api-seed-caller
+	@API_CALLER_COUNT=$(N) API_CALLER_AUTO_CREATE=true go run ./hack/tools/seed-caller
 
 seed-api-caller-many: seed-caller
 
 # Populate N users (default 10) with categories/tags/records via SQL generators.
 # Usage: make populate N=100
 populate:
-	@echo "🧹 Cleaning tables and populating $(N) users (password=$(SEED_DEFAULT_PASSWORD))..."
+	@echo "Cleaning tables and populating $(N) users (password=$(SEED_DEFAULT_PASSWORD))..."
 	@$(MAKE) seed-clean-all
 	@$(MAKE) seed-all N=$(N)
 	@echo "✅ Populate completed for $(N) users."
@@ -167,19 +167,19 @@ populate:
 # --- Clean helpers (dev-only): truncate seeded tables safely and reset IDs ---
 # NOTE: Intended for local dev. These use TRUNCATE ... RESTART IDENTITY CASCADE.
 seed-clean-users:
-	@echo "🧹 Truncating users (dev only)..."
+	@echo "Truncating users (dev only)..."
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.users RESTART IDENTITY CASCADE;"
 
 seed-clean-categories:
-	@echo "🧹 Truncating categories (dev only)..."
+	@echo "Truncating categories (dev only)..."
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.categories RESTART IDENTITY CASCADE;"
 
 seed-clean-tags:
-	@echo "🧹 Truncating tags (dev only)..."
+	@echo "Truncating tags (dev only)..."
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.tags RESTART IDENTITY CASCADE;"
 
 seed-clean-records:
-	@echo "🧹 Truncating records (dev only)..."
+	@echo "Truncating records (dev only)..."
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.records RESTART IDENTITY CASCADE;"
 
 seed-clean-user-roles:
@@ -187,7 +187,7 @@ seed-clean-user-roles:
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.user_roles RESTART IDENTITY CASCADE;"
 
 seed-clean-roles:
-	@echo "🧹 Truncating roles (dev only)..."
+	@echo "Truncating roles (dev only)..."
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.roles RESTART IDENTITY CASCADE;"
 
 seed-clean-all: seed-clean-records seed-clean-tags seed-clean-categories seed-clean-user-roles seed-clean-users seed-clean-roles
@@ -208,7 +208,7 @@ seed-user-roles:
 # Deletes all user-generated data but preserves system configuration
 # Perfect for starting fresh without losing roles/permissions setup
 reset-user-data: seed-clean-records seed-clean-tags seed-clean-categories seed-clean-user-roles seed-clean-users
-	@echo "🔄 Resetting cache..."
+	@echo "Resetting cache..."
 	@$(MAKE) cache-reset
 	@echo "📋 Re-seeding system roles..."
 	@$(MAKE) seed-roles
@@ -236,7 +236,14 @@ hash-gen:
 		echo "Usage: make hash-gen PASS='yourpassword'"; \
 		exit 1; \
 	fi
-	@go run cmd/hash-gen/main.go "$(PASS)"
+	@echo "Generating bcrypt hash for: $(PASS)"
+	@echo ""
+	@go run -mod=readonly -tags tools golang.org/x/crypto/bcrypt/cmd/bcrypt -cost=10 "$(PASS)" 2>/dev/null || \
+	{ \
+		echo "Password: $(PASS)"; \
+		GO_CODE='package main; import ("fmt"; "os"; "golang.org/x/crypto/bcrypt"); func main() { h, _ := bcrypt.GenerateFromPassword([]byte(os.Args[1]), 10); fmt.Printf("Hash:     %s\n", string(h)); err := bcrypt.CompareHashAndPassword(h, []byte(os.Args[1])); if err == nil { fmt.Println("✅ Hash verified successfully!") } else { fmt.Printf("❌ Hash verification failed: %v\n", err) }}'; \
+		echo "$$GO_CODE" | go run - "$(PASS)"; \
+	}
 
 
 # ============================================================
@@ -256,7 +263,7 @@ hash-gen:
 
 # Generate complete test profile
 seed-test:
-	@echo "🧪 Generating complete test profile..."
+	@echo "Generating complete test profile..."
 	@echo "   • Test user (testuser / Test@123)"
 	@echo "   • 8 categories + 22 tags"
 	@echo "   • 50 records across last 3 days"
@@ -272,7 +279,7 @@ seed-test:
 
 # Remove complete test profile
 seed-clean-test:
-	@echo "🧹 Removing test profile..."
+	@echo "Removing test profile..."
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) \
 		-c "DELETE FROM aion_api.records WHERE user_id = 999;" \
 		-c "DELETE FROM aion_api.tags WHERE user_id = 999;" \
@@ -300,7 +307,7 @@ db-full: migrate-dev-up seed-essential seed-test
 	@echo "   Admin:  username: aion      password: testpassword123"
 	@echo "   Test:   username: testuser  password: Test@123"
 	@echo ""
-	@echo "🎨 Timeline ready for testing!"
+	@echo "Timeline ready for testing!"
 
 # Reset database and apply migrations
 db-reset:

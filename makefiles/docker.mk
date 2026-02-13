@@ -22,7 +22,9 @@ rebuild-dashboard:
 	@docker rmi aionapi-dashboard:dev 2>/dev/null || true
 	@echo "Rebuilding aionapi-dashboard..."
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) build aionapi-dashboard
-	@echo "🔄 Starting aionapi-dashboard..."
+	@echo "Auto-cleanup: removing dangling images..."
+	@docker image prune -f > /dev/null 2>&1 || true
+	@echo "Starting aionapi-dashboard..."
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d aionapi-dashboard
 	@echo "✅ aionapi-dashboard rebuilt and restarted!"
 	@echo "   → http://localhost:5000"
@@ -35,7 +37,9 @@ rebuild-chat:
 	@docker rmi aion-chat:dev 2>/dev/null || true
 	@echo "Rebuilding aion-chat..."
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) build aion-chat
-	@echo "🔄 Starting aion-chat..."
+	@echo "Auto-cleanup: removing dangling images..."
+	@docker image prune -f > /dev/null 2>&1 || true
+	@echo "Starting aion-chat..."
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d aion-chat
 	@echo "✅ aion-chat rebuilt and restarted!"
 	@echo "   → http://localhost:8000/health"
@@ -47,8 +51,10 @@ rebuild-api:
 	@echo "Removing old aion-api image..."
 	@docker rmi $(APPLICATION_NAME):dev 2>/dev/null || true
 	@echo "Rebuilding aion-api..."
-	@DOCKER_BUILDKIT=1 docker build --progress=plain --build-arg BUILD_LDFLAGS="" -f infrastructure/docker/Dockerfile -t $(APPLICATION_NAME):dev .
-	@echo "🔄 Starting aion-api..."
+	@DOCKER_BUILDKIT=1 docker build --progress=plain --build-arg BUILD_LDFLAGS="" -f infrastructure/docker/environments/dev/Dockerfile.dev -t $(APPLICATION_NAME):dev .
+	@echo "Auto-cleanup: removing dangling images..."
+	@docker image prune -f > /dev/null 2>&1 || true
+	@echo "Starting aion-api..."
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d aion-api
 	@echo "✅ aion-api rebuilt and restarted!"
 	@echo "   → http://localhost:5001/aion/api/v1/health"
@@ -64,7 +70,7 @@ dev-up: dev-down
 
 dev-down:
 	@echo "[DEV-DOWN] Stopping DEV environment (preserving volumes)..."
-	@echo "      ℹ️  Ollama will be kept RUNNING (models preserved)"
+	@echo "      Ollama will be kept RUNNING (models preserved)"
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
 		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
@@ -86,26 +92,26 @@ dev-down:
 dev: build-dev
 	@echo "[DEV] Starting FULL STACK environment (detached)..."
 	@echo "      → AionApi + aion-chat + dashboard + infrastructure"
-	@echo "      ℹ️  Volumes preserved (Ollama models + PostgreSQL data)"
+	@echo "      ℹ️  Volumes preserved (Ollama models + Database)"
 	@echo "      💡 Use 'make rebuild-chat' or 'make rebuild-dashboard' to force rebuild"
 	@echo ""
-	@echo "🔄 Starting/restarting services (preserving volumes)..."
+	@echo "Starting/restarting services (preserving volumes)..."
 	@if ! docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
-		echo "🚀 Starting Ollama..."; \
+		echo "Starting Ollama..."; \
 		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d ollama; \
 		sleep 2; \
 	fi
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d --build --no-recreate 2>/dev/null || \
 		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d --build
 	@echo ""
-	@echo "⏳ Waiting for PostgreSQL to be ready..."
+	@echo "⏳ Waiting for Database to be ready..."
 	@for i in $$(seq 1 30); do \
 		if docker exec postgres-dev pg_isready -U aion -d aionapi >/dev/null 2>&1; then \
-			echo "✅ PostgreSQL is ready!"; \
+			echo "✅ Database is ready!"; \
 			break; \
 		fi; \
 		if [ $$i -eq 30 ]; then \
-			echo "⚠️  Timeout waiting for PostgreSQL"; \
+			echo "⚠️  Timeout waiting for Database"; \
 		fi; \
 		sleep 1; \
 	done
@@ -120,7 +126,7 @@ dev: build-dev
 	fi
 	@echo ""
 	@echo "🔧 Checking Ollama model setup..."
-	@bash scripts/check-and-setup-ollama.sh || echo "⚠️  Ollama setup had issues but continuing..."
+	@bash hack/dev/check-and-setup-ollama.sh || echo "⚠️  Ollama setup had issues but continuing..."
 	@echo ""
 	@echo "⏳ Waiting for services to be healthy..."
 	@for i in $$(seq 1 60); do \
@@ -159,25 +165,25 @@ dev-fast:
 	@echo "      ⚡ Use this when you haven't changed ANY code (fastest option)"
 	@echo ""
 	@if ! docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
-		echo "🚀 Starting Ollama..."; \
+		echo "Starting Ollama..."; \
 		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d ollama; \
 		sleep 2; \
 	fi
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) up -d
 	@echo ""
-	@echo "⏳ Waiting for PostgreSQL..."
+	@echo "Waiting for Database..."
 	@for i in $$(seq 1 20); do \
 		if docker exec postgres-dev pg_isready -U aion -d aionapi >/dev/null 2>&1; then \
 			break; \
 		fi; \
 		sleep 1; \
 	done
-	@echo "🗄️  Applying migrations..."
+	@echo " Applying migrations..."
 	@if command -v migrate >/dev/null 2>&1; then \
 		migrate -path infrastructure/db/migrations -database "postgres://aion:aion123@localhost:5432/aionapi?sslmode=disable" up 2>&1 | grep -v "no change" || true; \
 	fi
 	@echo ""
-	@echo "✓ Services started (using existing images)"
+	@echo " Services started (using existing images)"
 	@echo ""
 	@echo "📍 Service URLs:"
 	@echo "   • Dashboard:  http://localhost:5000"
@@ -339,7 +345,7 @@ my-down:
 
 my:
 	@echo "=================================================="
-	@echo "🚀  BUILDING + STARTING PERSONAL ENVIRONMENT (MY)"
+	@echo "  BUILDING + STARTING PERSONAL ENVIRONMENT (MY)"
 	@echo "=================================================="
 	@echo ""
 	@echo "This will:"

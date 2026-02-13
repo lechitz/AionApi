@@ -105,6 +105,9 @@ graphql:
 	@echo "Schemas found:"; if [ -n "$(GRAPHQL_SOURCES)" ]; then printf "  %s\n" $(GRAPHQL_SOURCES); else echo "  (no .graphqls found)"; fi
 	@mkdir -p "$(GO_CACHE)"
 	cd "$(GRAPH_DIR)" && GOCACHE=$(GO_CACHE) go run github.com/99designs/gqlgen generate
+	@echo ""
+	@echo "Applying introspection patch (required for aion-chat)..."
+	@$(ROOT_DIR)/hack/tools/patch-introspection.sh
 	cd "$(ROOT_DIR)" && GOCACHE=$(GO_CACHE) go mod tidy
 	@echo "✅  GraphQL code generated successfully."
 
@@ -173,7 +176,7 @@ mocks: verify_mockgen
 	fi
 	@$(MAKE) --no-print-directory $(GENERATED_MOCKS)
 	@if [ -z "$(GENERATED_MOCKS)" ]; then \
-		echo "ℹ️  No eligible files found under ports/output."; \
+		echo "No eligible files found under ports/output."; \
 	else \
 		echo "✅  All mocks generated successfully at: $(MOCKS_DIR)"; \
 	fi
@@ -207,7 +210,7 @@ endif
 clean_mocks:
 	@if [ -d "$(MOCKS_DIR)" ]; then \
 		rm -rf "$(MOCKS_DIR)"; \
-		echo "🧹  Cleaned: $(MOCKS_DIR)"; \
+		echo "Cleaned: $(MOCKS_DIR)"; \
 	else \
-		echo "ℹ️  Nothing to clean at $(MOCKS_DIR)"; \
+		echo "Nothing to clean at $(MOCKS_DIR)"; \
 	fi

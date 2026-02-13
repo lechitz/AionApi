@@ -5,17 +5,17 @@ ROOT_DIR := $(shell pwd)
 DOCS_DIR := $(ROOT_DIR)/docs/graphql
 SCHEMA_DIR := $(ROOT_DIR)/internal/adapter/primary/graphql/schema
 SCHEMA_OUT := $(DOCS_DIR)/schema.graphql
-QUERIES_DIR := $(ROOT_DIR)/graphql/queries
+QUERIES_DIR := $(ROOT_DIR)/contracts/graphql/queries
 
 graphql.schema:
-	@echo "📜 Exporting schema..."
+	@echo "Exporting schema..."
 	@mkdir -p "$(DOCS_DIR)"
 	@echo "# Aion GraphQL Schema" > "$(SCHEMA_OUT)"
 	@find "$(SCHEMA_DIR)" -name "*.graphqls" | sort | xargs cat >> "$(SCHEMA_OUT)"
 	@echo "✅ Schema: $(SCHEMA_OUT)"
 
 graphql.queries:
-	@echo "📝 Creating queries..."
+	@echo "Creating queries..."
 	@mkdir -p "$(QUERIES_DIR)/categories" "$(QUERIES_DIR)/tags" "$(QUERIES_DIR)/records"
 	@printf 'query ListCategories { categories { id name description colorHex icon } }\n' > "$(QUERIES_DIR)/categories/list.graphql"
 	@printf 'query ListTags { tags { id name categoryId icon } }\n' > "$(QUERIES_DIR)/tags/list.graphql"
@@ -29,7 +29,7 @@ graphql.docs: graphql.schema
 
 graphql.clean:
 	@rm -rf "$(DOCS_DIR)" "$(QUERIES_DIR)"
-	@echo "🧹 Cleaned"
+	@echo "Cleaned"
 
 graphql.setup: graphql.schema graphql.queries graphql.docs
 	@echo ""
