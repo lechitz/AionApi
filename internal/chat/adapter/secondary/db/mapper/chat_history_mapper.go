@@ -11,13 +11,17 @@ import (
 // ChatHistoryToDB converts a domain ChatHistory to a database ChatHistoryDB model.
 func ChatHistoryToDB(ch domain.ChatHistory) model.ChatHistoryDB {
 	db := model.ChatHistoryDB{
-		ChatID:     ch.ChatID,
-		UserID:     ch.UserID,
-		Message:    ch.Message,
-		Response:   ch.Response,
-		TokensUsed: ch.TokensUsed,
-		CreatedAt:  ch.CreatedAt,
-		UpdatedAt:  ch.UpdatedAt,
+		ChatID:          ch.ChatID,
+		UserID:          ch.UserID,
+		Message:         ch.Message,
+		Response:        ch.Response,
+		TokensUsed:      ch.TokensUsed,
+		CreatedAt:       ch.CreatedAt,
+		UpdatedAt:       ch.UpdatedAt,
+		SessionID:       ch.SessionID,
+		ExecutionTimeMs: ch.ExecutionTimeMs,
+		ToolCount:       ch.ToolCount,
+		ErrorCount:      ch.ErrorCount,
 	}
 
 	// Convert FunctionCalls map to JSONB
@@ -27,7 +31,7 @@ func ChatHistoryToDB(ch domain.ChatHistory) model.ChatHistoryDB {
 		}
 	}
 
-	// Handle soft delete
+	// Handle soft-delete
 	if ch.DeletedAt != nil {
 		db.DeletedAt.Time = *ch.DeletedAt
 		db.DeletedAt.Valid = true
@@ -39,13 +43,17 @@ func ChatHistoryToDB(ch domain.ChatHistory) model.ChatHistoryDB {
 // ChatHistoryFromDB converts a database ChatHistoryDB model to a domain ChatHistory.
 func ChatHistoryFromDB(db model.ChatHistoryDB) domain.ChatHistory {
 	ch := domain.ChatHistory{
-		ChatID:     db.ChatID,
-		UserID:     db.UserID,
-		Message:    db.Message,
-		Response:   db.Response,
-		TokensUsed: db.TokensUsed,
-		CreatedAt:  db.CreatedAt,
-		UpdatedAt:  db.UpdatedAt,
+		ChatID:          db.ChatID,
+		UserID:          db.UserID,
+		Message:         db.Message,
+		Response:        db.Response,
+		TokensUsed:      db.TokensUsed,
+		CreatedAt:       db.CreatedAt,
+		UpdatedAt:       db.UpdatedAt,
+		SessionID:       db.SessionID,
+		ExecutionTimeMs: db.ExecutionTimeMs,
+		ToolCount:       db.ToolCount,
+		ErrorCount:      db.ErrorCount,
 	}
 
 	// Convert JSONB to FunctionCalls map
@@ -56,7 +64,7 @@ func ChatHistoryFromDB(db model.ChatHistoryDB) domain.ChatHistory {
 		}
 	}
 
-	// Handle soft delete
+	// Handle soft-delete
 	if db.DeletedAt.Valid {
 		ch.DeletedAt = &db.DeletedAt.Time
 	}
