@@ -15,4 +15,6 @@ type Category struct {
 	Icon        string     // SVG icon key used for visualization
 	ID          uint64     // Unique identifier for the handler
 	UserID      uint64     // ID of the user who owns this handler
+	UsageCount  int        // Number of records associated with this category (updated via backfill or triggers)
+	LastUsedAt  *time.Time // Timestamp of the last record creation in this category (nil if never used)
 }

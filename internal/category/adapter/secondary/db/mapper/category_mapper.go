@@ -26,6 +26,8 @@ func CategoryFromDB(category model.CategoryDB) domain.Category {
 		CreatedAt:   category.CreatedAt,
 		UpdatedAt:   category.UpdatedAt,
 		DeletedAt:   deletedAt,
+		UsageCount:  category.UsageCount,
+		LastUsedAt:  category.LastUsedAt,
 	}
 }
 
@@ -47,5 +49,7 @@ func CategoryToDB(category domain.Category) model.CategoryDB {
 		CreatedAt:   category.CreatedAt,
 		UpdatedAt:   category.UpdatedAt,
 		DeletedAt:   deleted,
+		UsageCount:  category.UsageCount,
+		LastUsedAt:  category.LastUsedAt,
 	}
 }
