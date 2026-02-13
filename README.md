@@ -1,15 +1,31 @@
 # AionApi
 
-A modular Go backend exposing REST and GraphQL APIs with Hexagonal/Clean Architecture principles.
+AionApi is a production-oriented Go backend that exposes REST and GraphQL APIs for habit and diary workflows, built with Hexagonal/Clean Architecture and strong observability.
+
+## Why This Project
+
+AionApi focuses on three goals:
+
+- keep business logic isolated from transport and infrastructure
+- provide stable API contracts for multiple clients
+- keep operations visible and debuggable in local and production-like environments
 
 ## Quick Links
 
-- Docs site: [AionApi GitHub Pages](https://lechitz.github.io/AionApi/)
-- Swagger UI: [AionApi Swagger](https://lechitz.github.io/AionApi/swagger-ui/)
+- Documentation portal: [AionApi Docs](https://lechitz.github.io/AionApi/)
+- REST explorer: [Swagger UI](https://lechitz.github.io/AionApi/swagger-ui/)
+- OpenAPI contract: [`swagger/swagger.yaml`](./swagger/swagger.yaml)
+- GraphQL schema artifact: [`docs/graphql/schema.graphql`](./docs/graphql/schema.graphql)
 
-## Project Overview
+## Architecture At A Glance
 
-AionApi provides backend capabilities for habit/diary management workflows, including user management, auth, categories, tags, records, and chat integrations.
+| Layer | Purpose |
+| --- | --- |
+| `internal/<ctx>/core` | Domain, ports, and usecases (business logic) |
+| `internal/<ctx>/adapter/primary` | HTTP/GraphQL input adapters |
+| `internal/<ctx>/adapter/secondary` | DB/cache/provider output adapters |
+| `internal/platform` | App bootstrap, server, config, and observability wiring |
+| `infrastructure` | Docker, migrations, observability stack |
 
 ## Core Stack
 
@@ -18,16 +34,25 @@ AionApi provides backend capabilities for habit/diary management workflows, incl
 - gqlgen (GraphQL)
 - PostgreSQL + GORM
 - Redis
-- OpenTelemetry + Grafana + Prometheus + Loki
+- OpenTelemetry + Prometheus + Grafana + Loki
 - Docker / Docker Compose
 
-## Common Workflows
+## Fast Local Workflow
 
 ```bash
+make tools-install
 make dev
 make migrate-up
 make seed-all
+make verify
+```
+
+## Quality Gates
+
+```bash
 make test
+make test-cover-detail
+make docs-verify
 make verify
 ```
 
@@ -38,7 +63,6 @@ Repository README map by area.
 
 ### cmd
 - [`cmd/README.md`](./cmd/README.md)
-- [`cmd/api/README.md`](./cmd/api/README.md)
 
 ### contracts
 - [`contracts/graphql/queries/README.md`](./contracts/graphql/queries/README.md)
@@ -119,7 +143,7 @@ Repository README map by area.
 
 ## Package Improvements
 
-- Add architecture decision record links for major platform/domain choices.
-- Add contributor quick-start for first local run and troubleshooting.
-- Add release notes section summarizing contract changes per version.
-- Add badges/automation links for CI, coverage, and docs publishing.
+- Add architecture decision records (ADRs) for critical platform/domain choices.
+- Add release notes summary per version with API contract deltas.
+- Add contributor troubleshooting matrix for local setup failures.
+- Add CI/docs badges and links to pipeline checks.

@@ -4,27 +4,44 @@
 
 ## Overview
 
-This folder contains application binaries.
-Current production entrypoint is `cmd/api`.
+This layer contains executable application entrypoints.
+Current canonical runtime entrypoint is `cmd/api`.
 
 ## Structure
 
 | Folder | Role |
 | --- | --- |
-| `api/` | Main production server bootstrap |
+| `api/` | Main API bootstrap and runtime startup |
+
+## Responsibilities
+
+| Area | Responsibility |
+| --- | --- |
+| Bootstrap | Initialize platform dependencies and wiring |
+| Runtime | Start HTTP/GraphQL servers and middlewares |
+| Lifecycle | Handle graceful shutdown and cleanup |
+
+## Build and Run
+
+```bash
+go build -o bin/api ./cmd/api
+go run ./cmd/api
+# local stack with dependencies
+make dev
+```
 
 ## Design Notes
 
-- Entrypoints should orchestrate and delegate, not implement domain logic.
-- Keep startup concerns centralized (config, lifecycle, observability).
-- Development tooling belongs under `hack/`.
+- Keep entrypoints orchestration-only.
+- Domain rules belong to bounded contexts under `internal/<ctx>/core`.
+- Dev-only scripts/tools should live under `hack/`.
 
 ## Package Improvements
 
-- Add a compact boot sequence section linking to platform startup docs.
-- Document expected env profile for each entrypoint.
-- Add explicit convention for naming new entrypoint folders.
-- Add link to release/build pipeline docs for binaries.
+- Add startup sequence diagram (config -> deps -> server).
+- Add troubleshooting for missing env/infra dependencies.
+- Add explicit local vs container run matrix.
+- Add link to health/metrics endpoints for runtime checks.
 
 ---
 
