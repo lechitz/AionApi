@@ -1,6 +1,6 @@
 # GraphQL Shared Queries
 
-Single source of truth for GraphQL operations used across all Aion clients.
+Single source of truth for GraphQL operations used across Aion clients.
 
 ## 📁 Structure
 
