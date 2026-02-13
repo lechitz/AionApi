@@ -1,41 +1,36 @@
-# infrastructure/db
+# Database Infrastructure
 
-Database assets for the AionAPI Postgres schema. This folder contains schema migrations and seed data used for local development and testing.
+**Path:** `infrastructure/db`
 
-## Package Composition
+## Overview
 
-- `migrations/`
-  - Versioned schema changes (up/down) managed by golang-migrate.
-- `seed/`
-  - Deterministic seed datasets for dev/test.
+Database infrastructure assets for schema lifecycle and seed datasets.
+This package is split into migration contracts and seed scripts.
 
-## Flow (Where it comes from -> Where it goes)
+## Subpackages
 
-Developer -> migrations/seed -> database schema and data
+| Subpackage | Responsibility |
+| --- | --- |
+| `migrations/` | Versioned schema evolution |
+| `seed/` | Deterministic local/test data provisioning |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Keep schema evolution reproducible.
-- Separate schema changes from data seeding.
-- Support fast local setup without API dependency.
+- Keep schema changes migration-driven.
+- Keep seed data separate from schema evolution.
+- Align SQL artifacts with repository expectations in DB adapters.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Never edit applied migrations; add a new one.
-- Keep names aligned with DB adapters in `internal/*/adapter/secondary/db`.
-- Keep seeds small, safe, and representative.
-- Use env vars for parameters (no hardcoded secrets).
+- Add a simple compatibility matrix (migration version vs seed assumptions).
+- Add DB bootstrap script for first-time local setup.
+- Add schema verification query snippets for quick checks.
+- Add naming conventions for new SQL artifacts.
 
-## Common Commands
+---
 
-```bash
-make migrate-up
-make migrate-new
-make seed-all
-```
-
-## What Should NOT Live Here
-
-- Business logic or API behavior.
-- One-off SQL without versioning.
-- Sensitive production data.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

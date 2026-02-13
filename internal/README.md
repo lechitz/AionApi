@@ -1,41 +1,37 @@
-# internal
+# Internal Application Layer
 
-Application code for AionAPI, organized by bounded contexts and the shared platform layer (Hexagonal/Clean Architecture).
+**Path:** `internal`
 
-## Package Composition
+## Overview
 
-- `<context>/`
-  - Domain-focused modules (auth, user, chat, etc.).
-- `adapter/`
-  - Shared primary adapters (GraphQL infrastructure) and shared secondary adapters (db/cache/crypto).
-- `platform/`
-  - Cross-cutting runtime wiring: config, server, observability.
-- `shared/`
-  - Shared constants, errors, and utilities.
+Main application code organized by bounded contexts and cross-cutting platform/shared layers.
+Architecture follows ports-and-adapters with clear dependency direction.
 
-## Flow (Where it comes from -> Where it goes)
+## Main Areas
 
-Transport (HTTP/GraphQL) -> adapter/controller -> core/usecase -> output ports -> adapters
+| Area | Role |
+| --- | --- |
+| Context modules (`admin`, `auth`, `category`, `chat`, `record`, `tag`, `user`) | Domain-specific core + adapters |
+| `adapter/` | Shared primary/secondary adapter infrastructure |
+| `platform/` | Runtime configuration, DI, observability, server composition |
+| `shared/` | Cross-cutting constants and lightweight shared contracts |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Preserve dependency inversion and domain purity.
-- Keep contexts isolated and easy to evolve.
-- Centralize cross-cutting concerns in `platform`.
+- Preserve context isolation and dependency rule.
+- Keep domain logic in core/usecase layers.
+- Keep transport and infrastructure concerns in adapters/platform.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Usecases depend only on input/output ports.
-- Adapters map DTOs and handle transport concerns.
-- Semantic errors and OTel spans at all boundaries.
+- Add architecture map linking each context to its exposed adapters.
+- Add dependency direction examples with allowed/forbidden imports.
+- Add checklist for adding a new bounded context.
+- Add quick references to key subpackage READMEs.
 
-## Differentials
+---
 
-- Strict bounded-context isolation.
-- Central GraphQL routing with context controllers.
-
-## What Should NOT Live Here
-
-- Infrastructure assets (Docker, migrations).
-- Cross-context imports or shared state.
-- Business rules inside adapters.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../README.md)
+<!-- doc-nav:end -->

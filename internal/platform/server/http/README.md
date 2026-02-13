@@ -1,43 +1,78 @@
-# Platform HTTP
+# Platform HTTP Server Layer
 
-**Folder:** `internal/platform/server/http`
+**Path:** `internal/platform/server/http`
 
-## Responsibility
+## Overview
 
-* Compose the HTTP server, routing, and middleware used by all contexts.
-* Provide framework-agnostic router ports and concrete router adapters.
-* Expose generic handlers (health, 404/405, error) and shared utilities.
+This package composes the application HTTP surface: router adapter, middlewares, generic handlers, REST registrations, GraphQL mount, Swagger mount, and health endpoints.
+It is the platform entrypoint for transport-level HTTP orchestration.
 
-## Package Composition
+## Package Scope
 
-- `ports/`: router contract used by primary adapters.
-- `router/chi/`: chi implementation of the router port.
-- `middleware/`: request ID, recovery, cors, service-token.
-- `generic/`: health, not-found, error handlers.
-- `utils/`: httpresponse, sharederrors, cookies helpers.
-- `errors/`: shared HTTP error definitions.
-- `composer.go`: mounts platform endpoints and context routes.
-- `server.go`: builds and runs the HTTP server.
+| Area | Responsibility |
+| --- | --- |
+| Handler composition | Build the main HTTP handler tree (`ComposeHandler`) |
+| Server configuration | Build `http.Server` with config-driven timeouts and limits |
+| Platform wiring | Apply cross-cutting middlewares and fallback handlers |
+| Endpoint mounting | Mount REST adapters, GraphQL, Swagger, and health routes |
+| HTTP sentinel errors | Provide shared transport errors (`404`, `405`, `500`) |
 
-## Flow (Where it comes from -> Where it goes)
+## Subpackages
 
-HTTP request -> router -> middleware -> handler -> response helpers
+| Subpackage | Role |
+| --- | --- |
+| `ports/` | Framework-agnostic router contract |
+| `router/` | Concrete router adapter implementations (currently `chi`) |
+| `middleware/` | Cross-cutting HTTP middleware chain |
+| `generic/` | Generic handlers (`health`, `not found`, `method not allowed`, `recovery/error`) |
+| `utils/` | Shared response/error/cookie helpers |
+| `errors/` | Shared sentinel HTTP errors |
 
-## How It Works (Concise)
+## Core Files
 
-- The composer picks the concrete router adapter and applies middlewares in order.
-- Context adapters register their routes through `ports.Router` only.
-- Generic handlers standardize health and error responses.
-- Utilities centralize response envelopes, error mapping, and cookies.
+| File | Purpose |
+| --- | --- |
+| `composer.go` | Assembles full handler graph (middlewares + routes + GraphQL + Swagger + health) |
+| `server.go` | Builds `http.Server` from config and composed handler |
+| `http_constants.go` | Constants for routing/mount defaults and logging |
 
-## Recommended Practices Visible Here
+## Composition Flow (`ComposeHandler`)
 
-- Apply `requestid` early; keep `recovery` outermost.
-- Keep handlers thin and transport-only.
-- Map semantic errors to HTTP consistently via utils.
-- Never import `chi` directly in contexts.
+1. Instantiate router adapter (`chi.New()`).
+2. Register global middlewares (`requestid`, `recovery`, `cors`).
+3. Set fallback handlers (`NotFound`, `MethodNotAllowed`, `Error`).
+4. Resolve mount points from config (`context`, `swagger`, `docs`, `health`).
+5. Mount Swagger UI and docs alias under API context.
+6. Mount REST modules under API root.
+7. Build and mount GraphQL handler; wrap with `servicetoken` middleware.
+8. Wrap main router with `otelhttp` instrumentation.
+9. Expose health routes via a dedicated mux path (including backward-compatible path).
 
-## What Should NOT Live Here
+## Server Build (`Build` / `FromHTTP`)
 
-- Domain rules or usecase orchestration.
-- Context-specific DTOs or handlers.
+| Concern | Source |
+| --- | --- |
+| Listen address | `cfg.ServerHTTP.Host` + `cfg.ServerHTTP.Port` |
+| Timeouts/limits | `cfg.ServerHTTP.*Timeout`, `MaxHeaderBytes` |
+| Base context | Application context propagated via `BaseContext` |
+
+## Design Notes
+
+- This layer must remain transport/platform-focused; no domain usecase logic.
+- Context modules register endpoints through adapters; composition happens here.
+- Subpackage READMEs contain detailed contracts/behavior; this README is the integration-level view.
+
+## Package Improvements
+
+- Add integration tests for `ComposeHandler` route map (Swagger, docs alias, GraphQL mount, health aliases).
+- Ensure middleware ordering in code matches documented recommendation (`recovery` outermost) or update docs/code for consistency.
+- Consider adding a small table mapping mounted routes to owning adapters for discoverability.
+- Add a short section documenting failure behavior when GraphQL handler composition fails inside route setup.
+
+---
+
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../README.md)
+<!-- doc-nav:end -->

@@ -1,35 +1,37 @@
-# internal/platform/fxapp
+# Fx Application Wiring
 
-Fx application graph wiring (modules and lifecycle hooks) that compose platform + domains.
+**Path:** `internal/platform/fxapp`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Expose Fx modules (InfraModule, ApplicationModule, ServerModule) used by `cmd/aion-api`.
-- Wire constructors and invocations for db, cache, logger, observability, and servers.
-- Manage start/stop hooks with graceful shutdown logging.
+Dependency graph composition and lifecycle wiring using Uber Fx.
+This package assembles infrastructure, platform, and domain dependencies for runtime startup.
 
-## Package Composition
+## Responsibilities
 
-- Module definitions and Fx options.
-- Lifecycle hooks for startup and shutdown.
+| Area | Responsibility |
+| --- | --- |
+| Module composition | Group providers/invokes by platform area |
+| Dependency injection | Build runtime object graph |
+| Lifecycle hooks | Coordinate start/stop and graceful shutdown |
 
-## Flow (Where it comes from -> Where it goes)
+## Design Notes
 
-cmd/aion-api -> fxapp modules -> platform + adapters -> running server
+- Keep module boundaries explicit.
+- Prefer provider granularity that matches bounded contexts.
+- Log and surface startup/shutdown failures clearly.
 
-## Why It Was Designed This Way
+## Package Improvements
 
-- Keep wiring explicit and centralized.
-- Separate infra wiring from domain code.
-- Make lifecycle behavior observable and testable.
+- Add module dependency graph diagram.
+- Add startup failure troubleshooting section.
+- Add conventions for adding new providers/invokes.
+- Add smoke test for app boot sequence.
 
-## Recommended Practices Visible Here
+---
 
-- Prefer explicit `fx.Options` over hidden globals.
-- Keep module boundaries clear (infra vs application vs server).
-- Log failures during start/stop with context.
-
-## What Should NOT Live Here
-
-- Business logic or domain rules.
-- Adapter implementations tied to a single context.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

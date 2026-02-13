@@ -1,36 +1,36 @@
-# infrastructure/observability/fluentbit
+# Fluent Bit Configuration
 
-Fluent Bit configuration for collecting and forwarding logs from the AionAPI runtime to Loki (or other sinks).
+**Path:** `infrastructure/observability/fluentbit`
 
-## Package Composition
+## Overview
 
-- `fluent-bit.conf`
-  - Inputs, filters, and Loki output for Docker logs.
-- `parsers.conf`
-  - JSON parsing for container log payloads.
+Fluent Bit pipeline configuration for collecting and forwarding container/application logs.
+In local stack, it forwards logs to Loki for querying in Grafana.
 
-## Flow (Where it comes from -> Where it goes)
+## Files
 
-Container logs -> Fluent Bit -> Loki -> Grafana
+| File | Purpose |
+| --- | --- |
+| `fluent-bit.conf` | Input/filter/output pipeline definition |
+| `parsers.conf` | Log parser configuration |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Keep log parsing and routing centralized.
-- Support structured logging and correlation at the edge.
-- Decouple log collection from storage.
+- Keep labels aligned with tracing/log correlation strategy.
+- Keep parser changes backward compatible with dashboards/queries.
+- Avoid credentials in config files.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Parse JSON logs to keep fields queryable.
-- Enrich with service/env/trace labels for correlation.
-- Document any field mapping changes to keep queries stable.
+- Add sample log record before/after parsing in docs.
+- Add validation script for config syntax.
+- Add guidance for adding new log sources safely.
+- Add alerting recommendations for dropped/failed log events.
 
-## Differentials
+---
 
-- Correlation-ready log pipeline aligned with tracing labels.
-
-## What Should NOT Live Here
-
-- Loki storage config.
-- Application logging code.
-- Secrets or credentials.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

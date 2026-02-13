@@ -1,69 +1,40 @@
-# internal/platform
+# Platform Layer
 
-Cross-cutting platform layer (config, bootstrap/DI, observability, HTTP server) shared by all domains.
+**Path:** `internal/platform`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Load and validate configuration and build the Fx dependency graph.
-- Provide logging, tracing, and metrics primitives.
-- Host HTTP/GraphQL servers with routing and middleware.
-- Define shared output ports (cache, logger, keygen, hasher, db, httpclient).
+Cross-cutting platform layer for configuration, dependency graph assembly, observability, shared ports, and server runtime composition.
+It provides the operational foundation used by all bounded contexts.
 
-## Package Composition
+## Subpackages
 
-- `config/`: configuration loading and validation.
-- `fxapp/`: module wiring and dependency composition.
-- `observability/`: tracer and metric setup.
-- `server/`: HTTP server, routing, middleware, and utilities.
-- `ports/`: cross-cutting output ports consumed by bounded contexts.
-- `httpclient/`: shared HTTP client configuration.
+| Subpackage | Role |
+| --- | --- |
+| `config/` | Typed env loading and validation |
+| `fxapp/` | Dependency graph and lifecycle wiring |
+| `observability/` | Tracing/metrics provider bootstrap |
+| `ports/` | Shared output port contracts |
+| `httpclient/` | Shared instrumented outbound HTTP client |
+| `server/` | HTTP server composition and transport wiring |
 
-Key READMEs:
-- `config/README.md`
-- `fxapp/README.md`
-- `observability/README.md`
-- `server/README.md`
-- `server/http/README.md`
-- `ports/README.md`
-- `httpclient/README.md`
+## Design Notes
 
-## Flow (Where it comes from -> Where it goes)
+- Keep platform code domain-agnostic.
+- Keep runtime wiring centralized and explicit.
+- Keep subpackages independently documented for deeper details.
 
-Process start -> config -> observability -> fxapp modules -> server -> adapters/usecases
+## Package Improvements
 
-## Diagram
+- Add platform startup sequence diagram linking all subpackages.
+- Add compatibility table (config keys -> platform modules).
+- Add observability integration checklist for new modules.
+- Add convention guide for introducing new platform services.
 
-![Platform Bootstrap Flow](../../docs/diagram/images/internal-platform.svg)
+---
 
-Source: `../../docs/diagram/internal-platform.sequence.txt`
-
-## End-to-End Flow (Concise)
-
-- `config` loads env, validates, and normalizes values.
-- `observability` bootstraps tracer and metrics providers.
-- `fxapp` composes modules and injects dependencies.
-- `server/http` composes routes, middlewares, and mounts GraphQL.
-- Context adapters use ports to call usecases and repositories.
-
-## Why It Was Designed This Way
-
-- Centralize runtime wiring and avoid duplicated infra code.
-- Keep domains isolated from platform concerns.
-- Provide consistent observability and HTTP behavior.
-
-## Recommended Practices Visible Here
-
-- Prefer DI via Fx over globals.
-- Keep platform free of domain logic.
-- Align metrics/tracing with `infrastructure/observability`.
-- Keep HTTP utilities generic and reusable.
-- Link detailed docs in key subpackages (config, server, observability, ports).
-
-## Differentials
-
-- Single platform layer shared across all bounded contexts.
-
-## What Should NOT Live Here
-
-- Business rules or domain-specific behavior.
-- Adapter implementations tied to a single context.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

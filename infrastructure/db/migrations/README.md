@@ -1,49 +1,52 @@
-# infrastructure/db/migrations
+# Database Migrations
 
-Database migrations managed by golang-migrate. This folder is the source of truth for schema evolution.
+**Path:** `infrastructure/db/migrations`
 
-## Package Composition
+## Overview
 
-- `*.up.sql`
-  - Forward migrations (apply changes).
-- `*.down.sql`
-  - Rollback migrations (revert changes).
+Versioned SQL migrations managed by `golang-migrate`.
+This folder is the canonical source for schema evolution.
 
-## Flow (Where it comes from -> Where it goes)
+## Scope
 
-Developer -> migration files -> migrate tool -> database schema
+| Artifact | Responsibility |
+| --- | --- |
+| `*.up.sql` | Forward schema changes |
+| `*.down.sql` | Rollback path for matching forward migration |
 
-## Why It Was Designed This Way
+## Workflow
 
-- Keep schema changes versioned and reproducible.
-- Enable forward and rollback paths for each change.
-- Match production tooling (golang-migrate).
+1. Create migration pair.
+2. Apply with migration tooling.
+3. Validate schema/application compatibility.
+4. Keep rollback path consistent.
 
-## Recommended Practices Visible Here
-
-- Pair every `up` with a matching `down` migration.
-- Use 6-digit ordered versions.
-- Keep changes small and reversible.
-
-## Commands
+## Common Commands
 
 ```bash
 make migrate-up
-make migrate-dev-up
 make migrate-down
 make migrate-new
 make migrate-force VERSION=6
 ```
 
-## Environment Variables
+## Design Notes
 
-```bash
-MIGRATION_DB=postgres://user:password@host:port/database?sslmode=disable
-export MIGRATION_DB="postgres://aion:aion123@localhost:5432/aionapi?sslmode=disable"
-```
+- Keep migrations immutable after execution in shared environments.
+- Prefer small, focused migration steps.
+- Always include rollback strategy when feasible.
 
-## What Should NOT Live Here
+## Package Improvements
 
-- Seed data (use `infrastructure/db/seed`).
-- Ad-hoc SQL without migrations.
-- Irreversible changes without a clear rollback.
+- Add CI migration smoke test against disposable Postgres.
+- Add lint/check for missing down migration pairs.
+- Add migration naming convention guide in this README.
+- Add preflight checklist for destructive schema changes.
+
+---
+
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

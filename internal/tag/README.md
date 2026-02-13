@@ -1,52 +1,37 @@
-# internal/tag
+# Tag Bounded Context
 
-Tag domain for user-scoped labels exposed via GraphQL with per-user uniqueness.
+**Path:** `internal/tag`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Create and query tags by ID/name/category.
-- Enforce required fields and per-user uniqueness.
-- Keep tag validation centralized in core.
-- Provide semantic errors for GraphQL mapping.
+Tag domain for user-scoped labeling tied to categories and records.
+Provides tag lifecycle operations with uniqueness and ownership constraints.
 
-## Package Composition
+## Typical Responsibilities
 
-- `core/`: tag entities, ports, and usecases.
-- `core/ports/input`: tag service interface for adapters.
-- `core/ports/output`: tag repository contract.
-- `core/usecase`: Create, GetByID, GetByName, GetAll, GetByCategory.
-- `adapter/primary/graphql`: GraphQL controllers/resolvers and DTO mapping.
-- `adapter/secondary/db`: persistence adapters and mappers.
+| Area | Responsibility |
+| --- | --- |
+| Tag lifecycle | Create/read/update/soft-delete tags |
+| Domain constraints | Enforce per-user uniqueness and category relation |
+| Adapter exposure | Provide GraphQL/HTTP-facing controller operations |
 
-## Flow (Where it comes from -> Where it goes)
+## Design Notes
 
-GraphQL request -> context controller -> input port -> usecase ->
-output port -> db adapter -> database -> response
+- Keep validation and uniqueness in core.
+- Keep resolver/controller mapping separate from domain logic.
+- Keep semantic error contracts stable for transport mapping.
 
-## How It Works (Concise)
+## Package Improvements
 
-- Controllers map GraphQL inputs and read `user_id` from context.
-- Usecases validate name/description and check uniqueness before create.
-- Repositories persist and query tags by user and category.
+- Add uniqueness conflict behavior table.
+- Add tests for category reassignment/update edge cases.
+- Add guidance for icon/metadata normalization.
+- Add notes for tag usage impact on record queries.
 
-## Why It Was Designed This Way
+---
 
-- Keep tag rules consistent and transport-agnostic.
-- Avoid duplication of validation across resolvers.
-- Make schema and persistence evolution straightforward.
-
-## Recommended Practices Visible Here
-
-- Validate in core and return semantic errors (`TagAlreadyExists`, `TagNameIsRequired`).
-- Use spans with `tag_name`, `category_id`, `user_id` only.
-- Keep mapping in adapters; core stays pure.
-
-## Differentials
-
-- Strict per-user uniqueness baked into the usecases.
-
-## What Should NOT Live Here
-
-- Business logic inside adapters.
-- Transport DTOs inside core.
-- Cross-context imports.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

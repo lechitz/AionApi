@@ -1,53 +1,52 @@
-# infrastructure/db/seed
+# Database Seed Scripts
 
-Seed data scripts for local development and manual QA. These files populate a consistent dataset without calling the API directly.
+**Path:** `infrastructure/db/seed`
 
-## Package Composition
+## Overview
 
-- `*_generate.sql`
-  - Parametrized generators for users, categories, tags, and records.
-- `roles.sql`, `admin_user.sql`, `user_roles.sql`
-  - System roles and admin/user role assignments.
+SQL seed scripts used for local development, QA datasets, and deterministic test baselines.
+These scripts populate data directly in Postgres for fast environment setup.
 
-## Flow (Where it comes from -> Where it goes)
+## Scope
 
-Developer -> make seed-* -> SQL scripts -> database tables
+| Area | Responsibility |
+| --- | --- |
+| Core seed data | Roles, users, relationships |
+| Generated datasets | Categories, tags, records, test timelines |
+| Seed logging/artifacts | Optional run artifacts for local tooling |
 
-## Why It Was Designed This Way
+## Key Files
 
-- Provide fast, deterministic datasets for dev/test.
-- Keep seeding reproducible and idempotent.
-- Avoid API dependency when validating DB structure.
+| File pattern | Purpose |
+| --- | --- |
+| `*_generate.sql` | Parameterized data generators |
+| `roles.sql`, `user_roles.sql`, `admin_user.sql` | Security/role bootstrap |
+| `test_*.sql` | Scenario-focused test datasets |
 
-## Recommended Practices Visible Here
-
-- Keep scripts idempotent (ON CONFLICT DO NOTHING).
-- Preserve foreign key order in execution.
-- Use small N for quick local runs and larger N for load tests.
-
-## Differentials
-
-- Parametrized generators for scalable dataset sizes.
-- Consistent naming to avoid collisions across runs.
-
-## Common Targets
+## Usage
 
 ```bash
 make seed-all N=10
 make populate N=100
-make seed-user1-all
 ```
 
-## Environment Variables
+## Design Notes
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `N` | 10 | Number of users to generate |
-| `DEV_PASSWORD` | testpassword123 | Password for all seeded users |
-| `SEED_DAYS` | 7 | Number of days of records to generate |
+- Prefer idempotent SQL where possible.
+- Keep data representative but lightweight for local workflows.
+- Avoid embedding secrets in seed files.
 
-## What Should NOT Live Here
+## Package Improvements
 
-- Production credentials or secrets.
-- API-driven seed logic (use `cmd/api-seed-caller`).
-- Irreversible or destructive SQL without rollback strategy.
+- Add automated seed validation against current schema version.
+- Add documented dependency order between seed scripts.
+- Add optional “small/medium/large” seed profiles.
+- Move local artifacts (e.g., transient logs) to ignored output folder.
+
+---
+
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

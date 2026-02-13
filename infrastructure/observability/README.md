@@ -1,45 +1,39 @@
-# infrastructure/observability
+# Observability Infrastructure
 
-Observability infrastructure for AionAPI. This folder keeps the logging, metrics, and tracing stack reproducible across environments.
+**Path:** `infrastructure/observability`
 
-## Package Composition
+## Overview
 
-- `otel/`
-  - OTel Collector routing for traces and metrics.
-- `prometheus/`
-  - Scrape configuration for metrics.
-- `grafana/`
-  - Datasources, dashboards, and provisioning.
-- `loki/`
-  - Log storage configuration.
-- `fluentbit/`
-  - Log collection and routing.
-- `scripts/`
-  - Automation helpers for local setup and validation.
+Infrastructure assets for logs, metrics, and traces.
+This package composes collector, storage, scraping, and visualization layers.
 
-## Flow (Where it comes from -> Where it goes)
+## Subpackages
 
-AionAPI telemetry -> OTel/Fluent Bit -> Prometheus/Loki/Jaeger -> Grafana
+| Subpackage | Responsibility |
+| --- | --- |
+| `otel/` | Telemetry ingestion and routing |
+| `prometheus/` | Metrics scraping |
+| `loki/` | Log storage/query backend |
+| `fluentbit/` | Log collection/forwarding |
+| `grafana/` | Dashboards and datasource provisioning |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Keep observability assets versioned with the codebase.
-- Make local setup deterministic and fast.
-- Separate collection, storage, and visualization concerns.
+- Keep each observability concern isolated by component.
+- Use in-repo config for deterministic local environments.
+- Align naming conventions across logs, metrics, and traces.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Align metric and trace names with `internal/platform/observability`.
-- Keep datasource URLs and ports environment-specific.
-- Validate endpoints after configuration changes.
+- Add end-to-end observability startup verification runbook.
+- Add architecture diagram of signal flow by component.
+- Add environment-specific override strategy documentation.
+- Add minimum supported tool versions (Grafana/Prometheus/Loki/OTel).
 
-## Differentials
+---
 
-- Full stack provisioning (collector, metrics, logs, dashboards) in-repo.
-- Automation scripts for quick validation.
-
-## What Should NOT Live Here
-
-- Application instrumentation code.
-- Business logic or runtime configuration.
-- Secrets or production credentials.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

@@ -1,56 +1,44 @@
 # Architecture Diagrams
 
-All diagrams live in this folder as:
-- SVG images under `images/`
-- Editable sources as `*.sequence.txt` (sequencediagram.org compatible)
+**Path:** `docs/diagram`
 
-## Available Diagrams
+## Overview
 
-- `cmd-aion-api.sequence.txt`
-  - Image: `images/cmd-aion-api.svg`
-  - Purpose: Entry-point flow for the AionAPI process
-- `cmd-api-seed-caller.sequence.txt`
-  - Image: `images/cmd-api-seed-caller.svg`
-  - Purpose: API seeding via authenticated endpoints
-- `cmd-seed-helper.sequence.txt`
-  - Image: `images/cmd-seed-helper.svg`
-  - Purpose: Local seed env, tokens, and bcrypt hashes
-- `internal-admin.sequence.txt`
-  - Image: `images/internal-admin.svg`
-  - Purpose: Admin domain flow and boundaries
-- `internal-auth.sequence.txt`
-  - Image: `images/internal-auth.svg`
-  - Purpose: Auth domain flow and boundaries
-- `internal-adapter-primary-graphql.sequence.txt`
-  - Image: `images/internal-adapter-primary-graphql.svg`
-  - Purpose: Primary GraphQL adapter flow and boundaries
-- `internal-platform.sequence.txt`
-  - Image: `images/internal-platform.svg`
-  - Purpose: Platform bootstrap flow (config -> observability -> server)
-- `internal-platform-server.sequence.txt`
-  - Image: `images/internal-platform-server.svg`
-  - Purpose: Platform HTTP server routing flow
-- `internal-platform-httpclient.sequence.txt`
-  - Image: `images/internal-platform-httpclient.svg`
-  - Purpose: Instrumented HTTP client outbound flow
+This folder stores architecture and flow diagrams in two formats:
+- editable source (`*.sequence.txt`)
+- rendered output (`images/*.svg`)
 
-## How to View
+## Diagram Catalog
 
-1) Open `images/*.svg` in your browser or on GitHub.
-2) If you need to edit a diagram, open the matching `*.sequence.txt` file in a text editor.
-3) Paste into https://sequencediagram.org/ and export as SVG.
+| Source file | Rendered SVG | Purpose |
+| --- | --- | --- |
+| `cmd-aion-api.sequence.txt` | `images/cmd-aion-api.svg` | API entrypoint flow |
+| `cmd-api-seed-caller.sequence.txt` | `images/cmd-api-seed-caller.svg` | Seed caller flow |
+| `cmd-seed-helper.sequence.txt` | `images/cmd-seed-helper.svg` | Seed helper flow |
+| `internal-admin.sequence.txt` | `images/internal-admin.svg` | Admin context flow |
+| `internal-auth.sequence.txt` | `images/internal-auth.svg` | Auth context flow |
+| `internal-adapter-primary-graphql.sequence.txt` | `images/internal-adapter-primary-graphql.svg` | Primary GraphQL adapter flow |
+| `internal-platform.sequence.txt` | `images/internal-platform.svg` | Platform bootstrap flow |
+| `internal-platform-server.sequence.txt` | `images/internal-platform-server.svg` | HTTP server routing flow |
+| `internal-platform-httpclient.sequence.txt` | `images/internal-platform-httpclient.svg` | HTTP client flow |
 
-## Syntax (Short)
+## Editing Workflow
 
-title Example Flow
+1. Edit `*.sequence.txt` source.
+2. Render/export SVG (e.g., sequencediagram.org).
+3. Replace corresponding file under `images/`.
+4. Commit source and rendered artifact together.
 
-participant "User" as U
-participant "Service" as S
+## Package Improvements
 
-U->S: Call endpoint
-S->U: Response
+- Add diagram naming conventions for new contexts/features.
+- Add lightweight quality checklist (actors, direction, error path).
+- Add script/target to validate missing source↔svg pairs.
+- Add timestamp/version metadata in diagram headers for traceability.
 
-Notes:
-- Use `title` for the diagram title.
-- Define participants with readable names.
-- Keep flows short and focused.
+---
+
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

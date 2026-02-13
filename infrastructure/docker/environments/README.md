@@ -1,33 +1,38 @@
-# infrastructure/docker/environments
+# Docker Environment Profiles
 
-Docker compose overlays and `.env` files for each runtime profile. This folder defines how the stack runs in dev and prod.
+**Path:** `infrastructure/docker/environments`
 
-## Package Composition
+## Overview
 
-- `dev/`
-  - Local development profile and `.env.dev`.
-- `prod/`
-  - Production profile and `.env.prod`.
-- `example/`
-  - Template for new environments.
+Environment profiles for Docker-based runtime setups.
+This folder defines profile-specific compose and env configurations (dev/prod/personal/template).
 
-## Flow (Where it comes from -> Where it goes)
+## Profiles
 
-Environment profile -> docker compose -> running services
+| Profile | Purpose |
+| --- | --- |
+| `dev/` | Shared local development profile |
+| `prod/` | Production-like compose profile |
+| `example/` | Template baseline for new profiles |
+| `my/` | Personal isolated local profile |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Separate dev and prod runtime settings.
-- Keep secrets isolated per environment.
-- Provide a template for consistent new profiles.
+- Profile READMEs document implementation details per environment.
+- Keep profile-specific secrets outside repository or in ignored files.
+- Keep profile names and make targets aligned for discoverability.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Always derive new environments from `example/`.
-- Keep env files per profile; never reuse dev env in prod.
-- Update Makefile targets when adding a new profile.
+- Add profile capability matrix (services, ports, persistence, hot-reload).
+- Add script to validate required env vars across all profiles.
+- Add explicit docs on when to use `dev` vs `my` profile.
+- Add centralized list of active compose files/entrypoints.
 
-## What Should NOT Live Here
+---
 
-- Real secrets committed to git.
-- One-off local overrides (use a local copy).
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

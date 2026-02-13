@@ -1,59 +1,46 @@
-# cmd/api (Main API Server)
+# API Entrypoint (`cmd/api`)
 
-The primary entrypoint for the Aion API application (production binary).
+**Path:** `cmd/api`
 
-## What It Does
+## Overview
 
-- Wires all modules via Uber Fx (dependency injection)
-- Configures Swagger metadata at runtime
-- Boots HTTP server (GraphQL + REST endpoints)
-- Initializes observability (OTel tracing, logging)
-- Manages graceful shutdown
+This is the production application entrypoint.
+It bootstraps the platform, loads dependencies, and starts HTTP/GraphQL servers.
 
-## Build
+## Responsibilities
+
+| Area | Responsibility |
+| --- | --- |
+| App bootstrap | Wire modules/dependencies via platform setup |
+| Runtime startup | Initialize server, observability, config |
+| Graceful shutdown | Coordinate lifecycle termination |
+
+## Build and Run
 
 ```bash
-# Production build:
 go build -o bin/api ./cmd/api
-
-# Docker build:
-make build-dev
-make build-prod
-```
-
-## Run
-
-```bash
-# Docker (recommended - full stack with hot reload):
 make dev
-
-# Local with Air hot reload (API on host, deps in Docker):
-make dev-local
-
-# Direct:
+# or
 go run ./cmd/api
 ```
 
-## Configuration
+## Design Notes
 
-All config via environment variables (see `infrastructure/docker/environments/dev/.env.dev`).
+- Keep this package orchestration-only.
+- Business rules belong to bounded contexts in `internal/<ctx>`.
+- Developer utilities should stay in `hack/`.
 
-Key vars:
-- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
-- `CACHE_ADDR` (Redis)
-- `OTEL_EXPORTER_OTLP_ENDPOINT`
-- `SECRET_KEY` (JWT signing)
+## Package Improvements
 
-## Architecture
+- Add startup sequence diagram (config -> providers -> server start).
+- Add a short troubleshooting section for missing env/dependency failures.
+- Add explicit command examples for local and containerized runs.
+- Add pointers to runtime health/metrics endpoints.
 
-This is a **thin orchestrator** following Hexagonal Architecture:
-- No business logic here (lives in `internal/<ctx>/core/usecase/`)
-- No infrastructure details (wired via `internal/platform/`)
-- Just composition and bootstrap
+---
 
-## Development Tools
-
-For seeding, testing, utilities, see `hack/`:
-- `hack/tools/seed-caller/` - Seed via API
-- `hack/tools/seed-helper/` - Generate JWT/bcrypt
-- `hack/dev/test-*.sh` - Test scripts
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

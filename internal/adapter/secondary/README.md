@@ -1,49 +1,37 @@
-# internal/adapter/secondary
+# Secondary Adapters Layer
 
-Secondary adapters implement output ports for external integrations (db, cache, crypto, tokens, logging, graphs).
+**Path:** `internal/adapter/secondary`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Bridge usecases to infrastructure without leaking infra types into core.
-- Provide swappable implementations for external systems.
-- Translate infra errors into semantic errors expected by the core.
-- Centralize resilience and observability at IO boundaries.
+Secondary adapters implement output ports and connect core usecases to external systems.
+They are responsible for IO translation and infrastructure error adaptation.
 
-## Package Composition
+## Responsibilities
 
-- `db/`: persistence adapters (SQL databases).
-- `cache/`: cache adapters (e.g., Redis).
-- `graph/`: graph store adapters (e.g., Gremlin).
-- `crypto/`: encryption/decryption helpers behind output ports.
-- `hasher/`: hashing adapters for password or token material.
-- `token/`: token issuance/validation adapters.
-- `contextlogger/`: logger adapter used by output ports that require structured logging.
+| Area | Responsibility |
+| --- | --- |
+| Port implementation | Implement output contracts from core/platform ports |
+| Infra translation | Convert IO/vendor behavior into semantic application behavior |
+| Boundary observability | Emit logs/traces around external calls |
 
-## Flow (Where it comes from -> Where it goes)
+## Design Notes
 
-Usecase -> output port -> secondary adapter -> external system
+- Keep infra-specific details out of core.
+- Keep adapters replaceable and minimal.
+- Do not put business orchestration in secondary adapters.
 
-## Why It Was Designed This Way
+## Package Improvements
 
-- Isolate infrastructure details from core logic.
-- Standardize error translation and resilience policies.
-- Keep external integrations swappable.
-- Encourage consistent IO boundaries across contexts.
+- Add implementation matrix (port -> concrete adapter package).
+- Add error translation guidelines by adapter type.
+- Add retry/timeout policy references for external IO.
+- Add adapter conformance testing guide.
 
-## Recommended Practices Visible Here
+---
 
-- Translate infra errors to semantic errors in core.
-- Keep observability at adapter boundaries.
-- Apply timeouts/retries where needed.
-- Keep adapters thin: map inputs/outputs and delegate to infra clients.
-
-## Differentials
-
-- Consistent integration patterns across domains.
-- Port-first adapters that keep Clean Architecture boundaries intact.
-
-## What Should NOT Live Here
-
-- Business rules or domain logic.
-- Transport-layer DTOs.
-- Input ports or usecase orchestration (those belong in core).
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

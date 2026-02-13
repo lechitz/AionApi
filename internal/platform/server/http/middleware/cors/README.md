@@ -1,38 +1,67 @@
-# HTTP Middleware — CORS (Platform)
+# HTTP CORS Middleware
 
-**Folder:** `internal/platform/server/http/middleware/cors`
+**Path:** `internal/platform/server/http/middleware/cors`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Apply CORS rules for the frontend origins used by Aion.
-- Allow credentialed requests with explicit origins.
-- Expose `Set-Cookie` to support auth/session cookies.
+This package provides the platform-level CORS middleware used by the HTTP server.
+It defines which frontend origins can call the API and enables cookie-based cross-origin requests.
 
-## How it works
+## Package Scope
 
-- `New()` returns a `func(http.Handler) http.Handler` using `github.com/go-chi/cors`.
-- Configured with:
-  - AllowedOrigins: `http://localhost:5000`, `http://localhost:5173`
-  - AllowedMethods: `GET, POST, PUT, DELETE, OPTIONS`
-  - AllowedHeaders: `Accept, Authorization, Content-Type, X-CSRF-Token`
-  - ExposedHeaders: `Set-Cookie`
-  - AllowCredentials: `true`
-  - MaxAge: `300`
+| Area | Responsibility |
+| --- | --- |
+| Origin policy | Allow only known frontend origins |
+| Method policy | Restrict accepted HTTP methods |
+| Header policy | Restrict allowed request headers |
+| Credential support | Enable cookies/credentials for browser requests |
+
+## Files
+
+| File | Purpose |
+| --- | --- |
+| `cors_middleware.go` | Exposes `New()` middleware configured with `go-chi/cors` options |
+
+## Public API Reference
+
+| Function | Returns | Description |
+| --- | --- | --- |
+| `New()` | `func(http.Handler) http.Handler` | CORS middleware preconfigured for Aion API frontend integration |
+
+## Current CORS Policy
+
+| Setting | Value |
+| --- | --- |
+| `AllowedOrigins` | `http://localhost:5000`, `http://localhost:5173` |
+| `AllowedMethods` | `GET`, `POST`, `PUT`, `DELETE`, `OPTIONS` |
+| `AllowedHeaders` | `Accept`, `Authorization`, `Content-Type`, `X-CSRF-Token` |
+| `ExposedHeaders` | `Set-Cookie` |
+| `AllowCredentials` | `true` |
+| `MaxAge` | `300` seconds |
 
 ## Usage
 
-Register in the HTTP composer:
-
 ```go
-// composer.go
 r.Use(cors.New())
 ```
 
-## Notes
+## Design Notes
 
-- Keep origins aligned with frontend environments.
-- Avoid wildcard origins when `AllowCredentials` is true.
+- Keep CORS policy centralized to avoid divergence across routes.
+- Use explicit origins because `AllowCredentials` is enabled.
+- Keep transport policy here; do not mix authorization/business rules into middleware configuration.
 
-## What Should NOT Live Here
+## Package Improvements
 
-- Domain logic or auth rules.
+- Move allowed origins to platform configuration (`env`) to support multiple environments without code changes.
+- Add unit tests for middleware behavior (`OPTIONS` preflight, allowed origin, blocked origin).
+- Evaluate whether exposing `Set-Cookie` is still required for all consumers or should be narrowed.
+- Consider explicit local constants for CORS values to simplify future policy reviews.
+
+---
+
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../../../README.md)
+<!-- doc-nav:end -->

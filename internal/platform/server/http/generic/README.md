@@ -1,43 +1,75 @@
-# Platform HTTP — Generic
+# Platform HTTP Generic Layer
 
-**Folder:** `internal/platform/server/http/generic`
-**Subpackages:** `dto/`, `handler/`
+**Path:** `internal/platform/server/http/generic`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Provide platform-wide HTTP handlers (health, 404/405, error, recovery).
-- Keep cross-cutting responses out of domain adapters.
-- Ensure consistent envelopes, logs, and tracing.
+This package contains platform-level generic HTTP components shared by all contexts.
+It provides health and fallback handlers (`404`, `405`, error, panic recovery) with consistent response envelopes, logging, and tracing.
 
-## Package Composition
+## Package Scope
 
-- `handler/`: generic handlers (health, not found, method not allowed, error, recovery).
-- `dto/`: transport-only DTOs (e.g., health response).
+| Area | Responsibility |
+| --- | --- |
+| Health endpoint | Return service status and runtime metadata |
+| Router fallback handlers | Standardize `Not Found`, `Method Not Allowed`, and generic error behavior |
+| Panic recovery integration | Convert recovered panics into safe HTTP error responses |
+| Shared transport DTOs | Define transport-only payloads used by generic handlers |
 
-## Flow (Where it comes from -> Where it goes)
+## Subpackages
 
-HTTP composer -> generic handlers -> httpresponse/sharederrors -> response
+| Subpackage | Role |
+| --- | --- |
+| `dto/` | Generic HTTP DTOs (currently health response payload) |
+| `handler/` | Generic handler implementation and tracing/logging constants |
 
-## How it works
+## Main Components
 
-- `New(logger, generalCfg)` builds a `*handler.Handler`.
-- The composer wires:
-  - `GET /health` -> `Handler.HealthCheck`
-  - `SetNotFound`, `SetMethodNotAllowed`, `SetError`
-  - Recovery middleware uses `Handler.RecoveryHandler`
-- Responses use `httpresponse` for consistent JSON envelopes.
+| Component | Description |
+| --- | --- |
+| `handler.New(logger, generalCfg)` | Creates `*handler.Handler` with logger and general app metadata |
+| `(*Handler).HealthCheck` | Handles `/health` and returns app metadata + healthy status |
+| `(*Handler).NotFoundHandler` | Standardized JSON `404` |
+| `(*Handler).MethodNotAllowedHandler` | Standardized JSON `405` |
+| `(*Handler).ErrorHandler` | Standardized JSON `500` for router-level errors |
+| `(*Handler).RecoveryHandler` | Handles panic recovery payloads and emits telemetry |
 
-## Endpoints / Behaviors
+## Integration Flow
 
-- `/health` returns service metadata (`name`, `env`, `version`, `timestamp`).
-- 404/405 return standardized JSON errors.
-- Error/Recovery return safe 500 responses with correlation IDs.
+1. HTTP composer creates `genericHandler := handler.New(log, cfg.General)`.
+2. Router wiring connects:
+- `/health` to `genericHandler.HealthCheck`
+- `SetNotFound` to `genericHandler.NotFoundHandler`
+- `SetMethodNotAllowed` to `genericHandler.MethodNotAllowedHandler`
+- `SetError` to `genericHandler.ErrorHandler`
+3. Recovery middleware delegates panic handling to `genericHandler.RecoveryHandler`.
 
-## Observability
+## Observability Behavior
 
-- Spans per operation (see `0_generic_handler_constants.go`).
-- Logs include request ID and metadata only.
+| Aspect | Behavior |
+| --- | --- |
+| Tracing | Creates spans for health, error, and recovery flows |
+| Span attributes | Includes request metadata (`path`, `request_id`, `ip`, `user_agent`) |
+| Logging | Emits structured logs with shared keys from `commonkeys`/`tracingkeys` |
+| Responses | Uses `httpresponse` helpers for consistent JSON envelopes |
 
-## What Should NOT Live Here
+## Design Notes
 
-- Domain logic or context-specific behavior.
+- This layer is transport/platform only and should not contain business rules.
+- Generic handlers provide a stable baseline for all bounded contexts.
+- Constants in `handler/0_generic_handler_constants.go` centralize trace/log message semantics.
+
+## Package Improvements
+
+- Add dedicated tests for each generic handler (`health`, `404`, `405`, `error`, `recovery`) to lock response and tracing contracts.
+- Replace duplicated manual error body construction in `NotFoundHandler` and `MethodNotAllowedHandler` with a shared `httpresponse.WriteError` flow for consistency.
+- Consider moving tracer names and common messages to `internal/shared/constants/tracingkeys` when broadly reused outside this package.
+- Evaluate whether `HealthCheck` should support `HEAD` with empty body explicitly, depending on monitoring tool expectations.
+
+---
+
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../../README.md)
+<!-- doc-nav:end -->

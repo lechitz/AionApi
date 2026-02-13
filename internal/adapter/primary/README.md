@@ -1,33 +1,35 @@
-# internal/adapter/primary
+# Primary Adapters Layer
 
-Primary adapters expose domain usecases to external clients (GraphQL/HTTP). They translate transport payloads into domain commands and map responses back.
+**Path:** `internal/adapter/primary`
 
-## Package Composition
+## Overview
 
-- `graphql/`
-  - Shared GraphQL schema, directives, and models.
+Primary adapters expose usecases to external clients (GraphQL/HTTP).
+They convert transport payloads into core input contracts and map responses back to transport formats.
 
-## Flow (Where it comes from -> Where it goes)
+## Subpackages
 
-Client request -> primary adapter -> controller/usecase -> response DTO
+| Subpackage | Role |
+| --- | --- |
+| `graphql/` | Central GraphQL transport entrypoint, schema composition, directives, resolvers |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Keep transport concerns out of core logic.
-- Provide consistent auth/validation and error mapping.
-- Reuse shared GraphQL infrastructure across contexts.
+- Keep resolvers/handlers thin and orchestration-only.
+- Business rules must remain in context core/usecases.
+- Shared transport conventions live here to avoid drift across contexts.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Handlers/resolvers stay thin; business rules live in core.
-- Reuse directives/middleware for cross-cutting policies.
-- Avoid leaking transport types into domain.
+- Add short “transport boundary checklist” for new adapters.
+- Add examples for error/status mapping conventions.
+- Add explicit link map to context controllers.
+- Add contract test guidance for primary adapter behavior.
 
-## Differentials
+---
 
-- Centralized transport conventions to reduce drift.
-
-## What Should NOT Live Here
-
-- Business logic or persistence.
-- Domain entities with transport tags.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

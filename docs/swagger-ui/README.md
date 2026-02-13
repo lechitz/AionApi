@@ -1,33 +1,36 @@
-# docs/swagger-ui
+# Swagger UI Static Bundle
 
-Static Swagger UI bundle used to explore the generated OpenAPI contract under `docs/swagger`.
+**Path:** `docs/swagger-ui`
 
-## Package Composition
+## Overview
 
-- `index.html`
-  - Points to the generated swagger file.
-- `swagger-ui-bundle.js`, `swagger-ui.css`
-  - Swagger UI distribution files.
-- `custom.css`
-  - Local style overrides.
+Static Swagger UI assets used to browse the generated OpenAPI contract.
+This folder is intended for documentation hosting, not runtime API logic.
 
-## Flow (Where it comes from -> Where it goes)
+## Files
 
-Generated OpenAPI -> Swagger UI -> API exploration
+| File | Purpose |
+| --- | --- |
+| `index.html` | Swagger UI entrypoint |
+| `swagger-ui-bundle.js`, `swagger-ui.css` | Upstream Swagger UI distribution assets |
+| `custom.css` | Local visual overrides |
 
-## Why It Was Designed This Way
+## Usage Notes
 
-- Keep API exploration static and easy to host.
-- Allow custom styling without rebuilding Swagger UI.
+- Regenerate OpenAPI before reviewing UI output.
+- Keep relative references compatible with static hosting paths.
+- Validate UI after bumping Swagger UI distribution files.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Regenerate OpenAPI before browsing the UI.
-- Keep relative paths stable for GitHub Pages.
-- Validate compatibility when bumping Swagger UI versions.
+- Add source/version note for bundled Swagger UI release.
+- Add quick test checklist after asset upgrades.
+- Add minimal customization policy to keep overrides maintainable.
+- Add a link to OpenAPI generation workflow (`make swag`).
 
+---
 
-## What Should NOT Live Here
-
-- Generated OpenAPI files (keep in `docs/swagger`).
-- App runtime assets.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

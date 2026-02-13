@@ -1,39 +1,36 @@
-# infrastructure
+# Infrastructure Layer
 
-Operational assets for AionAPI: build, runtime environments, data lifecycle, and observability stack.
+**Path:** `infrastructure`
 
-## Package Composition
+## Overview
 
-- `docker/`
-  - Dockerfiles, compose overlays, and environment templates.
-- `db/`
-  - Migrations and seed data for Postgres.
-- `observability/`
-  - Logs, metrics, and tracing infrastructure.
+Operational infrastructure assets for container runtime, database lifecycle, and observability stack.
+This layer supports local development and deployment-oriented workflows.
 
-## Flow (Where it comes from -> Where it goes)
+## Subpackages
 
-Developer config -> infrastructure assets -> local/prod runtime stack
+| Subpackage | Responsibility |
+| --- | --- |
+| `docker/` | Image and environment runtime definitions |
+| `db/` | Migration and seed SQL assets |
+| `observability/` | Logs/metrics/traces infrastructure configs |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Keep operational contracts versioned alongside code.
-- Make local setups reproducible.
-- Separate runtime concerns (docker, db, observability) cleanly.
+- Keep infrastructure concerns separate from application/business code.
+- Favor reproducible, versioned configuration assets.
+- Keep sensitive runtime values outside committed docs/config templates.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Keep environment differences isolated under `docker/environments/`.
-- Align infra endpoints with app config and docs.
-- Treat migrations as immutable, seeds as deterministic.
+- Add infra quick-start flowchart (docker + db + observability bootstrap).
+- Add “who owns what” matrix per infrastructure subpackage.
+- Add policy section for secret management across profiles.
+- Add compatibility matrix between app version and infra dependencies.
 
-## Differentials
+---
 
-- Full local stack documented and versioned.
-- Clear separation between runtime wiring and app code.
-
-## What Should NOT Live Here
-
-- Application business logic.
-- Secrets or environment-specific credentials.
-- One-off scripts without repeatable value.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../README.md)
+<!-- doc-nav:end -->

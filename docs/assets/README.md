@@ -1,33 +1,35 @@
-# docs/assets
+# Documentation Assets
 
-Static assets used by documentation pages and Swagger UI. These files are not bundled into the runtime binary.
+**Path:** `docs/assets`
 
-## Package Composition
+## Overview
 
-- `stylesheets/`
-  - Theme overrides for Swagger UI and documentation pages.
-- Images and other static resources referenced by docs.
+Static assets used by documentation pages and Swagger UI custom styling.
+These files are documentation-only artifacts, not API runtime assets.
 
-## Flow (Where it comes from -> Where it goes)
+## Scope
 
-Docs pages -> assets -> rendered docs / Swagger UI
+| Area | Responsibility |
+| --- | --- |
+| Styling assets | CSS/theme overrides for docs surfaces |
+| Static resources | Images/icons used by docs pages |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Keep visual overrides alongside docs.
-- Avoid build steps for docs assets.
+- Keep assets lightweight and repository-friendly.
+- Use stable relative paths for static hosting (GitHub Pages).
+- Document visual-impact changes in related docs PRs.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Keep assets lightweight and versioned.
-- Use stable relative paths for GitHub Pages.
-- Document visual changes that affect Swagger UI.
+- Add an asset naming convention section (prefixes/folder strategy).
+- Add size budget guidance to prevent heavy static payloads.
+- Add a visual regression checklist for Swagger UI style changes.
+- Add ownership note for who reviews docs-theme modifications.
 
-## Differentials (Rare but Valuable)
+---
 
-- Zero build pipeline for docs assets.
-
-## What Should NOT Live Here
-
-- Runtime assets for the API.
-- Large binaries or build outputs.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

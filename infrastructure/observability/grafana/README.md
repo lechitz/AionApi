@@ -1,40 +1,37 @@
-# infrastructure/observability/grafana
+# Grafana Provisioning Assets
 
-Grafana provisioning assets for the AionAPI observability stack. These files define dashboards and data sources so Grafana boots with a ready-to-use view.
+**Path:** `infrastructure/observability/grafana`
 
-## Package Composition
+## Overview
 
-- `datasources/`
-  - Prometheus datasource definition (defaults to `prometheus-dev:9090` in dev).
-- `dashboards/`
-  - Versioned dashboard JSON files (latency, errors, and domain KPIs).
-- `provisioning/`
-  - Providers that load datasources and dashboards on Grafana startup.
+Grafana provisioning files for dashboards and datasources.
+These assets make Grafana startup deterministic across local environments.
 
-## Flow (Where it comes from -> Where it goes)
+## Structure
 
-Grafana boot -> provisioning/ -> datasources + dashboards -> Grafana UI
+| Folder | Purpose |
+| --- | --- |
+| `dashboards/` | Versioned dashboard JSON files |
+| `datasources/` | Datasource provisioning files |
+| `provisioning/` | Dashboard provider configuration |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Keep observability assets versioned alongside the codebase.
-- Make local onboarding fast with preloaded dashboards.
-- Avoid manual Grafana setup or clickops.
+- Treat dashboard JSON as versioned code artifacts.
+- Keep datasource naming stable to avoid dashboard breakage.
+- Do not store secrets in dashboard definitions.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Keep dashboards in JSON and review diffs like code.
-- Update datasource URLs per environment (dev/staging/prod).
-- Keep panel naming consistent with metric labels for searchability.
-- Avoid embedding secrets in dashboard JSON.
+- Add dashboard ownership map and review policy.
+- Add JSON validation/lint in CI.
+- Add changelog for major dashboard redesigns.
+- Add screenshot snapshots for baseline visual regression.
 
-## Differentials
+---
 
-- Auto-provisioned dashboards and datasources, no manual setup.
-- Reproducible Grafana state across environments.
-
-## What Should NOT Live Here
-
-- Ad-hoc dashboards created only in the UI.
-- Business logic or service configuration.
-- Secrets, tokens, or private credentials.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

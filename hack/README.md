@@ -1,42 +1,43 @@
-# hack/ (Developer Utilities)
+# Developer Utilities (`hack`)
 
-Development-only tools and scripts. **NOT included in production builds.**
+**Path:** `hack`
 
-Following Kubernetes convention: `hack/` contains experimental/dev utilities.
+## Overview
 
-## Structure
+This folder contains development-only tools and scripts.
+It follows the common `hack/` convention for non-production operational helpers.
 
-- `tools/` - Go CLIs for dev/test (seed-caller, seed-helper)
-- `dev/` - Bash scripts for troubleshooting (Ollama setup, DB roles, tests)
+## Subfolders
 
-## Usage
+| Folder | Responsibility |
+| --- | --- |
+| `tools/` | Go CLIs for seed and utility workflows |
+| `dev/` | Shell scripts for diagnostics and local troubleshooting |
 
-Via Makefile (recommended):
+## Usage Examples
+
 ```bash
-make seed-api-caller    # runs hack/tools/seed-caller
-make hash-gen PASS=...  # inline bcrypt (no binary)
+make seed-api-caller
+make seed-helper
 bash hack/dev/test-chat.sh
 ```
 
-Direct:
-```bash
-go run ./hack/tools/seed-caller
-bash hack/dev/force-insert-roles.sh
-```
+## Design Notes
 
-## Not for Production
+- Keep this folder out of production image/runtime paths.
+- Use it for reproducible local workflows and debugging support.
+- Domain logic must remain in `internal/`, not in `hack/` scripts/tools.
 
-This folder is ignored in:
-- `.dockerignore` (not copied to images)
-- CI release builds (only cmd/api is built)
+## Package Improvements
 
-## Why "hack/"?
+- Add a top-level command matrix mapping each utility to its Make target.
+- Add minimal contributor guidelines for adding new scripts/tools.
+- Add shared script helper library for common logging/error output.
+- Add quick links to per-tool READMEs (`tools/seed-caller`, `tools/seed-helper`).
 
-This naming follows the Kubernetes convention where `hack/` contains:
-- Build automation scripts
-- Development tools
-- Test utilities
-- Code generation helpers
+---
 
-It's called "hack" because these are utilities that "hack around" during development,
-not production code.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../README.md)
+<!-- doc-nav:end -->

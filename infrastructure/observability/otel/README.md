@@ -1,35 +1,35 @@
-# infrastructure/observability/otel
+# OpenTelemetry Collector Config
 
-OpenTelemetry Collector configuration for AionAPI. This collector receives OTLP from the API and routes traces/metrics to the rest of the stack.
+**Path:** `infrastructure/observability/otel`
 
-## Package Composition
+## Overview
 
-- `otel-collector-config.yaml`
-  - Receivers, processors, and exporters for traces and metrics.
+Collector pipeline configuration for traces and metrics emitted by Aion services.
+It centralizes telemetry routing to downstream backends.
 
-## Flow (Where it comes from -> Where it goes)
+## Files
 
-AionAPI (OTLP) -> OTel Collector -> exporters (Prometheus, Jaeger/Zipkin)
+| File | Purpose |
+| --- | --- |
+| `otel-collector-config.yaml` | Receivers, processors, exporters for telemetry pipeline |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Centralize telemetry routing in a single, versioned config.
-- Allow multiple backends without changing the API.
-- Keep local observability reproducible.
+- Keep exporter endpoints configurable per environment.
+- Keep attribute naming aligned with `tracingkeys` conventions.
+- Tune processors to reduce noise while preserving signal.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Filter low-signal spans (health checks) without losing critical traces.
-- Keep attribute keys aligned with `internal/shared/constants/tracingkeys`.
-- Validate collector health before starting the API.
+- Add pipeline diagram (receiver -> processor -> exporter).
+- Add config validation checks in CI.
+- Add troubleshooting matrix for exporter connectivity issues.
+- Add documented defaults for sampling/timeout behavior.
 
-## Differentials
+---
 
-- Multi-exporter routing from one OTLP intake.
-- Noise filtering baked into the collector pipeline.
-
-## What Should NOT Live Here
-
-- Application instrumentation code.
-- Grafana dashboards or datasource configs.
-- Secrets or production credentials.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

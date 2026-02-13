@@ -1,38 +1,27 @@
-# hack/tools/seed-helper
+# Seed Helper Tool
 
-This CLI generates seed credentials and auth tokens for local development. It is used by Make targets to prepare database seed variables and test tokens.
+**Path:** `hack/tools/seed-helper`
 
-## Package Composition
+## Overview
 
-- `main.go`
-  - Implements the command parser and generators.
-  - Writes a local seed env file and prints tokens/hashes.
+This CLI generates local seed artifacts such as JWT tokens and bcrypt hashes.
+It supports seed bootstrap flows used by Make targets and SQL seed scripts.
 
-## Flow (Where it comes from -> Where it goes)
+## Package Scope
 
-Operator -> seed-helper -> generate hashes/tokens -> .env.local / stdout
+| Area | Responsibility |
+| --- | --- |
+| Seed env generation | Create local `.env` seed values |
+| Token generation | Build JWT tokens for test users |
+| Password hash generation | Produce bcrypt hashes compatible with runtime auth |
 
-![Seed Helper Flow](../../docs/diagram/images/cmd-seed-helper.svg)
+## Main Commands
 
-Diagram source: `docs/diagram/cmd-seed-helper.sequence.txt`
-
-## Why It Was Designed This Way
-
-- Keep seed tooling in Go to match production libraries.
-- Guarantee JWT/bcrypt compatibility with the API.
-- Provide a repeatable, deterministic local seed setup.
-
-## Recommended Practices Visible Here
-
-- Use the same auth libs as the API (jwt + bcrypt).
-- Produce local artifacts only (never commit).
-- Prefer Make targets for repeatable workflows.
-
-## Differentials (Rare but Valuable)
-
-- Single-stack tooling: same language and crypto libs as runtime.
-- Generates complete seed env with one command.
-- Works with SQL seed scripts and Make targets.
+| Command | Purpose |
+| --- | --- |
+| `generate-env` | Creates local seed env file (`infrastructure/db/seed/.env.local`) |
+| `generate-token` | Generates JWT for a user ID |
+| `generate-bcrypt` | Generates bcrypt hash for a plain password |
 
 ## Quick Run
 
@@ -41,53 +30,27 @@ make seed-helper
 ./bin/seed-helper generate-env 10
 ```
 
-## Commands
+## Integration Points
 
-### generate-env
+- Used by Make targets (`seed-helper`, `seed-setup`, `seed-quick`).
+- Values feed SQL seed scripts under `infrastructure/db/seed/`.
 
-Creates `infrastructure/db/seed/.env.local` with seed variables.
+## Design Notes
 
-```bash
-./bin/seed-helper generate-env [userCount] [secretKey] [password]
-```
+- Keeps crypto/token generation aligned with backend libraries.
+- Avoid committing generated artifacts or sensitive values.
+- Keep this package strictly local-dev oriented.
 
-Defaults:
-- `userCount`: 10
-- `secretKey`: read from `.env.dev` (if available)
-- `password`: `testpassword123`
+## Package Improvements
 
-### generate-token
+- Add tests for command parsing and invalid argument handling.
+- Add explicit output format docs for each command.
+- Support writing to custom output path for CI/local sandbox runs.
+- Add optional JSON output mode for automation scripts.
 
-Generates a JWT token for a given user id.
+---
 
-```bash
-./bin/seed-helper generate-token [userID] [secretKey]
-```
-
-### generate-bcrypt
-
-Generates a bcrypt hash for a password.
-
-```bash
-./bin/seed-helper generate-bcrypt [password]
-```
-
-## Make Targets
-
-```bash
-make seed-helper
-make seed-setup
-make seed-quick
-```
-
-## Integration Notes
-
-The generated values are used by SQL seed scripts:
-- `infrastructure/db/seed/user_generate.sql`
-- `infrastructure/db/seed/.env.example`
-
-## What Should NOT Live Here
-
-- Production credentials or secrets.
-- Any runtime business logic.
-- Direct API calls (use api-seed-caller for that).
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

@@ -1,88 +1,71 @@
-# Router Port (Platform -> HTTP)
+# Platform HTTP Router Port
 
 **Path:** `internal/platform/server/http/ports`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Define the framework-agnostic routing contract (`Router`).
-- Keep contexts decoupled from concrete routers.
-- Standardize how routes and middleware are registered.
+This package defines the HTTP routing contract used by platform and context adapters.
+It is the abstraction that keeps contexts independent from concrete router frameworks (chi, gin, echo, etc.).
 
-## Contract Overview
+## Package Scope
 
-```go
-type Middleware func(http.Handler) http.Handler
+| Area | Responsibility |
+| --- | --- |
+| Router abstraction | Define the `Router` interface used by HTTP registrars |
+| Middleware abstraction | Define framework-neutral middleware signature |
+| Composition contract | Standardize grouping, mounting, and fallback handler registration |
 
-type Router interface {
-  // Middlewares
-  Use(mw ...Middleware)
+## Files
 
-  // Composition
-  Group(prefix string, fn func(Router))     // sub-tree under prefix
-  GroupWith(mw Middleware, fn func(Router)) // sub-tree with middleware applied
-  Mount(prefix string, h http.Handler)      // attach a ready handler (e.g., GraphQL)
+| File | Purpose |
+| --- | --- |
+| `router.go` | Declares `Middleware` and `Router` interfaces |
 
-  // HTTP handlers
-  Handle(method, path string, h http.Handler)
-  GET(path string, h http.Handler)
-  POST(path string, h http.Handler)
-  PUT(path string, h http.Handler)
-  DELETE(path string, h http.Handler)
+## Core Contracts
 
-  // Defaults / integration
-  SetNotFound(h http.Handler)
-  SetMethodNotAllowed(h http.Handler)
-  SetError(func(http.ResponseWriter, *http.Request, error))
+| Contract | Description |
+| --- | --- |
+| `type Middleware func(http.Handler) http.Handler` | Shared middleware signature across the HTTP layer |
+| `type Router interface { ... }` | Route registration, grouping, mounting, fallbacks, and `ServeHTTP` |
 
-  ServeHTTP(http.ResponseWriter, *http.Request)
-}
-```
+## Router Capabilities
 
-### Key points
+| Capability | Methods |
+| --- | --- |
+| Global middleware | `Use(...)` |
+| Route tree composition | `Group(...)`, `GroupWith(...)` |
+| Handler mounting | `Mount(prefix, handler)` |
+| HTTP method mapping | `Handle`, `GET`, `POST`, `PUT`, `DELETE` |
+| Fallback behavior | `SetNotFound`, `SetMethodNotAllowed`, `SetError` |
+| Entrypoint | `ServeHTTP` |
 
-- `Middleware` is `func(http.Handler) http.Handler` (easy to reuse and test).
-- `GroupWith` scopes middleware to a subtree (ideal for auth-protected areas).
-- `Mount` attaches a fully built handler (GraphQL, etc.).
-- `SetError` is used by recovery/error flows (not called by the router itself).
-
-## How contexts use it
-
-Each context exports a registrar and never imports a concrete router:
+## Usage Pattern
 
 ```go
-// internal/user/adapter/primary/http/handler/register.go
 func RegisterHTTP(r ports.Router, h *Handler) {
-  r.Group("/v1/users", func(ur ports.Router) {
-    ur.POST("/create", http.HandlerFunc(h.Create)) // public
-  })
-}
-
-// internal/user/adapter/primary/http/handler/register_protected.go
-func RegisterHTTPProtected(r ports.Router, h *Handler, mw ports.Middleware) {
-  r.Group("/v1/users", func(ur ports.Router) {
-    ur.GroupWith(mw, func(pr ports.Router) {
-      pr.PUT("/", http.HandlerFunc(h.UpdateUser))
-      pr.PUT("/password", http.HandlerFunc(h.UpdateUserPassword))
-      pr.DELETE("/", http.HandlerFunc(h.SoftDeleteUser))
+    r.Group("/v1/users", func(gr ports.Router) {
+        gr.POST("/create", http.HandlerFunc(h.Create))
     })
-  })
 }
 ```
 
-## Swapping the router
+## Design Notes
 
-* Implement `ports.Router` under `internal/platform/server/http/router/<impl>/<impl>_router.go`.
-* Update the platform composer to instantiate your new router instead of chi.
-* No changes are required in context registrars.
+- Context packages should depend on this port only, never on concrete router libraries.
+- Router implementation details belong to `internal/platform/server/http/router/...`.
+- Fallback handlers should be centralized at composer level for consistent transport behavior.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Do not import `chi/gin/echo` in contexts; use only `ports.Router`.
-- Apply global middlewares in the composer; domain middlewares via `GroupWith`.
-- Mount GraphQL via `Mount(...)` instead of per-method handlers.
-- Keep NotFound/MethodNotAllowed/Error centralized for consistent responses.
+- Add contract tests for any router adapter implementation to ensure full parity with `Router` behavior.
+- Consider adding short semantic comments in `router.go` for `SetError` execution expectations.
+- Evaluate whether `PATCH` support is needed in the port for future API evolution.
+- Add a small reference in platform docs to clarify when to use `Mount` vs `Group` + method handlers.
 
-## What Should NOT Live Here
+---
 
-- Concrete router implementations.
-- Domain logic or handler code.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../../README.md)
+<!-- doc-nav:end -->

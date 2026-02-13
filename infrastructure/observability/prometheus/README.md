@@ -1,34 +1,35 @@
-# infrastructure/observability/prometheus
+# Prometheus Scrape Config
 
-Prometheus configuration for scraping metrics emitted by the OTel Collector (and optionally other services).
+**Path:** `infrastructure/observability/prometheus`
 
-## Package Composition
+## Overview
 
-- `prometheus.yml`
-  - Scrape targets and intervals for the dev stack.
+Prometheus scrape configuration for metrics collection in local observability stack.
+It scrapes OTel collector and other configured targets.
 
-## Flow (Where it comes from -> Where it goes)
+## Files
 
-OTel Collector -> Prometheus scrape -> Grafana dashboards
+| File | Purpose |
+| --- | --- |
+| `prometheus.yml` | Scrape jobs, intervals, and target definitions |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Keep metric scraping explicit and versioned.
-- Separate data collection from visualization.
-- Make dev observability deterministic.
+- Keep scrape intervals appropriate for environment scale.
+- Keep target naming predictable for dashboard query reuse.
+- Verify target health after config updates.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Keep scrape intervals reasonable for the environment (dev vs prod).
-- Preserve label conventions used by Grafana dashboards.
-- Validate targets after changes (`/targets` endpoint).
+- Add example queries used by core dashboards.
+- Add validation target for config syntax in CI.
+- Add guidance for adding new scrape jobs safely.
+- Add cardinality warning section for high-volume labels.
 
-## Differentials
+---
 
-- Single-source scraping aligned with OTel metrics export.
-
-## What Should NOT Live Here
-
-- Grafana dashboards or provisioning configs.
-- Application metrics code or business logic.
-- Credentials or auth tokens.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

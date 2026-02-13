@@ -1,38 +1,35 @@
-# internal/shared
+# Shared Cross-Cutting Layer
 
-Cross-cutting shared assets used across multiple contexts without business rules.
+**Path:** `internal/shared`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Centralize constants for headers, logging keys, tracing attributes, and context keys.
-- Reduce magic strings and keep telemetry consistent.
-- Provide safe, minimal shared types for context propagation.
+Cross-context shared assets that do not contain business logic.
+Currently focused on shared constants and key namespaces used across adapters/usecases/platform.
 
-## Package Composition
+## Subpackages
 
-- `constants/`: claims, common keys, context keys, tracing keys.
+| Subpackage | Role |
+| --- | --- |
+| `constants/` | Claims/header/context/log/tracing key definitions |
 
-## Flow (Where it comes from -> Where it goes)
+## Design Notes
 
-Adapters/usecases -> shared constants -> logs/headers/traces
+- Keep this layer minimal and stable.
+- Avoid introducing context business rules here.
+- Use shared keys to reduce duplication and observability drift.
 
-## Why It Was Designed This Way
+## Package Improvements
 
-- Avoid duplication and typos across contexts.
-- Keep cross-cutting conventions stable and discoverable.
-- Preserve domain isolation (no shared business logic).
+- Add deprecation policy for renamed shared keys.
+- Add guidance for introducing new constant namespaces.
+- Add references to dashboards/log queries impacted by key changes.
+- Add integrity checks for duplicate/overlapping constants.
 
-## Recommended Practices Visible Here
+---
 
-- Prefer `commonkeys` and `tracingkeys` over ad-hoc strings.
-- Use `ctxkeys` for context values, not header names.
-- Keep new keys close to their domain area under `constants/`.
-
-## Differentials
-
-- Single source of truth for cross-cutting keys.
-
-## What Should NOT Live Here
-
-- Domain logic or usecases.
-- Adapter implementations or infra clients.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

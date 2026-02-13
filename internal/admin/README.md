@@ -1,69 +1,37 @@
-# internal/admin
+# Admin Bounded Context
 
-Administrative domain for privileged operations separated from end-user flows.
+**Path:** `internal/admin`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Enforce admin-only actions (roles, block/unblock, privileged updates).
-- Apply elevated authorization and auditing policies at a dedicated boundary.
-- Provide a clean separation between admin behavior and user-facing flows.
-- Expose admin operations via HTTP without leaking infra or core types.
+Administrative domain operations for user governance and privileged actions.
+Implements admin-focused usecases exposed via primary adapters.
 
-## Package Composition
+## Typical Responsibilities
 
-- `core/`: domain models, ports, and usecases (pure business logic).
-- `core/ports/input`: admin service contracts implemented by usecases.
-- `core/ports/output`: repository/integration contracts implemented by adapters.
-- `core/usecase`: privileged workflows and policy enforcement.
-- `adapter/primary/http`: admin HTTP handlers and DTO mapping.
-- `adapter/secondary/db`: admin repositories and database mapping.
+| Area | Responsibility |
+| --- | --- |
+| User governance | Block/unblock/promote/demote role-sensitive operations |
+| Authorization boundary | Enforce admin-level policies via core contracts |
+| Transport exposure | Provide HTTP/GraphQL adapter integration |
 
-## Flow (Where it comes from -> Where it goes)
+## Design Notes
 
-Admin HTTP request -> primary adapter -> input port -> usecase ->
-output port -> secondary adapter -> database -> response
+- Keep admin rules centralized in core usecases.
+- Keep adapters thin and mapping-only.
+- Use semantic errors and safe observability metadata.
 
-## Diagram
+## Package Improvements
 
-![Admin Domain Flow](../../docs/diagram/images/internal-admin.svg)
+- Add operation matrix (admin action -> required role -> port call).
+- Add explicit audit logging guidance for admin actions.
+- Add edge-case tests for role transition conflicts.
+- Add clear policy notes for privileged operation idempotency.
 
-Source: `../../docs/diagram/internal-admin.sequence.txt`
+---
 
-## How It Works (Concise)
-
-- HTTP handlers validate input and admin claims, open spans, and call input ports.
-- Usecases enforce admin policy, orchestrate repositories, and return semantic errors.
-- Secondary adapters translate infra errors and map persistence models.
-- Adapters map domain results into transport responses (no domain leakage).
-
-## Separation Inside the Bounded Context
-
-- Core (domain, ports, usecases) never imports adapters or infrastructure.
-- Primary adapters translate HTTP <-> core and own DTOs and validation.
-- Secondary adapters implement output ports and isolate persistence details.
-- Shared concerns (auth, logging, constants, errors) come from `internal/shared` and platform layers.
-
-## Why It Was Designed This Way
-
-- Keep admin permissions isolated from user routes.
-- Enforce strict policies at dedicated boundaries.
-- Allow auditing and trace correlation for sensitive actions.
-
-## Recommended Practices Visible Here
-
-- Validate admin claims in adapters and re-check in core.
-- Emit audit-ready logs with trace correlation.
-- Reuse shared ports when it avoids duplicating rules.
-- Map driver/infra errors to semantic admin errors in adapters.
-- Keep handlers thin: decode, validate, call usecase, map response.
-
-## Differentials
-
-- Dedicated admin boundary with explicit role documentation.
-- Clear separation between transport, policy, and persistence within the context.
-
-## What Should NOT Live Here
-
-- End-user behavior or generic CRUD.
-- UI-specific logic or transport DTOs outside adapters.
-- Cross-context imports or shared state leakage.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

@@ -1,54 +1,37 @@
-# internal/category
+# Category Bounded Context
 
-Category taxonomy domain (habit/daily) exposed via GraphQL, with per-user uniqueness and soft delete.
+**Path:** `internal/category`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Provide CRUD for categories scoped to a user.
-- Enforce uniqueness of category name per user.
-- Support partial updates and soft delete semantics.
-- Keep category rules isolated from transport and persistence.
+Category management domain for user-scoped classification entities.
+Supports CRUD-style operations and transport exposure through primary adapters.
 
-## Package Composition
+## Typical Responsibilities
 
-- `core/`: domain rules, ports, and usecases.
-- `core/ports/input`: Category service interface for adapters.
-- `core/ports/output`: Category repository contract.
-- `core/usecase`: Create, GetByID, GetByName, ListAll, Update, SoftDelete.
-- `adapter/primary/graphql`: GraphQL controllers/resolvers and DTO mapping.
-- `adapter/secondary/db`: repository, mapper, and persistence models.
+| Area | Responsibility |
+| --- | --- |
+| Category lifecycle | Create/read/update/soft-delete category entities |
+| Validation | Enforce required fields and user scoping |
+| Adapter integration | Expose operations through GraphQL/HTTP controllers |
 
-## Flow (Where it comes from -> Where it goes)
+## Design Notes
 
-GraphQL request -> context controller -> input port -> usecase ->
-output port -> db adapter -> database -> response
+- Keep invariants and uniqueness checks in core.
+- Keep transport mapping outside usecases.
+- Preserve semantic error usage for adapter mapping.
 
-## How It Works (Concise)
+## Package Improvements
 
-- Controllers read `user_id` from context and map GraphQL inputs to commands.
-- Usecases validate invariants (name required, per-user uniqueness) and orchestrate repository calls.
-- Updates are partial to avoid unintended overwrites.
-- Soft delete is idempotent to preserve referential integrity with records.
+- Add operation table with expected semantic errors.
+- Add tests for update/soft-delete edge cases.
+- Add explicit field normalization guidelines.
+- Add interaction notes with `tag`/`record` relations.
 
-## Why It Was Designed This Way
+---
 
-- Keep category rules consistent and reusable across transports.
-- Avoid leaking ORM/persistence types into core.
-- Make category behavior safe for auditing and future extension.
-
-## Recommended Practices Visible Here
-
-- Validate uniqueness in core before persist.
-- Keep mapping in adapters; core stays pure.
-- Emit spans with `user_id`/`category_id` and log only metadata.
-- Coordinate schema and persistence changes (GraphQL + migrations).
-
-## Differentials
-
-- Strict per-user uniqueness and soft delete by design.
-
-## What Should NOT Live Here
-
-- Cross-context imports or shared state.
-- Transport DTOs inside core.
-- Business logic inside adapters.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

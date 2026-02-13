@@ -1,52 +1,37 @@
-# internal/record
+# Record Bounded Context
 
-Record domain for diary/habit entries, exposed via GraphQL/HTTP with strict core rules.
+**Path:** `internal/record`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Create, list, retrieve, update, and soft delete records.
-- Enforce required fields and relationships (user/category/tag).
-- Keep record rules centralized in core.
-- Provide consistent semantic errors for transport mapping.
+Record domain for user event/diary entries.
+Handles record lifecycle and query flows with strict user-scoped validation.
 
-## Package Composition
+## Typical Responsibilities
 
-- `core/`: record entities, ports, and usecases.
-- `core/ports/input`: record service interface for adapters.
-- `core/ports/output`: repository and related lookups.
-- `core/usecase`: create/list/get/update/soft delete flows.
-- `adapter/primary`: GraphQL/HTTP controllers and DTO mapping.
-- `adapter/secondary/db`: record persistence adapters and mappers.
+| Area | Responsibility |
+| --- | --- |
+| Record lifecycle | Create/read/update/soft-delete records |
+| Query operations | Date/tag/category/user-based retrieval |
+| Domain validation | Ensure required relationships and field constraints |
 
-## Flow (Where it comes from -> Where it goes)
+## Design Notes
 
-GraphQL/HTTP request -> primary adapter -> input port -> usecase ->
-output port -> db adapter -> database -> response
+- Keep record invariants in core usecases.
+- Keep adapters mapping-only.
+- Keep persistence concerns in secondary adapters.
 
-## How It Works (Concise)
+## Package Improvements
 
-- Adapters map transport inputs to commands and open spans.
-- Usecases validate invariants, build partial updates, and orchestrate repositories.
-- Soft delete preserves history and avoids hard deletes.
+- Add query operation matrix with expected filters/pagination behavior.
+- Add tests for date/timezone boundary conditions.
+- Add relation consistency checks for category/tag references.
+- Add explicit notes for soft-delete semantics and recovery expectations.
 
-## Why It Was Designed This Way
+---
 
-- Maintain consistent rules across different transports.
-- Keep ORM and persistence details out of core.
-- Enable safe evolution of record fields and relationships.
-
-## Recommended Practices Visible Here
-
-- Validate relationships before persist when required.
-- Use semantic errors and avoid leaking driver errors.
-- Emit spans with `record_id`, `user_id`, `category_id` metadata only.
-
-## Differentials
-
-- Soft delete by default to preserve historical integrity.
-
-## What Should NOT Live Here
-
-- Business logic inside adapters.
-- Transport DTOs inside core.
-- Cross-context imports.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

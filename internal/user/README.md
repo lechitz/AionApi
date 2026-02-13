@@ -1,59 +1,38 @@
-# internal/user
+# User Bounded Context
 
-User lifecycle domain (create, query, update profile/password, soft delete) exposed via HTTP/GraphQL.
+**Path:** `internal/user`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Create and manage users with validation and normalization in core.
-- Enforce uniqueness for username/email.
-- Handle password hashing and token issuance via ports.
-- Provide soft delete and safe listing/lookup.
+User domain for account lifecycle, profile updates, password changes, and soft deletion.
+It centralizes identity-related business rules and security-sensitive flows.
 
-## Package Composition
+## Typical Responsibilities
 
-- `core/`: user entities, ports, and usecases.
-- `core/ports/input`: user service interface for adapters.
-- `core/ports/output`: repository, hasher, token provider, auth store.
-- `core/usecase`: Create, GetByID, GetByUsername, ListAll, Update, UpdatePassword, SoftDelete.
-- `adapter/primary`: HTTP/GraphQL controllers and DTO mapping.
-- `adapter/secondary`: db repositories, storage, hasher, token/cache adapters.
+| Area | Responsibility |
+| --- | --- |
+| Account lifecycle | Create/read/update/delete user operations |
+| Credential management | Password validation/hash/update flows |
+| Identity constraints | Username/email uniqueness and normalization |
+| Session interplay | Token/store coordination for sensitive user changes |
 
-## Flow (Where it comes from -> Where it goes)
+## Design Notes
 
-HTTP/GraphQL request -> primary adapter -> input port -> usecase ->
-output ports -> secondary adapters -> database/cache/storage -> response
+- Keep user rules and security checks in core usecases.
+- Keep transport concerns in primary adapters.
+- Keep storage/hash/token integrations behind output ports.
 
-## How It Works (Concise)
+## Package Improvements
 
-- Create: validate and normalize fields, check uniqueness, hash password, persist user.
-- Update profile: accept partial updates, reject empty changes, persist updates.
-- Update password: verify current password, re-hash, update, issue/store new tokens.
-- Soft delete: revoke tokens in auth store, mark user as deleted in repository.
+- Add end-to-end flow diagrams for create/update-password/delete.
+- Add tests for race/conflict scenarios on unique fields.
+- Add clear policy for PII-safe logging at boundaries.
+- Add compatibility notes for auth/session invalidation behavior.
 
-## Separation Inside the Bounded Context
+---
 
-- Core is transport-agnostic and owns validation and security rules.
-- Primary adapters map DTOs and handle HTTP/GraphQL specifics.
-- Secondary adapters isolate infrastructure (db, storage, cache, hashing).
-
-## Why It Was Designed This Way
-
-- Keep security-sensitive rules centralized in core.
-- Make adapters thin and replaceable.
-- Preserve consistent behavior across transports.
-
-## Recommended Practices Visible Here
-
-- Never log PII, hashes, or tokens; log IDs only.
-- Return semantic errors for adapters to map (e.g., username in use).
-- Use OTel spans per operation with standard attributes.
-
-## Differentials
-
-- Password and token handling via explicit output ports.
-
-## What Should NOT Live Here
-
-- Business logic in adapters.
-- Infra types inside core.
-- Cross-context imports.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

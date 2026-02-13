@@ -1,92 +1,75 @@
-# hack/tools/seed-caller
+# Seed Caller Tool
 
-This CLI generates authenticated API traffic to seed data and validate the end-to-end flow (login + GraphQL mutations). It is useful for observability checks and smoke tests without touching the database directly.
+**Path:** `hack/tools/seed-caller`
 
-**Note:** This tool has been moved from `cmd/api-seed-caller/` to `hack/tools/seed-caller/` as part of the development utilities reorganization.
+## Overview
 
-## Package Composition
+This CLI seeds data by calling the real API surface (login + GraphQL mutations).
+It is intended for local smoke checks, repeatable data setup, and observability validation without direct DB writes.
 
-- `main.go`
-  - Wires config, runs the seed workflow, and prints results.
-- Client and workflow files
-  - Build HTTP requests, execute login, then seed categories/tags/records via GraphQL.
+## Package Scope
 
-## Flow (Where it comes from -> Where it goes)
+| Area | Responsibility |
+| --- | --- |
+| Authenticated seeding | Login and execute GraphQL seeding flows |
+| Multi-user load setup | Generate deterministic user-based data batches |
+| Cleanup support | Optional clean modes for safe reruns |
+| Diagnostics | Optional debug output for payload/troubleshooting |
 
-Operator -> CLI -> Auth login -> GraphQL mutations -> Success log
+## Main Artifacts
 
-![API Seed Caller Flow](../../docs/diagram/images/cmd-api-seed-caller.svg)
+| File/Area | Purpose |
+| --- | --- |
+| `main.go` | CLI entrypoint and workflow wiring |
+| HTTP/GraphQL workflow code | Login, optional user creation, category/tag/record seeding |
+| Success log file | Persist successful run metadata |
 
-Diagram source: `docs/diagram/cmd-api-seed-caller.sequence.txt`
+## Runtime Flow
 
-## Why It Was Designed This Way
-
-- Seed through the same API paths used in production.
-- Exercise auth, permissions, and GraphQL mapping.
-- Produce telemetry (logs/metrics/traces) across real endpoints.
-
-## Recommended Practices Visible Here
-
-- Use configuration via environment variables.
-- Prefer API calls over direct DB access for validation.
-- Keep side effects explicit and traceable.
-
-## Differentials (Rare but Valuable)
-
-- Multi-user seeding with deterministic naming.
-- Optional auto-create path for missing users.
-- Optional clean mode for safe re-runs.
+1. Read CLI/environment configuration.
+2. Authenticate user against API.
+3. Optionally auto-create user if login fails.
+4. Execute GraphQL mutations for categories/tags/records.
+5. Optionally clean previous data depending on flags.
+6. Persist success run marker to configured log.
 
 ## Quick Run
 
 ```bash
-# Via Makefile (recommended):
 make seed-api-caller
-
-# Direct:
+# or
 go run ./hack/tools/seed-caller
 ```
 
-## Environment Variables
+## Key Environment Variables
 
 | Variable | Description |
 | --- | --- |
-| `API_CALLER_HOST` | Base API host (default: `http://localhost:5001`) |
-| `API_CALLER_CONTEXT` | Context path (default: `/aion`) |
-| `API_CALLER_ROOT` | API root (default: `/api/v1`) |
-| `API_CALLER_GRAPHQL` | GraphQL path (default: `/graphql`) |
-| `API_CALLER_USER` | Login user (default: `user1`) |
-| `API_CALLER_PASS` / `API_CALLER_PASSWORD` | Login password (default: `testpassword123`) |
-| `API_CALLER_SUCCESS_LOG` | Success log file (default: `infrastructure/db/seed/api_success.log`) |
-| `API_CALLER_AUTO_CREATE` | Create user when login fails (default: `false`) |
-| `API_CALLER_CLEAN` | Soft delete records before seeding (default: `false`) |
-| `API_CALLER_ONLY_CLEAN` | Only clean and exit (default: `false`) |
-| `API_CALLER_COUNT` | Number of users to seed (default: `1`) |
-| `API_CALLER_USER_PREFIX` | Username prefix (default: `user`) |
-| `API_CALLER_RUN_ID` | Run identifier suffix (default: empty) |
-| `API_CALLER_DEBUG` | Log GraphQL payloads (default: `false`) |
-| `API_CALLER_TIMEOUT` | HTTP timeout (example: `15s`, default: `10s`) |
+| `API_CALLER_HOST` | API base host |
+| `API_CALLER_CONTEXT` / `API_CALLER_ROOT` | Base context and API root |
+| `API_CALLER_GRAPHQL` | GraphQL path |
+| `API_CALLER_USER`, `API_CALLER_PASS` | Login credentials |
+| `API_CALLER_COUNT`, `API_CALLER_USER_PREFIX` | Multi-user batch controls |
+| `API_CALLER_AUTO_CREATE` | Auto-create user when login fails |
+| `API_CALLER_CLEAN`, `API_CALLER_ONLY_CLEAN` | Cleanup controls |
+| `API_CALLER_DEBUG` | Enable request/response debug output |
 
-## Multi-User Examples
+## Design Notes
 
-```bash
-# Seed 50 users (user1..user50), auto-create missing users
-API_CALLER_COUNT=50 API_CALLER_AUTO_CREATE=true go run ./hack/tools/seed-caller
+- This tool validates real API contracts and auth rules, not DB internals.
+- Keep it dev-focused; it should not become production automation.
+- Prefer Make targets for consistent usage across developers.
 
-# Using Makefile helper (if available)
-make seed-caller N=50
-```
+## Package Improvements
 
-## What It Does
+- Add table-driven tests for configuration parsing and cleanup behavior.
+- Add rate-limit/backoff options for safer high-volume local runs.
+- Emit structured run summary (JSON) for easier CI/local reporting.
+- Add a dry-run mode for validating configuration without side effects.
 
-1) Login via `/auth/login` and obtain a token.
-2) Optionally auto-create the user if login fails.
-3) Seed categories, tags, and records via GraphQL.
-4) Optionally clean records (and optionally user data) before seeding.
-5) Write only successful runs to the configured log.
+---
 
-## What Should NOT Live Here
-
-- Domain rules or validation.
-- Direct database access.
-- Production-only operational logic.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

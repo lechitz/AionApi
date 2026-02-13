@@ -1,34 +1,35 @@
-# infrastructure/observability/loki
+# Loki Configuration
 
-Loki configuration assets for log ingestion and querying. This folder is the target for log storage and correlation in the observability stack.
+**Path:** `infrastructure/observability/loki`
 
-## Package Composition
+## Overview
 
-- `loki.yaml`
-  - Single-binary Loki config with filesystem storage and retention.
+Loki storage/query configuration for centralized log retention and exploration.
+Logs are typically ingested via Fluent Bit and consumed in Grafana.
 
-## Flow (Where it comes from -> Where it goes)
+## Files
 
-AionAPI logs -> Fluent Bit -> Loki -> Grafana Explore / dashboards
+| File | Purpose |
+| --- | --- |
+| `loki.yaml` | Loki single-binary/server configuration |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Keep log storage configuration separate from collection.
-- Enable consistent log querying across environments.
-- Support trace correlation via shared labels.
+- Keep retention and storage config explicit by environment profile.
+- Align labels with ingestion pipeline for searchable logs.
+- Separate storage concerns from parser/collection concerns.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Align labels (service, env, trace_id) with Fluent Bit output.
-- Keep retention/storage settings explicit per environment.
-- Avoid committing storage credentials.
+- Add retention policy rationale and expected volume guidance.
+- Add startup verification checklist (`ready`, ingestion path, query path).
+- Add notes for scaling beyond local single-binary mode.
+- Add sanity tests for label cardinality controls.
 
-## Differentials
+---
 
-- Trace-log correlation built into label strategy.
-
-## What Should NOT Live Here
-
-- Log parsers or collection rules (Fluent Bit).
-- Application logging code.
-- Secrets or production storage credentials.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../README.md)
+<!-- doc-nav:end -->

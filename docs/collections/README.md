@@ -1,32 +1,35 @@
-# docs/collections
+# API Collections
 
-This folder contains versioned API client collections (Postman/Insomnia) for local development and manual QA. OpenAPI remains the source of truth.
+**Path:** `docs/collections`
 
-## Package Composition
+## Overview
 
-- `postman/`
-  - Current collection file(s), for example `AionApi.postman_collection.json`.
+This folder contains API client collections (Postman/Insomnia) used for manual QA and local integration checks.
+OpenAPI remains the source contract; collections are consumer-friendly artifacts.
 
-## Flow (Where it comes from -> Where it goes)
+## Scope
 
-OpenAPI spec -> Client collection -> Manual QA / local testing
+| Area | Responsibility |
+| --- | --- |
+| Manual testing support | Provide ready-to-run request collections |
+| Contract consumption | Reflect REST contract for external tooling |
 
-## Why It Was Designed This Way
+## Design Notes
 
-- Keep consumer tooling in sync with the API contract.
-- Support quick manual testing without custom scripts.
+- Keep environment placeholders (`{{baseURL}}`, tokens) in collection files.
+- Never commit real secrets/tokens.
+- Update collections when contract changes materially affect consumers.
 
-## Recommended Practices Visible Here
+## Package Improvements
 
-- Keep `{{baseURL}}` and environment variables.
-- Version collections on breaking changes.
-- Avoid committing secrets or tokens.
+- Add collection versioning notes linked to API releases.
+- Add validation step to ensure collections import cleanly.
+- Add quick start section with expected local environment variables.
+- Add mapping table from collection folders to API domains.
 
-## Differentials (Rare but Valuable)
+---
 
-- Collections are versioned artifacts, not the contract source.
-
-## What Should NOT Live Here
-
-- API contract changes (use `docs/swagger`).
-- Secrets or real tokens.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

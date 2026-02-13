@@ -1,49 +1,34 @@
-# cmd/ (Application Entrypoints)
+# Application Entrypoints (`cmd`)
 
-This folder contains the main application binary for AionAPI. The code here should orchestrate, not implement domain logic.
+**Path:** `cmd`
+
+## Overview
+
+This folder contains application binaries.
+Current production entrypoint is `cmd/api`.
 
 ## Structure
 
-- `api/` - Main API server (GraphQL + HTTP)
-  - Wires modules with Fx and configures Swagger metadata
-  - **This is the only production application**
+| Folder | Role |
+| --- | --- |
+| `api/` | Main production server bootstrap |
 
-## Flow (Where it comes from -> Where it goes)
+## Design Notes
 
-Operator → cmd/api → internal/platform/modules → adapters/usecases
+- Entrypoints should orchestrate and delegate, not implement domain logic.
+- Keep startup concerns centralized (config, lifecycle, observability).
+- Development tooling belongs under `hack/`.
 
-The entrypoint builds the process graph and delegates real work to `internal/` layers.
+## Package Improvements
 
-## Development Tools
+- Add a compact boot sequence section linking to platform startup docs.
+- Document expected env profile for each entrypoint.
+- Add explicit convention for naming new entrypoint folders.
+- Add link to release/build pipeline docs for binaries.
 
-Development utilities have been moved to `/hack`:
-- Go CLIs (seed-caller, seed-helper) → `hack/tools/`
-- Bash scripts (test-*, force-insert-roles.sh) → `hack/dev/`
+---
 
-See `hack/README.md` for details.
-
-## Why It Was Designed This Way
-
-- Keep entrypoints thin and predictable
-- Centralize configuration, lifecycle, and observability early
-- Preserve clean boundaries: cmd never owns business rules
-- Separate production code from development utilities
-
-## Recommended Practices Visible Here
-
-- main packages only orchestrate; no domain rules
-- Configuration loaded via `internal/platform/config`
-- Graceful shutdown with context timeout
-
-## Differentials
-
-- Swagger metadata applied at runtime from config
-- Single production binary (clean separation from dev tools)
-
-## What Should NOT Live Here
-
-- Domain rules or validation
-- Mapping of HTTP/GraphQL payloads
-- Repository or external IO implementations
-- Development tools (use `hack/` instead)
-
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../README.md)
+<!-- doc-nav:end -->

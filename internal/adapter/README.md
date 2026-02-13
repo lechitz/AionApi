@@ -1,38 +1,36 @@
-# internal/adapter
+# Shared Adapter Layer
 
-Shared adapters used across multiple contexts. This layer concentrates transport and infrastructure patterns to avoid duplication.
+**Path:** `internal/adapter`
 
-## Package Composition
+## Overview
 
-- `primary/`
-  - Shared entrypoint adapters (GraphQL infrastructure).
-- `secondary/`
-  - Shared output adapters (db, cache, crypto, tokens, logging, graphs).
+Shared adapter layer containing transport-facing primary adapters and infrastructure-facing secondary adapters.
+It provides cross-context adapter infrastructure and conventions.
 
-## Flow (Where it comes from -> Where it goes)
+## Subpackages
 
-External input -> primary adapters -> controllers/usecases
+| Subpackage | Role |
+| --- | --- |
+| `primary/` | Inbound transport adapters (client -> usecase boundary) |
+| `secondary/` | Outbound infra adapters (usecase -> external systems) |
 
-Usecases -> output ports -> secondary adapters -> external systems
+## Design Notes
 
-## Why It Was Designed This Way
+- Keep adapter responsibilities directional and explicit.
+- Keep core boundaries clean: no domain rules in adapters.
+- Detailed behavior for each side is documented in respective subpackage READMEs.
 
-- Centralize cross-context adapter behavior.
-- Keep domain contexts focused on business logic.
-- Standardize error handling and observability.
+## Package Improvements
 
-## Recommended Practices Visible Here
+- Add adapter boundary checklist (inbound vs outbound responsibilities).
+- Add sample request flow bridging primary -> core -> secondary.
+- Add lint/convention checks for forbidden dependency direction.
+- Add adapter testing guidance by adapter type.
 
-- Adapters depend on ports; core never depends on adapters.
-- Keep transport conventions centralized to avoid drift.
-- Include tracing/logging without leaking sensitive data.
+---
 
-## Differentials
-
-- Shared adapter patterns that enforce consistency.
-
-## What Should NOT Live Here
-
-- Domain rules or business decisions.
-- Cross-context imports inside core.
-- Infrastructure assets (Docker, migrations).
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->

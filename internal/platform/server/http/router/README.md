@@ -1,29 +1,55 @@
-# Platform HTTP Router
+# Platform HTTP Router Adapters
 
-**Folder:** `internal/platform/server/http/router`
+**Path:** `internal/platform/server/http/router`
 
-## Purpose and Main Capabilities
+## Overview
 
-- Hold concrete router adapters that implement `ports.Router`.
-- Allow swapping the routing engine without touching context code.
-- Keep routing details isolated from domain adapters.
+This package contains concrete router adapters that implement the `ports.Router` contract.
+It isolates framework-specific routing details from context modules and keeps route registration portable.
 
-## Package Composition
+## Package Scope
 
-- `chi/`: chi-based implementation of `ports.Router` (current adapter).
+| Area | Responsibility |
+| --- | --- |
+| Port implementation | Implement `internal/platform/server/http/ports.Router` |
+| Framework encapsulation | Hide chi-specific APIs from contexts and registrars |
+| Middleware composition | Apply global and scoped middlewares through router adapter methods |
+| Fallback wiring | Configure `NotFound`, `MethodNotAllowed`, and optional error callback hooks |
 
-## Flow (Where it comes from -> Where it goes)
+## Subpackages
 
-HTTP composer -> router adapter -> middleware -> handlers
+| Subpackage | Role |
+| --- | --- |
+| `chi/` | Current `chi/v5` adapter implementing the router port |
 
-## Recommended Practices Visible Here
+## Current Adapter Summary (`chi/`)
 
-- Contexts depend only on `internal/platform/server/http/ports`.
-- Use `Mount` for composite handlers (e.g., GraphQL).
-- Keep router adapters thin and focused on wiring.
-- Swap routers by changing the composer import, not context code.
+| Capability | Implementation notes |
+| --- | --- |
+| Global middleware | `Use(...)` with nil-guard |
+| Route groups | `Group(prefix, fn)` and `GroupWith(mw, fn)` |
+| Mounted handlers | `Mount(prefix, handler)` |
+| Method routing | `Handle`, `GET`, `POST`, `PUT`, `DELETE` |
+| Fallback handlers | `SetNotFound`, `SetMethodNotAllowed` |
+| Error callback | `SetError` stores callback (not automatically invoked by chi) |
 
-## What Should NOT Live Here
+## Design Notes
 
-- Context-specific route registration.
-- Business logic or transport DTOs.
+- Context registrars should depend only on `ports.Router`, never on `chi` directly.
+- Adapter remains thin: route wiring only, no business or transport mapping logic.
+- Router swapping should be done in composer wiring, not in domain/context packages.
+
+## Package Improvements
+
+- Add contract tests validating that `chi` adapter behavior matches `ports.Router` expectations.
+- Clarify and/or remove `SetError` if it is not consumed by platform flow to avoid dead API surface.
+- Consider adding optional support for additional verbs (e.g., `PATCH`) if required by upcoming endpoints.
+- Add a short “how to add a new adapter” section in this README with required method parity checklist.
+
+---
+
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../../README.md)
+<!-- doc-nav:end -->

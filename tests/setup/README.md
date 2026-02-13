@@ -1,111 +1,43 @@
-# Test Setup (helpers for unit tests)
+# Test Setup Helpers
 
-**Folder:** `tests/setup/`
+**Path:** `tests/setup`
 
-## Responsibility
+## Overview
 
-* Provide **ready-to-use test suites** for services (User, Auth, Token, Category).
-* Wire **GoMock** controllers + mocks and return the **system under test (SUT)**.
-* Offer shared helpers (e.g., **relaxed logger expectations**, **default test user**).
+Shared test builders and helpers for unit testing service/usecase layers.
+These helpers reduce boilerplate around gomock setup and default fixtures.
 
-> ⚠️ These builders are meant for tests only. They hide boilerplate and standardize setup/teardown across packages.
+## Responsibilities
 
----
+| Area | Responsibility |
+| --- | --- |
+| Suite builders | Build ready-to-use test suites per domain service |
+| Mock wiring | Create and expose required mocks consistently |
+| Shared fixtures | Provide default entities/helpers for tests |
 
-## How it works
-
-* Each `*ServiceTest(t *testing.T)` function:
-
-    * Creates a `gomock.Controller`.
-    * Instantiates the required **output-port mocks** (from `tests/mocks`).
-    * Applies **relaxed logger expectations** via `ExpectLoggerDefaultBehavior(...)`.
-    * Builds the concrete service (`usecase.NewService(...)`).
-    * Returns a typed `*...TestSuite` containing: `Ctrl`, `Ctx`, `Logger`, the mocks, and the `...Service` SUT.
-
-* You are responsible for teardown:
-
-  ```go
-  suite := setup.UserServiceTest(t)
-  defer suite.Ctrl.Finish()
-  ```
-
----
-
-## Provided suites & helpers
-
-* `UserServiceTest(t)` → `UserServiceTestSuite`
-
-    * Mocks: `UserRepository`, `AuthStore`, `AuthProvider`, `Hasher`, `ContextLogger`
-    * SUT: `*user/usecase.Service`
-    * Extras: `setup.DefaultTestUser()` (common `domain.User`)
-
-* `AuthServiceTest(t)` → `AuthServiceTestSuite`
-
-    * Mocks: `UserRepository`, `AuthStore`, `AuthProvider`, `Hasher`, `ContextLogger`
-    * SUT: `*auth/usecase.Service`
-
-* `TokenServiceTest(t)` → `TokenServiceTestSuite`
-
-    * Mocks: `AuthStore`, `AuthProvider`, `ContextLogger` (and internal deps wired for the SUT)
-    * SUT: `*auth/usecase.Service`
-
-* `CategoryServiceTest(t)` → `CategoryServiceTestSuite`
-
-    * Mocks: `CategoryRepository`, `ContextLogger`
-    * SUT: `*category/usecase.Service`
-
-* `ExpectLoggerDefaultBehavior(logger *mocks.MockContextLogger)`
-
-    * Registers **non-intrusive** expectations (`DebugwCtx/InfowCtx/WarnwCtx/ErrorwCtx`) with multiple arities so tests don’t fail on logging KVs.
-
----
-
-## Usage examples
+## Usage Pattern
 
 ```go
-func TestGetUserByID_Success(t *testing.T) {
-    suite := setup.UserServiceTest(t)
-    defer suite.Ctrl.Finish()
-
-    u := setup.DefaultTestUser()
-    suite.UserRepository.
-        EXPECT().
-        GetByID(gomock.Any(), u.ID).
-        Return(u, nil)
-
-    got, err := suite.UserService.GetByID(suite.Ctx, u.ID)
-    require.NoError(t, err)
-    require.Equal(t, u, got)
-}
+suite := setup.UserServiceTest(t)
+defer suite.Ctrl.Finish()
 ```
 
-```go
-func TestSoftDeleteUser_TokenError(t *testing.T) {
-    suite := setup.UserServiceTest(t)
-    defer suite.Ctrl.Finish()
+## Design Notes
 
-    suite.TokenStore.
-        EXPECT().
-        Delete(gomock.Any(), uint64(1)).
-        Return(errors.New("delete token failed"))
+- Keep helpers deterministic and focused.
+- Favor explicit fixture builders over hidden global state.
+- Keep suite APIs stable across refactors.
 
-    err := suite.UserService.SoftDeleteUser(suite.Ctx, 1)
-    require.Error(t, err)
-}
-```
+## Package Improvements
+
+- Add helper index table (builder -> mocks -> SUT).
+- Add extension guide for adding new service test suites.
+- Add stricter naming conventions for suite fields.
+- Add examples covering error-path assertions.
 
 ---
 
-## Conventions & tips
-
-* **Always** `defer suite.Ctrl.Finish()` to assert mock expectations.
-* Keep assertions focused; use `gomock.AssignableToTypeOf(...)` for dynamic maps/structs.
-* Use `tests/mocks` **generated** doubles—don’t hand-edit mocks.
-* Prefer **domain-centric** fixtures (`DefaultTestUser`) and keep test data minimal.
-
----
-
-## When to extend
-
-* Add a new service? Provide a `XServiceTest(t)` builder returning a `XServiceTestSuite`.
-* Need new shared fixtures or expectations? Add helpers here to keep tests consistent across contexts.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to root README](../../README.md)
+<!-- doc-nav:end -->
