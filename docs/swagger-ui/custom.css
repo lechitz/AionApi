@@ -1,3 +1,120 @@
+:root {
+  --aion-bg: #eef1f5;
+  --aion-surface: #ffffff;
+  --aion-surface-2: #f5f7fb;
+  --aion-border: #cfd8e3;
+  --aion-text: #101828;
+  --aion-muted: #344054;
+  --aion-accent: #1f3a5b;
+  --aion-accent-soft: #2f4f76;
+}
 
+html,
+body {
+  margin: 0;
+  background: var(--aion-bg);
+  color: var(--aion-text);
+}
 
+.aion-swagger-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--aion-border);
+  background: var(--aion-accent);
+  color: #fff;
+}
 
+.aion-swagger-header__brand {
+  font: 700 1rem/1.2 "Inter", "Segoe UI", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.aion-swagger-header__meta {
+  font: 500 0.85rem/1.2 "Inter", "Segoe UI", sans-serif;
+  color: #eaf1fa;
+}
+
+#swagger-ui {
+  min-height: calc(100vh - 54px);
+}
+
+.swagger-ui {
+  color: var(--aion-text);
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.swagger-ui .topbar {
+  display: none;
+}
+
+.swagger-ui .scheme-container {
+  background: var(--aion-surface-2);
+  box-shadow: none;
+  border-bottom: 1px solid var(--aion-border);
+}
+
+.swagger-ui .information-container,
+.swagger-ui .wrapper,
+.swagger-ui .opblock,
+.swagger-ui .responses-wrapper,
+.swagger-ui section.models,
+.swagger-ui .model-box {
+  background: var(--aion-surface);
+}
+
+.swagger-ui .opblock,
+.swagger-ui .model-box,
+.swagger-ui .responses-inner,
+.swagger-ui .response-col_status,
+.swagger-ui .response-col_description {
+  border-color: var(--aion-border);
+}
+
+.swagger-ui .opblock-tag,
+.swagger-ui .opblock .opblock-summary,
+.swagger-ui .opblock-description-wrapper,
+.swagger-ui .responses-table,
+.swagger-ui .tab li,
+.swagger-ui .btn,
+.swagger-ui select,
+.swagger-ui input[type=text],
+.swagger-ui textarea,
+.swagger-ui p,
+.swagger-ui span,
+.swagger-ui td,
+.swagger-ui th {
+  color: var(--aion-text);
+}
+
+.swagger-ui .btn.authorize,
+.swagger-ui .btn.execute {
+  background: var(--aion-accent);
+  border-color: var(--aion-accent);
+  color: #fff;
+}
+
+.swagger-ui .btn.execute:hover,
+.swagger-ui .btn.authorize:hover {
+  background: var(--aion-accent-soft);
+  border-color: var(--aion-accent-soft);
+}
+
+.swagger-ui input[type=text],
+.swagger-ui textarea,
+.swagger-ui select {
+  background: #fff;
+  border: 1px solid var(--aion-border);
+}
+
+.swagger-ui a,
+.swagger-ui .opblock-tag {
+  color: var(--aion-accent-soft);
+}
+
+.swagger-ui .microlight,
+.swagger-ui .highlight-code {
+  background: #f5f7fb;
+  color: #0f2742;
+}

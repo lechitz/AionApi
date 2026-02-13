@@ -1,74 +1,45 @@
-# AionApi — Documentation
+# AionApi Documentation
 
-Welcome to the AionApi documentation — a concise reference and walkthrough for this modular Go backend that powers habit and diary management with REST and GraphQL APIs.
+AionApi is a modular Go backend for habit and diary workflows, built with Hexagonal Architecture and strong observability by default.
 
----
+## What You Can Do Here
 
-## Build better habits with data
+| Area | What you will find |
+| --- | --- |
+| Start Here | Local setup, first run, and basic validation |
+| Architecture | Layer boundaries, context isolation, and request lifecycle |
+| API | REST contract (Swagger), GraphQL usage, and collections |
+| Platform & Ops | Observability setup and operational guides |
+| Reference | Diagram catalog, docs assets, and changelog |
 
-Aion helps you capture daily actions, measure patterns, and foster sustainable routines using a simple, extensible API-first platform. The server is designed for reliability, observability, and developer ergonomics — ideal for experimentation and iteration.
+## Quick Links
 
-Key ideas:
-- Instrumented by default (OpenTelemetry + Prometheus) so you can observe behavior and performance
-- Hexagonal (Ports & Adapters) architecture that keeps business logic decoupled from transport and infrastructure
-- Developer-first workflows with codegen, generated mocks, formatters and linters
+- Docs site: <https://lechitz.github.io/AionApi/>
+- Swagger UI: <https://lechitz.github.io/AionApi/swagger-ui/>
+- OpenAPI spec: <https://raw.githubusercontent.com/lechitz/AionApi/main/swagger/swagger.yaml>
+- Repository: <https://github.com/lechitz/AionApi>
 
----
+## Recommended Reading Path
 
-## Quick links
-- Getting started — Quick setup and local developer workflow: `docs/getting-started.md`
-- Architecture — Design, component responsibilities and request flows: `docs/architecture.md`
-- Platform — Observability, server and configuration notes: `docs/platform.md`
-- API (Swagger) — interactive API explorer: https://lechitz.github.io/AionApi/swagger-ui/
-- Raw OpenAPI spec: `./swagger/swagger.yaml`
+1. Read [Getting Started](getting-started.md) and boot the local stack.
+2. Read [System Design](architecture.md) to understand boundaries and flow.
+3. Read [Platform Runtime](platform.md) for wiring, server, and observability internals.
+4. Use [GraphQL Guide](graphql-api.md) and Swagger UI for API integration.
 
----
+## Documentation Principles
 
-## Quick start (dev)
+- Architecture-first: docs follow the same boundaries as code.
+- Operationally useful: commands are runnable in a fresh local environment.
+- Contract-driven: API docs point to generated artifacts and source contracts.
+- Maintainable: each page has a clear ownership scope and avoids duplicate low-level details.
 
-These commands get you from repo clone to a running dev environment.
+## Keep This Portal Updated
 
-```bash
-# clone
-git clone git@github.com:lechitz/AionApi.git
-cd AionApi
+When you change behavior, update docs in the same PR for:
 
-# install recommended developer tools (goimports, golines, golangci-lint, migrate, gqlgen, mockgen, ...)
-make install-tools
+- API contract changes (REST/GraphQL)
+- Architecture changes (ports, adapters, context boundaries)
+- Operational changes (make targets, observability stack, environment variables)
 
-# fetch modules
-go mod download
-
-# start the local development stack (Postgres, API, etc.)
-make dev
-
-# apply migrations and optionally seed sample data
-export MIGRATION_DB="postgres://aion:aion@localhost:5432/aionapi?sslmode=disable"
-make migrate-up
-make seed-all
-
-# health check
-curl -s http://localhost:8080/aion/health | jq
-```
-
-> Note: `make install-tools` is a convenient alias for the repository tooling installer (`tools-install` in `makefiles/tooling.mk`).
-
----
-
-## Explore the API
-- Live interactive API (Swagger UI): https://lechitz.github.io/AionApi/swagger-ui/
-- OpenAPI spec (raw): `https://raw.githubusercontent.com/lechitz/AionApi/main/swagger/swagger.yaml`
-
----
-
-## Preview this documentation locally
-
-If you want to preview the MkDocs site while editing:
-
-```bash
-# ensure mkdocs + mkdocs-material are installed in your environment
-mkdocs serve
-# open http://127.0.0.1:8000 in the browser
-```
-
----
+!!! tip
+    This site should stay high-level and navigable. Deep package-level details remain in repository `README.md` files and code comments.

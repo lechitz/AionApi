@@ -31,5 +31,5 @@ OpenAPI remains the source contract; collections are consumer-friendly artifacts
 
 <!-- doc-nav:start -->
 ## Navigation
-- [Back to root README](../../README.md)
+- [Back to root README](../index.md)
 <!-- doc-nav:end -->

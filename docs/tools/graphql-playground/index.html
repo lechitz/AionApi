@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>AionApi GraphQL Playground</title>
+  <style>
+    :root {
+      --bg: #eef1f5;
+      --surface: #ffffff;
+      --surface-soft: #f5f7fb;
+      --text: #101828;
+      --muted: #344054;
+      --border: #cfd8e3;
+      --primary: #1f3a5b;
+      --primary-soft: #2f4f76;
+    }
+    * { box-sizing: border-box; font-family: Inter, system-ui, -apple-system, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 16px; }
+    .head { background: var(--primary); color: #fff; border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .grid { display: grid; grid-template-columns: 340px 1fr; gap: 12px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+    .label { font-size: 12px; color: var(--muted); margin: 0 0 6px; font-weight: 600; }
+    input, select, textarea {
+      width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px;
+      background: var(--surface-soft); color: var(--text); font-size: 13px;
+    }
+    textarea { min-height: 260px; resize: vertical; font-family: "JetBrains Mono", ui-monospace, monospace; }
+    .row { display: grid; gap: 10px; margin-bottom: 10px; }
+    .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    button {
+      border: 1px solid var(--primary); background: var(--primary); color: #fff;
+      border-radius: 8px; padding: 8px 12px; font-weight: 600; cursor: pointer;
+    }
+    button.secondary { background: #fff; color: var(--primary); }
+    pre {
+      margin: 0; background: #0f2742; color: #f8fafc; border-radius: 10px;
+      padding: 12px; min-height: 260px; overflow: auto; font-size: 12px;
+    }
+    .meta { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <strong>AionApi GraphQL Playground</strong>
+      <div style="opacity:.9;font-size:12px;margin-top:4px;">Interactive requests with preloaded schema operations.</div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="row">
+          <label class="label" for="endpoint">Endpoint</label>
+          <input id="endpoint" value="http://localhost:8080/graphql"/>
+        </div>
+        <div class="row">
+          <label class="label" for="token">Bearer Token (optional)</label>
+          <input id="token" placeholder="eyJhbGciOi..."/>
+        </div>
+        <div class="row">
+          <label class="label" for="operation">Operation Template</label>
+          <select id="operation"></select>
+        </div>
+        <div class="btns">
+          <button id="load">Load Template</button>
+          <button class="secondary" id="copy">Copy Query</button>
+          <button id="run">Run Request</button>
+        </div>
+        <p class="meta">Tip: edit the template before running if your API requires different fields.</p>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <label class="label" for="query">GraphQL Query</label>
+          <textarea id="query"></textarea>
+        </div>
+        <div class="row">
+          <label class="label" for="variables">Variables (JSON)</label>
+          <textarea id="variables">{}</textarea>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:12px;">
+      <label class="label">Response</label>
+      <pre id="response">Run a request to see response JSON.</pre>
+    </section>
+  </div>
+
+  <script>
+    const templates = {
+      categories: `query Categories {\n  categories { id name description colorHex icon }\n}`,
+      categoryById: `query CategoryById($id: ID!) {\n  categoryById(id: $id) { id name description colorHex icon }\n}`,
+      categoryByName: `query CategoryByName($name: String!) {\n  categoryByName(name: $name) { id name description colorHex icon }\n}`,
+      chatHistory: `query ChatHistory($limit: Int, $offset: Int) {\n  chatHistory(limit: $limit, offset: $offset) { id message response tokensUsed createdAt }\n}`,
+      chatContext: `query ChatContext {\n  chatContext { totalRecords totalCategories totalTags }\n}`,
+      recordById: `query RecordById($id: ID!) {\n  recordById(id: $id) { id tagId description eventTime value status }\n}`,
+      records: `query Records($limit: Int, $afterEventTime: String, $afterId: ID) {\n  records(limit: $limit, afterEventTime: $afterEventTime, afterId: $afterId) { id tagId eventTime value status }\n}`,
+      recordsLatest: `query RecordsLatest($limit: Int) {\n  recordsLatest(limit: $limit) { id tagId eventTime value status }\n}`,
+      recordsByTag: `query RecordsByTag($tagId: ID!, $limit: Int) {\n  recordsByTag(tagId: $tagId, limit: $limit) { id description eventTime value status }\n}`,
+      recordsByCategory: `query RecordsByCategory($categoryId: ID!, $limit: Int) {\n  recordsByCategory(categoryId: $categoryId, limit: $limit) { id description eventTime value status }\n}`,
+      recordsByDay: `query RecordsByDay($date: String!) {\n  recordsByDay(date: $date) { id description eventTime value status }\n}`,
+      recordsUntil: `query RecordsUntil($until: String!, $limit: Int) {\n  recordsUntil(until: $until, limit: $limit) { id description eventTime value status }\n}`,
+      recordsBetween: `query RecordsBetween($startDate: String!, $endDate: String!, $limit: Int) {\n  recordsBetween(startDate: $startDate, endDate: $endDate, limit: $limit) { id description eventTime value status }\n}`,
+      searchRecords: `query SearchRecords($filters: SearchFilters!) {\n  searchRecords(filters: $filters) { id description eventTime value status }\n}`,
+      tagByName: `query TagByName($name: String!) {\n  tagByName(name: $name) { id name categoryId description icon }\n}`,
+      tagById: `query TagById($id: ID!) {\n  tagById(id: $id) { id name categoryId description icon }\n}`,
+      tags: `query Tags {\n  tags { id name categoryId description icon }\n}`,
+      tagsByCategoryId: `query TagsByCategoryId($categoryId: ID!) {\n  tagsByCategoryId(categoryId: $categoryId) { id name categoryId description icon }\n}`,
+      userStats: `query UserStats {\n  userStats { totalRecords totalCategories totalTags recordsThisWeek recordsThisMonth }\n}`,
+      createCategory: `mutation CreateCategory($input: CreateCategoryInput!) {\n  createCategory(input: $input) { id name colorHex }\n}`,
+      updateCategory: `mutation UpdateCategory($input: UpdateCategoryInput!) {\n  updateCategory(input: $input) { id name colorHex }\n}`,
+      softDeleteCategory: `mutation SoftDeleteCategory($input: DeleteCategoryInput!) {\n  softDeleteCategory(input: $input)\n}`,
+      createRecord: `mutation CreateRecord($input: CreateRecordInput!) {\n  createRecord(input: $input) { id tagId description eventTime value status }\n}`,
+      updateRecord: `mutation UpdateRecord($input: UpdateRecordInput!) {\n  updateRecord(input: $input) { id tagId description eventTime value status }\n}`,
+      softDeleteRecord: `mutation SoftDeleteRecord($input: DeleteRecordInput!) {\n  softDeleteRecord(input: $input)\n}`,
+      softDeleteAllRecords: `mutation SoftDeleteAllRecords {\n  softDeleteAllRecords\n}`,
+      createTag: `mutation CreateTag($input: CreateTagInput!) {\n  createTag(input: $input) { id name categoryId description icon }\n}`,
+      updateTag: `mutation UpdateTag($input: UpdateTagInput!) {\n  updateTag(input: $input) { id name categoryId description icon }\n}`,
+      softDeleteTag: `mutation SoftDeleteTag($input: DeleteTagInput!) {\n  softDeleteTag(input: $input)\n}`
+    };
+
+    const variableDefaults = {
+      categoryById: { id: "1" },
+      categoryByName: { name: "Work" },
+      chatHistory: { limit: 20, offset: 0 },
+      recordById: { id: "1" },
+      records: { limit: 20, afterEventTime: null, afterId: null },
+      recordsLatest: { limit: 20 },
+      recordsByTag: { tagId: "1", limit: 20 },
+      recordsByCategory: { categoryId: "1", limit: 20 },
+      recordsByDay: { date: "2026-02-13" },
+      recordsUntil: { until: "2026-02-13T23:59:59Z", limit: 20 },
+      recordsBetween: { startDate: "2026-02-01T00:00:00Z", endDate: "2026-02-13T23:59:59Z", limit: 50 },
+      searchRecords: { filters: { query: "run", limit: 20, offset: 0 } },
+      tagByName: { name: "Exercise" },
+      tagById: { id: "1" },
+      tagsByCategoryId: { categoryId: "1" },
+      createCategory: { input: { name: "Work", description: "Work items", colorHex: "#FF8B42", icon: "briefcase" } },
+      updateCategory: { input: { id: "1", name: "Work Updated", colorHex: "#FF6B1A" } },
+      softDeleteCategory: { input: { id: "1" } },
+      createRecord: { input: { tagId: "1", description: "Morning run", eventTime: "2026-02-13T07:00:00Z", value: 5.2, status: "completed" } },
+      updateRecord: { input: { id: "1", description: "Updated note", value: 6.0 } },
+      softDeleteRecord: { input: { id: "1" } },
+      createTag: { input: { name: "Exercise", categoryId: "1", description: "Workout tag", icon: "💪" } },
+      updateTag: { input: { id: "1", name: "Exercise Updated" } },
+      softDeleteTag: { input: { id: "1" } }
+    };
+
+    const operation = document.getElementById('operation');
+    const query = document.getElementById('query');
+    const variables = document.getElementById('variables');
+    const response = document.getElementById('response');
+
+    Object.keys(templates).forEach((key) => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = key;
+      operation.appendChild(opt);
+    });
+
+    function loadTemplate() {
+      const name = operation.value;
+      query.value = templates[name] || '';
+      variables.value = JSON.stringify(variableDefaults[name] || {}, null, 2);
+    }
+
+    async function run() {
+      const endpoint = document.getElementById('endpoint').value.trim();
+      const token = document.getElementById('token').value.trim();
+      let vars = {};
+      try { vars = JSON.parse(variables.value || '{}'); }
+      catch (err) {
+        response.textContent = `Invalid JSON in variables: ${err.message}`;
+        return;
+      }
+
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      response.textContent = 'Running request...';
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ query: query.value, variables: vars })
+        });
+        const text = await res.text();
+        try {
+          response.textContent = JSON.stringify(JSON.parse(text), null, 2);
+        } catch {
+          response.textContent = text;
+        }
+      } catch (err) {
+        response.textContent = `Request failed: ${err.message}`;
+      }
+    }
+
+    document.getElementById('load').addEventListener('click', loadTemplate);
+    document.getElementById('run').addEventListener('click', run);
+    document.getElementById('copy').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(query.value || '');
+    });
+
+    loadTemplate();
+  </script>
+</body>
+</html>

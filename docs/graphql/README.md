@@ -4,22 +4,22 @@
 
 ## Overview
 
-This folder contains generated GraphQL documentation artifacts used by consumers and tooling.
-It complements schema sources in `internal/adapter/primary/graphql/schema` and shared operations in `contracts/graphql/queries`.
+This folder stores generated GraphQL contract artifacts used by consumers and tooling.
+It complements schema modules under `internal/adapter/primary/graphql/schema/modules/`.
 
 ## Files
 
 | File | Purpose |
 | --- | --- |
-| `schema.graphql` | Flattened SDL representation of current GraphQL schema |
-| `introspection.json` | GraphQL introspection artifact for client/tooling usage |
+| `schema.graphql` | Flattened SDL representation of the current GraphQL schema |
 
 ## Regeneration Workflow
 
 ```bash
 make graphql.schema
-make graphql.introspect
 ```
+
+If your local setup includes introspection export targets, run them after server startup.
 
 ## Related Sources
 
@@ -28,20 +28,20 @@ make graphql.introspect
 
 ## Design Notes
 
-- Treat artifacts here as generated outputs.
-- Keep docs artifacts in sync with schema contract changes.
-- Use these files for client/codegen tooling integration.
+- Treat files here as generated artifacts.
+- Regenerate after schema changes in the same PR.
+- Keep docs artifacts aligned with consumer tooling expectations.
 
 ## Package Improvements
 
-- Add CI guard for stale generated schema/introspection artifacts.
-- Add explicit generation prerequisites (running server for introspection).
-- Add compatibility note for tooling versions that consume introspection.
-- Add quick links to GraphQL playground and central adapter README.
+- Add CI guard for stale generated schema artifacts.
+- Add optional introspection generation target with health checks.
+- Add version metadata header for schema snapshots.
+- Add compatibility note for codegen consumers.
 
 ---
 
 <!-- doc-nav:start -->
 ## Navigation
-- [Back to root README](../../README.md)
+- [Back to root README](../index.md)
 <!-- doc-nav:end -->

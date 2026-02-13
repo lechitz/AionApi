@@ -1,30 +1,71 @@
-site_name: AionApi
-site_description: Backend Go — Hexagonal, REST/GraphQL, Observability
+site_name: AionApi Docs
+site_description: Production-grade Go backend with Hexagonal Architecture, REST/GraphQL APIs, and observability.
+site_url: https://lechitz.github.io/AionApi/
 repo_name: lechitz/AionApi
 repo_url: https://github.com/lechitz/AionApi
+edit_uri: edit/main/docs/
+
 theme:
   name: material
+  language: en
+  logo: assets/logo/Aion.png
+  favicon: assets/logo/Aion.png
   features:
     - navigation.sections
+    - navigation.expand
+    - navigation.top
     - navigation.instant
     - content.code.copy
     - content.tabs.link
-nav:
-  - Home: index.md
-  - Architecture: architecture.md
-  - Getting Started: getting-started.md
-#  - GraphQL:
-#      - Overview: graphql/index.md
-#      - Queries: graphql/queries.md
-#      - Mutations: graphql/mutations.md
-#      - Types: graphql/types.md
-#      - Examples: graphql/examples.md
-#      - Collection (Runner): graphql/collection.md
-  - Swagger UI: https://lechitz.github.io/AionApi/swagger-ui/
+    - search.suggest
+    - search.highlight
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    - scheme: default
+      primary: blue grey
+      accent: blue
+
 plugins:
   - search
+
+exclude_docs: |
+  swagger-ui/README.md
+  CHANGELOG-2026-02-01.md
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+nav:
+  - Start Here:
+      - Overview: index.md
+      - Getting Started: getting-started.md
+  - Architecture:
+      - System Design: architecture.md
+      - Platform Runtime: platform.md
+  - API:
+      - REST API: rest-api.md
+      - GraphQL Guide: graphql-api.md
+      - GraphQL Playground: graphql-playground.md
+      - GraphQL Artifacts: graphql/README.md
+      - API Collections: collections/README.md
+  - Platform & Ops:
+      - Observability Quickstart: observability-quickstart.md
+      - Ollama GPU (Optional): ollama-gpu.md
+  - Reference:
+      - Diagrams: diagram/README.md
+      - Documentation Assets: assets/README.md
+      - Swagger UI Bundle: swagger-ui-bundle.md
+
 markdown_extensions:
   - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - tables
   - toc:
       permalink: true
-  - tables
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight

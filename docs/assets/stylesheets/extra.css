@@ -1,0 +1,138 @@
+:root {
+  --aion-bg: #eef1f5;
+  --aion-surface: #ffffff;
+  --aion-surface-soft: #e4e9f0;
+  --aion-text: #101828;
+  --aion-text-soft: #344054;
+  --aion-blue: #1f3a5b;
+  --aion-blue-soft: #2f4f76;
+  --aion-border: #cfd8e3;
+}
+
+[data-md-color-scheme="default"] {
+  --md-default-bg-color: var(--aion-bg);
+  --md-default-fg-color: var(--aion-text);
+  --md-default-fg-color--light: var(--aion-text-soft);
+  --md-default-fg-color--lighter: #667085;
+  --md-primary-fg-color: var(--aion-blue);
+  --md-primary-fg-color--light: #2b4768;
+  --md-primary-fg-color--dark: #162a41;
+  --md-accent-fg-color: var(--aion-blue-soft);
+  --md-typeset-a-color: var(--aion-blue-soft);
+}
+
+.md-header {
+  border-bottom: 1px solid var(--aion-border);
+}
+
+.md-main,
+.md-content,
+.md-content__inner {
+  background: var(--aion-bg);
+}
+
+.md-sidebar,
+.md-sidebar__scrollwrap,
+.md-nav {
+  background: var(--aion-surface-soft);
+}
+
+.md-content__inner {
+  background: var(--aion-surface);
+  border: 1px solid var(--aion-border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  max-width: 72rem;
+}
+
+.md-typeset,
+.md-typeset p,
+.md-typeset li,
+.md-typeset td,
+.md-typeset th {
+  color: var(--aion-text);
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5 {
+  color: #0f2742;
+}
+
+.md-typeset code {
+  border: 1px solid var(--aion-border);
+  border-radius: 0.35rem;
+  background: #f8fafc;
+  color: #0f2742;
+}
+
+.md-typeset pre code {
+  background: #0f2742;
+  color: #f8fafc;
+}
+
+.md-typeset table:not([class]) {
+  border: 1px solid var(--aion-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.md-typeset table:not([class]) th {
+  background: #1f3a5b;
+  color: #ffffff;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+  border: 1px solid var(--aion-border);
+  border-radius: 0.6rem;
+  background: #f8fafc;
+}
+
+.md-footer {
+  border-top: 1px solid var(--aion-border);
+  background: var(--aion-surface-soft);
+}
+
+.ops-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.9rem;
+}
+
+.ops-card {
+  border: 1px solid var(--aion-border);
+  border-radius: 0.6rem;
+  background: #fff;
+  padding: 0.8rem 0.9rem;
+}
+
+.ops-card h3 {
+  margin: 0 0 0.6rem;
+}
+
+.ops-card ul {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.ops-card li {
+  margin: 0.2rem 0;
+}
+
+@media (max-width: 700px) {
+  .ops-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Navbar logo sizing */
+.md-header__button.md-logo img,
+.md-nav__button.md-logo img {
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+}

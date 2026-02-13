@@ -32,5 +32,5 @@ This folder is intended for documentation hosting, not runtime API logic.
 
 <!-- doc-nav:start -->
 ## Navigation
-- [Back to root README](../../README.md)
+- [Back to root README](../index.md)
 <!-- doc-nav:end -->
