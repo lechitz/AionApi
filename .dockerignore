@@ -39,6 +39,7 @@ infrastructure/observability/
 infrastructure/db/seed/
 infrastructure/db/scripts/
 infrastructure/docker/environments/
+!infrastructure/docker/scripts/entrypoint.sh
 
 # Makefiles (not needed in build)
 Makefile
@@ -58,4 +59,7 @@ Thumbs.db
 tmp/
 temp/
 *.tmp
+
+# Development utilities (not for production builds)
+hack/
 

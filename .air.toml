@@ -8,7 +8,7 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./tmp/main"
-  cmd = "go build -buildvcs=false -o ./tmp/main ./cmd/aion-api"
+  cmd = "go build -buildvcs=false -o ./tmp/main ./cmd/api"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "tests", "infrastructure", "docs", "notes", ".git", ".github", "bin"]
   exclude_file = []

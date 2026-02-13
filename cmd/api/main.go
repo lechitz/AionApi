@@ -1,8 +1,8 @@
 // Package main AionAPI
 //
-// @title           AionAPI — REST API Documentation
-// @version         0.1.0
-// @description     Public and internal REST API for AionAPI. Swagger (OpenAPI 3.x) is generated via swaggo.
+// @title AionAPI — REST API Documentation
+// @version 0.1.0
+// @description Public and internal REST API for AionAPI. Swagger (OpenAPI 3.x) is generated via swaggo.
 // @termsOfService  https://github.com/lechitz/AionApi
 //
 // @contact.name   Lechitz
@@ -25,7 +25,7 @@
 // @name auth_token
 // @description Session-based authentication cookie (e.g., Redis-backed).
 //
-// @x-graphQLPlayground /graphql/  // Cross-reference to GraphQL Playground (not covered by Swagger)
+// @x-graphQLPlayground /graphql/ // Cross-reference to GraphQL Playground (not covered by Swagger)
 package main
 
 import (

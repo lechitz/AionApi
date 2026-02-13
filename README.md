@@ -110,13 +110,13 @@ make mocks    # generate gomock mocks in tests/mocks/
 ```
 Build the server binary
 ```bash
-go build -o bin/aion-api ./cmd/aion-api
+go build -o bin/api ./cmd/api
 ```
 Run the built server (example)
 ```bash
 export APP_ENV=development
 export DATABASE_URL=postgres://aion:aion@localhost:5432/aionapi?sslmode=disable
-./bin/aion-api
+./bin/api
 ```
 
 ---

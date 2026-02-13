@@ -16,7 +16,7 @@ ARG BUILD_LDFLAGS="-s -w"
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -ldflags="${BUILD_LDFLAGS}" -o aion-api ./cmd/aion-api
+    go build -ldflags="${BUILD_LDFLAGS}" -o aion-api ./cmd/api
 
 FROM alpine:3.19.1
 

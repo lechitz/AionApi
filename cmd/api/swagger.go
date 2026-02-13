@@ -3,7 +3,7 @@ package main
 import (
 	"path"
 
-	swagger "github.com/lechitz/AionApi/docs/swagger"
+	swagger "github.com/lechitz/AionApi/contracts/openapi"
 	"github.com/lechitz/AionApi/internal/platform/config"
 )
 

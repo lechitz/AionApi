@@ -1,6 +1,8 @@
-# cmd/api-seed-caller
+# hack/tools/seed-caller
 
 This CLI generates authenticated API traffic to seed data and validate the end-to-end flow (login + GraphQL mutations). It is useful for observability checks and smoke tests without touching the database directly.
+
+**Note:** This tool has been moved from `cmd/api-seed-caller/` to `hack/tools/seed-caller/` as part of the development utilities reorganization.
 
 ## Package Composition
 
@@ -38,7 +40,11 @@ Diagram source: `docs/diagram/cmd-api-seed-caller.sequence.txt`
 ## Quick Run
 
 ```bash
-go run ./cmd/api-seed-caller
+# Via Makefile (recommended):
+make seed-api-caller
+
+# Direct:
+go run ./hack/tools/seed-caller
 ```
 
 ## Environment Variables
@@ -65,7 +71,7 @@ go run ./cmd/api-seed-caller
 
 ```bash
 # Seed 50 users (user1..user50), auto-create missing users
-API_CALLER_COUNT=50 API_CALLER_AUTO_CREATE=true go run ./cmd/api-seed-caller
+API_CALLER_COUNT=50 API_CALLER_AUTO_CREATE=true go run ./hack/tools/seed-caller
 
 # Using Makefile helper (if available)
 make seed-caller N=50

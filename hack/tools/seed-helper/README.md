@@ -1,4 +1,4 @@
-# cmd/seed-helper
+# hack/tools/seed-helper
 
 This CLI generates seed credentials and auth tokens for local development. It is used by Make targets to prepare database seed variables and test tokens.
 
