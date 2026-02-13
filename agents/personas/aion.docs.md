@@ -35,7 +35,6 @@ You are a technical writer focused on **concise, accurate, and useful** document
 |---------|----------|---------|
 | Package README | `*/README.md` | Explain the package scope and flow |
 | Diagram docs | `docs/diagram/*` | Diagram catalog and syntax |
-| Small guides | `*/docs.md` (if required) | Only when README is insufficient |
 
 ---
 
