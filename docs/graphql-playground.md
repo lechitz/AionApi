@@ -1,6 +1,7 @@
 # GraphQL Playground
 
 Interactive GraphQL workspace with preloaded operations from the current schema.
+In published docs, Demo Mode is enabled by default so readers can run examples without backend access.
 
 ## Playground
 
@@ -60,6 +61,7 @@ Interactive GraphQL workspace with preloaded operations from the current schema.
 
 ## Notes
 
-- Default endpoint is `http://localhost:8080/graphql`.
+- Demo Mode returns mock responses for each operation (default enabled).
+- Disable Demo Mode to execute real requests against your own endpoint (local/staging) and optional token.
 - Add `Authorization: Bearer <token>` in the token field for protected operations.
 - Keep templates in sync with schema changes in the same PR.

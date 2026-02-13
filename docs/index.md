@@ -1,45 +1,34 @@
-# AionApi Documentation
+# Introduction
 
-AionApi is a modular Go backend for habit and diary workflows, built with Hexagonal Architecture and strong observability by default.
+AionApi is a modular Go backend that powers habit, diary, and structured personal data workflows through REST and GraphQL.
 
-## What You Can Do Here
+## What AionApi Is
 
-| Area | What you will find |
+- API-first backend for personal productivity domains
+- Built with Hexagonal/Clean Architecture and bounded contexts
+- Designed for maintainability, observability, and consistent contracts
+
+## Core Characteristics
+
+| Area | Description |
 | --- | --- |
-| Start Here | Local setup, first run, and basic validation |
-| Architecture | Layer boundaries, context isolation, and request lifecycle |
-| API | REST contract (Swagger), GraphQL usage, and collections |
-| Platform & Ops | Observability setup and operational guides |
-| Reference | Diagram catalog, docs assets, and changelog |
+| Architecture | Ports & Adapters with strict layer boundaries |
+| APIs | REST (OpenAPI/Swagger) and GraphQL |
+| Runtime | Docker-first local stack with migrations/seeds |
+| Observability | Traces, metrics, dashboards, and structured logs |
+
+## Read This Next
+
+1. [Overview](overview.md)
+2. [Getting Started](getting-started.md)
+3. [System Design](architecture.md)
+4. [Platform Runtime](platform.md)
 
 ## Quick Links
 
-- Docs site: <https://lechitz.github.io/AionApi/>
-- Swagger UI: <https://lechitz.github.io/AionApi/swagger-ui/>
-- OpenAPI spec: <https://raw.githubusercontent.com/lechitz/AionApi/main/swagger/swagger.yaml>
-- Repository: <https://github.com/lechitz/AionApi>
+- REST API docs: [REST API](rest-api.md)
+- GraphQL docs: [GraphQL Guide](graphql-api.md)
+- GraphQL interactive playground: [GraphQL Playground](graphql-playground.md)
 
-## Recommended Reading Path
-
-1. Read [Getting Started](getting-started.md) and boot the local stack.
-2. Read [System Design](architecture.md) to understand boundaries and flow.
-3. Read [Platform Runtime](platform.md) for wiring, server, and observability internals.
-4. Use [GraphQL Guide](graphql-api.md) and Swagger UI for API integration.
-
-## Documentation Principles
-
-- Architecture-first: docs follow the same boundaries as code.
-- Operationally useful: commands are runnable in a fresh local environment.
-- Contract-driven: API docs point to generated artifacts and source contracts.
-- Maintainable: each page has a clear ownership scope and avoids duplicate low-level details.
-
-## Keep This Portal Updated
-
-When you change behavior, update docs in the same PR for:
-
-- API contract changes (REST/GraphQL)
-- Architecture changes (ports, adapters, context boundaries)
-- Operational changes (make targets, observability stack, environment variables)
-
-!!! tip
-    This site should stay high-level and navigable. Deep package-level details remain in repository `README.md` files and code comments.
+!!! note
+    Clicking `AionApi Docs` in the top navbar or left sidebar always returns to this Introduction page.

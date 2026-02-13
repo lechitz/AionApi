@@ -8,7 +8,7 @@ This page is the practical GraphQL entrypoint for AionApi consumers.
 | --- | --- |
 | `http://localhost:8080/graphql` | Main GraphQL endpoint |
 | `http://localhost:8080/graphql/playground` | Native server playground (if enabled) |
-| `../tools/graphql-playground/index.html` | Docs-hosted interactive playground |
+| `graphql-playground.md` | Docs-hosted operation explorer (informative by default) |
 
 ## Authentication
 

@@ -39,7 +39,8 @@ extra_css:
 
 nav:
   - Start Here:
-      - Overview: index.md
+      - Introduction: index.md
+      - Overview: overview.md
       - Getting Started: getting-started.md
   - Architecture:
       - System Design: architecture.md

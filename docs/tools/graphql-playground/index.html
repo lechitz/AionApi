@@ -53,7 +53,7 @@
       <section class="card">
         <div class="row">
           <label class="label" for="endpoint">Endpoint</label>
-          <input id="endpoint" value="http://localhost:8080/graphql"/>
+          <input id="endpoint" placeholder="Set a local/staging GraphQL endpoint to run requests"/>
         </div>
         <div class="row">
           <label class="label" for="token">Bearer Token (optional)</label>
@@ -63,12 +63,18 @@
           <label class="label" for="operation">Operation Template</label>
           <select id="operation"></select>
         </div>
+        <div class="row">
+          <label class="label" for="demo-mode">
+            <input id="demo-mode" type="checkbox" checked style="width:auto;margin-right:6px;vertical-align:middle;"/>
+            Demo Mode (mock response)
+          </label>
+        </div>
         <div class="btns">
           <button id="load">Load Template</button>
           <button class="secondary" id="copy">Copy Query</button>
           <button id="run">Run Request</button>
         </div>
-        <p class="meta">Tip: edit the template before running if your API requires different fields.</p>
+        <p class="meta">Demo Mode is enabled by default for readers. Disable it to run against a real endpoint.</p>
       </section>
 
       <section class="card">
@@ -153,6 +159,7 @@
     const query = document.getElementById('query');
     const variables = document.getElementById('variables');
     const response = document.getElementById('response');
+    const demoMode = document.getElementById('demo-mode');
 
     Object.keys(templates).forEach((key) => {
       const opt = document.createElement('option');
@@ -167,6 +174,61 @@
       variables.value = JSON.stringify(variableDefaults[name] || {}, null, 2);
     }
 
+    function nowIso() {
+      return new Date().toISOString();
+    }
+
+    function demoResponse(name, vars) {
+      const records = [
+        { id: "101", tagId: "1", description: "Morning run", eventTime: nowIso(), value: 5.2, status: "completed" },
+        { id: "102", tagId: "2", description: "Reading", eventTime: nowIso(), value: 30, status: "completed" }
+      ];
+      const tags = [
+        { id: "1", name: "Exercise", categoryId: "1", description: "Workout tag", icon: "💪" },
+        { id: "2", name: "Focus", categoryId: "2", description: "Deep work", icon: "🧠" }
+      ];
+      const categories = [
+        { id: "1", name: "Health", description: "Health habits", colorHex: "#FF8B42", icon: "heart" },
+        { id: "2", name: "Work", description: "Professional tasks", colorHex: "#FF6B1A", icon: "briefcase" }
+      ];
+
+      const byOperation = {
+        categories: { data: { categories } },
+        categoryById: { data: { categoryById: categories.find(c => c.id === (vars.id || "1")) || categories[0] } },
+        categoryByName: { data: { categoryByName: categories.find(c => c.name === vars.name) || categories[0] } },
+        chatHistory: { data: { chatHistory: [{ id: "1", message: "How was my week?", response: "You completed 8 records.", tokensUsed: 42, createdAt: nowIso() }] } },
+        chatContext: { data: { chatContext: { totalRecords: 42, totalCategories: 6, totalTags: 14 } } },
+        recordById: { data: { recordById: records.find(r => r.id === (vars.id || "101")) || records[0] } },
+        records: { data: { records } },
+        recordsLatest: { data: { recordsLatest: records } },
+        recordsByTag: { data: { recordsByTag: records.filter(r => r.tagId === (vars.tagId || "1")) } },
+        recordsByCategory: { data: { recordsByCategory: records } },
+        recordsByDay: { data: { recordsByDay: records } },
+        recordsUntil: { data: { recordsUntil: records } },
+        recordsBetween: { data: { recordsBetween: records } },
+        searchRecords: { data: { searchRecords: records.filter(r => r.description.toLowerCase().includes((vars.filters?.query || "").toLowerCase())) } },
+        tagByName: { data: { tagByName: tags.find(t => t.name === vars.name) || tags[0] } },
+        tagById: { data: { tagById: tags.find(t => t.id === (vars.id || "1")) || tags[0] } },
+        tags: { data: { tags } },
+        tagsByCategoryId: { data: { tagsByCategoryId: tags.filter(t => t.categoryId === (vars.categoryId || "1")) } },
+        userStats: { data: { userStats: { totalRecords: 42, totalCategories: 6, totalTags: 14, recordsThisWeek: 9, recordsThisMonth: 27 } } },
+        createCategory: { data: { createCategory: { id: "3", name: vars.input?.name || "New Category", colorHex: vars.input?.colorHex || "#FF8B42" } } },
+        updateCategory: { data: { updateCategory: { id: vars.input?.id || "1", name: vars.input?.name || "Updated Category", colorHex: vars.input?.colorHex || "#FF6B1A" } } },
+        softDeleteCategory: { data: { softDeleteCategory: true } },
+        createRecord: { data: { createRecord: { id: "103", tagId: vars.input?.tagId || "1", description: vars.input?.description || "Demo record", eventTime: vars.input?.eventTime || nowIso(), value: vars.input?.value || 1, status: vars.input?.status || "completed" } } },
+        updateRecord: { data: { updateRecord: { id: vars.input?.id || "101", tagId: vars.input?.tagId || "1", description: vars.input?.description || "Updated demo record", eventTime: nowIso(), value: vars.input?.value || 2, status: "completed" } } },
+        softDeleteRecord: { data: { softDeleteRecord: true } },
+        softDeleteAllRecords: { data: { softDeleteAllRecords: true } },
+        createTag: { data: { createTag: { id: "3", name: vars.input?.name || "New Tag", categoryId: vars.input?.categoryId || "1", description: vars.input?.description || "", icon: vars.input?.icon || "🏷️" } } },
+        updateTag: { data: { updateTag: { id: vars.input?.id || "1", name: vars.input?.name || "Updated Tag", categoryId: vars.input?.categoryId || "1", description: vars.input?.description || "", icon: vars.input?.icon || "🏷️" } } },
+        softDeleteTag: { data: { softDeleteTag: true } }
+      };
+
+      const payload = byOperation[name] || { data: {} };
+      payload.extensions = { mode: "demo", generatedAt: nowIso() };
+      return payload;
+    }
+
     async function run() {
       const endpoint = document.getElementById('endpoint').value.trim();
       const token = document.getElementById('token').value.trim();
@@ -174,6 +236,19 @@
       try { vars = JSON.parse(variables.value || '{}'); }
       catch (err) {
         response.textContent = `Invalid JSON in variables: ${err.message}`;
+        return;
+      }
+
+      if (demoMode.checked) {
+        response.textContent = 'Running demo response...';
+        setTimeout(() => {
+          response.textContent = JSON.stringify(demoResponse(operation.value, vars), null, 2);
+        }, 220);
+        return;
+      }
+
+      if (!endpoint) {
+        response.textContent = 'Set an endpoint to run real requests, or enable Demo Mode.';
         return;
       }
 

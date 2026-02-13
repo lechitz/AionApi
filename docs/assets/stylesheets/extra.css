@@ -73,6 +73,26 @@
   color: #f8fafc;
 }
 
+/* GraphQL/code highlighting adjustments for dark code blocks */
+.md-typeset .highlight pre,
+.md-typeset .highlight code {
+  color: #ffffff !important;
+}
+
+.md-typeset .highlight .nf {
+  color: #ff8b42 !important;
+}
+
+.md-typeset .highlight .p,
+.md-typeset .highlight .n,
+.md-typeset .highlight .nc,
+.md-typeset .highlight .nv,
+.md-typeset .highlight .k,
+.md-typeset .highlight .w,
+.md-typeset .highlight .err {
+  color: #ffffff !important;
+}
+
 .md-typeset table:not([class]) {
   border: 1px solid var(--aion-border);
   border-radius: 0.5rem;
@@ -95,6 +115,26 @@
 .md-footer {
   border-top: 1px solid var(--aion-border);
   background: var(--aion-surface-soft);
+}
+
+/* Sidebar active item highlight */
+.md-nav__link {
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  border-left: 3px solid transparent;
+  padding-left: 0.55rem;
+}
+
+.md-nav__link:hover {
+  background: #ffd9bf;
+  color: #0f2742;
+}
+
+.md-nav__link--active {
+  background: #ff8b42 !important;
+  color: #101828 !important;
+  font-weight: 700;
+  border-left-color: #ff6b1a;
 }
 
 .ops-grid {
