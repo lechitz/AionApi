@@ -228,7 +228,7 @@ help:
 
 -include makefiles/*.mk
 
-.PHONY: graphql mocks docs.gen docs.validate docs.check-dirty lint test test-cover test-cover-detail test-ci test-clean
+.PHONY: graphql mocks docs.gen docs.validate docs.check-dirty docs-verify lint test test-cover test-cover-detail test-ci test-clean
 
 # Short aliases
 .PHONY: install-tools
@@ -248,13 +248,16 @@ install-tools: tools-install
 	test test-cover test-cover-detail test-html-report test-ci test-clean \
 	migrate-up migrate-down migrate-force migrate-new migrate-install \
 	migrate-dev-up migrate-dev-down migrate-dev-status migrate-dev-reset \
-	docs.gen docs.check-dirty docs.clean docs.validate
+	docs.gen docs.check-dirty docs.clean docs.validate docs-verify
 
 docs-serve:
-	@.venv-docs/bin/mkdocs serve
+	@.venv-docs/bin/python -m mkdocs serve
 
 docs-build:
-	@.venv-docs/bin/mkdocs build
+	@.venv-docs/bin/python -m mkdocs build
+
+docs-verify:
+	@.venv-docs/bin/python -m mkdocs build --strict
 
 # Include debug makefile (opt-in to avoid overriding targets and noisy warnings)
 # Usage: make INCLUDE_DEBUG_MK=1 debug-roles
