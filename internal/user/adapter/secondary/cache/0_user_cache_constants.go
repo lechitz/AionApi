@@ -38,6 +38,10 @@ const (
 // User data is relatively stable, so we can cache longer than categories/tags.
 const UserExpirationDefault = 60 * time.Minute
 
+// UserCacheSchemaVersion identifies the current JSON payload schema for user cache entries.
+// Older entries without this version are treated as stale and ignored.
+const UserCacheSchemaVersion = 1
+
 // Key formats.
 const (
 	// UserIDKeyFormat : user:id:{userID}.

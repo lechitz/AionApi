@@ -3,6 +3,7 @@ package cache
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -13,6 +14,8 @@ import (
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
+
+var errStaleUserCacheEntry = errors.New("stale user cache entry")
 
 // GetUserByID retrieves user profile from cache by ID.
 // Returns empty User if not found (not an error).
@@ -44,6 +47,11 @@ func (s *Store) GetUserByID(ctx context.Context, userID uint64) (domain.User, er
 		s.logger.Errorw(ErrorToDeserializeUser, AttributeCacheKey, cacheKey, commonkeys.Error, err)
 		return domain.User{}, err
 	}
+	if dto.Version != UserCacheSchemaVersion {
+		span.SetStatus(codes.Error, errStaleUserCacheEntry.Error())
+		span.RecordError(errStaleUserCacheEntry)
+		return domain.User{}, errStaleUserCacheEntry
+	}
 
 	// Convert DTO back to domain.User (PasswordHash remains empty)
 	user := domain.User{
@@ -51,6 +59,11 @@ func (s *Store) GetUserByID(ctx context.Context, userID uint64) (domain.User, er
 		Name:      dto.Name,
 		Username:  dto.Username,
 		Email:     dto.Email,
+		Locale:    dto.Locale,
+		Timezone:  dto.Timezone,
+		Location:  dto.Location,
+		Bio:       dto.Bio,
+		AvatarURL: dto.AvatarURL,
 		CreatedAt: dto.CreatedAt,
 		UpdatedAt: dto.UpdatedAt,
 		DeletedAt: dto.DeletedAt,
@@ -91,12 +104,22 @@ func (s *Store) GetUserByUsername(ctx context.Context, username string) (domain.
 		s.logger.Errorw(ErrorToDeserializeUser, AttributeCacheKey, cacheKey, commonkeys.Error, err)
 		return domain.User{}, err
 	}
+	if dto.Version != UserCacheSchemaVersion {
+		span.SetStatus(codes.Error, errStaleUserCacheEntry.Error())
+		span.RecordError(errStaleUserCacheEntry)
+		return domain.User{}, errStaleUserCacheEntry
+	}
 
 	user := domain.User{
 		ID:        dto.ID,
 		Name:      dto.Name,
 		Username:  dto.Username,
 		Email:     dto.Email,
+		Locale:    dto.Locale,
+		Timezone:  dto.Timezone,
+		Location:  dto.Location,
+		Bio:       dto.Bio,
+		AvatarURL: dto.AvatarURL,
 		CreatedAt: dto.CreatedAt,
 		UpdatedAt: dto.UpdatedAt,
 		DeletedAt: dto.DeletedAt,
@@ -136,12 +159,22 @@ func (s *Store) GetUserByEmail(ctx context.Context, email string) (domain.User, 
 		s.logger.Errorw(ErrorToDeserializeUser, AttributeCacheKey, cacheKey, commonkeys.Error, err)
 		return domain.User{}, err
 	}
+	if dto.Version != UserCacheSchemaVersion {
+		span.SetStatus(codes.Error, errStaleUserCacheEntry.Error())
+		span.RecordError(errStaleUserCacheEntry)
+		return domain.User{}, errStaleUserCacheEntry
+	}
 
 	user := domain.User{
 		ID:        dto.ID,
 		Name:      dto.Name,
 		Username:  dto.Username,
 		Email:     dto.Email,
+		Locale:    dto.Locale,
+		Timezone:  dto.Timezone,
+		Location:  dto.Location,
+		Bio:       dto.Bio,
+		AvatarURL: dto.AvatarURL,
 		CreatedAt: dto.CreatedAt,
 		UpdatedAt: dto.UpdatedAt,
 		DeletedAt: dto.DeletedAt,

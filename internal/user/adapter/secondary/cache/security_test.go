@@ -17,6 +17,7 @@ import (
 // SECURITY TEST: Critical - ensures password hashes are never cached.
 func TestUserCacheDTO_NoPasswordHash(t *testing.T) {
 	dto := cache.UserCacheDTO{
+		Version:   1,
 		ID:        123,
 		Name:      "Test User",
 		Username:  "testuser",
@@ -101,6 +102,7 @@ func TestGetUser_NeverHasPasswordHash(t *testing.T) {
 	mockLogger := &mockLogger{}
 
 	userData := `{
+		"version": 1,
 		"id": 789,
 		"name": "Cached User",
 		"username": "cacheduser",
@@ -122,6 +124,24 @@ func TestGetUser_NeverHasPasswordHash(t *testing.T) {
 	assert.Equal(t, uint64(789), user.ID)
 	assert.Equal(t, "cacheduser", user.Username)
 	assert.Equal(t, "cached@example.com", user.Email)
+}
+
+func TestGetUserByID_LegacyPayloadReturnsError(t *testing.T) {
+	mockCache := &mockCacheCapture{data: make(map[string]string)}
+	mockLogger := &mockLogger{}
+
+	// Legacy payload without "version" should be treated as stale.
+	mockCache.data["user:id:999"] = `{
+		"id": 999,
+		"name": "Legacy User",
+		"username": "legacy",
+		"email": "legacy@example.com"
+	}`
+
+	store := cache.NewStore(mockCache, mockLogger)
+
+	_, err := store.GetUserByID(t.Context(), 999)
+	require.Error(t, err, "legacy cache payload must trigger fallback to repository")
 }
 
 // mockCacheCapture captures what gets stored in cache for inspection.
