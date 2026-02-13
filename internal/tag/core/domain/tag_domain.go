@@ -15,4 +15,6 @@ type Tag struct {
 	ID          uint64     // Unique identifier for the tag
 	UserID      uint64     // ID of the user who owns the tag
 	CategoryID  uint64     // ID of the handler this tag belongs to
+	UsageCount  int        // Number of records associated with this tag (updated via backfill or triggers)
+	LastUsedAt  *time.Time // Timestamp of last record with this tag (nil if never used)
 }

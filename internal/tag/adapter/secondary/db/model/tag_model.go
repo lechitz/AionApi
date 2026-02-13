@@ -23,6 +23,8 @@ type TagDB struct {
 	CreatedAt   time.Time      `gorm:"column:created_at;autoCreateTime"`
 	UpdatedAt   time.Time      `gorm:"column:updated_at;autoUpdateTime"`
 	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at;index"`
+	UsageCount  int            `gorm:"column:usage_count;default:0"`
+	LastUsedAt  *time.Time     `gorm:"column:last_used_at"`
 }
 
 // TableName implements GORM's tabler interface and returns the fully qualified

@@ -24,6 +24,8 @@ func TagFromDB(db model.TagDB) domain.Tag {
 		CreatedAt:   db.CreatedAt,
 		UpdatedAt:   db.UpdatedAt,
 		DeletedAt:   deletedAt,
+		UsageCount:  db.UsageCount,
+		LastUsedAt:  db.LastUsedAt,
 	}
 }
 
@@ -47,5 +49,7 @@ func TagToDB(t domain.Tag) model.TagDB {
 		Icon:        t.Icon,
 		CreatedAt:   t.CreatedAt,
 		UpdatedAt:   t.UpdatedAt,
+		UsageCount:  t.UsageCount,
+		LastUsedAt:  t.LastUsedAt,
 	}
 }
