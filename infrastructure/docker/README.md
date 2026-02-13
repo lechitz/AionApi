@@ -20,6 +20,26 @@ This package defines container images, compose profiles, and environment wiring.
 - Keep production and development image concerns separated.
 - Keep compose/runtime behavior reproducible via Make targets.
 
+## Dev Hot Reload Notes
+
+The dev compose profile is wired for hot reload across integrated services:
+
+- API: `infrastructure/docker/environments/dev/Dockerfile.dev` (Air)
+- Chat: source mount + Uvicorn reload in dev mode
+- Dashboard: source mounts + Vite HMR
+
+Operational commands:
+
+```bash
+make dev
+make dev-fast
+make rebuild-api
+make rebuild-chat
+make rebuild-dashboard
+```
+
+Use targeted rebuild commands when dependency layers or Dockerfiles changed.
+
 ## Package Improvements
 
 - Add profile matrix documenting service composition and ports.

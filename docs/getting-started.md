@@ -60,7 +60,31 @@ curl -s http://localhost:8080/aion/health | jq
 | `make dev-fast` | Start quickly without full rebuild |
 | `make dev-down` | Stop stack, keep volumes |
 | `make dev-clean` | Stop stack and remove volumes |
+| `make rebuild-api` | Force rebuild only API service |
+| `make rebuild-chat` | Force rebuild only chat service |
+| `make rebuild-dashboard` | Force rebuild only dashboard service |
 | `make verify` | Local quality pipeline |
+
+## Hot Reload (Dev)
+
+`make dev` is configured for hot reload across services in the dev compose profile:
+
+- API (Go): Air reloads on `.go` changes.
+- Chat (Python): Uvicorn reloads on `.py` changes.
+- Dashboard (TypeScript): Vite HMR updates UI on `.ts/.tsx/.css` changes.
+
+Expected behavior:
+
+- Most code edits do not require full container rebuild.
+- Use targeted rebuild commands only when Dockerfile/dependency layers changed.
+
+Useful logs:
+
+```bash
+make logs-api
+make logs-chat
+make logs-dashboard
+```
 
 ## Codegen and Tests
 
@@ -93,6 +117,10 @@ curl -s http://localhost:8080/graphql \
 - Migration errors: verify `MIGRATION_DB` and that Postgres is ready.
 - Missing tools: rerun `make tools-install` and check `$(go env GOPATH)/bin` in `PATH`.
 - Port conflicts: stop local services already using 8080/5432/4566.
+- Hot reload not updating:
+  - check service logs (`make logs-api`, `make logs-chat`, `make logs-dashboard`)
+  - ensure source volumes are mounted in dev compose profile
+  - run targeted rebuild (`make rebuild-api`, `make rebuild-chat`, or `make rebuild-dashboard`)
 
 ## Next Step
 
