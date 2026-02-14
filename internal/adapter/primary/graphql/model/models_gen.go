@@ -24,6 +24,13 @@ type ChatContext struct {
 	TotalTags       int32          `json:"totalTags"`
 }
 
+type ChatDataPack struct {
+	Categories    []*Category `json:"categories"`
+	Tags          []*Tag      `json:"tags"`
+	RecentRecords []*Record   `json:"recentRecords"`
+	UserStats     *UserStats  `json:"userStats,omitempty"`
+}
+
 type ChatMessage struct {
 	ID            string  `json:"id"`
 	UserID        string  `json:"userId"`
@@ -93,6 +100,26 @@ type Record struct {
 	Status          *string  `json:"status,omitempty"`
 	CreatedAt       string   `json:"createdAt"`
 	UpdatedAt       string   `json:"updatedAt"`
+}
+
+type RecordStats struct {
+	TotalRecords         int32    `json:"totalRecords"`
+	RecordsWithValue     int32    `json:"recordsWithValue"`
+	TotalDurationSeconds int32    `json:"totalDurationSeconds"`
+	SumValue             float64  `json:"sumValue"`
+	AvgValue             float64  `json:"avgValue"`
+	AvgDurationSeconds   float64  `json:"avgDurationSeconds"`
+	MinValue             *float64 `json:"minValue,omitempty"`
+	MaxValue             *float64 `json:"maxValue,omitempty"`
+}
+
+type RecordStatsFilters struct {
+	Query       *string  `json:"query,omitempty"`
+	CategoryIds []string `json:"categoryIds,omitempty"`
+	TagIds      []string `json:"tagIds,omitempty"`
+	StartDate   *string  `json:"startDate,omitempty"`
+	EndDate     *string  `json:"endDate,omitempty"`
+	Limit       *int32   `json:"limit,omitempty"`
 }
 
 type SearchFilters struct {

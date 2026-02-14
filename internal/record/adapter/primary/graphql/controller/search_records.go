@@ -16,12 +16,12 @@ import (
 // SearchRecords performs full-text search on records with optional filters.
 func (c *controller) SearchRecords(ctx context.Context, filters model.SearchFilters, userID uint64) ([]*model.Record, error) {
 	tr := otel.Tracer(TracerName)
-	ctx, span := tr.Start(ctx, "record.controller.search")
+	ctx, span := tr.Start(ctx, SpanSearch)
 	defer span.End()
 
 	span.SetAttributes(
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String("search_query", filters.Query),
+		attribute.String(commonkeys.Operation, SpanSearch),
 	)
 
 	// Convert GraphQL filters to domain filters
@@ -31,8 +31,8 @@ func (c *controller) SearchRecords(ctx context.Context, filters model.SearchFilt
 	records, err := c.RecordService.SearchRecords(ctx, userID, domainFilters)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, "search failed")
-		c.Logger.ErrorwCtx(ctx, "error searching records",
+		span.SetStatus(codes.Error, MsgSearchError)
+		c.Logger.ErrorwCtx(ctx, MsgSearchError,
 			commonkeys.Error, err.Error(),
 			commonkeys.UserID, strconv.FormatUint(userID, 10),
 		)
@@ -42,12 +42,12 @@ func (c *controller) SearchRecords(ctx context.Context, filters model.SearchFilt
 	// Convert to GraphQL models
 	result := toModelOutSlice(records)
 
-	span.SetAttributes(attribute.Int("results_count", len(result)))
-	span.SetStatus(codes.Ok, "search completed")
+	span.SetAttributes(attribute.Int(AttrResultsCount, len(result)))
+	span.SetStatus(codes.Ok, StatusSearchCompleted)
 
-	c.Logger.InfowCtx(ctx, "records searched",
+	c.Logger.InfowCtx(ctx, MsgSearched,
 		commonkeys.UserID, strconv.FormatUint(userID, 10),
-		"results_count", len(result),
+		AttrResultsCount, len(result),
 	)
 
 	return result, nil

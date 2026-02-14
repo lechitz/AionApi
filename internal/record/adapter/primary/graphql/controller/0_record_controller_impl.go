@@ -23,6 +23,7 @@ type RecordController interface {
 	SoftDelete(ctx context.Context, recordID, userID uint64) error
 	SoftDeleteAll(ctx context.Context, userID uint64) error
 	SearchRecords(ctx context.Context, filters model.SearchFilters, userID uint64) ([]*model.Record, error)
+	RecordStats(ctx context.Context, filters *model.RecordStatsFilters, userID uint64) (*model.RecordStats, error)
 }
 
 // controller is the controller for the record service.

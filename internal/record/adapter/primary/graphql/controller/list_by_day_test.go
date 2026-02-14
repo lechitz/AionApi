@@ -29,7 +29,11 @@ func TestListByDay_InvalidDate(t *testing.T) {
 
 	out, err := h.ListByDay(t.Context(), 1, "bad")
 	require.Error(t, err)
-	assert.Equal(t, "invalid date format, expected YYYY-MM-DD or RFC3339", err.Error())
+	assert.Equal(
+		t,
+		"invalid date format, expected YYYY-MM-DD, DD/MM/YYYY, RFC3339, or natural language (today, yesterday, ...)",
+		err.Error(),
+	)
 	assert.Nil(t, out)
 }
 
@@ -49,12 +53,13 @@ func TestListByDay_ServiceError(t *testing.T) {
 }
 
 func TestListByDay_Success(t *testing.T) {
-	when := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	when := "2024-01-01"
 	svc := &recordServiceStub{
 		listByDayFn: func(_ context.Context, userID uint64, date time.Time) ([]domain.Record, error) {
 			require.Equal(t, uint64(9), userID)
-			require.Equal(t, when, date)
-			return []domain.Record{{ID: 1, UserID: userID, TagID: 2, EventTime: when, CreatedAt: when, UpdatedAt: when}}, nil
+			require.Equal(t, when, date.Format("2006-01-02"))
+			eventTime := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
+			return []domain.Record{{ID: 1, UserID: userID, TagID: 2, EventTime: eventTime, CreatedAt: eventTime, UpdatedAt: eventTime}}, nil
 		},
 	}
 	h, ctrl := newRecordController(t, svc)

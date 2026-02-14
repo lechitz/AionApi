@@ -16,11 +16,11 @@ import (
 // It adds tracing/logging, applies basic guards, and delegates to the input port.
 func (h *controller) GetByID(ctx context.Context, recordID, userID uint64) (*gmodel.Record, error) {
 	tr := otel.Tracer(TracerName)
-	ctx, span := tr.Start(ctx, SpanGetByName)
+	ctx, span := tr.Start(ctx, SpanGetByID)
 	defer span.End()
 
 	span.SetAttributes(
-		attribute.String(commonkeys.Operation, SpanGetByName),
+		attribute.String(commonkeys.Operation, SpanGetByID),
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 		attribute.String(commonkeys.RecordID, strconv.FormatUint(recordID, 10)),
 	)
@@ -45,7 +45,7 @@ func (h *controller) GetByID(ctx context.Context, recordID, userID uint64) (*gmo
 		h.Logger.ErrorwCtx(
 			ctx,
 			ErrRecordNotFound.Error(),
-			"error", err.Error(),
+			commonkeys.Error, err.Error(),
 			commonkeys.UserID, userID,
 			commonkeys.RecordID, recordID,
 		)

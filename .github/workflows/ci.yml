@@ -41,6 +41,15 @@ jobs:
       - name: Check Swagger docs drift
         run: make docs.check-dirty
 
+      - name: Generate GraphQL contracts and manifest
+        run: make graphql.queries graphql.manifest
+
+      - name: Validate GraphQL contracts against schema
+        run: make graphql.validate
+
+      - name: Check GraphQL contracts drift
+        run: make graphql.check-dirty
+
       - name: Build
         run: go build ./...
 

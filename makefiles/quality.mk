@@ -79,7 +79,7 @@ verify: go-check lint fieldalignment graphql mocks docs.validate docs-verify tes
 	@echo "✅  Verify passed successfully!"
 
 # CI-style verify (stricter, enforces committed artifacts)
-verify-ci: tools.check docs.gen docs.check-dirty lint fieldalignment test
+verify-ci: tools.check docs.gen docs.check-dirty graphql.queries graphql.manifest graphql.validate graphql.check-dirty lint fieldalignment test
 	@echo "Running test checks..."
 	@$(MAKE) -s test-checks
 	@echo "✅  CI verify passed!"

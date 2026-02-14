@@ -53,7 +53,17 @@ make verify
 make test
 make test-cover-detail
 make docs-verify
+make graphql.queries graphql.manifest graphql.validate
 make verify
+```
+
+## GraphQL Contract Workflow
+
+```bash
+make graphql.queries
+make graphql.manifest
+make graphql.validate
+make graphql.check-dirty
 ```
 
 <!-- docs-index:start -->

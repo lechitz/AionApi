@@ -30,3 +30,44 @@ func (r *queryResolver) ChatContext(ctx context.Context) (*model.ChatContext, er
 	userID, _ := ctx.Value(ctxkeys.UserID).(uint64)
 	return r.ChatController().GetChatContext(ctx, userID)
 }
+
+// ChatDataPack is the resolver for the chatDataPack field.
+func (r *queryResolver) ChatDataPack(ctx context.Context, limitRecords *int32, includeStats bool) (*model.ChatDataPack, error) {
+	userID, _ := ctx.Value(ctxkeys.UserID).(uint64)
+
+	lim := 10
+	if limitRecords != nil && *limitRecords > 0 {
+		lim = int(*limitRecords)
+	}
+
+	categories, err := r.CategoryController().ListAll(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	tags, err := r.TagController().GetAll(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	recentRecords, err := r.RecordController().ListLatest(ctx, userID, lim)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &model.ChatDataPack{
+		Categories:    categories,
+		Tags:          tags,
+		RecentRecords: recentRecords,
+	}
+
+	if includeStats {
+		stats, statsErr := r.UserStats(ctx)
+		if statsErr != nil {
+			return nil, statsErr
+		}
+		result.UserStats = stats
+	}
+
+	return result, nil
+}

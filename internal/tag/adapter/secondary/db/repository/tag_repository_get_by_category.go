@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/AionApi/internal/tag/adapter/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/tag/adapter/secondary/db/model"
 	"github.com/lechitz/AionApi/internal/tag/core/domain"
 	"go.opentelemetry.io/otel"
@@ -39,14 +40,7 @@ func (r TagRepository) GetByCategoryID(ctx context.Context, categoryID uint64, u
 		return []domain.Tag{}, fmt.Errorf("get tags by category id: %w", err)
 	}
 
-	var tags []domain.Tag
-	for _, tagDB := range tagsDB {
-		tags = append(tags, domain.Tag{
-			ID:     tagDB.ID,
-			UserID: tagDB.UserID,
-			Name:   tagDB.Name,
-		})
-	}
+	tags := mapper.TagsFromDB(tagsDB)
 
 	span.SetStatus(codes.Ok, StatusRetrievedByCategory)
 	return tags, nil

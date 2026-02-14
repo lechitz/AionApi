@@ -20,6 +20,9 @@ const (
 	// SpanCreate is the span name for creating a record.
 	SpanCreate = "record.controller.create"
 
+	// SpanGetByID is the span name for retrieving a record by ID.
+	SpanGetByID = "record.controller.get_by_id"
+
 	// SpanGetByName is the span name for retrieving a record by name.
 	SpanGetByName = "record.controller.get_by_name"
 
@@ -49,6 +52,21 @@ const (
 
 	// SpanListAllBetween is the span name for listing records between dates.
 	SpanListAllBetween = "record.controller.list_all_between"
+
+	// SpanRecordStats is the span name for aggregated record stats.
+	SpanRecordStats = "record.controller.record_stats"
+
+	// SpanSearch is the span name for searching records.
+	SpanSearch = "record.controller.search"
+
+	// SpanUpdate is the span name for updating a record.
+	SpanUpdate = "record.controller.update"
+
+	// SpanSoftDelete is the span name for soft-deleting a record.
+	SpanSoftDelete = "record.controller.soft_delete"
+
+	// SpanSoftDeleteAll is the span name for soft-deleting all records.
+	SpanSoftDeleteAll = "record.controller.soft_delete_all"
 )
 
 // -----------------------------------------------------------------------------
@@ -64,6 +82,21 @@ const (
 
 	// StatusFetched is the human-readable status used in responses/logs when records are retrieved.
 	StatusFetched = "fetched"
+
+	// StatusSearchCompleted is the human-readable status for search completion.
+	StatusSearchCompleted = "search completed"
+
+	// StatusStatsComputed is the human-readable status for stats computation.
+	StatusStatsComputed = "record stats computed"
+
+	// StatusDeleted is the human-readable status for soft deletion.
+	StatusDeleted = "deleted"
+
+	// StatusDeletedAll is the human-readable status for soft deletion of all records.
+	StatusDeletedAll = "deleted_all"
+
+	// StatusUpdated is the human-readable status for record update.
+	StatusUpdated = "updated"
 )
 
 // =============================================================================
@@ -77,6 +110,94 @@ const (
 const (
 	// MsgCreateError is the log message for when a create operation fails.
 	MsgCreateError = "error creating record"
+
+	// MsgSearchError is the log message for when a search operation fails.
+	MsgSearchError = "error searching records"
+
+	// MsgSearched is the log message for when records are searched successfully.
+	MsgSearched = "records searched"
+
+	// MsgStatsError is the log message for when a stats operation fails.
+	MsgStatsError = "error computing record stats"
+
+	// MsgListByTagError is the log message for when a list by tag operation fails.
+	MsgListByTagError = "error listing records by tag"
+
+	// MsgListByCategoryError is the log message for when a list by category operation fails.
+	MsgListByCategoryError = "error listing records by category"
+
+	// MsgListByDayError is the log message for when a list by day operation fails.
+	MsgListByDayError = "error listing records by day"
+
+	// MsgListUntilError is the log message for when a list until operation fails.
+	MsgListUntilError = "error listing records until"
+
+	// MsgListBetweenError is the log message for when a list between operation fails.
+	MsgListBetweenError = "error listing records between dates"
+
+	// MsgListLatestError is the log message for when a list latest operation fails.
+	MsgListLatestError = "error listing latest records"
+
+	// MsgInvalidDateFormat is the log message for invalid date format.
+	MsgInvalidDateFormat = "invalid date format"
+
+	// MsgInvalidUntilTimestamp is the log message for invalid until timestamp.
+	MsgInvalidUntilTimestamp = "invalid until timestamp"
+
+	// MsgInvalidStartDate is the log message for invalid start date.
+	MsgInvalidStartDate = "invalid start date"
+
+	// MsgInvalidEndDate is the log message for invalid end date.
+	MsgInvalidEndDate = "invalid end date"
+
+	// MsgSoftDeleteError is the log message for soft delete operation failure.
+	MsgSoftDeleteError = "error soft deleting record"
+
+	// MsgSoftDeleteAllError is the log message for soft delete all operation failure.
+	MsgSoftDeleteAllError = "error soft deleting all records"
+
+	// MsgUpdateError is the log message for update operation failure.
+	MsgUpdateError = "error updating record"
+)
+
+// -----------------------------------------------------------------------------
+// Attribute Keys
+// Used in span.SetAttributes() and log metadata
+// -----------------------------------------------------------------------------
+
+const (
+	// AttrResultsCount is the attribute key for result count.
+	AttrResultsCount = "results_count"
+
+	// AttrLimit is the attribute key for pagination limit.
+	AttrLimit = "limit"
+
+	// AttrCount is the attribute key for general count.
+	AttrCount = "count"
+
+	// AttrDate is the attribute key for date.
+	AttrDate = "date"
+
+	// AttrStartDate is the attribute key for start date.
+	AttrStartDate = "start_date"
+
+	// AttrEndDate is the attribute key for end date.
+	AttrEndDate = "end_date"
+
+	// AttrUntil is the attribute key for until timestamp.
+	AttrUntil = "until"
+
+	// AttrRecordsCount is the attribute key for records count.
+	AttrRecordsCount = "records_count"
+)
+
+// -----------------------------------------------------------------------------
+// Date Parsing Defaults
+// -----------------------------------------------------------------------------
+
+const (
+	// DefaultQueryTimezone is the default timezone for date parsing queries.
+	DefaultQueryTimezone = "America/Sao_Paulo"
 )
 
 // -----------------------------------------------------------------------------
@@ -105,4 +226,24 @@ var (
 
 	// ErrFailedToListRecords is the error when listing records fails.
 	ErrFailedToListRecords = errors.New("failed to list records")
+
+	// ErrInvalidRecordQueryDate is returned when a natural-language date cannot be parsed.
+	ErrInvalidRecordQueryDate = errors.New(
+		"invalid date format, expected YYYY-MM-DD, DD/MM/YYYY, RFC3339, or natural language (today, yesterday, ...)",
+	)
+
+	// ErrTagIDCannotBeZero is returned when a tag ID is zero.
+	ErrTagIDCannotBeZero = errors.New("tag id cannot be zero")
+
+	// ErrCategoryIDCannotBeZero is returned when a category ID is zero.
+	ErrCategoryIDCannotBeZero = errors.New("category id cannot be zero")
+
+	// ErrInvalidUntilTimestamp is returned when the until timestamp is invalid.
+	ErrInvalidUntilTimestamp = errors.New("invalid until timestamp, expected RFC3339")
+
+	// ErrInvalidStartDate is returned when the start date is invalid.
+	ErrInvalidStartDate = errors.New("invalid start date, expected RFC3339")
+
+	// ErrInvalidEndDate is returned when the end date is invalid.
+	ErrInvalidEndDate = errors.New("invalid end date, expected RFC3339")
 )

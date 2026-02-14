@@ -56,16 +56,37 @@ input SearchFilters {
     offset: Int
 }
 
+input RecordStatsFilters {
+    query: String
+    categoryIds: [ID!]
+    tagIds: [ID!]
+    startDate: String
+    endDate: String
+    limit: Int
+}
+
+type RecordStats {
+    totalRecords: Int!
+    recordsWithValue: Int!
+    totalDurationSeconds: Int!
+    sumValue: Float!
+    avgValue: Float!
+    avgDurationSeconds: Float!
+    minValue: Float
+    maxValue: Float
+}
+
 extend type Query {
     recordById(id: ID!): Record @auth(roles: "user")
     records(limit: Int, afterEventTime: String, afterId: ID): [Record!]! @auth(roles: "user")
     recordsLatest(limit: Int): [Record!]! @auth(roles: "user")
     recordsByTag(tagId: ID!, limit: Int): [Record!]! @auth(roles: "user")
     recordsByCategory(categoryId: ID!, limit: Int): [Record!]! @auth(roles: "user")
-    recordsByDay(date: String!): [Record!]! @auth(roles: "user")
+    recordsByDay(date: String): [Record!]! @auth(roles: "user")
     recordsUntil(until: String!, limit: Int): [Record!]! @auth(roles: "user")
     recordsBetween(startDate: String!, endDate: String!, limit: Int): [Record!]! @auth(roles: "user")
     searchRecords(filters: SearchFilters!): [Record!]! @auth(roles: "user")
+    recordStats(filters: RecordStatsFilters): RecordStats! @auth(roles: "user")
 }
 
 extend type Mutation {

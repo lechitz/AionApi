@@ -38,6 +38,9 @@ const (
 
 	// SpanSoftDeleteRepo is the span name for soft-deleting a record.
 	SpanSoftDeleteRepo = "record.repository.soft_delete"
+
+	// SpanSearchRepo is the span name for searching records.
+	SpanSearchRepo = "record.repository.search"
 )
 
 // -----------------------------------------------------------------------------
@@ -69,6 +72,9 @@ const (
 
 	// OpSoftDelete is the attribute value for the "soft delete" operation.
 	OpSoftDelete = "soft_delete"
+
+	// OpSearch is the attribute value for the "search" operation.
+	OpSearch = "search"
 )
 
 // -----------------------------------------------------------------------------
@@ -93,11 +99,40 @@ const (
 
 	// StatusUpdated indicates a record was updated successfully.
 	StatusUpdated = "record updated successfully"
+
+	// StatusSearchCompleted indicates records were searched successfully.
+	StatusSearchCompleted = "search completed successfully"
 )
 
 // =============================================================================
 // BUSINESS LOGIC - Error Messages
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// Attribute Keys
+// Used in span.SetAttributes() and log metadata
+// -----------------------------------------------------------------------------
+
+const (
+	// AttrSearchQuery is the attribute key for search query.
+	AttrSearchQuery = "search_query"
+
+	// AttrLimit is the attribute key for pagination limit.
+	AttrLimit = "limit"
+
+	// AttrOffset is the attribute key for pagination offset.
+	AttrOffset = "offset"
+
+	// AttrResultsCount is the attribute key for results count.
+	AttrResultsCount = "results_count"
+
+	// AttrQuery is the attribute key for query.
+	AttrQuery = "query"
+)
+
+// -----------------------------------------------------------------------------
+// Log Messages
+// -----------------------------------------------------------------------------
 
 const (
 	// ErrCreateRecordMsg is the error message used when creation fails.
@@ -117,4 +152,10 @@ const (
 
 	// ErrDeleteRecordMsg is the error message used when deleting a record fails.
 	ErrDeleteRecordMsg = "error deleting record"
+
+	// ErrSearchRecordsMsg is the error message used when searching records fails.
+	ErrSearchRecordsMsg = "error searching records"
+
+	// MsgSearchSuccess is the log message for successful search.
+	MsgSearchSuccess = "records searched successfully"
 )

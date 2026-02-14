@@ -43,9 +43,13 @@ func (q *queryResolver) RecordsByTag(ctx context.Context, tagID string, limit *i
 }
 
 // RecordsByDay is the resolver for the recordsByDay field.
-func (q *queryResolver) RecordsByDay(ctx context.Context, date string) ([]*model.Record, error) {
+func (q *queryResolver) RecordsByDay(ctx context.Context, date *string) ([]*model.Record, error) {
 	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
-	return q.RecordController().ListByDay(ctx, uid, date)
+	dateStr := ""
+	if date != nil {
+		dateStr = *date
+	}
+	return q.RecordController().ListByDay(ctx, uid, dateStr)
 }
 
 // RecordsUntil is the resolver for the recordsUntil field.
@@ -150,6 +154,12 @@ func (m *mutationResolver) SoftDeleteAllRecords(ctx context.Context) (bool, erro
 func (q *queryResolver) SearchRecords(ctx context.Context, filters model.SearchFilters) ([]*model.Record, error) {
 	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
 	return q.RecordController().SearchRecords(ctx, filters, uid)
+}
+
+// RecordStats is the resolver for the recordStats field.
+func (q *queryResolver) RecordStats(ctx context.Context, filters *model.RecordStatsFilters) (*model.RecordStats, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.RecordController().RecordStats(ctx, filters, uid)
 }
 
 // Additional unimplemented resolvers can be added below as needed.
