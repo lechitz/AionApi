@@ -11,7 +11,7 @@ import (
 )
 
 func TestContextHelpers_Getters(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	ctx = context.WithValue(ctx, ctxkeys.RequestID, []byte("req-1"))
 	ctx = context.WithValue(ctx, ctxkeys.TraceID, int64(12345))
 	ctx = context.WithValue(ctx, ctxkeys.UserID, uint64(99))
@@ -22,7 +22,7 @@ func TestContextHelpers_Getters(t *testing.T) {
 }
 
 func TestEnrichFieldsFromContext_UsesSpanContextWhenValid(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	ctx = context.WithValue(ctx, ctxkeys.RequestID, "req-2")
 	ctx = context.WithValue(ctx, ctxkeys.TraceID, "fallback-trace")
 	ctx = context.WithValue(ctx, ctxkeys.UserID, "user-2")
@@ -45,7 +45,7 @@ func TestEnrichFieldsFromContext_UsesSpanContextWhenValid(t *testing.T) {
 }
 
 func TestEnrichFieldsFromContext_FallbackTraceID(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	ctx = context.WithValue(ctx, ctxkeys.TraceID, "trace-fallback")
 
 	fields := contextlogger.EnrichFieldsFromContext(ctx)

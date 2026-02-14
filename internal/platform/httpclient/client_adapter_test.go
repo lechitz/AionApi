@@ -45,7 +45,7 @@ func TestClientAdapter_Get_Success(t *testing.T) {
 	})
 
 	c := httpclient.NewClient(&http.Client{})
-	resp, err := c.Get(context.Background(), srv.URL)
+	resp, err := c.Get(t.Context(), srv.URL)
 	if err != nil {
 		t.Fatalf("Get failed: %v", err)
 	}
@@ -58,7 +58,7 @@ func TestClientAdapter_Get_Success(t *testing.T) {
 
 func TestClientAdapter_Get_InvalidURL(t *testing.T) {
 	c := httpclient.NewClient(&http.Client{})
-	resp, err := c.Get(context.Background(), "://bad-url")
+	resp, err := c.Get(t.Context(), "://bad-url")
 	if resp != nil {
 		defer func() { _ = resp.Body.Close() }()
 	}
@@ -79,7 +79,7 @@ func TestClientAdapter_Post_Success(t *testing.T) {
 	})
 
 	c := httpclient.NewClient(&http.Client{})
-	resp, err := c.Post(context.Background(), srv.URL, "application/json", map[string]any{"ok": true})
+	resp, err := c.Post(t.Context(), srv.URL, "application/json", map[string]any{"ok": true})
 	if err != nil {
 		t.Fatalf("Post failed: %v", err)
 	}
@@ -99,7 +99,7 @@ func TestClientAdapter_Post_NilBody_Success(t *testing.T) {
 	})
 
 	c := httpclient.NewClient(&http.Client{})
-	resp, err := c.Post(context.Background(), srv.URL, "application/json", nil)
+	resp, err := c.Post(t.Context(), srv.URL, "application/json", nil)
 	if err != nil {
 		t.Fatalf("Post with nil body failed: %v", err)
 	}
@@ -112,7 +112,7 @@ func TestClientAdapter_Post_NilBody_Success(t *testing.T) {
 
 func TestClientAdapter_Post_MarshalError(t *testing.T) {
 	c := httpclient.NewClient(&http.Client{})
-	resp, err := c.Post(context.Background(), "http://example.com", "application/json", func() {})
+	resp, err := c.Post(t.Context(), "http://example.com", "application/json", func() {})
 	if resp != nil {
 		defer func() { _ = resp.Body.Close() }()
 	}
@@ -123,7 +123,7 @@ func TestClientAdapter_Post_MarshalError(t *testing.T) {
 
 func TestClientAdapter_Post_InvalidURL(t *testing.T) {
 	c := httpclient.NewClient(&http.Client{})
-	resp, err := c.Post(context.Background(), "://bad-url", "application/json", map[string]any{"ok": true})
+	resp, err := c.Post(t.Context(), "://bad-url", "application/json", map[string]any{"ok": true})
 	if resp != nil {
 		defer func() { _ = resp.Body.Close() }()
 	}
@@ -146,7 +146,7 @@ func TestNewInstrumentedClient_DisableInstrumentation_NoTraceparentInjection(t *
 		DisableInstrumentation: true,
 	})
 
-	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, srv.URL, nil)
+	req, _ := http.NewRequestWithContext(t.Context(), http.MethodGet, srv.URL, nil)
 	resp, err := client.Do(req)
 	if err != nil {
 		t.Fatalf("request failed: %v", err)
