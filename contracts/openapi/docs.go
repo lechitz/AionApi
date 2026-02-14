@@ -1445,7 +1445,7 @@ const docTemplate = `{
             "type": "apiKey",
             "name": "auth_token",
             "in": "cookie",
-            "x-graphqlplayground": "/graphql/  // Cross-reference to GraphQL Playground (not covered by Swagger)"
+            "x-graphqlplayground": "/graphql/ // Cross-reference to GraphQL Playground (not covered by Swagger)"
         }
     }
 }`

@@ -1066,6 +1066,6 @@ securityDefinitions:
     in: cookie
     name: auth_token
     type: apiKey
-    x-graphqlplayground: /graphql/  // Cross-reference to GraphQL Playground (not
-      covered by Swagger)
+    x-graphqlplayground: /graphql/ // Cross-reference to GraphQL Playground (not covered
+      by Swagger)
 swagger: "2.0"

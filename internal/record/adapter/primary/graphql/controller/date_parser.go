@@ -5,18 +5,13 @@ import (
 	"time"
 )
 
-var weekdayAliases = map[time.Weekday][]string{
-	time.Sunday:    {"domingo", "dom"},
-	time.Monday:    {"segunda", "segunda feira", "segunda-feira", "seg"},
-	time.Tuesday:   {"terca", "terca feira", "terca-feira", "terça", "terça feira", "terça-feira", "ter"},
-	time.Wednesday: {"quarta", "quarta feira", "quarta-feira", "qua"},
-	time.Thursday:  {"quinta", "quinta feira", "quinta-feira", "qui"},
-	time.Friday:    {"sexta", "sexta feira", "sexta-feira", "sex"},
-	time.Saturday:  {"sabado", "sabado feira", "sábado", "sábado feira", "sab"},
-}
-
 func parseRecordsDayQuery(dateStr string, now time.Time) (time.Time, error) {
 	loc := resolveQueryLocation()
+	return parseRecordsDayQueryWithLocation(dateStr, now, loc)
+}
+
+// ParseRecordsDayQueryWithLocation parses relative/absolute date expressions in a given location.
+func ParseRecordsDayQueryWithLocation(dateStr string, now time.Time, loc *time.Location) (time.Time, error) {
 	return parseRecordsDayQueryWithLocation(dateStr, now, loc)
 }
 
@@ -98,6 +93,16 @@ func normalizeDateExpression(raw string) string {
 }
 
 func extractWeekday(norm string) (time.Weekday, bool) {
+	weekdayAliases := map[time.Weekday][]string{
+		time.Sunday:    {"domingo", "dom"},
+		time.Monday:    {"segunda", "segunda feira", "segunda-feira", "seg"},
+		time.Tuesday:   {"terca", "terca feira", "terca-feira", "terça", "terça feira", "terça-feira", "ter"},
+		time.Wednesday: {"quarta", "quarta feira", "quarta-feira", "qua"},
+		time.Thursday:  {"quinta", "quinta feira", "quinta-feira", "qui"},
+		time.Friday:    {"sexta", "sexta feira", "sexta-feira", "sex"},
+		time.Saturday:  {"sabado", "sabado feira", "sábado", "sábado feira", "sab"},
+	}
+
 	for weekday, aliases := range weekdayAliases {
 		for _, alias := range aliases {
 			if containsToken(norm, normalizeDateExpression(alias)) {

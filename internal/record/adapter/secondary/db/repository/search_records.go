@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/mapper"
 	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
@@ -16,19 +17,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-// SearchRecords performs full-text search on records with optional filters using PostgreSQL tsvector.
-func (r RecordRepository) SearchRecords(ctx context.Context, userID uint64, filters domain.SearchFilters) ([]domain.Record, error) {
-	tr := otel.Tracer(TracerName)
-	ctx, span := tr.Start(ctx, SpanSearchRepo, trace.WithAttributes(
-		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
-		attribute.String(AttrSearchQuery, filters.Query),
-		attribute.Int(AttrLimit, filters.Limit),
-		attribute.Int(AttrOffset, filters.Offset),
-	))
-	defer span.End()
-
-	var records []model.Record
-
+func buildSearchRecordsQuery(userID uint64, filters domain.SearchFilters) (string, []interface{}) {
 	queryValue := strings.TrimSpace(filters.Query)
 	hasQuery := queryValue != ""
 
@@ -64,72 +53,117 @@ func (r RecordRepository) SearchRecords(ctx context.Context, userID uint64, filt
 		argIndex = 3
 	}
 
-	// Add category filter (requires JOIN with tags table)
-	if len(filters.CategoryIDs) > 0 {
-		if hasQuery {
-			query = `
-				SELECT r.id, r.user_id, r.tag_id, r.description,
-				       r.value, r.duration_seconds, r.event_time, r.recorded_at,
-				       r.source, r.timezone, r.status,
-				       r.created_at, r.updated_at, r.deleted_at,
-				       ts_rank(r.search_vector, plainto_tsquery('portuguese', $1)) as rank
-				FROM aion_api.records r
-				INNER JOIN aion_api.tags t ON r.tag_id = t.tag_id
-				WHERE r.user_id = $2
-				  AND r.deleted_at IS NULL
-				  AND r.search_vector @@ plainto_tsquery('portuguese', $1)
-				  AND t.category_id = ANY($3)
-			`
-			args = append(args, filters.CategoryIDs)
-			argIndex++
-		} else {
-			query = `
-				SELECT r.id, r.user_id, r.tag_id, r.description,
-				       r.value, r.duration_seconds, r.event_time, r.recorded_at,
-				       r.source, r.timezone, r.status,
-				       r.created_at, r.updated_at, r.deleted_at,
-				       0 as rank
-				FROM aion_api.records r
-				INNER JOIN aion_api.tags t ON r.tag_id = t.tag_id
-				WHERE r.user_id = $1
-				  AND r.deleted_at IS NULL
-				  AND t.category_id = ANY($2)
-			`
-			args = append(args, filters.CategoryIDs)
-			argIndex++
-		}
-	}
+	query, args, argIndex = applyCategoryFilter(query, args, argIndex, hasQuery, filters.CategoryIDs)
+	query, args, argIndex = applyTagFilter(query, args, argIndex, filters.TagIDs)
+	query, args, argIndex = applyDateRangeFilters(query, args, argIndex, filters.StartDate, filters.EndDate)
+	query = applyOrderBy(query, hasQuery)
 
-	// Add tag filter
-	if len(filters.TagIDs) > 0 {
-		query += fmt.Sprintf(" AND tag_id = ANY($%d)", argIndex)
-		args = append(args, filters.TagIDs)
-		argIndex++
-	}
-
-	// Add date range filters
-	if filters.StartDate != nil {
-		query += fmt.Sprintf(" AND event_time >= $%d", argIndex)
-		args = append(args, filters.StartDate)
-		argIndex++
-	}
-
-	if filters.EndDate != nil {
-		query += fmt.Sprintf(" AND event_time <= $%d", argIndex)
-		args = append(args, filters.EndDate)
-		argIndex++
-	}
-
-	// Order by relevance (when query exists), then by recency.
-	if hasQuery {
-		query += " ORDER BY rank DESC, created_at DESC"
-	} else {
-		query += " ORDER BY created_at DESC"
-	}
-
-	// Add pagination
 	query += fmt.Sprintf(" LIMIT $%d OFFSET $%d", argIndex, argIndex+1)
 	args = append(args, filters.Limit, filters.Offset)
+
+	return query, args
+}
+
+func applyCategoryFilter(
+	query string,
+	args []interface{},
+	argIndex int,
+	hasQuery bool,
+	categoryIDs []uint64,
+) (string, []interface{}, int) {
+	if len(categoryIDs) == 0 {
+		return query, args, argIndex
+	}
+
+	if hasQuery {
+		query = `
+			SELECT r.id, r.user_id, r.tag_id, r.description,
+			       r.value, r.duration_seconds, r.event_time, r.recorded_at,
+			       r.source, r.timezone, r.status,
+			       r.created_at, r.updated_at, r.deleted_at,
+			       ts_rank(r.search_vector, plainto_tsquery('portuguese', $1)) as rank
+			FROM aion_api.records r
+			INNER JOIN aion_api.tags t ON r.tag_id = t.tag_id
+			WHERE r.user_id = $2
+			  AND r.deleted_at IS NULL
+			  AND r.search_vector @@ plainto_tsquery('portuguese', $1)
+			  AND t.category_id = ANY($3)
+		`
+		args = append(args, categoryIDs)
+		argIndex++
+		return query, args, argIndex
+	}
+
+	query = `
+		SELECT r.id, r.user_id, r.tag_id, r.description,
+		       r.value, r.duration_seconds, r.event_time, r.recorded_at,
+		       r.source, r.timezone, r.status,
+		       r.created_at, r.updated_at, r.deleted_at,
+		       0 as rank
+		FROM aion_api.records r
+		INNER JOIN aion_api.tags t ON r.tag_id = t.tag_id
+		WHERE r.user_id = $1
+		  AND r.deleted_at IS NULL
+		  AND t.category_id = ANY($2)
+	`
+	args = append(args, categoryIDs)
+	argIndex++
+	return query, args, argIndex
+}
+
+func applyTagFilter(query string, args []interface{}, argIndex int, tagIDs []uint64) (string, []interface{}, int) {
+	if len(tagIDs) == 0 {
+		return query, args, argIndex
+	}
+	query += fmt.Sprintf(" AND tag_id = ANY($%d)", argIndex)
+	args = append(args, tagIDs)
+	argIndex++
+	return query, args, argIndex
+}
+
+func applyDateRangeFilters(
+	query string,
+	args []interface{},
+	argIndex int,
+	startDate *time.Time,
+	endDate *time.Time,
+) (string, []interface{}, int) {
+	if startDate != nil {
+		query += fmt.Sprintf(" AND event_time >= $%d", argIndex)
+		args = append(args, startDate)
+		argIndex++
+	}
+
+	if endDate != nil {
+		query += fmt.Sprintf(" AND event_time <= $%d", argIndex)
+		args = append(args, endDate)
+		argIndex++
+	}
+
+	return query, args, argIndex
+}
+
+func applyOrderBy(query string, hasQuery bool) string {
+	if hasQuery {
+		return query + " ORDER BY rank DESC, created_at DESC"
+	}
+	return query + " ORDER BY created_at DESC"
+}
+
+// SearchRecords performs full-text search on records with optional filters using PostgreSQL tsvector.
+func (r RecordRepository) SearchRecords(ctx context.Context, userID uint64, filters domain.SearchFilters) ([]domain.Record, error) {
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanSearchRepo, trace.WithAttributes(
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+		attribute.String(AttrSearchQuery, filters.Query),
+		attribute.Int(AttrLimit, filters.Limit),
+		attribute.Int(AttrOffset, filters.Offset),
+	))
+	defer span.End()
+
+	var records []model.Record
+
+	query, args := buildSearchRecordsQuery(userID, filters)
 
 	// Execute query with Raw() and Scan()
 	if err := r.db.WithContext(ctx).Raw(query, args...).Scan(&records).Error(); err != nil {

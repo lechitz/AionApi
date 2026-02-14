@@ -15,6 +15,11 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
+const (
+	maxInt32Value = int64(1<<31 - 1)
+	minInt32Value = int64(-1 << 31)
+)
+
 // RecordStats computes aggregated statistics over records using the same filter semantics from search.
 func (c *controller) RecordStats(ctx context.Context, filters *model.RecordStatsFilters, userID uint64) (*model.RecordStats, error) {
 	tr := otel.Tracer(TracerName)
@@ -141,13 +146,24 @@ func buildRecordStats(records []domain.Record) *model.RecordStats {
 	}
 
 	return &model.RecordStats{
-		TotalRecords:         int32(total),
-		RecordsWithValue:     int32(valueCount),
-		TotalDurationSeconds: int32(sumDuration),
+		TotalRecords:         safeIntToInt32(total),
+		RecordsWithValue:     safeIntToInt32(valueCount),
+		TotalDurationSeconds: safeIntToInt32(sumDuration),
 		SumValue:             sumValue,
 		AvgValue:             avgValue,
 		AvgDurationSeconds:   avgDuration,
 		MinValue:             minOut,
 		MaxValue:             maxOut,
 	}
+}
+
+func safeIntToInt32(value int) int32 {
+	v64 := int64(value)
+	if v64 > maxInt32Value {
+		return int32(maxInt32Value)
+	}
+	if v64 < minInt32Value {
+		return int32(minInt32Value)
+	}
+	return int32(v64)
 }

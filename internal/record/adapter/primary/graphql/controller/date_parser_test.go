@@ -1,9 +1,10 @@
-package controller
+package controller_test
 
 import (
 	"testing"
 	"time"
 
+	"github.com/lechitz/AionApi/internal/record/adapter/primary/graphql/controller"
 	"github.com/stretchr/testify/require"
 )
 
@@ -35,7 +36,7 @@ func TestParseRecordsDayQueryWithLocation_AbsoluteDates(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got, err := parseRecordsDayQueryWithLocation(tc.input, now, loc)
+			got, err := controller.ParseRecordsDayQueryWithLocation(tc.input, now, loc)
 			require.NoError(t, err)
 			require.True(t, got.Equal(tc.expected), "got=%s expected=%s", got, tc.expected)
 		})
@@ -99,7 +100,7 @@ func TestParseRecordsDayQueryWithLocation_NaturalLanguage(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got, err := parseRecordsDayQueryWithLocation(tc.input, tc.now, loc)
+			got, err := controller.ParseRecordsDayQueryWithLocation(tc.input, tc.now, loc)
 			require.NoError(t, err)
 			require.True(t, got.Equal(tc.expected), "got=%s expected=%s", got, tc.expected)
 		})
