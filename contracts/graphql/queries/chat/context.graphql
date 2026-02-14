@@ -1,0 +1,1 @@
+query ChatContext { chatContext { recentChats { id userId message response tokensUsed functionCalls createdAt updatedAt } totalRecords totalCategories totalTags } }

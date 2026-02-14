@@ -1,0 +1,1 @@
+query RecordsLatest($limit: Int) { recordsLatest(limit: $limit) { id userId tagId description eventTime recordedAt durationSeconds value source timezone status createdAt updatedAt } }

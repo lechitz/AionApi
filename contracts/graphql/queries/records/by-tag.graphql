@@ -1,0 +1,1 @@
+query RecordsByTag($tagId: ID!, $limit: Int) { recordsByTag(tagId: $tagId, limit: $limit) { id userId tagId description eventTime recordedAt durationSeconds value source timezone status createdAt updatedAt } }

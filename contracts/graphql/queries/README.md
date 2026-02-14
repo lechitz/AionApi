@@ -1,75 +1,84 @@
-# Shared GraphQL Queries
+# Shared GraphQL Operations
 
-**Path:** `contracts/graphql/queries`
+**Path:** `contracts/graphql`
 
 ## Overview
 
-This folder stores reusable GraphQL operation documents shared across Aion clients.
-It acts as a versioned contract artifact aligned with the backend GraphQL schema.
-
-## Package Scope
-
-| Area | Responsibility |
-| --- | --- |
-| Shared operations | Keep canonical query documents in one place |
-| Client reuse | Allow multiple clients to load the same `.graphql` files |
-| Contract traceability | Version query changes together with backend schema evolution |
+This folder stores reusable GraphQL operation documents aligned with the backend schema.
+It is intended to be the shared contract surface consumed by Aion clients.
 
 ## Structure
 
-| Folder | Current operations |
+| Folder | Scope |
 | --- | --- |
-| `categories/` | `list.graphql` |
-| `records/` | `list.graphql` |
-| `tags/` | `list.graphql` |
+| `manifest.json` | Deterministic index of shared operations and checksums |
+| `queries/categories/` | Category read operations |
+| `queries/tags/` | Tag read operations |
+| `queries/records/` | Record read operations |
+| `queries/chat/` | Chat read operations |
+| `queries/user/` | User read operations |
+| `mutations/categories/` | Category write operations |
+| `mutations/tags/` | Tag write operations |
+| `mutations/records/` | Record write operations |
 
-## Current Query Inventory
+## Query Inventory
 
-| Domain | File | Operation |
-| --- | --- | --- |
-| Categories | `categories/list.graphql` | `ListCategories` |
-| Records | `records/list.graphql` | `ListRecords(limit: Int)` |
-| Tags | `tags/list.graphql` | `ListTags` |
+### Categories
+- `queries/categories/list.graphql`
+- `queries/categories/by-id.graphql`
+- `queries/categories/by-name.graphql`
 
-**Total operations:** `3`
+### Tags
+- `queries/tags/list.graphql`
+- `queries/tags/by-id.graphql`
+- `queries/tags/by-name.graphql`
+- `queries/tags/by-category-id.graphql`
 
-## Usage Examples
+### Records
+- `queries/records/list.graphql`
+- `queries/records/by-id.graphql`
+- `queries/records/latest.graphql`
+- `queries/records/by-tag.graphql`
+- `queries/records/by-category.graphql`
+- `queries/records/by-day.graphql`
+- `queries/records/until.graphql`
+- `queries/records/between.graphql`
+- `queries/records/search.graphql`
+- `queries/records/stats.graphql`
 
-### Python
+### Chat
+- `queries/chat/history.graphql`
+- `queries/chat/context.graphql`
+- `queries/chat/data-pack.graphql`
 
-```python
-from pathlib import Path
+### User
+- `queries/user/stats.graphql`
 
-query = (Path("contracts/graphql/queries/categories/list.graphql")).read_text()
-```
+## Mutation Inventory
 
-### TypeScript
+### Categories
+- `mutations/categories/create.graphql`
+- `mutations/categories/update.graphql`
+- `mutations/categories/delete.graphql`
 
-```ts
-import { readFileSync } from "fs";
+### Tags
+- `mutations/tags/create.graphql`
+- `mutations/tags/update.graphql`
+- `mutations/tags/delete.graphql`
 
-const query = readFileSync("contracts/graphql/queries/categories/list.graphql", "utf-8");
-```
+### Records
+- `mutations/records/create.graphql`
+- `mutations/records/update.graphql`
+- `mutations/records/delete.graphql`
+- `mutations/records/delete-all.graphql`
 
-## Maintenance Workflow
+## Notes
 
-1. Add or update `.graphql` files under the appropriate domain folder.
-2. Ensure operation names and selected fields match current schema.
-3. Validate client compatibility (dashboard, chat, CLI, etc.).
-4. Commit query files together with related schema/backend changes.
-
-## Design Notes
-
-- Keep operation documents small and purpose-driven.
-- Prefer stable operation names to improve observability and cache behavior.
-- This folder stores operation documents only, not generated clients.
-
-## Package Improvements
-
-- Add missing mutation/query documents for create/update/delete flows to match schema coverage.
-- Add CI validation that checks `.graphql` files against the current GraphQL schema.
-- Standardize folder naming (`categories`, `tags`, `records`) with a short naming convention note.
-- Add per-query comments for expected auth context (`@auth` protected operations).
+- Keep operation names stable for observability and client cache behavior.
+- Keep selection sets consistent across clients unless a consumer needs a narrower shape.
+- Validate operation documents against current schema in CI.
+- Regenerate contract files + manifest with: `make graphql.queries graphql.manifest`.
+- Validate schema compatibility with: `make graphql.validate`.
 
 ---
 

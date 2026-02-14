@@ -1,0 +1,1 @@
+mutation UpdateTag($input: UpdateTagInput!) { updateTag(input: $input) { id userId name categoryId description icon createdAt updatedAt } }

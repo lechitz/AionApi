@@ -1,0 +1,1 @@
+query RecordStats($filters: RecordStatsFilters) { recordStats(filters: $filters) { totalRecords recordsWithValue totalDurationSeconds sumValue avgValue avgDurationSeconds minValue maxValue } }

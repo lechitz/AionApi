@@ -1,0 +1,1 @@
+mutation UpdateRecord($input: UpdateRecordInput!) { updateRecord(input: $input) { id userId tagId description eventTime recordedAt durationSeconds value source timezone status createdAt updatedAt } }

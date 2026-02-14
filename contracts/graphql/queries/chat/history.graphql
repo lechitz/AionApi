@@ -1,0 +1,1 @@
+query ChatHistory($limit: Int, $offset: Int) { chatHistory(limit: $limit, offset: $offset) { id userId message response tokensUsed functionCalls createdAt updatedAt } }

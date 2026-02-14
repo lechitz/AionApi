@@ -1,0 +1,1 @@
+mutation CreateCategory($input: CreateCategoryInput!) { createCategory(input: $input) { id userId name description colorHex icon } }

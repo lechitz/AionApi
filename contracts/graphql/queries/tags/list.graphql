@@ -1,1 +1,1 @@
-query ListTags { tags { id name categoryId icon } }
+query ListTags { tags { id userId name categoryId description icon createdAt updatedAt } }

@@ -1,0 +1,1 @@
+query CategoryByName($name: String!) { categoryByName(name: $name) { id userId name description colorHex icon } }

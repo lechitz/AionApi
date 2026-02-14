@@ -1,0 +1,1 @@
+query TagsByCategoryId($categoryId: ID!) { tagsByCategoryId(categoryId: $categoryId) { id userId name categoryId description icon createdAt updatedAt } }

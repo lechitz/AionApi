@@ -1,0 +1,1 @@
+mutation SoftDeleteCategory($input: DeleteCategoryInput!) { softDeleteCategory(input: $input) }

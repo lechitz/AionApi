@@ -1,0 +1,1 @@
+query RecordsBetween($startDate: String!, $endDate: String!, $limit: Int) { recordsBetween(startDate: $startDate, endDate: $endDate, limit: $limit) { id userId tagId description eventTime recordedAt durationSeconds value source timezone status createdAt updatedAt } }

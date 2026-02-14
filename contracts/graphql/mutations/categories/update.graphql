@@ -1,0 +1,1 @@
+mutation UpdateCategory($input: UpdateCategoryInput!) { updateCategory(input: $input) { id userId name description colorHex icon } }
