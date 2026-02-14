@@ -83,7 +83,7 @@ func TestSendMessage_Success(t *testing.T) {
 func TestSendMessage_Errors(t *testing.T) {
 	t.Run("marshal error", func(t *testing.T) {
 		client := chathttp.New(mockChatHTTPClient{
-			doFn: func(req *stdhttp.Request) (*stdhttp.Response, error) {
+			doFn: func(_ *stdhttp.Request) (*stdhttp.Response, error) {
 				return nil, errors.New("should not call")
 			},
 		}, "http://aion-chat:8000", mockChatHTTPLogger{})
@@ -96,7 +96,7 @@ func TestSendMessage_Errors(t *testing.T) {
 
 	t.Run("request build error", func(t *testing.T) {
 		client := chathttp.New(mockChatHTTPClient{
-			doFn: func(req *stdhttp.Request) (*stdhttp.Response, error) {
+			doFn: func(_ *stdhttp.Request) (*stdhttp.Response, error) {
 				return nil, errors.New("should not call")
 			},
 		}, "://bad", mockChatHTTPLogger{})
@@ -107,7 +107,7 @@ func TestSendMessage_Errors(t *testing.T) {
 
 	t.Run("http do error", func(t *testing.T) {
 		client := chathttp.New(mockChatHTTPClient{
-			doFn: func(req *stdhttp.Request) (*stdhttp.Response, error) {
+			doFn: func(_ *stdhttp.Request) (*stdhttp.Response, error) {
 				return nil, errors.New("http down")
 			},
 		}, "http://aion-chat:8000", mockChatHTTPLogger{})
@@ -118,7 +118,7 @@ func TestSendMessage_Errors(t *testing.T) {
 
 	t.Run("read body error", func(t *testing.T) {
 		client := chathttp.New(mockChatHTTPClient{
-			doFn: func(req *stdhttp.Request) (*stdhttp.Response, error) {
+			doFn: func(_ *stdhttp.Request) (*stdhttp.Response, error) {
 				return &stdhttp.Response{StatusCode: stdhttp.StatusOK, Body: errReadCloser{}}, nil
 			},
 		}, "http://aion-chat:8000", mockChatHTTPLogger{})
@@ -129,7 +129,7 @@ func TestSendMessage_Errors(t *testing.T) {
 
 	t.Run("non 200", func(t *testing.T) {
 		client := chathttp.New(mockChatHTTPClient{
-			doFn: func(req *stdhttp.Request) (*stdhttp.Response, error) {
+			doFn: func(_ *stdhttp.Request) (*stdhttp.Response, error) {
 				return &stdhttp.Response{
 					StatusCode: stdhttp.StatusBadGateway,
 					Body:       io.NopCloser(strings.NewReader("upstream failed")),
@@ -143,7 +143,7 @@ func TestSendMessage_Errors(t *testing.T) {
 
 	t.Run("unmarshal error", func(t *testing.T) {
 		client := chathttp.New(mockChatHTTPClient{
-			doFn: func(req *stdhttp.Request) (*stdhttp.Response, error) {
+			doFn: func(_ *stdhttp.Request) (*stdhttp.Response, error) {
 				return &stdhttp.Response{
 					StatusCode: stdhttp.StatusOK,
 					Body:       io.NopCloser(strings.NewReader("{invalid-json")),
