@@ -60,6 +60,34 @@ func TestNewLoggerAndCleanup(t *testing.T) {
 	cleanup()
 }
 
+func TestLoggerMethods_DoNotPanic(t *testing.T) {
+	logger, cleanup := contextlogger.New()
+	t.Cleanup(cleanup)
+
+	ctx := context.WithValue(t.Context(), ctxkeys.RequestID, 123)
+	ctx = context.WithValue(ctx, ctxkeys.TraceID, []byte("trace-b"))
+	ctx = context.WithValue(ctx, ctxkeys.UserID, int64(7))
+
+	logger.Infof("hello %s", "world")
+	logger.Errorf("err %d", 1)
+	logger.Debugf("dbg %t", true)
+	logger.Warnf("warn %s", "x")
+
+	logger.Infow("msg", "k1", "v1")
+	logger.Errorw("msg", "k1", "v1")
+	logger.Debugw("msg", "k1", "v1")
+	logger.Warnw("msg", "k1", "v1")
+
+	logger.InfowCtx(ctx, "ctx-msg", "k2", "v2")
+	logger.ErrorwCtx(ctx, "ctx-msg", "k2", "v2")
+	logger.DebugwCtx(ctx, "ctx-msg", "k2", "v2")
+	logger.WarnwCtx(ctx, "ctx-msg", "k2", "v2")
+
+	require.Equal(t, "123", contextlogger.GetRequestID(ctx))
+	require.Equal(t, "trace-b", contextlogger.GetTraceID(ctx))
+	require.Equal(t, "7", contextlogger.GetUserID(ctx))
+}
+
 func fieldsToMap(fields []any) map[string]string {
 	out := make(map[string]string)
 	for i := 0; i+1 < len(fields); i += 2 {
