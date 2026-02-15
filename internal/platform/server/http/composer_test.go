@@ -70,3 +70,44 @@ func TestComposeHandler_HealthAndDocsRoutes(t *testing.T) {
 	handler.ServeHTTP(rec, req)
 	require.Equal(t, stdhttp.StatusTemporaryRedirect, rec.Code)
 }
+
+func TestComposeHandler_DefaultFallbackRoutes(t *testing.T) {
+	cfg := testHTTPConfig()
+	cfg.ServerHTTP.Context = ""
+	cfg.ServerHTTP.SwaggerMountPath = ""
+	cfg.ServerHTTP.DocsAliasPath = ""
+	cfg.ServerHTTP.HealthRoute = ""
+
+	handler, err := serverhttp.ComposeHandler(cfg, &app.Dependencies{}, mockServerLogger{})
+	require.NoError(t, err)
+	require.NotNil(t, handler)
+
+	t.Run("root health", func(t *testing.T) {
+		req := httptest.NewRequest(stdhttp.MethodGet, "/health", nil)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+		require.Equal(t, stdhttp.StatusOK, rec.Code)
+	})
+
+	t.Run("root health with trailing slash", func(t *testing.T) {
+		req := httptest.NewRequest(stdhttp.MethodGet, "/health/", nil)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+		require.Equal(t, stdhttp.StatusOK, rec.Code)
+	})
+
+	t.Run("alt health under api root", func(t *testing.T) {
+		req := httptest.NewRequest(stdhttp.MethodGet, "/api/v1/health", nil)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+		require.Equal(t, stdhttp.StatusOK, rec.Code)
+	})
+
+	t.Run("docs alias fallback redirect", func(t *testing.T) {
+		req := httptest.NewRequest(stdhttp.MethodGet, "/docs", nil)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+		require.Equal(t, stdhttp.StatusTemporaryRedirect, rec.Code)
+		require.Equal(t, "/swagger/index.html", rec.Header().Get("Location"))
+	})
+}
