@@ -37,6 +37,12 @@ import (
 	"go.uber.org/fx"
 )
 
+type lifecycleApp interface {
+	Start(context.Context) error
+	Stop(context.Context) error
+	Done() <-chan os.Signal
+}
+
 // the main is the entry point for the application.
 func main() {
 	os.Exit(run())
@@ -44,7 +50,11 @@ func main() {
 
 // run is the main application logic.
 func run() int {
-	app := fx.New(
+	return runWithFactory(newFXApp)
+}
+
+func newFXApp() lifecycleApp {
+	return fx.New(
 		fx.Options(
 			fx.Invoke(configureSwagger),
 			fxapp.InfraModule,
@@ -52,6 +62,10 @@ func run() int {
 			fxapp.ServerModule,
 		),
 	)
+}
+
+func runWithFactory(factory func() lifecycleApp) int {
+	app := factory()
 	if err := app.Start(context.Background()); err != nil {
 		return 1
 	}
