@@ -108,3 +108,51 @@ func TestProvideHTTPClientCustomTimeout(t *testing.T) {
 	client := ProvideHTTPClient(cfg)
 	require.NotNil(t, client)
 }
+
+func TestProvideCacheReturnsErrorWhenRedisUnavailable(t *testing.T) {
+	lc := &fakeLifecycle{}
+	cfg := &config.Config{
+		Cache: config.CacheConfig{
+			Addr:           "127.0.0.1:1",
+			AuthDB:         0,
+			CategoryDB:     1,
+			TagDB:          2,
+			RecordDB:       3,
+			UserDB:         4,
+			ChatDB:         5,
+			PoolSize:       1,
+			ConnectTimeout: 10 * time.Millisecond,
+		},
+	}
+
+	out, err := ProvideCache(lc, cfg, noopLoggerFx{})
+	require.Error(t, err)
+	require.Equal(t, CacheOut{}, out)
+	require.Empty(t, lc.hooks)
+}
+
+func TestProvideDatabaseReturnsErrorWhenPostgresUnavailable(t *testing.T) {
+	lc := &fakeLifecycle{}
+	cfg := &config.Config{
+		DB: config.DBConfig{
+			Type:            "postgres",
+			Host:            "127.0.0.1",
+			Port:            "1",
+			Name:            "aion",
+			User:            "aion",
+			Password:        "aion",
+			SSLMode:         "disable",
+			TimeZone:        "UTC",
+			MaxOpenConns:    1,
+			MaxIdleConns:    1,
+			MaxRetries:      1,
+			RetryInterval:   10 * time.Millisecond,
+			ConnMaxLifetime: time.Second,
+		},
+	}
+
+	dbConn, err := ProvideDatabase(lc, cfg, noopLoggerFx{})
+	require.Error(t, err)
+	require.Nil(t, dbConn)
+	require.Empty(t, lc.hooks)
+}

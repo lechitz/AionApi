@@ -80,6 +80,38 @@ func TestConfigValidate_HTTPAndGraphQLErrors(t *testing.T) {
 	require.EqualError(t, cfg.Validate(), config.ErrGraphqlPathMustStart)
 }
 
+func TestConfigValidate_HTTPPathEdgeCases(t *testing.T) {
+	t.Run("context root is allowed", func(t *testing.T) {
+		cfg := baseConfig()
+		cfg.ServerHTTP.Context = "/"
+		require.NoError(t, cfg.Validate())
+	})
+
+	t.Run("context with trailing slash is invalid", func(t *testing.T) {
+		cfg := baseConfig()
+		cfg.ServerHTTP.Context = "/aion/"
+		require.EqualError(t, cfg.Validate(), config.ErrHTTPContextMustNotEndWithSlash)
+	})
+
+	t.Run("api root without leading slash is invalid", func(t *testing.T) {
+		cfg := baseConfig()
+		cfg.ServerHTTP.APIRoot = "api/v1"
+		require.EqualError(t, cfg.Validate(), config.ErrHTTPAPIRootMustStart)
+	})
+
+	t.Run("docs alias cannot be empty", func(t *testing.T) {
+		cfg := baseConfig()
+		cfg.ServerHTTP.DocsAliasPath = ""
+		require.EqualError(t, cfg.Validate(), config.ErrHTTPDocsAliasPathEmpty)
+	})
+
+	t.Run("health route cannot end with slash", func(t *testing.T) {
+		cfg := baseConfig()
+		cfg.ServerHTTP.HealthRoute = "/health/"
+		require.EqualError(t, cfg.Validate(), config.ErrHTTPHealthRouteMustNotEndSlash)
+	})
+}
+
 func TestConfigValidate_CacheAndDBErrors(t *testing.T) {
 	cfg := baseConfig()
 	cfg.Cache.PoolSize = 0
@@ -92,6 +124,18 @@ func TestConfigValidate_CacheAndDBErrors(t *testing.T) {
 	cfg = baseConfig()
 	cfg.DB.MaxRetries = 0
 	require.EqualError(t, cfg.Validate(), "DB_CONNECT_MAX_RETRIES must be at least 1")
+
+	cfg = baseConfig()
+	cfg.Cache.Addr = ""
+	require.EqualError(t, cfg.Validate(), config.ErrCacheAddrEmpty)
+
+	cfg = baseConfig()
+	cfg.DB.TimeZone = ""
+	require.EqualError(t, cfg.Validate(), config.ErrDBTimeZoneEmpty)
+
+	cfg = baseConfig()
+	cfg.DB.MaxOpenConns = 0
+	require.EqualError(t, cfg.Validate(), "DB_MAX_CONNECTIONS must be at least 1")
 }
 
 func TestConfigValidate_ObservabilityAndAppErrors(t *testing.T) {
