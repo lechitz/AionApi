@@ -331,3 +331,118 @@ func TestSession_SuccessWithClaimsNormalization(t *testing.T) {
 		t.Fatalf("unexpected expires_at: %v expected %v", body.Result.ExpiresAt, expectedExp)
 	}
 }
+
+func TestLogin_ValidationRequiredFields(t *testing.T) {
+	h := newTestHandler(t, &authServiceStub{})
+
+	req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(`{"username":"   ","password":"   "}`))
+	w := httptest.NewRecorder()
+
+	h.Login(w, req)
+
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", w.Code)
+	}
+}
+
+func TestSession_ClaimVariant_RolesFromCommonKeyAndExpFloat64(t *testing.T) {
+	body := runSessionWithClaims(t, map[string]any{
+		commonkeys.Roles: []string{"user"},
+		claimskeys.Exp:   float64(1735689600),
+	})
+	if strings.Join(body.Result.Roles, ",") != "user" {
+		t.Fatalf("unexpected roles: %+v", body.Result.Roles)
+	}
+	if body.Result.ExpiresAt == nil || body.Result.ExpiresAt.Unix() != 1735689600 {
+		t.Fatalf("unexpected expires_at: %v", body.Result.ExpiresAt)
+	}
+}
+
+func TestSession_ClaimVariant_RolesAsStringAndExpInt64(t *testing.T) {
+	body := runSessionWithClaims(t, map[string]any{
+		claimskeys.Roles: "admin",
+		claimskeys.Exp:   int64(1735689601),
+	})
+	if strings.Join(body.Result.Roles, ",") != "admin" {
+		t.Fatalf("unexpected roles: %+v", body.Result.Roles)
+	}
+	if body.Result.ExpiresAt == nil || body.Result.ExpiresAt.Unix() != 1735689601 {
+		t.Fatalf("unexpected expires_at: %v", body.Result.ExpiresAt)
+	}
+}
+
+func TestSession_ClaimVariant_RolesInvalidAndExpInt(t *testing.T) {
+	body := runSessionWithClaims(t, map[string]any{
+		claimskeys.Roles: 99,
+		claimskeys.Exp:   int(1735689602),
+	})
+	if len(body.Result.Roles) != 0 {
+		t.Fatalf("unexpected roles: %+v", body.Result.Roles)
+	}
+	if body.Result.ExpiresAt == nil || body.Result.ExpiresAt.Unix() != 1735689602 {
+		t.Fatalf("unexpected expires_at: %v", body.Result.ExpiresAt)
+	}
+}
+
+func TestSession_ClaimVariant_InvalidExpStringReturnsNil(t *testing.T) {
+	body := runSessionWithClaims(t, map[string]any{
+		claimskeys.Roles: []any{"user"},
+		claimskeys.Exp:   "173x",
+	})
+	if strings.Join(body.Result.Roles, ",") != "user" {
+		t.Fatalf("unexpected roles: %+v", body.Result.Roles)
+	}
+	if body.Result.ExpiresAt != nil {
+		t.Fatalf("expected nil expires_at, got %v", body.Result.ExpiresAt)
+	}
+}
+
+func TestSession_EmptyAccessTokenCookie(t *testing.T) {
+	h := newTestHandler(t, &authServiceStub{})
+
+	req := httptest.NewRequest(http.MethodGet, "/auth/session", nil)
+	req.AddCookie(&http.Cookie{Name: commonkeys.AuthTokenCookieName, Value: ""})
+	w := httptest.NewRecorder()
+
+	h.Session(w, req)
+
+	if w.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401, got %d", w.Code)
+	}
+}
+
+func runSessionWithClaims(t *testing.T, claims map[string]any) struct {
+	Result struct {
+		Roles     []string   `json:"roles"`
+		ExpiresAt *time.Time `json:"expires_at"`
+	} `json:"result"`
+} {
+	t.Helper()
+	h := newTestHandler(t, &authServiceStub{
+		validateFn: func(_ context.Context, token string) (uint64, map[string]any, error) {
+			if token != "access-token" {
+				t.Fatalf("unexpected token: %s", token)
+			}
+			return 55, claims, nil
+		},
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/auth/session", nil)
+	req.AddCookie(&http.Cookie{Name: commonkeys.AuthTokenCookieName, Value: "access-token"})
+	w := httptest.NewRecorder()
+	h.Session(w, req)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", w.Code)
+	}
+
+	var body struct {
+		Result struct {
+			Roles     []string   `json:"roles"`
+			ExpiresAt *time.Time `json:"expires_at"`
+		} `json:"result"`
+	}
+	if err := json.NewDecoder(w.Body).Decode(&body); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+	return body
+}
