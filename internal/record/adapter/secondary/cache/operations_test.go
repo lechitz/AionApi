@@ -156,6 +156,31 @@ func TestRecordCache_GetFallbackAndErrors(t *testing.T) {
 	require.Error(t, err)
 }
 
+func TestRecordCache_GetCategoryAndTagErrors(t *testing.T) {
+	fc := newFakeRecordCache()
+	store := recordcache.NewStore(fc, &mockRecordLogger{})
+
+	categoryKey := fmt.Sprintf(recordcache.RecordByCategoryKeyFormat, uint64(5), uint64(3))
+	fc.getErr[categoryKey] = errors.New("redis get category failed")
+	_, err := store.GetRecordsByCategory(t.Context(), 5, 3)
+	require.Error(t, err)
+
+	delete(fc.getErr, categoryKey)
+	fc.data[categoryKey] = "not-json"
+	_, err = store.GetRecordsByCategory(t.Context(), 5, 3)
+	require.Error(t, err)
+
+	tagKey := fmt.Sprintf(recordcache.RecordByTagKeyFormat, uint64(7), uint64(3))
+	fc.getErr[tagKey] = errors.New("redis get tag failed")
+	_, err = store.GetRecordsByTag(t.Context(), 7, 3)
+	require.Error(t, err)
+
+	delete(fc.getErr, tagKey)
+	fc.data[tagKey] = "not-json"
+	_, err = store.GetRecordsByTag(t.Context(), 7, 3)
+	require.Error(t, err)
+}
+
 func TestRecordCache_SaveSetError(t *testing.T) {
 	fc := newFakeRecordCache()
 	store := recordcache.NewStore(fc, &mockRecordLogger{})
@@ -213,4 +238,24 @@ func TestRecordCache_DeleteAllKeys(t *testing.T) {
 	fc.data[key] = string(raw)
 	_, err = store.GetRecordsByTag(t.Context(), rec.TagID, rec.UserID)
 	require.NoError(t, err)
+}
+
+func TestRecordCache_DeleteErrorsByKeyType(t *testing.T) {
+	fc := newFakeRecordCache()
+	store := recordcache.NewStore(fc, &mockRecordLogger{})
+
+	recordKey := fmt.Sprintf(recordcache.RecordIDKeyFormat, uint64(20), uint64(10))
+	fc.delErr[recordKey] = errors.New("delete record failed")
+	err := store.DeleteRecord(t.Context(), 10, 20)
+	require.Error(t, err)
+
+	categoryKey := fmt.Sprintf(recordcache.RecordByCategoryKeyFormat, uint64(30), uint64(20))
+	fc.delErr[categoryKey] = errors.New("delete category list failed")
+	err = store.DeleteRecordsByCategory(t.Context(), 30, 20)
+	require.Error(t, err)
+
+	tagKey := fmt.Sprintf(recordcache.RecordByTagKeyFormat, uint64(40), uint64(20))
+	fc.delErr[tagKey] = errors.New("delete tag list failed")
+	err = store.DeleteRecordsByTag(t.Context(), 40, 20)
+	require.Error(t, err)
 }

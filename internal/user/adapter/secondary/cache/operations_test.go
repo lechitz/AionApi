@@ -153,3 +153,35 @@ func TestGetUserByEmail_StaleVersionReturnsError(t *testing.T) {
 	_, err := store.GetUserByEmail(t.Context(), "john@example.com")
 	require.Error(t, err)
 }
+
+func TestGetUserByID_CacheAndPayloadErrors(t *testing.T) {
+	fc := newFakeCache()
+	store := usercache.NewStore(fc, &mockLogger{})
+
+	idKey := "user:id:77"
+	fc.getErr[idKey] = errors.New("redis get failed")
+	_, err := store.GetUserByID(t.Context(), 77)
+	require.Error(t, err)
+
+	delete(fc.getErr, idKey)
+	fc.data[idKey] = "{invalid-json"
+	_, err = store.GetUserByID(t.Context(), 77)
+	require.Error(t, err)
+
+	fc.data[idKey] = `{"version":999,"id":77,"username":"john","email":"john@example.com"}`
+	_, err = store.GetUserByID(t.Context(), 77)
+	require.Error(t, err)
+}
+
+func TestGetUserByUsernameAndEmail_CacheGetErrors(t *testing.T) {
+	fc := newFakeCache()
+	store := usercache.NewStore(fc, &mockLogger{})
+
+	fc.getErr["user:username:john"] = errors.New("username get failed")
+	_, err := store.GetUserByUsername(t.Context(), "john")
+	require.Error(t, err)
+
+	fc.getErr["user:email:john@example.com"] = errors.New("email get failed")
+	_, err = store.GetUserByEmail(t.Context(), "john@example.com")
+	require.Error(t, err)
+}
