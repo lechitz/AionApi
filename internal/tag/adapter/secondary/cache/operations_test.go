@@ -162,6 +162,31 @@ func TestTagCache_GetFallbackAndErrors(t *testing.T) {
 	require.Error(t, err)
 }
 
+func TestTagCache_GetByNameAndCategoryErrors(t *testing.T) {
+	fc := newFakeTagCache()
+	store := tagcache.NewStore(fc, &mockTagLogger{})
+
+	nameKey := fmt.Sprintf(tagcache.TagNameKeyFormat, uint64(2), "Health")
+	fc.getErr[nameKey] = errors.New("redis get name failed")
+	_, err := store.GetTagByName(t.Context(), "Health", 2)
+	require.Error(t, err)
+
+	delete(fc.getErr, nameKey)
+	fc.data[nameKey] = "{invalid-json"
+	_, err = store.GetTagByName(t.Context(), "Health", 2)
+	require.Error(t, err)
+
+	catKey := fmt.Sprintf(tagcache.TagByCategoryKeyFormat, uint64(7), uint64(2))
+	fc.getErr[catKey] = errors.New("redis get category failed")
+	_, err = store.GetTagsByCategory(t.Context(), 7, 2)
+	require.Error(t, err)
+
+	delete(fc.getErr, catKey)
+	fc.data[catKey] = "not-json"
+	_, err = store.GetTagsByCategory(t.Context(), 7, 2)
+	require.Error(t, err)
+}
+
 func TestTagCache_SaveAndDeleteErrors(t *testing.T) {
 	fc := newFakeTagCache()
 	store := tagcache.NewStore(fc, &mockTagLogger{})
