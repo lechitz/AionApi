@@ -581,3 +581,111 @@ docker-prune-full:
 	else \
 		echo "❌ Cancelled"; \
 	fi
+
+# ============================================================
+#               NETWORK/BANDWIDTH DIAGNOSTICS
+# ============================================================
+
+.PHONY: network-audit network-images ollama-update images-update
+
+# Audit Docker images and estimate potential bandwidth consumption
+network-audit:
+	@echo ""
+	@echo "┃═══════════════════════════════════════════════════════════════┃"
+	@echo "┃              AION STACK - NETWORK/BANDWIDTH AUDIT             ┃"
+	@echo "┃═══════════════════════════════════════════════════════════════┃"
+	@echo ""
+	@echo "📊 DOCKER IMAGES (cached locally):"
+	@echo "──────────────────────────────────────────────────────────────────"
+	@docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | grep -E "(ollama|aion|postgres|redis|node|python|grafana|prometheus|jaeger|loki|fluent|otel|localstack)" || echo "   (none found)"
+	@echo ""
+	@echo "💾 VOLUMES (persistent data):"
+	@echo "──────────────────────────────────────────────────────────────────"
+	@docker volume ls --format "{{.Name}}" | grep -E "(ollama|postgres|grafana|loki|redis)" | while read vol; do \
+		size=$$(docker system df -v 2>/dev/null | grep "$$vol" | awk '{print $$3}' || echo "?"); \
+		echo "   $$vol: $$size"; \
+	done
+	@echo ""
+	@echo "🌐 ESTIMATED BANDWIDTH PER COMMAND (if cache miss):"
+	@echo "──────────────────────────────────────────────────────────────────"
+	@echo "   make dev (full rebuild):"
+	@echo "      • Ollama image:         ~800 MB"
+	@echo "      • aion-chat deps:       ~1.5 GB (PyTorch, LangChain, Whisper)"
+	@echo "      • aion-api deps:        ~200 MB (Go modules)"
+	@echo "      • dashboard deps:       ~300 MB (node_modules)"
+	@echo "      • Infra images:         ~500 MB (Postgres, Redis, Grafana, etc)"
+	@echo "      ────────────────────────────────"
+	@echo "      TOTAL (worst case):     ~3.3 GB"
+	@echo ""
+	@echo "   make dev-fast (no rebuild):"
+	@echo "      • Downloads:            0 MB (uses cached images)"
+	@echo ""
+	@echo "   make ollama-pull (new model):"
+	@echo "      • Qwen 7B:              ~4.5 GB"
+	@echo "      • Qwen 14B:             ~8.5 GB"
+	@echo "      • Llama 3.1 8B:         ~4.7 GB"
+	@echo ""
+	@echo "💡 OTIMIZAÇÕES APLICADAS:"
+	@echo "──────────────────────────────────────────────────────────────────"
+	@if grep -q "pull_policy: missing" $(COMPOSE_FILE_DEV) 2>/dev/null; then \
+		echo "   ✅ Ollama: pull_policy: missing (não baixa a cada make dev)"; \
+	else \
+		echo "   ❌ Ollama: pull_policy: always (baixa ~800MB a cada make dev!)"; \
+	fi
+	@echo "   ✅ Volumes persistentes: ollama-models, postgres-data-dev"
+	@echo "   ✅ Go module cache: go-mod-cache volume"
+	@echo "   ✅ Dashboard node_modules: volume separado"
+	@echo ""
+	@echo "🔧 COMANDOS ÚTEIS:"
+	@echo "──────────────────────────────────────────────────────────────────"
+	@echo "   make dev-fast          → Inicia SEM rebuild (0 MB download)"
+	@echo "   make ollama-status     → Verifica modelos já baixados"
+	@echo "   make images-update     → Atualiza imagens base manualmente"
+	@echo "   make docker-disk       → Mostra uso de disco do Docker"
+	@echo ""
+
+# Show current Docker images that could be updated
+network-images:
+	@echo "📦 Imagens Docker do stack Aion:"
+	@echo ""
+	@docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}\t{{.CreatedSince}}" | grep -E "(ollama|aion|postgres|redis|node|python|grafana|prometheus|jaeger|loki|fluent|otel|localstack|REPOSITORY)" || echo "(none)"
+
+# Manually update base images (only when YOU want, not every make dev)
+images-update:
+	@echo "🔄 Atualizando imagens base (isso usa banda!)..."
+	@echo ""
+	@echo "Isso vai baixar:"
+	@echo "   • ollama/ollama:latest    (~800 MB)"
+	@echo "   • postgres:16             (~400 MB)"
+	@echo "   • redis:7.2               (~150 MB)"
+	@echo "   • node:20-slim            (~200 MB)"
+	@echo "   • python:3.12-slim        (~150 MB)"
+	@echo ""
+	@read -p "Continuar? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		echo ""; \
+		echo "→ Pulling ollama..."; \
+		docker pull ollama/ollama:latest; \
+		echo "→ Pulling postgres..."; \
+		docker pull postgres:16; \
+		echo "→ Pulling redis..."; \
+		docker pull redis:7.2; \
+		echo "→ Pulling node..."; \
+		docker pull node:20-slim; \
+		echo "→ Pulling python..."; \
+		docker pull python:3.12-slim; \
+		echo ""; \
+		echo "✅ Imagens atualizadas!"; \
+	else \
+		echo "❌ Cancelado"; \
+	fi
+
+# Alias for ollama update only
+ollama-update:
+	@echo "🔄 Atualizando apenas Ollama (~800 MB)..."
+	@docker pull ollama/ollama:latest
+	@echo "✅ Ollama atualizado!"
+	@echo ""
+	@echo "💡 Reinicie o Ollama para usar a nova versão:"
+	@echo "   make ollama-restart"

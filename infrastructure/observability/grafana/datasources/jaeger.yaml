@@ -7,7 +7,7 @@ datasources:
     url: http://jaeger:16686
     editable: false
     jsonData:
-      # Correlação com métricas do Prometheus
+      # Prometheus metrics correlation
       tracesToMetrics:
         datasourceUid: 'PBFA97CFB590B2093'
         tags:
@@ -24,7 +24,6 @@ datasources:
             query: 'sum(rate(http_server_request_duration_seconds_count{service="${__tags.service}",http_response_status_code=~"5.."}[5m])) / sum(rate(http_server_request_duration_seconds_count{service="${__tags.service}"}[5m]))'
           - name: 'Duration P95'
             query: 'histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{service="${__tags.service}"}[5m])) by (le))'
-      # Configuração do span bar
       spanBar:
         type: 'Tag'
         tag: 'http.status_code'
