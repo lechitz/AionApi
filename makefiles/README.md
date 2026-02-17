@@ -23,6 +23,16 @@ They centralize commands for build, environment, migrations, codegen, tests, and
 - Tests/coverage
 - Lint/format/verify
 
+## Dashboard Demo Workflow
+
+For a realistic local environment with white-label dashboard backend tables and seeded test profile:
+
+```bash
+make db-full
+# or alias
+make db-test
+```
+
 ## Design Notes
 
 - Keep root `Makefile` thin; logic belongs in modules.

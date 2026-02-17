@@ -26,6 +26,17 @@ If your local setup includes introspection export targets, run them after server
 - Schema modules: `internal/adapter/primary/graphql/schema/modules/`
 - Shared queries: `contracts/graphql/queries/`
 
+## Dashboard White Label Contract Notes
+
+The schema now exposes dashboard layout and composition primitives:
+
+- `dashboardViews`, `dashboardView`
+- `dashboardWidgetCatalog`
+- `suggestMetricDefinitions`
+- `createDashboardView`, `setDefaultDashboardView`
+- `upsertDashboardWidget`, `reorderDashboardWidgets`, `deleteDashboardWidget`
+- `createMetricAndWidget`
+
 ## Design Notes
 
 - Treat files here as generated artifacts.

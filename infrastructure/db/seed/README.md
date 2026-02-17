@@ -46,6 +46,7 @@ What `db-full` prepares:
 - realistic user `testuser` / `Test@123`
 - merged taxonomy (legacy + new operational categories/tags)
 - dashboard metric definitions + goal templates
+- dashboard white-label layout tables ready (`dashboard_views`, `dashboard_widgets`)
 - ~3 months of records with high daily volume (about 50-60/day)
 
 ## Design Notes
