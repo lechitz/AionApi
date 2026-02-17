@@ -14,24 +14,33 @@ import (
 )
 
 type recordServiceStub struct {
-	createFn         func(context.Context, input.CreateRecordCommand) (domain.Record, error)
-	getByIDFn        func(context.Context, uint64, uint64) (domain.Record, error)
-	listByUserFn     func(context.Context, uint64, int, *string, *int64) ([]domain.Record, error)
-	listByTagFn      func(context.Context, uint64, uint64, int) ([]domain.Record, error)
-	listByCatFn      func(context.Context, uint64, uint64, int) ([]domain.Record, error)
-	listByDayFn      func(context.Context, uint64, time.Time) ([]domain.Record, error)
-	listAllUntilFn   func(context.Context, uint64, time.Time, int) ([]domain.Record, error)
-	listAllBetweenFn func(context.Context, uint64, time.Time, time.Time, int) ([]domain.Record, error)
-	listLatestFn     func(context.Context, uint64, int) ([]domain.Record, error)
-	updateFn         func(context.Context, uint64, uint64, input.UpdateRecordCommand) (domain.Record, error)
-	deleteFn         func(context.Context, uint64, uint64) error
-	deleteAllFn      func(context.Context, uint64) error
-	searchFn         func(context.Context, uint64, domain.SearchFilters) ([]domain.Record, error)
-	dashboardFn      func(context.Context, uint64, input.DashboardSnapshotQuery) (domain.DashboardSnapshot, error)
-	listMetricFn     func(context.Context, uint64) ([]domain.MetricDefinition, error)
-	upsertMetricFn   func(context.Context, uint64, input.UpsertMetricDefinitionCommand) (domain.MetricDefinition, error)
-	upsertGoalFn     func(context.Context, uint64, input.UpsertGoalTemplateCommand) (domain.GoalTemplate, error)
-	deleteGoalFn     func(context.Context, uint64, uint64) error
+	createFn                func(context.Context, input.CreateRecordCommand) (domain.Record, error)
+	getByIDFn               func(context.Context, uint64, uint64) (domain.Record, error)
+	listByUserFn            func(context.Context, uint64, int, *string, *int64) ([]domain.Record, error)
+	listByTagFn             func(context.Context, uint64, uint64, int) ([]domain.Record, error)
+	listByCatFn             func(context.Context, uint64, uint64, int) ([]domain.Record, error)
+	listByDayFn             func(context.Context, uint64, time.Time) ([]domain.Record, error)
+	listAllUntilFn          func(context.Context, uint64, time.Time, int) ([]domain.Record, error)
+	listAllBetweenFn        func(context.Context, uint64, time.Time, time.Time, int) ([]domain.Record, error)
+	listLatestFn            func(context.Context, uint64, int) ([]domain.Record, error)
+	updateFn                func(context.Context, uint64, uint64, input.UpdateRecordCommand) (domain.Record, error)
+	deleteFn                func(context.Context, uint64, uint64) error
+	deleteAllFn             func(context.Context, uint64) error
+	searchFn                func(context.Context, uint64, domain.SearchFilters) ([]domain.Record, error)
+	dashboardFn             func(context.Context, uint64, input.DashboardSnapshotQuery) (domain.DashboardSnapshot, error)
+	listMetricFn            func(context.Context, uint64) ([]domain.MetricDefinition, error)
+	upsertMetricFn          func(context.Context, uint64, input.UpsertMetricDefinitionCommand) (domain.MetricDefinition, error)
+	upsertGoalFn            func(context.Context, uint64, input.UpsertGoalTemplateCommand) (domain.GoalTemplate, error)
+	deleteGoalFn            func(context.Context, uint64, uint64) error
+	listViewsFn             func(context.Context, uint64) ([]domain.DashboardView, error)
+	getViewFn               func(context.Context, uint64, uint64) (domain.DashboardView, error)
+	createViewFn            func(context.Context, uint64, input.CreateDashboardViewCommand) (domain.DashboardView, error)
+	setDefaultViewFn        func(context.Context, uint64, uint64) (domain.DashboardView, error)
+	upsertWidgetFn          func(context.Context, uint64, input.UpsertDashboardWidgetCommand) (domain.DashboardWidget, error)
+	reorderWidgetFn         func(context.Context, uint64, input.ReorderDashboardWidgetsCommand) ([]domain.DashboardWidget, error)
+	deleteWidgetFn          func(context.Context, uint64, uint64) error
+	createMetricAndWidgetFn func(context.Context, uint64, input.CreateMetricAndWidgetCommand) (domain.DashboardWidget, error)
+	suggestMetricFn         func(context.Context, uint64, int) ([]domain.MetricDefinitionSuggestion, error)
 }
 
 func newRecordController(t *testing.T, svc input.RecordService) (controller.RecordController, *gomock.Controller) {
@@ -166,4 +175,67 @@ func (s *recordServiceStub) DeleteGoalTemplate(ctx context.Context, userID uint6
 		panic("unexpected DeleteGoalTemplate call")
 	}
 	return s.deleteGoalFn(ctx, userID, goalTemplateID)
+}
+
+func (s *recordServiceStub) ListDashboardViews(ctx context.Context, userID uint64) ([]domain.DashboardView, error) {
+	if s.listViewsFn == nil {
+		panic("unexpected ListDashboardViews call")
+	}
+	return s.listViewsFn(ctx, userID)
+}
+
+func (s *recordServiceStub) GetDashboardView(ctx context.Context, userID uint64, viewID uint64) (domain.DashboardView, error) {
+	if s.getViewFn == nil {
+		panic("unexpected GetDashboardView call")
+	}
+	return s.getViewFn(ctx, userID, viewID)
+}
+
+func (s *recordServiceStub) CreateDashboardView(ctx context.Context, userID uint64, cmd input.CreateDashboardViewCommand) (domain.DashboardView, error) {
+	if s.createViewFn == nil {
+		panic("unexpected CreateDashboardView call")
+	}
+	return s.createViewFn(ctx, userID, cmd)
+}
+
+func (s *recordServiceStub) SetDefaultDashboardView(ctx context.Context, userID uint64, viewID uint64) (domain.DashboardView, error) {
+	if s.setDefaultViewFn == nil {
+		panic("unexpected SetDefaultDashboardView call")
+	}
+	return s.setDefaultViewFn(ctx, userID, viewID)
+}
+
+func (s *recordServiceStub) UpsertDashboardWidget(ctx context.Context, userID uint64, cmd input.UpsertDashboardWidgetCommand) (domain.DashboardWidget, error) {
+	if s.upsertWidgetFn == nil {
+		panic("unexpected UpsertDashboardWidget call")
+	}
+	return s.upsertWidgetFn(ctx, userID, cmd)
+}
+
+func (s *recordServiceStub) ReorderDashboardWidgets(ctx context.Context, userID uint64, cmd input.ReorderDashboardWidgetsCommand) ([]domain.DashboardWidget, error) {
+	if s.reorderWidgetFn == nil {
+		panic("unexpected ReorderDashboardWidgets call")
+	}
+	return s.reorderWidgetFn(ctx, userID, cmd)
+}
+
+func (s *recordServiceStub) DeleteDashboardWidget(ctx context.Context, userID uint64, widgetID uint64) error {
+	if s.deleteWidgetFn == nil {
+		panic("unexpected DeleteDashboardWidget call")
+	}
+	return s.deleteWidgetFn(ctx, userID, widgetID)
+}
+
+func (s *recordServiceStub) CreateMetricAndWidget(ctx context.Context, userID uint64, cmd input.CreateMetricAndWidgetCommand) (domain.DashboardWidget, error) {
+	if s.createMetricAndWidgetFn == nil {
+		panic("unexpected CreateMetricAndWidget call")
+	}
+	return s.createMetricAndWidgetFn(ctx, userID, cmd)
+}
+
+func (s *recordServiceStub) SuggestMetricDefinitions(ctx context.Context, userID uint64, limit int) ([]domain.MetricDefinitionSuggestion, error) {
+	if s.suggestMetricFn == nil {
+		panic("unexpected SuggestMetricDefinitions call")
+	}
+	return s.suggestMetricFn(ctx, userID, limit)
 }

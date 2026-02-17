@@ -199,4 +199,66 @@ func (m *mutationResolver) DeleteGoalTemplate(ctx context.Context, input model.D
 	return true, nil
 }
 
+// DashboardViews is the resolver for the dashboardViews field.
+func (q *queryResolver) DashboardViews(ctx context.Context) ([]*model.DashboardView, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.RecordController().ListDashboardViews(ctx, uid)
+}
+
+// DashboardView is the resolver for the dashboardView field.
+func (q *queryResolver) DashboardView(ctx context.Context, id string) (*model.DashboardView, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.RecordController().GetDashboardView(ctx, uid, id)
+}
+
+// DashboardWidgetCatalog is the resolver for the dashboardWidgetCatalog field.
+func (q *queryResolver) DashboardWidgetCatalog(ctx context.Context) (*model.DashboardWidgetCatalog, error) {
+	return q.RecordController().DashboardWidgetCatalog(ctx)
+}
+
+// SuggestMetricDefinitions is the resolver for the suggestMetricDefinitions field.
+func (q *queryResolver) SuggestMetricDefinitions(ctx context.Context, limit *int32) ([]*model.MetricDefinitionSuggestion, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.RecordController().SuggestMetricDefinitions(ctx, uid, limit)
+}
+
+// CreateDashboardView is the resolver for the createDashboardView field.
+func (m *mutationResolver) CreateDashboardView(ctx context.Context, input model.CreateDashboardViewInput) (*model.DashboardView, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return m.RecordController().CreateDashboardView(ctx, uid, input)
+}
+
+// SetDefaultDashboardView is the resolver for the setDefaultDashboardView field.
+func (m *mutationResolver) SetDefaultDashboardView(ctx context.Context, input model.SetDefaultDashboardViewInput) (*model.DashboardView, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return m.RecordController().SetDefaultDashboardView(ctx, uid, input.ViewID)
+}
+
+// UpsertDashboardWidget is the resolver for the upsertDashboardWidget field.
+func (m *mutationResolver) UpsertDashboardWidget(ctx context.Context, input model.UpsertDashboardWidgetInput) (*model.DashboardWidget, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return m.RecordController().UpsertDashboardWidget(ctx, uid, input)
+}
+
+// ReorderDashboardWidgets is the resolver for the reorderDashboardWidgets field.
+func (m *mutationResolver) ReorderDashboardWidgets(ctx context.Context, input model.ReorderDashboardWidgetsInput) ([]*model.DashboardWidget, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return m.RecordController().ReorderDashboardWidgets(ctx, uid, input)
+}
+
+// DeleteDashboardWidget is the resolver for the deleteDashboardWidget field.
+func (m *mutationResolver) DeleteDashboardWidget(ctx context.Context, input model.DeleteDashboardWidgetInput) (bool, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	if err := m.RecordController().DeleteDashboardWidget(ctx, uid, input.ID); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// CreateMetricAndWidget is the resolver for the createMetricAndWidget field.
+func (m *mutationResolver) CreateMetricAndWidget(ctx context.Context, input model.CreateMetricAndWidgetInput) (*model.DashboardWidget, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return m.RecordController().CreateMetricAndWidget(ctx, uid, input)
+}
+
 // Additional unimplemented resolvers can be added below as needed.

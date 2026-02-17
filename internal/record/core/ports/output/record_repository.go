@@ -36,4 +36,15 @@ type RecordRepository interface {
 	ListGoalTemplates(ctx context.Context, userID uint64) ([]domain.GoalTemplate, error)
 	UpsertGoalTemplate(ctx context.Context, template domain.GoalTemplate) (domain.GoalTemplate, error)
 	DeleteGoalTemplate(ctx context.Context, userID uint64, goalTemplateID uint64) error
+
+	// White-label dashboard layout persistence
+	ListDashboardViews(ctx context.Context, userID uint64) ([]domain.DashboardView, error)
+	GetDashboardView(ctx context.Context, userID uint64, viewID uint64) (domain.DashboardView, error)
+	CreateDashboardView(ctx context.Context, view domain.DashboardView) (domain.DashboardView, error)
+	SetDefaultDashboardView(ctx context.Context, userID uint64, viewID uint64) (domain.DashboardView, error)
+	UpsertDashboardWidget(ctx context.Context, widget domain.DashboardWidget) (domain.DashboardWidget, error)
+	ListDashboardWidgetsByView(ctx context.Context, userID uint64, viewID uint64) ([]domain.DashboardWidget, error)
+	ReorderDashboardWidgets(ctx context.Context, userID uint64, viewID uint64, items []domain.DashboardWidget) ([]domain.DashboardWidget, error)
+	DeleteDashboardWidget(ctx context.Context, userID uint64, widgetID uint64) error
+	CountLargeWidgetsInView(ctx context.Context, userID uint64, viewID uint64, excludeWidgetID *uint64) (int64, error)
 }

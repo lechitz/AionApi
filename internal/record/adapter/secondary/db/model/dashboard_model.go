@@ -53,3 +53,37 @@ type GoalTemplate struct {
 func (GoalTemplate) TableName() string {
 	return "aion_api.goal_templates"
 }
+
+// DashboardView maps aion_api.dashboard_views.
+type DashboardView struct {
+	ID        uint64    `gorm:"column:id;primaryKey"`
+	UserID    uint64    `gorm:"column:user_id;not null"`
+	Name      string    `gorm:"column:name;not null"`
+	IsDefault bool      `gorm:"column:is_default;not null"`
+	CreatedAt time.Time `gorm:"column:created_at;not null"`
+	UpdatedAt time.Time `gorm:"column:updated_at;not null"`
+}
+
+func (DashboardView) TableName() string {
+	return "aion_api.dashboard_views"
+}
+
+// DashboardWidget maps aion_api.dashboard_widgets.
+type DashboardWidget struct {
+	ID                 uint64    `gorm:"column:id;primaryKey"`
+	UserID             uint64    `gorm:"column:user_id;not null"`
+	ViewID             uint64    `gorm:"column:view_id;not null"`
+	MetricDefinitionID uint64    `gorm:"column:metric_definition_id;not null"`
+	WidgetType         string    `gorm:"column:widget_type;not null"`
+	Size               string    `gorm:"column:size;not null"`
+	OrderIndex         int       `gorm:"column:order_index;not null"`
+	TitleOverride      *string   `gorm:"column:title_override"`
+	ConfigJSON         string    `gorm:"column:config_json;not null"`
+	IsActive           bool      `gorm:"column:is_active;not null"`
+	CreatedAt          time.Time `gorm:"column:created_at;not null"`
+	UpdatedAt          time.Time `gorm:"column:updated_at;not null"`
+}
+
+func (DashboardWidget) TableName() string {
+	return "aion_api.dashboard_widgets"
+}

@@ -54,4 +54,14 @@ type RecordService interface {
 	UpsertGoalTemplate(ctx context.Context, userID uint64, cmd UpsertGoalTemplateCommand) (domain.GoalTemplate, error)
 	// DeleteGoalTemplate soft deletes/removes a goal template.
 	DeleteGoalTemplate(ctx context.Context, userID uint64, goalTemplateID uint64) error
+	// Dashboard views/widgets (white-label dashboard layout)
+	ListDashboardViews(ctx context.Context, userID uint64) ([]domain.DashboardView, error)
+	GetDashboardView(ctx context.Context, userID uint64, viewID uint64) (domain.DashboardView, error)
+	CreateDashboardView(ctx context.Context, userID uint64, cmd CreateDashboardViewCommand) (domain.DashboardView, error)
+	SetDefaultDashboardView(ctx context.Context, userID uint64, viewID uint64) (domain.DashboardView, error)
+	UpsertDashboardWidget(ctx context.Context, userID uint64, cmd UpsertDashboardWidgetCommand) (domain.DashboardWidget, error)
+	ReorderDashboardWidgets(ctx context.Context, userID uint64, cmd ReorderDashboardWidgetsCommand) ([]domain.DashboardWidget, error)
+	DeleteDashboardWidget(ctx context.Context, userID uint64, widgetID uint64) error
+	CreateMetricAndWidget(ctx context.Context, userID uint64, cmd CreateMetricAndWidgetCommand) (domain.DashboardWidget, error)
+	SuggestMetricDefinitions(ctx context.Context, userID uint64, limit int) ([]domain.MetricDefinitionSuggestion, error)
 }

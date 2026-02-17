@@ -152,6 +152,31 @@ func (recordSvcStub) UpsertGoalTemplate(context.Context, uint64, recordinput.Ups
 	return recorddomain.GoalTemplate{}, nil
 }
 func (recordSvcStub) DeleteGoalTemplate(context.Context, uint64, uint64) error { return nil }
+func (recordSvcStub) ListDashboardViews(context.Context, uint64) ([]recorddomain.DashboardView, error) {
+	return []recorddomain.DashboardView{}, nil
+}
+func (recordSvcStub) GetDashboardView(context.Context, uint64, uint64) (recorddomain.DashboardView, error) {
+	return recorddomain.DashboardView{}, nil
+}
+func (recordSvcStub) CreateDashboardView(context.Context, uint64, recordinput.CreateDashboardViewCommand) (recorddomain.DashboardView, error) {
+	return recorddomain.DashboardView{}, nil
+}
+func (recordSvcStub) SetDefaultDashboardView(context.Context, uint64, uint64) (recorddomain.DashboardView, error) {
+	return recorddomain.DashboardView{}, nil
+}
+func (recordSvcStub) UpsertDashboardWidget(context.Context, uint64, recordinput.UpsertDashboardWidgetCommand) (recorddomain.DashboardWidget, error) {
+	return recorddomain.DashboardWidget{}, nil
+}
+func (recordSvcStub) ReorderDashboardWidgets(context.Context, uint64, recordinput.ReorderDashboardWidgetsCommand) ([]recorddomain.DashboardWidget, error) {
+	return []recorddomain.DashboardWidget{}, nil
+}
+func (recordSvcStub) DeleteDashboardWidget(context.Context, uint64, uint64) error { return nil }
+func (recordSvcStub) CreateMetricAndWidget(context.Context, uint64, recordinput.CreateMetricAndWidgetCommand) (recorddomain.DashboardWidget, error) {
+	return recorddomain.DashboardWidget{}, nil
+}
+func (recordSvcStub) SuggestMetricDefinitions(context.Context, uint64, int) ([]recorddomain.MetricDefinitionSuggestion, error) {
+	return []recorddomain.MetricDefinitionSuggestion{}, nil
+}
 
 type chatSvcStub struct{}
 

@@ -33,3 +33,40 @@ type DashboardSnapshotQuery struct {
 	Date     time.Time
 	Timezone string
 }
+
+// CreateDashboardViewCommand contains input for creating a dashboard view.
+type CreateDashboardViewCommand struct {
+	Name      string
+	IsDefault *bool
+}
+
+// UpsertDashboardWidgetCommand contains input data to create/update dashboard widget.
+type UpsertDashboardWidgetCommand struct {
+	ID                 *uint64
+	ViewID             uint64
+	MetricDefinitionID uint64
+	WidgetType         string
+	Size               string
+	OrderIndex         *int
+	TitleOverride      *string
+	ConfigJSON         string
+	IsActive           *bool
+}
+
+// ReorderDashboardWidgetsItem defines widget order item.
+type ReorderDashboardWidgetsItem struct {
+	WidgetID   uint64
+	OrderIndex int
+}
+
+// ReorderDashboardWidgetsCommand contains input for bulk reorder.
+type ReorderDashboardWidgetsCommand struct {
+	ViewID uint64
+	Items  []ReorderDashboardWidgetsItem
+}
+
+// CreateMetricAndWidgetCommand creates metric definition + widget in one operation.
+type CreateMetricAndWidgetCommand struct {
+	Metric UpsertMetricDefinitionCommand
+	Widget UpsertDashboardWidgetCommand
+}

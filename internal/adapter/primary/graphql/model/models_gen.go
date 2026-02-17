@@ -2,6 +2,13 @@
 
 package model
 
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"strconv"
+)
+
 type Category struct {
 	ID          string  `json:"id"`
 	UserID      string  `json:"userId"`
@@ -47,6 +54,16 @@ type CreateCategoryInput struct {
 	Description *string `json:"description,omitempty"`
 	ColorHex    *string `json:"colorHex,omitempty"`
 	Icon        *string `json:"icon,omitempty"`
+}
+
+type CreateDashboardViewInput struct {
+	Name      string `json:"name"`
+	IsDefault *bool  `json:"isDefault,omitempty"`
+}
+
+type CreateMetricAndWidgetInput struct {
+	Metric *UpsertMetricDefinitionInput `json:"metric"`
+	Widget *UpsertDashboardWidgetInput  `json:"widget"`
 }
 
 type CreateRecordInput struct {
@@ -95,7 +112,40 @@ type DashboardSnapshot struct {
 	Goals    []*DashboardGoal   `json:"goals"`
 }
 
+type DashboardView struct {
+	ID        string             `json:"id"`
+	Name      string             `json:"name"`
+	IsDefault bool               `json:"isDefault"`
+	Widgets   []*DashboardWidget `json:"widgets"`
+	CreatedAt string             `json:"createdAt"`
+	UpdatedAt string             `json:"updatedAt"`
+}
+
+type DashboardWidget struct {
+	ID                 string              `json:"id"`
+	ViewID             string              `json:"viewId"`
+	MetricDefinitionID string              `json:"metricDefinitionId"`
+	WidgetType         DashboardWidgetType `json:"widgetType"`
+	Size               DashboardWidgetSize `json:"size"`
+	OrderIndex         int32               `json:"orderIndex"`
+	TitleOverride      *string             `json:"titleOverride,omitempty"`
+	ConfigJSON         *string             `json:"configJson,omitempty"`
+	IsActive           bool                `json:"isActive"`
+	CreatedAt          string              `json:"createdAt"`
+	UpdatedAt          string              `json:"updatedAt"`
+}
+
+type DashboardWidgetCatalog struct {
+	MaxLargeWidgets int32                 `json:"maxLargeWidgets"`
+	Sizes           []DashboardWidgetSize `json:"sizes"`
+	Types           []DashboardWidgetType `json:"types"`
+}
+
 type DeleteCategoryInput struct {
+	ID string `json:"id"`
+}
+
+type DeleteDashboardWidgetInput struct {
 	ID string `json:"id"`
 }
 
@@ -133,6 +183,17 @@ type MetricDefinition struct {
 	Unit        string   `json:"unit"`
 	GoalDefault *float64 `json:"goalDefault,omitempty"`
 	IsActive    bool     `json:"isActive"`
+}
+
+type MetricDefinitionSuggestion struct {
+	MetricKey   string   `json:"metricKey"`
+	DisplayName string   `json:"displayName"`
+	CategoryID  *string  `json:"categoryId,omitempty"`
+	TagIds      []string `json:"tagIds"`
+	ValueSource string   `json:"valueSource"`
+	Aggregation string   `json:"aggregation"`
+	Unit        string   `json:"unit"`
+	Reason      string   `json:"reason"`
 }
 
 type Mutation struct {
@@ -177,6 +238,16 @@ type RecordStatsFilters struct {
 	Limit       *int32   `json:"limit,omitempty"`
 }
 
+type ReorderDashboardWidgetItemInput struct {
+	ID         string `json:"id"`
+	OrderIndex int32  `json:"orderIndex"`
+}
+
+type ReorderDashboardWidgetsInput struct {
+	ViewID string                             `json:"viewId"`
+	Items  []*ReorderDashboardWidgetItemInput `json:"items"`
+}
+
 type SearchFilters struct {
 	Query       string   `json:"query"`
 	CategoryIds []string `json:"categoryIds,omitempty"`
@@ -185,6 +256,10 @@ type SearchFilters struct {
 	EndDate     *string  `json:"endDate,omitempty"`
 	Limit       *int32   `json:"limit,omitempty"`
 	Offset      *int32   `json:"offset,omitempty"`
+}
+
+type SetDefaultDashboardViewInput struct {
+	ViewID string `json:"viewId"`
 }
 
 type Tag struct {
@@ -233,6 +308,18 @@ type UpdateTagInput struct {
 	Icon        *string `json:"icon,omitempty"`
 }
 
+type UpsertDashboardWidgetInput struct {
+	ID                 *string             `json:"id,omitempty"`
+	ViewID             string              `json:"viewId"`
+	MetricDefinitionID *string             `json:"metricDefinitionId,omitempty"`
+	WidgetType         DashboardWidgetType `json:"widgetType"`
+	Size               DashboardWidgetSize `json:"size"`
+	OrderIndex         *int32              `json:"orderIndex,omitempty"`
+	TitleOverride      *string             `json:"titleOverride,omitempty"`
+	ConfigJSON         *string             `json:"configJson,omitempty"`
+	IsActive           *bool               `json:"isActive,omitempty"`
+}
+
 type UpsertGoalTemplateInput struct {
 	ID          *string `json:"id,omitempty"`
 	MetricKey   string  `json:"metricKey"`
@@ -265,4 +352,120 @@ type UserStats struct {
 	RecordsThisMonth int32          `json:"recordsThisMonth"`
 	MostUsedCategory *CategoryCount `json:"mostUsedCategory,omitempty"`
 	MostUsedTag      *TagCount      `json:"mostUsedTag,omitempty"`
+}
+
+type DashboardWidgetSize string
+
+const (
+	DashboardWidgetSizeSmall  DashboardWidgetSize = "SMALL"
+	DashboardWidgetSizeMedium DashboardWidgetSize = "MEDIUM"
+	DashboardWidgetSizeLarge  DashboardWidgetSize = "LARGE"
+)
+
+var AllDashboardWidgetSize = []DashboardWidgetSize{
+	DashboardWidgetSizeSmall,
+	DashboardWidgetSizeMedium,
+	DashboardWidgetSizeLarge,
+}
+
+func (e DashboardWidgetSize) IsValid() bool {
+	switch e {
+	case DashboardWidgetSizeSmall, DashboardWidgetSizeMedium, DashboardWidgetSizeLarge:
+		return true
+	}
+	return false
+}
+
+func (e DashboardWidgetSize) String() string {
+	return string(e)
+}
+
+func (e *DashboardWidgetSize) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = DashboardWidgetSize(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid DashboardWidgetSize", str)
+	}
+	return nil
+}
+
+func (e DashboardWidgetSize) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *DashboardWidgetSize) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e DashboardWidgetSize) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type DashboardWidgetType string
+
+const (
+	DashboardWidgetTypeKpiNumber    DashboardWidgetType = "KPI_NUMBER"
+	DashboardWidgetTypeGoalProgress DashboardWidgetType = "GOAL_PROGRESS"
+	DashboardWidgetTypeTrendLine    DashboardWidgetType = "TREND_LINE"
+	DashboardWidgetTypeChecklist    DashboardWidgetType = "CHECKLIST"
+)
+
+var AllDashboardWidgetType = []DashboardWidgetType{
+	DashboardWidgetTypeKpiNumber,
+	DashboardWidgetTypeGoalProgress,
+	DashboardWidgetTypeTrendLine,
+	DashboardWidgetTypeChecklist,
+}
+
+func (e DashboardWidgetType) IsValid() bool {
+	switch e {
+	case DashboardWidgetTypeKpiNumber, DashboardWidgetTypeGoalProgress, DashboardWidgetTypeTrendLine, DashboardWidgetTypeChecklist:
+		return true
+	}
+	return false
+}
+
+func (e DashboardWidgetType) String() string {
+	return string(e)
+}
+
+func (e *DashboardWidgetType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = DashboardWidgetType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid DashboardWidgetType", str)
+	}
+	return nil
+}
+
+func (e DashboardWidgetType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *DashboardWidgetType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e DashboardWidgetType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }

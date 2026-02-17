@@ -122,6 +122,35 @@ type ComplexityRoot struct {
 		Timezone func(childComplexity int) int
 	}
 
+	DashboardView struct {
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		IsDefault func(childComplexity int) int
+		Name      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		Widgets   func(childComplexity int) int
+	}
+
+	DashboardWidget struct {
+		ConfigJSON         func(childComplexity int) int
+		CreatedAt          func(childComplexity int) int
+		ID                 func(childComplexity int) int
+		IsActive           func(childComplexity int) int
+		MetricDefinitionID func(childComplexity int) int
+		OrderIndex         func(childComplexity int) int
+		Size               func(childComplexity int) int
+		TitleOverride      func(childComplexity int) int
+		UpdatedAt          func(childComplexity int) int
+		ViewID             func(childComplexity int) int
+		WidgetType         func(childComplexity int) int
+	}
+
+	DashboardWidgetCatalog struct {
+		MaxLargeWidgets func(childComplexity int) int
+		Sizes           func(childComplexity int) int
+		Types           func(childComplexity int) int
+	}
+
 	GoalTemplate struct {
 		Comparison  func(childComplexity int) int
 		ID          func(childComplexity int) int
@@ -146,48 +175,69 @@ type ComplexityRoot struct {
 		ValueSource func(childComplexity int) int
 	}
 
+	MetricDefinitionSuggestion struct {
+		Aggregation func(childComplexity int) int
+		CategoryID  func(childComplexity int) int
+		DisplayName func(childComplexity int) int
+		MetricKey   func(childComplexity int) int
+		Reason      func(childComplexity int) int
+		TagIds      func(childComplexity int) int
+		Unit        func(childComplexity int) int
+		ValueSource func(childComplexity int) int
+	}
+
 	Mutation struct {
-		CreateCategory         func(childComplexity int, input model.CreateCategoryInput) int
-		CreateRecord           func(childComplexity int, input model.CreateRecordInput) int
-		CreateTag              func(childComplexity int, input model.CreateTagInput) int
-		DeleteGoalTemplate     func(childComplexity int, input model.DeleteGoalTemplateInput) int
-		Empty                  func(childComplexity int) int
-		SoftDeleteAllRecords   func(childComplexity int) int
-		SoftDeleteCategory     func(childComplexity int, input model.DeleteCategoryInput) int
-		SoftDeleteRecord       func(childComplexity int, input model.DeleteRecordInput) int
-		SoftDeleteTag          func(childComplexity int, input model.DeleteTagInput) int
-		UpdateCategory         func(childComplexity int, input model.UpdateCategoryInput) int
-		UpdateRecord           func(childComplexity int, input model.UpdateRecordInput) int
-		UpdateTag              func(childComplexity int, input model.UpdateTagInput) int
-		UpsertGoalTemplate     func(childComplexity int, input model.UpsertGoalTemplateInput) int
-		UpsertMetricDefinition func(childComplexity int, input model.UpsertMetricDefinitionInput) int
+		CreateCategory          func(childComplexity int, input model.CreateCategoryInput) int
+		CreateDashboardView     func(childComplexity int, input model.CreateDashboardViewInput) int
+		CreateMetricAndWidget   func(childComplexity int, input model.CreateMetricAndWidgetInput) int
+		CreateRecord            func(childComplexity int, input model.CreateRecordInput) int
+		CreateTag               func(childComplexity int, input model.CreateTagInput) int
+		DeleteDashboardWidget   func(childComplexity int, input model.DeleteDashboardWidgetInput) int
+		DeleteGoalTemplate      func(childComplexity int, input model.DeleteGoalTemplateInput) int
+		Empty                   func(childComplexity int) int
+		ReorderDashboardWidgets func(childComplexity int, input model.ReorderDashboardWidgetsInput) int
+		SetDefaultDashboardView func(childComplexity int, input model.SetDefaultDashboardViewInput) int
+		SoftDeleteAllRecords    func(childComplexity int) int
+		SoftDeleteCategory      func(childComplexity int, input model.DeleteCategoryInput) int
+		SoftDeleteRecord        func(childComplexity int, input model.DeleteRecordInput) int
+		SoftDeleteTag           func(childComplexity int, input model.DeleteTagInput) int
+		UpdateCategory          func(childComplexity int, input model.UpdateCategoryInput) int
+		UpdateRecord            func(childComplexity int, input model.UpdateRecordInput) int
+		UpdateTag               func(childComplexity int, input model.UpdateTagInput) int
+		UpsertDashboardWidget   func(childComplexity int, input model.UpsertDashboardWidgetInput) int
+		UpsertGoalTemplate      func(childComplexity int, input model.UpsertGoalTemplateInput) int
+		UpsertMetricDefinition  func(childComplexity int, input model.UpsertMetricDefinitionInput) int
 	}
 
 	Query struct {
-		Categories        func(childComplexity int) int
-		CategoryByID      func(childComplexity int, id string) int
-		CategoryByName    func(childComplexity int, name string) int
-		ChatContext       func(childComplexity int) int
-		ChatDataPack      func(childComplexity int, limitRecords *int32, includeStats bool) int
-		ChatHistory       func(childComplexity int, limit *int32, offset *int32) int
-		DashboardSnapshot func(childComplexity int, date string, timezone *string) int
-		Empty             func(childComplexity int) int
-		MetricDefinitions func(childComplexity int) int
-		RecordByID        func(childComplexity int, id string) int
-		RecordStats       func(childComplexity int, filters *model.RecordStatsFilters) int
-		Records           func(childComplexity int, limit *int32, afterEventTime *string, afterID *string) int
-		RecordsBetween    func(childComplexity int, startDate string, endDate string, limit *int32) int
-		RecordsByCategory func(childComplexity int, categoryID string, limit *int32) int
-		RecordsByDay      func(childComplexity int, date *string) int
-		RecordsByTag      func(childComplexity int, tagID string, limit *int32) int
-		RecordsLatest     func(childComplexity int, limit *int32) int
-		RecordsUntil      func(childComplexity int, until string, limit *int32) int
-		SearchRecords     func(childComplexity int, filters model.SearchFilters) int
-		TagByID           func(childComplexity int, id string) int
-		TagByName         func(childComplexity int, name string) int
-		Tags              func(childComplexity int) int
-		TagsByCategoryID  func(childComplexity int, categoryID string) int
-		UserStats         func(childComplexity int) int
+		Categories               func(childComplexity int) int
+		CategoryByID             func(childComplexity int, id string) int
+		CategoryByName           func(childComplexity int, name string) int
+		ChatContext              func(childComplexity int) int
+		ChatDataPack             func(childComplexity int, limitRecords *int32, includeStats bool) int
+		ChatHistory              func(childComplexity int, limit *int32, offset *int32) int
+		DashboardSnapshot        func(childComplexity int, date string, timezone *string) int
+		DashboardView            func(childComplexity int, id string) int
+		DashboardViews           func(childComplexity int) int
+		DashboardWidgetCatalog   func(childComplexity int) int
+		Empty                    func(childComplexity int) int
+		MetricDefinitions        func(childComplexity int) int
+		RecordByID               func(childComplexity int, id string) int
+		RecordStats              func(childComplexity int, filters *model.RecordStatsFilters) int
+		Records                  func(childComplexity int, limit *int32, afterEventTime *string, afterID *string) int
+		RecordsBetween           func(childComplexity int, startDate string, endDate string, limit *int32) int
+		RecordsByCategory        func(childComplexity int, categoryID string, limit *int32) int
+		RecordsByDay             func(childComplexity int, date *string) int
+		RecordsByTag             func(childComplexity int, tagID string, limit *int32) int
+		RecordsLatest            func(childComplexity int, limit *int32) int
+		RecordsUntil             func(childComplexity int, until string, limit *int32) int
+		SearchRecords            func(childComplexity int, filters model.SearchFilters) int
+		SuggestMetricDefinitions func(childComplexity int, limit *int32) int
+		TagByID                  func(childComplexity int, id string) int
+		TagByName                func(childComplexity int, name string) int
+		Tags                     func(childComplexity int) int
+		TagsByCategoryID         func(childComplexity int, categoryID string) int
+		UserStats                func(childComplexity int) int
 	}
 
 	Record struct {
@@ -257,6 +307,12 @@ type MutationResolver interface {
 	UpsertMetricDefinition(ctx context.Context, input model.UpsertMetricDefinitionInput) (*model.MetricDefinition, error)
 	UpsertGoalTemplate(ctx context.Context, input model.UpsertGoalTemplateInput) (*model.GoalTemplate, error)
 	DeleteGoalTemplate(ctx context.Context, input model.DeleteGoalTemplateInput) (bool, error)
+	CreateDashboardView(ctx context.Context, input model.CreateDashboardViewInput) (*model.DashboardView, error)
+	SetDefaultDashboardView(ctx context.Context, input model.SetDefaultDashboardViewInput) (*model.DashboardView, error)
+	UpsertDashboardWidget(ctx context.Context, input model.UpsertDashboardWidgetInput) (*model.DashboardWidget, error)
+	ReorderDashboardWidgets(ctx context.Context, input model.ReorderDashboardWidgetsInput) ([]*model.DashboardWidget, error)
+	DeleteDashboardWidget(ctx context.Context, input model.DeleteDashboardWidgetInput) (bool, error)
+	CreateMetricAndWidget(ctx context.Context, input model.CreateMetricAndWidgetInput) (*model.DashboardWidget, error)
 	CreateTag(ctx context.Context, input model.CreateTagInput) (*model.Tag, error)
 	UpdateTag(ctx context.Context, input model.UpdateTagInput) (*model.Tag, error)
 	SoftDeleteTag(ctx context.Context, input model.DeleteTagInput) (bool, error)
@@ -281,6 +337,10 @@ type QueryResolver interface {
 	RecordStats(ctx context.Context, filters *model.RecordStatsFilters) (*model.RecordStats, error)
 	DashboardSnapshot(ctx context.Context, date string, timezone *string) (*model.DashboardSnapshot, error)
 	MetricDefinitions(ctx context.Context) ([]*model.MetricDefinition, error)
+	DashboardViews(ctx context.Context) ([]*model.DashboardView, error)
+	DashboardView(ctx context.Context, id string) (*model.DashboardView, error)
+	DashboardWidgetCatalog(ctx context.Context) (*model.DashboardWidgetCatalog, error)
+	SuggestMetricDefinitions(ctx context.Context, limit *int32) ([]*model.MetricDefinitionSuggestion, error)
 	TagByName(ctx context.Context, name string) (*model.Tag, error)
 	TagByID(ctx context.Context, id string) (*model.Tag, error)
 	Tags(ctx context.Context) ([]*model.Tag, error)
@@ -573,6 +633,129 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DashboardSnapshot.Timezone(childComplexity), true
 
+	case "DashboardView.createdAt":
+		if e.complexity.DashboardView.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.DashboardView.CreatedAt(childComplexity), true
+	case "DashboardView.id":
+		if e.complexity.DashboardView.ID == nil {
+			break
+		}
+
+		return e.complexity.DashboardView.ID(childComplexity), true
+	case "DashboardView.isDefault":
+		if e.complexity.DashboardView.IsDefault == nil {
+			break
+		}
+
+		return e.complexity.DashboardView.IsDefault(childComplexity), true
+	case "DashboardView.name":
+		if e.complexity.DashboardView.Name == nil {
+			break
+		}
+
+		return e.complexity.DashboardView.Name(childComplexity), true
+	case "DashboardView.updatedAt":
+		if e.complexity.DashboardView.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.DashboardView.UpdatedAt(childComplexity), true
+	case "DashboardView.widgets":
+		if e.complexity.DashboardView.Widgets == nil {
+			break
+		}
+
+		return e.complexity.DashboardView.Widgets(childComplexity), true
+
+	case "DashboardWidget.configJson":
+		if e.complexity.DashboardWidget.ConfigJSON == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.ConfigJSON(childComplexity), true
+	case "DashboardWidget.createdAt":
+		if e.complexity.DashboardWidget.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.CreatedAt(childComplexity), true
+	case "DashboardWidget.id":
+		if e.complexity.DashboardWidget.ID == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.ID(childComplexity), true
+	case "DashboardWidget.isActive":
+		if e.complexity.DashboardWidget.IsActive == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.IsActive(childComplexity), true
+	case "DashboardWidget.metricDefinitionId":
+		if e.complexity.DashboardWidget.MetricDefinitionID == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.MetricDefinitionID(childComplexity), true
+	case "DashboardWidget.orderIndex":
+		if e.complexity.DashboardWidget.OrderIndex == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.OrderIndex(childComplexity), true
+	case "DashboardWidget.size":
+		if e.complexity.DashboardWidget.Size == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.Size(childComplexity), true
+	case "DashboardWidget.titleOverride":
+		if e.complexity.DashboardWidget.TitleOverride == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.TitleOverride(childComplexity), true
+	case "DashboardWidget.updatedAt":
+		if e.complexity.DashboardWidget.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.UpdatedAt(childComplexity), true
+	case "DashboardWidget.viewId":
+		if e.complexity.DashboardWidget.ViewID == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.ViewID(childComplexity), true
+	case "DashboardWidget.widgetType":
+		if e.complexity.DashboardWidget.WidgetType == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidget.WidgetType(childComplexity), true
+
+	case "DashboardWidgetCatalog.maxLargeWidgets":
+		if e.complexity.DashboardWidgetCatalog.MaxLargeWidgets == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidgetCatalog.MaxLargeWidgets(childComplexity), true
+	case "DashboardWidgetCatalog.sizes":
+		if e.complexity.DashboardWidgetCatalog.Sizes == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidgetCatalog.Sizes(childComplexity), true
+	case "DashboardWidgetCatalog.types":
+		if e.complexity.DashboardWidgetCatalog.Types == nil {
+			break
+		}
+
+		return e.complexity.DashboardWidgetCatalog.Types(childComplexity), true
+
 	case "GoalTemplate.comparison":
 		if e.complexity.GoalTemplate.Comparison == nil {
 			break
@@ -683,6 +866,55 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.MetricDefinition.ValueSource(childComplexity), true
 
+	case "MetricDefinitionSuggestion.aggregation":
+		if e.complexity.MetricDefinitionSuggestion.Aggregation == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinitionSuggestion.Aggregation(childComplexity), true
+	case "MetricDefinitionSuggestion.categoryId":
+		if e.complexity.MetricDefinitionSuggestion.CategoryID == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinitionSuggestion.CategoryID(childComplexity), true
+	case "MetricDefinitionSuggestion.displayName":
+		if e.complexity.MetricDefinitionSuggestion.DisplayName == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinitionSuggestion.DisplayName(childComplexity), true
+	case "MetricDefinitionSuggestion.metricKey":
+		if e.complexity.MetricDefinitionSuggestion.MetricKey == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinitionSuggestion.MetricKey(childComplexity), true
+	case "MetricDefinitionSuggestion.reason":
+		if e.complexity.MetricDefinitionSuggestion.Reason == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinitionSuggestion.Reason(childComplexity), true
+	case "MetricDefinitionSuggestion.tagIds":
+		if e.complexity.MetricDefinitionSuggestion.TagIds == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinitionSuggestion.TagIds(childComplexity), true
+	case "MetricDefinitionSuggestion.unit":
+		if e.complexity.MetricDefinitionSuggestion.Unit == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinitionSuggestion.Unit(childComplexity), true
+	case "MetricDefinitionSuggestion.valueSource":
+		if e.complexity.MetricDefinitionSuggestion.ValueSource == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinitionSuggestion.ValueSource(childComplexity), true
+
 	case "Mutation.createCategory":
 		if e.complexity.Mutation.CreateCategory == nil {
 			break
@@ -694,6 +926,28 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateCategory(childComplexity, args["input"].(model.CreateCategoryInput)), true
+	case "Mutation.createDashboardView":
+		if e.complexity.Mutation.CreateDashboardView == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createDashboardView_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateDashboardView(childComplexity, args["input"].(model.CreateDashboardViewInput)), true
+	case "Mutation.createMetricAndWidget":
+		if e.complexity.Mutation.CreateMetricAndWidget == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createMetricAndWidget_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateMetricAndWidget(childComplexity, args["input"].(model.CreateMetricAndWidgetInput)), true
 	case "Mutation.createRecord":
 		if e.complexity.Mutation.CreateRecord == nil {
 			break
@@ -716,6 +970,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateTag(childComplexity, args["input"].(model.CreateTagInput)), true
+	case "Mutation.deleteDashboardWidget":
+		if e.complexity.Mutation.DeleteDashboardWidget == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteDashboardWidget_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteDashboardWidget(childComplexity, args["input"].(model.DeleteDashboardWidgetInput)), true
 	case "Mutation.deleteGoalTemplate":
 		if e.complexity.Mutation.DeleteGoalTemplate == nil {
 			break
@@ -733,6 +998,28 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.Empty(childComplexity), true
+	case "Mutation.reorderDashboardWidgets":
+		if e.complexity.Mutation.ReorderDashboardWidgets == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_reorderDashboardWidgets_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ReorderDashboardWidgets(childComplexity, args["input"].(model.ReorderDashboardWidgetsInput)), true
+	case "Mutation.setDefaultDashboardView":
+		if e.complexity.Mutation.SetDefaultDashboardView == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_setDefaultDashboardView_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SetDefaultDashboardView(childComplexity, args["input"].(model.SetDefaultDashboardViewInput)), true
 	case "Mutation.softDeleteAllRecords":
 		if e.complexity.Mutation.SoftDeleteAllRecords == nil {
 			break
@@ -805,6 +1092,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateTag(childComplexity, args["input"].(model.UpdateTagInput)), true
+	case "Mutation.upsertDashboardWidget":
+		if e.complexity.Mutation.UpsertDashboardWidget == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_upsertDashboardWidget_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertDashboardWidget(childComplexity, args["input"].(model.UpsertDashboardWidgetInput)), true
 	case "Mutation.upsertGoalTemplate":
 		if e.complexity.Mutation.UpsertGoalTemplate == nil {
 			break
@@ -895,6 +1193,29 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.DashboardSnapshot(childComplexity, args["date"].(string), args["timezone"].(*string)), true
+	case "Query.dashboardView":
+		if e.complexity.Query.DashboardView == nil {
+			break
+		}
+
+		args, err := ec.field_Query_dashboardView_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.DashboardView(childComplexity, args["id"].(string)), true
+	case "Query.dashboardViews":
+		if e.complexity.Query.DashboardViews == nil {
+			break
+		}
+
+		return e.complexity.Query.DashboardViews(childComplexity), true
+	case "Query.dashboardWidgetCatalog":
+		if e.complexity.Query.DashboardWidgetCatalog == nil {
+			break
+		}
+
+		return e.complexity.Query.DashboardWidgetCatalog(childComplexity), true
 	case "Query._empty":
 		if e.complexity.Query.Empty == nil {
 			break
@@ -1017,6 +1338,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.SearchRecords(childComplexity, args["filters"].(model.SearchFilters)), true
+	case "Query.suggestMetricDefinitions":
+		if e.complexity.Query.SuggestMetricDefinitions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_suggestMetricDefinitions_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.SuggestMetricDefinitions(childComplexity, args["limit"].(*int32)), true
 	case "Query.tagById":
 		if e.complexity.Query.TagByID == nil {
 			break
@@ -1311,17 +1643,24 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateCategoryInput,
+		ec.unmarshalInputCreateDashboardViewInput,
+		ec.unmarshalInputCreateMetricAndWidgetInput,
 		ec.unmarshalInputCreateRecordInput,
 		ec.unmarshalInputCreateTagInput,
 		ec.unmarshalInputDeleteCategoryInput,
+		ec.unmarshalInputDeleteDashboardWidgetInput,
 		ec.unmarshalInputDeleteGoalTemplateInput,
 		ec.unmarshalInputDeleteRecordInput,
 		ec.unmarshalInputDeleteTagInput,
 		ec.unmarshalInputRecordStatsFilters,
+		ec.unmarshalInputReorderDashboardWidgetItemInput,
+		ec.unmarshalInputReorderDashboardWidgetsInput,
 		ec.unmarshalInputSearchFilters,
+		ec.unmarshalInputSetDefaultDashboardViewInput,
 		ec.unmarshalInputUpdateCategoryInput,
 		ec.unmarshalInputUpdateRecordInput,
 		ec.unmarshalInputUpdateTagInput,
+		ec.unmarshalInputUpsertDashboardWidgetInput,
 		ec.unmarshalInputUpsertGoalTemplateInput,
 		ec.unmarshalInputUpsertMetricDefinitionInput,
 	)
@@ -1467,6 +1806,28 @@ func (ec *executionContext) field_Mutation_createCategory_args(ctx context.Conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createDashboardView_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateDashboardViewInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateDashboardViewInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createMetricAndWidget_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateMetricAndWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateMetricAndWidgetInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createRecord_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -1489,10 +1850,43 @@ func (ec *executionContext) field_Mutation_createTag_args(ctx context.Context, r
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteDashboardWidget_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteDashboardWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteDashboardWidgetInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteGoalTemplate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
 	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteGoalTemplateInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteGoalTemplateInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_reorderDashboardWidgets_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNReorderDashboardWidgetsInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetsInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_setDefaultDashboardView_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNSetDefaultDashboardViewInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSetDefaultDashboardViewInput)
 	if err != nil {
 		return nil, err
 	}
@@ -1559,6 +1953,17 @@ func (ec *executionContext) field_Mutation_updateTag_args(ctx context.Context, r
 	var err error
 	args := map[string]any{}
 	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateTagInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_upsertDashboardWidget_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpsertDashboardWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput)
 	if err != nil {
 		return nil, err
 	}
@@ -1666,6 +2071,17 @@ func (ec *executionContext) field_Query_dashboardSnapshot_args(ctx context.Conte
 		return nil, err
 	}
 	args["timezone"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_dashboardView_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -1811,6 +2227,17 @@ func (ec *executionContext) field_Query_searchRecords_args(ctx context.Context, 
 		return nil, err
 	}
 	args["filters"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_suggestMetricDefinitions_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint32)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
 	return args, nil
 }
 
@@ -3272,6 +3699,610 @@ func (ec *executionContext) fieldContext_DashboardSnapshot_goals(_ context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _DashboardView_id(ctx context.Context, field graphql.CollectedField, obj *model.DashboardView) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardView_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardView_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardView",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardView_name(ctx context.Context, field graphql.CollectedField, obj *model.DashboardView) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardView_name,
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardView_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardView",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardView_isDefault(ctx context.Context, field graphql.CollectedField, obj *model.DashboardView) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardView_isDefault,
+		func(ctx context.Context) (any, error) {
+			return obj.IsDefault, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardView_isDefault(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardView",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardView_widgets(ctx context.Context, field graphql.CollectedField, obj *model.DashboardView) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardView_widgets,
+		func(ctx context.Context) (any, error) {
+			return obj.Widgets, nil
+		},
+		nil,
+		ec.marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardView_widgets(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardView",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DashboardWidget_id(ctx, field)
+			case "viewId":
+				return ec.fieldContext_DashboardWidget_viewId(ctx, field)
+			case "metricDefinitionId":
+				return ec.fieldContext_DashboardWidget_metricDefinitionId(ctx, field)
+			case "widgetType":
+				return ec.fieldContext_DashboardWidget_widgetType(ctx, field)
+			case "size":
+				return ec.fieldContext_DashboardWidget_size(ctx, field)
+			case "orderIndex":
+				return ec.fieldContext_DashboardWidget_orderIndex(ctx, field)
+			case "titleOverride":
+				return ec.fieldContext_DashboardWidget_titleOverride(ctx, field)
+			case "configJson":
+				return ec.fieldContext_DashboardWidget_configJson(ctx, field)
+			case "isActive":
+				return ec.fieldContext_DashboardWidget_isActive(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DashboardWidget_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DashboardWidget_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardWidget", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardView_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.DashboardView) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardView_createdAt,
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardView_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardView",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardView_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.DashboardView) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardView_updatedAt,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardView_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardView",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_id(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_viewId(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_viewId,
+		func(ctx context.Context) (any, error) {
+			return obj.ViewID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_viewId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_metricDefinitionId(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_metricDefinitionId,
+		func(ctx context.Context) (any, error) {
+			return obj.MetricDefinitionID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_metricDefinitionId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_widgetType(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_widgetType,
+		func(ctx context.Context) (any, error) {
+			return obj.WidgetType, nil
+		},
+		nil,
+		ec.marshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_widgetType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DashboardWidgetType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_size(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_size,
+		func(ctx context.Context) (any, error) {
+			return obj.Size, nil
+		},
+		nil,
+		ec.marshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_size(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DashboardWidgetSize does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_orderIndex(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_orderIndex,
+		func(ctx context.Context) (any, error) {
+			return obj.OrderIndex, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_orderIndex(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_titleOverride(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_titleOverride,
+		func(ctx context.Context) (any, error) {
+			return obj.TitleOverride, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_titleOverride(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_configJson(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_configJson,
+		func(ctx context.Context) (any, error) {
+			return obj.ConfigJSON, nil
+		},
+		nil,
+		ec.marshalOJSON2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_configJson(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_isActive(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_isActive,
+		func(ctx context.Context) (any, error) {
+			return obj.IsActive, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_isActive(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_createdAt,
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAt, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidget_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidget) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidget_updatedAt,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAt, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidget_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidgetCatalog_maxLargeWidgets(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidgetCatalog) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidgetCatalog_maxLargeWidgets,
+		func(ctx context.Context) (any, error) {
+			return obj.MaxLargeWidgets, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidgetCatalog_maxLargeWidgets(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidgetCatalog",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidgetCatalog_sizes(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidgetCatalog) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidgetCatalog_sizes,
+		func(ctx context.Context) (any, error) {
+			return obj.Sizes, nil
+		},
+		nil,
+		ec.marshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSizeᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidgetCatalog_sizes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidgetCatalog",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DashboardWidgetSize does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardWidgetCatalog_types(ctx context.Context, field graphql.CollectedField, obj *model.DashboardWidgetCatalog) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardWidgetCatalog_types,
+		func(ctx context.Context) (any, error) {
+			return obj.Types, nil
+		},
+		nil,
+		ec.marshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetTypeᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardWidgetCatalog_types(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardWidgetCatalog",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DashboardWidgetType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _GoalTemplate_id(ctx context.Context, field graphql.CollectedField, obj *model.GoalTemplate) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3789,6 +4820,238 @@ func (ec *executionContext) fieldContext_MetricDefinition_isActive(_ context.Con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinitionSuggestion_metricKey(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinitionSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinitionSuggestion_metricKey,
+		func(ctx context.Context) (any, error) {
+			return obj.MetricKey, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinitionSuggestion_metricKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinitionSuggestion",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinitionSuggestion_displayName(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinitionSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinitionSuggestion_displayName,
+		func(ctx context.Context) (any, error) {
+			return obj.DisplayName, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinitionSuggestion_displayName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinitionSuggestion",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinitionSuggestion_categoryId(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinitionSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinitionSuggestion_categoryId,
+		func(ctx context.Context) (any, error) {
+			return obj.CategoryID, nil
+		},
+		nil,
+		ec.marshalOID2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinitionSuggestion_categoryId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinitionSuggestion",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinitionSuggestion_tagIds(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinitionSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinitionSuggestion_tagIds,
+		func(ctx context.Context) (any, error) {
+			return obj.TagIds, nil
+		},
+		nil,
+		ec.marshalNID2ᚕstringᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinitionSuggestion_tagIds(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinitionSuggestion",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinitionSuggestion_valueSource(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinitionSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinitionSuggestion_valueSource,
+		func(ctx context.Context) (any, error) {
+			return obj.ValueSource, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinitionSuggestion_valueSource(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinitionSuggestion",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinitionSuggestion_aggregation(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinitionSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinitionSuggestion_aggregation,
+		func(ctx context.Context) (any, error) {
+			return obj.Aggregation, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinitionSuggestion_aggregation(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinitionSuggestion",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinitionSuggestion_unit(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinitionSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinitionSuggestion_unit,
+		func(ctx context.Context) (any, error) {
+			return obj.Unit, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinitionSuggestion_unit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinitionSuggestion",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinitionSuggestion_reason(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinitionSuggestion) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinitionSuggestion_reason,
+		func(ctx context.Context) (any, error) {
+			return obj.Reason, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinitionSuggestion_reason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinitionSuggestion",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4519,6 +5782,460 @@ func (ec *executionContext) fieldContext_Mutation_deleteGoalTemplate(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteGoalTemplate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createDashboardView(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createDashboardView,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateDashboardView(ctx, fc.Args["input"].(model.CreateDashboardViewInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.DashboardView
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.DashboardView
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createDashboardView(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DashboardView_id(ctx, field)
+			case "name":
+				return ec.fieldContext_DashboardView_name(ctx, field)
+			case "isDefault":
+				return ec.fieldContext_DashboardView_isDefault(ctx, field)
+			case "widgets":
+				return ec.fieldContext_DashboardView_widgets(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DashboardView_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DashboardView_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardView", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createDashboardView_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_setDefaultDashboardView(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_setDefaultDashboardView,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().SetDefaultDashboardView(ctx, fc.Args["input"].(model.SetDefaultDashboardViewInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.DashboardView
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.DashboardView
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_setDefaultDashboardView(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DashboardView_id(ctx, field)
+			case "name":
+				return ec.fieldContext_DashboardView_name(ctx, field)
+			case "isDefault":
+				return ec.fieldContext_DashboardView_isDefault(ctx, field)
+			case "widgets":
+				return ec.fieldContext_DashboardView_widgets(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DashboardView_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DashboardView_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardView", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_setDefaultDashboardView_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_upsertDashboardWidget(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_upsertDashboardWidget,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpsertDashboardWidget(ctx, fc.Args["input"].(model.UpsertDashboardWidgetInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.DashboardWidget
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.DashboardWidget
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_upsertDashboardWidget(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DashboardWidget_id(ctx, field)
+			case "viewId":
+				return ec.fieldContext_DashboardWidget_viewId(ctx, field)
+			case "metricDefinitionId":
+				return ec.fieldContext_DashboardWidget_metricDefinitionId(ctx, field)
+			case "widgetType":
+				return ec.fieldContext_DashboardWidget_widgetType(ctx, field)
+			case "size":
+				return ec.fieldContext_DashboardWidget_size(ctx, field)
+			case "orderIndex":
+				return ec.fieldContext_DashboardWidget_orderIndex(ctx, field)
+			case "titleOverride":
+				return ec.fieldContext_DashboardWidget_titleOverride(ctx, field)
+			case "configJson":
+				return ec.fieldContext_DashboardWidget_configJson(ctx, field)
+			case "isActive":
+				return ec.fieldContext_DashboardWidget_isActive(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DashboardWidget_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DashboardWidget_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardWidget", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_upsertDashboardWidget_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_reorderDashboardWidgets(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_reorderDashboardWidgets,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().ReorderDashboardWidgets(ctx, fc.Args["input"].(model.ReorderDashboardWidgetsInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.DashboardWidget
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.DashboardWidget
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_reorderDashboardWidgets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DashboardWidget_id(ctx, field)
+			case "viewId":
+				return ec.fieldContext_DashboardWidget_viewId(ctx, field)
+			case "metricDefinitionId":
+				return ec.fieldContext_DashboardWidget_metricDefinitionId(ctx, field)
+			case "widgetType":
+				return ec.fieldContext_DashboardWidget_widgetType(ctx, field)
+			case "size":
+				return ec.fieldContext_DashboardWidget_size(ctx, field)
+			case "orderIndex":
+				return ec.fieldContext_DashboardWidget_orderIndex(ctx, field)
+			case "titleOverride":
+				return ec.fieldContext_DashboardWidget_titleOverride(ctx, field)
+			case "configJson":
+				return ec.fieldContext_DashboardWidget_configJson(ctx, field)
+			case "isActive":
+				return ec.fieldContext_DashboardWidget_isActive(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DashboardWidget_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DashboardWidget_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardWidget", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_reorderDashboardWidgets_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteDashboardWidget(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_deleteDashboardWidget,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().DeleteDashboardWidget(ctx, fc.Args["input"].(model.DeleteDashboardWidgetInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal bool
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal bool
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteDashboardWidget(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteDashboardWidget_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createMetricAndWidget(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createMetricAndWidget,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateMetricAndWidget(ctx, fc.Args["input"].(model.CreateMetricAndWidgetInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.DashboardWidget
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.DashboardWidget
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createMetricAndWidget(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DashboardWidget_id(ctx, field)
+			case "viewId":
+				return ec.fieldContext_DashboardWidget_viewId(ctx, field)
+			case "metricDefinitionId":
+				return ec.fieldContext_DashboardWidget_metricDefinitionId(ctx, field)
+			case "widgetType":
+				return ec.fieldContext_DashboardWidget_widgetType(ctx, field)
+			case "size":
+				return ec.fieldContext_DashboardWidget_size(ctx, field)
+			case "orderIndex":
+				return ec.fieldContext_DashboardWidget_orderIndex(ctx, field)
+			case "titleOverride":
+				return ec.fieldContext_DashboardWidget_titleOverride(ctx, field)
+			case "configJson":
+				return ec.fieldContext_DashboardWidget_configJson(ctx, field)
+			case "isActive":
+				return ec.fieldContext_DashboardWidget_isActive(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DashboardWidget_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DashboardWidget_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardWidget", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createMetricAndWidget_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -6173,6 +7890,272 @@ func (ec *executionContext) fieldContext_Query_metricDefinitions(_ context.Conte
 			}
 			return nil, fmt.Errorf("no field named %q was found under type MetricDefinition", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_dashboardViews(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_dashboardViews,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().DashboardViews(ctx)
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.DashboardView
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.DashboardView
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNDashboardView2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardViewᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_dashboardViews(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DashboardView_id(ctx, field)
+			case "name":
+				return ec.fieldContext_DashboardView_name(ctx, field)
+			case "isDefault":
+				return ec.fieldContext_DashboardView_isDefault(ctx, field)
+			case "widgets":
+				return ec.fieldContext_DashboardView_widgets(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DashboardView_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DashboardView_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardView", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_dashboardView(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_dashboardView,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().DashboardView(ctx, fc.Args["id"].(string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.DashboardView
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.DashboardView
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalODashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_dashboardView(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DashboardView_id(ctx, field)
+			case "name":
+				return ec.fieldContext_DashboardView_name(ctx, field)
+			case "isDefault":
+				return ec.fieldContext_DashboardView_isDefault(ctx, field)
+			case "widgets":
+				return ec.fieldContext_DashboardView_widgets(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DashboardView_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DashboardView_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardView", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_dashboardView_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_dashboardWidgetCatalog(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_dashboardWidgetCatalog,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().DashboardWidgetCatalog(ctx)
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.DashboardWidgetCatalog
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.DashboardWidgetCatalog
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNDashboardWidgetCatalog2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetCatalog,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_dashboardWidgetCatalog(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "maxLargeWidgets":
+				return ec.fieldContext_DashboardWidgetCatalog_maxLargeWidgets(ctx, field)
+			case "sizes":
+				return ec.fieldContext_DashboardWidgetCatalog_sizes(ctx, field)
+			case "types":
+				return ec.fieldContext_DashboardWidgetCatalog_types(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardWidgetCatalog", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_suggestMetricDefinitions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_suggestMetricDefinitions,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().SuggestMetricDefinitions(ctx, fc.Args["limit"].(*int32))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.MetricDefinitionSuggestion
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.MetricDefinitionSuggestion
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNMetricDefinitionSuggestion2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestionᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_suggestMetricDefinitions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "metricKey":
+				return ec.fieldContext_MetricDefinitionSuggestion_metricKey(ctx, field)
+			case "displayName":
+				return ec.fieldContext_MetricDefinitionSuggestion_displayName(ctx, field)
+			case "categoryId":
+				return ec.fieldContext_MetricDefinitionSuggestion_categoryId(ctx, field)
+			case "tagIds":
+				return ec.fieldContext_MetricDefinitionSuggestion_tagIds(ctx, field)
+			case "valueSource":
+				return ec.fieldContext_MetricDefinitionSuggestion_valueSource(ctx, field)
+			case "aggregation":
+				return ec.fieldContext_MetricDefinitionSuggestion_aggregation(ctx, field)
+			case "unit":
+				return ec.fieldContext_MetricDefinitionSuggestion_unit(ctx, field)
+			case "reason":
+				return ec.fieldContext_MetricDefinitionSuggestion_reason(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MetricDefinitionSuggestion", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_suggestMetricDefinitions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -9285,6 +11268,74 @@ func (ec *executionContext) unmarshalInputCreateCategoryInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCreateDashboardViewInput(ctx context.Context, obj any) (model.CreateDashboardViewInput, error) {
+	var it model.CreateDashboardViewInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "isDefault"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "isDefault":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isDefault"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsDefault = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreateMetricAndWidgetInput(ctx context.Context, obj any) (model.CreateMetricAndWidgetInput, error) {
+	var it model.CreateMetricAndWidgetInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"metric", "widget"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "metric":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metric"))
+			data, err := ec.unmarshalNUpsertMetricDefinitionInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Metric = data
+		case "widget":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("widget"))
+			data, err := ec.unmarshalNUpsertDashboardWidgetInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Widget = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateRecordInput(ctx context.Context, obj any) (model.CreateRecordInput, error) {
 	var it model.CreateRecordInput
 	asMap := map[string]any{}
@@ -9418,6 +11469,33 @@ func (ec *executionContext) unmarshalInputCreateTagInput(ctx context.Context, ob
 
 func (ec *executionContext) unmarshalInputDeleteCategoryInput(ctx context.Context, obj any) (model.DeleteCategoryInput, error) {
 	var it model.DeleteCategoryInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputDeleteDashboardWidgetInput(ctx context.Context, obj any) (model.DeleteDashboardWidgetInput, error) {
+	var it model.DeleteDashboardWidgetInput
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -9586,6 +11664,74 @@ func (ec *executionContext) unmarshalInputRecordStatsFilters(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputReorderDashboardWidgetItemInput(ctx context.Context, obj any) (model.ReorderDashboardWidgetItemInput, error) {
+	var it model.ReorderDashboardWidgetItemInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "orderIndex"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "orderIndex":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderIndex"))
+			data, err := ec.unmarshalNInt2int32(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrderIndex = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputReorderDashboardWidgetsInput(ctx context.Context, obj any) (model.ReorderDashboardWidgetsInput, error) {
+	var it model.ReorderDashboardWidgetsInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"viewId", "items"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "viewId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("viewId"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ViewID = data
+		case "items":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("items"))
+			data, err := ec.unmarshalNReorderDashboardWidgetItemInput2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Items = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSearchFilters(ctx context.Context, obj any) (model.SearchFilters, error) {
 	var it model.SearchFilters
 	asMap := map[string]any{}
@@ -9649,6 +11795,33 @@ func (ec *executionContext) unmarshalInputSearchFilters(ctx context.Context, obj
 				return it, err
 			}
 			it.Offset = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputSetDefaultDashboardViewInput(ctx context.Context, obj any) (model.SetDefaultDashboardViewInput, error) {
+	var it model.SetDefaultDashboardViewInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"viewId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "viewId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("viewId"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ViewID = data
 		}
 	}
 
@@ -9849,6 +12022,89 @@ func (ec *executionContext) unmarshalInputUpdateTagInput(ctx context.Context, ob
 				return it, err
 			}
 			it.Icon = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpsertDashboardWidgetInput(ctx context.Context, obj any) (model.UpsertDashboardWidgetInput, error) {
+	var it model.UpsertDashboardWidgetInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "viewId", "metricDefinitionId", "widgetType", "size", "orderIndex", "titleOverride", "configJson", "isActive"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "viewId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("viewId"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ViewID = data
+		case "metricDefinitionId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metricDefinitionId"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetricDefinitionID = data
+		case "widgetType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("widgetType"))
+			data, err := ec.unmarshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.WidgetType = data
+		case "size":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("size"))
+			data, err := ec.unmarshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Size = data
+		case "orderIndex":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderIndex"))
+			data, err := ec.unmarshalOInt2ᚖint32(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrderIndex = data
+		case "titleOverride":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("titleOverride"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TitleOverride = data
+		case "configJson":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("configJson"))
+			data, err := ec.unmarshalOJSON2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConfigJSON = data
+		case "isActive":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isActive"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsActive = data
 		}
 	}
 
@@ -10498,6 +12754,202 @@ func (ec *executionContext) _DashboardSnapshot(ctx context.Context, sel ast.Sele
 	return out
 }
 
+var dashboardViewImplementors = []string{"DashboardView"}
+
+func (ec *executionContext) _DashboardView(ctx context.Context, sel ast.SelectionSet, obj *model.DashboardView) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dashboardViewImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DashboardView")
+		case "id":
+			out.Values[i] = ec._DashboardView_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._DashboardView_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "isDefault":
+			out.Values[i] = ec._DashboardView_isDefault(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "widgets":
+			out.Values[i] = ec._DashboardView_widgets(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._DashboardView_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._DashboardView_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var dashboardWidgetImplementors = []string{"DashboardWidget"}
+
+func (ec *executionContext) _DashboardWidget(ctx context.Context, sel ast.SelectionSet, obj *model.DashboardWidget) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dashboardWidgetImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DashboardWidget")
+		case "id":
+			out.Values[i] = ec._DashboardWidget_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "viewId":
+			out.Values[i] = ec._DashboardWidget_viewId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "metricDefinitionId":
+			out.Values[i] = ec._DashboardWidget_metricDefinitionId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "widgetType":
+			out.Values[i] = ec._DashboardWidget_widgetType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "size":
+			out.Values[i] = ec._DashboardWidget_size(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "orderIndex":
+			out.Values[i] = ec._DashboardWidget_orderIndex(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "titleOverride":
+			out.Values[i] = ec._DashboardWidget_titleOverride(ctx, field, obj)
+		case "configJson":
+			out.Values[i] = ec._DashboardWidget_configJson(ctx, field, obj)
+		case "isActive":
+			out.Values[i] = ec._DashboardWidget_isActive(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._DashboardWidget_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._DashboardWidget_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var dashboardWidgetCatalogImplementors = []string{"DashboardWidgetCatalog"}
+
+func (ec *executionContext) _DashboardWidgetCatalog(ctx context.Context, sel ast.SelectionSet, obj *model.DashboardWidgetCatalog) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dashboardWidgetCatalogImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DashboardWidgetCatalog")
+		case "maxLargeWidgets":
+			out.Values[i] = ec._DashboardWidgetCatalog_maxLargeWidgets(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "sizes":
+			out.Values[i] = ec._DashboardWidgetCatalog_sizes(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "types":
+			out.Values[i] = ec._DashboardWidgetCatalog_types(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var goalTemplateImplementors = []string{"GoalTemplate"}
 
 func (ec *executionContext) _GoalTemplate(ctx context.Context, sel ast.SelectionSet, obj *model.GoalTemplate) graphql.Marshaler {
@@ -10650,6 +13102,77 @@ func (ec *executionContext) _MetricDefinition(ctx context.Context, sel ast.Selec
 	return out
 }
 
+var metricDefinitionSuggestionImplementors = []string{"MetricDefinitionSuggestion"}
+
+func (ec *executionContext) _MetricDefinitionSuggestion(ctx context.Context, sel ast.SelectionSet, obj *model.MetricDefinitionSuggestion) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, metricDefinitionSuggestionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MetricDefinitionSuggestion")
+		case "metricKey":
+			out.Values[i] = ec._MetricDefinitionSuggestion_metricKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "displayName":
+			out.Values[i] = ec._MetricDefinitionSuggestion_displayName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "categoryId":
+			out.Values[i] = ec._MetricDefinitionSuggestion_categoryId(ctx, field, obj)
+		case "tagIds":
+			out.Values[i] = ec._MetricDefinitionSuggestion_tagIds(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "valueSource":
+			out.Values[i] = ec._MetricDefinitionSuggestion_valueSource(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "aggregation":
+			out.Values[i] = ec._MetricDefinitionSuggestion_aggregation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "unit":
+			out.Values[i] = ec._MetricDefinitionSuggestion_unit(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "reason":
+			out.Values[i] = ec._MetricDefinitionSuggestion_reason(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -10739,6 +13262,48 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteGoalTemplate":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteGoalTemplate(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createDashboardView":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createDashboardView(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "setDefaultDashboardView":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_setDefaultDashboardView(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "upsertDashboardWidget":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_upsertDashboardWidget(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "reorderDashboardWidgets":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_reorderDashboardWidgets(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteDashboardWidget":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteDashboardWidget(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createMetricAndWidget":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createMetricAndWidget(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -11200,6 +13765,91 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_metricDefinitions(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "dashboardViews":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_dashboardViews(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "dashboardView":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_dashboardView(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "dashboardWidgetCatalog":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_dashboardWidgetCatalog(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "suggestMetricDefinitions":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_suggestMetricDefinitions(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -12169,6 +14819,16 @@ func (ec *executionContext) unmarshalNCreateCategoryInput2githubᚗcomᚋlechitz
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateDashboardViewInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateDashboardViewInput(ctx context.Context, v any) (model.CreateDashboardViewInput, error) {
+	res, err := ec.unmarshalInputCreateDashboardViewInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNCreateMetricAndWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateMetricAndWidgetInput(ctx context.Context, v any) (model.CreateMetricAndWidgetInput, error) {
+	res, err := ec.unmarshalInputCreateMetricAndWidgetInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateRecordInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateRecordInput(ctx context.Context, v any) (model.CreateRecordInput, error) {
 	res, err := ec.unmarshalInputCreateRecordInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -12301,8 +14961,281 @@ func (ec *executionContext) marshalNDashboardSnapshot2ᚖgithubᚗcomᚋlechitz�
 	return ec._DashboardSnapshot(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNDashboardView2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx context.Context, sel ast.SelectionSet, v model.DashboardView) graphql.Marshaler {
+	return ec._DashboardView(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDashboardView2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardViewᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardView) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx context.Context, sel ast.SelectionSet, v *model.DashboardView) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DashboardView(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDashboardWidget2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidget) graphql.Marshaler {
+	return ec._DashboardWidget(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardWidget) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget(ctx context.Context, sel ast.SelectionSet, v *model.DashboardWidget) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DashboardWidget(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDashboardWidgetCatalog2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetCatalog(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidgetCatalog) graphql.Marshaler {
+	return ec._DashboardWidgetCatalog(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDashboardWidgetCatalog2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetCatalog(ctx context.Context, sel ast.SelectionSet, v *model.DashboardWidgetCatalog) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DashboardWidgetCatalog(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx context.Context, v any) (model.DashboardWidgetSize, error) {
+	var res model.DashboardWidgetSize
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidgetSize) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSizeᚄ(ctx context.Context, v any) ([]model.DashboardWidgetSize, error) {
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]model.DashboardWidgetSize, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSizeᚄ(ctx context.Context, sel ast.SelectionSet, v []model.DashboardWidgetSize) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx context.Context, v any) (model.DashboardWidgetType, error) {
+	var res model.DashboardWidgetType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidgetType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetTypeᚄ(ctx context.Context, v any) ([]model.DashboardWidgetType, error) {
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]model.DashboardWidgetType, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []model.DashboardWidgetType) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalNDeleteCategoryInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteCategoryInput(ctx context.Context, v any) (model.DeleteCategoryInput, error) {
 	res, err := ec.unmarshalInputDeleteCategoryInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNDeleteDashboardWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteDashboardWidgetInput(ctx context.Context, v any) (model.DeleteDashboardWidgetInput, error) {
+	res, err := ec.unmarshalInputDeleteDashboardWidgetInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -12471,6 +15404,60 @@ func (ec *executionContext) marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitz�
 	return ec._MetricDefinition(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNMetricDefinitionSuggestion2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MetricDefinitionSuggestion) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMetricDefinitionSuggestion2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestion(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNMetricDefinitionSuggestion2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestion(ctx context.Context, sel ast.SelectionSet, v *model.MetricDefinitionSuggestion) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MetricDefinitionSuggestion(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNRecord2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v model.Record) graphql.Marshaler {
 	return ec._Record(ctx, sel, &v)
 }
@@ -12543,8 +15530,38 @@ func (ec *executionContext) marshalNRecordStats2ᚖgithubᚗcomᚋlechitzᚋAion
 	return ec._RecordStats(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNReorderDashboardWidgetItemInput2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInputᚄ(ctx context.Context, v any) ([]*model.ReorderDashboardWidgetItemInput, error) {
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*model.ReorderDashboardWidgetItemInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNReorderDashboardWidgetItemInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNReorderDashboardWidgetItemInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInput(ctx context.Context, v any) (*model.ReorderDashboardWidgetItemInput, error) {
+	res, err := ec.unmarshalInputReorderDashboardWidgetItemInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNReorderDashboardWidgetsInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetsInput(ctx context.Context, v any) (model.ReorderDashboardWidgetsInput, error) {
+	res, err := ec.unmarshalInputReorderDashboardWidgetsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNSearchFilters2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSearchFilters(ctx context.Context, v any) (model.SearchFilters, error) {
 	res, err := ec.unmarshalInputSearchFilters(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNSetDefaultDashboardViewInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSetDefaultDashboardViewInput(ctx context.Context, v any) (model.SetDefaultDashboardViewInput, error) {
+	res, err := ec.unmarshalInputSetDefaultDashboardViewInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -12637,6 +15654,16 @@ func (ec *executionContext) unmarshalNUpdateTagInput2githubᚗcomᚋlechitzᚋAi
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpsertDashboardWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput(ctx context.Context, v any) (model.UpsertDashboardWidgetInput, error) {
+	res, err := ec.unmarshalInputUpsertDashboardWidgetInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpsertDashboardWidgetInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput(ctx context.Context, v any) (*model.UpsertDashboardWidgetInput, error) {
+	res, err := ec.unmarshalInputUpsertDashboardWidgetInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpsertGoalTemplateInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertGoalTemplateInput(ctx context.Context, v any) (model.UpsertGoalTemplateInput, error) {
 	res, err := ec.unmarshalInputUpsertGoalTemplateInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -12645,6 +15672,11 @@ func (ec *executionContext) unmarshalNUpsertGoalTemplateInput2githubᚗcomᚋlec
 func (ec *executionContext) unmarshalNUpsertMetricDefinitionInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput(ctx context.Context, v any) (model.UpsertMetricDefinitionInput, error) {
 	res, err := ec.unmarshalInputUpsertMetricDefinitionInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpsertMetricDefinitionInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput(ctx context.Context, v any) (*model.UpsertMetricDefinitionInput, error) {
+	res, err := ec.unmarshalInputUpsertMetricDefinitionInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNUserStats2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats(ctx context.Context, sel ast.SelectionSet, v model.UserStats) graphql.Marshaler {
@@ -12956,6 +15988,13 @@ func (ec *executionContext) marshalOCategoryCount2ᚖgithubᚗcomᚋlechitzᚋAi
 		return graphql.Null
 	}
 	return ec._CategoryCount(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalODashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx context.Context, sel ast.SelectionSet, v *model.DashboardView) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._DashboardView(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v any) (*float64, error) {

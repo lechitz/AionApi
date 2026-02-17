@@ -63,3 +63,57 @@ type DashboardSnapshot struct {
 	Metrics  []DashboardMetricValue
 	Goals    []DashboardGoalValue
 }
+
+const (
+	DashboardWidgetSizeSmall  = "small"
+	DashboardWidgetSizeMedium = "medium"
+	DashboardWidgetSizeLarge  = "large"
+
+	DashboardWidgetTypeKPINumber    = "kpi_number"
+	DashboardWidgetTypeGoalProgress = "goal_progress"
+	DashboardWidgetTypeTrendLine    = "trend_line"
+	DashboardWidgetTypeChecklist    = "checklist"
+)
+
+const (
+	MaxLargeWidgetsPerDashboard = 3
+)
+
+// DashboardWidget configures one dashboard card/widget instance in a view.
+type DashboardWidget struct {
+	ID                 uint64
+	UserID             uint64
+	ViewID             uint64
+	MetricDefinitionID uint64
+	WidgetType         string
+	Size               string
+	OrderIndex         int
+	TitleOverride      *string
+	ConfigJSON         string
+	IsActive           bool
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
+}
+
+// DashboardView is a user-defined dashboard layout that contains widgets.
+type DashboardView struct {
+	ID        uint64
+	UserID    uint64
+	Name      string
+	IsDefault bool
+	Widgets   []DashboardWidget
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+// MetricDefinitionSuggestion is a deterministic proposal users can accept before creation.
+type MetricDefinitionSuggestion struct {
+	MetricKey   string
+	DisplayName string
+	CategoryID  *uint64
+	TagIDs      []uint64
+	ValueSource string
+	Aggregation string
+	Unit        string
+	Reason      string
+}

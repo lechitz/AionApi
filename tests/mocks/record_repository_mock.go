@@ -42,6 +42,21 @@ func (m *MockRecordRepository) EXPECT() *MockRecordRepositoryMockRecorder {
 	return m.recorder
 }
 
+// CountLargeWidgetsInView mocks base method.
+func (m *MockRecordRepository) CountLargeWidgetsInView(ctx context.Context, userID, viewID uint64, excludeWidgetID *uint64) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountLargeWidgetsInView", ctx, userID, viewID, excludeWidgetID)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountLargeWidgetsInView indicates an expected call of CountLargeWidgetsInView.
+func (mr *MockRecordRepositoryMockRecorder) CountLargeWidgetsInView(ctx, userID, viewID, excludeWidgetID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountLargeWidgetsInView", reflect.TypeOf((*MockRecordRepository)(nil).CountLargeWidgetsInView), ctx, userID, viewID, excludeWidgetID)
+}
+
 // Create mocks base method.
 func (m *MockRecordRepository) Create(ctx context.Context, r domain.Record) (domain.Record, error) {
 	m.ctrl.T.Helper()
@@ -55,6 +70,21 @@ func (m *MockRecordRepository) Create(ctx context.Context, r domain.Record) (dom
 func (mr *MockRecordRepositoryMockRecorder) Create(ctx, r any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockRecordRepository)(nil).Create), ctx, r)
+}
+
+// CreateDashboardView mocks base method.
+func (m *MockRecordRepository) CreateDashboardView(ctx context.Context, view domain.DashboardView) (domain.DashboardView, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateDashboardView", ctx, view)
+	ret0, _ := ret[0].(domain.DashboardView)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateDashboardView indicates an expected call of CreateDashboardView.
+func (mr *MockRecordRepositoryMockRecorder) CreateDashboardView(ctx, view any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDashboardView", reflect.TypeOf((*MockRecordRepository)(nil).CreateDashboardView), ctx, view)
 }
 
 // Delete mocks base method.
@@ -83,6 +113,20 @@ func (m *MockRecordRepository) DeleteAllByUser(ctx context.Context, userID uint6
 func (mr *MockRecordRepositoryMockRecorder) DeleteAllByUser(ctx, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllByUser", reflect.TypeOf((*MockRecordRepository)(nil).DeleteAllByUser), ctx, userID)
+}
+
+// DeleteDashboardWidget mocks base method.
+func (m *MockRecordRepository) DeleteDashboardWidget(ctx context.Context, userID, widgetID uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteDashboardWidget", ctx, userID, widgetID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteDashboardWidget indicates an expected call of DeleteDashboardWidget.
+func (mr *MockRecordRepositoryMockRecorder) DeleteDashboardWidget(ctx, userID, widgetID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteDashboardWidget", reflect.TypeOf((*MockRecordRepository)(nil).DeleteDashboardWidget), ctx, userID, widgetID)
 }
 
 // DeleteGoalTemplate mocks base method.
@@ -127,6 +171,21 @@ func (m *MockRecordRepository) GetByUserCategoryDate(ctx context.Context, userID
 func (mr *MockRecordRepositoryMockRecorder) GetByUserCategoryDate(ctx, userID, categoryID, date any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserCategoryDate", reflect.TypeOf((*MockRecordRepository)(nil).GetByUserCategoryDate), ctx, userID, categoryID, date)
+}
+
+// GetDashboardView mocks base method.
+func (m *MockRecordRepository) GetDashboardView(ctx context.Context, userID, viewID uint64) (domain.DashboardView, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDashboardView", ctx, userID, viewID)
+	ret0, _ := ret[0].(domain.DashboardView)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDashboardView indicates an expected call of GetDashboardView.
+func (mr *MockRecordRepositoryMockRecorder) GetDashboardView(ctx, userID, viewID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDashboardView", reflect.TypeOf((*MockRecordRepository)(nil).GetDashboardView), ctx, userID, viewID)
 }
 
 // ListAllBetween mocks base method.
@@ -219,6 +278,36 @@ func (mr *MockRecordRepositoryMockRecorder) ListByUser(ctx, userID, limit, after
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByUser", reflect.TypeOf((*MockRecordRepository)(nil).ListByUser), ctx, userID, limit, afterEventTime, afterID)
 }
 
+// ListDashboardViews mocks base method.
+func (m *MockRecordRepository) ListDashboardViews(ctx context.Context, userID uint64) ([]domain.DashboardView, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListDashboardViews", ctx, userID)
+	ret0, _ := ret[0].([]domain.DashboardView)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListDashboardViews indicates an expected call of ListDashboardViews.
+func (mr *MockRecordRepositoryMockRecorder) ListDashboardViews(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListDashboardViews", reflect.TypeOf((*MockRecordRepository)(nil).ListDashboardViews), ctx, userID)
+}
+
+// ListDashboardWidgetsByView mocks base method.
+func (m *MockRecordRepository) ListDashboardWidgetsByView(ctx context.Context, userID, viewID uint64) ([]domain.DashboardWidget, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListDashboardWidgetsByView", ctx, userID, viewID)
+	ret0, _ := ret[0].([]domain.DashboardWidget)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListDashboardWidgetsByView indicates an expected call of ListDashboardWidgetsByView.
+func (mr *MockRecordRepositoryMockRecorder) ListDashboardWidgetsByView(ctx, userID, viewID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListDashboardWidgetsByView", reflect.TypeOf((*MockRecordRepository)(nil).ListDashboardWidgetsByView), ctx, userID, viewID)
+}
+
 // ListGoalTemplates mocks base method.
 func (m *MockRecordRepository) ListGoalTemplates(ctx context.Context, userID uint64) ([]domain.GoalTemplate, error) {
 	m.ctrl.T.Helper()
@@ -264,6 +353,21 @@ func (mr *MockRecordRepositoryMockRecorder) ListMetricDefinitions(ctx, userID an
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListMetricDefinitions", reflect.TypeOf((*MockRecordRepository)(nil).ListMetricDefinitions), ctx, userID)
 }
 
+// ReorderDashboardWidgets mocks base method.
+func (m *MockRecordRepository) ReorderDashboardWidgets(ctx context.Context, userID, viewID uint64, items []domain.DashboardWidget) ([]domain.DashboardWidget, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReorderDashboardWidgets", ctx, userID, viewID, items)
+	ret0, _ := ret[0].([]domain.DashboardWidget)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReorderDashboardWidgets indicates an expected call of ReorderDashboardWidgets.
+func (mr *MockRecordRepositoryMockRecorder) ReorderDashboardWidgets(ctx, userID, viewID, items any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReorderDashboardWidgets", reflect.TypeOf((*MockRecordRepository)(nil).ReorderDashboardWidgets), ctx, userID, viewID, items)
+}
+
 // SearchRecords mocks base method.
 func (m *MockRecordRepository) SearchRecords(ctx context.Context, userID uint64, filters domain.SearchFilters) ([]domain.Record, error) {
 	m.ctrl.T.Helper()
@@ -279,6 +383,21 @@ func (mr *MockRecordRepositoryMockRecorder) SearchRecords(ctx, userID, filters a
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchRecords", reflect.TypeOf((*MockRecordRepository)(nil).SearchRecords), ctx, userID, filters)
 }
 
+// SetDefaultDashboardView mocks base method.
+func (m *MockRecordRepository) SetDefaultDashboardView(ctx context.Context, userID, viewID uint64) (domain.DashboardView, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetDefaultDashboardView", ctx, userID, viewID)
+	ret0, _ := ret[0].(domain.DashboardView)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SetDefaultDashboardView indicates an expected call of SetDefaultDashboardView.
+func (mr *MockRecordRepositoryMockRecorder) SetDefaultDashboardView(ctx, userID, viewID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetDefaultDashboardView", reflect.TypeOf((*MockRecordRepository)(nil).SetDefaultDashboardView), ctx, userID, viewID)
+}
+
 // Update mocks base method.
 func (m *MockRecordRepository) Update(ctx context.Context, r domain.Record) (domain.Record, error) {
 	m.ctrl.T.Helper()
@@ -292,6 +411,21 @@ func (m *MockRecordRepository) Update(ctx context.Context, r domain.Record) (dom
 func (mr *MockRecordRepositoryMockRecorder) Update(ctx, r any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockRecordRepository)(nil).Update), ctx, r)
+}
+
+// UpsertDashboardWidget mocks base method.
+func (m *MockRecordRepository) UpsertDashboardWidget(ctx context.Context, widget domain.DashboardWidget) (domain.DashboardWidget, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertDashboardWidget", ctx, widget)
+	ret0, _ := ret[0].(domain.DashboardWidget)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertDashboardWidget indicates an expected call of UpsertDashboardWidget.
+func (mr *MockRecordRepositoryMockRecorder) UpsertDashboardWidget(ctx, widget any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertDashboardWidget", reflect.TypeOf((*MockRecordRepository)(nil).UpsertDashboardWidget), ctx, widget)
 }
 
 // UpsertGoalTemplate mocks base method.

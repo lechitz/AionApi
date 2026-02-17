@@ -29,6 +29,16 @@ type RecordController interface {
 	UpsertMetricDefinition(ctx context.Context, userID uint64, in model.UpsertMetricDefinitionInput) (*model.MetricDefinition, error)
 	UpsertGoalTemplate(ctx context.Context, userID uint64, in model.UpsertGoalTemplateInput) (*model.GoalTemplate, error)
 	DeleteGoalTemplate(ctx context.Context, userID uint64, id uint64) error
+	ListDashboardViews(ctx context.Context, userID uint64) ([]*model.DashboardView, error)
+	GetDashboardView(ctx context.Context, userID uint64, viewID string) (*model.DashboardView, error)
+	CreateDashboardView(ctx context.Context, userID uint64, in model.CreateDashboardViewInput) (*model.DashboardView, error)
+	SetDefaultDashboardView(ctx context.Context, userID uint64, viewID string) (*model.DashboardView, error)
+	UpsertDashboardWidget(ctx context.Context, userID uint64, in model.UpsertDashboardWidgetInput) (*model.DashboardWidget, error)
+	ReorderDashboardWidgets(ctx context.Context, userID uint64, in model.ReorderDashboardWidgetsInput) ([]*model.DashboardWidget, error)
+	DeleteDashboardWidget(ctx context.Context, userID uint64, widgetID string) error
+	CreateMetricAndWidget(ctx context.Context, userID uint64, in model.CreateMetricAndWidgetInput) (*model.DashboardWidget, error)
+	DashboardWidgetCatalog(ctx context.Context) (*model.DashboardWidgetCatalog, error)
+	SuggestMetricDefinitions(ctx context.Context, userID uint64, limit *int32) ([]*model.MetricDefinitionSuggestion, error)
 }
 
 // controller is the controller for the record service.

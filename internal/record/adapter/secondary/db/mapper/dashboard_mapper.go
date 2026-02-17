@@ -67,3 +67,55 @@ func GoalTemplateToDB(in domain.GoalTemplate) dbmodel.GoalTemplate {
 		IsActive:    in.IsActive,
 	}
 }
+
+func DashboardViewFromDB(in dbmodel.DashboardView) domain.DashboardView {
+	return domain.DashboardView{
+		ID:        in.ID,
+		UserID:    in.UserID,
+		Name:      in.Name,
+		IsDefault: in.IsDefault,
+		CreatedAt: in.CreatedAt,
+		UpdatedAt: in.UpdatedAt,
+	}
+}
+
+func DashboardViewToDB(in domain.DashboardView) dbmodel.DashboardView {
+	return dbmodel.DashboardView{
+		ID:        in.ID,
+		UserID:    in.UserID,
+		Name:      in.Name,
+		IsDefault: in.IsDefault,
+	}
+}
+
+func DashboardWidgetFromDB(in dbmodel.DashboardWidget) domain.DashboardWidget {
+	return domain.DashboardWidget{
+		ID:                 in.ID,
+		UserID:             in.UserID,
+		ViewID:             in.ViewID,
+		MetricDefinitionID: in.MetricDefinitionID,
+		WidgetType:         in.WidgetType,
+		Size:               in.Size,
+		OrderIndex:         in.OrderIndex,
+		TitleOverride:      in.TitleOverride,
+		ConfigJSON:         in.ConfigJSON,
+		IsActive:           in.IsActive,
+		CreatedAt:          in.CreatedAt,
+		UpdatedAt:          in.UpdatedAt,
+	}
+}
+
+func DashboardWidgetToDB(in domain.DashboardWidget) dbmodel.DashboardWidget {
+	return dbmodel.DashboardWidget{
+		ID:                 in.ID,
+		UserID:             in.UserID,
+		ViewID:             in.ViewID,
+		MetricDefinitionID: in.MetricDefinitionID,
+		WidgetType:         in.WidgetType,
+		Size:               in.Size,
+		OrderIndex:         in.OrderIndex,
+		TitleOverride:      in.TitleOverride,
+		ConfigJSON:         in.ConfigJSON,
+		IsActive:           in.IsActive,
+	}
+}
