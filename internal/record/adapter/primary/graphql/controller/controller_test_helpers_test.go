@@ -27,6 +27,11 @@ type recordServiceStub struct {
 	deleteFn         func(context.Context, uint64, uint64) error
 	deleteAllFn      func(context.Context, uint64) error
 	searchFn         func(context.Context, uint64, domain.SearchFilters) ([]domain.Record, error)
+	dashboardFn      func(context.Context, uint64, input.DashboardSnapshotQuery) (domain.DashboardSnapshot, error)
+	listMetricFn     func(context.Context, uint64) ([]domain.MetricDefinition, error)
+	upsertMetricFn   func(context.Context, uint64, input.UpsertMetricDefinitionCommand) (domain.MetricDefinition, error)
+	upsertGoalFn     func(context.Context, uint64, input.UpsertGoalTemplateCommand) (domain.GoalTemplate, error)
+	deleteGoalFn     func(context.Context, uint64, uint64) error
 }
 
 func newRecordController(t *testing.T, svc input.RecordService) (controller.RecordController, *gomock.Controller) {
@@ -126,4 +131,39 @@ func (s *recordServiceStub) SearchRecords(ctx context.Context, userID uint64, fi
 		panic("unexpected SearchRecords call")
 	}
 	return s.searchFn(ctx, userID, filters)
+}
+
+func (s *recordServiceStub) DashboardSnapshot(ctx context.Context, userID uint64, query input.DashboardSnapshotQuery) (domain.DashboardSnapshot, error) {
+	if s.dashboardFn == nil {
+		panic("unexpected DashboardSnapshot call")
+	}
+	return s.dashboardFn(ctx, userID, query)
+}
+
+func (s *recordServiceStub) ListMetricDefinitions(ctx context.Context, userID uint64) ([]domain.MetricDefinition, error) {
+	if s.listMetricFn == nil {
+		panic("unexpected ListMetricDefinitions call")
+	}
+	return s.listMetricFn(ctx, userID)
+}
+
+func (s *recordServiceStub) UpsertMetricDefinition(ctx context.Context, userID uint64, cmd input.UpsertMetricDefinitionCommand) (domain.MetricDefinition, error) {
+	if s.upsertMetricFn == nil {
+		panic("unexpected UpsertMetricDefinition call")
+	}
+	return s.upsertMetricFn(ctx, userID, cmd)
+}
+
+func (s *recordServiceStub) UpsertGoalTemplate(ctx context.Context, userID uint64, cmd input.UpsertGoalTemplateCommand) (domain.GoalTemplate, error) {
+	if s.upsertGoalFn == nil {
+		panic("unexpected UpsertGoalTemplate call")
+	}
+	return s.upsertGoalFn(ctx, userID, cmd)
+}
+
+func (s *recordServiceStub) DeleteGoalTemplate(ctx context.Context, userID uint64, goalTemplateID uint64) error {
+	if s.deleteGoalFn == nil {
+		panic("unexpected DeleteGoalTemplate call")
+	}
+	return s.deleteGoalFn(ctx, userID, goalTemplateID)
 }

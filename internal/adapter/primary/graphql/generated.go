@@ -95,18 +95,72 @@ type ComplexityRoot struct {
 		UserID        func(childComplexity int) int
 	}
 
+	DashboardGoal struct {
+		CurrentValue func(childComplexity int) int
+		GoalID       func(childComplexity int) int
+		MetricKey    func(childComplexity int) int
+		ProgressPct  func(childComplexity int) int
+		Status       func(childComplexity int) int
+		TargetValue  func(childComplexity int) int
+		Title        func(childComplexity int) int
+	}
+
+	DashboardMetric struct {
+		Label       func(childComplexity int) int
+		MetricKey   func(childComplexity int) int
+		ProgressPct func(childComplexity int) int
+		Status      func(childComplexity int) int
+		Target      func(childComplexity int) int
+		Unit        func(childComplexity int) int
+		Value       func(childComplexity int) int
+	}
+
+	DashboardSnapshot struct {
+		Date     func(childComplexity int) int
+		Goals    func(childComplexity int) int
+		Metrics  func(childComplexity int) int
+		Timezone func(childComplexity int) int
+	}
+
+	GoalTemplate struct {
+		Comparison  func(childComplexity int) int
+		ID          func(childComplexity int) int
+		IsActive    func(childComplexity int) int
+		MetricKey   func(childComplexity int) int
+		Period      func(childComplexity int) int
+		TargetValue func(childComplexity int) int
+		Title       func(childComplexity int) int
+	}
+
+	MetricDefinition struct {
+		Aggregation func(childComplexity int) int
+		CategoryID  func(childComplexity int) int
+		DisplayName func(childComplexity int) int
+		GoalDefault func(childComplexity int) int
+		ID          func(childComplexity int) int
+		IsActive    func(childComplexity int) int
+		MetricKey   func(childComplexity int) int
+		TagID       func(childComplexity int) int
+		TagIds      func(childComplexity int) int
+		Unit        func(childComplexity int) int
+		ValueSource func(childComplexity int) int
+	}
+
 	Mutation struct {
-		CreateCategory       func(childComplexity int, input model.CreateCategoryInput) int
-		CreateRecord         func(childComplexity int, input model.CreateRecordInput) int
-		CreateTag            func(childComplexity int, input model.CreateTagInput) int
-		Empty                func(childComplexity int) int
-		SoftDeleteAllRecords func(childComplexity int) int
-		SoftDeleteCategory   func(childComplexity int, input model.DeleteCategoryInput) int
-		SoftDeleteRecord     func(childComplexity int, input model.DeleteRecordInput) int
-		SoftDeleteTag        func(childComplexity int, input model.DeleteTagInput) int
-		UpdateCategory       func(childComplexity int, input model.UpdateCategoryInput) int
-		UpdateRecord         func(childComplexity int, input model.UpdateRecordInput) int
-		UpdateTag            func(childComplexity int, input model.UpdateTagInput) int
+		CreateCategory         func(childComplexity int, input model.CreateCategoryInput) int
+		CreateRecord           func(childComplexity int, input model.CreateRecordInput) int
+		CreateTag              func(childComplexity int, input model.CreateTagInput) int
+		DeleteGoalTemplate     func(childComplexity int, input model.DeleteGoalTemplateInput) int
+		Empty                  func(childComplexity int) int
+		SoftDeleteAllRecords   func(childComplexity int) int
+		SoftDeleteCategory     func(childComplexity int, input model.DeleteCategoryInput) int
+		SoftDeleteRecord       func(childComplexity int, input model.DeleteRecordInput) int
+		SoftDeleteTag          func(childComplexity int, input model.DeleteTagInput) int
+		UpdateCategory         func(childComplexity int, input model.UpdateCategoryInput) int
+		UpdateRecord           func(childComplexity int, input model.UpdateRecordInput) int
+		UpdateTag              func(childComplexity int, input model.UpdateTagInput) int
+		UpsertGoalTemplate     func(childComplexity int, input model.UpsertGoalTemplateInput) int
+		UpsertMetricDefinition func(childComplexity int, input model.UpsertMetricDefinitionInput) int
 	}
 
 	Query struct {
@@ -116,7 +170,9 @@ type ComplexityRoot struct {
 		ChatContext       func(childComplexity int) int
 		ChatDataPack      func(childComplexity int, limitRecords *int32, includeStats bool) int
 		ChatHistory       func(childComplexity int, limit *int32, offset *int32) int
+		DashboardSnapshot func(childComplexity int, date string, timezone *string) int
 		Empty             func(childComplexity int) int
+		MetricDefinitions func(childComplexity int) int
 		RecordByID        func(childComplexity int, id string) int
 		RecordStats       func(childComplexity int, filters *model.RecordStatsFilters) int
 		Records           func(childComplexity int, limit *int32, afterEventTime *string, afterID *string) int
@@ -198,6 +254,9 @@ type MutationResolver interface {
 	UpdateRecord(ctx context.Context, input model.UpdateRecordInput) (*model.Record, error)
 	SoftDeleteRecord(ctx context.Context, input model.DeleteRecordInput) (bool, error)
 	SoftDeleteAllRecords(ctx context.Context) (bool, error)
+	UpsertMetricDefinition(ctx context.Context, input model.UpsertMetricDefinitionInput) (*model.MetricDefinition, error)
+	UpsertGoalTemplate(ctx context.Context, input model.UpsertGoalTemplateInput) (*model.GoalTemplate, error)
+	DeleteGoalTemplate(ctx context.Context, input model.DeleteGoalTemplateInput) (bool, error)
 	CreateTag(ctx context.Context, input model.CreateTagInput) (*model.Tag, error)
 	UpdateTag(ctx context.Context, input model.UpdateTagInput) (*model.Tag, error)
 	SoftDeleteTag(ctx context.Context, input model.DeleteTagInput) (bool, error)
@@ -220,6 +279,8 @@ type QueryResolver interface {
 	RecordsBetween(ctx context.Context, startDate string, endDate string, limit *int32) ([]*model.Record, error)
 	SearchRecords(ctx context.Context, filters model.SearchFilters) ([]*model.Record, error)
 	RecordStats(ctx context.Context, filters *model.RecordStatsFilters) (*model.RecordStats, error)
+	DashboardSnapshot(ctx context.Context, date string, timezone *string) (*model.DashboardSnapshot, error)
+	MetricDefinitions(ctx context.Context) ([]*model.MetricDefinition, error)
 	TagByName(ctx context.Context, name string) (*model.Tag, error)
 	TagByID(ctx context.Context, id string) (*model.Tag, error)
 	Tags(ctx context.Context) ([]*model.Tag, error)
@@ -401,6 +462,227 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.ChatMessage.UserID(childComplexity), true
 
+	case "DashboardGoal.currentValue":
+		if e.complexity.DashboardGoal.CurrentValue == nil {
+			break
+		}
+
+		return e.complexity.DashboardGoal.CurrentValue(childComplexity), true
+	case "DashboardGoal.goalId":
+		if e.complexity.DashboardGoal.GoalID == nil {
+			break
+		}
+
+		return e.complexity.DashboardGoal.GoalID(childComplexity), true
+	case "DashboardGoal.metricKey":
+		if e.complexity.DashboardGoal.MetricKey == nil {
+			break
+		}
+
+		return e.complexity.DashboardGoal.MetricKey(childComplexity), true
+	case "DashboardGoal.progressPct":
+		if e.complexity.DashboardGoal.ProgressPct == nil {
+			break
+		}
+
+		return e.complexity.DashboardGoal.ProgressPct(childComplexity), true
+	case "DashboardGoal.status":
+		if e.complexity.DashboardGoal.Status == nil {
+			break
+		}
+
+		return e.complexity.DashboardGoal.Status(childComplexity), true
+	case "DashboardGoal.targetValue":
+		if e.complexity.DashboardGoal.TargetValue == nil {
+			break
+		}
+
+		return e.complexity.DashboardGoal.TargetValue(childComplexity), true
+	case "DashboardGoal.title":
+		if e.complexity.DashboardGoal.Title == nil {
+			break
+		}
+
+		return e.complexity.DashboardGoal.Title(childComplexity), true
+
+	case "DashboardMetric.label":
+		if e.complexity.DashboardMetric.Label == nil {
+			break
+		}
+
+		return e.complexity.DashboardMetric.Label(childComplexity), true
+	case "DashboardMetric.metricKey":
+		if e.complexity.DashboardMetric.MetricKey == nil {
+			break
+		}
+
+		return e.complexity.DashboardMetric.MetricKey(childComplexity), true
+	case "DashboardMetric.progressPct":
+		if e.complexity.DashboardMetric.ProgressPct == nil {
+			break
+		}
+
+		return e.complexity.DashboardMetric.ProgressPct(childComplexity), true
+	case "DashboardMetric.status":
+		if e.complexity.DashboardMetric.Status == nil {
+			break
+		}
+
+		return e.complexity.DashboardMetric.Status(childComplexity), true
+	case "DashboardMetric.target":
+		if e.complexity.DashboardMetric.Target == nil {
+			break
+		}
+
+		return e.complexity.DashboardMetric.Target(childComplexity), true
+	case "DashboardMetric.unit":
+		if e.complexity.DashboardMetric.Unit == nil {
+			break
+		}
+
+		return e.complexity.DashboardMetric.Unit(childComplexity), true
+	case "DashboardMetric.value":
+		if e.complexity.DashboardMetric.Value == nil {
+			break
+		}
+
+		return e.complexity.DashboardMetric.Value(childComplexity), true
+
+	case "DashboardSnapshot.date":
+		if e.complexity.DashboardSnapshot.Date == nil {
+			break
+		}
+
+		return e.complexity.DashboardSnapshot.Date(childComplexity), true
+	case "DashboardSnapshot.goals":
+		if e.complexity.DashboardSnapshot.Goals == nil {
+			break
+		}
+
+		return e.complexity.DashboardSnapshot.Goals(childComplexity), true
+	case "DashboardSnapshot.metrics":
+		if e.complexity.DashboardSnapshot.Metrics == nil {
+			break
+		}
+
+		return e.complexity.DashboardSnapshot.Metrics(childComplexity), true
+	case "DashboardSnapshot.timezone":
+		if e.complexity.DashboardSnapshot.Timezone == nil {
+			break
+		}
+
+		return e.complexity.DashboardSnapshot.Timezone(childComplexity), true
+
+	case "GoalTemplate.comparison":
+		if e.complexity.GoalTemplate.Comparison == nil {
+			break
+		}
+
+		return e.complexity.GoalTemplate.Comparison(childComplexity), true
+	case "GoalTemplate.id":
+		if e.complexity.GoalTemplate.ID == nil {
+			break
+		}
+
+		return e.complexity.GoalTemplate.ID(childComplexity), true
+	case "GoalTemplate.isActive":
+		if e.complexity.GoalTemplate.IsActive == nil {
+			break
+		}
+
+		return e.complexity.GoalTemplate.IsActive(childComplexity), true
+	case "GoalTemplate.metricKey":
+		if e.complexity.GoalTemplate.MetricKey == nil {
+			break
+		}
+
+		return e.complexity.GoalTemplate.MetricKey(childComplexity), true
+	case "GoalTemplate.period":
+		if e.complexity.GoalTemplate.Period == nil {
+			break
+		}
+
+		return e.complexity.GoalTemplate.Period(childComplexity), true
+	case "GoalTemplate.targetValue":
+		if e.complexity.GoalTemplate.TargetValue == nil {
+			break
+		}
+
+		return e.complexity.GoalTemplate.TargetValue(childComplexity), true
+	case "GoalTemplate.title":
+		if e.complexity.GoalTemplate.Title == nil {
+			break
+		}
+
+		return e.complexity.GoalTemplate.Title(childComplexity), true
+
+	case "MetricDefinition.aggregation":
+		if e.complexity.MetricDefinition.Aggregation == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.Aggregation(childComplexity), true
+	case "MetricDefinition.categoryId":
+		if e.complexity.MetricDefinition.CategoryID == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.CategoryID(childComplexity), true
+	case "MetricDefinition.displayName":
+		if e.complexity.MetricDefinition.DisplayName == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.DisplayName(childComplexity), true
+	case "MetricDefinition.goalDefault":
+		if e.complexity.MetricDefinition.GoalDefault == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.GoalDefault(childComplexity), true
+	case "MetricDefinition.id":
+		if e.complexity.MetricDefinition.ID == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.ID(childComplexity), true
+	case "MetricDefinition.isActive":
+		if e.complexity.MetricDefinition.IsActive == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.IsActive(childComplexity), true
+	case "MetricDefinition.metricKey":
+		if e.complexity.MetricDefinition.MetricKey == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.MetricKey(childComplexity), true
+	case "MetricDefinition.tagId":
+		if e.complexity.MetricDefinition.TagID == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.TagID(childComplexity), true
+	case "MetricDefinition.tagIds":
+		if e.complexity.MetricDefinition.TagIds == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.TagIds(childComplexity), true
+	case "MetricDefinition.unit":
+		if e.complexity.MetricDefinition.Unit == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.Unit(childComplexity), true
+	case "MetricDefinition.valueSource":
+		if e.complexity.MetricDefinition.ValueSource == nil {
+			break
+		}
+
+		return e.complexity.MetricDefinition.ValueSource(childComplexity), true
+
 	case "Mutation.createCategory":
 		if e.complexity.Mutation.CreateCategory == nil {
 			break
@@ -434,6 +716,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateTag(childComplexity, args["input"].(model.CreateTagInput)), true
+	case "Mutation.deleteGoalTemplate":
+		if e.complexity.Mutation.DeleteGoalTemplate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteGoalTemplate_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteGoalTemplate(childComplexity, args["input"].(model.DeleteGoalTemplateInput)), true
 	case "Mutation._empty":
 		if e.complexity.Mutation.Empty == nil {
 			break
@@ -512,6 +805,28 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateTag(childComplexity, args["input"].(model.UpdateTagInput)), true
+	case "Mutation.upsertGoalTemplate":
+		if e.complexity.Mutation.UpsertGoalTemplate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_upsertGoalTemplate_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertGoalTemplate(childComplexity, args["input"].(model.UpsertGoalTemplateInput)), true
+	case "Mutation.upsertMetricDefinition":
+		if e.complexity.Mutation.UpsertMetricDefinition == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_upsertMetricDefinition_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertMetricDefinition(childComplexity, args["input"].(model.UpsertMetricDefinitionInput)), true
 
 	case "Query.categories":
 		if e.complexity.Query.Categories == nil {
@@ -569,12 +884,29 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.ChatHistory(childComplexity, args["limit"].(*int32), args["offset"].(*int32)), true
+	case "Query.dashboardSnapshot":
+		if e.complexity.Query.DashboardSnapshot == nil {
+			break
+		}
+
+		args, err := ec.field_Query_dashboardSnapshot_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.DashboardSnapshot(childComplexity, args["date"].(string), args["timezone"].(*string)), true
 	case "Query._empty":
 		if e.complexity.Query.Empty == nil {
 			break
 		}
 
 		return e.complexity.Query.Empty(childComplexity), true
+	case "Query.metricDefinitions":
+		if e.complexity.Query.MetricDefinitions == nil {
+			break
+		}
+
+		return e.complexity.Query.MetricDefinitions(childComplexity), true
 	case "Query.recordById":
 		if e.complexity.Query.RecordByID == nil {
 			break
@@ -982,6 +1314,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateRecordInput,
 		ec.unmarshalInputCreateTagInput,
 		ec.unmarshalInputDeleteCategoryInput,
+		ec.unmarshalInputDeleteGoalTemplateInput,
 		ec.unmarshalInputDeleteRecordInput,
 		ec.unmarshalInputDeleteTagInput,
 		ec.unmarshalInputRecordStatsFilters,
@@ -989,6 +1322,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateCategoryInput,
 		ec.unmarshalInputUpdateRecordInput,
 		ec.unmarshalInputUpdateTagInput,
+		ec.unmarshalInputUpsertGoalTemplateInput,
+		ec.unmarshalInputUpsertMetricDefinitionInput,
 	)
 	first := true
 
@@ -1154,6 +1489,17 @@ func (ec *executionContext) field_Mutation_createTag_args(ctx context.Context, r
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteGoalTemplate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteGoalTemplateInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteGoalTemplateInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_softDeleteCategory_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -1213,6 +1559,28 @@ func (ec *executionContext) field_Mutation_updateTag_args(ctx context.Context, r
 	var err error
 	args := map[string]any{}
 	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateTagInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_upsertGoalTemplate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpsertGoalTemplateInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertGoalTemplateInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_upsertMetricDefinition_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpsertMetricDefinitionInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput)
 	if err != nil {
 		return nil, err
 	}
@@ -1282,6 +1650,22 @@ func (ec *executionContext) field_Query_chatHistory_args(ctx context.Context, ra
 		return nil, err
 	}
 	args["offset"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_dashboardSnapshot_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "date", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
+	}
+	args["date"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "timezone", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["timezone"] = arg1
 	return args, nil
 }
 
@@ -2334,6 +2718,1082 @@ func (ec *executionContext) fieldContext_ChatMessage_updatedAt(_ context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _DashboardGoal_goalId(ctx context.Context, field graphql.CollectedField, obj *model.DashboardGoal) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardGoal_goalId,
+		func(ctx context.Context) (any, error) {
+			return obj.GoalID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardGoal_goalId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardGoal",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardGoal_title(ctx context.Context, field graphql.CollectedField, obj *model.DashboardGoal) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardGoal_title,
+		func(ctx context.Context) (any, error) {
+			return obj.Title, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardGoal_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardGoal",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardGoal_metricKey(ctx context.Context, field graphql.CollectedField, obj *model.DashboardGoal) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardGoal_metricKey,
+		func(ctx context.Context) (any, error) {
+			return obj.MetricKey, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardGoal_metricKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardGoal",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardGoal_currentValue(ctx context.Context, field graphql.CollectedField, obj *model.DashboardGoal) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardGoal_currentValue,
+		func(ctx context.Context) (any, error) {
+			return obj.CurrentValue, nil
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardGoal_currentValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardGoal",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardGoal_targetValue(ctx context.Context, field graphql.CollectedField, obj *model.DashboardGoal) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardGoal_targetValue,
+		func(ctx context.Context) (any, error) {
+			return obj.TargetValue, nil
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardGoal_targetValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardGoal",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardGoal_progressPct(ctx context.Context, field graphql.CollectedField, obj *model.DashboardGoal) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardGoal_progressPct,
+		func(ctx context.Context) (any, error) {
+			return obj.ProgressPct, nil
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardGoal_progressPct(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardGoal",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardGoal_status(ctx context.Context, field graphql.CollectedField, obj *model.DashboardGoal) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardGoal_status,
+		func(ctx context.Context) (any, error) {
+			return obj.Status, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardGoal_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardGoal",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardMetric_metricKey(ctx context.Context, field graphql.CollectedField, obj *model.DashboardMetric) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardMetric_metricKey,
+		func(ctx context.Context) (any, error) {
+			return obj.MetricKey, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardMetric_metricKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardMetric",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardMetric_label(ctx context.Context, field graphql.CollectedField, obj *model.DashboardMetric) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardMetric_label,
+		func(ctx context.Context) (any, error) {
+			return obj.Label, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardMetric_label(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardMetric",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardMetric_value(ctx context.Context, field graphql.CollectedField, obj *model.DashboardMetric) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardMetric_value,
+		func(ctx context.Context) (any, error) {
+			return obj.Value, nil
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardMetric_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardMetric",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardMetric_unit(ctx context.Context, field graphql.CollectedField, obj *model.DashboardMetric) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardMetric_unit,
+		func(ctx context.Context) (any, error) {
+			return obj.Unit, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardMetric_unit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardMetric",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardMetric_target(ctx context.Context, field graphql.CollectedField, obj *model.DashboardMetric) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardMetric_target,
+		func(ctx context.Context) (any, error) {
+			return obj.Target, nil
+		},
+		nil,
+		ec.marshalOFloat2ᚖfloat64,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardMetric_target(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardMetric",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardMetric_progressPct(ctx context.Context, field graphql.CollectedField, obj *model.DashboardMetric) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardMetric_progressPct,
+		func(ctx context.Context) (any, error) {
+			return obj.ProgressPct, nil
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardMetric_progressPct(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardMetric",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardMetric_status(ctx context.Context, field graphql.CollectedField, obj *model.DashboardMetric) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardMetric_status,
+		func(ctx context.Context) (any, error) {
+			return obj.Status, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardMetric_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardMetric",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardSnapshot_date(ctx context.Context, field graphql.CollectedField, obj *model.DashboardSnapshot) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardSnapshot_date,
+		func(ctx context.Context) (any, error) {
+			return obj.Date, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardSnapshot_date(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardSnapshot",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardSnapshot_timezone(ctx context.Context, field graphql.CollectedField, obj *model.DashboardSnapshot) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardSnapshot_timezone,
+		func(ctx context.Context) (any, error) {
+			return obj.Timezone, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardSnapshot_timezone(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardSnapshot",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardSnapshot_metrics(ctx context.Context, field graphql.CollectedField, obj *model.DashboardSnapshot) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardSnapshot_metrics,
+		func(ctx context.Context) (any, error) {
+			return obj.Metrics, nil
+		},
+		nil,
+		ec.marshalNDashboardMetric2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetricᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardSnapshot_metrics(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardSnapshot",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "metricKey":
+				return ec.fieldContext_DashboardMetric_metricKey(ctx, field)
+			case "label":
+				return ec.fieldContext_DashboardMetric_label(ctx, field)
+			case "value":
+				return ec.fieldContext_DashboardMetric_value(ctx, field)
+			case "unit":
+				return ec.fieldContext_DashboardMetric_unit(ctx, field)
+			case "target":
+				return ec.fieldContext_DashboardMetric_target(ctx, field)
+			case "progressPct":
+				return ec.fieldContext_DashboardMetric_progressPct(ctx, field)
+			case "status":
+				return ec.fieldContext_DashboardMetric_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardMetric", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardSnapshot_goals(ctx context.Context, field graphql.CollectedField, obj *model.DashboardSnapshot) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardSnapshot_goals,
+		func(ctx context.Context) (any, error) {
+			return obj.Goals, nil
+		},
+		nil,
+		ec.marshalNDashboardGoal2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoalᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardSnapshot_goals(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardSnapshot",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "goalId":
+				return ec.fieldContext_DashboardGoal_goalId(ctx, field)
+			case "title":
+				return ec.fieldContext_DashboardGoal_title(ctx, field)
+			case "metricKey":
+				return ec.fieldContext_DashboardGoal_metricKey(ctx, field)
+			case "currentValue":
+				return ec.fieldContext_DashboardGoal_currentValue(ctx, field)
+			case "targetValue":
+				return ec.fieldContext_DashboardGoal_targetValue(ctx, field)
+			case "progressPct":
+				return ec.fieldContext_DashboardGoal_progressPct(ctx, field)
+			case "status":
+				return ec.fieldContext_DashboardGoal_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardGoal", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GoalTemplate_id(ctx context.Context, field graphql.CollectedField, obj *model.GoalTemplate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GoalTemplate_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_GoalTemplate_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GoalTemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GoalTemplate_metricKey(ctx context.Context, field graphql.CollectedField, obj *model.GoalTemplate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GoalTemplate_metricKey,
+		func(ctx context.Context) (any, error) {
+			return obj.MetricKey, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_GoalTemplate_metricKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GoalTemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GoalTemplate_title(ctx context.Context, field graphql.CollectedField, obj *model.GoalTemplate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GoalTemplate_title,
+		func(ctx context.Context) (any, error) {
+			return obj.Title, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_GoalTemplate_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GoalTemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GoalTemplate_targetValue(ctx context.Context, field graphql.CollectedField, obj *model.GoalTemplate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GoalTemplate_targetValue,
+		func(ctx context.Context) (any, error) {
+			return obj.TargetValue, nil
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_GoalTemplate_targetValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GoalTemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GoalTemplate_comparison(ctx context.Context, field graphql.CollectedField, obj *model.GoalTemplate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GoalTemplate_comparison,
+		func(ctx context.Context) (any, error) {
+			return obj.Comparison, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_GoalTemplate_comparison(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GoalTemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GoalTemplate_period(ctx context.Context, field graphql.CollectedField, obj *model.GoalTemplate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GoalTemplate_period,
+		func(ctx context.Context) (any, error) {
+			return obj.Period, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_GoalTemplate_period(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GoalTemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GoalTemplate_isActive(ctx context.Context, field graphql.CollectedField, obj *model.GoalTemplate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_GoalTemplate_isActive,
+		func(ctx context.Context) (any, error) {
+			return obj.IsActive, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_GoalTemplate_isActive(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GoalTemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_id(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_metricKey(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_metricKey,
+		func(ctx context.Context) (any, error) {
+			return obj.MetricKey, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_metricKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_displayName(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_displayName,
+		func(ctx context.Context) (any, error) {
+			return obj.DisplayName, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_displayName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_categoryId(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_categoryId,
+		func(ctx context.Context) (any, error) {
+			return obj.CategoryID, nil
+		},
+		nil,
+		ec.marshalOID2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_categoryId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_tagId(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_tagId,
+		func(ctx context.Context) (any, error) {
+			return obj.TagID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_tagId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_tagIds(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_tagIds,
+		func(ctx context.Context) (any, error) {
+			return obj.TagIds, nil
+		},
+		nil,
+		ec.marshalNID2ᚕstringᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_tagIds(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_valueSource(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_valueSource,
+		func(ctx context.Context) (any, error) {
+			return obj.ValueSource, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_valueSource(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_aggregation(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_aggregation,
+		func(ctx context.Context) (any, error) {
+			return obj.Aggregation, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_aggregation(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_unit(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_unit,
+		func(ctx context.Context) (any, error) {
+			return obj.Unit, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_unit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_goalDefault(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_goalDefault,
+		func(ctx context.Context) (any, error) {
+			return obj.GoalDefault, nil
+		},
+		nil,
+		ec.marshalOFloat2ᚖfloat64,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_goalDefault(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MetricDefinition_isActive(ctx context.Context, field graphql.CollectedField, obj *model.MetricDefinition) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MetricDefinition_isActive,
+		func(ctx context.Context) (any, error) {
+			return obj.IsActive, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MetricDefinition_isActive(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MetricDefinition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation__empty(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -2844,6 +4304,223 @@ func (ec *executionContext) fieldContext_Mutation_softDeleteAllRecords(_ context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_upsertMetricDefinition(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_upsertMetricDefinition,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpsertMetricDefinition(ctx, fc.Args["input"].(model.UpsertMetricDefinitionInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.MetricDefinition
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.MetricDefinition
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_upsertMetricDefinition(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_MetricDefinition_id(ctx, field)
+			case "metricKey":
+				return ec.fieldContext_MetricDefinition_metricKey(ctx, field)
+			case "displayName":
+				return ec.fieldContext_MetricDefinition_displayName(ctx, field)
+			case "categoryId":
+				return ec.fieldContext_MetricDefinition_categoryId(ctx, field)
+			case "tagId":
+				return ec.fieldContext_MetricDefinition_tagId(ctx, field)
+			case "tagIds":
+				return ec.fieldContext_MetricDefinition_tagIds(ctx, field)
+			case "valueSource":
+				return ec.fieldContext_MetricDefinition_valueSource(ctx, field)
+			case "aggregation":
+				return ec.fieldContext_MetricDefinition_aggregation(ctx, field)
+			case "unit":
+				return ec.fieldContext_MetricDefinition_unit(ctx, field)
+			case "goalDefault":
+				return ec.fieldContext_MetricDefinition_goalDefault(ctx, field)
+			case "isActive":
+				return ec.fieldContext_MetricDefinition_isActive(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MetricDefinition", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_upsertMetricDefinition_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_upsertGoalTemplate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_upsertGoalTemplate,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpsertGoalTemplate(ctx, fc.Args["input"].(model.UpsertGoalTemplateInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.GoalTemplate
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.GoalTemplate
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNGoalTemplate2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐGoalTemplate,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_upsertGoalTemplate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GoalTemplate_id(ctx, field)
+			case "metricKey":
+				return ec.fieldContext_GoalTemplate_metricKey(ctx, field)
+			case "title":
+				return ec.fieldContext_GoalTemplate_title(ctx, field)
+			case "targetValue":
+				return ec.fieldContext_GoalTemplate_targetValue(ctx, field)
+			case "comparison":
+				return ec.fieldContext_GoalTemplate_comparison(ctx, field)
+			case "period":
+				return ec.fieldContext_GoalTemplate_period(ctx, field)
+			case "isActive":
+				return ec.fieldContext_GoalTemplate_isActive(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GoalTemplate", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_upsertGoalTemplate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteGoalTemplate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_deleteGoalTemplate,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().DeleteGoalTemplate(ctx, fc.Args["input"].(model.DeleteGoalTemplateInput))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal bool
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal bool
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteGoalTemplate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteGoalTemplate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -4356,6 +6033,146 @@ func (ec *executionContext) fieldContext_Query_recordStats(ctx context.Context, 
 	if fc.Args, err = ec.field_Query_recordStats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_dashboardSnapshot(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_dashboardSnapshot,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().DashboardSnapshot(ctx, fc.Args["date"].(string), fc.Args["timezone"].(*string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.DashboardSnapshot
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.DashboardSnapshot
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNDashboardSnapshot2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardSnapshot,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_dashboardSnapshot(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "date":
+				return ec.fieldContext_DashboardSnapshot_date(ctx, field)
+			case "timezone":
+				return ec.fieldContext_DashboardSnapshot_timezone(ctx, field)
+			case "metrics":
+				return ec.fieldContext_DashboardSnapshot_metrics(ctx, field)
+			case "goals":
+				return ec.fieldContext_DashboardSnapshot_goals(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardSnapshot", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_dashboardSnapshot_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_metricDefinitions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_metricDefinitions,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().MetricDefinitions(ctx)
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.MetricDefinition
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.MetricDefinition
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNMetricDefinition2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_metricDefinitions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_MetricDefinition_id(ctx, field)
+			case "metricKey":
+				return ec.fieldContext_MetricDefinition_metricKey(ctx, field)
+			case "displayName":
+				return ec.fieldContext_MetricDefinition_displayName(ctx, field)
+			case "categoryId":
+				return ec.fieldContext_MetricDefinition_categoryId(ctx, field)
+			case "tagId":
+				return ec.fieldContext_MetricDefinition_tagId(ctx, field)
+			case "tagIds":
+				return ec.fieldContext_MetricDefinition_tagIds(ctx, field)
+			case "valueSource":
+				return ec.fieldContext_MetricDefinition_valueSource(ctx, field)
+			case "aggregation":
+				return ec.fieldContext_MetricDefinition_aggregation(ctx, field)
+			case "unit":
+				return ec.fieldContext_MetricDefinition_unit(ctx, field)
+			case "goalDefault":
+				return ec.fieldContext_MetricDefinition_goalDefault(ctx, field)
+			case "isActive":
+				return ec.fieldContext_MetricDefinition_isActive(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MetricDefinition", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -7626,6 +9443,33 @@ func (ec *executionContext) unmarshalInputDeleteCategoryInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputDeleteGoalTemplateInput(ctx context.Context, obj any) (model.DeleteGoalTemplateInput, error) {
+	var it model.DeleteGoalTemplateInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputDeleteRecordInput(ctx context.Context, obj any) (model.DeleteRecordInput, error) {
 	var it model.DeleteRecordInput
 	asMap := map[string]any{}
@@ -8011,6 +9855,172 @@ func (ec *executionContext) unmarshalInputUpdateTagInput(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpsertGoalTemplateInput(ctx context.Context, obj any) (model.UpsertGoalTemplateInput, error) {
+	var it model.UpsertGoalTemplateInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "metricKey", "title", "targetValue", "comparison", "period", "isActive"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "metricKey":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metricKey"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetricKey = data
+		case "title":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Title = data
+		case "targetValue":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetValue"))
+			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TargetValue = data
+		case "comparison":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comparison"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Comparison = data
+		case "period":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("period"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Period = data
+		case "isActive":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isActive"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsActive = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpsertMetricDefinitionInput(ctx context.Context, obj any) (model.UpsertMetricDefinitionInput, error) {
+	var it model.UpsertMetricDefinitionInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "metricKey", "displayName", "categoryId", "tagId", "tagIds", "valueSource", "aggregation", "unit", "goalDefault", "isActive"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "metricKey":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metricKey"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetricKey = data
+		case "displayName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayName = data
+		case "categoryId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryId"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CategoryID = data
+		case "tagId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tagId"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TagID = data
+		case "tagIds":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tagIds"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TagIds = data
+		case "valueSource":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueSource"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ValueSource = data
+		case "aggregation":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("aggregation"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Aggregation = data
+		case "unit":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("unit"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Unit = data
+		case "goalDefault":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("goalDefault"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GoalDefault = data
+		case "isActive":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isActive"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsActive = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -8299,6 +10309,347 @@ func (ec *executionContext) _ChatMessage(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var dashboardGoalImplementors = []string{"DashboardGoal"}
+
+func (ec *executionContext) _DashboardGoal(ctx context.Context, sel ast.SelectionSet, obj *model.DashboardGoal) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dashboardGoalImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DashboardGoal")
+		case "goalId":
+			out.Values[i] = ec._DashboardGoal_goalId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "title":
+			out.Values[i] = ec._DashboardGoal_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "metricKey":
+			out.Values[i] = ec._DashboardGoal_metricKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "currentValue":
+			out.Values[i] = ec._DashboardGoal_currentValue(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "targetValue":
+			out.Values[i] = ec._DashboardGoal_targetValue(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "progressPct":
+			out.Values[i] = ec._DashboardGoal_progressPct(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._DashboardGoal_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var dashboardMetricImplementors = []string{"DashboardMetric"}
+
+func (ec *executionContext) _DashboardMetric(ctx context.Context, sel ast.SelectionSet, obj *model.DashboardMetric) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dashboardMetricImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DashboardMetric")
+		case "metricKey":
+			out.Values[i] = ec._DashboardMetric_metricKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "label":
+			out.Values[i] = ec._DashboardMetric_label(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "value":
+			out.Values[i] = ec._DashboardMetric_value(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "unit":
+			out.Values[i] = ec._DashboardMetric_unit(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "target":
+			out.Values[i] = ec._DashboardMetric_target(ctx, field, obj)
+		case "progressPct":
+			out.Values[i] = ec._DashboardMetric_progressPct(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._DashboardMetric_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var dashboardSnapshotImplementors = []string{"DashboardSnapshot"}
+
+func (ec *executionContext) _DashboardSnapshot(ctx context.Context, sel ast.SelectionSet, obj *model.DashboardSnapshot) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dashboardSnapshotImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DashboardSnapshot")
+		case "date":
+			out.Values[i] = ec._DashboardSnapshot_date(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "timezone":
+			out.Values[i] = ec._DashboardSnapshot_timezone(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "metrics":
+			out.Values[i] = ec._DashboardSnapshot_metrics(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "goals":
+			out.Values[i] = ec._DashboardSnapshot_goals(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var goalTemplateImplementors = []string{"GoalTemplate"}
+
+func (ec *executionContext) _GoalTemplate(ctx context.Context, sel ast.SelectionSet, obj *model.GoalTemplate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, goalTemplateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GoalTemplate")
+		case "id":
+			out.Values[i] = ec._GoalTemplate_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "metricKey":
+			out.Values[i] = ec._GoalTemplate_metricKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "title":
+			out.Values[i] = ec._GoalTemplate_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "targetValue":
+			out.Values[i] = ec._GoalTemplate_targetValue(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "comparison":
+			out.Values[i] = ec._GoalTemplate_comparison(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "period":
+			out.Values[i] = ec._GoalTemplate_period(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "isActive":
+			out.Values[i] = ec._GoalTemplate_isActive(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var metricDefinitionImplementors = []string{"MetricDefinition"}
+
+func (ec *executionContext) _MetricDefinition(ctx context.Context, sel ast.SelectionSet, obj *model.MetricDefinition) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, metricDefinitionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MetricDefinition")
+		case "id":
+			out.Values[i] = ec._MetricDefinition_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "metricKey":
+			out.Values[i] = ec._MetricDefinition_metricKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "displayName":
+			out.Values[i] = ec._MetricDefinition_displayName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "categoryId":
+			out.Values[i] = ec._MetricDefinition_categoryId(ctx, field, obj)
+		case "tagId":
+			out.Values[i] = ec._MetricDefinition_tagId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "tagIds":
+			out.Values[i] = ec._MetricDefinition_tagIds(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "valueSource":
+			out.Values[i] = ec._MetricDefinition_valueSource(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "aggregation":
+			out.Values[i] = ec._MetricDefinition_aggregation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "unit":
+			out.Values[i] = ec._MetricDefinition_unit(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "goalDefault":
+			out.Values[i] = ec._MetricDefinition_goalDefault(ctx, field, obj)
+		case "isActive":
+			out.Values[i] = ec._MetricDefinition_isActive(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -8367,6 +10718,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "softDeleteAllRecords":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_softDeleteAllRecords(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "upsertMetricDefinition":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_upsertMetricDefinition(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "upsertGoalTemplate":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_upsertGoalTemplate(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteGoalTemplate":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteGoalTemplate(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -8784,6 +11156,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_recordStats(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "dashboardSnapshot":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_dashboardSnapshot(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "metricDefinitions":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_metricDefinitions(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -9763,8 +12179,135 @@ func (ec *executionContext) unmarshalNCreateTagInput2githubᚗcomᚋlechitzᚋAi
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNDashboardGoal2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoalᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardGoal) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNDashboardGoal2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoal(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNDashboardGoal2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoal(ctx context.Context, sel ast.SelectionSet, v *model.DashboardGoal) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DashboardGoal(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDashboardMetric2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetricᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardMetric) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNDashboardMetric2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetric(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNDashboardMetric2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetric(ctx context.Context, sel ast.SelectionSet, v *model.DashboardMetric) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DashboardMetric(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDashboardSnapshot2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardSnapshot(ctx context.Context, sel ast.SelectionSet, v model.DashboardSnapshot) graphql.Marshaler {
+	return ec._DashboardSnapshot(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDashboardSnapshot2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardSnapshot(ctx context.Context, sel ast.SelectionSet, v *model.DashboardSnapshot) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DashboardSnapshot(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNDeleteCategoryInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteCategoryInput(ctx context.Context, v any) (model.DeleteCategoryInput, error) {
 	res, err := ec.unmarshalInputDeleteCategoryInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNDeleteGoalTemplateInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteGoalTemplateInput(ctx context.Context, v any) (model.DeleteGoalTemplateInput, error) {
+	res, err := ec.unmarshalInputDeleteGoalTemplateInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -9794,6 +12337,20 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
+func (ec *executionContext) marshalNGoalTemplate2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐGoalTemplate(ctx context.Context, sel ast.SelectionSet, v model.GoalTemplate) graphql.Marshaler {
+	return ec._GoalTemplate(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGoalTemplate2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐGoalTemplate(ctx context.Context, sel ast.SelectionSet, v *model.GoalTemplate) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GoalTemplate(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -9810,6 +12367,36 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) unmarshalNID2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNID2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNID2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNID2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalNInt2int32(ctx context.Context, v any) (int32, error) {
 	res, err := graphql.UnmarshalInt32(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -9824,6 +12411,64 @@ func (ec *executionContext) marshalNInt2int32(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNMetricDefinition2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition(ctx context.Context, sel ast.SelectionSet, v model.MetricDefinition) graphql.Marshaler {
+	return ec._MetricDefinition(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMetricDefinition2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MetricDefinition) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition(ctx context.Context, sel ast.SelectionSet, v *model.MetricDefinition) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MetricDefinition(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNRecord2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v model.Record) graphql.Marshaler {
@@ -9989,6 +12634,16 @@ func (ec *executionContext) unmarshalNUpdateRecordInput2githubᚗcomᚋlechitz�
 
 func (ec *executionContext) unmarshalNUpdateTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateTagInput(ctx context.Context, v any) (model.UpdateTagInput, error) {
 	res, err := ec.unmarshalInputUpdateTagInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpsertGoalTemplateInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertGoalTemplateInput(ctx context.Context, v any) (model.UpsertGoalTemplateInput, error) {
+	res, err := ec.unmarshalInputUpsertGoalTemplateInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpsertMetricDefinitionInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput(ctx context.Context, v any) (model.UpsertMetricDefinitionInput, error) {
+	res, err := ec.unmarshalInputUpsertMetricDefinitionInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

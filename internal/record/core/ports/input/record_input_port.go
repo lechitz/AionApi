@@ -44,4 +44,14 @@ type RecordService interface {
 
 	// SearchRecords performs full-text search with filters
 	SearchRecords(ctx context.Context, userID uint64, filters domain.SearchFilters) ([]domain.Record, error)
+	// DashboardSnapshot computes deterministic metrics and goals for a specific day.
+	DashboardSnapshot(ctx context.Context, userID uint64, query DashboardSnapshotQuery) (domain.DashboardSnapshot, error)
+	// ListMetricDefinitions retrieves active dashboard metric definitions.
+	ListMetricDefinitions(ctx context.Context, userID uint64) ([]domain.MetricDefinition, error)
+	// UpsertMetricDefinition creates/updates a metric definition.
+	UpsertMetricDefinition(ctx context.Context, userID uint64, cmd UpsertMetricDefinitionCommand) (domain.MetricDefinition, error)
+	// UpsertGoalTemplate creates/updates a goal template.
+	UpsertGoalTemplate(ctx context.Context, userID uint64, cmd UpsertGoalTemplateCommand) (domain.GoalTemplate, error)
+	// DeleteGoalTemplate soft deletes/removes a goal template.
+	DeleteGoalTemplate(ctx context.Context, userID uint64, goalTemplateID uint64) error
 }

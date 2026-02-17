@@ -139,6 +139,19 @@ func (recordSvcStub) DeleteAll(context.Context, uint64) error      { return nil 
 func (recordSvcStub) SearchRecords(context.Context, uint64, recorddomain.SearchFilters) ([]recorddomain.Record, error) {
 	return []recorddomain.Record{}, nil
 }
+func (recordSvcStub) DashboardSnapshot(context.Context, uint64, recordinput.DashboardSnapshotQuery) (recorddomain.DashboardSnapshot, error) {
+	return recorddomain.DashboardSnapshot{}, nil
+}
+func (recordSvcStub) ListMetricDefinitions(context.Context, uint64) ([]recorddomain.MetricDefinition, error) {
+	return []recorddomain.MetricDefinition{}, nil
+}
+func (recordSvcStub) UpsertMetricDefinition(context.Context, uint64, recordinput.UpsertMetricDefinitionCommand) (recorddomain.MetricDefinition, error) {
+	return recorddomain.MetricDefinition{}, nil
+}
+func (recordSvcStub) UpsertGoalTemplate(context.Context, uint64, recordinput.UpsertGoalTemplateCommand) (recorddomain.GoalTemplate, error) {
+	return recorddomain.GoalTemplate{}, nil
+}
+func (recordSvcStub) DeleteGoalTemplate(context.Context, uint64, uint64) error { return nil }
 
 type chatSvcStub struct{}
 

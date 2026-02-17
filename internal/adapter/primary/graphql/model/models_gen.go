@@ -68,7 +68,38 @@ type CreateTagInput struct {
 	Icon        *string `json:"icon,omitempty"`
 }
 
+type DashboardGoal struct {
+	GoalID       string  `json:"goalId"`
+	Title        string  `json:"title"`
+	MetricKey    string  `json:"metricKey"`
+	CurrentValue float64 `json:"currentValue"`
+	TargetValue  float64 `json:"targetValue"`
+	ProgressPct  float64 `json:"progressPct"`
+	Status       string  `json:"status"`
+}
+
+type DashboardMetric struct {
+	MetricKey   string   `json:"metricKey"`
+	Label       string   `json:"label"`
+	Value       float64  `json:"value"`
+	Unit        string   `json:"unit"`
+	Target      *float64 `json:"target,omitempty"`
+	ProgressPct float64  `json:"progressPct"`
+	Status      string   `json:"status"`
+}
+
+type DashboardSnapshot struct {
+	Date     string             `json:"date"`
+	Timezone string             `json:"timezone"`
+	Metrics  []*DashboardMetric `json:"metrics"`
+	Goals    []*DashboardGoal   `json:"goals"`
+}
+
 type DeleteCategoryInput struct {
+	ID string `json:"id"`
+}
+
+type DeleteGoalTemplateInput struct {
 	ID string `json:"id"`
 }
 
@@ -78,6 +109,30 @@ type DeleteRecordInput struct {
 
 type DeleteTagInput struct {
 	ID string `json:"id"`
+}
+
+type GoalTemplate struct {
+	ID          string  `json:"id"`
+	MetricKey   string  `json:"metricKey"`
+	Title       string  `json:"title"`
+	TargetValue float64 `json:"targetValue"`
+	Comparison  string  `json:"comparison"`
+	Period      string  `json:"period"`
+	IsActive    bool    `json:"isActive"`
+}
+
+type MetricDefinition struct {
+	ID          string   `json:"id"`
+	MetricKey   string   `json:"metricKey"`
+	DisplayName string   `json:"displayName"`
+	CategoryID  *string  `json:"categoryId,omitempty"`
+	TagID       string   `json:"tagId"`
+	TagIds      []string `json:"tagIds"`
+	ValueSource string   `json:"valueSource"`
+	Aggregation string   `json:"aggregation"`
+	Unit        string   `json:"unit"`
+	GoalDefault *float64 `json:"goalDefault,omitempty"`
+	IsActive    bool     `json:"isActive"`
 }
 
 type Mutation struct {
@@ -176,6 +231,30 @@ type UpdateTagInput struct {
 	CategoryID  *string `json:"categoryId,omitempty"`
 	Description *string `json:"description,omitempty"`
 	Icon        *string `json:"icon,omitempty"`
+}
+
+type UpsertGoalTemplateInput struct {
+	ID          *string `json:"id,omitempty"`
+	MetricKey   string  `json:"metricKey"`
+	Title       string  `json:"title"`
+	TargetValue float64 `json:"targetValue"`
+	Comparison  *string `json:"comparison,omitempty"`
+	Period      *string `json:"period,omitempty"`
+	IsActive    *bool   `json:"isActive,omitempty"`
+}
+
+type UpsertMetricDefinitionInput struct {
+	ID          *string  `json:"id,omitempty"`
+	MetricKey   string   `json:"metricKey"`
+	DisplayName string   `json:"displayName"`
+	CategoryID  *string  `json:"categoryId,omitempty"`
+	TagID       string   `json:"tagId"`
+	TagIds      []string `json:"tagIds,omitempty"`
+	ValueSource *string  `json:"valueSource,omitempty"`
+	Aggregation *string  `json:"aggregation,omitempty"`
+	Unit        *string  `json:"unit,omitempty"`
+	GoalDefault *float64 `json:"goalDefault,omitempty"`
+	IsActive    *bool    `json:"isActive,omitempty"`
 }
 
 type UserStats struct {

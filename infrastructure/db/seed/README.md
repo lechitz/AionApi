@@ -28,7 +28,25 @@ These scripts populate data directly in Postgres for fast environment setup.
 ```bash
 make seed-all N=10
 make populate N=100
+make db-full
 ```
+
+## Realistic Demo Flow
+
+Use this flow when you want a production-like local environment:
+
+```bash
+make dev
+make db-full
+```
+
+What `db-full` prepares:
+- reset + full migrations
+- roles + admin account
+- realistic user `testuser` / `Test@123`
+- merged taxonomy (legacy + new operational categories/tags)
+- dashboard metric definitions + goal templates
+- ~3 months of records with high daily volume (about 50-60/day)
 
 ## Design Notes
 

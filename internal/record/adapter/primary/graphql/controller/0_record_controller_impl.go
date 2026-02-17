@@ -19,11 +19,16 @@ type RecordController interface {
 	ListByDay(ctx context.Context, userID uint64, date string) ([]*model.Record, error)
 	ListAllUntil(ctx context.Context, userID uint64, until string, limit int) ([]*model.Record, error)
 	ListAllBetween(ctx context.Context, userID uint64, startDate, endDate string, limit int) ([]*model.Record, error)
+	DashboardSnapshot(ctx context.Context, userID uint64, date string, timezone *string) (*model.DashboardSnapshot, error)
+	ListMetricDefinitions(ctx context.Context, userID uint64) ([]*model.MetricDefinition, error)
 	Update(ctx context.Context, in model.UpdateRecordInput, userID uint64) (*model.Record, error)
 	SoftDelete(ctx context.Context, recordID, userID uint64) error
 	SoftDeleteAll(ctx context.Context, userID uint64) error
 	SearchRecords(ctx context.Context, filters model.SearchFilters, userID uint64) ([]*model.Record, error)
 	RecordStats(ctx context.Context, filters *model.RecordStatsFilters, userID uint64) (*model.RecordStats, error)
+	UpsertMetricDefinition(ctx context.Context, userID uint64, in model.UpsertMetricDefinitionInput) (*model.MetricDefinition, error)
+	UpsertGoalTemplate(ctx context.Context, userID uint64, in model.UpsertGoalTemplateInput) (*model.GoalTemplate, error)
+	DeleteGoalTemplate(ctx context.Context, userID uint64, id uint64) error
 }
 
 // controller is the controller for the record service.

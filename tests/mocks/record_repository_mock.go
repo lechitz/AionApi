@@ -85,6 +85,20 @@ func (mr *MockRecordRepositoryMockRecorder) DeleteAllByUser(ctx, userID any) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllByUser", reflect.TypeOf((*MockRecordRepository)(nil).DeleteAllByUser), ctx, userID)
 }
 
+// DeleteGoalTemplate mocks base method.
+func (m *MockRecordRepository) DeleteGoalTemplate(ctx context.Context, userID, goalTemplateID uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteGoalTemplate", ctx, userID, goalTemplateID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteGoalTemplate indicates an expected call of DeleteGoalTemplate.
+func (mr *MockRecordRepositoryMockRecorder) DeleteGoalTemplate(ctx, userID, goalTemplateID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGoalTemplate", reflect.TypeOf((*MockRecordRepository)(nil).DeleteGoalTemplate), ctx, userID, goalTemplateID)
+}
+
 // GetByID mocks base method.
 func (m *MockRecordRepository) GetByID(ctx context.Context, recordID, userID uint64) (domain.Record, error) {
 	m.ctrl.T.Helper()
@@ -205,6 +219,21 @@ func (mr *MockRecordRepositoryMockRecorder) ListByUser(ctx, userID, limit, after
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByUser", reflect.TypeOf((*MockRecordRepository)(nil).ListByUser), ctx, userID, limit, afterEventTime, afterID)
 }
 
+// ListGoalTemplates mocks base method.
+func (m *MockRecordRepository) ListGoalTemplates(ctx context.Context, userID uint64) ([]domain.GoalTemplate, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListGoalTemplates", ctx, userID)
+	ret0, _ := ret[0].([]domain.GoalTemplate)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListGoalTemplates indicates an expected call of ListGoalTemplates.
+func (mr *MockRecordRepositoryMockRecorder) ListGoalTemplates(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListGoalTemplates", reflect.TypeOf((*MockRecordRepository)(nil).ListGoalTemplates), ctx, userID)
+}
+
 // ListLatest mocks base method.
 func (m *MockRecordRepository) ListLatest(ctx context.Context, userID uint64, limit int) ([]domain.Record, error) {
 	m.ctrl.T.Helper()
@@ -218,6 +247,21 @@ func (m *MockRecordRepository) ListLatest(ctx context.Context, userID uint64, li
 func (mr *MockRecordRepositoryMockRecorder) ListLatest(ctx, userID, limit any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLatest", reflect.TypeOf((*MockRecordRepository)(nil).ListLatest), ctx, userID, limit)
+}
+
+// ListMetricDefinitions mocks base method.
+func (m *MockRecordRepository) ListMetricDefinitions(ctx context.Context, userID uint64) ([]domain.MetricDefinition, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListMetricDefinitions", ctx, userID)
+	ret0, _ := ret[0].([]domain.MetricDefinition)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListMetricDefinitions indicates an expected call of ListMetricDefinitions.
+func (mr *MockRecordRepositoryMockRecorder) ListMetricDefinitions(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListMetricDefinitions", reflect.TypeOf((*MockRecordRepository)(nil).ListMetricDefinitions), ctx, userID)
 }
 
 // SearchRecords mocks base method.
@@ -248,4 +292,34 @@ func (m *MockRecordRepository) Update(ctx context.Context, r domain.Record) (dom
 func (mr *MockRecordRepositoryMockRecorder) Update(ctx, r any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockRecordRepository)(nil).Update), ctx, r)
+}
+
+// UpsertGoalTemplate mocks base method.
+func (m *MockRecordRepository) UpsertGoalTemplate(ctx context.Context, template domain.GoalTemplate) (domain.GoalTemplate, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertGoalTemplate", ctx, template)
+	ret0, _ := ret[0].(domain.GoalTemplate)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertGoalTemplate indicates an expected call of UpsertGoalTemplate.
+func (mr *MockRecordRepositoryMockRecorder) UpsertGoalTemplate(ctx, template any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertGoalTemplate", reflect.TypeOf((*MockRecordRepository)(nil).UpsertGoalTemplate), ctx, template)
+}
+
+// UpsertMetricDefinition mocks base method.
+func (m *MockRecordRepository) UpsertMetricDefinition(ctx context.Context, definition domain.MetricDefinition) (domain.MetricDefinition, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertMetricDefinition", ctx, definition)
+	ret0, _ := ret[0].(domain.MetricDefinition)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertMetricDefinition indicates an expected call of UpsertMetricDefinition.
+func (mr *MockRecordRepositoryMockRecorder) UpsertMetricDefinition(ctx, definition any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertMetricDefinition", reflect.TypeOf((*MockRecordRepository)(nil).UpsertMetricDefinition), ctx, definition)
 }

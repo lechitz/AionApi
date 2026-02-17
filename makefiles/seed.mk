@@ -247,31 +247,30 @@ hash-gen:
 
 
 # ============================================================
-#                   TIMELINE TEST DATA
+#                   REALISTIC DEMO DATASET
 # ============================================================
-# Complete test profile seed
+# Complete demo profile seed
 # - Test user (username: testuser, password: Test@123)
-# - 8 categories + 22 tags (exact user structure)
-# - 50 realistic records across last 3 days
-# - Multiple event overlaps (tests multi-row rendering)
-# - Special rules: água/café 5-10min duration
-# - Dynamic dates (always works, uses CURRENT_DATE)
+# - Canonical categories/tags used by dashboard and records
+# - Metric definitions + goal templates
+# - ~3 months history (50-60 records/day)
+# - Adds current-day records for immediate dashboard visibility
 # - Only runs in dev/local (user_id=999)
 # ============================================================
 
-.PHONY: seed-test seed-clean-test seed-essential db-full db-reset
+.PHONY: seed-test seed-clean-test seed-essential db-full db-test db-reset
 
 # Generate complete test profile
 seed-test:
-	@echo "Generating complete test profile..."
+	@echo "Generating realistic demo profile..."
 	@echo "   • Test user (testuser / Test@123)"
-	@echo "   • 8 categories + 22 tags"
-	@echo "   • 50 records across last 3 days"
-	@echo "   • Multiple overlaps (events in parallel)"
-	@echo "   • Dynamic dates (uses CURRENT_DATE)"
+	@echo "   • Legacy + new categories/tags merged for dashboard + timeline"
+	@echo "   • Metric definitions + goal templates"
+	@echo "   • ~3 months history (50-60 records/day)"
+	@echo "   • Records always include duration + recorded_at"
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) \
 		< infrastructure/db/seed/test_data.sql
-	@echo "✅ Test profile generated!"
+	@echo "✅ Realistic demo profile generated!"
 	@echo ""
 	@echo "🔐 Test User Login:"
 	@echo "   username: testuser"
@@ -281,6 +280,10 @@ seed-test:
 seed-clean-test:
 	@echo "Removing test profile..."
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) \
+		-c "DELETE FROM aion_api.metric_definition_tag_bindings WHERE user_id = 999;" \
+		-c "DELETE FROM aion_api.goal_instances WHERE user_id = 999;" \
+		-c "DELETE FROM aion_api.goal_templates WHERE user_id = 999;" \
+		-c "DELETE FROM aion_api.metric_definitions WHERE user_id = 999;" \
 		-c "DELETE FROM aion_api.records WHERE user_id = 999;" \
 		-c "DELETE FROM aion_api.tags WHERE user_id = 999;" \
 		-c "DELETE FROM aion_api.categories WHERE user_id = 999;" \
@@ -293,21 +296,25 @@ seed-essential: seed-roles seed-admin
 	@echo "✅ Essential data seeded (roles + admin)"
 
 # Full database setup: migrations + essential + test profile
-db-full: migrate-dev-up seed-essential seed-test
+db-full: migrate-dev-reset seed-essential seed-test
 	@echo ""
-	@echo "✅ Database ready with test data!"
+	@echo "✅ Database ready with realistic demo data!"
 	@echo ""
 	@echo "📊 Summary:"
-	@echo "   ✓ Migrations applied"
+	@echo "   ✓ Database reset + migrations applied"
 	@echo "   ✓ System roles created"
 	@echo "   ✓ Admin user (username: aion, password: testpassword123)"
-	@echo "   ✓ Test user with complete profile (username: testuser, password: Test@123)"
+	@echo "   ✓ Test user with 3 months realistic profile (username: testuser, password: Test@123)"
 	@echo ""
 	@echo "🔐 Available Logins:"
 	@echo "   Admin:  username: aion      password: testpassword123"
 	@echo "   Test:   username: testuser  password: Test@123"
 	@echo ""
-	@echo "Timeline ready for testing!"
+	@echo "Platform ready for realistic analysis!"
+
+# Alias: explicit name for test/demo profile setup
+db-test: db-full
+	@echo "✅ db-test completed (same as db-full)"
 
 # Reset database and apply migrations
 db-reset:

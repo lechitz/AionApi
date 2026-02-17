@@ -76,6 +76,85 @@ type RecordStats {
     maxValue: Float
 }
 
+type DashboardMetric {
+    metricKey: String!
+    label: String!
+    value: Float!
+    unit: String!
+    target: Float
+    progressPct: Float!
+    status: String!
+}
+
+type DashboardGoal {
+    goalId: ID!
+    title: String!
+    metricKey: String!
+    currentValue: Float!
+    targetValue: Float!
+    progressPct: Float!
+    status: String!
+}
+
+type DashboardSnapshot {
+    date: String!
+    timezone: String!
+    metrics: [DashboardMetric!]!
+    goals: [DashboardGoal!]!
+}
+
+type MetricDefinition {
+    id: ID!
+    metricKey: String!
+    displayName: String!
+    categoryId: ID
+    tagId: ID!
+    tagIds: [ID!]!
+    valueSource: String!
+    aggregation: String!
+    unit: String!
+    goalDefault: Float
+    isActive: Boolean!
+}
+
+type GoalTemplate {
+    id: ID!
+    metricKey: String!
+    title: String!
+    targetValue: Float!
+    comparison: String!
+    period: String!
+    isActive: Boolean!
+}
+
+input UpsertMetricDefinitionInput {
+    id: ID
+    metricKey: String!
+    displayName: String!
+    categoryId: ID
+    tagId: ID!
+    tagIds: [ID!]
+    valueSource: String
+    aggregation: String
+    unit: String
+    goalDefault: Float
+    isActive: Boolean
+}
+
+input UpsertGoalTemplateInput {
+    id: ID
+    metricKey: String!
+    title: String!
+    targetValue: Float!
+    comparison: String
+    period: String
+    isActive: Boolean
+}
+
+input DeleteGoalTemplateInput {
+    id: ID!
+}
+
 extend type Query {
     recordById(id: ID!): Record @auth(roles: "user")
     records(limit: Int, afterEventTime: String, afterId: ID): [Record!]! @auth(roles: "user")
@@ -87,6 +166,8 @@ extend type Query {
     recordsBetween(startDate: String!, endDate: String!, limit: Int): [Record!]! @auth(roles: "user")
     searchRecords(filters: SearchFilters!): [Record!]! @auth(roles: "user")
     recordStats(filters: RecordStatsFilters): RecordStats! @auth(roles: "user")
+    dashboardSnapshot(date: String!, timezone: String): DashboardSnapshot! @auth(roles: "user")
+    metricDefinitions: [MetricDefinition!]! @auth(roles: "user")
 }
 
 extend type Mutation {
@@ -94,4 +175,7 @@ extend type Mutation {
     updateRecord(input: UpdateRecordInput!): Record! @auth(roles: "user")
     softDeleteRecord(input: DeleteRecordInput!): Boolean! @auth(roles: "user")
     softDeleteAllRecords: Boolean! @auth(roles: "user")
+    upsertMetricDefinition(input: UpsertMetricDefinitionInput!): MetricDefinition! @auth(roles: "user")
+    upsertGoalTemplate(input: UpsertGoalTemplateInput!): GoalTemplate! @auth(roles: "user")
+    deleteGoalTemplate(input: DeleteGoalTemplateInput!): Boolean! @auth(roles: "user")
 }

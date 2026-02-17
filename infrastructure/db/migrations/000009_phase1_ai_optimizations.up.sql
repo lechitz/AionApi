@@ -7,13 +7,13 @@
 -- ============================================================================
 
 -- pg_trgm enables fast LIKE/ILIKE queries and similarity search
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
 
 -- Add trigram index on records.description for fast LIKE/ILIKE queries
 -- This improves queries like: WHERE description ILIKE '%café%'
 -- Expected improvement: 10-100x faster than sequential scan
 CREATE INDEX IF NOT EXISTS idx_records_description_trgm 
-  ON aion_api.records USING gin (description gin_trgm_ops)
+  ON aion_api.records USING gin (description public.gin_trgm_ops)
   WHERE deleted_at IS NULL;
 
 COMMENT ON INDEX aion_api.idx_records_description_trgm IS 

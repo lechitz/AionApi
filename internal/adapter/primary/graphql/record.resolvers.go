@@ -162,4 +162,41 @@ func (q *queryResolver) RecordStats(ctx context.Context, filters *model.RecordSt
 	return q.RecordController().RecordStats(ctx, filters, uid)
 }
 
+// DashboardSnapshot is the resolver for the dashboardSnapshot field.
+func (q *queryResolver) DashboardSnapshot(ctx context.Context, date string, timezone *string) (*model.DashboardSnapshot, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.RecordController().DashboardSnapshot(ctx, uid, date, timezone)
+}
+
+// MetricDefinitions is the resolver for the metricDefinitions field.
+func (q *queryResolver) MetricDefinitions(ctx context.Context) ([]*model.MetricDefinition, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.RecordController().ListMetricDefinitions(ctx, uid)
+}
+
+// UpsertMetricDefinition is the resolver for the upsertMetricDefinition field.
+func (m *mutationResolver) UpsertMetricDefinition(ctx context.Context, input model.UpsertMetricDefinitionInput) (*model.MetricDefinition, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return m.RecordController().UpsertMetricDefinition(ctx, uid, input)
+}
+
+// UpsertGoalTemplate is the resolver for the upsertGoalTemplate field.
+func (m *mutationResolver) UpsertGoalTemplate(ctx context.Context, input model.UpsertGoalTemplateInput) (*model.GoalTemplate, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return m.RecordController().UpsertGoalTemplate(ctx, uid, input)
+}
+
+// DeleteGoalTemplate is the resolver for the deleteGoalTemplate field.
+func (m *mutationResolver) DeleteGoalTemplate(ctx context.Context, input model.DeleteGoalTemplateInput) (bool, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	id, err := strconv.ParseUint(input.ID, 10, 64)
+	if err != nil {
+		return false, err
+	}
+	if err := m.RecordController().DeleteGoalTemplate(ctx, uid, id); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // Additional unimplemented resolvers can be added below as needed.

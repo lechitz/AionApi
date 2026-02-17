@@ -28,4 +28,12 @@ type RecordRepository interface {
 
 	// SearchRecords performs text search with filters
 	SearchRecords(ctx context.Context, userID uint64, filters domain.SearchFilters) ([]domain.Record, error)
+
+	// Dashboard semantic configuration
+	ListMetricDefinitions(ctx context.Context, userID uint64) ([]domain.MetricDefinition, error)
+	UpsertMetricDefinition(ctx context.Context, definition domain.MetricDefinition) (domain.MetricDefinition, error)
+
+	ListGoalTemplates(ctx context.Context, userID uint64) ([]domain.GoalTemplate, error)
+	UpsertGoalTemplate(ctx context.Context, template domain.GoalTemplate) (domain.GoalTemplate, error)
+	DeleteGoalTemplate(ctx context.Context, userID uint64, goalTemplateID uint64) error
 }
