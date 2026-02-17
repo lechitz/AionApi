@@ -108,6 +108,8 @@ const (
 const (
 	// ContextKeyTimezone is the context key for timezone.
 	ContextKeyTimezone = "timezone"
+	// ContextKeyUserTimezone is the canonical context key for timezone sent to aion-chat.
+	ContextKeyUserTimezone = "user_timezone"
 	// DefaultTimezone is the default timezone value.
 	DefaultTimezone = "America/Sao_Paulo"
 )

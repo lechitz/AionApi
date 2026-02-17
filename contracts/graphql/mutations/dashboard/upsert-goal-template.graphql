@@ -1,0 +1,1 @@
+mutation UpsertGoalTemplate($input: UpsertGoalTemplateInput!) { upsertGoalTemplate(input: $input) { id title description metricKey targetValue unit dueDate daysToComplete colorHex icon priority isCompleted createdAt updatedAt } }

@@ -61,7 +61,8 @@ func buildChatRequest(
 	context map[string]interface{},
 ) *dto.InternalChatRequest {
 	payloadContext := map[string]interface{}{
-		ContextKeyTimezone: DefaultTimezone, // TODO: Get from user settings
+		ContextKeyTimezone:     DefaultTimezone, // Backward-compatible key
+		ContextKeyUserTimezone: DefaultTimezone, // Canonical key for aion-chat
 	}
 	for key, value := range context {
 		payloadContext[key] = value
