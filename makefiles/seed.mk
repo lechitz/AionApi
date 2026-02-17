@@ -283,6 +283,8 @@ seed-clean-test:
 		-c "DELETE FROM aion_api.metric_definition_tag_bindings WHERE user_id = 999;" \
 		-c "DELETE FROM aion_api.goal_instances WHERE user_id = 999;" \
 		-c "DELETE FROM aion_api.goal_templates WHERE user_id = 999;" \
+		-c "DELETE FROM aion_api.dashboard_widgets WHERE user_id = 999;" \
+		-c "DELETE FROM aion_api.dashboard_views WHERE user_id = 999;" \
 		-c "DELETE FROM aion_api.metric_definitions WHERE user_id = 999;" \
 		-c "DELETE FROM aion_api.records WHERE user_id = 999;" \
 		-c "DELETE FROM aion_api.tags WHERE user_id = 999;" \
@@ -295,8 +297,8 @@ seed-clean-test:
 seed-essential: seed-roles seed-admin
 	@echo "✅ Essential data seeded (roles + admin)"
 
-# Full database setup: migrations + essential + test profile
-db-full: migrate-dev-reset seed-essential seed-test
+# Full database setup: migrations + essential + test profile + cache flush
+db-full: migrate-dev-reset seed-essential seed-test cache-reset
 	@echo ""
 	@echo "✅ Database ready with realistic demo data!"
 	@echo ""

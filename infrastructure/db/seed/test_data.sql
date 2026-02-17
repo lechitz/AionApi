@@ -17,6 +17,8 @@ BEGIN;
 -- --------------------------------------------------------------------------
 DELETE FROM aion_api.goal_instances WHERE user_id = 999;
 DELETE FROM aion_api.goal_templates WHERE user_id = 999;
+DELETE FROM aion_api.dashboard_widgets WHERE user_id = 999;
+DELETE FROM aion_api.dashboard_views WHERE user_id = 999;
 DELETE FROM aion_api.metric_definitions WHERE user_id = 999;
 DELETE FROM aion_api.records WHERE user_id = 999;
 DELETE FROM aion_api.tags WHERE user_id = 999;
@@ -207,7 +209,82 @@ VALUES
     (999, 'physical',     'Saude fisica por 45 minutos',     2700, 'gte', 'day', TRUE, NOW(), NOW());
 
 -- --------------------------------------------------------------------------
--- 5) Historical records (about 3 months, 50-60 records/day)
+-- 5) White-label dashboard views and widgets (canonical metrics)
+-- --------------------------------------------------------------------------
+WITH new_views AS (
+    INSERT INTO aion_api.dashboard_views (user_id, name, is_default, created_at, updated_at)
+    VALUES
+        (999, 'Equilíbrio', TRUE, NOW(), NOW()),
+        (999, 'Produtividade', FALSE, NOW(), NOW()),
+        (999, 'Saúde', FALSE, NOW(), NOW()),
+        (999, 'Principal', FALSE, NOW(), NOW())
+    RETURNING id, name
+),
+def AS (
+    SELECT id, metric_key
+    FROM aion_api.metric_definitions
+    WHERE user_id = 999
+),
+template_rows AS (
+    SELECT
+        v.id AS view_id,
+        x.metric_key,
+        x.widget_type,
+        x.size,
+        x.order_index
+    FROM new_views v
+    JOIN (
+        VALUES
+            ('Equilíbrio', 'water',        'goal_progress', 'small',  0),
+            ('Equilíbrio', 'nutrition',    'kpi_number',    'small',  1),
+            ('Equilíbrio', 'sleep',        'kpi_number',    'medium', 2),
+            ('Equilíbrio', 'mood',         'trend_line',    'small',  3),
+            ('Equilíbrio', 'energy',       'kpi_number',    'small',  4),
+            ('Equilíbrio', 'intentions',   'checklist',     'large',  5),
+            ('Equilíbrio', 'physical',     'goal_progress', 'small',  6),
+
+            ('Produtividade', 'work_session', 'goal_progress', 'large',  0),
+            ('Produtividade', 'intentions',   'checklist',     'medium', 1),
+            ('Produtividade', 'energy',       'kpi_number',    'small',  2),
+            ('Produtividade', 'mood',         'trend_line',    'small',  3),
+            ('Produtividade', 'water',        'kpi_number',    'small',  4),
+            ('Produtividade', 'nutrition',    'kpi_number',    'small',  5),
+
+            ('Saúde', 'sleep',      'goal_progress', 'large',  0),
+            ('Saúde', 'water',      'goal_progress', 'medium', 1),
+            ('Saúde', 'physical',   'goal_progress', 'medium', 2),
+            ('Saúde', 'energy',     'trend_line',    'small',  3),
+            ('Saúde', 'mood',       'trend_line',    'small',  4),
+            ('Saúde', 'nutrition',  'kpi_number',    'small',  5),
+
+            ('Principal', 'work_session', 'kpi_number', 'medium', 0),
+            ('Principal', 'water',        'kpi_number', 'small',  1),
+            ('Principal', 'sleep',        'kpi_number', 'small',  2),
+            ('Principal', 'intentions',   'checklist',  'small',  3)
+    ) AS x(view_name, metric_key, widget_type, size, order_index)
+      ON v.name = x.view_name
+)
+INSERT INTO aion_api.dashboard_widgets (
+    user_id, view_id, metric_definition_id, widget_type, size, order_index, title_override, config_json, is_active, created_at, updated_at
+)
+SELECT
+    999,
+    tr.view_id,
+    d.id,
+    tr.widget_type,
+    tr.size,
+    tr.order_index,
+    NULL,
+    '{}'::jsonb,
+    TRUE,
+    NOW(),
+    NOW()
+FROM template_rows tr
+JOIN def d
+  ON d.metric_key = tr.metric_key;
+
+-- --------------------------------------------------------------------------
+-- 6) Historical records (about 3 months, 50-60 records/day)
 -- --------------------------------------------------------------------------
 DO $$
 DECLARE
@@ -586,7 +663,7 @@ BEGIN
 END $$;
 
 -- --------------------------------------------------------------------------
--- 6) Today records (real-time visibility, no future timestamps)
+-- 7) Today records (real-time visibility, no future timestamps)
 -- --------------------------------------------------------------------------
 DO $$
 DECLARE

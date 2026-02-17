@@ -33,6 +33,14 @@ make db-full
 make db-test
 ```
 
+`db-full` now provisions:
+- canonical metric definitions (shared across dashboard views),
+- white-label views (`Equilíbrio`, `Produtividade`, `Saúde`, `Principal`),
+- widgets already linked to canonical metrics,
+- ~3 months of realistic records (including current day),
+- automatic Redis cache flush at the end (avoids stale taxonomy/records views),
+- test login: `testuser / Test@123`.
+
 ## Design Notes
 
 - Keep root `Makefile` thin; logic belongs in modules.
