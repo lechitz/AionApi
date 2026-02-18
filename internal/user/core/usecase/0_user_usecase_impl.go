@@ -10,29 +10,35 @@ import (
 
 // Service provides an abstraction for user management, including creating, retrieving, updating, and deleting users, plus authentication handling.
 type Service struct {
-	userRepository userOutput.UserRepository
-	userCache      userOutput.UserCache
-	authStore      authOutput.AuthStore
-	tokenProvider  authOutput.AuthProvider
-	hasher         hasher.Hasher
-	logger         logger.ContextLogger
+	userRepository   userOutput.UserRepository
+	registrationRepo userOutput.RegistrationSessionRepository
+	userCache        userOutput.UserCache
+	avatarStorage    userOutput.AvatarStorage
+	authStore        authOutput.AuthStore
+	tokenProvider    authOutput.AuthProvider
+	hasher           hasher.Hasher
+	logger           logger.ContextLogger
 }
 
 // NewService creates and returns a new Service instance with the provided dependencies for handling user-related operations.
 func NewService(
 	userRepository userOutput.UserRepository,
+	registrationRepo userOutput.RegistrationSessionRepository,
 	userCache userOutput.UserCache,
+	avatarStorage userOutput.AvatarStorage,
 	authStore authOutput.AuthStore,
 	tokenProvider authOutput.AuthProvider,
 	hasher hasher.Hasher,
 	logger logger.ContextLogger,
 ) *Service {
 	return &Service{
-		userRepository: userRepository,
-		userCache:      userCache,
-		authStore:      authStore,
-		tokenProvider:  tokenProvider,
-		hasher:         hasher,
-		logger:         logger,
+		userRepository:   userRepository,
+		registrationRepo: registrationRepo,
+		userCache:        userCache,
+		avatarStorage:    avatarStorage,
+		authStore:        authStore,
+		tokenProvider:    tokenProvider,
+		hasher:           hasher,
+		logger:           logger,
 	}
 }

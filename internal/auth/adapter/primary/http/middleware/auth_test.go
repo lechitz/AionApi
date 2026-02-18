@@ -81,8 +81,8 @@ func TestAuthMiddleware_MissingToken_ReturnsError(t *testing.T) {
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 
-	if w.Code != http.StatusInternalServerError {
-		t.Fatalf("expected 500 for missing token path, got %d", w.Code)
+	if w.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 for missing token path, got %d", w.Code)
 	}
 }
 
@@ -121,8 +121,8 @@ func TestAuthMiddleware_ValidateErrorRaw_ReturnsServerError(t *testing.T) {
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 
-	if w.Code != http.StatusInternalServerError {
-		t.Fatalf("expected 500 for generic validation error, got %d", w.Code)
+	if w.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 for generic validation error, got %d", w.Code)
 	}
 }
 

@@ -61,7 +61,9 @@ func newUserService(t *testing.T) (context.Context,
 
 	svc := usecase.NewService(
 		repo,      // userRepository
+		nil,       // registrationRepo
 		userCache, // userCache
+		nil,       // avatarStorage
 		store,     // authStore
 		provider,
 		hasher,

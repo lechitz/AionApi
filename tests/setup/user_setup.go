@@ -43,7 +43,9 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 
 	svc := usecase.NewService(
 		userRepo,
+		nil,
 		userCache,
+		nil,
 		tokenStore,
 		tokenProvider,
 		hasher,

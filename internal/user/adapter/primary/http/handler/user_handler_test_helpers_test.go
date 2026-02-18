@@ -16,16 +16,49 @@ import (
 )
 
 type mockUserService struct {
-	createFn           func(ctx context.Context, cmd userinput.CreateUserCommand) (userdomain.User, error)
-	getByIDFn          func(ctx context.Context, userID uint64) (userdomain.User, error)
-	getByUsernameFn    func(ctx context.Context, username string) (userdomain.User, error)
-	listAllFn          func(ctx context.Context) ([]userdomain.User, error)
-	getUserStatsFn     func(ctx context.Context, userID uint64) (userdomain.UserStats, error)
-	updateUserFn       func(ctx context.Context, userID uint64, cmd userinput.UpdateUserCommand) (userdomain.User, error)
-	updatePasswordFn   func(ctx context.Context, userID uint64, oldPassword, newPassword string) (string, error)
-	softDeleteUserFn   func(ctx context.Context, userID uint64) error
-	calledUpdateUserID uint64
-	calledPasswordID   uint64
+	createFn                    func(ctx context.Context, cmd userinput.CreateUserCommand) (userdomain.User, error)
+	startRegistrationFn         func(ctx context.Context, cmd userinput.StartRegistrationCommand) (userdomain.RegistrationSession, error)
+	updateRegistrationProfileFn func(ctx context.Context, registrationID string, cmd userinput.UpdateRegistrationProfileCommand) (userdomain.RegistrationSession, error)
+	updateRegistrationAvatarFn  func(ctx context.Context, registrationID string, cmd userinput.UpdateRegistrationAvatarCommand) (userdomain.RegistrationSession, error)
+	completeRegistrationFn      func(ctx context.Context, registrationID string) (userdomain.User, error)
+	getByIDFn                   func(ctx context.Context, userID uint64) (userdomain.User, error)
+	getByUsernameFn             func(ctx context.Context, username string) (userdomain.User, error)
+	listAllFn                   func(ctx context.Context) ([]userdomain.User, error)
+	getUserStatsFn              func(ctx context.Context, userID uint64) (userdomain.UserStats, error)
+	updateUserFn                func(ctx context.Context, userID uint64, cmd userinput.UpdateUserCommand) (userdomain.User, error)
+	updatePasswordFn            func(ctx context.Context, userID uint64, oldPassword, newPassword string) (string, error)
+	softDeleteUserFn            func(ctx context.Context, userID uint64) error
+	uploadAvatarFn              func(ctx context.Context, cmd userinput.UploadAvatarCommand) (string, string, int64, error)
+	calledUpdateUserID          uint64
+	calledPasswordID            uint64
+}
+
+func (m *mockUserService) StartRegistration(ctx context.Context, cmd userinput.StartRegistrationCommand) (userdomain.RegistrationSession, error) {
+	if m.startRegistrationFn != nil {
+		return m.startRegistrationFn(ctx, cmd)
+	}
+	return userdomain.RegistrationSession{RegistrationID: "reg-1", CurrentStep: 1, Status: userdomain.RegistrationStatusPending, ExpiresAt: time.Now().Add(2 * time.Hour)}, nil
+}
+
+func (m *mockUserService) UpdateRegistrationProfile(ctx context.Context, registrationID string, cmd userinput.UpdateRegistrationProfileCommand) (userdomain.RegistrationSession, error) {
+	if m.updateRegistrationProfileFn != nil {
+		return m.updateRegistrationProfileFn(ctx, registrationID, cmd)
+	}
+	return userdomain.RegistrationSession{RegistrationID: registrationID, CurrentStep: 2, Status: userdomain.RegistrationStatusPending, ExpiresAt: time.Now().Add(2 * time.Hour)}, nil
+}
+
+func (m *mockUserService) UpdateRegistrationAvatar(ctx context.Context, registrationID string, cmd userinput.UpdateRegistrationAvatarCommand) (userdomain.RegistrationSession, error) {
+	if m.updateRegistrationAvatarFn != nil {
+		return m.updateRegistrationAvatarFn(ctx, registrationID, cmd)
+	}
+	return userdomain.RegistrationSession{RegistrationID: registrationID, CurrentStep: 3, Status: userdomain.RegistrationStatusPending, ExpiresAt: time.Now().Add(2 * time.Hour)}, nil
+}
+
+func (m *mockUserService) CompleteRegistration(ctx context.Context, registrationID string) (userdomain.User, error) {
+	if m.completeRegistrationFn != nil {
+		return m.completeRegistrationFn(ctx, registrationID)
+	}
+	return userdomain.User{ID: 1, Name: "User", Username: "user", Email: "user@example.com"}, nil
 }
 
 func (m *mockUserService) Create(ctx context.Context, cmd userinput.CreateUserCommand) (userdomain.User, error) {
@@ -84,6 +117,13 @@ func (m *mockUserService) SoftDeleteUser(ctx context.Context, userID uint64) err
 		return m.softDeleteUserFn(ctx, userID)
 	}
 	return nil
+}
+
+func (m *mockUserService) UploadAvatar(ctx context.Context, cmd userinput.UploadAvatarCommand) (string, string, int64, error) {
+	if m.uploadAvatarFn != nil {
+		return m.uploadAvatarFn(ctx, cmd)
+	}
+	return "data:image/png;base64,AA==", "image/png", 2, nil
 }
 
 type mockLogger struct{}

@@ -14,6 +14,7 @@ func RegisterHTTP(r ports.Router, h *Handler, authService authinput.AuthService,
 	r.Group("/user", func(ur ports.Router) {
 		// Public
 		ur.POST("/create", http.HandlerFunc(h.Create))
+		ur.POST("/avatar/upload", http.HandlerFunc(h.UploadAvatar))
 
 		// Private
 		if authService != nil {
@@ -27,5 +28,12 @@ func RegisterHTTP(r ports.Router, h *Handler, authService authinput.AuthService,
 				pr.DELETE("/", http.HandlerFunc(h.SoftDeleteUser))
 			})
 		}
+	})
+
+	r.Group("/registration", func(rr ports.Router) {
+		rr.POST("/start", http.HandlerFunc(h.StartRegistration))
+		rr.PUT("/{registration_id}/profile", http.HandlerFunc(h.UpdateRegistrationProfile))
+		rr.PUT("/{registration_id}/avatar", http.HandlerFunc(h.UpdateRegistrationAvatar))
+		rr.POST("/{registration_id}/complete", http.HandlerFunc(h.CompleteRegistration))
 	})
 }

@@ -14,6 +14,7 @@ const (
 	SpanUpdateUserHandler       = "user.update"
 	SpanUpdatePasswordHandler   = "user.update_password"
 	SpanSoftDeleteUserHandler   = "user.soft_delete"
+	SpanUploadAvatarHandler     = "user.upload_avatar"
 	SpanAttrUserPasswordUpdate  = "user.password_update"
 	SpanAttrAuthCookieRefreshed = "auth.cookie_refreshed"
 )
@@ -30,6 +31,7 @@ const (
 	EventUserServiceUpdateUser         = "user_service.update_user"
 	EventUserServiceUpdateUserPassword = "user_service.update_user_password"
 	EventUserServiceSoftDeleteUser     = "user_service.soft_delete_user"
+	EventUserServiceUploadAvatar       = "user_service.upload_avatar"
 
 	EventUserCreatedSuccess         = "user.created.success"
 	EventUserUpdatedSuccess         = "user.updated.success"
@@ -37,6 +39,7 @@ const (
 	EventUserFetchedSuccess         = "user.fetched.success"
 	EventUsersFetchedSuccess        = "users.fetched.success"
 	EventUserSoftDeletedSuccess     = "user.soft_deleted.success"
+	EventAvatarUploadedSuccess      = "user.avatar_uploaded.success"
 )
 
 // Status names for semantic span states.
@@ -47,6 +50,7 @@ const (
 	StatusUserUpdated         = "user_updated"
 	StatusUserPasswordUpdated = "user_password_updated"
 	StatusUserSoftDeleted     = "user_soft_deleted"
+	StatusAvatarUploaded      = "avatar_uploaded"
 )
 
 // Error messages used in user handler (for response, tracing and logs).
@@ -63,6 +67,7 @@ const (
 	ErrGetUsers       = "error getting users"
 	ErrUpdateUser     = "error updating user"
 	ErrSoftDeleteUser = "error soft deleting user"
+	ErrUploadAvatar   = "error uploading avatar"
 )
 
 // ErrNoFieldsToUpdate is the error message for no fields provided for update.

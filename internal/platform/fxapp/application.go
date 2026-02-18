@@ -29,6 +29,7 @@ import (
 	tag "github.com/lechitz/AionApi/internal/tag/core/usecase"
 	userCache "github.com/lechitz/AionApi/internal/user/adapter/secondary/cache"
 	userRepo "github.com/lechitz/AionApi/internal/user/adapter/secondary/db/repository"
+	userAvatarStorage "github.com/lechitz/AionApi/internal/user/adapter/secondary/storage/s3"
 	user "github.com/lechitz/AionApi/internal/user/core/usecase"
 	"go.uber.org/fx"
 )
@@ -67,6 +68,11 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 	adminRepository := adminRepo.New(deps.DB, deps.Log)
 
 	userRepository := userRepo.New(deps.DB, deps.Log, adminRepository)
+	avatarStorage, avatarErr := userAvatarStorage.NewAvatarStorage(deps.Cfg.AvatarStorage, deps.Log)
+	if avatarErr != nil {
+		deps.Log.Errorw("failed to initialize avatar storage", "error", avatarErr)
+		avatarStorage = nil
+	}
 
 	categoryRepository := categoryRepo.New(deps.DB, deps.Log)
 	tagRepository := tagRepo.New(deps.DB, deps.Log)
@@ -82,7 +88,7 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 	chatHTTPClient := chatClient.New(deps.HTTPClient, deps.Cfg.AionChat.BaseURL, deps.Log)
 
 	authService := auth.NewService(adminRepository, authCacheStore, userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
-	userService := user.NewService(userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
+	userService := user.NewService(userRepository, userRepository, userCacheStore, avatarStorage, authCacheStore, tokenProvider, hasherProvider, deps.Log)
 	adminService := admin.NewService(adminRepository, authCacheStore, authCacheStore, deps.Log)
 	categoryService := category.NewService(categoryRepository, categoryCacheStore, deps.Log)
 	tagService := tag.NewService(tagRepository, tagCacheStore, deps.Log)

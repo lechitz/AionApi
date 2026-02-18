@@ -40,6 +40,9 @@ const (
 
 	// SpanSoftDeleteUser is the span name for soft deleting a user.
 	SpanSoftDeleteUser = "user.soft_delete"
+
+	// SpanUploadAvatar is the span name for uploading/processing avatar images.
+	SpanUploadAvatar = "user.upload_avatar"
 )
 
 // -----------------------------------------------------------------------------

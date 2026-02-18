@@ -207,6 +207,21 @@ type userSvcStub struct{}
 func (userSvcStub) Create(context.Context, userinput.CreateUserCommand) (userdomain.User, error) {
 	return userdomain.User{}, nil
 }
+func (userSvcStub) StartRegistration(context.Context, userinput.StartRegistrationCommand) (userdomain.RegistrationSession, error) {
+	return userdomain.RegistrationSession{}, nil
+}
+func (userSvcStub) UpdateRegistrationProfile(context.Context, string, userinput.UpdateRegistrationProfileCommand) (userdomain.RegistrationSession, error) {
+	return userdomain.RegistrationSession{}, nil
+}
+func (userSvcStub) UpdateRegistrationAvatar(context.Context, string, userinput.UpdateRegistrationAvatarCommand) (userdomain.RegistrationSession, error) {
+	return userdomain.RegistrationSession{}, nil
+}
+func (userSvcStub) CompleteRegistration(context.Context, string) (userdomain.User, error) {
+	return userdomain.User{}, nil
+}
+func (userSvcStub) UploadAvatar(context.Context, userinput.UploadAvatarCommand) (string, string, int64, error) {
+	return "", "", 0, nil
+}
 
 func (userSvcStub) GetByID(context.Context, uint64) (userdomain.User, error) {
 	return userdomain.User{}, nil

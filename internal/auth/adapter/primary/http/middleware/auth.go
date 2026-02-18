@@ -3,7 +3,6 @@ package middleware
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -66,6 +65,7 @@ func (a *AuthMiddleware) Auth(next http.Handler) http.Handler {
 
 		userID, claims, err := a.authService.Validate(ctx, rawToken)
 		if err != nil {
+			err = sharederrors.ErrUnauthorized(err.Error())
 			span.SetStatus(codes.Error, SpanErrorTokenInvalid)
 			span.SetAttributes(attribute.String(AttrAuthMiddlewareError, err.Error()))
 			a.logger.WarnwCtx(ctx, ErrorUnauthorizedAccessInvalidToken, commonkeys.Error, err.Error())
@@ -105,5 +105,5 @@ func extractToken(r *http.Request) (string, error) {
 		return c.Value, nil
 	}
 
-	return "", errors.New(ErrorUnauthorizedAccessMissingToken)
+	return "", sharederrors.ErrUnauthorized(ErrorUnauthorizedAccessMissingToken)
 }

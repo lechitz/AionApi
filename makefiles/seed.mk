@@ -4,7 +4,7 @@
 # All seeds use *_generate.sql (dynamic, parametrizable via N=count)
 # Usage: make seed-all N=10 | make populate N=100 | make seed-caller N=5
 # ============================================================
-.PHONY: seed-users seed-categories seed-all seed-tags seed-records seed-roles seed-user-roles seed-admin seed-user1-all seed-everybody seed-clean-users seed-clean-categories seed-clean-tags seed-clean-records seed-clean-roles seed-clean-user-roles seed-clean-all seed-helper seed-setup seed-quick seed-api-caller seed-api-caller-bootstrap seed-api-caller-clean seed-caller populate reset-user-data seed-test-timeline seed-clean-test-timeline seed-essential db-full db-reset
+.PHONY: seed-users seed-categories seed-all seed-tags seed-records seed-roles seed-user-roles seed-admin seed-user1-all seed-everybody seed-clean-users seed-clean-categories seed-clean-tags seed-clean-records seed-clean-roles seed-clean-user-roles seed-clean-registration-sessions seed-clean-all seed-helper seed-setup seed-quick seed-api-caller seed-api-caller-bootstrap seed-api-caller-clean seed-caller populate reset-user-data seed-test-timeline seed-clean-test-timeline seed-essential db-full db-reset
 
 POSTGRES_CONTAINER := postgres-dev
 POSTGRES_USER := aion
@@ -190,7 +190,11 @@ seed-clean-roles:
 	@echo "Truncating roles (dev only)..."
 	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.roles RESTART IDENTITY CASCADE;"
 
-seed-clean-all: seed-clean-records seed-clean-tags seed-clean-categories seed-clean-user-roles seed-clean-users seed-clean-roles
+seed-clean-registration-sessions:
+	@echo "Truncating registration_sessions (dev only)..."
+	@docker exec -i $(POSTGRES_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE aion_api.registration_sessions RESTART IDENTITY CASCADE;"
+
+seed-clean-all: seed-clean-records seed-clean-tags seed-clean-categories seed-clean-user-roles seed-clean-users seed-clean-roles seed-clean-registration-sessions
 	@echo "✅ All seeded tables truncated (dev only)."
 
 # --- Missing seed targets (referenced by seed-all but not defined) ---
@@ -207,7 +211,7 @@ seed-user-roles:
 # --- Reset user data (keeps system data like roles) ---
 # Deletes all user-generated data but preserves system configuration
 # Perfect for starting fresh without losing roles/permissions setup
-reset-user-data: seed-clean-records seed-clean-tags seed-clean-categories seed-clean-user-roles seed-clean-users
+reset-user-data: seed-clean-records seed-clean-tags seed-clean-categories seed-clean-user-roles seed-clean-users seed-clean-registration-sessions
 	@echo "Resetting cache..."
 	@$(MAKE) cache-reset
 	@echo "📋 Re-seeding system roles..."
@@ -218,6 +222,7 @@ reset-user-data: seed-clean-records seed-clean-tags seed-clean-categories seed-c
 	@echo "   ✓ Categories deleted"
 	@echo "   ✓ Tags deleted"
 	@echo "   ✓ Records deleted"
+	@echo "   ✓ Registration sessions deleted"
 	@echo "   ✓ Cache cleared"
 	@echo "   ✓ System roles preserved"
 	@echo ""

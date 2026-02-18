@@ -12,6 +12,7 @@ type Config struct {
 	Secret        Secret
 	Observability ObservabilityConfig
 	AionChat      AionChatConfig
+	AvatarStorage AvatarStorageConfig
 	Cookie        CookieConfig
 	ServerHTTP    ServerHTTP
 	DB            DBConfig
