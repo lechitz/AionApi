@@ -108,16 +108,17 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	span.SetAttributes(attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusOK))
 
 	res := dto.UpdateUserResponse{
-		ID:        userUpdated.ID,
-		Name:      &userUpdated.Name,
-		Username:  &userUpdated.Username,
-		Email:     &userUpdated.Email,
-		UpdatedAt: userUpdated.UpdatedAt,
-		Locale:    userUpdated.Locale,
-		Timezone:  userUpdated.Timezone,
-		Location:  userUpdated.Location,
-		Bio:       userUpdated.Bio,
-		AvatarURL: userUpdated.AvatarURL,
+		ID:                  userUpdated.ID,
+		Name:                &userUpdated.Name,
+		Username:            &userUpdated.Username,
+		Email:               &userUpdated.Email,
+		UpdatedAt:           userUpdated.UpdatedAt,
+		Locale:              userUpdated.Locale,
+		Timezone:            userUpdated.Timezone,
+		Location:            userUpdated.Location,
+		Bio:                 userUpdated.Bio,
+		AvatarURL:           userUpdated.AvatarURL,
+		OnboardingCompleted: userUpdated.OnboardingCompleted,
 	}
 
 	httpresponse.WriteSuccess(w, http.StatusOK, res, MsgUserUpdated)

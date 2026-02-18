@@ -37,6 +37,9 @@ type UpdateUserRequest struct {
 
 	// AvatarURL is an optional URL for the user's avatar.
 	AvatarURL *string `json:"avatar_url,omitempty" example:"https://example.com/avatar.png"`
+
+	// OnboardingCompleted indicates if the user has completed the onboarding flow.
+	OnboardingCompleted *bool `json:"onboarding_completed,omitempty" example:"true"`
 }
 
 // Validate ensures provided fields meet basic constraints.
@@ -47,14 +50,15 @@ func (r UpdateUserRequest) Validate() error {
 // ToCommand converts the request to a domain command.
 func (r UpdateUserRequest) ToCommand() input.UpdateUserCommand {
 	return input.UpdateUserCommand{
-		Name:      normalizeOptional(r.Name),
-		Username:  normalizeOptional(r.Username),
-		Email:     normalizeOptional(r.Email),
-		Locale:    normalizeOptional(r.Locale),
-		Timezone:  normalizeOptional(r.Timezone),
-		Location:  normalizeOptional(r.Location),
-		Bio:       normalizeOptional(r.Bio),
-		AvatarURL: normalizeOptional(r.AvatarURL),
+		Name:                normalizeOptional(r.Name),
+		Username:            normalizeOptional(r.Username),
+		Email:               normalizeOptional(r.Email),
+		Locale:              normalizeOptional(r.Locale),
+		Timezone:            normalizeOptional(r.Timezone),
+		Location:            normalizeOptional(r.Location),
+		Bio:                 normalizeOptional(r.Bio),
+		AvatarURL:           normalizeOptional(r.AvatarURL),
+		OnboardingCompleted: r.OnboardingCompleted,
 	}
 }
 
@@ -94,4 +98,7 @@ type UpdateUserResponse struct {
 
 	// AvatarURL returned after update.
 	AvatarURL *string `json:"avatar_url,omitempty" example:"https://example.com/avatar.png"`
+
+	// OnboardingCompleted indicates if the user has completed the onboarding flow.
+	OnboardingCompleted bool `json:"onboarding_completed" example:"true"`
 }

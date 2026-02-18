@@ -46,15 +46,16 @@ func (h *Handler) GetMe(w http.ResponseWriter, r *http.Request) {
 	span.SetStatus(codes.Ok, "user_me_success")
 
 	response := dto.UserMeResponse{
-		Name:      user.Name,
-		Username:  user.Username,
-		Email:     user.Email,
-		ID:        user.ID,
-		Locale:    user.Locale,
-		Timezone:  user.Timezone,
-		Location:  user.Location,
-		Bio:       user.Bio,
-		AvatarURL: user.AvatarURL,
+		Name:                user.Name,
+		Username:            user.Username,
+		Email:               user.Email,
+		ID:                  user.ID,
+		Locale:              user.Locale,
+		Timezone:            user.Timezone,
+		Location:            user.Location,
+		Bio:                 user.Bio,
+		AvatarURL:           user.AvatarURL,
+		OnboardingCompleted: user.OnboardingCompleted,
 	}
 
 	httpresponse.WriteSuccess(w, http.StatusOK, response, "user_me_success")
