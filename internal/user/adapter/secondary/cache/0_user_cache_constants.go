@@ -40,7 +40,8 @@ const UserExpirationDefault = 60 * time.Minute
 
 // UserCacheSchemaVersion identifies the current JSON payload schema for user cache entries.
 // Older entries without this version are treated as stale and ignored.
-const UserCacheSchemaVersion = 1
+// Version 2: Added OnboardingCompleted field
+const UserCacheSchemaVersion = 2
 
 // Key formats.
 const (

@@ -31,19 +31,20 @@ func (s *Store) SaveUser(ctx context.Context, user domain.User, expiration time.
 	}
 
 	dto := UserCacheDTO{
-		Version:   UserCacheSchemaVersion,
-		ID:        user.ID,
-		Name:      user.Name,
-		Username:  user.Username,
-		Email:     user.Email,
-		Locale:    user.Locale,
-		Timezone:  user.Timezone,
-		Location:  user.Location,
-		Bio:       user.Bio,
-		AvatarURL: user.AvatarURL,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-		DeletedAt: user.DeletedAt,
+		Version:             UserCacheSchemaVersion,
+		ID:                  user.ID,
+		Name:                user.Name,
+		Username:            user.Username,
+		Email:               user.Email,
+		Locale:              user.Locale,
+		Timezone:            user.Timezone,
+		Location:            user.Location,
+		Bio:                 user.Bio,
+		AvatarURL:           user.AvatarURL,
+		OnboardingCompleted: user.OnboardingCompleted,
+		CreatedAt:           user.CreatedAt,
+		UpdatedAt:           user.UpdatedAt,
+		DeletedAt:           user.DeletedAt,
 	}
 
 	data, err := json.Marshal(dto)
