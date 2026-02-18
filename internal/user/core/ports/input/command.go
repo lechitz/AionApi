@@ -46,14 +46,15 @@ type UploadAvatarCommand struct {
 
 // UpdateUserCommand defines a struct for updating user information.
 type UpdateUserCommand struct {
-	Name      *string
-	Username  *string
-	Email     *string
-	Locale    *string
-	Timezone  *string
-	Location  *string
-	Bio       *string
-	AvatarURL *string
+	Name                *string
+	Username            *string
+	Email               *string
+	Locale              *string
+	Timezone            *string
+	Location            *string
+	Bio                 *string
+	AvatarURL           *string
+	OnboardingCompleted *bool
 }
 
 // HasUpdates returns true if the command contains any updates.
@@ -65,5 +66,6 @@ func (u UpdateUserCommand) HasUpdates() bool {
 		u.Timezone != nil ||
 		u.Location != nil ||
 		u.Bio != nil ||
-		u.AvatarURL != nil
+		u.AvatarURL != nil ||
+		u.OnboardingCompleted != nil
 }

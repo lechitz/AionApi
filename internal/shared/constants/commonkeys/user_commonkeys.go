@@ -33,6 +33,9 @@ const (
 	// AvatarURL is the key for the user's avatar URL.
 	AvatarURL = "avatar_url"
 
+	// OnboardingCompleted is the key for the user's onboarding completion status.
+	OnboardingCompleted = "onboarding_completed"
+
 	// Role is the key for a single user's role.
 	Role = "role"
 

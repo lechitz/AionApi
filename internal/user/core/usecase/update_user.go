@@ -96,6 +96,9 @@ func buildUpdateFields(cmd input.UpdateUserCommand) map[string]interface{} {
 	if cmd.AvatarURL != nil {
 		fields[commonkeys.AvatarURL] = *cmd.AvatarURL
 	}
+	if cmd.OnboardingCompleted != nil {
+		fields[commonkeys.OnboardingCompleted] = *cmd.OnboardingCompleted
+	}
 
 	return fields
 }
