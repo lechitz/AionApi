@@ -183,8 +183,8 @@ const (
 const (
 	// SelectByUsernameColumns is the columns to select when getting a user by username.
 	// Includes optional profile fields because auth login caches this user payload.
-	SelectByUsernameColumns = "user_id, name, username, email, password, locale, timezone, location, bio, avatar_url, created_at, updated_at, deleted_at"
+	SelectByUsernameColumns = "user_id, name, username, email, password, locale, timezone, location, bio, avatar_url, onboarding_completed, created_at, updated_at, deleted_at"
 
 	// SelectListAllColumns is the columns to select when listing all users.
-	SelectListAllColumns = "user_id, name, username, email, created_at, updated_at, deleted_at"
+	SelectListAllColumns = "user_id, name, username, email, onboarding_completed, created_at, updated_at, deleted_at"
 )

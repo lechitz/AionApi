@@ -18,19 +18,20 @@ func UserFromDB(user model.UserDB) domain.User {
 	}
 
 	return domain.User{
-		ID:        user.ID,
-		Name:      user.Name,
-		Username:  user.Username,
-		Email:     user.Email,
-		Password:  user.Password,
-		Locale:    user.Locale,
-		Timezone:  user.Timezone,
-		Location:  user.Location,
-		Bio:       user.Bio,
-		AvatarURL: user.AvatarURL,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-		DeletedAt: deletedAt,
+		ID:                  user.ID,
+		Name:                user.Name,
+		Username:            user.Username,
+		Email:               user.Email,
+		Password:            user.Password,
+		Locale:              user.Locale,
+		Timezone:            user.Timezone,
+		Location:            user.Location,
+		Bio:                 user.Bio,
+		AvatarURL:           user.AvatarURL,
+		OnboardingCompleted: user.OnboardingCompleted,
+		CreatedAt:           user.CreatedAt,
+		UpdatedAt:           user.UpdatedAt,
+		DeletedAt:           deletedAt,
 	}
 }
 
@@ -50,13 +51,14 @@ func UserToDB(user domain.User) model.UserDB {
 		Email:    user.Email,
 		Password: user.Password,
 		// Roles are NOT mapped - managed separately in user_roles table
-		Locale:    user.Locale,
-		Timezone:  user.Timezone,
-		Location:  user.Location,
-		Bio:       user.Bio,
-		AvatarURL: user.AvatarURL,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-		DeletedAt: deleted,
+		Locale:              user.Locale,
+		Timezone:            user.Timezone,
+		Location:            user.Location,
+		Bio:                 user.Bio,
+		AvatarURL:           user.AvatarURL,
+		OnboardingCompleted: user.OnboardingCompleted,
+		CreatedAt:           user.CreatedAt,
+		UpdatedAt:           user.UpdatedAt,
+		DeletedAt:           deleted,
 	}
 }
