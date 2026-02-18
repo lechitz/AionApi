@@ -18,9 +18,9 @@
   \quit 1
 \endif
 
--- Create admin user 'aion'
-INSERT INTO aion_api.users (name, username, password, email)
-VALUES ('Aion Owner', 'aion', :'user_seed_password_hash', 'aion@aion.com')
+-- Create admin user 'aion' (with onboarding already completed)
+INSERT INTO aion_api.users (name, username, password, email, onboarding_completed)
+VALUES ('Aion Owner', 'aion', :'user_seed_password_hash', 'aion@aion.com', TRUE)
 ON CONFLICT (username) DO NOTHING;
 
 -- Assign 'owner' role to 'aion' user (highest privilege)

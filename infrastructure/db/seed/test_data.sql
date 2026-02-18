@@ -31,7 +31,7 @@ DELETE FROM aion_api.users WHERE user_id = 999;
 -- --------------------------------------------------------------------------
 -- Password: Test@123
 INSERT INTO aion_api.users (
-    user_id, name, username, password, email, locale, timezone, location, bio, created_at, updated_at
+    user_id, name, username, password, email, locale, timezone, location, bio, onboarding_completed, created_at, updated_at
 ) VALUES (
     999,
     'Demo User',
@@ -42,6 +42,7 @@ INSERT INTO aion_api.users (
     'America/Sao_Paulo',
     'Sao Paulo, Brasil',
     'Perfil demo: 3 meses de uso realista (50-60 registros/dia).',
+    TRUE,
     NOW(),
     NOW()
 );
