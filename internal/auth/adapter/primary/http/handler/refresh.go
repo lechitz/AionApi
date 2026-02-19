@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/lechitz/AionApi/internal/auth/adapter/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/cookies"
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
@@ -49,9 +50,14 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	cookies.SetAuthCookie(w, accessToken, h.Config.Cookie)
 	cookies.SetRefreshCookie(w, newRefreshToken, h.Config.Cookie)
 
+	// Return the new access token in the response body so frontend can update in-memory token
+	refreshResponse := dto.RefreshResponse{
+		Token: accessToken,
+	}
+
 	span.AddEvent(EventRefreshSuccess)
 	span.SetStatus(codes.Ok, StatusRefreshSuccess)
 	h.Logger.InfowCtx(ctx, MsgRefreshSuccess)
 
-	w.WriteHeader(http.StatusOK)
+	httpresponse.WriteSuccess(w, http.StatusOK, refreshResponse, MsgRefreshSuccess)
 }
