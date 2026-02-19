@@ -119,8 +119,8 @@ func (s *Service) UpdateRegistrationProfile(ctx context.Context, registrationID 
 	location := strings.TrimSpace(cmd.Location)
 	bio := strings.TrimSpace(cmd.Bio)
 
-	if locale == "" || timezone == "" || location == "" || bio == "" {
-		return domain.RegistrationSession{}, sharederrors.MissingFields(commonkeys.Locale, commonkeys.Timezone, commonkeys.Location, commonkeys.Bio)
+	if locale == "" || timezone == "" || location == "" {
+		return domain.RegistrationSession{}, sharederrors.MissingFields(commonkeys.Locale, commonkeys.Timezone, commonkeys.Location)
 	}
 	if !regexp.MustCompile(`^[a-z]{2}(-[A-Z]{2})?$`).MatchString(locale) {
 		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Locale, "invalid locale format")
@@ -143,9 +143,11 @@ func (s *Service) UpdateRegistrationProfile(ctx context.Context, registrationID 
 		commonkeys.Locale:   locale,
 		commonkeys.Timezone: timezone,
 		commonkeys.Location: location,
-		commonkeys.Bio:      bio,
 		"current_step":      2,
 		"updated_at":        time.Now().UTC(),
+	}
+	if bio != "" {
+		fields[commonkeys.Bio] = bio
 	}
 	out, err := s.registrationRepo.UpdateRegistrationSession(ctx, registrationID, fields)
 	if err != nil {
@@ -211,7 +213,7 @@ func (s *Service) CompleteRegistration(ctx context.Context, registrationID strin
 	if session.CurrentStep < 3 {
 		return domain.User{}, fmt.Errorf("%w: registration flow not completed", sharederrors.ErrDomainConflict)
 	}
-	if session.Locale == nil || session.Timezone == nil || session.Location == nil || session.Bio == nil {
+	if session.Locale == nil || session.Timezone == nil || session.Location == nil {
 		return domain.User{}, fmt.Errorf("%w: required profile fields are missing", sharederrors.ErrDomainConflict)
 	}
 
