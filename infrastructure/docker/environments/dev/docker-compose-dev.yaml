@@ -49,6 +49,12 @@ services:
     networks:
       - rede_local
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4566/_localstack/health >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.101.0
@@ -229,6 +235,8 @@ services:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      localstack:
         condition: service_healthy
       otel-collector:
         condition: service_started
