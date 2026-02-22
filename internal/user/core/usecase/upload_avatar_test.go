@@ -14,12 +14,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type noopUserRepo struct{ userOutput.UserRepository }
-type noopUserCache struct{ userOutput.UserCache }
-type noopAuthStore struct{ authOutput.AuthStore }
-type noopAuthProvider struct{ authOutput.AuthProvider }
-type noopHasher struct{ hasher.Hasher }
-type noopLogger struct{ logger.ContextLogger }
+type (
+	noopUserRepo     struct{ userOutput.UserRepository }
+	noopUserCache    struct{ userOutput.UserCache }
+	noopAuthStore    struct{ authOutput.AuthStore }
+	noopAuthProvider struct{ authOutput.AuthProvider }
+	noopHasher       struct{ hasher.Hasher }
+	noopLogger       struct{ logger.ContextLogger }
+)
 
 type mockAvatarStorage struct {
 	url string

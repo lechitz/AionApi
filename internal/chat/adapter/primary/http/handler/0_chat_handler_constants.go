@@ -68,6 +68,8 @@ const (
 const (
 	MsgChatSuccess      = "Chat processed successfully"
 	MsgChatRequestStart = "Processing chat request"
+	// MsgChatRequestIncludesUIAction indicates request includes ui_action metadata.
+	MsgChatRequestIncludesUIAction = "HTTP chat request includes UI action"
 )
 
 // Validation constraints.
@@ -258,4 +260,15 @@ const (
 	LogKeyResponse = "response"
 	// LogKeyAudioSize is the log key for audio file size.
 	LogKeyAudioSize = "audio_size"
+	// LogKeyUIActionType is the log key for ui action type.
+	LogKeyUIActionType = "ui_action_type"
+	// LogKeyDraftID is the log key for draft identifier.
+	LogKeyDraftID = "draft_id"
+)
+
+// Context payload keys for chat request metadata.
+const (
+	ContextKeyUIAction     = "ui_action"
+	ContextKeyUIActionType = "type"
+	ContextKeyDraftID      = "draft_id"
 )

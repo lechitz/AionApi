@@ -9,6 +9,7 @@ import (
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 )
 
+// ListMetricDefinitions returns active metric definitions for a user with all tag bindings.
 func (r *RecordRepository) ListMetricDefinitions(ctx context.Context, userID uint64) ([]domain.MetricDefinition, error) {
 	var rows []model.MetricDefinition
 	if err := r.db.WithContext(ctx).
@@ -56,6 +57,7 @@ func (r *RecordRepository) ListMetricDefinitions(ctx context.Context, userID uin
 	return out, nil
 }
 
+// UpsertMetricDefinition creates or updates a metric definition and syncs tag bindings.
 func (r *RecordRepository) UpsertMetricDefinition(ctx context.Context, definition domain.MetricDefinition) (domain.MetricDefinition, error) {
 	row := mapper.MetricDefinitionToDB(definition)
 	err := r.db.WithContext(ctx).Transaction(func(tx dbport.DB) error {
@@ -125,6 +127,7 @@ func (r *RecordRepository) syncMetricDefinitionTagBindings(ctx context.Context, 
 	return tx.WithContext(ctx).Create(&toInsert).Error()
 }
 
+// ListGoalTemplates returns active goal templates for a user.
 func (r *RecordRepository) ListGoalTemplates(ctx context.Context, userID uint64) ([]domain.GoalTemplate, error) {
 	var rows []model.GoalTemplate
 	if err := r.db.WithContext(ctx).
@@ -141,6 +144,7 @@ func (r *RecordRepository) ListGoalTemplates(ctx context.Context, userID uint64)
 	return out, nil
 }
 
+// UpsertGoalTemplate creates or updates a goal template.
 func (r *RecordRepository) UpsertGoalTemplate(ctx context.Context, template domain.GoalTemplate) (domain.GoalTemplate, error) {
 	row := mapper.GoalTemplateToDB(template)
 	if row.ID != 0 {
@@ -171,6 +175,7 @@ func (r *RecordRepository) UpsertGoalTemplate(ctx context.Context, template doma
 	return mapper.GoalTemplateFromDB(row), nil
 }
 
+// DeleteGoalTemplate performs a soft delete by marking the goal template inactive.
 func (r *RecordRepository) DeleteGoalTemplate(ctx context.Context, userID uint64, goalTemplateID uint64) error {
 	return r.db.WithContext(ctx).
 		Model(&model.GoalTemplate{}).

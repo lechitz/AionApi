@@ -1,5 +1,12 @@
 basePath: /api/v1
 definitions:
+  dto.ChatCancelResponse:
+    properties:
+      cancelled:
+        type: boolean
+      message:
+        type: string
+    type: object
   dto.ChatRequest:
     properties:
       context:
@@ -274,6 +281,11 @@ definitions:
           Example: "Alice Doe"
         example: Alice Doe
         type: string
+      onboarding_completed:
+        description: OnboardingCompleted indicates if the user has completed the onboarding
+          flow.
+        example: true
+        type: boolean
       timezone:
         description: Timezone is the optional timezone (IANA).
         example: America/Sao_Paulo
@@ -315,6 +327,11 @@ definitions:
           Example: "Alice Doe"
         example: Alice Doe
         type: string
+      onboarding_completed:
+        description: OnboardingCompleted indicates if the user has completed the onboarding
+          flow.
+        example: true
+        type: boolean
       timezone:
         description: Timezone returned after update.
         example: America/Sao_Paulo
@@ -390,6 +407,15 @@ definitions:
           Example: "alice"
         example: alice
         type: string
+    type: object
+  dto.UploadAvatarResponse:
+    properties:
+      avatar_url:
+        type: string
+      content_type:
+        type: string
+      size_bytes:
+        type: integer
     type: object
 info:
   contact:
@@ -789,6 +815,37 @@ paths:
       summary: Send voice chat message
       tags:
       - ChatText
+  /chat/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Cancels ongoing AI processing for the current authenticated user.
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cancellation status
+          schema:
+            $ref: '#/definitions/dto.ChatCancelResponse'
+        "401":
+          description: Unauthorized - missing or invalid token
+          schema:
+            type: string
+        "503":
+          description: Service unavailable - AI service is down
+          schema:
+            type: string
+      security:
+      - BearerAuth.: []
+      summary: Cancel active chat processing
+      tags:
+      - ChatText
   /chat/text:
     post:
       consumes:
@@ -970,6 +1027,36 @@ paths:
       - BearerAuth: []
       - CookieAuth: []
       summary: List all users
+      tags:
+      - Users
+  /user/avatar/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads an avatar image (PNG/JPEG/WEBP) and returns a URL payload
+        suitable for user create/update.
+      parameters:
+      - description: Avatar image file
+        in: formData
+        name: avatar
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UploadAvatarResponse'
+        "400":
+          description: Invalid file or validation error
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Upload user avatar
       tags:
       - Users
   /user/create:

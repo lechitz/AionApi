@@ -24,6 +24,15 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 	)
 
 	s.logger.InfowCtx(ctx, LogProcessingChatMessage, LogKeyUserID, userID, LogKeyMessageLength, len(message))
+	if uiActionType, draftID := extractUIActionMetadata(requestContext); uiActionType != "" {
+		s.logger.InfowCtx(
+			ctx,
+			LogChatRequestIncludesUIAction,
+			LogKeyUserID, userID,
+			LogKeyUIActionType, uiActionType,
+			LogKeyDraftID, draftID,
+		)
+	}
 
 	// Fetch recent conversation history from cache (6 messages = 3 exchanges for context)
 	const historyLimit = 6
@@ -69,6 +78,19 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 	go s.saveChatInteraction(context.Background(), userID, message, resp.Response, resp.TokensUsed, resp.FunctionCalls)
 
 	return result, nil
+}
+
+func extractUIActionMetadata(requestContext map[string]interface{}) (string, string) {
+	if requestContext == nil {
+		return "", ""
+	}
+	uiAction, ok := requestContext[ContextKeyUIAction].(map[string]interface{})
+	if !ok || uiAction == nil {
+		return "", ""
+	}
+	actionType, _ := uiAction[ContextKeyUIActionType].(string)
+	draftID, _ := uiAction[ContextKeyDraftID].(string)
+	return actionType, draftID
 }
 
 // convertSources converts the sources from the internal response to domain format.

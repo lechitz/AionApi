@@ -11,6 +11,7 @@ import (
 	"github.com/lechitz/AionApi/internal/record/core/ports/input"
 )
 
+// ListDashboardViews lists all user dashboard views, creating defaults when empty.
 func (s *Service) ListDashboardViews(ctx context.Context, userID uint64) ([]domain.DashboardView, error) {
 	if userID == 0 {
 		return nil, ErrUserIDIsRequired
@@ -18,16 +19,18 @@ func (s *Service) ListDashboardViews(ctx context.Context, userID uint64) ([]doma
 	return s.ensureDashboardViews(ctx, userID)
 }
 
+// GetDashboardView retrieves one dashboard view by ID.
 func (s *Service) GetDashboardView(ctx context.Context, userID uint64, viewID uint64) (domain.DashboardView, error) {
 	if userID == 0 {
 		return domain.DashboardView{}, ErrUserIDIsRequired
 	}
 	if viewID == 0 {
-		return domain.DashboardView{}, errors.New("viewID is required")
+		return domain.DashboardView{}, errors.New(ErrDashboardViewIDRequired)
 	}
 	return s.RecordRepository.GetDashboardView(ctx, userID, viewID)
 }
 
+// CreateDashboardView creates a new dashboard view.
 func (s *Service) CreateDashboardView(ctx context.Context, userID uint64, cmd input.CreateDashboardViewCommand) (domain.DashboardView, error) {
 	if userID == 0 {
 		return domain.DashboardView{}, ErrUserIDIsRequired
@@ -35,7 +38,7 @@ func (s *Service) CreateDashboardView(ctx context.Context, userID uint64, cmd in
 
 	name := strings.TrimSpace(cmd.Name)
 	if name == "" {
-		name = "Meu Dashboard"
+		name = DefaultDashboardViewName
 	}
 	isDefault := cmd.IsDefault != nil && *cmd.IsDefault
 
@@ -54,25 +57,27 @@ func (s *Service) CreateDashboardView(ctx context.Context, userID uint64, cmd in
 	return view, nil
 }
 
+// SetDefaultDashboardView sets the user's default dashboard view.
 func (s *Service) SetDefaultDashboardView(ctx context.Context, userID uint64, viewID uint64) (domain.DashboardView, error) {
 	if userID == 0 {
 		return domain.DashboardView{}, ErrUserIDIsRequired
 	}
 	if viewID == 0 {
-		return domain.DashboardView{}, errors.New("viewID is required")
+		return domain.DashboardView{}, errors.New(ErrDashboardViewIDRequired)
 	}
 	return s.RecordRepository.SetDefaultDashboardView(ctx, userID, viewID)
 }
 
+// UpsertDashboardWidget creates or updates a dashboard widget.
 func (s *Service) UpsertDashboardWidget(ctx context.Context, userID uint64, cmd input.UpsertDashboardWidgetCommand) (domain.DashboardWidget, error) {
 	if userID == 0 {
 		return domain.DashboardWidget{}, ErrUserIDIsRequired
 	}
 	if cmd.ViewID == 0 {
-		return domain.DashboardWidget{}, errors.New("viewID is required")
+		return domain.DashboardWidget{}, errors.New(ErrDashboardViewIDRequired)
 	}
 	if cmd.MetricDefinitionID == 0 {
-		return domain.DashboardWidget{}, errors.New("metricDefinitionID is required")
+		return domain.DashboardWidget{}, errors.New(ErrDashboardMetricDefinitionIDRequired)
 	}
 
 	widgetType := normalizeWidgetType(cmd.WidgetType)
@@ -88,11 +93,11 @@ func (s *Service) UpsertDashboardWidget(ctx context.Context, userID uint64, cmd 
 			return domain.DashboardWidget{}, err
 		}
 		if countLarge >= domain.MaxLargeWidgetsPerDashboard {
-			return domain.DashboardWidget{}, fmt.Errorf("limit reached: max %d large widgets", domain.MaxLargeWidgetsPerDashboard)
+			return domain.DashboardWidget{}, fmt.Errorf(ErrDashboardLimitLargeWidgets, domain.MaxLargeWidgetsPerDashboard)
 		}
 	}
 
-	orderIndex := 0
+	var orderIndex int
 	if cmd.OrderIndex != nil {
 		orderIndex = *cmd.OrderIndex
 	} else {
@@ -120,7 +125,7 @@ func (s *Service) UpsertDashboardWidget(ctx context.Context, userID uint64, cmd 
 		IsActive:           isActive,
 	}
 	if widget.ConfigJSON == "" {
-		widget.ConfigJSON = "{}"
+		widget.ConfigJSON = DefaultDashboardConfigJSON
 	}
 	if cmd.ID != nil {
 		widget.ID = *cmd.ID
@@ -129,21 +134,22 @@ func (s *Service) UpsertDashboardWidget(ctx context.Context, userID uint64, cmd 
 	return s.RecordRepository.UpsertDashboardWidget(ctx, widget)
 }
 
+// ReorderDashboardWidgets updates ordering for dashboard widgets in a view.
 func (s *Service) ReorderDashboardWidgets(ctx context.Context, userID uint64, cmd input.ReorderDashboardWidgetsCommand) ([]domain.DashboardWidget, error) {
 	if userID == 0 {
 		return nil, ErrUserIDIsRequired
 	}
 	if cmd.ViewID == 0 {
-		return nil, errors.New("viewID is required")
+		return nil, errors.New(ErrDashboardViewIDRequired)
 	}
 	if len(cmd.Items) == 0 {
-		return nil, errors.New("items are required")
+		return nil, errors.New(ErrDashboardItemsRequired)
 	}
 
 	items := make([]domain.DashboardWidget, 0, len(cmd.Items))
 	for _, item := range cmd.Items {
 		if item.WidgetID == 0 {
-			return nil, errors.New("widgetID is required")
+			return nil, errors.New(ErrDashboardWidgetIDRequired)
 		}
 		items = append(items, domain.DashboardWidget{
 			ID:         item.WidgetID,
@@ -155,16 +161,18 @@ func (s *Service) ReorderDashboardWidgets(ctx context.Context, userID uint64, cm
 	return s.RecordRepository.ReorderDashboardWidgets(ctx, userID, cmd.ViewID, items)
 }
 
+// DeleteDashboardWidget disables a dashboard widget.
 func (s *Service) DeleteDashboardWidget(ctx context.Context, userID uint64, widgetID uint64) error {
 	if userID == 0 {
 		return ErrUserIDIsRequired
 	}
 	if widgetID == 0 {
-		return errors.New("widgetID is required")
+		return errors.New(ErrDashboardWidgetIDRequired)
 	}
 	return s.RecordRepository.DeleteDashboardWidget(ctx, userID, widgetID)
 }
 
+// CreateMetricAndWidget creates/updates a metric definition and then creates/updates its widget.
 func (s *Service) CreateMetricAndWidget(ctx context.Context, userID uint64, cmd input.CreateMetricAndWidgetCommand) (domain.DashboardWidget, error) {
 	metric, err := s.UpsertMetricDefinition(ctx, userID, cmd.Metric)
 	if err != nil {
@@ -178,15 +186,16 @@ func (s *Service) CreateMetricAndWidget(ctx context.Context, userID uint64, cmd 
 	return s.UpsertDashboardWidget(ctx, userID, widgetCmd)
 }
 
+// SuggestMetricDefinitions proposes deterministic metric definitions from user tags.
 func (s *Service) SuggestMetricDefinitions(ctx context.Context, userID uint64, limit int) ([]domain.MetricDefinitionSuggestion, error) {
 	if userID == 0 {
 		return nil, ErrUserIDIsRequired
 	}
 	if limit <= 0 {
-		limit = 8
+		limit = DefaultDashboardSuggestionsLimit
 	}
-	if limit > 20 {
-		limit = 20
+	if limit > MaxDashboardSuggestionsLimit {
+		limit = MaxDashboardSuggestionsLimit
 	}
 
 	// Deterministic suggestions from existing active tags.
@@ -218,10 +227,10 @@ func (s *Service) SuggestMetricDefinitions(ctx context.Context, userID uint64, l
 			DisplayName: strings.TrimSpace(tag.Name),
 			CategoryID:  &tag.CategoryID,
 			TagIDs:      []uint64{tagID},
-			ValueSource: "count",
-			Aggregation: "sum",
-			Unit:        "count",
-			Reason:      "Baseado em tags existentes da sua taxonomia.",
+			ValueSource: DashboardValueSourceCount,
+			Aggregation: DashboardAggregationSum,
+			Unit:        DashboardUnitCount,
+			Reason:      DashboardSuggestionReasonTaxonomy,
 		})
 	}
 	return out, nil
@@ -238,7 +247,7 @@ func (s *Service) ensureDashboardViews(ctx context.Context, userID uint64) ([]do
 
 	defaultView, err := s.RecordRepository.CreateDashboardView(ctx, domain.DashboardView{
 		UserID:    userID,
-		Name:      "Principal",
+		Name:      FallbackDashboardViewName,
 		IsDefault: true,
 	})
 	if err != nil {
@@ -283,12 +292,12 @@ func slugMetricKey(v string) string {
 		return ""
 	}
 	replacer := strings.NewReplacer(
-		" ", "_",
-		"-", "_",
-		"/", "_",
-		"(", "",
-		")", "",
+		DashboardSlugSpace, DashboardSlugUnderscore,
+		DashboardSlugHyphen, DashboardSlugUnderscore,
+		DashboardSlugSlash, DashboardSlugUnderscore,
+		DashboardSlugLeftParenthesis, "",
+		DashboardSlugRightParenthesis, "",
 	)
 	v = replacer.Replace(v)
-	return strings.Trim(v, "_")
+	return strings.Trim(v, DashboardSlugUnderscore)
 }

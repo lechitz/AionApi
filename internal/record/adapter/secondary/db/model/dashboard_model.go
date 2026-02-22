@@ -19,6 +19,7 @@ type MetricDefinition struct {
 	UpdatedAt   time.Time `gorm:"column:updated_at;not null"`
 }
 
+// TableName returns the database table name for MetricDefinition.
 func (MetricDefinition) TableName() string {
 	return "aion_api.metric_definitions"
 }
@@ -32,6 +33,7 @@ type MetricDefinitionTagBinding struct {
 	CreatedAt          time.Time `gorm:"column:created_at;not null"`
 }
 
+// TableName returns the database table name for MetricDefinitionTagBinding.
 func (MetricDefinitionTagBinding) TableName() string {
 	return "aion_api.metric_definition_tag_bindings"
 }
@@ -50,6 +52,7 @@ type GoalTemplate struct {
 	UpdatedAt   time.Time `gorm:"column:updated_at;not null"`
 }
 
+// TableName returns the database table name for GoalTemplate.
 func (GoalTemplate) TableName() string {
 	return "aion_api.goal_templates"
 }
@@ -64,6 +67,7 @@ type DashboardView struct {
 	UpdatedAt time.Time `gorm:"column:updated_at;not null"`
 }
 
+// TableName returns the database table name for DashboardView.
 func (DashboardView) TableName() string {
 	return "aion_api.dashboard_views"
 }
@@ -84,6 +88,7 @@ type DashboardWidget struct {
 	UpdatedAt          time.Time `gorm:"column:updated_at;not null"`
 }
 
+// TableName returns the database table name for DashboardWidget.
 func (DashboardWidget) TableName() string {
 	return "aion_api.dashboard_widgets"
 }

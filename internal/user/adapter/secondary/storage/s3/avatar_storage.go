@@ -1,3 +1,4 @@
+// Package s3 provides the S3-backed avatar storage adapter for the user context.
 package s3
 
 import (

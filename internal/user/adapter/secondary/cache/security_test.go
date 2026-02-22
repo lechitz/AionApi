@@ -17,7 +17,7 @@ import (
 // SECURITY TEST: Critical - ensures password hashes are never cached.
 func TestUserCacheDTO_NoPasswordHash(t *testing.T) {
 	dto := cache.UserCacheDTO{
-		Version:   1,
+		Version:   cache.UserCacheSchemaVersion,
 		ID:        123,
 		Name:      "Test User",
 		Username:  "testuser",
@@ -102,7 +102,7 @@ func TestGetUser_NeverHasPasswordHash(t *testing.T) {
 	mockLogger := &mockLogger{}
 
 	userData := `{
-		"version": 1,
+		"version": 2,
 		"id": 789,
 		"name": "Cached User",
 		"username": "cacheduser",

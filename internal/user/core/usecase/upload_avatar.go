@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,12 +23,6 @@ const (
 	maxAvatarUploadSize = int64(20 << 20) // 20MB
 )
 
-var allowedAvatarContentTypes = map[string]struct{}{
-	"image/png":  {},
-	"image/jpeg": {},
-	"image/webp": {},
-}
-
 // UploadAvatar validates avatar payload, stores it using configured avatar storage, and returns a public avatar URL.
 func (s *Service) UploadAvatar(ctx context.Context, cmd input.UploadAvatarCommand) (string, string, int64, error) {
 	tracer := otel.Tracer(TracerName)
@@ -35,29 +30,29 @@ func (s *Service) UploadAvatar(ctx context.Context, cmd input.UploadAvatarComman
 	defer span.End()
 
 	if s.avatarStorage == nil {
-		return "", "", 0, fmt.Errorf("avatar storage not configured")
+		return "", "", 0, errors.New(errAvatarStorageNotConfigured)
 	}
 
 	if cmd.File == nil {
-		return "", "", 0, sharederrors.NewValidationError("avatar", "avatar file is required")
+		return "", "", 0, sharederrors.NewValidationError(fieldAvatar, errAvatarFileRequired)
 	}
 
 	contentType := strings.ToLower(strings.TrimSpace(cmd.ContentType))
-	if idx := strings.Index(contentType, ";"); idx >= 0 {
+	if idx := strings.Index(contentType, contentTypeParamSeparator); idx >= 0 {
 		contentType = strings.TrimSpace(contentType[:idx])
 	}
 
 	if contentType != "" {
-		if _, ok := allowedAvatarContentTypes[contentType]; !ok {
-			return "", "", 0, sharederrors.NewValidationError("avatar", "unsupported image type (allowed: PNG, JPEG, WEBP)")
+		if !isAllowedAvatarContentType(contentType) {
+			return "", "", 0, sharederrors.NewValidationError(fieldAvatar, errAvatarUnsupportedType)
 		}
 	}
 
 	if cmd.SizeBytes <= 0 {
-		return "", "", 0, sharederrors.NewValidationError("avatar", "empty avatar file")
+		return "", "", 0, sharederrors.NewValidationError(fieldAvatar, errAvatarEmptyFile)
 	}
 	if cmd.SizeBytes > maxAvatarUploadSize {
-		return "", "", 0, sharederrors.NewValidationError("avatar", fmt.Sprintf("avatar too large (max %d bytes)", maxAvatarUploadSize))
+		return "", "", 0, sharederrors.NewValidationError(fieldAvatar, fmt.Sprintf(errAvatarTooLarge, maxAvatarUploadSize))
 	}
 
 	payload, err := io.ReadAll(io.LimitReader(cmd.File, maxAvatarUploadSize+1))
@@ -66,15 +61,15 @@ func (s *Service) UploadAvatar(ctx context.Context, cmd input.UploadAvatarComman
 		return "", "", 0, err
 	}
 	if int64(len(payload)) == 0 {
-		return "", "", 0, sharederrors.NewValidationError("avatar", "empty avatar file")
+		return "", "", 0, sharederrors.NewValidationError(fieldAvatar, errAvatarEmptyFile)
 	}
 	if int64(len(payload)) > maxAvatarUploadSize {
-		return "", "", 0, sharederrors.NewValidationError("avatar", fmt.Sprintf("avatar too large (max %d bytes)", maxAvatarUploadSize))
+		return "", "", 0, sharederrors.NewValidationError(fieldAvatar, fmt.Sprintf(errAvatarTooLarge, maxAvatarUploadSize))
 	}
 
 	detectedType := http.DetectContentType(payload)
-	if _, ok := allowedAvatarContentTypes[detectedType]; !ok {
-		return "", "", 0, sharederrors.NewValidationError("avatar", "invalid image content")
+	if !isAllowedAvatarContentType(detectedType) {
+		return "", "", 0, sharederrors.NewValidationError(fieldAvatar, errAvatarInvalidContent)
 	}
 
 	objectKey := buildAvatarObjectKey(cmd.Filename, detectedType)
@@ -97,25 +92,34 @@ func (s *Service) UploadAvatar(ctx context.Context, cmd input.UploadAvatarComman
 	return url, detectedType, int64(len(payload)), nil
 }
 
+func isAllowedAvatarContentType(contentType string) bool {
+	switch contentType {
+	case contentTypeImagePNG, contentTypeImageJPEG, contentTypeImageWEBP:
+		return true
+	default:
+		return false
+	}
+}
+
 func buildAvatarObjectKey(filename, contentType string) string {
 	ext := contentTypeToExt(contentType)
 	if ext == "" {
 		ext = filepath.Ext(filename)
 	}
 	if ext == "" {
-		ext = ".img"
+		ext = defaultAvatarFallbackExt
 	}
 	return strconv.FormatInt(time.Now().UTC().UnixNano(), 10) + ext
 }
 
 func contentTypeToExt(contentType string) string {
 	switch contentType {
-	case "image/png":
-		return ".png"
-	case "image/jpeg":
-		return ".jpg"
-	case "image/webp":
-		return ".webp"
+	case contentTypeImagePNG:
+		return extPNG
+	case contentTypeImageJPEG:
+		return extJPEG
+	case contentTypeImageWEBP:
+		return extWEBP
 	default:
 		return ""
 	}

@@ -37,21 +37,44 @@ func (m *mockUserService) StartRegistration(ctx context.Context, cmd userinput.S
 	if m.startRegistrationFn != nil {
 		return m.startRegistrationFn(ctx, cmd)
 	}
-	return userdomain.RegistrationSession{RegistrationID: "reg-1", CurrentStep: 1, Status: userdomain.RegistrationStatusPending, ExpiresAt: time.Now().Add(2 * time.Hour)}, nil
+	return userdomain.RegistrationSession{
+		RegistrationID: "reg-1",
+		CurrentStep:    1,
+		Status:         userdomain.RegistrationStatusPending,
+		ExpiresAt:      time.Now().Add(2 * time.Hour),
+	}, nil
 }
 
-func (m *mockUserService) UpdateRegistrationProfile(ctx context.Context, registrationID string, cmd userinput.UpdateRegistrationProfileCommand) (userdomain.RegistrationSession, error) {
+func (m *mockUserService) UpdateRegistrationProfile(
+	ctx context.Context,
+	registrationID string,
+	cmd userinput.UpdateRegistrationProfileCommand,
+) (userdomain.RegistrationSession, error) {
 	if m.updateRegistrationProfileFn != nil {
 		return m.updateRegistrationProfileFn(ctx, registrationID, cmd)
 	}
-	return userdomain.RegistrationSession{RegistrationID: registrationID, CurrentStep: 2, Status: userdomain.RegistrationStatusPending, ExpiresAt: time.Now().Add(2 * time.Hour)}, nil
+	return userdomain.RegistrationSession{
+		RegistrationID: registrationID,
+		CurrentStep:    2,
+		Status:         userdomain.RegistrationStatusPending,
+		ExpiresAt:      time.Now().Add(2 * time.Hour),
+	}, nil
 }
 
-func (m *mockUserService) UpdateRegistrationAvatar(ctx context.Context, registrationID string, cmd userinput.UpdateRegistrationAvatarCommand) (userdomain.RegistrationSession, error) {
+func (m *mockUserService) UpdateRegistrationAvatar(
+	ctx context.Context,
+	registrationID string,
+	cmd userinput.UpdateRegistrationAvatarCommand,
+) (userdomain.RegistrationSession, error) {
 	if m.updateRegistrationAvatarFn != nil {
 		return m.updateRegistrationAvatarFn(ctx, registrationID, cmd)
 	}
-	return userdomain.RegistrationSession{RegistrationID: registrationID, CurrentStep: 3, Status: userdomain.RegistrationStatusPending, ExpiresAt: time.Now().Add(2 * time.Hour)}, nil
+	return userdomain.RegistrationSession{
+		RegistrationID: registrationID,
+		CurrentStep:    3,
+		Status:         userdomain.RegistrationStatusPending,
+		ExpiresAt:      time.Now().Add(2 * time.Hour),
+	}, nil
 }
 
 func (m *mockUserService) CompleteRegistration(ctx context.Context, registrationID string) (userdomain.User, error) {

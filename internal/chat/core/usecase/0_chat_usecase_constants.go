@@ -88,6 +88,8 @@ const (
 	LogGettingChatContext = "Getting chat context"
 	// LogChatContextRetrieved is the log message for successfully retrieved chat context.
 	LogChatContextRetrieved = "Chat context retrieved successfully"
+	// LogChatRequestIncludesUIAction is the log message when chat request carries ui_action metadata.
+	LogChatRequestIncludesUIAction = "Chat request contains UI action metadata"
 )
 
 // Log keys.
@@ -102,6 +104,10 @@ const (
 	LogKeyResponseLength = "response_length"
 	// LogKeyError is the log key for error.
 	LogKeyError = "error"
+	// LogKeyUIActionType is the log key for ui action type.
+	LogKeyUIActionType = "ui_action_type"
+	// LogKeyDraftID is the log key for draft identifier.
+	LogKeyDraftID = "draft_id"
 )
 
 // Context keys.
@@ -110,6 +116,12 @@ const (
 	ContextKeyTimezone = "timezone"
 	// ContextKeyUserTimezone is the canonical context key for timezone sent to aion-chat.
 	ContextKeyUserTimezone = "user_timezone"
+	// ContextKeyUIAction is the context key for ui actions sent by dashboard/chat clients.
+	ContextKeyUIAction = "ui_action"
+	// ContextKeyUIActionType is the nested key for ui action type.
+	ContextKeyUIActionType = "type"
+	// ContextKeyDraftID is the nested key for draft identifier.
+	ContextKeyDraftID = "draft_id"
 	// DefaultTimezone is the default timezone value.
 	DefaultTimezone = "America/Sao_Paulo"
 )

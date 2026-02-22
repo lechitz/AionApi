@@ -67,6 +67,12 @@ const (
 	AttrTokensUsed = "aion.chat.tokens_used"
 	// AttrResponseLength is the attribute key for the response length.
 	AttrResponseLength = "aion.chat.response_length"
+	// AttrResponseLengthShort is the log key for response length.
+	AttrResponseLengthShort = "response_length"
+	// AttrStatusCode is the log key for status code.
+	AttrStatusCode = "status_code"
+	// AttrBody is the log key for response body.
+	AttrBody = "body"
 )
 
 // =============================================================================
@@ -97,10 +103,20 @@ const (
 	ErrFailedUnmarshal = "failed to unmarshal response"
 	// ErrAionChatRequestFailed indicates that the request to Aion-Chat service failed.
 	ErrAionChatRequestFailed = "aion-chat request failed"
+	// MsgAionChatRequestCancelled indicates the request was cancelled by client.
+	MsgAionChatRequestCancelled = "aion-chat request cancelled"
 )
 
 // Status descriptions.
 const (
 	// StatusMessageSent indicates that the message was sent successfully.
 	StatusMessageSent = "message_sent"
+	// StatusRequestCancelled indicates request was cancelled by client.
+	StatusRequestCancelled = "request_cancelled"
+)
+
+// HTTP status codes used by Aion-Chat integration.
+const (
+	// StatusCodeClientClosedRequest is non-standard 499 used for client cancellations.
+	StatusCodeClientClosedRequest = 499
 )

@@ -5,6 +5,7 @@ import (
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 )
 
+// MetricDefinitionFromDB maps a DB metric definition row into the core domain model.
 func MetricDefinitionFromDB(in dbmodel.MetricDefinition) domain.MetricDefinition {
 	return domain.MetricDefinition{
 		ID:          in.ID,
@@ -24,6 +25,7 @@ func MetricDefinitionFromDB(in dbmodel.MetricDefinition) domain.MetricDefinition
 	}
 }
 
+// MetricDefinitionToDB maps a core metric definition into the DB persistence model.
 func MetricDefinitionToDB(in domain.MetricDefinition) dbmodel.MetricDefinition {
 	return dbmodel.MetricDefinition{
 		ID:          in.ID,
@@ -40,6 +42,7 @@ func MetricDefinitionToDB(in domain.MetricDefinition) dbmodel.MetricDefinition {
 	}
 }
 
+// GoalTemplateFromDB maps a DB goal template row into the core domain model.
 func GoalTemplateFromDB(in dbmodel.GoalTemplate) domain.GoalTemplate {
 	return domain.GoalTemplate{
 		ID:          in.ID,
@@ -55,6 +58,7 @@ func GoalTemplateFromDB(in dbmodel.GoalTemplate) domain.GoalTemplate {
 	}
 }
 
+// GoalTemplateToDB maps a core goal template into the DB persistence model.
 func GoalTemplateToDB(in domain.GoalTemplate) dbmodel.GoalTemplate {
 	return dbmodel.GoalTemplate{
 		ID:          in.ID,
@@ -68,6 +72,7 @@ func GoalTemplateToDB(in domain.GoalTemplate) dbmodel.GoalTemplate {
 	}
 }
 
+// DashboardViewFromDB maps a DB dashboard view row into the core domain model.
 func DashboardViewFromDB(in dbmodel.DashboardView) domain.DashboardView {
 	return domain.DashboardView{
 		ID:        in.ID,
@@ -79,6 +84,7 @@ func DashboardViewFromDB(in dbmodel.DashboardView) domain.DashboardView {
 	}
 }
 
+// DashboardViewToDB maps a core dashboard view into the DB persistence model.
 func DashboardViewToDB(in domain.DashboardView) dbmodel.DashboardView {
 	return dbmodel.DashboardView{
 		ID:        in.ID,
@@ -88,6 +94,7 @@ func DashboardViewToDB(in domain.DashboardView) dbmodel.DashboardView {
 	}
 }
 
+// DashboardWidgetFromDB maps a DB dashboard widget row into the core domain model.
 func DashboardWidgetFromDB(in dbmodel.DashboardWidget) domain.DashboardWidget {
 	return domain.DashboardWidget{
 		ID:                 in.ID,
@@ -105,6 +112,7 @@ func DashboardWidgetFromDB(in dbmodel.DashboardWidget) domain.DashboardWidget {
 	}
 }
 
+// DashboardWidgetToDB maps a core dashboard widget into the DB persistence model.
 func DashboardWidgetToDB(in domain.DashboardWidget) dbmodel.DashboardWidget {
 	return dbmodel.DashboardWidget{
 		ID:                 in.ID,

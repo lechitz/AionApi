@@ -6,10 +6,14 @@ import "time"
 type RegistrationSessionStatus string
 
 const (
-	RegistrationStatusPending   RegistrationSessionStatus = "pending"
+	// RegistrationStatusPending indicates a session waiting for completion.
+	RegistrationStatusPending RegistrationSessionStatus = "pending"
+	// RegistrationStatusCompleted indicates a session successfully completed.
 	RegistrationStatusCompleted RegistrationSessionStatus = "completed"
-	RegistrationStatusExpired   RegistrationSessionStatus = "expired"
-	RegistrationStatusCanceled  RegistrationSessionStatus = "canceled"
+	// RegistrationStatusExpired indicates a session expired before completion.
+	RegistrationStatusExpired RegistrationSessionStatus = "expired"
+	// RegistrationStatusCanceled indicates a session canceled by user/system action.
+	RegistrationStatusCanceled RegistrationSessionStatus = "canceled"
 )
 
 // RegistrationSession stores the in-progress multi-step public registration flow.

@@ -64,6 +64,7 @@ type DashboardSnapshot struct {
 	Goals    []DashboardGoalValue
 }
 
+// Dashboard widget supported sizes.
 const (
 	DashboardWidgetSizeSmall  = "small"
 	DashboardWidgetSizeMedium = "medium"
@@ -75,6 +76,7 @@ const (
 	DashboardWidgetTypeChecklist    = "checklist"
 )
 
+// MaxLargeWidgetsPerDashboard limits how many large widgets can exist per view.
 const (
 	MaxLargeWidgetsPerDashboard = 3
 )

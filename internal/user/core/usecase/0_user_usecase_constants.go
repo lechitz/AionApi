@@ -190,6 +190,73 @@ const (
 )
 
 // =============================================================================
+// REGISTRATION FLOW - keys, spans, statuses and validation messages
+// =============================================================================
+
+const (
+	spanStartRegistration         = "user.registration.start"
+	spanUpdateRegistrationProfile = "user.registration.update_profile"
+	spanUpdateRegistrationAvatar  = "user.registration.update_avatar"
+	spanCompleteRegistration      = "user.registration.complete"
+)
+
+const (
+	attrRegistrationID      = "registration_id"
+	attrCurrentStep         = "current_step"
+	attrUpdatedAt           = "updated_at"
+	fieldRegistrationID     = "registration_id"
+	fieldAvatar             = "avatar"
+	defaultRegistrationStep = 1
+	profileRegistrationStep = 2
+	avatarRegistrationStep  = 3
+)
+
+const (
+	statusRegistrationStarted        = "registration_started"
+	statusRegistrationProfileUpdated = "registration_profile_updated"
+	statusRegistrationAvatarUpdated  = "registration_avatar_updated"
+	statusRegistrationCompleted      = "registration_completed"
+)
+
+const (
+	errRegistrationRepoNotConfigured       = "registration repository not configured"
+	errPasswordMinLength                   = "password must be at least 8 characters"
+	errInvalidEmailFormat                  = "invalid email format"
+	errInvalidLocaleFormat                 = "invalid locale format"
+	errTimezoneTooLong                     = "timezone must be up to 64 characters"
+	errLocationTooLong                     = "location must be up to 255 characters"
+	errBioTooLong                          = "bio must be up to 1000 characters"
+	errInvalidRegistrationStep             = "invalid registration step"
+	errProfileStepMustBeCompleted          = "profile step must be completed before avatar step"
+	errAvatarURLInvalid                    = "avatar_url must be a valid URL"
+	errRegistrationFlowNotCompleted        = "registration flow not completed"
+	errRegistrationRequiredFieldsMissing   = "required profile fields are missing"
+	errRegistrationSessionNotPending       = "registration session is not pending"
+	errRegistrationSessionExpired          = "registration session expired"
+	errRegistrationIDRequired              = "registration_id is required"
+	errRegistrationSessionNotFound         = "registration session not found"
+	warnDeleteCompletedRegistrationSession = "failed to delete completed registration session"
+)
+
+// Upload avatar flow constants.
+const (
+	errAvatarStorageNotConfigured = "avatar storage not configured"
+	errAvatarFileRequired         = "avatar file is required"
+	errAvatarUnsupportedType      = "unsupported image type (allowed: PNG, JPEG, WEBP)"
+	errAvatarEmptyFile            = "empty avatar file"
+	errAvatarTooLarge             = "avatar too large (max %d bytes)"
+	errAvatarInvalidContent       = "invalid image content"
+	contentTypeImagePNG           = "image/png"
+	contentTypeImageJPEG          = "image/jpeg"
+	contentTypeImageWEBP          = "image/webp"
+	contentTypeParamSeparator     = ";"
+	defaultAvatarFallbackExt      = ".img"
+	extPNG                        = ".png"
+	extJPEG                       = ".jpg"
+	extWEBP                       = ".webp"
+)
+
+// =============================================================================
 // SENTINEL ERRORS - For errors.Is() comparisons
 // =============================================================================
 

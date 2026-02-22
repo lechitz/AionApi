@@ -118,13 +118,13 @@ type AionChatConfig struct {
 
 // AvatarStorageConfig holds S3-compatible storage config for avatar uploads.
 type AvatarStorageConfig struct {
-	Provider      string `envconfig:"AVATAR_STORAGE_PROVIDER" default:"s3"`
-	S3Endpoint    string `envconfig:"AVATAR_S3_ENDPOINT" default:"http://localstack:4566"`
-	S3Region      string `envconfig:"AVATAR_S3_REGION" default:"us-east-1"`
-	S3Bucket      string `envconfig:"AVATAR_S3_BUCKET" default:"aion-assets"`
-	S3Prefix      string `envconfig:"AVATAR_S3_PREFIX" default:"avatars"`
-	PublicBaseURL string `envconfig:"AVATAR_PUBLIC_BASE_URL" default:"http://localhost:4566/aion-assets"`
-	AccessKeyID   string `envconfig:"AVATAR_S3_ACCESS_KEY_ID" default:"test"`
+	Provider      string `envconfig:"AVATAR_STORAGE_PROVIDER"     default:"s3"`
+	S3Endpoint    string `envconfig:"AVATAR_S3_ENDPOINT"          default:"http://localstack:4566"`
+	S3Region      string `envconfig:"AVATAR_S3_REGION"            default:"us-east-1"`
+	S3Bucket      string `envconfig:"AVATAR_S3_BUCKET"            default:"aion-assets"`
+	S3Prefix      string `envconfig:"AVATAR_S3_PREFIX"            default:"avatars"`
+	PublicBaseURL string `envconfig:"AVATAR_PUBLIC_BASE_URL"      default:"http://localhost:4566/aion-assets"`
+	AccessKeyID   string `envconfig:"AVATAR_S3_ACCESS_KEY_ID"     default:"test"`
 	SecretKey     string `envconfig:"AVATAR_S3_SECRET_ACCESS_KEY" default:"test"`
-	MaxUploadMB   int    `envconfig:"AVATAR_MAX_UPLOAD_MB" default:"20"`
+	MaxUploadMB   int    `envconfig:"AVATAR_MAX_UPLOAD_MB"        default:"20"`
 }

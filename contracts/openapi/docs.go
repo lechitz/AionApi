@@ -606,6 +606,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/chat/cancel": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth.": []
+                    }
+                ],
+                "description": "Cancels ongoing AI processing for the current authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChatText"
+                ],
+                "summary": "Cancel active chat processing",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cancellation status",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ChatCancelResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "503": {
+                        "description": "Service unavailable - AI service is down",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/chat/text": {
             "post": {
                 "security": [
@@ -838,6 +887,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/avatar/upload": {
+            "post": {
+                "description": "Uploads an avatar image (PNG/JPEG/WEBP) and returns a URL payload suitable for user create/update.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Upload user avatar",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Avatar image file",
+                        "name": "avatar",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UploadAvatarResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid file or validation error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/user/create": {
             "post": {
                 "description": "Registers a new user account. On success, returns basic user information.",
@@ -1019,6 +1112,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.ChatCancelResponse": {
+            "type": "object",
+            "properties": {
+                "cancelled": {
+                    "type": "boolean"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.ChatRequest": {
             "type": "object",
             "required": [
@@ -1311,6 +1415,11 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Alice Doe"
                 },
+                "onboarding_completed": {
+                    "description": "OnboardingCompleted indicates if the user has completed the onboarding flow.",
+                    "type": "boolean",
+                    "example": true
+                },
                 "timezone": {
                     "description": "Timezone is the optional timezone (IANA).",
                     "type": "string",
@@ -1355,6 +1464,11 @@ const docTemplate = `{
                     "description": "Name is the current display name after the update (if changed).\nExample: \"Alice Doe\"",
                     "type": "string",
                     "example": "Alice Doe"
+                },
+                "onboarding_completed": {
+                    "description": "OnboardingCompleted indicates if the user has completed the onboarding flow.",
+                    "type": "boolean",
+                    "example": true
                 },
                 "timezone": {
                     "description": "Timezone returned after update.",
@@ -1429,6 +1543,20 @@ const docTemplate = `{
                     "description": "Username is the user's username.\nExample: \"alice\"",
                     "type": "string",
                     "example": "alice"
+                }
+            }
+        },
+        "dto.UploadAvatarResponse": {
+            "type": "object",
+            "properties": {
+                "avatar_url": {
+                    "type": "string"
+                },
+                "content_type": {
+                    "type": "string"
+                },
+                "size_bytes": {
+                    "type": "integer"
                 }
             }
         }

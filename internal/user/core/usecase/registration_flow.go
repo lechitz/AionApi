@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -24,13 +25,14 @@ const (
 
 var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
 
+// StartRegistration validates user identity data and starts a registration session.
 func (s *Service) StartRegistration(ctx context.Context, cmd input.StartRegistrationCommand) (domain.RegistrationSession, error) {
 	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(ctx, "user.registration.start")
+	ctx, span := tracer.Start(ctx, spanStartRegistration)
 	defer span.End()
 
 	if s.registrationRepo == nil {
-		return domain.RegistrationSession{}, fmt.Errorf("registration repository not configured")
+		return domain.RegistrationSession{}, errors.New(errRegistrationRepoNotConfigured)
 	}
 
 	name := strings.TrimSpace(cmd.Name)
@@ -42,10 +44,10 @@ func (s *Service) StartRegistration(ctx context.Context, cmd input.StartRegistra
 		return domain.RegistrationSession{}, sharederrors.MissingFields(commonkeys.Name, commonkeys.Username, commonkeys.Email, commonkeys.Password)
 	}
 	if len(password) < 8 {
-		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Password, "password must be at least 8 characters")
+		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Password, errPasswordMinLength)
 	}
 	if !emailRegex.MatchString(email) {
-		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Email, "invalid email format")
+		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Email, errInvalidEmailFormat)
 	}
 
 	conflict, err := s.userRepository.CheckUniqueness(ctx, username, email)
@@ -85,7 +87,7 @@ func (s *Service) StartRegistration(ctx context.Context, cmd input.StartRegistra
 		Username:       username,
 		Email:          email,
 		PasswordHash:   hashed,
-		CurrentStep:    1,
+		CurrentStep:    defaultRegistrationStep,
 		Status:         domain.RegistrationStatusPending,
 		ExpiresAt:      now.Add(registrationSessionTTL),
 		CreatedAt:      now,
@@ -97,16 +99,17 @@ func (s *Service) StartRegistration(ctx context.Context, cmd input.StartRegistra
 		span.RecordError(err)
 		return domain.RegistrationSession{}, err
 	}
-	span.SetAttributes(attribute.String("registration_id", out.RegistrationID))
-	span.SetStatus(codes.Ok, "registration_started")
+	span.SetAttributes(attribute.String(attrRegistrationID, out.RegistrationID))
+	span.SetStatus(codes.Ok, statusRegistrationStarted)
 	return out, nil
 }
 
+// UpdateRegistrationProfile updates locale/timezone/location and optional bio for an active registration.
 func (s *Service) UpdateRegistrationProfile(ctx context.Context, registrationID string, cmd input.UpdateRegistrationProfileCommand) (domain.RegistrationSession, error) {
 	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(ctx, "user.registration.update_profile")
+	ctx, span := tracer.Start(ctx, spanUpdateRegistrationProfile)
 	defer span.End()
-	span.SetAttributes(attribute.String("registration_id", registrationID))
+	span.SetAttributes(attribute.String(attrRegistrationID, registrationID))
 
 	session, err := s.getActiveRegistrationSession(ctx, registrationID)
 	if err != nil {
@@ -123,28 +126,28 @@ func (s *Service) UpdateRegistrationProfile(ctx context.Context, registrationID 
 		return domain.RegistrationSession{}, sharederrors.MissingFields(commonkeys.Locale, commonkeys.Timezone, commonkeys.Location)
 	}
 	if !regexp.MustCompile(`^[a-z]{2}(-[A-Z]{2})?$`).MatchString(locale) {
-		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Locale, "invalid locale format")
+		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Locale, errInvalidLocaleFormat)
 	}
 	if len(timezone) > 64 {
-		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Timezone, "timezone must be up to 64 characters")
+		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Timezone, errTimezoneTooLong)
 	}
 	if len(location) > 255 {
-		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Location, "location must be up to 255 characters")
+		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Location, errLocationTooLong)
 	}
 	if len(bio) > 1000 {
-		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Bio, "bio must be up to 1000 characters")
+		return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.Bio, errBioTooLong)
 	}
 
-	if session.CurrentStep < 1 {
-		return domain.RegistrationSession{}, fmt.Errorf("%w: invalid registration step", sharederrors.ErrDomainConflict)
+	if session.CurrentStep < defaultRegistrationStep {
+		return domain.RegistrationSession{}, fmt.Errorf("%w: %s", sharederrors.ErrDomainConflict, errInvalidRegistrationStep)
 	}
 
 	fields := map[string]interface{}{
 		commonkeys.Locale:   locale,
 		commonkeys.Timezone: timezone,
 		commonkeys.Location: location,
-		"current_step":      2,
-		"updated_at":        time.Now().UTC(),
+		attrCurrentStep:     profileRegistrationStep,
+		attrUpdatedAt:       time.Now().UTC(),
 	}
 	if bio != "" {
 		fields[commonkeys.Bio] = bio
@@ -154,35 +157,36 @@ func (s *Service) UpdateRegistrationProfile(ctx context.Context, registrationID 
 		span.RecordError(err)
 		return domain.RegistrationSession{}, err
 	}
-	span.SetStatus(codes.Ok, "registration_profile_updated")
+	span.SetStatus(codes.Ok, statusRegistrationProfileUpdated)
 	return out, nil
 }
 
+// UpdateRegistrationAvatar advances registration with an optional avatar URL.
 func (s *Service) UpdateRegistrationAvatar(ctx context.Context, registrationID string, cmd input.UpdateRegistrationAvatarCommand) (domain.RegistrationSession, error) {
 	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(ctx, "user.registration.update_avatar")
+	ctx, span := tracer.Start(ctx, spanUpdateRegistrationAvatar)
 	defer span.End()
-	span.SetAttributes(attribute.String("registration_id", registrationID))
+	span.SetAttributes(attribute.String(attrRegistrationID, registrationID))
 
 	session, err := s.getActiveRegistrationSession(ctx, registrationID)
 	if err != nil {
 		span.RecordError(err)
 		return domain.RegistrationSession{}, err
 	}
-	if session.CurrentStep < 2 {
-		return domain.RegistrationSession{}, fmt.Errorf("%w: profile step must be completed before avatar step", sharederrors.ErrDomainConflict)
+	if session.CurrentStep < profileRegistrationStep {
+		return domain.RegistrationSession{}, fmt.Errorf("%w: %s", sharederrors.ErrDomainConflict, errProfileStepMustBeCompleted)
 	}
 
 	fields := map[string]interface{}{
-		"current_step": 3,
-		"updated_at":   time.Now().UTC(),
+		attrCurrentStep: avatarRegistrationStep,
+		attrUpdatedAt:   time.Now().UTC(),
 	}
 
 	if cmd.AvatarURL != nil {
 		trimmed := strings.TrimSpace(*cmd.AvatarURL)
 		if trimmed != "" {
 			if _, parseErr := url.ParseRequestURI(trimmed); parseErr != nil {
-				return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.AvatarURL, "avatar_url must be a valid URL")
+				return domain.RegistrationSession{}, sharederrors.NewValidationError(commonkeys.AvatarURL, errAvatarURLInvalid)
 			}
 			fields[commonkeys.AvatarURL] = trimmed
 		} else {
@@ -195,26 +199,27 @@ func (s *Service) UpdateRegistrationAvatar(ctx context.Context, registrationID s
 		span.RecordError(err)
 		return domain.RegistrationSession{}, err
 	}
-	span.SetStatus(codes.Ok, "registration_avatar_updated")
+	span.SetStatus(codes.Ok, statusRegistrationAvatarUpdated)
 	return out, nil
 }
 
+// CompleteRegistration materializes the final user when all registration steps are complete.
 func (s *Service) CompleteRegistration(ctx context.Context, registrationID string) (domain.User, error) {
 	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(ctx, "user.registration.complete")
+	ctx, span := tracer.Start(ctx, spanCompleteRegistration)
 	defer span.End()
-	span.SetAttributes(attribute.String("registration_id", registrationID))
+	span.SetAttributes(attribute.String(attrRegistrationID, registrationID))
 
 	session, err := s.getActiveRegistrationSession(ctx, registrationID)
 	if err != nil {
 		span.RecordError(err)
 		return domain.User{}, err
 	}
-	if session.CurrentStep < 3 {
-		return domain.User{}, fmt.Errorf("%w: registration flow not completed", sharederrors.ErrDomainConflict)
+	if session.CurrentStep < avatarRegistrationStep {
+		return domain.User{}, fmt.Errorf("%w: %s", sharederrors.ErrDomainConflict, errRegistrationFlowNotCompleted)
 	}
 	if session.Locale == nil || session.Timezone == nil || session.Location == nil {
-		return domain.User{}, fmt.Errorf("%w: required profile fields are missing", sharederrors.ErrDomainConflict)
+		return domain.User{}, fmt.Errorf("%w: %s", sharederrors.ErrDomainConflict, errRegistrationRequiredFieldsMissing)
 	}
 
 	// Re-check uniqueness before materializing final user.
@@ -247,32 +252,32 @@ func (s *Service) CompleteRegistration(ctx context.Context, registrationID strin
 	}
 
 	if err := s.registrationRepo.DeleteRegistrationSession(ctx, registrationID); err != nil {
-		s.logger.WarnwCtx(ctx, "failed to delete completed registration session", "registration_id", registrationID, commonkeys.Error, err)
+		s.logger.WarnwCtx(ctx, warnDeleteCompletedRegistrationSession, attrRegistrationID, registrationID, commonkeys.Error, err)
 	}
 
-	span.SetStatus(codes.Ok, "registration_completed")
+	span.SetStatus(codes.Ok, statusRegistrationCompleted)
 	return user, nil
 }
 
 func (s *Service) getActiveRegistrationSession(ctx context.Context, registrationID string) (domain.RegistrationSession, error) {
 	if s.registrationRepo == nil {
-		return domain.RegistrationSession{}, fmt.Errorf("registration repository not configured")
+		return domain.RegistrationSession{}, errors.New(errRegistrationRepoNotConfigured)
 	}
 	if strings.TrimSpace(registrationID) == "" {
-		return domain.RegistrationSession{}, sharederrors.NewValidationError("registration_id", "registration_id is required")
+		return domain.RegistrationSession{}, sharederrors.NewValidationError(fieldRegistrationID, errRegistrationIDRequired)
 	}
 	session, err := s.registrationRepo.GetRegistrationSessionByID(ctx, registrationID)
 	if err != nil {
 		return domain.RegistrationSession{}, err
 	}
 	if session.RegistrationID == "" {
-		return domain.RegistrationSession{}, sharederrors.NewValidationError("registration_id", "registration session not found")
+		return domain.RegistrationSession{}, sharederrors.NewValidationError(fieldRegistrationID, errRegistrationSessionNotFound)
 	}
 	if session.Status != domain.RegistrationStatusPending {
-		return domain.RegistrationSession{}, fmt.Errorf("%w: registration session is not pending", sharederrors.ErrDomainConflict)
+		return domain.RegistrationSession{}, fmt.Errorf("%w: %s", sharederrors.ErrDomainConflict, errRegistrationSessionNotPending)
 	}
 	if time.Now().UTC().After(session.ExpiresAt) {
-		return domain.RegistrationSession{}, fmt.Errorf("%w: registration session expired", sharederrors.ErrDomainConflict)
+		return domain.RegistrationSession{}, fmt.Errorf("%w: %s", sharederrors.ErrDomainConflict, errRegistrationSessionExpired)
 	}
 	return session, nil
 }

@@ -81,6 +81,7 @@ func (h *Handler) ChatText(w http.ResponseWriter, r *http.Request) {
 	span.SetAttributes(
 		attribute.Int(AttrMessageLength, len(chatReq.Message)),
 	)
+	h.logUIActionMetadata(ctx, userID, chatReq.Context)
 
 	h.Logger.InfowCtx(ctx, MsgChatRequestStart, commonkeys.UserID, strconv.FormatUint(userID, 10), AttrMessageLength, len(chatReq.Message))
 
@@ -178,4 +179,28 @@ func isClientCancelledError(err error) bool {
 	return strings.Contains(text, "context canceled") ||
 		strings.Contains(text, "request canceled") ||
 		strings.Contains(text, "operation was canceled")
+}
+
+func (h *Handler) logUIActionMetadata(
+	ctx context.Context,
+	userID uint64,
+	requestContext map[string]interface{},
+) {
+	if requestContext == nil {
+		return
+	}
+	rawAction, ok := requestContext[ContextKeyUIAction].(map[string]interface{})
+	if !ok || rawAction == nil {
+		return
+	}
+
+	actionType, _ := rawAction[ContextKeyUIActionType].(string)
+	draftID, _ := rawAction[ContextKeyDraftID].(string)
+	h.Logger.InfowCtx(
+		ctx,
+		MsgChatRequestIncludesUIAction,
+		commonkeys.UserID, strconv.FormatUint(userID, 10),
+		LogKeyUIActionType, actionType,
+		LogKeyDraftID, draftID,
+	)
 }

@@ -139,15 +139,19 @@ func (recordSvcStub) DeleteAll(context.Context, uint64) error      { return nil 
 func (recordSvcStub) SearchRecords(context.Context, uint64, recorddomain.SearchFilters) ([]recorddomain.Record, error) {
 	return []recorddomain.Record{}, nil
 }
+
 func (recordSvcStub) DashboardSnapshot(context.Context, uint64, recordinput.DashboardSnapshotQuery) (recorddomain.DashboardSnapshot, error) {
 	return recorddomain.DashboardSnapshot{}, nil
 }
+
 func (recordSvcStub) ListMetricDefinitions(context.Context, uint64) ([]recorddomain.MetricDefinition, error) {
 	return []recorddomain.MetricDefinition{}, nil
 }
+
 func (recordSvcStub) UpsertMetricDefinition(context.Context, uint64, recordinput.UpsertMetricDefinitionCommand) (recorddomain.MetricDefinition, error) {
 	return recorddomain.MetricDefinition{}, nil
 }
+
 func (recordSvcStub) UpsertGoalTemplate(context.Context, uint64, recordinput.UpsertGoalTemplateCommand) (recorddomain.GoalTemplate, error) {
 	return recorddomain.GoalTemplate{}, nil
 }
@@ -155,18 +159,23 @@ func (recordSvcStub) DeleteGoalTemplate(context.Context, uint64, uint64) error {
 func (recordSvcStub) ListDashboardViews(context.Context, uint64) ([]recorddomain.DashboardView, error) {
 	return []recorddomain.DashboardView{}, nil
 }
+
 func (recordSvcStub) GetDashboardView(context.Context, uint64, uint64) (recorddomain.DashboardView, error) {
 	return recorddomain.DashboardView{}, nil
 }
+
 func (recordSvcStub) CreateDashboardView(context.Context, uint64, recordinput.CreateDashboardViewCommand) (recorddomain.DashboardView, error) {
 	return recorddomain.DashboardView{}, nil
 }
+
 func (recordSvcStub) SetDefaultDashboardView(context.Context, uint64, uint64) (recorddomain.DashboardView, error) {
 	return recorddomain.DashboardView{}, nil
 }
+
 func (recordSvcStub) UpsertDashboardWidget(context.Context, uint64, recordinput.UpsertDashboardWidgetCommand) (recorddomain.DashboardWidget, error) {
 	return recorddomain.DashboardWidget{}, nil
 }
+
 func (recordSvcStub) ReorderDashboardWidgets(context.Context, uint64, recordinput.ReorderDashboardWidgetsCommand) ([]recorddomain.DashboardWidget, error) {
 	return []recorddomain.DashboardWidget{}, nil
 }
@@ -174,6 +183,7 @@ func (recordSvcStub) DeleteDashboardWidget(context.Context, uint64, uint64) erro
 func (recordSvcStub) CreateMetricAndWidget(context.Context, uint64, recordinput.CreateMetricAndWidgetCommand) (recorddomain.DashboardWidget, error) {
 	return recorddomain.DashboardWidget{}, nil
 }
+
 func (recordSvcStub) SuggestMetricDefinitions(context.Context, uint64, int) ([]recorddomain.MetricDefinitionSuggestion, error) {
 	return []recorddomain.MetricDefinitionSuggestion{}, nil
 }
@@ -207,18 +217,23 @@ type userSvcStub struct{}
 func (userSvcStub) Create(context.Context, userinput.CreateUserCommand) (userdomain.User, error) {
 	return userdomain.User{}, nil
 }
+
 func (userSvcStub) StartRegistration(context.Context, userinput.StartRegistrationCommand) (userdomain.RegistrationSession, error) {
 	return userdomain.RegistrationSession{}, nil
 }
+
 func (userSvcStub) UpdateRegistrationProfile(context.Context, string, userinput.UpdateRegistrationProfileCommand) (userdomain.RegistrationSession, error) {
 	return userdomain.RegistrationSession{}, nil
 }
+
 func (userSvcStub) UpdateRegistrationAvatar(context.Context, string, userinput.UpdateRegistrationAvatarCommand) (userdomain.RegistrationSession, error) {
 	return userdomain.RegistrationSession{}, nil
 }
+
 func (userSvcStub) CompleteRegistration(context.Context, string) (userdomain.User, error) {
 	return userdomain.User{}, nil
 }
+
 func (userSvcStub) UploadAvatar(context.Context, userinput.UploadAvatarCommand) (string, string, int64, error) {
 	return "", "", 0, nil
 }

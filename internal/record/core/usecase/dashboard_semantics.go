@@ -11,10 +11,6 @@ import (
 	"github.com/lechitz/AionApi/internal/record/core/ports/input"
 )
 
-const (
-	defaultDashboardLimit = 50000
-)
-
 // ListMetricDefinitions returns active dashboard metric definitions for the user.
 func (s *Service) ListMetricDefinitions(ctx context.Context, userID uint64) ([]domain.MetricDefinition, error) {
 	if userID == 0 {
@@ -53,7 +49,7 @@ func (s *Service) DashboardSnapshot(ctx context.Context, userID uint64, query in
 		return domain.DashboardSnapshot{}, err
 	}
 
-	records, err := s.RecordRepository.ListAllBetween(ctx, userID, startUTC, endUTC, defaultDashboardLimit)
+	records, err := s.RecordRepository.ListAllBetween(ctx, userID, startUTC, endUTC, DefaultDashboardLimit)
 	if err != nil {
 		return domain.DashboardSnapshot{}, err
 	}
@@ -72,11 +68,11 @@ func (s *Service) DashboardSnapshot(ctx context.Context, userID uint64, query in
 			progress = clampPct((value / *def.GoalDefault) * 100)
 		}
 
-		status := "pending"
+		status := DashboardMetricStatusPending
 		if def.GoalDefault == nil {
-			status = "tracked"
+			status = DashboardMetricStatusTracked
 		} else if value >= *def.GoalDefault {
-			status = "completed"
+			status = DashboardMetricStatusCompleted
 		}
 
 		item := domain.DashboardMetricValue{
@@ -129,10 +125,10 @@ func (s *Service) UpsertMetricDefinition(ctx context.Context, userID uint64, cmd
 		return domain.MetricDefinition{}, ErrTagIDIsRequired
 	}
 	if strings.TrimSpace(cmd.MetricKey) == "" {
-		return domain.MetricDefinition{}, errors.New("metricKey is required")
+		return domain.MetricDefinition{}, errors.New(ErrDashboardMetricKeyRequired)
 	}
 	if strings.TrimSpace(cmd.DisplayName) == "" {
-		return domain.MetricDefinition{}, errors.New("displayName is required")
+		return domain.MetricDefinition{}, errors.New(ErrDashboardDisplayNameRequired)
 	}
 
 	active := true
@@ -147,9 +143,9 @@ func (s *Service) UpsertMetricDefinition(ctx context.Context, userID uint64, cmd
 		CategoryID:  cmd.CategoryID,
 		TagID:       cmd.TagID,
 		TagIDs:      normalizeMetricTagIDs(cmd.TagID, cmd.TagIDs),
-		ValueSource: normalizeOrDefault(cmd.ValueSource, "count"),
-		Aggregation: normalizeOrDefault(cmd.Aggregation, "sum"),
-		Unit:        normalizeOrDefault(cmd.Unit, "count"),
+		ValueSource: normalizeOrDefault(cmd.ValueSource, DashboardValueSourceCount),
+		Aggregation: normalizeOrDefault(cmd.Aggregation, DashboardAggregationSum),
+		Unit:        normalizeOrDefault(cmd.Unit, DashboardUnitCount),
 		GoalDefault: cmd.GoalDefault,
 		IsActive:    active,
 	}
@@ -166,13 +162,13 @@ func (s *Service) UpsertGoalTemplate(ctx context.Context, userID uint64, cmd inp
 		return domain.GoalTemplate{}, ErrUserIDIsRequired
 	}
 	if strings.TrimSpace(cmd.MetricKey) == "" {
-		return domain.GoalTemplate{}, errors.New("metricKey is required")
+		return domain.GoalTemplate{}, errors.New(ErrDashboardMetricKeyRequired)
 	}
 	if strings.TrimSpace(cmd.Title) == "" {
-		return domain.GoalTemplate{}, errors.New("title is required")
+		return domain.GoalTemplate{}, errors.New(ErrDashboardTitleRequired)
 	}
 	if cmd.TargetValue <= 0 {
-		return domain.GoalTemplate{}, errors.New("targetValue must be greater than zero")
+		return domain.GoalTemplate{}, errors.New(ErrDashboardTargetValueRequired)
 	}
 
 	active := true
@@ -185,8 +181,8 @@ func (s *Service) UpsertGoalTemplate(ctx context.Context, userID uint64, cmd inp
 		MetricKey:   strings.TrimSpace(cmd.MetricKey),
 		Title:       strings.TrimSpace(cmd.Title),
 		TargetValue: cmd.TargetValue,
-		Comparison:  normalizeOrDefault(cmd.Comparison, "gte"),
-		Period:      normalizeOrDefault(cmd.Period, "day"),
+		Comparison:  normalizeOrDefault(cmd.Comparison, DashboardGoalComparisonGTE),
+		Period:      normalizeOrDefault(cmd.Period, DashboardGoalPeriodDay),
 		IsActive:    active,
 	}
 	if cmd.ID != nil {
@@ -202,7 +198,7 @@ func (s *Service) DeleteGoalTemplate(ctx context.Context, userID uint64, goalTem
 		return ErrUserIDIsRequired
 	}
 	if goalTemplateID == 0 {
-		return errors.New("goalTemplateID is required")
+		return errors.New(ErrDashboardGoalTemplateIDRequired)
 	}
 	return s.RecordRepository.DeleteGoalTemplate(ctx, userID, goalTemplateID)
 }
@@ -238,14 +234,14 @@ func computeMetricValue(records []domain.Record, def domain.MetricDefinition) fl
 	}
 
 	switch def.Aggregation {
-	case "count":
+	case DashboardAggregationCount:
 		return float64(matched)
-	case "avg":
+	case DashboardAggregationAvg:
 		if matched == 0 {
 			return 0
 		}
 		return sum / float64(matched)
-	case "latest":
+	case DashboardAggregationLatest:
 		return latest
 	default:
 		return sum
@@ -292,12 +288,12 @@ func normalizeMetricTagIDs(primary uint64, tagIDs []uint64) []uint64 {
 
 func extractRecordValue(rec domain.Record, valueSource string) float64 {
 	switch valueSource {
-	case "duration_seconds":
+	case DashboardValueSourceDuration:
 		if rec.DurationSecs != nil {
 			return float64(*rec.DurationSecs)
 		}
 		return 0
-	case "value", "latest_value":
+	case DashboardValueSourceRaw, DashboardValueSourceLatestValue:
 		if rec.Value != nil {
 			return *rec.Value
 		}
@@ -307,30 +303,30 @@ func extractRecordValue(rec domain.Record, valueSource string) float64 {
 	}
 }
 
-func evaluateGoal(current float64, target float64, comparison string) (status string, progress float64) {
+func evaluateGoal(current float64, target float64, comparison string) (string, float64) {
 	if target <= 0 {
-		return "invalid", 0
+		return DashboardMetricStatusInvalid, 0
 	}
 
 	switch comparison {
-	case "lte":
-		progress = clampPct((target / math.Max(current, 0.000001)) * 100)
+	case DashboardGoalComparisonLTE:
+		progress := clampPct((target / math.Max(current, 0.000001)) * 100)
 		if current <= target {
-			return "completed", 100
+			return DashboardMetricStatusCompleted, 100
 		}
-		return "pending", progress
-	case "eq":
+		return DashboardMetricStatusPending, progress
+	case DashboardGoalComparisonEQ:
 		if math.Abs(current-target) < 0.0001 {
-			return "completed", 100
+			return DashboardMetricStatusCompleted, 100
 		}
-		progress = clampPct(100 - math.Abs(current-target)/target*100)
-		return "pending", progress
+		progress := clampPct(100 - math.Abs(current-target)/target*100)
+		return DashboardMetricStatusPending, progress
 	default:
-		progress = clampPct((current / target) * 100)
+		progress := clampPct((current / target) * 100)
 		if current >= target {
-			return "completed", progress
+			return DashboardMetricStatusCompleted, progress
 		}
-		return "pending", progress
+		return DashboardMetricStatusPending, progress
 	}
 }
 

@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"errors"
+	"math"
 	"strconv"
 	"strings"
 
@@ -166,7 +167,7 @@ func (c *controller) CreateMetricAndWidget(ctx context.Context, userID uint64, i
 	return toGraphQLDashboardWidget(out), nil
 }
 
-func (c *controller) DashboardWidgetCatalog(ctx context.Context) (*model.DashboardWidgetCatalog, error) {
+func (c *controller) DashboardWidgetCatalog(_ context.Context) (*model.DashboardWidgetCatalog, error) {
 	return &model.DashboardWidgetCatalog{
 		MaxLargeWidgets: int32(domain.MaxLargeWidgetsPerDashboard),
 		Sizes: []model.DashboardWidgetSize{
@@ -235,7 +236,7 @@ func toGraphQLDashboardWidget(in domain.DashboardWidget) *model.DashboardWidget 
 		MetricDefinitionID: strconv.FormatUint(in.MetricDefinitionID, 10),
 		WidgetType:         toGraphQLWidgetType(in.WidgetType),
 		Size:               toGraphQLWidgetSize(in.Size),
-		OrderIndex:         int32(in.OrderIndex),
+		OrderIndex:         safeInt32(in.OrderIndex),
 		TitleOverride:      in.TitleOverride,
 		ConfigJSON:         toStringPtr(in.ConfigJSON),
 		IsActive:           in.IsActive,
@@ -307,4 +308,14 @@ func toIntPtr(v *int32) *int {
 	}
 	value := int(*v)
 	return &value
+}
+
+func safeInt32(value int) int32 {
+	if value > math.MaxInt32 {
+		return math.MaxInt32
+	}
+	if value < math.MinInt32 {
+		return math.MinInt32
+	}
+	return int32(value)
 }

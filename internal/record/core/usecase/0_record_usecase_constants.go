@@ -191,6 +191,61 @@ const (
 
 	// DefaultTimezone is the default timezone when not provided.
 	DefaultTimezone = "America/Sao_Paulo"
+	// DefaultDashboardLimit caps records loaded for dashboard snapshot calculations.
+	DefaultDashboardLimit = 50000
+	// DefaultDashboardViewName is the default dashboard view title.
+	DefaultDashboardViewName = "Meu Dashboard"
+	// FallbackDashboardViewName is the fallback view title when bootstraping.
+	FallbackDashboardViewName = "Principal"
+	// DefaultDashboardConfigJSON is the default widget config payload.
+	DefaultDashboardConfigJSON = "{}"
+	// DefaultDashboardSuggestionsLimit controls generated suggestions count.
+	DefaultDashboardSuggestionsLimit = 8
+	// MaxDashboardSuggestionsLimit prevents excessive suggestion payload.
+	MaxDashboardSuggestionsLimit = 20
+	// DashboardSuggestionReasonTaxonomy explains deterministic suggestion source.
+	DashboardSuggestionReasonTaxonomy = "Baseado em tags existentes da sua taxonomia."
+)
+
+// Dashboard validation and domain messages.
+const (
+	ErrDashboardViewIDRequired             = "viewID is required"
+	ErrDashboardMetricDefinitionIDRequired = "metricDefinitionID is required"
+	ErrDashboardItemsRequired              = "items are required"
+	ErrDashboardWidgetIDRequired           = "widgetID is required"
+	ErrDashboardLimitLargeWidgets          = "limit reached: max %d large widgets"
+	ErrDashboardMetricKeyRequired          = "metricKey is required"
+	ErrDashboardDisplayNameRequired        = "displayName is required"
+	ErrDashboardTitleRequired              = "title is required"
+	ErrDashboardTargetValueRequired        = "targetValue must be greater than zero"
+	ErrDashboardGoalTemplateIDRequired     = "goalTemplateID is required"
+)
+
+// Dashboard metric defaults and status values.
+const (
+	DashboardValueSourceCount       = "count"
+	DashboardValueSourceDuration    = "duration_seconds"
+	DashboardValueSourceRaw         = "value"
+	DashboardValueSourceLatestValue = "latest_value"
+	DashboardAggregationCount       = "count"
+	DashboardAggregationSum         = "sum"
+	DashboardAggregationAvg         = "avg"
+	DashboardAggregationLatest      = "latest"
+	DashboardUnitCount              = "count"
+	DashboardGoalComparisonGTE      = "gte"
+	DashboardGoalComparisonLTE      = "lte"
+	DashboardGoalComparisonEQ       = "eq"
+	DashboardGoalPeriodDay          = "day"
+	DashboardMetricStatusPending    = "pending"
+	DashboardMetricStatusTracked    = "tracked"
+	DashboardMetricStatusCompleted  = "completed"
+	DashboardMetricStatusInvalid    = "invalid"
+	DashboardSlugSpace              = " "
+	DashboardSlugHyphen             = "-"
+	DashboardSlugSlash              = "/"
+	DashboardSlugLeftParenthesis    = "("
+	DashboardSlugRightParenthesis   = ")"
+	DashboardSlugUnderscore         = "_"
 )
 
 // =============================================================================
