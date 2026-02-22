@@ -89,12 +89,12 @@ func (h *Handler) ChatText(w http.ResponseWriter, r *http.Request) {
 	result, err := h.Service.ProcessMessage(ctx, userID, chatReq.Message, chatReq.Context)
 	if err != nil {
 		if isClientCancelledError(err) {
-			span.AddEvent("chat.handler.cancelled")
-			span.SetStatus(codes.Ok, "chat request cancelled by client")
-			h.Logger.InfowCtx(ctx, "Chat request cancelled by client",
+			span.AddEvent(EventChatCancelled)
+			span.SetStatus(codes.Ok, StatusChatCancelled)
+			h.Logger.InfowCtx(ctx, MsgChatCancelled,
 				commonkeys.UserID, strconv.FormatUint(userID, 10),
 			)
-			httpresponse.WriteSuccess(w, 499, nil, "Chat request cancelled")
+			httpresponse.WriteSuccess(w, HTTPStatusClientClosedRequest, nil, MsgChatCancelledResponse)
 			return
 		}
 		span.AddEvent(EventChatError)
@@ -176,9 +176,9 @@ func isClientCancelledError(err error) bool {
 	}
 
 	text := strings.ToLower(err.Error())
-	return strings.Contains(text, "context canceled") ||
-		strings.Contains(text, "request canceled") ||
-		strings.Contains(text, "operation was canceled")
+	return strings.Contains(text, ErrorTextContextCanceled) ||
+		strings.Contains(text, ErrorTextRequestCanceled) ||
+		strings.Contains(text, ErrorTextOperationCanceled)
 }
 
 func (h *Handler) logUIActionMetadata(

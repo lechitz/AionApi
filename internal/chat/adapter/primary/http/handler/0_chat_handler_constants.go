@@ -35,6 +35,8 @@ const (
 	EventChatSuccess = "chat.handler.success"
 	// EventChatError indicates an error occurred during chat processing.
 	EventChatError = "chat.handler.error"
+	// EventChatCancelled indicates the request was cancelled by the client.
+	EventChatCancelled = "chat.handler.cancelled"
 )
 
 // -----------------------------------------------------------------------------
@@ -44,6 +46,8 @@ const (
 const (
 	// StatusChatSuccess indicates successful chat processing.
 	StatusChatSuccess = "chat processed successfully"
+	// StatusChatCancelled indicates successful cancellation acknowledgement.
+	StatusChatCancelled = "chat request cancelled by client"
 )
 
 // =============================================================================
@@ -68,8 +72,29 @@ const (
 const (
 	MsgChatSuccess      = "Chat processed successfully"
 	MsgChatRequestStart = "Processing chat request"
+	// MsgChatCancelled indicates chat request cancellation by the client.
+	MsgChatCancelled = "Chat request cancelled by client"
 	// MsgChatRequestIncludesUIAction indicates request includes ui_action metadata.
 	MsgChatRequestIncludesUIAction = "HTTP chat request includes UI action"
+)
+
+// Response messages.
+const (
+	// MsgChatCancelledResponse is the success payload message returned on cancel.
+	MsgChatCancelledResponse = "Chat request cancelled"
+)
+
+// HTTP status codes.
+const (
+	// HTTPStatusClientClosedRequest is the non-standard code used for cancelled requests.
+	HTTPStatusClientClosedRequest = 499
+)
+
+// Error text markers used to detect client-side cancellation.
+const (
+	ErrorTextContextCanceled   = "context canceled"
+	ErrorTextRequestCanceled   = "request canceled"
+	ErrorTextOperationCanceled = "operation was canceled"
 )
 
 // Validation constraints.
