@@ -196,11 +196,28 @@ func (h *Handler) logUIActionMetadata(
 
 	actionType, _ := rawAction[ContextKeyUIActionType].(string)
 	draftID, _ := rawAction[ContextKeyDraftID].(string)
+	consentRequired := false
+	consentConfirmed := false
+	consentPolicyVersion := ""
+	if rawConsent, ok := rawAction[ContextKeyConsent].(map[string]interface{}); ok && rawConsent != nil {
+		if value, ok := rawConsent["required"].(bool); ok {
+			consentRequired = value
+		}
+		if value, ok := rawConsent["confirmed"].(bool); ok {
+			consentConfirmed = value
+		}
+		if value, ok := rawConsent["policy_version"].(string); ok {
+			consentPolicyVersion = value
+		}
+	}
 	h.Logger.InfowCtx(
 		ctx,
 		MsgChatRequestIncludesUIAction,
 		commonkeys.UserID, strconv.FormatUint(userID, 10),
 		LogKeyUIActionType, actionType,
 		LogKeyDraftID, draftID,
+		LogKeyConsentRequired, consentRequired,
+		LogKeyConsentConfirmed, consentConfirmed,
+		LogKeyConsentPolicyVersion, consentPolicyVersion,
 	)
 }

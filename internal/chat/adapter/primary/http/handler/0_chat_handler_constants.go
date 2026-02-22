@@ -289,6 +289,12 @@ const (
 	LogKeyUIActionType = "ui_action_type"
 	// LogKeyDraftID is the log key for draft identifier.
 	LogKeyDraftID = "draft_id"
+	// LogKeyConsentRequired is the log key for consent requirement flag.
+	LogKeyConsentRequired = "consent_required"
+	// LogKeyConsentConfirmed is the log key for consent confirmation flag.
+	LogKeyConsentConfirmed = "consent_confirmed"
+	// LogKeyConsentPolicyVersion is the log key for consent policy version.
+	LogKeyConsentPolicyVersion = "consent_policy_version"
 )
 
 // Context payload keys for chat request metadata.
@@ -296,4 +302,5 @@ const (
 	ContextKeyUIAction     = "ui_action"
 	ContextKeyUIActionType = "type"
 	ContextKeyDraftID      = "draft_id"
+	ContextKeyConsent      = "consent"
 )
