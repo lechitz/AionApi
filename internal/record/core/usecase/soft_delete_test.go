@@ -79,7 +79,9 @@ func TestService_Delete_Success(t *testing.T) {
 		Return(tagdomain.Tag{ID: existing.TagID, CategoryID: 10}, nil)
 
 	suite.RecordCache.EXPECT().DeleteRecord(gomock.Any(), recordID, userID).Return(nil)
-	suite.RecordCache.EXPECT().DeleteRecordsByDay(gomock.Any(), userID, time.Date(when.UTC().Year(), when.UTC().Month(), when.UTC().Day(), 0, 0, 0, 0, time.UTC)).Return(nil)
+	suite.RecordCache.EXPECT().
+		DeleteRecordsByDay(gomock.Any(), userID, time.Date(when.UTC().Year(), when.UTC().Month(), when.UTC().Day(), 0, 0, 0, 0, time.UTC)).
+		Return(nil)
 	suite.RecordCache.EXPECT().DeleteRecordsByCategory(gomock.Any(), uint64(10), userID).Return(nil)
 	suite.RecordCache.EXPECT().DeleteRecordsByTag(gomock.Any(), existing.TagID, userID).Return(nil)
 

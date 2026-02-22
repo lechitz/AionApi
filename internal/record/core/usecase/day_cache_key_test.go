@@ -1,9 +1,10 @@
-package usecase
+package usecase_test
 
 import (
 	"testing"
 	"time"
 
+	usecase "github.com/lechitz/AionApi/internal/record/core/usecase"
 	"github.com/stretchr/testify/require"
 )
 
@@ -29,7 +30,8 @@ func TestCacheDayStart_NormalizesToUTCMidnight(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := cacheDayStart(tc.input)
+			t.Parallel()
+			got := usecase.CacheDayStart(tc.input)
 			require.Equal(t, tc.expected, got)
 			require.Equal(t, time.UTC, got.Location())
 		})

@@ -59,7 +59,7 @@ func (s *Service) Delete(ctx context.Context, id uint64, userID uint64) error {
 	}
 
 	// Invalidate day cache
-	eventDate := cacheDayStart(existing.EventTime)
+	eventDate := CacheDayStart(existing.EventTime)
 	if err := s.RecordCache.DeleteRecordsByDay(ctx, userID, eventDate); err != nil {
 		s.Logger.WarnwCtx(ctx, "failed to invalidate day cache",
 			commonkeys.UserID, userID,
