@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -86,6 +87,15 @@ func (h *Handler) ChatText(w http.ResponseWriter, r *http.Request) {
 	span.AddEvent(EventCallService)
 	result, err := h.Service.ProcessMessage(ctx, userID, chatReq.Message, chatReq.Context)
 	if err != nil {
+		if isClientCancelledError(err) {
+			span.AddEvent("chat.handler.cancelled")
+			span.SetStatus(codes.Ok, "chat request cancelled by client")
+			h.Logger.InfowCtx(ctx, "Chat request cancelled by client",
+				commonkeys.UserID, strconv.FormatUint(userID, 10),
+			)
+			httpresponse.WriteSuccess(w, 499, nil, "Chat request cancelled")
+			return
+		}
 		span.AddEvent(EventChatError)
 		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, ErrChat, h.Logger)
 		return
@@ -153,4 +163,19 @@ func convertToMapSlice(sources []interface{}) []map[string]interface{} {
 	}
 
 	return result
+}
+
+func isClientCancelledError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	if errors.Is(err, context.Canceled) {
+		return true
+	}
+
+	text := strings.ToLower(err.Error())
+	return strings.Contains(text, "context canceled") ||
+		strings.Contains(text, "request canceled") ||
+		strings.Contains(text, "operation was canceled")
 }

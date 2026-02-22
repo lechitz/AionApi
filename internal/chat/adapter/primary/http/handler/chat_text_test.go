@@ -108,7 +108,7 @@ func TestNewAndRegisterHTTP(t *testing.T) {
 
 	handler.RegisterHTTP(router, h, mockAuthService{}, mockLogger{})
 	require.Equal(t, 1, router.groupWithCalls)
-	require.ElementsMatch(t, []string{"/chat/text", "/chat/audio"}, router.posts)
+	require.ElementsMatch(t, []string{"/chat/text", "/chat/cancel", "/chat/audio"}, router.posts)
 }
 
 func TestChatText_Success(t *testing.T) {
@@ -180,6 +180,22 @@ func TestChatText_Errors(t *testing.T) {
 		rec := httptest.NewRecorder()
 		h.ChatText(rec, req)
 		require.Equal(t, http.StatusInternalServerError, rec.Code)
+	})
+
+	t.Run("service canceled", func(t *testing.T) {
+		cancelHandler := handler.New(mockChatService{
+			processFn: func(context.Context, uint64, string, map[string]interface{}) (*domain.ChatResult, error) {
+				return nil, context.Canceled
+			},
+		}, &config.Config{}, mockLogger{})
+
+		req := httptest.NewRequest(http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello"}`))
+		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(7)))
+		rec := httptest.NewRecorder()
+
+		cancelHandler.ChatText(rec, req)
+		require.Equal(t, 499, rec.Code)
+		require.Contains(t, rec.Body.String(), "Chat request cancelled")
 	})
 }
 

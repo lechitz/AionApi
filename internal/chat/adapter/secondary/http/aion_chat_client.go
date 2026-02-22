@@ -75,6 +75,11 @@ func (c *AionChatClient) SendMessage(ctx context.Context, req *dto.InternalChatR
 	}
 
 	if httpResp.StatusCode != http.StatusOK {
+		if httpResp.StatusCode == 499 {
+			span.SetStatus(codes.Ok, "aion-chat request cancelled")
+			c.logger.WarnwCtx(ctx, "aion-chat request cancelled", "status_code", httpResp.StatusCode, "body", string(body))
+			return nil, fmt.Errorf("%s: %w", ErrAionChatRequestFailed, context.Canceled)
+		}
 		span.SetStatus(codes.Error, ErrAionChatNonOK)
 		c.logger.ErrorwCtx(ctx, ErrAionChatNonOK, "status_code", httpResp.StatusCode, "body", string(body))
 		return nil, fmt.Errorf("%s: status %d: %s", ErrAionChatNonOK, httpResp.StatusCode, string(body))

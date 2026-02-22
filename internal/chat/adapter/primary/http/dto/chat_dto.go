@@ -15,6 +15,15 @@ type ChatResponse struct {
 	Usage    *TokenUsage              `json:"usage,omitempty"`
 }
 
+// ChatCancelRequest represents a cancel request for active chat processing.
+type ChatCancelRequest struct{}
+
+// ChatCancelResponse represents cancel response status.
+type ChatCancelResponse struct {
+	Cancelled bool   `json:"cancelled"`
+	Message   string `json:"message"`
+}
+
 // TokenUsage represents LLM token consumption statistics.
 type TokenUsage struct {
 	PromptTokens     int `json:"prompt_tokens,omitempty"     example:"50"`

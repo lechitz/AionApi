@@ -16,6 +16,7 @@ func RegisterHTTP(r ports.Router, h *Handler, authService input.AuthService, log
 		mw := authMiddleware.New(authService, log)
 		r.GroupWith(mw.Auth, func(pr ports.Router) {
 			pr.POST("/chat/text", http.HandlerFunc(h.ChatText))
+			pr.POST("/chat/cancel", http.HandlerFunc(h.ChatCancel))
 			pr.POST("/chat/audio", http.HandlerFunc(h.ChatVoice))
 		})
 	}
