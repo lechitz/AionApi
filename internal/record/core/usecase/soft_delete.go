@@ -49,9 +49,9 @@ func (s *Service) Delete(ctx context.Context, id uint64, userID uint64) error {
 		return fmt.Errorf("%w: %w", ErrDeleteRecord, err)
 	}
 
-	span.AddEvent("InvalidateCache")
+	span.AddEvent(EventInvalidateCache)
 	if err := s.RecordCache.DeleteRecord(ctx, id, userID); err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to invalidate record cache",
+		s.Logger.WarnwCtx(ctx, LogFailedInvalidateRecordCache,
 			commonkeys.RecordID, id,
 			commonkeys.UserID, userID,
 			commonkeys.Error, err,
@@ -61,9 +61,9 @@ func (s *Service) Delete(ctx context.Context, id uint64, userID uint64) error {
 	// Invalidate day cache
 	eventDate := CacheDayStart(existing.EventTime)
 	if err := s.RecordCache.DeleteRecordsByDay(ctx, userID, eventDate); err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to invalidate day cache",
+		s.Logger.WarnwCtx(ctx, LogFailedInvalidateDayCache,
 			commonkeys.UserID, userID,
-			"date", eventDate.Format("2006-01-02"),
+			commonkeys.Date, eventDate.Format(DateFormatISO8601Date),
 			commonkeys.Error, err,
 		)
 	}
@@ -73,7 +73,7 @@ func (s *Service) Delete(ctx context.Context, id uint64, userID uint64) error {
 		tagObj, err := s.TagRepository.GetByID(ctx, existing.TagID, userID)
 		if err == nil && tagObj.ID != 0 {
 			if err := s.RecordCache.DeleteRecordsByCategory(ctx, tagObj.CategoryID, userID); err != nil {
-				s.Logger.WarnwCtx(ctx, "failed to invalidate category cache",
+				s.Logger.WarnwCtx(ctx, LogFailedInvalidateCategoryCache,
 					commonkeys.CategoryID, tagObj.CategoryID,
 					commonkeys.UserID, userID,
 					commonkeys.Error, err,
@@ -82,7 +82,7 @@ func (s *Service) Delete(ctx context.Context, id uint64, userID uint64) error {
 		}
 
 		if err := s.RecordCache.DeleteRecordsByTag(ctx, existing.TagID, userID); err != nil {
-			s.Logger.WarnwCtx(ctx, "failed to invalidate tag cache",
+			s.Logger.WarnwCtx(ctx, LogFailedInvalidateTagCache,
 				commonkeys.TagID, existing.TagID,
 				commonkeys.UserID, userID,
 				commonkeys.Error, err,
@@ -92,7 +92,7 @@ func (s *Service) Delete(ctx context.Context, id uint64, userID uint64) error {
 
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusDeleted)
-	s.Logger.InfowCtx(ctx, "record soft-deleted successfully",
+	s.Logger.InfowCtx(ctx, LogRecordSoftDeletedSuccess,
 		commonkeys.RecordID, id,
 		commonkeys.UserID, userID,
 	)

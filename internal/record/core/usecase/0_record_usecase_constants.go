@@ -94,6 +94,9 @@ const (
 
 	// EventSuccess marks a successful outcome.
 	EventSuccess = "record.success"
+
+	// EventInvalidateCache marks cache invalidation operations.
+	EventInvalidateCache = "record.cache.invalidate"
 )
 
 // -----------------------------------------------------------------------------
@@ -143,6 +146,25 @@ const (
 
 	// RecordNotFound indicates the record was not found.
 	RecordNotFound = "record not found"
+
+	// TagNotFound indicates the tag was not found.
+	TagNotFound = "tag not found"
+)
+
+// Logging and formatting messages.
+const (
+	LogRecordUpdatedSuccessfully = "record updated successfully"
+	LogRecordCreatedSuccessfully = "record created successfully"
+	LogRecordSoftDeletedSuccess  = "record soft-deleted successfully"
+
+	LogFailedSaveRecordToCacheAfterCreation = "failed to save record to cache after creation"
+	LogFailedInvalidateRecordCache          = "failed to invalidate record cache"
+	LogFailedInvalidateDayCache             = "failed to invalidate day cache"
+	LogFailedInvalidateCategoryCache        = "failed to invalidate category cache"
+	LogFailedInvalidateTagCache             = "failed to invalidate tag cache"
+
+	DateFormatISO8601Date = "2006-01-02"
+	ErrLookupTagFormat    = "lookup tag: %w"
 )
 
 // Validation messages.

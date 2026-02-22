@@ -54,8 +54,8 @@ func (s *Service) Update(ctx context.Context, recordID uint64, userID uint64, cm
 		if err != nil || tag.ID == 0 {
 			span.RecordError(err)
 			span.SetStatus(codes.Error, FailedToUpdateRecord)
-			s.Logger.ErrorwCtx(ctx, FailedToUpdateRecord, commonkeys.Error, "tag not found")
-			return domain.Record{}, fmt.Errorf("%w: tag not found", ErrUpdateRecord)
+			s.Logger.ErrorwCtx(ctx, FailedToUpdateRecord, commonkeys.Error, TagNotFound)
+			return domain.Record{}, fmt.Errorf("%w: %s", ErrUpdateRecord, TagNotFound)
 		}
 		finalTagID = *cmd.TagID
 	}
@@ -80,7 +80,7 @@ func (s *Service) Update(ctx context.Context, recordID uint64, userID uint64, cm
 
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusUpdated)
-	s.Logger.InfowCtx(ctx, "record updated successfully",
+	s.Logger.InfowCtx(ctx, LogRecordUpdatedSuccessfully,
 		commonkeys.RecordID, updated.ID,
 		commonkeys.UserID, updated.UserID,
 	)
@@ -121,11 +121,11 @@ func applyRecordPatch(r domain.Record, cmd input.UpdateRecordCommand, tagID uint
 // invalidateRecordCaches invalidates all caches related to the updated record.
 // This is a best-effort operation - errors are logged but don't fail the operation.
 func (s *Service) invalidateRecordCaches(ctx context.Context, span trace.Span, record domain.Record) {
-	span.AddEvent("InvalidateCache")
+	span.AddEvent(EventInvalidateCache)
 
 	// Invalidate the specific record cache
 	if err := s.RecordCache.DeleteRecord(ctx, record.ID, record.UserID); err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to invalidate record cache",
+		s.Logger.WarnwCtx(ctx, LogFailedInvalidateRecordCache,
 			commonkeys.RecordID, record.ID,
 			commonkeys.UserID, record.UserID,
 			commonkeys.Error, err,
@@ -135,9 +135,9 @@ func (s *Service) invalidateRecordCaches(ctx context.Context, span trace.Span, r
 	// Invalidate day cache for the event date
 	eventDate := CacheDayStart(record.EventTime)
 	if err := s.RecordCache.DeleteRecordsByDay(ctx, record.UserID, eventDate); err != nil {
-		s.Logger.WarnwCtx(ctx, "failed to invalidate day cache",
+		s.Logger.WarnwCtx(ctx, LogFailedInvalidateDayCache,
 			commonkeys.UserID, record.UserID,
-			"date", eventDate.Format("2006-01-02"),
+			commonkeys.Date, eventDate.Format(DateFormatISO8601Date),
 			commonkeys.Error, err,
 		)
 	}
@@ -148,7 +148,7 @@ func (s *Service) invalidateRecordCaches(ctx context.Context, span trace.Span, r
 		if err == nil && tag.ID != 0 {
 			// Invalidate category cache
 			if err := s.RecordCache.DeleteRecordsByCategory(ctx, tag.CategoryID, record.UserID); err != nil {
-				s.Logger.WarnwCtx(ctx, "failed to invalidate category cache",
+				s.Logger.WarnwCtx(ctx, LogFailedInvalidateCategoryCache,
 					commonkeys.CategoryID, tag.CategoryID,
 					commonkeys.UserID, record.UserID,
 					commonkeys.Error, err,
@@ -158,7 +158,7 @@ func (s *Service) invalidateRecordCaches(ctx context.Context, span trace.Span, r
 
 		// Invalidate tag cache
 		if err := s.RecordCache.DeleteRecordsByTag(ctx, record.TagID, record.UserID); err != nil {
-			s.Logger.WarnwCtx(ctx, "failed to invalidate tag cache",
+			s.Logger.WarnwCtx(ctx, LogFailedInvalidateTagCache,
 				commonkeys.TagID, record.TagID,
 				commonkeys.UserID, record.UserID,
 				commonkeys.Error, err,

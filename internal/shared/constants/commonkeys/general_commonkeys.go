@@ -85,6 +85,9 @@ const (
 const (
 	// Context is the bounded context name for logging and tracing.
 	Context = "context"
+
+	// Date is the standard key used for date values in logs and tracing attributes.
+	Date = "date"
 )
 
 // Request/tracing identifiers.
