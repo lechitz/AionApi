@@ -14,8 +14,9 @@ AionApi focuses on three goals:
 
 - Documentation portal: [AionApi Docs](https://lechitz.github.io/AionApi/)
 - REST explorer: [Swagger UI](https://lechitz.github.io/AionApi/swagger-ui/)
-- OpenAPI contract: [`swagger/swagger.yaml`](./swagger/swagger.yaml)
+- OpenAPI contract: `contracts/openapi/swagger.yaml`
 - GraphQL schema artifact: [`docs/graphql/schema.graphql`](./docs/graphql/schema.graphql)
+- Documentation ownership map: [`.github/DOCUMENTATION_OWNERSHIP.md`](./.github/DOCUMENTATION_OWNERSHIP.md)
 
 ## Architecture At A Glance
 

@@ -1,0 +1,20 @@
+name: Docs Check
+
+on:
+  pull_request:
+  push:
+    branches: [ main, feature/** ]
+
+permissions:
+  contents: read
+
+jobs:
+  markdown-links:
+    name: Markdown Links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run markdown link check
+        run: ./.github/scripts/check_md_links.sh

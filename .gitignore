@@ -48,6 +48,8 @@ notes/
 **/docs.md
 agents/
 scripts/
+!/.github/scripts/
+!/.github/scripts/**
 
 # Local module cache used by Go
 .gocache
