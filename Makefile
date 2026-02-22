@@ -220,7 +220,7 @@ help:
 	@echo " 🔶 ┃ API CALLS ┃"
 	@echo ""
 	@echo "     call-login               →  POST /auth/login (vars: USER, PASS, SAVE_TOKEN=true to cache)"
-	@echo "     call-health              →  GET /health"
+	@echo "     call-health              →  GET /aion/health (also available at /aion/api/v1/health)"
 	@echo "     call-me                  →  GET /user/me (needs TOKEN or .cache/aion/token)"
 	@echo "     call-chat                →  POST /chat (needs MESSAGE + token)"
 	@echo "     call-graphql             →  POST /graphql (vars: QUERY or QUERY_FILE)"
