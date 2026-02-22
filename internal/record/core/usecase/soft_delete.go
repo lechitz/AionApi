@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
@@ -60,7 +59,7 @@ func (s *Service) Delete(ctx context.Context, id uint64, userID uint64) error {
 	}
 
 	// Invalidate day cache
-	eventDate := existing.EventTime.Truncate(24 * time.Hour)
+	eventDate := cacheDayStart(existing.EventTime)
 	if err := s.RecordCache.DeleteRecordsByDay(ctx, userID, eventDate); err != nil {
 		s.Logger.WarnwCtx(ctx, "failed to invalidate day cache",
 			commonkeys.UserID, userID,

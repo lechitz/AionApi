@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 	"github.com/lechitz/AionApi/internal/record/core/ports/input"
@@ -134,7 +133,7 @@ func (s *Service) invalidateRecordCaches(ctx context.Context, span trace.Span, r
 	}
 
 	// Invalidate day cache for the event date
-	eventDate := record.EventTime.Truncate(24 * time.Hour)
+	eventDate := cacheDayStart(record.EventTime)
 	if err := s.RecordCache.DeleteRecordsByDay(ctx, record.UserID, eventDate); err != nil {
 		s.Logger.WarnwCtx(ctx, "failed to invalidate day cache",
 			commonkeys.UserID, record.UserID,

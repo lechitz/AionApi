@@ -169,7 +169,7 @@ func (s *Service) saveToCacheAndInvalidate(ctx context.Context, span trace.Span,
 	}
 
 	span.AddEvent("InvalidateCache")
-	eventDate := record.EventTime.Truncate(24 * time.Hour)
+	eventDate := cacheDayStart(record.EventTime)
 
 	if err := s.RecordCache.DeleteRecordsByDay(ctx, record.UserID, eventDate); err != nil {
 		s.Logger.WarnwCtx(ctx, "failed to invalidate day cache",

@@ -105,7 +105,7 @@ func TestService_Update_Success(t *testing.T) {
 		Return(tagdomain.Tag{ID: updated.TagID, CategoryID: 10}, nil)
 
 	suite.RecordCache.EXPECT().DeleteRecord(gomock.Any(), updated.ID, updated.UserID).Return(nil)
-	suite.RecordCache.EXPECT().DeleteRecordsByDay(gomock.Any(), updated.UserID, when.Truncate(24*time.Hour)).Return(nil)
+	suite.RecordCache.EXPECT().DeleteRecordsByDay(gomock.Any(), updated.UserID, time.Date(when.UTC().Year(), when.UTC().Month(), when.UTC().Day(), 0, 0, 0, 0, time.UTC)).Return(nil)
 	suite.RecordCache.EXPECT().DeleteRecordsByCategory(gomock.Any(), uint64(10), updated.UserID).Return(nil)
 	suite.RecordCache.EXPECT().DeleteRecordsByTag(gomock.Any(), updated.TagID, updated.UserID).Return(nil)
 
