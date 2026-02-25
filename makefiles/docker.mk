@@ -2,7 +2,7 @@
 #                DOCKER ENVIRONMENT TARGETS
 # ============================================================
 
-.PHONY: build-dev dev-up dev-down dev dev-fast dev-clean clean-dev
+.PHONY: build-dev dev-up dev-down dev dev-fast rebuild-dev dev-full dev-clean clean-dev
 .PHONY: build-my my-up my-down my my-fast my-clean clean-my
 .PHONY: rebuild-dashboard rebuild-chat rebuild-api
 .PHONY: build-prod prod-up prod-down prod clean-prod
@@ -89,11 +89,11 @@ dev-down:
 		echo "   • To start Ollama: make ollama-up"; \
 	fi
 
-dev: build-dev
-	@echo "[DEV] Starting FULL STACK environment (detached)..."
+rebuild-dev: build-dev
+	@echo "[REBUILD-DEV] Building images + starting FULL STACK (detached)..."
 	@echo "      → AionApi + aion-chat + dashboard + infrastructure"
 	@echo "      ℹ️  Volumes preserved (Ollama models + Database)"
-	@echo "      💡 Use 'make rebuild-chat' or 'make rebuild-dashboard' to force rebuild"
+	@echo "      💡 Use 'make dev' for fast startup without forced rebuild"
 	@echo ""
 	@echo "Starting/restarting services (preserving volumes)..."
 	@if ! docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
@@ -152,7 +152,9 @@ dev: build-dev
 	@echo "   • Loki:       http://localhost:3100"
 	@echo ""
 	@echo "Quick commands:"
-	@echo "   make dev-fast              → Start without rebuilding ANY images (fastest)"
+	@echo "   make dev                   → Start without rebuilding ANY images (default/fast)"
+	@echo "   make dev-fast              → Same as make dev (kept for compatibility)"
+	@echo "   make rebuild-dev           → Build all images + start full stack"
 	@echo "   make dev-down              → Stop services (Ollama stays running)"
 	@echo "   make rebuild-api           → Rebuild only aion-api (smart rebuild)"
 	@echo "   make dev-attach            → Attach to aion-api logs"
@@ -193,6 +195,12 @@ dev-fast:
 	@echo "   • Logs (Loki): http://localhost:3000/explore"
 	@echo "   • Jaeger:     http://localhost:16686"
 	@echo "   • Loki:       http://localhost:3100"
+
+# New default behavior: fast startup without rebuild.
+dev: dev-fast
+
+# Alias for explicit naming.
+dev-full: rebuild-dev
 
 # ============================================================
 #                     LOGS COMMANDS

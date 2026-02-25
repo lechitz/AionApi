@@ -57,14 +57,15 @@ help:
 	@echo "  - [DEV - Docker Full Stack]"
 	@echo ""
 	@echo "     build-dev                →  Build the development Docker image (aion-api only)"
-	@echo "     dev                      →  Build ALL images + start FULL STACK"
+	@echo "     dev                      →  Start FULL STACK without rebuilding (default/fast)"
+	@echo "     dev-fast                 →  Same as make dev (compatibility alias)"
+	@echo "     rebuild-dev              →  Build ALL images + start FULL STACK"
 	@echo "                                  Rebuilds: aion-api, aion-chat, aionapi-dashboard"
 	@echo "                                  Preserves: Ollama models + PostgreSQL data (no re-download!)"
 	@echo "                                  🔥 HOT RELOAD enabled for all projects:"
 	@echo "                                     • Go: Air auto-recompile (~3-5s)"
 	@echo "                                     • Python: Uvicorn --reload (~1-2s)"
 	@echo "                                     • TypeScript: Vite HMR (<1s)"
-	@echo "     dev-fast                 →  Start FULL STACK without rebuilding (faster, use when no code changes)"
 	@echo "     dev-down                 →  Stop services (keeps Ollama running, preserves all volumes)"
 	@echo "     clean-dev                →  ⚠️ Remove dev containers/volumes/images (keeps Ollama running)"
 	@echo ""
@@ -243,7 +244,7 @@ install-tools: tools-install
 
 .PHONY: \
 	help tools-install tools.check \
-	build-dev dev-up dev-down dev dev-fast dev-attach dev-logs dev-clean clean-dev \
+	build-dev rebuild-dev dev-full dev-up dev-down dev dev-fast dev-attach dev-logs dev-clean clean-dev \
 	logs-api logs-chat logs-dashboard logs-postgres logs-redis logs-ollama logs-jaeger logs-otel logs-prometheus logs-grafana logs-all \
 	ollama-up ollama-down ollama-status ollama-restart ollama-logs ollama-models ollama-pull ollama-clean \
 	dev-local dev-local-deps dev-local-full dev-local-stop dev-local-down air-install \
