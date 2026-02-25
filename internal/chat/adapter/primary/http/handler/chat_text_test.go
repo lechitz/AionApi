@@ -61,6 +61,30 @@ func (mockLogger) ErrorwCtx(context.Context, string, ...any) {}
 func (mockLogger) WarnwCtx(context.Context, string, ...any)  {}
 func (mockLogger) DebugwCtx(context.Context, string, ...any) {}
 
+type capturedLogEntry struct {
+	message string
+	keyvals []any
+}
+
+type capturingLogger struct {
+	entries []capturedLogEntry
+}
+
+func (l *capturingLogger) Infof(string, ...any)                      {}
+func (l *capturingLogger) Errorf(string, ...any)                     {}
+func (l *capturingLogger) Debugf(string, ...any)                     {}
+func (l *capturingLogger) Warnf(string, ...any)                      {}
+func (l *capturingLogger) Infow(string, ...any)                      {}
+func (l *capturingLogger) Errorw(string, ...any)                     {}
+func (l *capturingLogger) Debugw(string, ...any)                     {}
+func (l *capturingLogger) Warnw(string, ...any)                      {}
+func (l *capturingLogger) ErrorwCtx(context.Context, string, ...any) {}
+func (l *capturingLogger) WarnwCtx(context.Context, string, ...any)  {}
+func (l *capturingLogger) DebugwCtx(context.Context, string, ...any) {}
+func (l *capturingLogger) InfowCtx(_ context.Context, msg string, keyvals ...any) {
+	l.entries = append(l.entries, capturedLogEntry{message: msg, keyvals: keyvals})
+}
+
 type mockAuthService struct{}
 
 func (mockAuthService) Validate(context.Context, string) (uint64, map[string]any, error) {
@@ -197,6 +221,54 @@ func TestChatText_Errors(t *testing.T) {
 		require.Equal(t, 499, rec.Code)
 		require.Contains(t, rec.Body.String(), "Chat request cancelled")
 	})
+}
+
+func TestChatText_LogsUIActionMetadataWithConsent(t *testing.T) {
+	logger := &capturingLogger{}
+	h := handler.New(mockChatService{
+		processFn: func(_ context.Context, userID uint64, message string, requestContext map[string]interface{}) (*domain.ChatResult, error) {
+			require.Equal(t, uint64(9), userID)
+			require.Equal(t, "confirmar", message)
+			return &domain.ChatResult{Response: "ok"}, nil
+		},
+	}, &config.Config{}, logger)
+
+	req := httptest.NewRequest(
+		http.MethodPost,
+		"/chat/text",
+		strings.NewReader(`{"message":"confirmar","context":{"ui_action":{"type":"draft_accept","draft_id":"draft-xyz","consent":{"required":true,"confirmed":true,"policy_version":"consent-v1"}}}}`),
+	)
+	req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(9)))
+	rec := httptest.NewRecorder()
+
+	h.ChatText(rec, req)
+
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var uiActionLog *capturedLogEntry
+	for idx := range logger.entries {
+		entry := &logger.entries[idx]
+		if entry.message == handler.MsgChatRequestIncludesUIAction {
+			uiActionLog = entry
+			break
+		}
+	}
+	require.NotNil(t, uiActionLog, "expected ui_action metadata log entry")
+
+	logMap := make(map[string]any)
+	for i := 0; i+1 < len(uiActionLog.keyvals); i += 2 {
+		key, ok := uiActionLog.keyvals[i].(string)
+		if !ok {
+			continue
+		}
+		logMap[key] = uiActionLog.keyvals[i+1]
+	}
+
+	require.Equal(t, "draft_accept", logMap[handler.LogKeyUIActionType])
+	require.Equal(t, "draft-xyz", logMap[handler.LogKeyDraftID])
+	require.Equal(t, true, logMap[handler.LogKeyConsentRequired])
+	require.Equal(t, true, logMap[handler.LogKeyConsentConfirmed])
+	require.Equal(t, "consent-v1", logMap[handler.LogKeyConsentPolicyVersion])
 }
 
 var (
