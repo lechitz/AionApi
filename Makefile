@@ -210,6 +210,7 @@ help:
 	@echo "     test-cover-detail        →  Run tests with coverage report (excludes mocks)"
 	@echo "     test-html-report         →  Generate HTML test report (requires go-test-html-report)"
 	@echo "     regression-gate-draft    →  Run cross-repo draft-flow regression gate (dashboard + chat + api)"
+	@echo "     e2e-draft-smoke          →  Run dashboard Playwright smoke for DC-08/DC-09 (host deps required)"
 	@echo "     dc15-correlate           →  Correlate UI action logs across dashboard + api + chat (vars: SINCE, DRAFT_ID)"
 	@echo ""
 	@echo ""
@@ -256,7 +257,7 @@ install-tools: tools-install
 	graphql mocks \
 	format lint lint-fix verify \
 	test test-cover test-cover-detail test-html-report test-ci test-clean \
-	regression-gate-draft dc15-correlate \
+	regression-gate-draft e2e-draft-smoke dc15-correlate \
 	migrate-up migrate-down migrate-force migrate-new migrate-install \
 	migrate-dev-up migrate-dev-down migrate-dev-status migrate-dev-reset \
 	docs.gen docs.check-dirty docs.clean docs.validate docs-verify
@@ -272,6 +273,9 @@ docs-verify:
 
 regression-gate-draft:
 	@./hack/regression-gate-draft-flow.sh
+
+e2e-draft-smoke:
+	@cd ../aionapi-dashboard && npm run test:e2e:draft
 
 dc15-correlate:
 	@./hack/dc15-correlate-ui-action.sh --since "$${SINCE:-45m}" $${DRAFT_ID:+--draft-id "$$DRAFT_ID"}
