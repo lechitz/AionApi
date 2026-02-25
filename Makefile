@@ -210,6 +210,7 @@ help:
 	@echo "     test-cover-detail        →  Run tests with coverage report (excludes mocks)"
 	@echo "     test-html-report         →  Generate HTML test report (requires go-test-html-report)"
 	@echo "     regression-gate-draft    →  Run cross-repo draft-flow regression gate (dashboard + chat + api)"
+	@echo "     dc15-correlate           →  Correlate UI action logs across dashboard + api + chat (vars: SINCE, DRAFT_ID)"
 	@echo ""
 	@echo ""
 	@echo " 🔶 ┃ API DOCS (SWAGGER) ┃"
@@ -255,7 +256,7 @@ install-tools: tools-install
 	graphql mocks \
 	format lint lint-fix verify \
 	test test-cover test-cover-detail test-html-report test-ci test-clean \
-	regression-gate-draft \
+	regression-gate-draft dc15-correlate \
 	migrate-up migrate-down migrate-force migrate-new migrate-install \
 	migrate-dev-up migrate-dev-down migrate-dev-status migrate-dev-reset \
 	docs.gen docs.check-dirty docs.clean docs.validate docs-verify
@@ -271,6 +272,9 @@ docs-verify:
 
 regression-gate-draft:
 	@./hack/regression-gate-draft-flow.sh
+
+dc15-correlate:
+	@./hack/dc15-correlate-ui-action.sh --since "$${SINCE:-45m}" $${DRAFT_ID:+--draft-id "$$DRAFT_ID"}
 
 # Include debug makefile (opt-in to avoid overriding targets and noisy warnings)
 # Usage: make INCLUDE_DEBUG_MK=1 debug-roles
