@@ -295,6 +295,14 @@ const (
 	LogKeyConsentConfirmed = "consent_confirmed"
 	// LogKeyConsentPolicyVersion is the log key for consent policy version.
 	LogKeyConsentPolicyVersion = "consent_policy_version"
+	// LogKeyQuickAddContractVersion is the log key for quick_add contract version.
+	LogKeyQuickAddContractVersion = "quick_add_contract_version"
+	// LogKeyQuickAddEntity is the log key for quick_add entity.
+	LogKeyQuickAddEntity = "quick_add_entity"
+	// LogKeyQuickAddOperation is the log key for quick_add operation.
+	LogKeyQuickAddOperation = "quick_add_operation"
+	// LogKeyQuickAddIdempotencyKey is the log key for quick_add idempotency key.
+	LogKeyQuickAddIdempotencyKey = "quick_add_idempotency_key"
 )
 
 // Context payload keys for chat request metadata.
@@ -303,4 +311,5 @@ const (
 	ContextKeyUIActionType = "type"
 	ContextKeyDraftID      = "draft_id"
 	ContextKeyConsent      = "consent"
+	ContextKeyQuickAdd     = "quick_add"
 )

@@ -81,6 +81,7 @@ func (h *Handler) ChatText(w http.ResponseWriter, r *http.Request) {
 	span.SetAttributes(
 		attribute.Int(AttrMessageLength, len(chatReq.Message)),
 	)
+	chatReq.Context = normalizeUIActionQuickAdd(chatReq.Context)
 	h.logUIActionMetadata(ctx, userID, chatReq.Context)
 
 	h.Logger.InfowCtx(ctx, MsgChatRequestStart, commonkeys.UserID, strconv.FormatUint(userID, 10), AttrMessageLength, len(chatReq.Message))
@@ -199,6 +200,10 @@ func (h *Handler) logUIActionMetadata(
 	consentRequired := false
 	consentConfirmed := false
 	consentPolicyVersion := ""
+	quickAddContractVersion := ""
+	quickAddEntity := ""
+	quickAddOperation := ""
+	quickAddIdempotencyKey := ""
 	if rawConsent, ok := rawAction[ContextKeyConsent].(map[string]interface{}); ok && rawConsent != nil {
 		if value, ok := rawConsent["required"].(bool); ok {
 			consentRequired = value
@@ -210,6 +215,20 @@ func (h *Handler) logUIActionMetadata(
 			consentPolicyVersion = value
 		}
 	}
+	if rawQuickAdd, ok := rawAction[ContextKeyQuickAdd].(map[string]interface{}); ok && rawQuickAdd != nil {
+		if value, ok := rawQuickAdd["contract_version"].(string); ok {
+			quickAddContractVersion = value
+		}
+		if value, ok := rawQuickAdd["entity"].(string); ok {
+			quickAddEntity = value
+		}
+		if value, ok := rawQuickAdd["operation"].(string); ok {
+			quickAddOperation = value
+		}
+		if value, ok := rawQuickAdd["idempotency_key"].(string); ok {
+			quickAddIdempotencyKey = value
+		}
+	}
 	h.Logger.InfowCtx(
 		ctx,
 		MsgChatRequestIncludesUIAction,
@@ -219,5 +238,79 @@ func (h *Handler) logUIActionMetadata(
 		LogKeyConsentRequired, consentRequired,
 		LogKeyConsentConfirmed, consentConfirmed,
 		LogKeyConsentPolicyVersion, consentPolicyVersion,
+		LogKeyQuickAddContractVersion, quickAddContractVersion,
+		LogKeyQuickAddEntity, quickAddEntity,
+		LogKeyQuickAddOperation, quickAddOperation,
+		LogKeyQuickAddIdempotencyKey, quickAddIdempotencyKey,
 	)
+}
+
+func normalizeUIActionQuickAdd(requestContext map[string]interface{}) map[string]interface{} {
+	if requestContext == nil {
+		return nil
+	}
+	rawAction, ok := requestContext[ContextKeyUIAction].(map[string]interface{})
+	if !ok || rawAction == nil {
+		return requestContext
+	}
+
+	rawQuickAdd, hasQuickAdd := rawAction[ContextKeyQuickAdd]
+	if !hasQuickAdd {
+		return requestContext
+	}
+
+	quickAdd, ok := rawQuickAdd.(map[string]interface{})
+	if !ok || quickAdd == nil {
+		delete(rawAction, ContextKeyQuickAdd)
+		requestContext[ContextKeyUIAction] = rawAction
+		return requestContext
+	}
+
+	actionType, _ := rawAction[ContextKeyUIActionType].(string)
+	normalized := map[string]interface{}{}
+	contractVersion := normalizeQuickAddString(quickAdd["contract_version"])
+	if contractVersion == "" {
+		contractVersion = "quick-add-v1"
+	}
+	normalized["contract_version"] = contractVersion
+
+	entity := normalizeQuickAddString(quickAdd["entity"])
+	if entity != "" {
+		normalized["entity"] = entity
+	}
+
+	operation := normalizeQuickAddString(quickAdd["operation"])
+	if operation == "" && actionType == "draft_cancel" {
+		operation = "cancel"
+	}
+	if operation != "" {
+		normalized["operation"] = operation
+	}
+
+	idempotencyKey := normalizeQuickAddString(quickAdd["idempotency_key"])
+	if idempotencyKey != "" {
+		normalized["idempotency_key"] = idempotencyKey
+	}
+
+	clientActionID := normalizeQuickAddString(quickAdd["client_action_id"])
+	if clientActionID != "" {
+		normalized["client_action_id"] = clientActionID
+	}
+
+	source := normalizeQuickAddString(quickAdd["source"])
+	if source != "" {
+		normalized["source"] = source
+	}
+
+	rawAction[ContextKeyQuickAdd] = normalized
+	requestContext[ContextKeyUIAction] = rawAction
+	return requestContext
+}
+
+func normalizeQuickAddString(raw interface{}) string {
+	value, ok := raw.(string)
+	if !ok {
+		return ""
+	}
+	return strings.TrimSpace(value)
 }

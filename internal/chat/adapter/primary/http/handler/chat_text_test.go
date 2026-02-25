@@ -236,7 +236,7 @@ func TestChatText_LogsUIActionMetadataWithConsent(t *testing.T) {
 	req := httptest.NewRequest(
 		http.MethodPost,
 		"/chat/text",
-		strings.NewReader(`{"message":"confirmar","context":{"ui_action":{"type":"draft_accept","draft_id":"draft-xyz","consent":{"required":true,"confirmed":true,"policy_version":"consent-v1"}}}}`),
+		strings.NewReader(`{"message":"confirmar","context":{"ui_action":{"type":"draft_accept","draft_id":"draft-xyz","consent":{"required":true,"confirmed":true,"policy_version":"consent-v1"},"quick_add":{"contract_version":" quick-add-v1 ","entity":"category","operation":"create","idempotency_key":"qa-1"}}}}`),
 	)
 	req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(9)))
 	rec := httptest.NewRecorder()
@@ -269,6 +269,10 @@ func TestChatText_LogsUIActionMetadataWithConsent(t *testing.T) {
 	require.Equal(t, true, logMap[handler.LogKeyConsentRequired])
 	require.Equal(t, true, logMap[handler.LogKeyConsentConfirmed])
 	require.Equal(t, "consent-v1", logMap[handler.LogKeyConsentPolicyVersion])
+	require.Equal(t, "quick-add-v1", logMap[handler.LogKeyQuickAddContractVersion])
+	require.Equal(t, "category", logMap[handler.LogKeyQuickAddEntity])
+	require.Equal(t, "create", logMap[handler.LogKeyQuickAddOperation])
+	require.Equal(t, "qa-1", logMap[handler.LogKeyQuickAddIdempotencyKey])
 }
 
 var (
