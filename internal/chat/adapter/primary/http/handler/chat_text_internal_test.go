@@ -20,8 +20,15 @@ func TestNormalizeUIActionQuickAdd(t *testing.T) {
 		}
 
 		normalized := normalizeUIActionQuickAdd(requestContext)
-		uiAction := normalized[ContextKeyUIAction].(map[string]interface{})
-		quickAdd := uiAction[ContextKeyQuickAdd].(map[string]interface{})
+		rawUIAction, ok := normalized[ContextKeyUIAction]
+		require.True(t, ok)
+		uiAction, ok := rawUIAction.(map[string]interface{})
+		require.True(t, ok)
+
+		rawQuickAdd, ok := uiAction[ContextKeyQuickAdd]
+		require.True(t, ok)
+		quickAdd, ok := rawQuickAdd.(map[string]interface{})
+		require.True(t, ok)
 
 		require.Equal(t, "quick-add-v1", quickAdd["contract_version"])
 		require.Equal(t, "tag", quickAdd["entity"])
@@ -38,7 +45,10 @@ func TestNormalizeUIActionQuickAdd(t *testing.T) {
 		}
 
 		normalized := normalizeUIActionQuickAdd(requestContext)
-		uiAction := normalized[ContextKeyUIAction].(map[string]interface{})
+		rawUIAction, ok := normalized[ContextKeyUIAction]
+		require.True(t, ok)
+		uiAction, ok := rawUIAction.(map[string]interface{})
+		require.True(t, ok)
 		_, exists := uiAction[ContextKeyQuickAdd]
 		require.False(t, exists)
 	})

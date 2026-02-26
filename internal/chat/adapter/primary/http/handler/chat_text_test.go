@@ -226,7 +226,7 @@ func TestChatText_Errors(t *testing.T) {
 func TestChatText_LogsUIActionMetadataWithConsent(t *testing.T) {
 	logger := &capturingLogger{}
 	h := handler.New(mockChatService{
-		processFn: func(_ context.Context, userID uint64, message string, requestContext map[string]interface{}) (*domain.ChatResult, error) {
+		processFn: func(_ context.Context, userID uint64, message string, _ map[string]interface{}) (*domain.ChatResult, error) {
 			require.Equal(t, uint64(9), userID)
 			require.Equal(t, "confirmar", message)
 			return &domain.ChatResult{Response: "ok"}, nil
@@ -236,7 +236,9 @@ func TestChatText_LogsUIActionMetadataWithConsent(t *testing.T) {
 	req := httptest.NewRequest(
 		http.MethodPost,
 		"/chat/text",
-		strings.NewReader(`{"message":"confirmar","context":{"ui_action":{"type":"draft_accept","draft_id":"draft-xyz","consent":{"required":true,"confirmed":true,"policy_version":"consent-v1"},"quick_add":{"contract_version":" quick-add-v1 ","entity":"category","operation":"create","idempotency_key":"qa-1"}}}}`),
+		strings.NewReader(
+			`{"message":"confirmar","context":{"ui_action":{"type":"draft_accept","draft_id":"draft-xyz","consent":{"required":true,"confirmed":true,"policy_version":"consent-v1"},"quick_add":{"contract_version":" quick-add-v1 ","entity":"category","operation":"create","idempotency_key":"qa-1"}}}}`,
+		),
 	)
 	req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(9)))
 	rec := httptest.NewRecorder()

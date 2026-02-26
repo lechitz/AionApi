@@ -187,48 +187,16 @@ func (h *Handler) logUIActionMetadata(
 	userID uint64,
 	requestContext map[string]interface{},
 ) {
-	if requestContext == nil {
-		return
-	}
-	rawAction, ok := requestContext[ContextKeyUIAction].(map[string]interface{})
-	if !ok || rawAction == nil {
+	rawAction := extractUIActionMap(requestContext)
+	if rawAction == nil {
 		return
 	}
 
 	actionType, _ := rawAction[ContextKeyUIActionType].(string)
 	draftID, _ := rawAction[ContextKeyDraftID].(string)
-	consentRequired := false
-	consentConfirmed := false
-	consentPolicyVersion := ""
-	quickAddContractVersion := ""
-	quickAddEntity := ""
-	quickAddOperation := ""
-	quickAddIdempotencyKey := ""
-	if rawConsent, ok := rawAction[ContextKeyConsent].(map[string]interface{}); ok && rawConsent != nil {
-		if value, ok := rawConsent["required"].(bool); ok {
-			consentRequired = value
-		}
-		if value, ok := rawConsent["confirmed"].(bool); ok {
-			consentConfirmed = value
-		}
-		if value, ok := rawConsent["policy_version"].(string); ok {
-			consentPolicyVersion = value
-		}
-	}
-	if rawQuickAdd, ok := rawAction[ContextKeyQuickAdd].(map[string]interface{}); ok && rawQuickAdd != nil {
-		if value, ok := rawQuickAdd["contract_version"].(string); ok {
-			quickAddContractVersion = value
-		}
-		if value, ok := rawQuickAdd["entity"].(string); ok {
-			quickAddEntity = value
-		}
-		if value, ok := rawQuickAdd["operation"].(string); ok {
-			quickAddOperation = value
-		}
-		if value, ok := rawQuickAdd["idempotency_key"].(string); ok {
-			quickAddIdempotencyKey = value
-		}
-	}
+	consentRequired, consentConfirmed, consentPolicyVersion := extractConsentMetadata(rawAction)
+	quickAddContractVersion, quickAddEntity, quickAddOperation, quickAddIdempotencyKey := extractQuickAddMetadata(rawAction)
+
 	h.Logger.InfowCtx(
 		ctx,
 		MsgChatRequestIncludesUIAction,
@@ -243,6 +211,42 @@ func (h *Handler) logUIActionMetadata(
 		LogKeyQuickAddOperation, quickAddOperation,
 		LogKeyQuickAddIdempotencyKey, quickAddIdempotencyKey,
 	)
+}
+
+func extractUIActionMap(requestContext map[string]interface{}) map[string]interface{} {
+	if requestContext == nil {
+		return nil
+	}
+	rawAction, ok := requestContext[ContextKeyUIAction].(map[string]interface{})
+	if !ok || rawAction == nil {
+		return nil
+	}
+	return rawAction
+}
+
+func extractConsentMetadata(rawAction map[string]interface{}) (bool, bool, string) {
+	rawConsent, ok := rawAction[ContextKeyConsent].(map[string]interface{})
+	if !ok || rawConsent == nil {
+		return false, false, ""
+	}
+
+	consentRequired, _ := rawConsent["required"].(bool)
+	consentConfirmed, _ := rawConsent["confirmed"].(bool)
+	consentPolicyVersion, _ := rawConsent["policy_version"].(string)
+	return consentRequired, consentConfirmed, consentPolicyVersion
+}
+
+func extractQuickAddMetadata(rawAction map[string]interface{}) (string, string, string, string) {
+	rawQuickAdd, ok := rawAction[ContextKeyQuickAdd].(map[string]interface{})
+	if !ok || rawQuickAdd == nil {
+		return "", "", "", ""
+	}
+
+	quickAddContractVersion, _ := rawQuickAdd["contract_version"].(string)
+	quickAddEntity, _ := rawQuickAdd["entity"].(string)
+	quickAddOperation, _ := rawQuickAdd["operation"].(string)
+	quickAddIdempotencyKey, _ := rawQuickAdd["idempotency_key"].(string)
+	return quickAddContractVersion, quickAddEntity, quickAddOperation, quickAddIdempotencyKey
 }
 
 func normalizeUIActionQuickAdd(requestContext map[string]interface{}) map[string]interface{} {
