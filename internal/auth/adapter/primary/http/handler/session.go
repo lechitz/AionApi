@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/lechitz/AionApi/internal/auth/adapter/primary/http/dto"
@@ -31,7 +32,7 @@ func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerAuthHandler).Start(r.Context(), SpanSessionHandler)
 	defer span.End()
 
-	accessToken, err := cookies.ExtractAuthToken(r)
+	accessToken, err := extractSessionAccessToken(r)
 	if err != nil {
 		span.RecordError(err)
 		httpresponse.WriteAuthError(w, sharederrors.ErrUnauthorized(err.Error()), h.Logger)
@@ -69,6 +70,19 @@ func (h *Handler) Session(w http.ResponseWriter, r *http.Request) {
 	span.SetStatus(codes.Ok, StatusSessionSuccess)
 
 	httpresponse.WriteSuccess(w, http.StatusOK, resp, MsgSessionSuccess)
+}
+
+func extractSessionAccessToken(r *http.Request) (string, error) {
+	// Prefer explicit Authorization header when present.
+	if ah := strings.TrimSpace(r.Header.Get("Authorization")); ah != "" {
+		parts := strings.SplitN(ah, " ", 2)
+		if len(parts) == 2 && strings.EqualFold(parts[0], "Bearer") && strings.TrimSpace(parts[1]) != "" {
+			return strings.TrimSpace(parts[1]), nil
+		}
+	}
+
+	// Backward-compatible cookie support for browser flows.
+	return cookies.ExtractAuthToken(r)
 }
 
 func extractStringClaim(claims map[string]any, key string) string {

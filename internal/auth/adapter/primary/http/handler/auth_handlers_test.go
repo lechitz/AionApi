@@ -332,6 +332,30 @@ func TestSession_SuccessWithClaimsNormalization(t *testing.T) {
 	}
 }
 
+func TestSession_SuccessWithBearerToken(t *testing.T) {
+	h := newTestHandler(t, &authServiceStub{
+		validateFn: func(_ context.Context, token string) (uint64, map[string]any, error) {
+			if token != "bearer-token" {
+				t.Fatalf("unexpected token: %s", token)
+			}
+			return 202, map[string]any{
+				claimskeys.Username: "bearer-user",
+				claimskeys.Roles:    []string{"user"},
+			}, nil
+		},
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/auth/session", nil)
+	req.Header.Set("Authorization", "Bearer bearer-token")
+	w := httptest.NewRecorder()
+
+	h.Session(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", w.Code)
+	}
+}
+
 func TestLogin_ValidationRequiredFields(t *testing.T) {
 	h := newTestHandler(t, &authServiceStub{})
 
