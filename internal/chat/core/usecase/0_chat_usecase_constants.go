@@ -90,6 +90,10 @@ const (
 	LogChatContextRetrieved = "Chat context retrieved successfully"
 	// LogChatRequestIncludesUIAction is the log message when chat request carries ui_action metadata.
 	LogChatRequestIncludesUIAction = "Chat request contains UI action metadata"
+	// LogAuditEventSaved indicates audit event persistence succeeded.
+	LogAuditEventSaved = "Audit action event persisted"
+	// LogAuditEventSaveFailed indicates audit event persistence failed but business flow continues.
+	LogAuditEventSaveFailed = "Audit action event persistence failed (non-blocking)"
 )
 
 // Log keys.
@@ -108,6 +112,10 @@ const (
 	LogKeyUIActionType = "ui_action_type"
 	// LogKeyDraftID is the log key for draft identifier.
 	LogKeyDraftID = "draft_id"
+	// LogKeyTraceID is the log key for trace identifier.
+	LogKeyTraceID = "trace_id"
+	// LogKeyRequestID is the log key for request identifier.
+	LogKeyRequestID = "request_id"
 )
 
 // Context keys.
@@ -122,6 +130,12 @@ const (
 	ContextKeyUIActionType = "type"
 	// ContextKeyDraftID is the nested key for draft identifier.
 	ContextKeyDraftID = "draft_id"
+	// ContextKeyConsent is the nested key for consent metadata.
+	ContextKeyConsent = "consent"
+	// ContextKeyQuickAdd is the nested key for quick_add metadata.
+	ContextKeyQuickAdd = "quick_add"
+	// ContextKeyActionResult is the nested key for action_result metadata.
+	ContextKeyActionResult = "action_result"
 	// DefaultTimezone is the default timezone value.
 	DefaultTimezone = "America/Sao_Paulo"
 )

@@ -14,12 +14,14 @@ Orchestrates chat-related usecases and external AI/chat providers via output por
 | Chat history/context | Query and format user conversation context |
 | External provider orchestration | Call AI/chat service adapters via output ports |
 | Transport integration | Expose chat usecases through primary adapters |
+| Audit publishing | Emit audit action events through `audit` bounded context |
 
 ## Design Notes
 
 - Keep provider-specific details in secondary adapters.
 - Keep message-handling rules in core usecases.
 - Avoid logging raw sensitive content.
+- Keep audit persistence out of `chat` DB adapters; use `audit` input port/service.
 
 ## Package Improvements
 

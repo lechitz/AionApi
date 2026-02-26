@@ -7,8 +7,10 @@ import (
 	"testing"
 	"time"
 
+	auditdomain "github.com/lechitz/AionApi/internal/audit/core/domain"
 	"github.com/lechitz/AionApi/internal/chat/adapter/primary/http/dto"
 	"github.com/lechitz/AionApi/internal/chat/core/domain"
+	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -291,4 +293,94 @@ func TestProcessMessage_WithMultipleFunctionCalls(t *testing.T) {
 	require.Equal(t, TestFunctionSetReminder, result.FunctionCalls[1])
 
 	time.Sleep(10 * time.Millisecond)
+}
+
+func TestProcessMessage_UIActionPersistsAuditEvent(t *testing.T) {
+	suite := setup.ChatServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	userID := uint64(444)
+	message := "confirm this draft"
+	ctx := context.WithValue(suite.Ctx, ctxkeys.TraceID, "trace-123")
+	ctx = context.WithValue(ctx, ctxkeys.RequestID, "req-123")
+	requestContext := map[string]interface{}{
+		"ui_action": map[string]interface{}{
+			"type":     "draft_accept",
+			"draft_id": "draft-xyz",
+			"consent": map[string]interface{}{
+				"required":       true,
+				"confirmed":      true,
+				"policy_version": "consent-v1",
+			},
+			"quick_add": map[string]interface{}{
+				"contract_version": "quick-add-v1",
+				"entity":           "category",
+				"operation":        "create",
+				"idempotency_key":  "qa-1",
+			},
+		},
+	}
+
+	suite.HistoryCache.EXPECT().GetLatest(gomock.Any(), userID, 6).Return([]domain.ChatHistory{}, nil)
+	suite.AionChatClient.EXPECT().
+		SendMessage(gomock.Any(), gomock.Any()).
+		Return(&dto.InternalChatResponse{
+			Response: "ok",
+			UI: map[string]interface{}{
+				"action_result": map[string]interface{}{
+					"status":       "success",
+					"entity_id":    "10293",
+					"message_code": "action.success",
+				},
+			},
+		}, nil)
+	suite.AuditService.EXPECT().
+		WriteEvent(gomock.Any(), gomock.Any()).
+		DoAndReturn(func(_ context.Context, event auditdomain.AuditActionEvent) error {
+			require.Equal(t, userID, event.UserID)
+			require.Equal(t, "draft_accept", event.UIActionType)
+			require.Equal(t, "draft-xyz", event.DraftID)
+			require.Equal(t, "success", event.Status)
+			require.Equal(t, "trace-123", event.TraceID)
+			require.Equal(t, "req-123", event.RequestID)
+			require.Equal(t, "category", event.Entity)
+			require.Equal(t, "create", event.Operation)
+			require.Equal(t, "action.success", event.MessageCode)
+			require.False(t, event.TimestampUTC.IsZero())
+			return nil
+		})
+	suite.HistoryRepo.EXPECT().Save(gomock.Any(), gomock.Any()).Return(domain.ChatHistory{}, nil).AnyTimes()
+	suite.HistoryCache.EXPECT().Add(gomock.Any(), userID, gomock.Any()).Return(nil).AnyTimes()
+
+	result, err := suite.ChatService.ProcessMessage(ctx, userID, message, requestContext)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+}
+
+func TestProcessMessage_AuditFailureDoesNotFailBusinessFlow(t *testing.T) {
+	suite := setup.ChatServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	userID := uint64(445)
+	requestContext := map[string]interface{}{
+		"ui_action": map[string]interface{}{
+			"type":     "draft_cancel",
+			"draft_id": "draft-abcd",
+		},
+	}
+
+	suite.HistoryCache.EXPECT().GetLatest(gomock.Any(), userID, 6).Return([]domain.ChatHistory{}, nil)
+	suite.AionChatClient.EXPECT().
+		SendMessage(gomock.Any(), gomock.Any()).
+		Return(&dto.InternalChatResponse{Response: "ok"}, nil)
+	suite.AuditService.EXPECT().
+		WriteEvent(gomock.Any(), gomock.Any()).
+		Return(errors.New(TestErrorDatabaseTimeout))
+	suite.HistoryRepo.EXPECT().Save(gomock.Any(), gomock.Any()).Return(domain.ChatHistory{}, nil).AnyTimes()
+	suite.HistoryCache.EXPECT().Add(gomock.Any(), userID, gomock.Any()).Return(nil).AnyTimes()
+
+	result, err := suite.ChatService.ProcessMessage(suite.Ctx, userID, "cancel", requestContext)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	require.Equal(t, "ok", result.Response)
 }

@@ -3,6 +3,7 @@ package app
 
 import (
 	inputAdmin "github.com/lechitz/AionApi/internal/admin/core/ports/input"
+	inputAudit "github.com/lechitz/AionApi/internal/audit/core/ports/input"
 	inputAuth "github.com/lechitz/AionApi/internal/auth/core/ports/input"
 	inputCategory "github.com/lechitz/AionApi/internal/category/core/ports/input"
 	inputChat "github.com/lechitz/AionApi/internal/chat/core/ports/input"
@@ -22,5 +23,6 @@ type Dependencies struct {
 	TagService      inputTag.TagService
 	RecordService   inputRecord.RecordService
 	ChatService     inputChat.ChatService
+	AuditService    inputAudit.Service
 	Logger          logger.ContextLogger
 }

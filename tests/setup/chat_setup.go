@@ -19,6 +19,7 @@ type ChatServiceTestSuite struct {
 	AionChatClient *mocks.MockAionChatClient
 	HistoryRepo    *mocks.MockChatHistoryRepository
 	HistoryCache   *mocks.MockChatHistoryCache
+	AuditService   *mocks.MockService
 	Logger         *mocks.MockContextLogger
 }
 
@@ -30,6 +31,7 @@ func ChatServiceTest(t *testing.T) *ChatServiceTestSuite {
 	aionChatClient := mocks.NewMockAionChatClient(ctrl)
 	historyRepo := mocks.NewMockChatHistoryRepository(ctrl)
 	historyCache := mocks.NewMockChatHistoryCache(ctrl)
+	auditService := mocks.NewMockService(ctrl)
 	logger := mocks.NewMockContextLogger(ctrl)
 
 	ExpectLoggerDefaultBehavior(logger)
@@ -38,6 +40,7 @@ func ChatServiceTest(t *testing.T) *ChatServiceTestSuite {
 		aionChatClient,
 		historyRepo,
 		historyCache,
+		auditService,
 		logger,
 	)
 
@@ -48,6 +51,7 @@ func ChatServiceTest(t *testing.T) *ChatServiceTestSuite {
 		AionChatClient: aionChatClient,
 		HistoryRepo:    historyRepo,
 		HistoryCache:   historyCache,
+		AuditService:   auditService,
 		Logger:         logger,
 	}
 }

@@ -74,6 +74,9 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 		LogKeyResponseLength, len(resp.Response),
 	)
 
+	// Best-effort sync audit persistence for UI actions.
+	s.persistAuditActionEvent(ctx, userID, requestContext, result)
+
 	// Save chat history asynchronously (non-blocking)
 	go s.saveChatInteraction(context.Background(), userID, message, resp.Response, resp.TokensUsed, resp.FunctionCalls)
 

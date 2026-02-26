@@ -44,6 +44,7 @@ It is the platform entrypoint for transport-level HTTP orchestration.
 4. Resolve mount points from config (`context`, `swagger`, `docs`, `health`).
 5. Mount Swagger UI and docs alias under API context.
 6. Mount REST modules under API root.
+   - Includes `audit` HTTP module (`GET /audit/events`).
 7. Build and mount GraphQL handler; wrap with `servicetoken` middleware.
 8. Wrap main router with `otelhttp` instrumentation.
 9. Expose health routes via a dedicated mux path (including backward-compatible path).

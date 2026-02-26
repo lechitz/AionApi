@@ -5,6 +5,7 @@
 package usecase
 
 import (
+	auditinput "github.com/lechitz/AionApi/internal/audit/core/ports/input"
 	"github.com/lechitz/AionApi/internal/chat/core/ports/input"
 	"github.com/lechitz/AionApi/internal/chat/core/ports/output"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
@@ -15,6 +16,7 @@ type ChatService struct {
 	aionChatClient   output.AionChatClient
 	chatHistoryRepo  output.ChatHistoryRepository
 	chatHistoryCache output.ChatHistoryCache // Redis cache for fast history access
+	auditService     auditinput.Service
 	logger           logger.ContextLogger
 }
 
@@ -23,12 +25,14 @@ func NewService(
 	client output.AionChatClient,
 	historyRepo output.ChatHistoryRepository,
 	historyCache output.ChatHistoryCache,
+	auditSvc auditinput.Service,
 	log logger.ContextLogger,
 ) input.ChatService {
 	return &ChatService{
 		aionChatClient:   client,
 		chatHistoryRepo:  historyRepo,
 		chatHistoryCache: historyCache,
+		auditService:     auditSvc,
 		logger:           log,
 	}
 }
