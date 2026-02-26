@@ -1,3 +1,4 @@
+// Package handler implements HTTP handlers for audit endpoints.
 package handler
 
 const (
@@ -11,14 +12,14 @@ const (
 )
 
 const (
-	ErrAuditService       = "failed to list audit events"
-	ErrMissingUserID      = "user ID not found in context"
-	ErrInvalidUserID      = "invalid user ID"
-	ErrForbiddenCrossUser = "forbidden cross-user audit query"
+	errAuditService       = "failed to list audit events"
+	errMissingUserID      = "user ID not found in context"
+	errInvalidUserID      = "invalid user ID"
+	errForbiddenCrossUser = "forbidden cross-user audit query"
 )
 
 const (
-	MsgAuditEventsListed = "Audit events listed successfully"
+	msgAuditEventsListed = "Audit events listed successfully"
 	// MsgCrossUserAuditQuery is emitted when an admin queries another user's audit events.
 	MsgCrossUserAuditQuery = "cross-user audit query"
 	// MsgCrossUserAuditQueryFailed is emitted when cross-user query fails.
@@ -26,17 +27,17 @@ const (
 )
 
 const (
-	QueryTraceID = "trace_id"
-	QueryDraftID = "draft_id"
-	QueryStatus  = "status"
-	QueryUserID  = "user_id"
-	QueryFromUTC = "from_utc"
-	QueryToUTC   = "to_utc"
-	QueryLimit   = "limit"
-	QueryOffset  = "offset"
+	queryTraceID = "trace_id"
+	queryDraftID = "draft_id"
+	queryStatus  = "status"
+	queryUserID  = "user_id"
+	queryFromUTC = "from_utc"
+	queryToUTC   = "to_utc"
+	queryLimit   = "limit"
+	queryOffset  = "offset"
 )
 
 const (
-	DefaultLimit = 100
-	MaxLimit     = 500
+	defaultLimit = 100
+	maxLimit     = 500
 )

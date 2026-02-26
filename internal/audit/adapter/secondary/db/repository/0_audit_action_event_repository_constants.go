@@ -1,3 +1,4 @@
+// Package repository implements DB repositories for audit persistence.
 package repository
 
 const (

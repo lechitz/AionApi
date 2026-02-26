@@ -47,20 +47,20 @@ func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
 
 	userIDValue := ctx.Value(ctxkeys.UserID)
 	if userIDValue == nil {
-		httpresponse.WriteAuthErrorSpan(ctx, w, span, sharederrors.NewAuthenticationError(ErrMissingUserID), h.Logger)
+		httpresponse.WriteAuthErrorSpan(ctx, w, span, sharederrors.NewAuthenticationError(errMissingUserID), h.Logger)
 		return
 	}
 
 	userID, ok := userIDValue.(uint64)
 	if !ok {
-		httpresponse.WriteAuthErrorSpan(ctx, w, span, sharederrors.NewAuthenticationError(ErrInvalidUserID), h.Logger)
+		httpresponse.WriteAuthErrorSpan(ctx, w, span, sharederrors.NewAuthenticationError(errInvalidUserID), h.Logger)
 		return
 	}
 
 	filter, err := buildFilter(ctx, r, userID)
 	if err != nil {
-		if strings.Contains(err.Error(), ErrForbiddenCrossUser) {
-			httpresponse.WriteDomainErrorSpan(ctx, w, span, sharederrors.ErrForbidden(ErrForbiddenCrossUser), ErrForbiddenCrossUser, h.Logger)
+		if strings.Contains(err.Error(), errForbiddenCrossUser) {
+			httpresponse.WriteDomainErrorSpan(ctx, w, span, sharederrors.ErrForbidden(errForbiddenCrossUser), errForbiddenCrossUser, h.Logger)
 			return
 		}
 		httpresponse.WriteValidationErrorSpan(ctx, w, span, err, h.Logger)
@@ -69,12 +69,12 @@ func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
 
 	events, err := h.Service.ListEvents(ctx, filter)
 	if err != nil {
-		logCrossUserAuditQuery(h, ctx, userID, filter, 0, err)
-		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, ErrAuditService, h.Logger)
+		logCrossUserAuditQuery(ctx, h, userID, filter, 0, err)
+		httpresponse.WriteDomainErrorSpan(ctx, w, span, err, errAuditService, h.Logger)
 		return
 	}
 
-	logCrossUserAuditQuery(h, ctx, userID, filter, len(events), nil)
+	logCrossUserAuditQuery(ctx, h, userID, filter, len(events), nil)
 
 	response := listEventsResponse{Items: toResponseItems(events), Count: len(events)}
 	span.SetAttributes(
@@ -82,74 +82,104 @@ func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
 		attribute.Int("audit.count", len(events)),
 		attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusOK),
 	)
-	span.SetStatus(codes.Ok, MsgAuditEventsListed)
+	span.SetStatus(codes.Ok, msgAuditEventsListed)
 
-	httpresponse.WriteSuccess(w, http.StatusOK, response, MsgAuditEventsListed)
+	httpresponse.WriteSuccess(w, http.StatusOK, response, msgAuditEventsListed)
 }
 
 func buildFilter(ctx context.Context, r *http.Request, userID uint64) (domain.AuditActionEventFilter, error) {
 	query := r.URL.Query()
-	filterUserID := userID
-	if rawUserID := strings.TrimSpace(query.Get(QueryUserID)); rawUserID != "" {
-		if !hasAdminRole(extractRolesFromContext(ctx)) {
-			return domain.AuditActionEventFilter{}, sharederrors.ErrForbidden(ErrForbiddenCrossUser)
-		}
-		parsedUserID, err := strconv.ParseUint(rawUserID, 10, 64)
-		if err != nil || parsedUserID == 0 {
-			return domain.AuditActionEventFilter{}, sharederrors.NewValidationError(QueryUserID, "must be a positive integer")
-		}
-		filterUserID = parsedUserID
+	filterUserID, err := resolveFilterUserID(ctx, query.Get(queryUserID), userID)
+	if err != nil {
+		return domain.AuditActionEventFilter{}, err
 	}
 
 	filter := domain.AuditActionEventFilter{
 		UserID:   &filterUserID,
-		TraceID:  strings.TrimSpace(query.Get(QueryTraceID)),
-		DraftID:  strings.TrimSpace(query.Get(QueryDraftID)),
-		Statuses: query[QueryStatus],
-		Limit:    DefaultLimit,
+		TraceID:  strings.TrimSpace(query.Get(queryTraceID)),
+		DraftID:  strings.TrimSpace(query.Get(queryDraftID)),
+		Statuses: query[queryStatus],
+		Limit:    defaultLimit,
 		Offset:   0,
 	}
 
-	if rawLimit := strings.TrimSpace(query.Get(QueryLimit)); rawLimit != "" {
-		limit, err := strconv.Atoi(rawLimit)
+	if err := applyPagination(query.Get(queryLimit), query.Get(queryOffset), &filter); err != nil {
+		return domain.AuditActionEventFilter{}, err
+	}
+	if err := applyTimeRange(query.Get(queryFromUTC), query.Get(queryToUTC), &filter); err != nil {
+		return domain.AuditActionEventFilter{}, err
+	}
+
+	if filter.FromUTC != nil && filter.ToUTC != nil && filter.FromUTC.After(*filter.ToUTC) {
+		return domain.AuditActionEventFilter{}, sharederrors.NewValidationError(queryFromUTC, "must be before or equal to to_utc")
+	}
+
+	return filter, nil
+}
+
+func resolveFilterUserID(ctx context.Context, rawUserID string, defaultUserID uint64) (uint64, error) {
+	trimmed := strings.TrimSpace(rawUserID)
+	if trimmed == "" {
+		return defaultUserID, nil
+	}
+	if !hasAdminRole(extractRolesFromContext(ctx)) {
+		return 0, sharederrors.ErrForbidden(errForbiddenCrossUser)
+	}
+
+	parsedUserID, err := strconv.ParseUint(trimmed, 10, 64)
+	if err != nil || parsedUserID == 0 {
+		return 0, sharederrors.NewValidationError(queryUserID, "must be a positive integer")
+	}
+	return parsedUserID, nil
+}
+
+func applyPagination(rawLimit, rawOffset string, filter *domain.AuditActionEventFilter) error {
+	trimmedLimit := strings.TrimSpace(rawLimit)
+	if trimmedLimit != "" {
+		limit, err := strconv.Atoi(trimmedLimit)
 		if err != nil || limit <= 0 {
-			return domain.AuditActionEventFilter{}, sharederrors.NewValidationError(QueryLimit, "must be a positive integer")
+			return sharederrors.NewValidationError(queryLimit, "must be a positive integer")
 		}
-		if limit > MaxLimit {
-			limit = MaxLimit
+		if limit > maxLimit {
+			limit = maxLimit
 		}
 		filter.Limit = limit
 	}
 
-	if rawOffset := strings.TrimSpace(query.Get(QueryOffset)); rawOffset != "" {
-		offset, err := strconv.Atoi(rawOffset)
-		if err != nil || offset < 0 {
-			return domain.AuditActionEventFilter{}, sharederrors.NewValidationError(QueryOffset, "must be a non-negative integer")
-		}
-		filter.Offset = offset
+	trimmedOffset := strings.TrimSpace(rawOffset)
+	if trimmedOffset == "" {
+		return nil
 	}
 
-	if rawFrom := strings.TrimSpace(query.Get(QueryFromUTC)); rawFrom != "" {
-		from, err := time.Parse(time.RFC3339, rawFrom)
+	offset, err := strconv.Atoi(trimmedOffset)
+	if err != nil || offset < 0 {
+		return sharederrors.NewValidationError(queryOffset, "must be a non-negative integer")
+	}
+	filter.Offset = offset
+	return nil
+}
+
+func applyTimeRange(rawFrom, rawTo string, filter *domain.AuditActionEventFilter) error {
+	trimmedFrom := strings.TrimSpace(rawFrom)
+	if trimmedFrom != "" {
+		from, err := time.Parse(time.RFC3339, trimmedFrom)
 		if err != nil {
-			return domain.AuditActionEventFilter{}, sharederrors.NewValidationError(QueryFromUTC, "must be RFC3339")
+			return sharederrors.NewValidationError(queryFromUTC, "must be RFC3339")
 		}
 		filter.FromUTC = &from
 	}
 
-	if rawTo := strings.TrimSpace(query.Get(QueryToUTC)); rawTo != "" {
-		to, err := time.Parse(time.RFC3339, rawTo)
-		if err != nil {
-			return domain.AuditActionEventFilter{}, sharederrors.NewValidationError(QueryToUTC, "must be RFC3339")
-		}
-		filter.ToUTC = &to
+	trimmedTo := strings.TrimSpace(rawTo)
+	if trimmedTo == "" {
+		return nil
 	}
 
-	if filter.FromUTC != nil && filter.ToUTC != nil && filter.FromUTC.After(*filter.ToUTC) {
-		return domain.AuditActionEventFilter{}, sharederrors.NewValidationError(QueryFromUTC, "must be before or equal to to_utc")
+	to, err := time.Parse(time.RFC3339, trimmedTo)
+	if err != nil {
+		return sharederrors.NewValidationError(queryToUTC, "must be RFC3339")
 	}
-
-	return filter, nil
+	filter.ToUTC = &to
+	return nil
 }
 
 func extractRolesFromContext(ctx context.Context) []string {
@@ -193,8 +223,8 @@ func hasAdminRole(rolesList []string) bool {
 }
 
 func logCrossUserAuditQuery(
-	h *Handler,
 	ctx context.Context,
+	h *Handler,
 	actorUserID uint64,
 	filter domain.AuditActionEventFilter,
 	resultCount int,
@@ -210,8 +240,8 @@ func logCrossUserAuditQuery(
 			commonkeys.Error, listErr.Error(),
 			"actor_user_id", actorUserID,
 			"target_user_id", targetUserID,
-			QueryTraceID, filter.TraceID,
-			QueryDraftID, filter.DraftID,
+			queryTraceID, filter.TraceID,
+			queryDraftID, filter.DraftID,
 			"limit", filter.Limit,
 			"offset", filter.Offset,
 		)
@@ -221,8 +251,8 @@ func logCrossUserAuditQuery(
 	h.Logger.InfowCtx(ctx, MsgCrossUserAuditQuery,
 		"actor_user_id", actorUserID,
 		"target_user_id", targetUserID,
-		QueryTraceID, filter.TraceID,
-		QueryDraftID, filter.DraftID,
+		queryTraceID, filter.TraceID,
+		queryDraftID, filter.DraftID,
 		"status_count", len(filter.Statuses),
 		"limit", filter.Limit,
 		"offset", filter.Offset,

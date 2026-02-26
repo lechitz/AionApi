@@ -78,7 +78,11 @@ func TestListEvents_Success(t *testing.T) {
 		},
 	)
 
-	req := httptest.NewRequest(http.MethodGet, "/audit/events?trace_id=trace-1&draft_id=draft-1&status=failed&status=blocked&limit=20&offset=5&from_utc="+from+"&to_utc="+to, nil)
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/audit/events?trace_id=trace-1&draft_id=draft-1&status=failed&status=blocked&limit=20&offset=5&from_utc="+from+"&to_utc="+to,
+		nil,
+	)
 	req = req.WithContext(context.WithValue(req.Context(), ctxkeys.UserID, uint64(7)))
 	rec := httptest.NewRecorder()
 
@@ -128,7 +132,7 @@ func TestListEvents_AdminCanQueryOtherUser(t *testing.T) {
 		},
 	)
 
-	ctx := context.WithValue(context.Background(), ctxkeys.UserID, uint64(7))
+	ctx := context.WithValue(t.Context(), ctxkeys.UserID, uint64(7))
 	ctx = context.WithValue(ctx, ctxkeys.Claims, map[string]any{"roles": []any{"admin"}})
 	req := httptest.NewRequest(http.MethodGet, "/audit/events?user_id=999", nil).WithContext(ctx)
 	rec := httptest.NewRecorder()

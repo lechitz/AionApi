@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
-	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -22,7 +22,7 @@ func (s *Service) WriteEvent(ctx context.Context, event domain.AuditActionEvent)
 
 	event = normalizeEvent(event)
 	span.SetAttributes(
-		attribute.String(LogKeyUserID, fmt.Sprintf("%d", event.UserID)),
+		attribute.String(LogKeyUserID, strconv.FormatUint(event.UserID, 10)),
 		attribute.String(LogKeyTraceID, event.TraceID),
 		attribute.String(LogKeyDraftID, event.DraftID),
 		attribute.String("status", event.Status),

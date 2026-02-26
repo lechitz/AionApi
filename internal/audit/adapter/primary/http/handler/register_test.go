@@ -16,7 +16,7 @@ type mockAuditRouter struct {
 	gets          []string
 }
 
-func (m *mockAuditRouter) Use(...ports.Middleware) {}
+func (m *mockAuditRouter) Use(...ports.Middleware)          {}
 func (m *mockAuditRouter) Group(string, func(ports.Router)) {}
 func (m *mockAuditRouter) GroupWith(_ ports.Middleware, fn func(ports.Router)) {
 	m.groupWithCall++
