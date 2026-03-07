@@ -22,10 +22,10 @@ FROM alpine:3.19.1
 
 WORKDIR /app
 
-COPY --from=builder /app/aion-api .
+COPY --from=builder /app/aion-api /usr/local/bin/aion-api
 
-COPY infrastructure/docker/scripts/entrypoint.sh .
+COPY infrastructure/docker/scripts/entrypoint.sh /entrypoint.sh
 
-RUN chmod +x ./entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

@@ -10,7 +10,7 @@ SWAG_VERSION ?= v1.16.6
 SWAG_BIN     = $(shell [ -x "$(CURDIR)/.cache/bin/swag" ] && echo "$(CURDIR)/.cache/bin/swag" || command -v swag || echo "$$(go env GOPATH)/bin/swag")
 SWAG_OUT     ?= contracts/openapi
 SWAG_DIRS    ?= ./cmd/api,./internal/admin/adapter/primary/http/handler,./internal/auth/adapter/primary/http/handler,./internal/chat/adapter/primary/http/handler,./internal/user/adapter/primary/http/handler
-SWAG_MAIN    ?= main.go
+SWAG_MAIN    ?= swagger.go
 SWAG_PKG     ?= docs
 GO_CACHE     ?= $(CURDIR)/.cache/go-build
 
