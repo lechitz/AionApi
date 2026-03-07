@@ -7,12 +7,17 @@
 Docker build/runtime assets for local and production-like environments.
 This package defines container images, compose profiles, and environment wiring.
 
-## Subpackages
+## What It Contains
 
-| Subpackage | Responsibility |
-| --- | --- |
-| `environments/` | Profile-specific compose/env definitions |
-| root `Dockerfile` | Production-oriented API image build |
+- root `Dockerfile`: production-oriented API image build (multi-stage).
+- `environments/`: profile-specific compose/env definitions (`dev`, `prod`, `example`).
+- `scripts/`: utility helpers for build/run/clean flows.
+
+## Main Flows
+
+- Dev: `make dev` (or `make dev-up` / `make clean`) using `environments/dev/docker-compose-dev.yaml` and `.env.dev`.
+- Prod-like: `make prod` using `environments/prod/docker-compose-prod.yaml` and `.env.prod`.
+- Custom profile: start from `environments/example/.env.example`.
 
 ## Design Notes
 
@@ -40,12 +45,12 @@ make rebuild-dashboard
 
 Use targeted rebuild commands when dependency layers or Dockerfiles changed.
 
-## Package Improvements
+## Best Practices
 
-- Add profile matrix documenting service composition and ports.
-- Add build cache strategy notes for faster local rebuilds.
-- Add startup dependency ordering notes for local stack reliability.
-- Add security checklist for production image hardening.
+- Do not store real secrets in `.env.*`; keep secrets outside git.
+- Keep service parity between dev and prod; change only tuning/security details.
+- Use `make build-dev` / `make build-prod` for reproducible images (BuildKit enabled).
+- Preserve healthchecks (Postgres/Redis/API) when adding services.
 
 ---
 
