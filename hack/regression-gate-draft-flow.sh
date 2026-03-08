@@ -42,7 +42,10 @@ run_step "Dashboard tests (DC-08/DC-09 partial automation)" \
   bash -lc "cd \"$DASHBOARD_DIR\" && npm test"
 
 run_step "aion-chat ui_action/quick_add unit tests" \
-  bash -lc "cd \"$CHAT_DIR\" && ./.venv/bin/pytest -q tests/unit/application/services/test_chat_service.py -k \"ui_action or quick_add or mixed_accept_cancel_with_edits_sequence\""
+  bash -lc "cd \"$CHAT_DIR\" && ./.venv/bin/pytest -q tests/unit/contexts/chat_interaction/adapter/secondary/test_chat_service.py -k \"ui_action or quick_add or mixed_accept_cancel_with_edits_sequence\""
+
+run_step "aion-chat draft time-range/implicit-action regression tests" \
+  bash -lc "cd \"$CHAT_DIR\" && ./.venv/bin/pytest -q tests/unit/contexts/chat_interaction/core/usecase/test_mutation_draft_flow.py"
 
 run_step "AionApi chat HTTP handler tests" \
   bash -lc "cd \"$API_DIR\" && GOCACHE=\"$GOCACHE_DIR\" go test ./internal/chat/adapter/primary/http/handler/..."
