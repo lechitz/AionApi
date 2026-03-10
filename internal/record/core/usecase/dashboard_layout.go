@@ -76,11 +76,10 @@ func (s *Service) UpsertDashboardWidget(ctx context.Context, userID uint64, cmd 
 	if cmd.ViewID == 0 {
 		return domain.DashboardWidget{}, errors.New(ErrDashboardViewIDRequired)
 	}
-	if cmd.MetricDefinitionID == 0 {
+	widgetType := normalizeWidgetType(cmd.WidgetType)
+	if cmd.MetricDefinitionID == 0 && widgetType != domain.DashboardWidgetTypeInsightFeed {
 		return domain.DashboardWidget{}, errors.New(ErrDashboardMetricDefinitionIDRequired)
 	}
-
-	widgetType := normalizeWidgetType(cmd.WidgetType)
 	size := normalizeWidgetSize(cmd.Size)
 
 	if size == domain.DashboardWidgetSizeLarge {
@@ -270,6 +269,8 @@ func normalizeWidgetType(v string) string {
 		return domain.DashboardWidgetTypeTrendLine
 	case domain.DashboardWidgetTypeChecklist:
 		return domain.DashboardWidgetTypeChecklist
+	case domain.DashboardWidgetTypeInsightFeed:
+		return domain.DashboardWidgetTypeInsightFeed
 	default:
 		return domain.DashboardWidgetTypeKPINumber
 	}

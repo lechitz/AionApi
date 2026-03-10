@@ -1,0 +1,1 @@
+query AnalyticsSeries($seriesKey: String!, $window: InsightWindow!, $date: String, $timezone: String, $categoryId: ID, $tagIds: [ID!]) { analyticsSeries(seriesKey: $seriesKey, window: $window, date: $date, timezone: $timezone, categoryId: $categoryId, tagIds: $tagIds) { seriesKey window points { timestamp value label } summary } }

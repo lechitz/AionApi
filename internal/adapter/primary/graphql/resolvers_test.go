@@ -144,6 +144,14 @@ func (recordSvcStub) DashboardSnapshot(context.Context, uint64, recordinput.Dash
 	return recorddomain.DashboardSnapshot{}, nil
 }
 
+func (recordSvcStub) InsightFeed(context.Context, uint64, recordinput.InsightFeedQuery) ([]recorddomain.InsightCard, error) {
+	return []recorddomain.InsightCard{}, nil
+}
+
+func (recordSvcStub) AnalyticsSeries(context.Context, uint64, recordinput.AnalyticsSeriesQuery) (recorddomain.AnalyticsSeriesResult, error) {
+	return recorddomain.AnalyticsSeriesResult{}, nil
+}
+
 func (recordSvcStub) ListMetricDefinitions(context.Context, uint64) ([]recorddomain.MetricDefinition, error) {
 	return []recorddomain.MetricDefinition{}, nil
 }

@@ -54,6 +54,12 @@ const (
 
 	// SpanSoftDelete is the span name for soft-deleting a record.
 	SpanSoftDelete = "record.soft_delete"
+
+	// SpanInsightFeed is the span name for computing canonical insights.
+	SpanInsightFeed = "record.insight_feed"
+
+	// SpanAnalyticsSeries is the span name for computing dashboard analytics series.
+	SpanAnalyticsSeries = "record.analytics_series"
 )
 
 // -----------------------------------------------------------------------------
@@ -97,6 +103,12 @@ const (
 
 	// EventInvalidateCache marks cache invalidation operations.
 	EventInvalidateCache = "record.cache.invalidate"
+
+	// EventRepositoryMetricDefinitions marks metric definition lookups.
+	EventRepositoryMetricDefinitions = "record.repository.metric_definitions"
+
+	// EventRepositoryTags marks tag lookups used for scoped insights.
+	EventRepositoryTags = "record.repository.tags"
 )
 
 // -----------------------------------------------------------------------------
@@ -118,6 +130,12 @@ const (
 
 	// StatusListedAll indicates all records were listed.
 	StatusListedAll = "listed_all"
+
+	// StatusFetched indicates a fetch operation completed.
+	StatusFetched = "fetched"
+
+	// StatusStatsComputed indicates analytics computation completed.
+	StatusStatsComputed = "stats_computed"
 )
 
 // =============================================================================
@@ -162,9 +180,21 @@ const (
 	LogFailedInvalidateDayCache             = "failed to invalidate day cache"
 	LogFailedInvalidateCategoryCache        = "failed to invalidate category cache"
 	LogFailedInvalidateTagCache             = "failed to invalidate tag cache"
+	LogInsightFeedComputedSuccessfully      = "insight feed computed successfully"
+	LogAnalyticsSeriesComputedSuccessfully  = "analytics series computed successfully"
 
 	DateFormatISO8601Date = "2006-01-02"
 	ErrLookupTagFormat    = "lookup tag: %w"
+)
+
+// Observability attribute keys.
+const (
+	AttrResultsCount = "results_count"
+	AttrLimit        = "limit"
+	AttrTimezone     = "timezone"
+	AttrSeriesKey    = "series_key"
+	AttrWindow       = "window"
+	AttrTagIDsCount  = "tag_ids_count"
 )
 
 // Validation messages.
@@ -227,6 +257,10 @@ const (
 	MaxDashboardSuggestionsLimit = 20
 	// DashboardSuggestionReasonTaxonomy explains deterministic suggestion source.
 	DashboardSuggestionReasonTaxonomy = "Baseado em tags existentes da sua taxonomia."
+	// DefaultInsightFeedLimit caps insight cards returned in one request.
+	DefaultInsightFeedLimit = 8
+	// MaxInsightFeedLimit prevents oversized insight payloads.
+	MaxInsightFeedLimit = 20
 )
 
 // Dashboard validation and domain messages.
@@ -241,6 +275,8 @@ const (
 	ErrDashboardTitleRequired              = "title is required"
 	ErrDashboardTargetValueRequired        = "targetValue must be greater than zero"
 	ErrDashboardGoalTemplateIDRequired     = "goalTemplateID is required"
+	ErrComputeInsightFeed                  = "failed to compute insight feed"
+	ErrComputeAnalyticsSeries              = "failed to compute analytics series"
 )
 
 // Dashboard metric defaults and status values.

@@ -90,19 +90,24 @@ func (r *RecordRepository) UpsertDashboardWidget(ctx context.Context, widget dom
 	}
 
 	if row.ID != 0 {
+		updateMap := map[string]interface{}{
+			"view_id":        row.ViewID,
+			"widget_type":    row.WidgetType,
+			"size":           row.Size,
+			"order_index":    row.OrderIndex,
+			"title_override": row.TitleOverride,
+			"config_json":    row.ConfigJSON,
+			"is_active":      row.IsActive,
+		}
+		if row.MetricDefinitionID != nil {
+			updateMap["metric_definition_id"] = *row.MetricDefinitionID
+		} else {
+			updateMap["metric_definition_id"] = nil
+		}
 		if err := r.db.WithContext(ctx).
 			Model(&model.DashboardWidget{}).
 			Where("id = ? AND user_id = ?", row.ID, row.UserID).
-			Updates(map[string]interface{}{
-				"view_id":              row.ViewID,
-				"metric_definition_id": row.MetricDefinitionID,
-				"widget_type":          row.WidgetType,
-				"size":                 row.Size,
-				"order_index":          row.OrderIndex,
-				"title_override":       row.TitleOverride,
-				"config_json":          row.ConfigJSON,
-				"is_active":            row.IsActive,
-			}).Error(); err != nil {
+			Updates(updateMap).Error(); err != nil {
 			return domain.DashboardWidget{}, err
 		}
 		if err := r.db.WithContext(ctx).

@@ -1,1 +1,1 @@
-query MetricDefinitions { metricDefinitions { id metricKey name description icon valueType format precision defaultPeriod defaultAggregation defaultVisible goalDefault displayOrder metadata isActive createdAt updatedAt } }
+query MetricDefinitions { metricDefinitions { id metricKey displayName categoryId tagId tagIds valueSource aggregation unit goalDefault isActive } }

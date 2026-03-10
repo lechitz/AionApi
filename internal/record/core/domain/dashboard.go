@@ -2,6 +2,52 @@ package domain
 
 import "time"
 
+// InsightWindow identifies the supported analysis windows for v1 insights/series.
+type InsightWindow string
+
+const (
+	InsightWindow7D  InsightWindow = "WINDOW_7D"
+	InsightWindow30D InsightWindow = "WINDOW_30D"
+	InsightWindow90D InsightWindow = "WINDOW_90D"
+)
+
+// InsightEvidence explains one supporting fact behind an insight.
+type InsightEvidence struct {
+	Label string
+	Value string
+	Kind  string
+}
+
+// InsightCard is the canonical explainable insight payload for v1.
+type InsightCard struct {
+	ID                string
+	Type              string
+	Title             string
+	Summary           string
+	Status            string
+	Window            InsightWindow
+	Confidence        int
+	MetricKeys        []string
+	RecommendedAction *string
+	Evidence          []InsightEvidence
+	GeneratedAt       time.Time
+}
+
+// AnalyticsPoint represents one point in an analytics series.
+type AnalyticsPoint struct {
+	Timestamp time.Time
+	Value     *float64
+	Label     *string
+}
+
+// AnalyticsSeriesResult is a compact time-series payload for dashboard consumers.
+type AnalyticsSeriesResult struct {
+	SeriesKey string
+	Window    InsightWindow
+	Points    []AnalyticsPoint
+	Summary   *string
+}
+
 // MetricDefinition configures how a dashboard metric is computed from records.
 type MetricDefinition struct {
 	ID          uint64
@@ -74,6 +120,7 @@ const (
 	DashboardWidgetTypeGoalProgress = "goal_progress"
 	DashboardWidgetTypeTrendLine    = "trend_line"
 	DashboardWidgetTypeChecklist    = "checklist"
+	DashboardWidgetTypeInsightFeed  = "insight_feed"
 )
 
 // MaxLargeWidgetsPerDashboard limits how many large widgets can exist per view.

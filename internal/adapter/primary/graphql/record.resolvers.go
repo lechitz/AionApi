@@ -168,6 +168,18 @@ func (q *queryResolver) DashboardSnapshot(ctx context.Context, date string, time
 	return q.RecordController().DashboardSnapshot(ctx, uid, date, timezone)
 }
 
+// InsightFeed is the resolver for the insightFeed field.
+func (q *queryResolver) InsightFeed(ctx context.Context, window model.InsightWindow, limit *int32, date *string, timezone *string, categoryID *string, tagIDs []string) ([]*model.InsightCard, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.RecordController().InsightFeed(ctx, uid, window, limit, date, timezone, categoryID, tagIDs)
+}
+
+// AnalyticsSeries is the resolver for the analyticsSeries field.
+func (q *queryResolver) AnalyticsSeries(ctx context.Context, seriesKey string, window model.InsightWindow, date *string, timezone *string, categoryID *string, tagIDs []string) (*model.AnalyticsSeriesResult, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.RecordController().AnalyticsSeries(ctx, uid, seriesKey, window, date, timezone, categoryID, tagIDs)
+}
+
 // MetricDefinitions is the resolver for the metricDefinitions field.
 func (q *queryResolver) MetricDefinitions(ctx context.Context) ([]*model.MetricDefinition, error) {
 	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)

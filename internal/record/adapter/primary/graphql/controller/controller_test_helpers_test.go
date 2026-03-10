@@ -28,6 +28,8 @@ type recordServiceStub struct {
 	deleteAllFn             func(context.Context, uint64) error
 	searchFn                func(context.Context, uint64, domain.SearchFilters) ([]domain.Record, error)
 	dashboardFn             func(context.Context, uint64, input.DashboardSnapshotQuery) (domain.DashboardSnapshot, error)
+	insightFeedFn           func(context.Context, uint64, input.InsightFeedQuery) ([]domain.InsightCard, error)
+	analyticsSeriesFn       func(context.Context, uint64, input.AnalyticsSeriesQuery) (domain.AnalyticsSeriesResult, error)
 	listMetricFn            func(context.Context, uint64) ([]domain.MetricDefinition, error)
 	upsertMetricFn          func(context.Context, uint64, input.UpsertMetricDefinitionCommand) (domain.MetricDefinition, error)
 	upsertGoalFn            func(context.Context, uint64, input.UpsertGoalTemplateCommand) (domain.GoalTemplate, error)
@@ -147,6 +149,20 @@ func (s *recordServiceStub) DashboardSnapshot(ctx context.Context, userID uint64
 		panic("unexpected DashboardSnapshot call")
 	}
 	return s.dashboardFn(ctx, userID, query)
+}
+
+func (s *recordServiceStub) InsightFeed(ctx context.Context, userID uint64, query input.InsightFeedQuery) ([]domain.InsightCard, error) {
+	if s.insightFeedFn == nil {
+		panic("unexpected InsightFeed call")
+	}
+	return s.insightFeedFn(ctx, userID, query)
+}
+
+func (s *recordServiceStub) AnalyticsSeries(ctx context.Context, userID uint64, query input.AnalyticsSeriesQuery) (domain.AnalyticsSeriesResult, error) {
+	if s.analyticsSeriesFn == nil {
+		panic("unexpected AnalyticsSeries call")
+	}
+	return s.analyticsSeriesFn(ctx, userID, query)
 }
 
 func (s *recordServiceStub) ListMetricDefinitions(ctx context.Context, userID uint64) ([]domain.MetricDefinition, error) {

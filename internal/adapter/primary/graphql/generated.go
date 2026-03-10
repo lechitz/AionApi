@@ -55,6 +55,19 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	AnalyticsPoint struct {
+		Label     func(childComplexity int) int
+		Timestamp func(childComplexity int) int
+		Value     func(childComplexity int) int
+	}
+
+	AnalyticsSeriesResult struct {
+		Points    func(childComplexity int) int
+		SeriesKey func(childComplexity int) int
+		Summary   func(childComplexity int) int
+		Window    func(childComplexity int) int
+	}
+
 	Category struct {
 		ColorHex    func(childComplexity int) int
 		Description func(childComplexity int) int
@@ -161,6 +174,26 @@ type ComplexityRoot struct {
 		Title       func(childComplexity int) int
 	}
 
+	InsightCard struct {
+		Confidence        func(childComplexity int) int
+		Evidence          func(childComplexity int) int
+		GeneratedAt       func(childComplexity int) int
+		ID                func(childComplexity int) int
+		MetricKeys        func(childComplexity int) int
+		RecommendedAction func(childComplexity int) int
+		Status            func(childComplexity int) int
+		Summary           func(childComplexity int) int
+		Title             func(childComplexity int) int
+		Type              func(childComplexity int) int
+		Window            func(childComplexity int) int
+	}
+
+	InsightEvidence struct {
+		Kind  func(childComplexity int) int
+		Label func(childComplexity int) int
+		Value func(childComplexity int) int
+	}
+
 	MetricDefinition struct {
 		Aggregation func(childComplexity int) int
 		CategoryID  func(childComplexity int) int
@@ -210,6 +243,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		AnalyticsSeries          func(childComplexity int, seriesKey string, window model.InsightWindow, date *string, timezone *string, categoryID *string, tagIds []string) int
 		Categories               func(childComplexity int) int
 		CategoryByID             func(childComplexity int, id string) int
 		CategoryByName           func(childComplexity int, name string) int
@@ -221,6 +255,7 @@ type ComplexityRoot struct {
 		DashboardViews           func(childComplexity int) int
 		DashboardWidgetCatalog   func(childComplexity int) int
 		Empty                    func(childComplexity int) int
+		InsightFeed              func(childComplexity int, window model.InsightWindow, limit *int32, date *string, timezone *string, categoryID *string, tagIds []string) int
 		MetricDefinitions        func(childComplexity int) int
 		RecordByID               func(childComplexity int, id string) int
 		RecordStats              func(childComplexity int, filters *model.RecordStatsFilters) int
@@ -336,6 +371,8 @@ type QueryResolver interface {
 	SearchRecords(ctx context.Context, filters model.SearchFilters) ([]*model.Record, error)
 	RecordStats(ctx context.Context, filters *model.RecordStatsFilters) (*model.RecordStats, error)
 	DashboardSnapshot(ctx context.Context, date string, timezone *string) (*model.DashboardSnapshot, error)
+	InsightFeed(ctx context.Context, window model.InsightWindow, limit *int32, date *string, timezone *string, categoryID *string, tagIds []string) ([]*model.InsightCard, error)
+	AnalyticsSeries(ctx context.Context, seriesKey string, window model.InsightWindow, date *string, timezone *string, categoryID *string, tagIds []string) (*model.AnalyticsSeriesResult, error)
 	MetricDefinitions(ctx context.Context) ([]*model.MetricDefinition, error)
 	DashboardViews(ctx context.Context) ([]*model.DashboardView, error)
 	DashboardView(ctx context.Context, id string) (*model.DashboardView, error)
@@ -366,6 +403,50 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AnalyticsPoint.label":
+		if e.complexity.AnalyticsPoint.Label == nil {
+			break
+		}
+
+		return e.complexity.AnalyticsPoint.Label(childComplexity), true
+	case "AnalyticsPoint.timestamp":
+		if e.complexity.AnalyticsPoint.Timestamp == nil {
+			break
+		}
+
+		return e.complexity.AnalyticsPoint.Timestamp(childComplexity), true
+	case "AnalyticsPoint.value":
+		if e.complexity.AnalyticsPoint.Value == nil {
+			break
+		}
+
+		return e.complexity.AnalyticsPoint.Value(childComplexity), true
+
+	case "AnalyticsSeriesResult.points":
+		if e.complexity.AnalyticsSeriesResult.Points == nil {
+			break
+		}
+
+		return e.complexity.AnalyticsSeriesResult.Points(childComplexity), true
+	case "AnalyticsSeriesResult.seriesKey":
+		if e.complexity.AnalyticsSeriesResult.SeriesKey == nil {
+			break
+		}
+
+		return e.complexity.AnalyticsSeriesResult.SeriesKey(childComplexity), true
+	case "AnalyticsSeriesResult.summary":
+		if e.complexity.AnalyticsSeriesResult.Summary == nil {
+			break
+		}
+
+		return e.complexity.AnalyticsSeriesResult.Summary(childComplexity), true
+	case "AnalyticsSeriesResult.window":
+		if e.complexity.AnalyticsSeriesResult.Window == nil {
+			break
+		}
+
+		return e.complexity.AnalyticsSeriesResult.Window(childComplexity), true
 
 	case "Category.colorHex":
 		if e.complexity.Category.ColorHex == nil {
@@ -799,6 +880,92 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.GoalTemplate.Title(childComplexity), true
 
+	case "InsightCard.confidence":
+		if e.complexity.InsightCard.Confidence == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.Confidence(childComplexity), true
+	case "InsightCard.evidence":
+		if e.complexity.InsightCard.Evidence == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.Evidence(childComplexity), true
+	case "InsightCard.generatedAt":
+		if e.complexity.InsightCard.GeneratedAt == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.GeneratedAt(childComplexity), true
+	case "InsightCard.id":
+		if e.complexity.InsightCard.ID == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.ID(childComplexity), true
+	case "InsightCard.metricKeys":
+		if e.complexity.InsightCard.MetricKeys == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.MetricKeys(childComplexity), true
+	case "InsightCard.recommendedAction":
+		if e.complexity.InsightCard.RecommendedAction == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.RecommendedAction(childComplexity), true
+	case "InsightCard.status":
+		if e.complexity.InsightCard.Status == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.Status(childComplexity), true
+	case "InsightCard.summary":
+		if e.complexity.InsightCard.Summary == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.Summary(childComplexity), true
+	case "InsightCard.title":
+		if e.complexity.InsightCard.Title == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.Title(childComplexity), true
+	case "InsightCard.type":
+		if e.complexity.InsightCard.Type == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.Type(childComplexity), true
+	case "InsightCard.window":
+		if e.complexity.InsightCard.Window == nil {
+			break
+		}
+
+		return e.complexity.InsightCard.Window(childComplexity), true
+
+	case "InsightEvidence.kind":
+		if e.complexity.InsightEvidence.Kind == nil {
+			break
+		}
+
+		return e.complexity.InsightEvidence.Kind(childComplexity), true
+	case "InsightEvidence.label":
+		if e.complexity.InsightEvidence.Label == nil {
+			break
+		}
+
+		return e.complexity.InsightEvidence.Label(childComplexity), true
+	case "InsightEvidence.value":
+		if e.complexity.InsightEvidence.Value == nil {
+			break
+		}
+
+		return e.complexity.InsightEvidence.Value(childComplexity), true
+
 	case "MetricDefinition.aggregation":
 		if e.complexity.MetricDefinition.Aggregation == nil {
 			break
@@ -1126,6 +1293,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.UpsertMetricDefinition(childComplexity, args["input"].(model.UpsertMetricDefinitionInput)), true
 
+	case "Query.analyticsSeries":
+		if e.complexity.Query.AnalyticsSeries == nil {
+			break
+		}
+
+		args, err := ec.field_Query_analyticsSeries_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.AnalyticsSeries(childComplexity, args["seriesKey"].(string), args["window"].(model.InsightWindow), args["date"].(*string), args["timezone"].(*string), args["categoryId"].(*string), args["tagIds"].([]string)), true
 	case "Query.categories":
 		if e.complexity.Query.Categories == nil {
 			break
@@ -1222,6 +1400,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.Empty(childComplexity), true
+	case "Query.insightFeed":
+		if e.complexity.Query.InsightFeed == nil {
+			break
+		}
+
+		args, err := ec.field_Query_insightFeed_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.InsightFeed(childComplexity, args["window"].(model.InsightWindow), args["limit"].(*int32), args["date"].(*string), args["timezone"].(*string), args["categoryId"].(*string), args["tagIds"].([]string)), true
 	case "Query.metricDefinitions":
 		if e.complexity.Query.MetricDefinitions == nil {
 			break
@@ -2004,6 +2193,42 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_analyticsSeries_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "seriesKey", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
+	}
+	args["seriesKey"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "window", ec.unmarshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow)
+	if err != nil {
+		return nil, err
+	}
+	args["window"] = arg1
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "date", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["date"] = arg2
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "timezone", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["timezone"] = arg3
+	arg4, err := graphql.ProcessArgField(ctx, rawArgs, "categoryId", ec.unmarshalOID2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["categoryId"] = arg4
+	arg5, err := graphql.ProcessArgField(ctx, rawArgs, "tagIds", ec.unmarshalOID2ᚕstringᚄ)
+	if err != nil {
+		return nil, err
+	}
+	args["tagIds"] = arg5
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_categoryById_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -2082,6 +2307,42 @@ func (ec *executionContext) field_Query_dashboardView_args(ctx context.Context, 
 		return nil, err
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_insightFeed_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "window", ec.unmarshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow)
+	if err != nil {
+		return nil, err
+	}
+	args["window"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint32)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg1
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "date", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["date"] = arg2
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "timezone", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["timezone"] = arg3
+	arg4, err := graphql.ProcessArgField(ctx, rawArgs, "categoryId", ec.unmarshalOID2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["categoryId"] = arg4
+	arg5, err := graphql.ProcessArgField(ctx, rawArgs, "tagIds", ec.unmarshalOID2ᚕstringᚄ)
+	if err != nil {
+		return nil, err
+	}
+	args["tagIds"] = arg5
 	return args, nil
 }
 
@@ -2325,6 +2586,217 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AnalyticsPoint_timestamp(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticsPoint) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_AnalyticsPoint_timestamp,
+		func(ctx context.Context) (any, error) {
+			return obj.Timestamp, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_AnalyticsPoint_timestamp(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AnalyticsPoint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AnalyticsPoint_value(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticsPoint) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_AnalyticsPoint_value,
+		func(ctx context.Context) (any, error) {
+			return obj.Value, nil
+		},
+		nil,
+		ec.marshalOFloat2ᚖfloat64,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_AnalyticsPoint_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AnalyticsPoint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AnalyticsPoint_label(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticsPoint) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_AnalyticsPoint_label,
+		func(ctx context.Context) (any, error) {
+			return obj.Label, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_AnalyticsPoint_label(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AnalyticsPoint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AnalyticsSeriesResult_seriesKey(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticsSeriesResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_AnalyticsSeriesResult_seriesKey,
+		func(ctx context.Context) (any, error) {
+			return obj.SeriesKey, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_AnalyticsSeriesResult_seriesKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AnalyticsSeriesResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AnalyticsSeriesResult_window(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticsSeriesResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_AnalyticsSeriesResult_window,
+		func(ctx context.Context) (any, error) {
+			return obj.Window, nil
+		},
+		nil,
+		ec.marshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_AnalyticsSeriesResult_window(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AnalyticsSeriesResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type InsightWindow does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AnalyticsSeriesResult_points(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticsSeriesResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_AnalyticsSeriesResult_points,
+		func(ctx context.Context) (any, error) {
+			return obj.Points, nil
+		},
+		nil,
+		ec.marshalNAnalyticsPoint2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPointᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_AnalyticsSeriesResult_points(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AnalyticsSeriesResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "timestamp":
+				return ec.fieldContext_AnalyticsPoint_timestamp(ctx, field)
+			case "value":
+				return ec.fieldContext_AnalyticsPoint_value(ctx, field)
+			case "label":
+				return ec.fieldContext_AnalyticsPoint_label(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AnalyticsPoint", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AnalyticsSeriesResult_summary(ctx context.Context, field graphql.CollectedField, obj *model.AnalyticsSeriesResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_AnalyticsSeriesResult_summary,
+		func(ctx context.Context) (any, error) {
+			return obj.Summary, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_AnalyticsSeriesResult_summary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AnalyticsSeriesResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _Category_id(ctx context.Context, field graphql.CollectedField, obj *model.Category) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
@@ -3965,9 +4437,9 @@ func (ec *executionContext) _DashboardWidget_metricDefinitionId(ctx context.Cont
 			return obj.MetricDefinitionID, nil
 		},
 		nil,
-		ec.marshalNID2string,
+		ec.marshalOID2ᚖstring,
 		true,
-		true,
+		false,
 	)
 }
 
@@ -4501,6 +4973,420 @@ func (ec *executionContext) fieldContext_GoalTemplate_isActive(_ context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_id(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_type(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_type,
+		func(ctx context.Context) (any, error) {
+			return obj.Type, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_title(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_title,
+		func(ctx context.Context) (any, error) {
+			return obj.Title, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_summary(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_summary,
+		func(ctx context.Context) (any, error) {
+			return obj.Summary, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_summary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_status(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_status,
+		func(ctx context.Context) (any, error) {
+			return obj.Status, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_window(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_window,
+		func(ctx context.Context) (any, error) {
+			return obj.Window, nil
+		},
+		nil,
+		ec.marshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_window(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type InsightWindow does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_confidence(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_confidence,
+		func(ctx context.Context) (any, error) {
+			return obj.Confidence, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_confidence(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_metricKeys(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_metricKeys,
+		func(ctx context.Context) (any, error) {
+			return obj.MetricKeys, nil
+		},
+		nil,
+		ec.marshalNString2ᚕstringᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_metricKeys(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_recommendedAction(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_recommendedAction,
+		func(ctx context.Context) (any, error) {
+			return obj.RecommendedAction, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_recommendedAction(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_evidence(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_evidence,
+		func(ctx context.Context) (any, error) {
+			return obj.Evidence, nil
+		},
+		nil,
+		ec.marshalNInsightEvidence2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidenceᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_evidence(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "label":
+				return ec.fieldContext_InsightEvidence_label(ctx, field)
+			case "value":
+				return ec.fieldContext_InsightEvidence_value(ctx, field)
+			case "kind":
+				return ec.fieldContext_InsightEvidence_kind(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type InsightEvidence", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightCard_generatedAt(ctx context.Context, field graphql.CollectedField, obj *model.InsightCard) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightCard_generatedAt,
+		func(ctx context.Context) (any, error) {
+			return obj.GeneratedAt, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightCard_generatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightEvidence_label(ctx context.Context, field graphql.CollectedField, obj *model.InsightEvidence) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightEvidence_label,
+		func(ctx context.Context) (any, error) {
+			return obj.Label, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightEvidence_label(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightEvidence",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightEvidence_value(ctx context.Context, field graphql.CollectedField, obj *model.InsightEvidence) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightEvidence_value,
+		func(ctx context.Context) (any, error) {
+			return obj.Value, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightEvidence_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightEvidence",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InsightEvidence_kind(ctx context.Context, field graphql.CollectedField, obj *model.InsightEvidence) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_InsightEvidence_kind,
+		func(ctx context.Context) (any, error) {
+			return obj.Kind, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_InsightEvidence_kind(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InsightEvidence",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -7817,6 +8703,158 @@ func (ec *executionContext) fieldContext_Query_dashboardSnapshot(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_dashboardSnapshot_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_insightFeed(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_insightFeed,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().InsightFeed(ctx, fc.Args["window"].(model.InsightWindow), fc.Args["limit"].(*int32), fc.Args["date"].(*string), fc.Args["timezone"].(*string), fc.Args["categoryId"].(*string), fc.Args["tagIds"].([]string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.InsightCard
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.InsightCard
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNInsightCard2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCardᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_insightFeed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_InsightCard_id(ctx, field)
+			case "type":
+				return ec.fieldContext_InsightCard_type(ctx, field)
+			case "title":
+				return ec.fieldContext_InsightCard_title(ctx, field)
+			case "summary":
+				return ec.fieldContext_InsightCard_summary(ctx, field)
+			case "status":
+				return ec.fieldContext_InsightCard_status(ctx, field)
+			case "window":
+				return ec.fieldContext_InsightCard_window(ctx, field)
+			case "confidence":
+				return ec.fieldContext_InsightCard_confidence(ctx, field)
+			case "metricKeys":
+				return ec.fieldContext_InsightCard_metricKeys(ctx, field)
+			case "recommendedAction":
+				return ec.fieldContext_InsightCard_recommendedAction(ctx, field)
+			case "evidence":
+				return ec.fieldContext_InsightCard_evidence(ctx, field)
+			case "generatedAt":
+				return ec.fieldContext_InsightCard_generatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type InsightCard", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_insightFeed_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_analyticsSeries(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_analyticsSeries,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().AnalyticsSeries(ctx, fc.Args["seriesKey"].(string), fc.Args["window"].(model.InsightWindow), fc.Args["date"].(*string), fc.Args["timezone"].(*string), fc.Args["categoryId"].(*string), fc.Args["tagIds"].([]string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.AnalyticsSeriesResult
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.AnalyticsSeriesResult
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNAnalyticsSeriesResult2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsSeriesResult,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_analyticsSeries(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "seriesKey":
+				return ec.fieldContext_AnalyticsSeriesResult_seriesKey(ctx, field)
+			case "window":
+				return ec.fieldContext_AnalyticsSeriesResult_window(ctx, field)
+			case "points":
+				return ec.fieldContext_AnalyticsSeriesResult_points(ctx, field)
+			case "summary":
+				return ec.fieldContext_AnalyticsSeriesResult_summary(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AnalyticsSeriesResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_analyticsSeries_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -12285,6 +13323,100 @@ func (ec *executionContext) unmarshalInputUpsertMetricDefinitionInput(ctx contex
 
 // region    **************************** object.gotpl ****************************
 
+var analyticsPointImplementors = []string{"AnalyticsPoint"}
+
+func (ec *executionContext) _AnalyticsPoint(ctx context.Context, sel ast.SelectionSet, obj *model.AnalyticsPoint) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, analyticsPointImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AnalyticsPoint")
+		case "timestamp":
+			out.Values[i] = ec._AnalyticsPoint_timestamp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "value":
+			out.Values[i] = ec._AnalyticsPoint_value(ctx, field, obj)
+		case "label":
+			out.Values[i] = ec._AnalyticsPoint_label(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var analyticsSeriesResultImplementors = []string{"AnalyticsSeriesResult"}
+
+func (ec *executionContext) _AnalyticsSeriesResult(ctx context.Context, sel ast.SelectionSet, obj *model.AnalyticsSeriesResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, analyticsSeriesResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AnalyticsSeriesResult")
+		case "seriesKey":
+			out.Values[i] = ec._AnalyticsSeriesResult_seriesKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "window":
+			out.Values[i] = ec._AnalyticsSeriesResult_window(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "points":
+			out.Values[i] = ec._AnalyticsSeriesResult_points(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "summary":
+			out.Values[i] = ec._AnalyticsSeriesResult_summary(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var categoryImplementors = []string{"Category"}
 
 func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet, obj *model.Category) graphql.Marshaler {
@@ -12841,9 +13973,6 @@ func (ec *executionContext) _DashboardWidget(ctx context.Context, sel ast.Select
 			}
 		case "metricDefinitionId":
 			out.Values[i] = ec._DashboardWidget_metricDefinitionId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "widgetType":
 			out.Values[i] = ec._DashboardWidget_widgetType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -12993,6 +14122,141 @@ func (ec *executionContext) _GoalTemplate(ctx context.Context, sel ast.Selection
 			}
 		case "isActive":
 			out.Values[i] = ec._GoalTemplate_isActive(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var insightCardImplementors = []string{"InsightCard"}
+
+func (ec *executionContext) _InsightCard(ctx context.Context, sel ast.SelectionSet, obj *model.InsightCard) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, insightCardImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("InsightCard")
+		case "id":
+			out.Values[i] = ec._InsightCard_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "type":
+			out.Values[i] = ec._InsightCard_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "title":
+			out.Values[i] = ec._InsightCard_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "summary":
+			out.Values[i] = ec._InsightCard_summary(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._InsightCard_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "window":
+			out.Values[i] = ec._InsightCard_window(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "confidence":
+			out.Values[i] = ec._InsightCard_confidence(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "metricKeys":
+			out.Values[i] = ec._InsightCard_metricKeys(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "recommendedAction":
+			out.Values[i] = ec._InsightCard_recommendedAction(ctx, field, obj)
+		case "evidence":
+			out.Values[i] = ec._InsightCard_evidence(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "generatedAt":
+			out.Values[i] = ec._InsightCard_generatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var insightEvidenceImplementors = []string{"InsightEvidence"}
+
+func (ec *executionContext) _InsightEvidence(ctx context.Context, sel ast.SelectionSet, obj *model.InsightEvidence) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, insightEvidenceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("InsightEvidence")
+		case "label":
+			out.Values[i] = ec._InsightEvidence_label(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "value":
+			out.Values[i] = ec._InsightEvidence_value(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "kind":
+			out.Values[i] = ec._InsightEvidence_kind(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -13743,6 +15007,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_dashboardSnapshot(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "insightFeed":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_insightFeed(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "analyticsSeries":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_analyticsSeries(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -14658,6 +15966,74 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAnalyticsPoint2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPointᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AnalyticsPoint) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAnalyticsPoint2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPoint(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNAnalyticsPoint2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPoint(ctx context.Context, sel ast.SelectionSet, v *model.AnalyticsPoint) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AnalyticsPoint(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAnalyticsSeriesResult2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsSeriesResult(ctx context.Context, sel ast.SelectionSet, v model.AnalyticsSeriesResult) graphql.Marshaler {
+	return ec._AnalyticsSeriesResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAnalyticsSeriesResult2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsSeriesResult(ctx context.Context, sel ast.SelectionSet, v *model.AnalyticsSeriesResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AnalyticsSeriesResult(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v any) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -15330,6 +16706,124 @@ func (ec *executionContext) marshalNID2ᚕstringᚄ(ctx context.Context, sel ast
 	return ret
 }
 
+func (ec *executionContext) marshalNInsightCard2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCardᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.InsightCard) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNInsightCard2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCard(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNInsightCard2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCard(ctx context.Context, sel ast.SelectionSet, v *model.InsightCard) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._InsightCard(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNInsightEvidence2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidenceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.InsightEvidence) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNInsightEvidence2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidence(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNInsightEvidence2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidence(ctx context.Context, sel ast.SelectionSet, v *model.InsightEvidence) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._InsightEvidence(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow(ctx context.Context, v any) (model.InsightWindow, error) {
+	var res model.InsightWindow
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow(ctx context.Context, sel ast.SelectionSet, v model.InsightWindow) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNInt2int32(ctx context.Context, v any) (int32, error) {
 	res, err := graphql.UnmarshalInt32(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -15579,6 +17073,36 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNTag2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx context.Context, sel ast.SelectionSet, v model.Tag) graphql.Marshaler {

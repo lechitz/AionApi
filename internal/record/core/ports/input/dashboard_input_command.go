@@ -34,6 +34,26 @@ type DashboardSnapshotQuery struct {
 	Timezone string
 }
 
+// InsightFeedQuery contains input parameters for the canonical insight feed.
+type InsightFeedQuery struct {
+	Window   string
+	Limit    int
+	Date     time.Time
+	Timezone string
+	CategoryID *uint64
+	TagIDs    []uint64
+}
+
+// AnalyticsSeriesQuery contains input parameters for analytics series retrieval.
+type AnalyticsSeriesQuery struct {
+	SeriesKey string
+	Window    string
+	Date      time.Time
+	Timezone  string
+	CategoryID *uint64
+	TagIDs    []uint64
+}
+
 // CreateDashboardViewCommand contains input for creating a dashboard view.
 type CreateDashboardViewCommand struct {
 	Name      string

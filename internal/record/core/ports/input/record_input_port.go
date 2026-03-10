@@ -46,6 +46,10 @@ type RecordService interface {
 	SearchRecords(ctx context.Context, userID uint64, filters domain.SearchFilters) ([]domain.Record, error)
 	// DashboardSnapshot computes deterministic metrics and goals for a specific day.
 	DashboardSnapshot(ctx context.Context, userID uint64, query DashboardSnapshotQuery) (domain.DashboardSnapshot, error)
+	// InsightFeed returns explainable deterministic insights for one analysis window.
+	InsightFeed(ctx context.Context, userID uint64, query InsightFeedQuery) ([]domain.InsightCard, error)
+	// AnalyticsSeries returns a compact series for one supported key/window pair.
+	AnalyticsSeries(ctx context.Context, userID uint64, query AnalyticsSeriesQuery) (domain.AnalyticsSeriesResult, error)
 	// ListMetricDefinitions retrieves active dashboard metric definitions.
 	ListMetricDefinitions(ctx context.Context, userID uint64) ([]domain.MetricDefinition, error)
 	// UpsertMetricDefinition creates/updates a metric definition.

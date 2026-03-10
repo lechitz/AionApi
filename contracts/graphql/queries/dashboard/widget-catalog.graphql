@@ -1,1 +1,1 @@
-query DashboardWidgetCatalog { dashboardWidgetCatalog { metricDefinitions { id metricKey name description icon valueType format precision defaultPeriod defaultAggregation defaultVisible goalDefault displayOrder metadata isActive createdAt updatedAt } goalTemplates { id title description metricKey targetValue unit dueDate daysToComplete colorHex icon priority isCompleted createdAt updatedAt } quickStats { totalMetrics activeGoals dueToday completionRate updatedAt } } }
+query DashboardWidgetCatalog { dashboardWidgetCatalog { maxLargeWidgets sizes types } }

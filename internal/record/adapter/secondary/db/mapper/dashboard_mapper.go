@@ -96,11 +96,15 @@ func DashboardViewToDB(in domain.DashboardView) dbmodel.DashboardView {
 
 // DashboardWidgetFromDB maps a DB dashboard widget row into the core domain model.
 func DashboardWidgetFromDB(in dbmodel.DashboardWidget) domain.DashboardWidget {
+	var metricDefinitionID uint64
+	if in.MetricDefinitionID != nil {
+		metricDefinitionID = *in.MetricDefinitionID
+	}
 	return domain.DashboardWidget{
 		ID:                 in.ID,
 		UserID:             in.UserID,
 		ViewID:             in.ViewID,
-		MetricDefinitionID: in.MetricDefinitionID,
+		MetricDefinitionID: metricDefinitionID,
 		WidgetType:         in.WidgetType,
 		Size:               in.Size,
 		OrderIndex:         in.OrderIndex,
@@ -114,11 +118,16 @@ func DashboardWidgetFromDB(in dbmodel.DashboardWidget) domain.DashboardWidget {
 
 // DashboardWidgetToDB maps a core dashboard widget into the DB persistence model.
 func DashboardWidgetToDB(in domain.DashboardWidget) dbmodel.DashboardWidget {
+	var metricDefinitionID *uint64
+	if in.MetricDefinitionID != 0 {
+		value := in.MetricDefinitionID
+		metricDefinitionID = &value
+	}
 	return dbmodel.DashboardWidget{
 		ID:                 in.ID,
 		UserID:             in.UserID,
 		ViewID:             in.ViewID,
-		MetricDefinitionID: in.MetricDefinitionID,
+		MetricDefinitionID: metricDefinitionID,
 		WidgetType:         in.WidgetType,
 		Size:               in.Size,
 		OrderIndex:         in.OrderIndex,

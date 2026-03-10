@@ -180,6 +180,7 @@ func (c *controller) DashboardWidgetCatalog(_ context.Context) (*model.Dashboard
 			model.DashboardWidgetTypeGoalProgress,
 			model.DashboardWidgetTypeTrendLine,
 			model.DashboardWidgetTypeChecklist,
+			model.DashboardWidgetTypeInsightFeed,
 		},
 	}, nil
 }
@@ -230,10 +231,15 @@ func toGraphQLDashboardView(in domain.DashboardView, widgets []domain.DashboardW
 }
 
 func toGraphQLDashboardWidget(in domain.DashboardWidget) *model.DashboardWidget {
+	var metricDefinitionID *string
+	if in.MetricDefinitionID != 0 {
+		value := strconv.FormatUint(in.MetricDefinitionID, 10)
+		metricDefinitionID = &value
+	}
 	return &model.DashboardWidget{
 		ID:                 strconv.FormatUint(in.ID, 10),
 		ViewID:             strconv.FormatUint(in.ViewID, 10),
-		MetricDefinitionID: strconv.FormatUint(in.MetricDefinitionID, 10),
+		MetricDefinitionID: metricDefinitionID,
 		WidgetType:         toGraphQLWidgetType(in.WidgetType),
 		Size:               toGraphQLWidgetSize(in.Size),
 		OrderIndex:         safeInt32(in.OrderIndex),
@@ -253,6 +259,8 @@ func toGraphQLWidgetType(v string) model.DashboardWidgetType {
 		return model.DashboardWidgetTypeTrendLine
 	case domain.DashboardWidgetTypeChecklist:
 		return model.DashboardWidgetTypeChecklist
+	case domain.DashboardWidgetTypeInsightFeed:
+		return model.DashboardWidgetTypeInsightFeed
 	default:
 		return model.DashboardWidgetTypeKpiNumber
 	}

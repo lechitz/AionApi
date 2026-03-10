@@ -1,1 +1,1 @@
-mutation CreateDashboardView($input: CreateDashboardViewInput!) { createDashboardView(input: $input) { id name description isDefault orderIndex widgets { id metricDefinitionId widgetType size orderIndex titleOverride configJson isActive createdAt updatedAt } createdAt updatedAt } }
+mutation CreateDashboardView($input: CreateDashboardViewInput!) { createDashboardView(input: $input) { id name isDefault widgets { id viewId metricDefinitionId widgetType size orderIndex titleOverride configJson isActive createdAt updatedAt } createdAt updatedAt } }

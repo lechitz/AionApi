@@ -103,6 +103,45 @@ type DashboardSnapshot {
     goals: [DashboardGoal!]!
 }
 
+enum InsightWindow {
+    WINDOW_7D
+    WINDOW_30D
+    WINDOW_90D
+}
+
+type InsightEvidence {
+    label: String!
+    value: String!
+    kind: String!
+}
+
+type InsightCard {
+    id: ID!
+    type: String!
+    title: String!
+    summary: String!
+    status: String!
+    window: InsightWindow!
+    confidence: Int!
+    metricKeys: [String!]!
+    recommendedAction: String
+    evidence: [InsightEvidence!]!
+    generatedAt: String!
+}
+
+type AnalyticsPoint {
+    timestamp: String!
+    value: Float
+    label: String
+}
+
+type AnalyticsSeriesResult {
+    seriesKey: String!
+    window: InsightWindow!
+    points: [AnalyticsPoint!]!
+    summary: String
+}
+
 type MetricDefinition {
     id: ID!
     metricKey: String!
@@ -138,12 +177,13 @@ enum DashboardWidgetType {
     GOAL_PROGRESS
     TREND_LINE
     CHECKLIST
+    INSIGHT_FEED
 }
 
 type DashboardWidget {
     id: ID!
     viewId: ID!
-    metricDefinitionId: ID!
+    metricDefinitionId: ID
     widgetType: DashboardWidgetType!
     size: DashboardWidgetSize!
     orderIndex: Int!
@@ -260,6 +300,8 @@ extend type Query {
     searchRecords(filters: SearchFilters!): [Record!]! @auth(roles: "user")
     recordStats(filters: RecordStatsFilters): RecordStats! @auth(roles: "user")
     dashboardSnapshot(date: String!, timezone: String): DashboardSnapshot! @auth(roles: "user")
+    insightFeed(window: InsightWindow!, limit: Int, date: String, timezone: String, categoryId: ID, tagIds: [ID!]): [InsightCard!]! @auth(roles: "user")
+    analyticsSeries(seriesKey: String!, window: InsightWindow!, date: String, timezone: String, categoryId: ID, tagIds: [ID!]): AnalyticsSeriesResult! @auth(roles: "user")
     metricDefinitions: [MetricDefinition!]! @auth(roles: "user")
     dashboardViews: [DashboardView!]! @auth(roles: "user")
     dashboardView(id: ID!): DashboardView @auth(roles: "user")

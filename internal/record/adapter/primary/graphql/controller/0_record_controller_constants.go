@@ -67,6 +67,12 @@ const (
 
 	// SpanSoftDeleteAll is the span name for soft-deleting all records.
 	SpanSoftDeleteAll = "record.controller.soft_delete_all"
+
+	// SpanInsightFeed is the span name for insight feed queries.
+	SpanInsightFeed = "record.controller.insight_feed"
+
+	// SpanAnalyticsSeries is the span name for analytics series queries.
+	SpanAnalyticsSeries = "record.controller.analytics_series"
 )
 
 // -----------------------------------------------------------------------------
@@ -158,6 +164,18 @@ const (
 
 	// MsgUpdateError is the log message for update operation failure.
 	MsgUpdateError = "error updating record"
+
+	// MsgInsightFeedError is the log message for insight feed failures.
+	MsgInsightFeedError = "error computing insight feed"
+
+	// MsgAnalyticsSeriesError is the log message for analytics series failures.
+	MsgAnalyticsSeriesError = "error computing analytics series"
+
+	// MsgInsightFeedFetched is the log message for successful insight queries.
+	MsgInsightFeedFetched = "insight feed fetched"
+
+	// MsgAnalyticsSeriesComputed is the log message for successful analytics series queries.
+	MsgAnalyticsSeriesComputed = "analytics series computed"
 )
 
 // -----------------------------------------------------------------------------
@@ -189,6 +207,18 @@ const (
 
 	// AttrRecordsCount is the attribute key for records count.
 	AttrRecordsCount = "records_count"
+
+	// AttrTimezone is the attribute key for timezone.
+	AttrTimezone = "timezone"
+
+	// AttrSeriesKey is the attribute key for analytics series key.
+	AttrSeriesKey = "series_key"
+
+	// AttrWindow is the attribute key for insight window.
+	AttrWindow = "window"
+
+	// AttrTagIDsCount is the attribute key for scoped tag ids count.
+	AttrTagIDsCount = "tag_ids_count"
 )
 
 // -----------------------------------------------------------------------------

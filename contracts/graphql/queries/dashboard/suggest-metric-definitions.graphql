@@ -1,1 +1,1 @@
-query SuggestMetricDefinitions($limit: Int) { suggestMetricDefinitions(limit: $limit) { metricKey name description icon valueType format precision defaultPeriod defaultAggregation defaultVisible goalDefault displayOrder metadata } }
+query SuggestMetricDefinitions($limit: Int) { suggestMetricDefinitions(limit: $limit) { metricKey displayName categoryId tagIds valueSource aggregation unit reason } }

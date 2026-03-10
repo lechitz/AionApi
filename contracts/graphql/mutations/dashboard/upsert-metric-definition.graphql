@@ -1,1 +1,1 @@
-mutation UpsertMetricDefinition($input: UpsertMetricDefinitionInput!) { upsertMetricDefinition(input: $input) { id metricKey name description icon valueType format precision defaultPeriod defaultAggregation defaultVisible goalDefault displayOrder metadata isActive createdAt updatedAt } }
+mutation UpsertMetricDefinition($input: UpsertMetricDefinitionInput!) { upsertMetricDefinition(input: $input) { id metricKey displayName categoryId tagId tagIds valueSource aggregation unit goalDefault isActive } }

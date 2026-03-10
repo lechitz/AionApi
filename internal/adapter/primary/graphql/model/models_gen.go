@@ -9,6 +9,19 @@ import (
 	"strconv"
 )
 
+type AnalyticsPoint struct {
+	Timestamp string   `json:"timestamp"`
+	Value     *float64 `json:"value,omitempty"`
+	Label     *string  `json:"label,omitempty"`
+}
+
+type AnalyticsSeriesResult struct {
+	SeriesKey string            `json:"seriesKey"`
+	Window    InsightWindow     `json:"window"`
+	Points    []*AnalyticsPoint `json:"points"`
+	Summary   *string           `json:"summary,omitempty"`
+}
+
 type Category struct {
 	ID          string  `json:"id"`
 	UserID      string  `json:"userId"`
@@ -124,7 +137,7 @@ type DashboardView struct {
 type DashboardWidget struct {
 	ID                 string              `json:"id"`
 	ViewID             string              `json:"viewId"`
-	MetricDefinitionID string              `json:"metricDefinitionId"`
+	MetricDefinitionID *string             `json:"metricDefinitionId,omitempty"`
 	WidgetType         DashboardWidgetType `json:"widgetType"`
 	Size               DashboardWidgetSize `json:"size"`
 	OrderIndex         int32               `json:"orderIndex"`
@@ -169,6 +182,26 @@ type GoalTemplate struct {
 	Comparison  string  `json:"comparison"`
 	Period      string  `json:"period"`
 	IsActive    bool    `json:"isActive"`
+}
+
+type InsightCard struct {
+	ID                string             `json:"id"`
+	Type              string             `json:"type"`
+	Title             string             `json:"title"`
+	Summary           string             `json:"summary"`
+	Status            string             `json:"status"`
+	Window            InsightWindow      `json:"window"`
+	Confidence        int32              `json:"confidence"`
+	MetricKeys        []string           `json:"metricKeys"`
+	RecommendedAction *string            `json:"recommendedAction,omitempty"`
+	Evidence          []*InsightEvidence `json:"evidence"`
+	GeneratedAt       string             `json:"generatedAt"`
+}
+
+type InsightEvidence struct {
+	Label string `json:"label"`
+	Value string `json:"value"`
+	Kind  string `json:"kind"`
 }
 
 type MetricDefinition struct {
@@ -418,6 +451,7 @@ const (
 	DashboardWidgetTypeGoalProgress DashboardWidgetType = "GOAL_PROGRESS"
 	DashboardWidgetTypeTrendLine    DashboardWidgetType = "TREND_LINE"
 	DashboardWidgetTypeChecklist    DashboardWidgetType = "CHECKLIST"
+	DashboardWidgetTypeInsightFeed  DashboardWidgetType = "INSIGHT_FEED"
 )
 
 var AllDashboardWidgetType = []DashboardWidgetType{
@@ -425,11 +459,12 @@ var AllDashboardWidgetType = []DashboardWidgetType{
 	DashboardWidgetTypeGoalProgress,
 	DashboardWidgetTypeTrendLine,
 	DashboardWidgetTypeChecklist,
+	DashboardWidgetTypeInsightFeed,
 }
 
 func (e DashboardWidgetType) IsValid() bool {
 	switch e {
-	case DashboardWidgetTypeKpiNumber, DashboardWidgetTypeGoalProgress, DashboardWidgetTypeTrendLine, DashboardWidgetTypeChecklist:
+	case DashboardWidgetTypeKpiNumber, DashboardWidgetTypeGoalProgress, DashboardWidgetTypeTrendLine, DashboardWidgetTypeChecklist, DashboardWidgetTypeInsightFeed:
 		return true
 	}
 	return false
@@ -465,6 +500,63 @@ func (e *DashboardWidgetType) UnmarshalJSON(b []byte) error {
 }
 
 func (e DashboardWidgetType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type InsightWindow string
+
+const (
+	InsightWindowWindow7d  InsightWindow = "WINDOW_7D"
+	InsightWindowWindow30d InsightWindow = "WINDOW_30D"
+	InsightWindowWindow90d InsightWindow = "WINDOW_90D"
+)
+
+var AllInsightWindow = []InsightWindow{
+	InsightWindowWindow7d,
+	InsightWindowWindow30d,
+	InsightWindowWindow90d,
+}
+
+func (e InsightWindow) IsValid() bool {
+	switch e {
+	case InsightWindowWindow7d, InsightWindowWindow30d, InsightWindowWindow90d:
+		return true
+	}
+	return false
+}
+
+func (e InsightWindow) String() string {
+	return string(e)
+}
+
+func (e *InsightWindow) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = InsightWindow(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid InsightWindow", str)
+	}
+	return nil
+}
+
+func (e InsightWindow) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *InsightWindow) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e InsightWindow) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil

@@ -54,6 +54,16 @@ It is intended to be the shared contract surface consumed by Aion clients.
 ### User
 - `queries/user/stats.graphql`
 
+### Dashboard
+- `queries/dashboard/snapshot.graphql`
+- `queries/dashboard/insight-feed.graphql`
+- `queries/dashboard/analytics-series.graphql`
+- `queries/dashboard/metric-definitions.graphql`
+- `queries/dashboard/views.graphql`
+- `queries/dashboard/view.graphql`
+- `queries/dashboard/widget-catalog.graphql`
+- `queries/dashboard/suggest-metric-definitions.graphql`
+
 ## Mutation Inventory
 
 ### Categories

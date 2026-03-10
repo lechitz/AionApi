@@ -77,7 +77,7 @@ type DashboardWidget struct {
 	ID                 uint64    `gorm:"column:id;primaryKey"`
 	UserID             uint64    `gorm:"column:user_id;not null"`
 	ViewID             uint64    `gorm:"column:view_id;not null"`
-	MetricDefinitionID uint64    `gorm:"column:metric_definition_id;not null"`
+	MetricDefinitionID *uint64   `gorm:"column:metric_definition_id"`
 	WidgetType         string    `gorm:"column:widget_type;not null"`
 	Size               string    `gorm:"column:size;not null"`
 	OrderIndex         int       `gorm:"column:order_index;not null"`
