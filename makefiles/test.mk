@@ -3,6 +3,7 @@
 # ============================================================
 
 GO_CACHE := $(CURDIR)/.cache/go-build
+MCP_SMOKE_USER_ID ?= 999
 
 .PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks mcp-smoke mcp-smoke-readonly
 
@@ -107,28 +108,28 @@ mcp-smoke:
 	@echo "Running MCP smoke test via aion-chat..."
 	@if docker ps --filter "name=aion-chat-dev" --filter "status=running" -q | grep -q .; then \
 		if docker exec aion-chat-dev test -f /app/scripts/mcp_smoke_test.py >/dev/null 2>&1; then \
-			docker exec aion-chat-dev python /app/scripts/mcp_smoke_test.py; \
+			docker exec aion-chat-dev python /app/scripts/mcp_smoke_test.py --user-id $(MCP_SMOKE_USER_ID); \
 		else \
 			echo "⚠️  MCP smoke script not found inside aion-chat-dev."; \
 			echo "   Falling back to host repo execution."; \
-			cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --env-file infrastructure/docker/environments/dev/.env.dev; \
+			cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --user-id $(MCP_SMOKE_USER_ID) --env-file infrastructure/docker/environments/dev/.env.dev; \
 		fi; \
 	else \
 		echo "⚠️  aion-chat-dev is not running. Falling back to host repo execution."; \
-		cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --env-file infrastructure/docker/environments/dev/.env.dev; \
+		cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --user-id $(MCP_SMOKE_USER_ID) --env-file infrastructure/docker/environments/dev/.env.dev; \
 	fi
 
 mcp-smoke-readonly:
 	@echo "Running MCP smoke test (read-only) via aion-chat..."
 	@if docker ps --filter "name=aion-chat-dev" --filter "status=running" -q | grep -q .; then \
 		if docker exec aion-chat-dev test -f /app/scripts/mcp_smoke_test.py >/dev/null 2>&1; then \
-			docker exec aion-chat-dev python /app/scripts/mcp_smoke_test.py --read-only; \
+			docker exec aion-chat-dev python /app/scripts/mcp_smoke_test.py --read-only --user-id $(MCP_SMOKE_USER_ID); \
 		else \
 			echo "⚠️  MCP smoke script not found inside aion-chat-dev."; \
 			echo "   Falling back to host repo execution."; \
-			cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --read-only --env-file infrastructure/docker/environments/dev/.env.dev; \
+			cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --read-only --user-id $(MCP_SMOKE_USER_ID) --env-file infrastructure/docker/environments/dev/.env.dev; \
 		fi; \
 	else \
 		echo "⚠️  aion-chat-dev is not running. Falling back to host repo execution."; \
-		cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --read-only --env-file infrastructure/docker/environments/dev/.env.dev; \
+		cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --read-only --user-id $(MCP_SMOKE_USER_ID) --env-file infrastructure/docker/environments/dev/.env.dev; \
 	fi
