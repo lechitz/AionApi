@@ -110,12 +110,12 @@ mcp-smoke:
 			docker exec aion-chat-dev python /app/scripts/mcp_smoke_test.py; \
 		else \
 			echo "⚠️  MCP smoke script not found inside aion-chat-dev."; \
-			echo "   Rebuild chat image first: make rebuild-chat"; \
-			exit 1; \
+			echo "   Falling back to host repo execution."; \
+			cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --env-file infrastructure/docker/environments/dev/.env.dev; \
 		fi; \
 	else \
 		echo "⚠️  aion-chat-dev is not running. Falling back to host repo execution."; \
-		cd ../aion-chat && .venv/bin/python scripts/mcp_smoke_test.py; \
+		cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --env-file infrastructure/docker/environments/dev/.env.dev; \
 	fi
 
 mcp-smoke-readonly:
@@ -125,10 +125,10 @@ mcp-smoke-readonly:
 			docker exec aion-chat-dev python /app/scripts/mcp_smoke_test.py --read-only; \
 		else \
 			echo "⚠️  MCP smoke script not found inside aion-chat-dev."; \
-			echo "   Rebuild chat image first: make rebuild-chat"; \
-			exit 1; \
+			echo "   Falling back to host repo execution."; \
+			cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --read-only --env-file infrastructure/docker/environments/dev/.env.dev; \
 		fi; \
 	else \
 		echo "⚠️  aion-chat-dev is not running. Falling back to host repo execution."; \
-		cd ../aion-chat && .venv/bin/python scripts/mcp_smoke_test.py --read-only; \
+		cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --read-only --env-file infrastructure/docker/environments/dev/.env.dev; \
 	fi
