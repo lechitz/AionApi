@@ -212,6 +212,8 @@ help:
 	@echo "     regression-gate-draft    →  Run cross-repo draft-flow regression gate (dashboard + chat + api)"
 	@echo "     e2e-draft-smoke          →  Run dashboard Playwright smoke for DC-08/DC-09 (host deps required)"
 	@echo "     dc15-correlate           →  Correlate UI action logs across dashboard + api + chat (vars: SINCE, DRAFT_ID)"
+	@echo "     mcp-smoke                →  Run MCP smoke test through aion-chat against the current local stack"
+	@echo "     mcp-smoke-readonly       →  Run MCP smoke test in read-only mode"
 	@echo ""
 	@echo ""
 	@echo " 🔶 ┃ API DOCS (SWAGGER) ┃"
@@ -258,6 +260,7 @@ install-tools: tools-install
 	format lint lint-fix verify \
 	test test-cover test-cover-detail test-html-report test-ci test-clean \
 	regression-gate-draft e2e-draft-smoke dc15-correlate \
+	mcp-smoke mcp-smoke-readonly \
 	migrate-up migrate-down migrate-force migrate-new migrate-install \
 	migrate-dev-up migrate-dev-down migrate-dev-status migrate-dev-reset \
 	docs.gen docs.check-dirty docs.clean docs.validate docs-verify

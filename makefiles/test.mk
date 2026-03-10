@@ -4,7 +4,7 @@
 
 GO_CACHE := $(CURDIR)/.cache/go-build
 
-.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks
+.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks mcp-smoke mcp-smoke-readonly
 
 # Execute unit tests
 test:
@@ -102,3 +102,33 @@ test-clean:
 		$(COVERAGE_DIR)/coverage.html \
 		$(COVERAGE_DIR)/junit-report.xml
 	@echo "✅ Cleanup complete!"
+
+mcp-smoke:
+	@echo "Running MCP smoke test via aion-chat..."
+	@if docker ps --filter "name=aion-chat-dev" --filter "status=running" -q | grep -q .; then \
+		if docker exec aion-chat-dev test -f /app/scripts/mcp_smoke_test.py >/dev/null 2>&1; then \
+			docker exec aion-chat-dev python /app/scripts/mcp_smoke_test.py; \
+		else \
+			echo "⚠️  MCP smoke script not found inside aion-chat-dev."; \
+			echo "   Rebuild chat image first: make rebuild-chat"; \
+			exit 1; \
+		fi; \
+	else \
+		echo "⚠️  aion-chat-dev is not running. Falling back to host repo execution."; \
+		cd ../aion-chat && .venv/bin/python scripts/mcp_smoke_test.py; \
+	fi
+
+mcp-smoke-readonly:
+	@echo "Running MCP smoke test (read-only) via aion-chat..."
+	@if docker ps --filter "name=aion-chat-dev" --filter "status=running" -q | grep -q .; then \
+		if docker exec aion-chat-dev test -f /app/scripts/mcp_smoke_test.py >/dev/null 2>&1; then \
+			docker exec aion-chat-dev python /app/scripts/mcp_smoke_test.py --read-only; \
+		else \
+			echo "⚠️  MCP smoke script not found inside aion-chat-dev."; \
+			echo "   Rebuild chat image first: make rebuild-chat"; \
+			exit 1; \
+		fi; \
+	else \
+		echo "⚠️  aion-chat-dev is not running. Falling back to host repo execution."; \
+		cd ../aion-chat && .venv/bin/python scripts/mcp_smoke_test.py --read-only; \
+	fi
