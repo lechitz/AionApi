@@ -24,6 +24,7 @@ Handles record lifecycle and query flows with strict user-scoped validation.
 - Keep persistence concerns in secondary adapters.
 - Dashboard white-label layout rules are enforced in usecase layer (including large-card limits).
 - Insight generation and analytics aggregation for v1 belong here, not in dashboard local state.
+- Graph projection contracts for optional export/lab workflows belong here too, but they stay derived and non-authoritative.
 - Scope semantics should stay consistent across GraphQL surfaces:
   - `window`
   - optional `date`
