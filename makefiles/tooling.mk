@@ -41,11 +41,13 @@ GRAPH_PROJECTION_WINDOW ?= WINDOW_30D
 GRAPH_PROJECTION_TIMEZONE ?= America/Sao_Paulo
 
 graph-projection-export:
-	@go run ./hack/tools/graph-projection-export \
-		--user-id "$(GRAPH_PROJECTION_USER_ID)" \
-		--window "$(GRAPH_PROJECTION_WINDOW)" \
-		--timezone "$(GRAPH_PROJECTION_TIMEZONE)" \
-		$(if $(DATE),--date "$(DATE)",) \
-		$(if $(CATEGORY_ID),--category-id "$(CATEGORY_ID)",) \
-		$(if $(TAG_IDS),--tag-ids "$(TAG_IDS)",) \
-		$(if $(OUTPUT),--output "$(OUTPUT)",)
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
+		DB_HOST=localhost \
+		go run ./hack/tools/graph-projection-export \
+			--user-id "$(GRAPH_PROJECTION_USER_ID)" \
+			--window "$(GRAPH_PROJECTION_WINDOW)" \
+			--timezone "$(GRAPH_PROJECTION_TIMEZONE)" \
+			$(if $(DATE),--date "$(DATE)",) \
+			$(if $(CATEGORY_ID),--category-id "$(CATEGORY_ID)",) \
+			$(if $(TAG_IDS),--tag-ids "$(TAG_IDS)",) \
+			$(if $(OUTPUT),--output "$(OUTPUT)",)

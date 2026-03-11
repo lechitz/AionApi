@@ -32,7 +32,7 @@ func run(ctx context.Context, args []string) int {
 	}
 
 	log, cleanup := contextlogger.New()
-	defer cleanup()
+	_ = cleanup
 
 	appCfg, err := config.New(crypto.New()).Load(log)
 	if err != nil {
