@@ -7,6 +7,13 @@
 This folder stores reusable GraphQL operation documents aligned with the backend schema.
 It is intended to be the shared contract surface consumed by Aion clients.
 
+For v1 insight and analytics work, this folder is not optional documentation.
+It is part of the canonical consumer contract and must remain aligned with:
+
+1. schema modules under `internal/adapter/primary/graphql/schema/modules/`
+2. generated server artifacts
+3. downstream typed consumers in dashboard/chat layers
+
 ## Structure
 
 | Folder | Scope |
@@ -64,6 +71,36 @@ It is intended to be the shared contract surface consumed by Aion clients.
 - `queries/dashboard/widget-catalog.graphql`
 - `queries/dashboard/suggest-metric-definitions.graphql`
 
+## v1 Insight and Analytics Contract Notes
+
+Canonical operations:
+
+- `InsightFeed`
+- `AnalyticsSeries`
+
+Current scope model shared by both operations:
+
+- `window`
+- optional `date`
+- optional `timezone`
+- optional `categoryId`
+- optional `tagIds`
+
+Current v1 restriction:
+
+- `AnalyticsSeries` is intentionally narrow and currently centered on `records.count`
+
+Consumer compatibility rules:
+
+- additive changes are preferred
+- field removal or meaning changes require explicit coordinated updates across `AionApi`, `aionapi-dashboard`, and `aion-chat`
+- the first insight returned by `InsightFeed` is the dominant insight for that scope
+- consumers may humanize wording, but they must not reinterpret business meaning
+
+Governance reference:
+
+- `/Aion/notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md`
+
 ## Mutation Inventory
 
 ### Categories
@@ -89,6 +126,7 @@ It is intended to be the shared contract surface consumed by Aion clients.
 - Validate operation documents against current schema in CI.
 - Regenerate contract files + manifest with: `make graphql.queries graphql.manifest`.
 - Validate schema compatibility with: `make graphql.validate`.
+- Treat `queries/dashboard/insight-feed.graphql` and `queries/dashboard/analytics-series.graphql` as backend-owned public contracts for v1 surfaces such as `Radar`, `Analytics`, and MCP read tools.
 
 ---
 

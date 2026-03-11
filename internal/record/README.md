@@ -15,6 +15,7 @@ Handles record lifecycle and query flows with strict user-scoped validation.
 | Query operations | Date/tag/category/user-based retrieval |
 | Domain validation | Ensure required relationships and field constraints |
 | Dashboard semantics | Metric definitions, goal templates, and white-label layout (views/widgets) |
+| Analytics and insights | Deterministic v1 insight generation and backend-owned analytics series |
 
 ## Design Notes
 
@@ -22,6 +23,13 @@ Handles record lifecycle and query flows with strict user-scoped validation.
 - Keep adapters mapping-only.
 - Keep persistence concerns in secondary adapters.
 - Dashboard white-label layout rules are enforced in usecase layer (including large-card limits).
+- Insight generation and analytics aggregation for v1 belong here, not in dashboard local state.
+- Scope semantics should stay consistent across GraphQL surfaces:
+  - `window`
+  - optional `date`
+  - optional `timezone`
+  - optional `categoryId`
+  - optional `tagIds`
 
 ## Package Improvements
 

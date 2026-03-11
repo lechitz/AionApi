@@ -67,6 +67,48 @@ make graphql.validate
 make graphql.check-dirty
 ```
 
+## Canonical v1 Insight Surface
+
+The v1 personal-intelligence layer is intentionally narrow and backend-owned.
+
+Canonical GraphQL operations:
+
+- `insightFeed`
+- `analyticsSeries`
+
+Current contract rules:
+
+- `AionApi` is the authority for schema, resolver behavior, and shared GraphQL artifacts.
+- shared query documents under `contracts/graphql` must stay aligned with the live schema
+- consumers such as `aionapi-dashboard` and `aion-chat` may adapt presentation, but must not invent richer business semantics than the backend exposes
+
+Current v1 scope model:
+
+- recency windows: `WINDOW_7D`, `WINDOW_30D`, `WINDOW_90D`
+- optional `date`
+- optional `timezone`
+- optional `categoryId`
+- optional `tagIds`
+
+Current v1 series support:
+
+- `analyticsSeries` is intentionally narrow
+- `records.count` is the canonical v1 series key
+
+Current v1 insight semantics:
+
+- deterministic, explainable insights
+- dominant insight is the first item in `insightFeed`
+- secondary insights remain ordered after the dominant item
+- consumers should treat `status`, `confidence`, `summary`, `recommendedAction`, and `evidence` as backend-owned meaning
+
+Related references:
+
+- [`contracts/graphql/queries/README.md`](./contracts/graphql/queries/README.md)
+- [`docs/graphql/README.md`](./docs/graphql/README.md)
+- [`internal/record/README.md`](./internal/record/README.md)
+- [`/Aion/notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md`](../notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md)
+
 <!-- docs-index:start -->
 ## Documentation Index
 

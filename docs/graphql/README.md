@@ -37,6 +37,23 @@ The schema now exposes dashboard layout and composition primitives:
 - `upsertDashboardWidget`, `reorderDashboardWidgets`, `deleteDashboardWidget`
 - `createMetricAndWidget`
 
+The same schema also exposes the canonical v1 intelligence surface used across the product:
+
+- `insightFeed`
+- `analyticsSeries`
+
+Those operations back:
+
+- `Radar`
+- canonical `Analytics`
+- dashboard `INSIGHT_FEED` widgets
+- MCP read tools in `aion-chat`
+
+For compatibility policy and ownership, refer to:
+
+- `contracts/graphql/queries/README.md`
+- `/Aion/notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md`
+
 ## Design Notes
 
 - Treat files here as generated artifacts.
