@@ -37,6 +37,7 @@ help:
 	@echo " 🔶 ┃ TOOLING ┃"
 	@echo ""
 	@echo "     tools-install            →  Install all development tools (goimports, golines, gofumpt, golangci-lint)"
+	@echo "     graph-projection-export  →  Export graph-projection-v1 JSON (vars: GRAPH_PROJECTION_USER_ID, DATE, CATEGORY_ID, TAG_IDS, OUTPUT)"
 	@echo ""
 	@echo ""
 	@echo " 🔶 ┃ DOCKER ENVIRONMENT COMMANDS ┃"
@@ -249,6 +250,7 @@ install-tools: tools-install
 
 .PHONY: \
 	help tools-install tools.check \
+	graph-projection-export \
 	build-dev rebuild-dev dev-full dev-up dev-down dev dev-fast dev-attach dev-logs dev-clean clean-dev \
 	logs-api logs-chat logs-dashboard logs-postgres logs-redis logs-ollama logs-jaeger logs-otel logs-prometheus logs-grafana logs-all \
 	ollama-up ollama-down ollama-status ollama-restart ollama-logs ollama-models ollama-pull ollama-clean \

@@ -19,6 +19,7 @@ It follows the common `hack/` convention for non-production operational helpers.
 ```bash
 make seed-api-caller
 make seed-helper
+go run ./hack/tools/graph-projection-export --user-id 999
 bash hack/dev/test-chat.sh
 ```
 
