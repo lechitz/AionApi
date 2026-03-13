@@ -20,6 +20,8 @@ func NewService(repository output.EventRepository, log logger.ContextLogger) inp
 	return &Service{
 		repository: repository,
 		logger:     log,
-		now:        time.Now().UTC,
+		now: func() time.Time {
+			return time.Now().UTC()
+		},
 	}
 }
