@@ -50,6 +50,15 @@ func baseConfig() config.Config {
 			OtelExporterOTLPEndpoint: "otel-collector:4318",
 			OtelExporterCompression:  "none",
 		},
+		Kafka: config.KafkaConfig{
+			Brokers:           "kafka:9092",
+			RecordEventsTopic: "aion.record.events.v1",
+		},
+		Outbox: config.OutboxConfig{
+			PublishEnabled:  true,
+			PublishInterval: 2 * time.Second,
+			BatchSize:       50,
+		},
 		Application: config.Application{
 			ContextRequest: config.MinContextRequest,
 			Timeout:        config.MinShutdownTimeout,
@@ -150,4 +159,12 @@ func TestConfigValidate_ObservabilityAndAppErrors(t *testing.T) {
 	cfg = baseConfig()
 	cfg.Application.Timeout = 500 * time.Millisecond
 	require.EqualError(t, cfg.Validate(), "shutdown timeout must be at least 1s second")
+
+	cfg = baseConfig()
+	cfg.Kafka.Brokers = ""
+	require.EqualError(t, cfg.Validate(), config.ErrKafkaBrokersEmpty)
+
+	cfg = baseConfig()
+	cfg.Outbox.BatchSize = 0
+	require.EqualError(t, cfg.Validate(), "OUTBOX_BATCH_SIZE must be at least 1")
 }

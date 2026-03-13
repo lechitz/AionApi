@@ -32,6 +32,12 @@ const (
 
 	// MinDBMaxRetries is the minimum allowed value for the maximum number of retries.
 	MinDBMaxRetries = 1
+
+	// MinOutboxPublishInterval is the minimum allowed interval for one outbox publish loop.
+	MinOutboxPublishInterval = 1 * time.Second
+
+	// MinOutboxBatchSize is the minimum allowed number of outbox rows per publish batch.
+	MinOutboxBatchSize = 1
 )
 
 // ErrFailedToProcessEnvVars is returned when environment variables cannot be processed.
@@ -78,6 +84,10 @@ const (
 
 	ErrOtelEndpointEmpty      = "OTel Exporter endpoint cannot be empty"
 	ErrOtelCompressionInvalid = "OTel Exporter compression must be either 'none' or 'gzip', got: %s"
+	ErrKafkaBrokersEmpty      = "KAFKA_BROKERS cannot be empty"
+	ErrKafkaRecordEventsTopicEmpty = "KAFKA_TOPIC_RECORD_EVENTS cannot be empty"
+	ErrOutboxPublishIntervalMin    = "OUTBOX_PUBLISH_INTERVAL must be at least %v"
+	ErrOutboxBatchSizeMin          = "OUTBOX_BATCH_SIZE must be at least %d"
 
 	ErrAppContextReqMin      = "context request timeout must be at least %v"
 	ErrAppShutdownTimeoutMin = "shutdown timeout must be at least %s second"

@@ -26,6 +26,19 @@ type ObservabilityConfig struct {
 	OtelExporterInsecure     bool   `envconfig:"OTEL_EXPORTER_INSECURE"      default:"true"`
 }
 
+// KafkaConfig holds Kafka broker and topic settings for canonical event publication.
+type KafkaConfig struct {
+	Brokers           string `envconfig:"KAFKA_BROKERS"             default:"kafka:9092"`
+	RecordEventsTopic string `envconfig:"KAFKA_TOPIC_RECORD_EVENTS" default:"aion.record.events.v1"`
+}
+
+// OutboxConfig holds runtime controls for the outbox publisher loop.
+type OutboxConfig struct {
+	PublishEnabled  bool          `envconfig:"OUTBOX_PUBLISH_ENABLED"  default:"true"`
+	PublishInterval time.Duration `envconfig:"OUTBOX_PUBLISH_INTERVAL" default:"2s"`
+	BatchSize       int           `envconfig:"OUTBOX_BATCH_SIZE"       default:"50"`
+}
+
 // CacheConfig holds Redis cache configuration.
 // Each bounded context uses a separate Redis database for isolation.
 type CacheConfig struct {

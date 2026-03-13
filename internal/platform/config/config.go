@@ -14,6 +14,8 @@ type Config struct {
 	AionChat      AionChatConfig
 	AvatarStorage AvatarStorageConfig
 	Cookie        CookieConfig
+	Kafka         KafkaConfig
+	Outbox        OutboxConfig
 	ServerHTTP    ServerHTTP
 	DB            DBConfig
 	ServerGraphql ServerGraphql
@@ -38,8 +40,27 @@ func (c *Config) Validate() error {
 	if err := c.validateObservability(); err != nil {
 		return err
 	}
+	if err := c.validateKafka(); err != nil {
+		return err
+	}
 	if err := c.validateApp(); err != nil {
 		return err
+	}
+	return nil
+}
+
+func (c *Config) validateKafka() error {
+	if c.Kafka.Brokers == "" {
+		return errors.New(ErrKafkaBrokersEmpty)
+	}
+	if c.Kafka.RecordEventsTopic == "" {
+		return errors.New(ErrKafkaRecordEventsTopicEmpty)
+	}
+	if c.Outbox.PublishInterval < MinOutboxPublishInterval {
+		return fmt.Errorf(ErrOutboxPublishIntervalMin, MinOutboxPublishInterval)
+	}
+	if c.Outbox.BatchSize < MinOutboxBatchSize {
+		return fmt.Errorf(ErrOutboxBatchSizeMin, MinOutboxBatchSize)
 	}
 	return nil
 }

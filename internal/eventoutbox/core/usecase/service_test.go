@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
 	"github.com/lechitz/AionApi/internal/eventoutbox/core/usecase"
@@ -70,6 +71,18 @@ func (s *eventRepositoryStub) Save(_ context.Context, event domain.Event) error 
 		return s.err
 	}
 	s.saved = append(s.saved, event)
+	return nil
+}
+
+func (s *eventRepositoryStub) ListPending(context.Context, int) ([]domain.Event, error) {
+	return nil, nil
+}
+
+func (s *eventRepositoryStub) MarkPublished(context.Context, string, time.Time) error {
+	return nil
+}
+
+func (s *eventRepositoryStub) Reschedule(context.Context, string, time.Time, string) error {
 	return nil
 }
 

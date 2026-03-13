@@ -16,13 +16,15 @@ ARG BUILD_LDFLAGS="-s -w"
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -ldflags="${BUILD_LDFLAGS}" -o aion-api ./cmd/api
+    go build -ldflags="${BUILD_LDFLAGS}" -o aion-api ./cmd/api && \
+    go build -ldflags="${BUILD_LDFLAGS}" -o aion-api-outbox-publisher ./cmd/outbox-publisher
 
 FROM alpine:3.19.1
 
 WORKDIR /app
 
 COPY --from=builder /app/aion-api /usr/local/bin/aion-api
+COPY --from=builder /app/aion-api-outbox-publisher /usr/local/bin/aion-api-outbox-publisher
 
 COPY infrastructure/docker/scripts/entrypoint.sh /entrypoint.sh
 

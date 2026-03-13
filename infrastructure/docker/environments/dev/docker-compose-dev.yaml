@@ -322,6 +322,62 @@ services:
       retries: 5
       start_period: 10s
 
+  aion-streams-worker:
+    image: aion-streams:dev
+    build:
+      context: ../../../../../aion-streams
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: aion-streams-worker-dev
+    restart: unless-stopped
+    entrypoint: ["aion-streams-worker"]
+    environment:
+      - APP_NAME=aion-streams
+      - LOG_LEVEL=INFO
+      - KAFKA_BROKERS=kafka:9092
+      - CONSUMER_GROUP=aion-streams-v1
+      - INPUT_TOPIC=aion.record.events.v1
+      - PROJECTION_STORE_DSN=postgres://aion:aion123@postgres:5432/aionapi?sslmode=disable
+      - GRACEFUL_TIMEOUT_SECS=10
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+    networks:
+      - rede_local
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+
+  aion-api-outbox-publisher:
+    image: aion-api:dev
+    build:
+      context: ../../../..
+      dockerfile: infrastructure/docker/environments/dev/Dockerfile.dev
+    container_name: aion-api-outbox-publisher-dev
+    env_file:
+      - .env.dev
+    environment:
+      - TZ=America/Sao_Paulo
+      - APP_NAME=aion-api-outbox-publisher
+    entrypoint: ["air", "-c", ".air.outbox-publisher.toml"]
+    volumes:
+      - ../../../..:/app
+      - go-mod-cache:/go/pkg/mod
+      - go-build-cache:/root/.cache/go-build
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    networks:
+      - rede_local
+    restart: unless-stopped
+
   aion-api:
     image: aion-api:dev
     build:
@@ -360,6 +416,10 @@ services:
         condition: service_healthy
       aion-streams:
         condition: service_healthy
+      aion-streams-worker:
+        condition: service_started
+      aion-api-outbox-publisher:
+        condition: service_started
     networks:
       - rede_local
     restart: unless-stopped

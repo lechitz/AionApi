@@ -11,3 +11,8 @@ import (
 type Service interface {
 	Enqueue(ctx context.Context, event domain.Event) error
 }
+
+// PublisherService defines background publication of pending outbox rows.
+type PublisherService interface {
+	PublishPending(ctx context.Context, limit int) error
+}
