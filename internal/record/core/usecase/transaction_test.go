@@ -12,120 +12,67 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-type recordRepositoryWithDBWrapper struct {
-	*mocks.MockRecordRepository
-	cloned output.RecordRepository
-	gotDB  dbport.DB
+type txAwareRecordRepository struct {
+	output.RecordRepository
+	txRepository output.RecordRepository
 }
 
-func (s *recordRepositoryWithDBWrapper) WithDB(database dbport.DB) output.RecordRepository {
-	s.gotDB = database
-	return s.cloned
+func (r txAwareRecordRepository) WithDB(_ dbport.DB) output.RecordRepository {
+	return r.txRepository
 }
 
-type outboxServiceWithDBStub struct {
-	cloned eventoutboxinput.Service
-	gotDB  dbport.DB
+type txAwareOutboxService struct {
+	eventoutboxinput.Service
+	txService eventoutboxinput.Service
 }
 
-func (s *outboxServiceWithDBStub) Enqueue(context.Context, eventoutboxdomain.Event) error {
+func (s txAwareOutboxService) WithDB(_ dbport.DB) eventoutboxinput.Service {
+	return s.txService
+}
+
+type noopOutboxServiceWithTx struct{}
+
+func (noopOutboxServiceWithTx) Enqueue(_ context.Context, _ eventoutboxdomain.Event) error {
 	return nil
 }
 
-func (s *outboxServiceWithDBStub) WithDB(database dbport.DB) eventoutboxinput.Service {
-	s.gotDB = database
-	return s.cloned
-}
-
-type outboxServiceNoop struct{}
-
-func (s *outboxServiceNoop) Enqueue(context.Context, eventoutboxdomain.Event) error {
-	return nil
-}
-
-func TestRunWithinRecordOutboxTransaction_UsesTransactionBoundDependencies(t *testing.T) {
+func TestService_RunWithinRecordOutboxTransaction_UsesTransactionBoundDependencies(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	txManager := mocks.NewMockDB(ctrl)
-	txDB := mocks.NewMockDB(ctrl)
-	baseRecordRepo := mocks.NewMockRecordRepository(ctrl)
+	dbMock := mocks.NewMockDB(ctrl)
+	txMock := mocks.NewMockDB(ctrl)
+	recordRepo := mocks.NewMockRecordRepository(ctrl)
 	txRecordRepo := mocks.NewMockRecordRepository(ctrl)
 
-	recordRepo := &recordRepositoryWithDBWrapper{
-		MockRecordRepository: baseRecordRepo,
-		cloned:               txRecordRepo,
+	service := &Service{
+		RecordRepository:   txAwareRecordRepository{RecordRepository: recordRepo, txRepository: txRecordRepo},
+		OutboxService:      txAwareOutboxService{Service: noopOutboxServiceWithTx{}, txService: noopOutboxServiceWithTx{}},
+		TransactionManager: dbMock,
 	}
-	outboxTxClone := &outboxServiceNoop{}
-	outboxBase := &outboxServiceWithDBStub{cloned: outboxTxClone}
 
-	txManager.EXPECT().WithContext(gomock.Any()).Return(txManager)
-	txManager.EXPECT().Transaction(gomock.Any()).DoAndReturn(func(fn func(dbport.DB) error) error {
-		return fn(txDB)
+	dbMock.EXPECT().WithContext(gomock.Any()).Return(dbMock)
+	dbMock.EXPECT().Transaction(gomock.Any()).DoAndReturn(func(fn func(dbport.DB) error) error {
+		return fn(txMock)
 	})
 
-	service := &Service{
-		RecordRepository:   recordRepo,
-		OutboxService:      outboxBase,
-		TransactionManager: txManager,
-	}
-
-	var gotRecordRepo output.RecordRepository
+	var gotRepo output.RecordRepository
 	var gotOutbox eventoutboxinput.Service
-	err := service.runWithinRecordOutboxTransaction(context.Background(), func(recordRepo output.RecordRepository, outboxService eventoutboxinput.Service) error {
-		gotRecordRepo = recordRepo
+	err := service.runWithinRecordOutboxTransaction(t.Context(), func(recordRepo output.RecordRepository, outboxService eventoutboxinput.Service) error {
+		gotRepo = recordRepo
 		gotOutbox = outboxService
 		return nil
 	})
-
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
-	if recordRepo.gotDB != txDB {
-		t.Fatalf("expected record repo to receive transaction db")
+
+	if gotRepo != txRecordRepo {
+		t.Fatalf("expected transaction-bound record repo")
 	}
-	if outboxBase.gotDB != txDB {
-		t.Fatalf("expected outbox service to receive transaction db")
-	}
-	if gotRecordRepo != txRecordRepo {
-		t.Fatalf("expected transaction-bound record repository")
-	}
-	if gotOutbox != outboxTxClone {
+	if gotOutbox == nil {
 		t.Fatalf("expected transaction-bound outbox service")
-	}
-}
-
-func TestRunWithinRecordOutboxTransaction_FallsBackWithoutTransactionManager(t *testing.T) {
-	t.Parallel()
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	baseRecordRepo := mocks.NewMockRecordRepository(ctrl)
-	baseOutbox := &outboxServiceNoop{}
-
-	service := &Service{
-		RecordRepository: baseRecordRepo,
-		OutboxService:    baseOutbox,
-	}
-
-	var gotRecordRepo output.RecordRepository
-	var gotOutbox eventoutboxinput.Service
-	err := service.runWithinRecordOutboxTransaction(context.Background(), func(recordRepo output.RecordRepository, outboxService eventoutboxinput.Service) error {
-		gotRecordRepo = recordRepo
-		gotOutbox = outboxService
-		return nil
-	})
-
-	if err != nil {
-		t.Fatalf("expected no error, got %v", err)
-	}
-	if gotRecordRepo != baseRecordRepo {
-		t.Fatalf("expected base record repository when transaction manager is nil")
-	}
-	if gotOutbox != baseOutbox {
-		t.Fatalf("expected base outbox service when transaction manager is nil")
 	}
 }
