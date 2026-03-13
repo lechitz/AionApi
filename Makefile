@@ -224,6 +224,7 @@ help:
 	@echo "     record-projection-page-smoke  →  Run cursor pagination smoke for derived record projections"
 	@echo "     ingest-event-smoke       →  Run cross-repo smoke for aion-ingest -> kafka envelope publication"
 	@echo "     outbox-diagnose          →  Inspect outbox backlog and sample pending/failed rows"
+	@echo "     event-backbone-gate      →  Run the full v2 records gate across api, streams, ingest, and dashboard"
 	@echo ""
 	@echo ""
 	@echo " 🔶 ┃ API DOCS (SWAGGER) ┃"

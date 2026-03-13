@@ -5,7 +5,7 @@
 GO_CACHE := $(CURDIR)/.cache/go-build
 MCP_SMOKE_USER_ID ?= 999
 
-.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks mcp-smoke mcp-smoke-readonly record-projection-smoke record-projection-page-smoke ingest-event-smoke outbox-diagnose
+.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks mcp-smoke mcp-smoke-readonly record-projection-smoke record-projection-page-smoke ingest-event-smoke outbox-diagnose event-backbone-gate
 
 # Execute unit tests
 test:
@@ -153,3 +153,12 @@ outbox-diagnose:
 	@echo "Running outbox diagnose tool..."
 	@mkdir -p $(GO_CACHE)
 	GOCACHE=$(GO_CACHE) go run ./hack/tools/outbox-diagnose
+
+event-backbone-gate:
+	@echo "Running v2 event backbone gate..."
+	@$(MAKE) outbox-diagnose
+	@$(MAKE) record-projection-smoke
+	@$(MAKE) record-projection-page-smoke
+	@$(MAKE) ingest-event-smoke
+	@echo "Running dashboard records smoke..."
+	@cd ../aionapi-dashboard && npm run test:e2e:records
