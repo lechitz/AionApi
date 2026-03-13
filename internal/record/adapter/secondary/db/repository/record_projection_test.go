@@ -65,10 +65,7 @@ func TestRecordProjectionQueries(t *testing.T) {
 		afterID := int64(5176)
 
 		dbMock.EXPECT().WithContext(gomock.Any()).Return(dbMock)
-		dbMock.EXPECT().Raw(gomock.Any(), gomock.Any()).Return(dbMock)
-		dbMock.EXPECT().Where(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(dbMock)
-		dbMock.EXPECT().Order(gomock.Any()).Return(dbMock)
-		dbMock.EXPECT().Limit(10).Return(dbMock)
+		dbMock.EXPECT().Raw(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(dbMock)
 		dbMock.EXPECT().Scan(gomock.Any()).DoAndReturn(func(dest any) db.DB {
 			rows, ok := dest.(*[]recordProjectionRow)
 			require.True(t, ok)

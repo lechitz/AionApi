@@ -155,42 +155,48 @@ func (r *RecordRepository) ListProjectedLatest(ctx context.Context, userID uint6
 // ListProjectedPage returns derived projections ordered by event time desc with the same cursor contract as records().
 func (r *RecordRepository) ListProjectedPage(ctx context.Context, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]domain.RecordProjection, error) {
 	var rows []recordProjectionRow
-	query := r.db.WithContext(ctx).Raw(`
-		SELECT
-			record_id,
-			user_id,
-			tag_id,
-			description,
-			event_time_utc,
-			recorded_at_utc,
-			status,
-			timezone,
-			duration_seconds,
-			value,
-			source,
-			last_event_id,
-			last_event_type,
-			last_event_version,
-			last_trace_id,
-			last_request_id,
-			last_kafka_topic,
-			last_kafka_partition,
-			last_kafka_offset,
-			last_consumed_at_utc,
-			payload_json,
-			created_at_utc,
-			updated_at_utc
-		FROM aion_derived.record_projection_v1
-		WHERE user_id = ?
-	`, userID)
-
+	args := []any{userID}
+	cursorClause := ""
 	if afterEventTime != nil && afterID != nil {
-		query = query.Where("event_time_utc < ? OR (event_time_utc = ? AND record_id < ?)", *afterEventTime, *afterEventTime, *afterID)
+		cursorClause = `
+			AND (event_time_utc < ? OR (event_time_utc = ? AND record_id < ?))
+		`
+		args = append(args, *afterEventTime, *afterEventTime, *afterID)
 	}
+	args = append(args, limit)
 
-	if err := query.
-		Order("event_time_utc DESC, record_id DESC").
-		Limit(limit).
+	if err := r.db.WithContext(ctx).
+		Raw(fmt.Sprintf(`
+			SELECT
+				record_id,
+				user_id,
+				tag_id,
+				description,
+				event_time_utc,
+				recorded_at_utc,
+				status,
+				timezone,
+				duration_seconds,
+				value,
+				source,
+				last_event_id,
+				last_event_type,
+				last_event_version,
+				last_trace_id,
+				last_request_id,
+				last_kafka_topic,
+				last_kafka_partition,
+				last_kafka_offset,
+				last_consumed_at_utc,
+				payload_json,
+				created_at_utc,
+				updated_at_utc
+			FROM aion_derived.record_projection_v1
+			WHERE user_id = ?
+			%s
+			ORDER BY event_time_utc DESC, record_id DESC
+			LIMIT ?
+		`, cursorClause), args...).
 		Scan(&rows).Error(); err != nil {
 		return nil, fmt.Errorf("list projected page: %w", err)
 	}
