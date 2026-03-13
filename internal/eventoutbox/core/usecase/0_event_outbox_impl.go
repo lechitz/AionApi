@@ -5,6 +5,7 @@ import (
 
 	"github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
 	"github.com/lechitz/AionApi/internal/eventoutbox/core/ports/output"
+	dbport "github.com/lechitz/AionApi/internal/platform/ports/output/db"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 )
 
@@ -24,4 +25,25 @@ func NewService(repository output.EventRepository, log logger.ContextLogger) inp
 			return time.Now().UTC()
 		},
 	}
+}
+
+type eventRepositoryWithDB interface {
+	WithDB(database dbport.DB) output.EventRepository
+}
+
+// WithDB clones the outbox service with a transaction-bound repository when supported.
+func (s *Service) WithDB(database dbport.DB) input.Service {
+	if s == nil {
+		return nil
+	}
+
+	if repository, ok := s.repository.(eventRepositoryWithDB); ok {
+		return &Service{
+			repository: repository.WithDB(database),
+			logger:     s.logger,
+			now:        s.now,
+		}
+	}
+
+	return s
 }

@@ -6,13 +6,18 @@ import (
 	"strconv"
 
 	eventoutboxdomain "github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
+	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 )
 
 func (s *Service) enqueueRecordOutboxEvent(ctx context.Context, eventType string, record domain.Record) {
-	if s.OutboxService == nil {
+	s.enqueueRecordOutboxEventWithService(ctx, s.OutboxService, eventType, record)
+}
+
+func (s *Service) enqueueRecordOutboxEventWithService(ctx context.Context, outboxService eventoutboxinput.Service, eventType string, record domain.Record) {
+	if outboxService == nil {
 		return
 	}
 
@@ -51,7 +56,7 @@ func (s *Service) enqueueRecordOutboxEvent(ctx context.Context, eventType string
 		PayloadJSON:   payloadJSON,
 	}
 
-	if err := s.OutboxService.Enqueue(ctx, event); err != nil {
+	if err := outboxService.Enqueue(ctx, event); err != nil {
 		s.Logger.WarnwCtx(ctx, LogFailedToEnqueueRecordEvent,
 			commonkeys.Error, err,
 			commonkeys.RecordID, record.ID,

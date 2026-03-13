@@ -17,3 +17,14 @@ type RecordRepository struct {
 func New(database db.DB, logger logger.ContextLogger) *RecordRepository {
 	return &RecordRepository{db: database, logger: logger}
 }
+
+// WithDB clones the repository with a transaction-bound database handle.
+func (r *RecordRepository) WithDB(database db.DB) *RecordRepository {
+	if r == nil {
+		return nil
+	}
+	return &RecordRepository{
+		db:     database,
+		logger: r.logger,
+	}
+}

@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"strconv"
 
+	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 	"github.com/lechitz/AionApi/internal/record/core/ports/input"
+	"github.com/lechitz/AionApi/internal/record/core/ports/output"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -34,22 +36,7 @@ func (s *Service) Update(ctx context.Context, recordID uint64, userID uint64, cm
 		return domain.Record{}, ErrInvalidRecordIDOrUserID
 	}
 
-	span.AddEvent(EventRepositoryGet)
-	existing, err := s.RecordRepository.GetByID(ctx, recordID, userID)
-	if err != nil {
-		span.RecordError(err)
-		span.SetStatus(codes.Error, FailedToGetRecord)
-		s.Logger.ErrorwCtx(ctx, FailedToGetRecord,
-			commonkeys.RecordID, recordID,
-			commonkeys.UserID, userID,
-			commonkeys.Error, err,
-		)
-		return domain.Record{}, fmt.Errorf("%w: %w", ErrGetRecord, err)
-	}
-
-	// If tagID is being updated, validate it exists
-	finalTagID := existing.TagID
-	if cmd.TagID != nil && *cmd.TagID != existing.TagID {
+	if cmd.TagID != nil {
 		tag, err := s.TagRepository.GetByID(ctx, *cmd.TagID, userID)
 		if err != nil || tag.ID == 0 {
 			span.RecordError(err)
@@ -57,16 +44,46 @@ func (s *Service) Update(ctx context.Context, recordID uint64, userID uint64, cm
 			s.Logger.ErrorwCtx(ctx, FailedToUpdateRecord, commonkeys.Error, TagNotFound)
 			return domain.Record{}, fmt.Errorf("%w: %s", ErrUpdateRecord, TagNotFound)
 		}
-		finalTagID = *cmd.TagID
 	}
 
-	// Apply patch-like updates to the entity
-	existing = applyRecordPatch(existing, cmd, finalTagID)
+	var updated domain.Record
+	if err := s.runWithinRecordOutboxTransaction(ctx, func(recordRepo output.RecordRepository, outboxService eventoutboxinput.Service) error {
+		span.AddEvent(EventRepositoryGet)
+		existing, getErr := recordRepo.GetByID(ctx, recordID, userID)
+		if getErr != nil {
+			return fmt.Errorf("%w: %w", ErrGetRecord, getErr)
+		}
 
-	span.AddEvent(EventRepositoryUpdate)
-	updated, err := s.RecordRepository.Update(ctx, existing)
-	if err != nil {
+		finalTagID := existing.TagID
+		if cmd.TagID != nil {
+			finalTagID = *cmd.TagID
+		}
+
+		existing = applyRecordPatch(existing, cmd, finalTagID)
+
+		span.AddEvent(EventRepositoryUpdate)
+		var updateErr error
+		updated, updateErr = recordRepo.Update(ctx, existing)
+		if updateErr != nil {
+			return updateErr
+		}
+
+		if outboxService != nil {
+			s.enqueueRecordOutboxEventWithService(ctx, outboxService, RecordEventTypeUpdatedV1, updated)
+		}
+
+		return nil
+	}); err != nil {
 		span.RecordError(err)
+		if isGetRecordError(err) {
+			span.SetStatus(codes.Error, FailedToGetRecord)
+			s.Logger.ErrorwCtx(ctx, FailedToGetRecord,
+				commonkeys.RecordID, recordID,
+				commonkeys.UserID, userID,
+				commonkeys.Error, err,
+			)
+			return domain.Record{}, err
+		}
 		span.SetStatus(codes.Error, FailedToUpdateRecord)
 		s.Logger.ErrorwCtx(ctx, FailedToUpdateRecord,
 			commonkeys.RecordID, recordID,
@@ -77,7 +94,6 @@ func (s *Service) Update(ctx context.Context, recordID uint64, userID uint64, cm
 
 	// Invalidate all related caches
 	s.invalidateRecordCaches(ctx, span, updated)
-	s.enqueueRecordOutboxEvent(ctx, RecordEventTypeUpdatedV1, updated)
 
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusUpdated)

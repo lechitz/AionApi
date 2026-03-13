@@ -266,10 +266,13 @@ services:
       - KAFKA_BROKERS=kafka:9092
       - KAFKA_TOPIC_INGEST=aion.ingest.events.v1
       - RAW_PAYLOAD_BUCKET=aion-raw-events
+      - RAW_PAYLOAD_DIR=/data/raw
       - GRACEFUL_TIMEOUT_SECS=10
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
     ports:
       - "8091:8091"
+    volumes:
+      - aion-ingest-raw-dev:/data/raw
     networks:
       - rede_local
     depends_on:
@@ -473,6 +476,7 @@ volumes:
   ollama-models:
   loki-data-dev:
   fluentbit-data:
+  aion-ingest-raw-dev:
   # HOT RELOAD: Named volumes to preserve dependencies
   aionapi-dashboard-node-modules:
   go-mod-cache:

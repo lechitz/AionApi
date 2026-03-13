@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"time"
 
+	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 	"github.com/lechitz/AionApi/internal/record/core/ports/input"
+	"github.com/lechitz/AionApi/internal/record/core/ports/output"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -70,9 +72,20 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateRecordCommand) (do
 		Status:       status,
 	}
 
-	span.AddEvent(EventRepositoryCreate)
-	created, err := s.RecordRepository.Create(ctx, rec)
-	if err != nil {
+	var created domain.Record
+	if err := s.runWithinRecordOutboxTransaction(ctx, func(recordRepo output.RecordRepository, outboxService eventoutboxinput.Service) error {
+		span.AddEvent(EventRepositoryCreate)
+		var createErr error
+		created, createErr = recordRepo.Create(ctx, rec)
+		if createErr != nil {
+			return createErr
+		}
+
+		if outboxService != nil {
+			s.enqueueRecordOutboxEventWithService(ctx, outboxService, RecordEventTypeCreatedV1, created)
+		}
+		return nil
+	}); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, FailedToCreateRecord)
 		s.Logger.ErrorwCtx(ctx, FailedToCreateRecord, commonkeys.Error, err)
@@ -80,7 +93,6 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateRecordCommand) (do
 	}
 
 	s.saveToCacheAndInvalidate(ctx, span, created)
-	s.enqueueRecordOutboxEvent(ctx, RecordEventTypeCreatedV1, created)
 
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusCreated)

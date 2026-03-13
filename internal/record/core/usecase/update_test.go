@@ -46,11 +46,6 @@ func TestService_Update_TagNotFound(t *testing.T) {
 	recordID := uint64(2)
 	newTagID := uint64(10)
 
-	existing := domain.Record{ID: recordID, UserID: userID, TagID: 1, EventTime: time.Now().UTC()}
-	suite.RecordRepository.EXPECT().
-		GetByID(gomock.Any(), recordID, userID).
-		Return(existing, nil)
-
 	suite.TagRepository.EXPECT().
 		GetByID(gomock.Any(), newTagID, userID).
 		Return(tagdomain.Tag{}, errors.New("not found"))

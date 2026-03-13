@@ -18,3 +18,14 @@ func NewEventRepository(database db.DB, log logger.ContextLogger) *EventReposito
 		logger: log,
 	}
 }
+
+// WithDB clones the repository with a transaction-bound database handle.
+func (r *EventRepository) WithDB(database db.DB) *EventRepository {
+	if r == nil {
+		return nil
+	}
+	return &EventRepository{
+		db:     database,
+		logger: r.logger,
+	}
+}

@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
+	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
+	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/AionApi/internal/record/core/ports/output"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -23,23 +26,35 @@ func (s *Service) Delete(ctx context.Context, id uint64, userID uint64) error {
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 	)
 
-	span.AddEvent(EventRepositoryGet)
-	existing, err := s.RecordRepository.GetByID(ctx, id, userID)
-	if err != nil {
-		span.RecordError(err)
-		span.SetStatus(codes.Error, FailedToGetRecord)
-		s.Logger.ErrorwCtx(ctx, FailedToGetRecord,
-			commonkeys.RecordID, id,
-			commonkeys.UserID, userID,
-			commonkeys.Error, err,
-		)
-		return fmt.Errorf("%w: %w", ErrGetRecord, err)
-	}
+	var existing domain.Record
+	if err := s.runWithinRecordOutboxTransaction(ctx, func(recordRepo output.RecordRepository, outboxService eventoutboxinput.Service) error {
+		span.AddEvent(EventRepositoryGet)
+		var getErr error
+		existing, getErr = recordRepo.GetByID(ctx, id, userID)
+		if getErr != nil {
+			return fmt.Errorf("%w: %w", ErrGetRecord, getErr)
+		}
 
-	span.AddEvent(EventRepositoryDelete)
-	err = s.RecordRepository.Delete(ctx, id, userID)
-	if err != nil {
+		span.AddEvent(EventRepositoryDelete)
+		if deleteErr := recordRepo.Delete(ctx, id, userID); deleteErr != nil {
+			return deleteErr
+		}
+
+		if outboxService != nil {
+			s.enqueueRecordOutboxEventWithService(ctx, outboxService, RecordEventTypeDeletedV1, existing)
+		}
+		return nil
+	}); err != nil {
 		span.RecordError(err)
+		if isGetRecordError(err) {
+			span.SetStatus(codes.Error, FailedToGetRecord)
+			s.Logger.ErrorwCtx(ctx, FailedToGetRecord,
+				commonkeys.RecordID, id,
+				commonkeys.UserID, userID,
+				commonkeys.Error, err,
+			)
+			return err
+		}
 		span.SetStatus(codes.Error, FailedToDeleteRecord)
 		s.Logger.ErrorwCtx(ctx, FailedToDeleteRecord,
 			commonkeys.RecordID, id,
@@ -89,8 +104,6 @@ func (s *Service) Delete(ctx context.Context, id uint64, userID uint64) error {
 			)
 		}
 	}
-
-	s.enqueueRecordOutboxEvent(ctx, RecordEventTypeDeletedV1, existing)
 
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusDeleted)

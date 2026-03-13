@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
+	dbport "github.com/lechitz/AionApi/internal/platform/ports/output/db"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/record/core/ports/output"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
@@ -20,6 +21,7 @@ type Service struct {
 	RecordCache                output.RecordCache
 	TagRepository              tagoutput.TagRepository
 	OutboxService              eventoutboxinput.Service
+	TransactionManager         dbport.DB
 	Logger                     logger.ContextLogger
 }
 
@@ -36,6 +38,12 @@ func NewService(recordRepo output.RecordRepository, cache output.RecordCache, ta
 // WithOutbox attaches an optional outbox service without breaking existing constructor call sites.
 func (s *Service) WithOutbox(outboxService eventoutboxinput.Service) *Service {
 	s.OutboxService = outboxService
+	return s
+}
+
+// WithTransactionManager attaches an optional transaction manager without breaking constructor call sites.
+func (s *Service) WithTransactionManager(database dbport.DB) *Service {
+	s.TransactionManager = database
 	return s
 }
 
