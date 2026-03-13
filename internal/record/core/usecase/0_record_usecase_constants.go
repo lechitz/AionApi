@@ -98,6 +98,9 @@ const (
 	// EventSaveToCache marks saving records to cache.
 	EventSaveToCache = "record.cache.save"
 
+	// EventOutboxEnqueue marks enqueueing a canonical outbox event.
+	EventOutboxEnqueue = "record.outbox.enqueue"
+
 	// EventSuccess marks a successful outcome.
 	EventSuccess = "record.success"
 
@@ -182,6 +185,7 @@ const (
 	LogFailedInvalidateTagCache             = "failed to invalidate tag cache"
 	LogInsightFeedComputedSuccessfully      = "insight feed computed successfully"
 	LogAnalyticsSeriesComputedSuccessfully  = "analytics series computed successfully"
+	LogFailedEnqueueRecordCreatedEvent      = "failed to enqueue record created event"
 
 	DateFormatISO8601Date = "2006-01-02"
 	ErrLookupTagFormat    = "lookup tag: %w"
@@ -195,6 +199,14 @@ const (
 	AttrSeriesKey    = "series_key"
 	AttrWindow       = "window"
 	AttrTagIDsCount  = "tag_ids_count"
+	AttrEventType    = "event_type"
+)
+
+// Outbox event constants.
+const (
+	OutboxAggregateRecord      = "record"
+	OutboxEventRecordCreated   = "record.created"
+	OutboxEventVersionRecordV1 = "v1"
 )
 
 // Validation messages.
@@ -261,6 +273,26 @@ const (
 	DefaultInsightFeedLimit = 8
 	// MaxInsightFeedLimit prevents oversized insight payloads.
 	MaxInsightFeedLimit = 20
+)
+
+const (
+	// RecordAggregateType identifies the record aggregate in canonical outbox events.
+	RecordAggregateType = "record"
+	// RecordEventVersionV1 identifies the first canonical event contract version.
+	RecordEventVersionV1 = "v1"
+	// RecordEventTypeCreatedV1 is emitted after record creation succeeds.
+	RecordEventTypeCreatedV1 = "record.created"
+	// RecordEventTypeUpdatedV1 is emitted after record update succeeds.
+	RecordEventTypeUpdatedV1 = "record.updated"
+	// RecordEventTypeDeletedV1 is emitted after record soft deletion succeeds.
+	RecordEventTypeDeletedV1 = "record.deleted"
+)
+
+const (
+	// LogFailedToEnqueueRecordEvent indicates best-effort outbox enqueue failure after a successful write.
+	LogFailedToEnqueueRecordEvent = "failed to enqueue record outbox event"
+	// LogFailedToMarshalRecordEventPayload indicates payload serialization failed before enqueue.
+	LogFailedToMarshalRecordEventPayload = "failed to marshal record outbox payload"
 )
 
 // Dashboard validation and domain messages.

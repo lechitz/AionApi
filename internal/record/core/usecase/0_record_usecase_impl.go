@@ -6,6 +6,7 @@ import (
 	"errors"
 	"strconv"
 
+	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/record/core/ports/output"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
@@ -17,6 +18,7 @@ type Service struct {
 	RecordRepository output.RecordRepository
 	RecordCache      output.RecordCache
 	TagRepository    tagoutput.TagRepository
+	OutboxService    eventoutboxinput.Service
 	Logger           logger.ContextLogger
 }
 
@@ -28,6 +30,12 @@ func NewService(recordRepo output.RecordRepository, cache output.RecordCache, ta
 		TagRepository:    tagRepo,
 		Logger:           logger,
 	}
+}
+
+// WithOutbox attaches an optional outbox service without breaking existing constructor call sites.
+func (s *Service) WithOutbox(outboxService eventoutboxinput.Service) *Service {
+	s.OutboxService = outboxService
+	return s
 }
 
 // getUserIDFromContext extracts a numeric user ID from context, supporting common types.

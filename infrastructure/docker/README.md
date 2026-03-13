@@ -32,6 +32,8 @@ The dev compose profile is wired for hot reload across integrated services:
 - API: `infrastructure/docker/environments/dev/Dockerfile.dev` (Air)
 - Chat: source mount + Uvicorn reload in dev mode
 - Dashboard: source mounts + Vite HMR
+- Kafka backbone via Redpanda-compatible local broker
+- `aion-ingest` and `aion-streams` bootstrap services in the same local network
 
 Operational commands:
 

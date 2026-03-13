@@ -90,6 +90,8 @@ func (s *Service) Delete(ctx context.Context, id uint64, userID uint64) error {
 		}
 	}
 
+	s.enqueueRecordOutboxEvent(ctx, RecordEventTypeDeletedV1, existing)
+
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusDeleted)
 	s.Logger.InfowCtx(ctx, LogRecordSoftDeletedSuccess,

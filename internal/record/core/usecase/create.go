@@ -80,6 +80,7 @@ func (s *Service) Create(ctx context.Context, cmd input.CreateRecordCommand) (do
 	}
 
 	s.saveToCacheAndInvalidate(ctx, span, created)
+	s.enqueueRecordOutboxEvent(ctx, RecordEventTypeCreatedV1, created)
 
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusCreated)

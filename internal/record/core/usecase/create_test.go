@@ -6,11 +6,13 @@ import (
 	"testing"
 	"time"
 
+	eventoutboxdomain "github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 	"github.com/lechitz/AionApi/internal/record/core/ports/input"
 	"github.com/lechitz/AionApi/internal/record/core/usecase"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	tagdomain "github.com/lechitz/AionApi/internal/tag/core/domain"
+	"github.com/lechitz/AionApi/tests/mocks"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -172,6 +174,59 @@ func TestService_Create_ErrorCases(t *testing.T) {
 			assert.Equal(t, domain.Record{}, result)
 		})
 	}
+}
+
+func TestService_Create_EnqueuesOutboxBestEffort(t *testing.T) {
+	suite := setup.RecordServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	userID := uint64(1)
+	tagID := uint64(10)
+	eventTime := time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC)
+	ctx := context.WithValue(suite.Ctx, ctxkeys.UserID, userID)
+	ctx = context.WithValue(ctx, ctxkeys.TraceID, "trace-123")
+	ctx = context.WithValue(ctx, ctxkeys.RequestID, "req-123")
+
+	outbox := mocks.NewMockOutboxService(suite.Ctrl)
+	suite.RecordService.WithOutbox(outbox)
+
+	suite.TagRepository.EXPECT().
+		GetByID(gomock.Any(), tagID, userID).
+		Return(tagdomain.Tag{ID: tagID, Name: "Exercise", CategoryID: 1}, nil)
+
+	suite.RecordRepository.EXPECT().
+		Create(gomock.Any(), gomock.Any()).
+		DoAndReturn(func(_ context.Context, rec domain.Record) (domain.Record, error) {
+			rec.ID = 77
+			rec.CreatedAt = time.Now().UTC()
+			rec.UpdatedAt = rec.CreatedAt
+			return rec, nil
+		})
+
+	suite.RecordCache.EXPECT().SaveRecord(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	suite.RecordCache.EXPECT().DeleteRecordsByDay(gomock.Any(), userID, gomock.Any()).Return(nil).AnyTimes()
+	suite.TagRepository.EXPECT().GetByID(gomock.Any(), tagID, userID).Return(tagdomain.Tag{ID: tagID, CategoryID: 1}, nil).AnyTimes()
+	suite.RecordCache.EXPECT().DeleteRecordsByCategory(gomock.Any(), gomock.Any(), userID).Return(nil).AnyTimes()
+	suite.RecordCache.EXPECT().DeleteRecordsByTag(gomock.Any(), tagID, userID).Return(nil).AnyTimes()
+
+	outbox.EXPECT().Enqueue(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, event eventoutboxdomain.Event) error {
+		assert.Equal(t, usecase.RecordAggregateType, event.AggregateType)
+		assert.Equal(t, "77", event.AggregateID)
+		assert.Equal(t, usecase.RecordEventTypeCreatedV1, event.EventType)
+		assert.Equal(t, usecase.RecordEventVersionV1, event.EventVersion)
+		assert.Equal(t, "trace-123", event.TraceID)
+		assert.Equal(t, "req-123", event.RequestID)
+		assert.NotEmpty(t, event.PayloadJSON)
+		return errors.New("outbox unavailable")
+	})
+
+	result, err := suite.RecordService.Create(ctx, input.CreateRecordCommand{
+		TagID:     tagID,
+		EventTime: eventTime,
+	})
+
+	require.NoError(t, err)
+	assert.Equal(t, uint64(77), result.ID)
 }
 
 // Helper functions.

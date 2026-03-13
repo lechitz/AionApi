@@ -77,6 +77,7 @@ func (s *Service) Update(ctx context.Context, recordID uint64, userID uint64, cm
 
 	// Invalidate all related caches
 	s.invalidateRecordCaches(ctx, span, updated)
+	s.enqueueRecordOutboxEvent(ctx, RecordEventTypeUpdatedV1, updated)
 
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusUpdated)

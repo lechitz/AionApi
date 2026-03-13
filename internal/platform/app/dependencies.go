@@ -7,6 +7,7 @@ import (
 	inputAuth "github.com/lechitz/AionApi/internal/auth/core/ports/input"
 	inputCategory "github.com/lechitz/AionApi/internal/category/core/ports/input"
 	inputChat "github.com/lechitz/AionApi/internal/chat/core/ports/input"
+	inputEventOutbox "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	inputRecord "github.com/lechitz/AionApi/internal/record/core/ports/input"
 	inputTag "github.com/lechitz/AionApi/internal/tag/core/ports/input"
@@ -24,5 +25,6 @@ type Dependencies struct {
 	RecordService   inputRecord.RecordService
 	ChatService     inputChat.ChatService
 	AuditService    inputAudit.Service
+	OutboxService   inputEventOutbox.Service
 	Logger          logger.ContextLogger
 }

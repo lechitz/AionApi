@@ -17,6 +17,8 @@ import (
 	chatHistoryRepo "github.com/lechitz/AionApi/internal/chat/adapter/secondary/db/repository"
 	chatClient "github.com/lechitz/AionApi/internal/chat/adapter/secondary/http"
 	chat "github.com/lechitz/AionApi/internal/chat/core/usecase"
+	eventOutboxRepo "github.com/lechitz/AionApi/internal/eventoutbox/adapter/secondary/db/repository"
+	eventOutbox "github.com/lechitz/AionApi/internal/eventoutbox/core/usecase"
 	"github.com/lechitz/AionApi/internal/platform/app"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/cache"
@@ -81,6 +83,7 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 	recordRepository := recordRepo.New(deps.DB, deps.Log)
 	chatHistoryRepository := chatHistoryRepo.New(deps.DB, deps.Log)
 	auditActionEventRepository := auditRepo.NewAuditActionEventRepository(deps.DB, deps.Log)
+	eventOutboxRepository := eventOutboxRepo.NewEventRepository(deps.DB, deps.Log)
 
 	authCacheStore := authCache.NewStore(deps.AuthCache, deps.Log)
 	userCacheStore := userCache.NewStore(deps.UserCache, deps.Log)
@@ -90,13 +93,14 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 	chatHistoryCacheStore := chatCache.NewStore(deps.ChatCache, deps.Log)
 	chatHTTPClient := chatClient.New(deps.HTTPClient, deps.Cfg.AionChat.BaseURL, deps.Log)
 	auditService := audit.NewService(auditActionEventRepository, deps.Log)
+	outboxService := eventOutbox.NewService(eventOutboxRepository, deps.Log)
 
 	authService := auth.NewService(adminRepository, authCacheStore, userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
 	userService := user.NewService(userRepository, userRepository, userCacheStore, avatarStorage, authCacheStore, tokenProvider, hasherProvider, deps.Log)
 	adminService := admin.NewService(adminRepository, authCacheStore, authCacheStore, deps.Log)
 	categoryService := category.NewService(categoryRepository, categoryCacheStore, deps.Log)
 	tagService := tag.NewService(tagRepository, tagCacheStore, deps.Log)
-	recordService := record.NewService(recordRepository, recordCacheStore, tagRepository, deps.Log)
+	recordService := record.NewService(recordRepository, recordCacheStore, tagRepository, deps.Log).WithOutbox(outboxService)
 	chatService := chat.NewService(chatHTTPClient, chatHistoryRepository, chatHistoryCacheStore, auditService, deps.Log)
 
 	return &AppDependencies{
@@ -108,6 +112,7 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 		RecordService:   recordService,
 		ChatService:     chatService,
 		AuditService:    auditService,
+		OutboxService:   outboxService,
 		Logger:          deps.Log,
 	}
 }

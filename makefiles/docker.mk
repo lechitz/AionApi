@@ -72,9 +72,9 @@ dev-down:
 	@echo "[DEV-DOWN] Stopping DEV environment (preserving volumes)..."
 	@echo "      Ollama will be kept RUNNING (models preserved)"
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aion-ingest aion-streams aionapi-dashboard postgres redis kafka localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) rm -f aion-api aion-chat aionapi-dashboard postgres redis localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) rm -f aion-api aion-chat aion-ingest aion-streams aionapi-dashboard postgres redis kafka localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@echo ""
 	@if docker ps --filter "name=ollama-dev" --filter "status=running" -q | grep -q .; then \
 		echo "✅ Services stopped (Ollama still running)"; \
@@ -206,7 +206,7 @@ dev-full: rebuild-dev
 #                     LOGS COMMANDS
 # ============================================================
 
-.PHONY: logs-api logs-chat logs-dashboard logs-postgres logs-redis logs-ollama logs-jaeger logs-otel logs-prometheus logs-grafana logs-all
+.PHONY: logs-api logs-chat logs-ingest logs-streams logs-dashboard logs-postgres logs-redis logs-kafka logs-ollama logs-jaeger logs-otel logs-prometheus logs-grafana logs-all
 
 logs-api:
 	@echo "📋 aion-api logs (Ctrl+C to exit)"
@@ -219,6 +219,18 @@ logs-chat:
 	@echo ""
 	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
 		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f aion-chat
+
+logs-ingest:
+	@echo "📋 aion-ingest logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f aion-ingest
+
+logs-streams:
+	@echo "📋 aion-streams logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f aion-streams
 
 logs-dashboard:
 	@echo "📋 aionapi-dashboard logs (Ctrl+C to exit)"
@@ -237,6 +249,12 @@ logs-redis:
 	@echo ""
 	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
 		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f redis
+
+logs-kafka:
+	@echo "📋 Kafka logs (Ctrl+C to exit)"
+	@echo ""
+	@trap 'echo ""; echo "✓ Stopped viewing logs. Container still running."; exit 0' INT; \
+		export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && docker compose -f $(COMPOSE_FILE_DEV) logs -f kafka
 
 logs-ollama:
 	@echo "📋 Ollama logs (Ctrl+C to exit)"
@@ -295,9 +313,9 @@ clean-dev:
 	@echo ""
 	@echo "→ Stopping and removing services (except Ollama)..."
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aionapi-dashboard postgres redis localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) stop aion-api aion-chat aion-ingest aion-streams aionapi-dashboard postgres redis kafka localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
-		docker compose -f $(COMPOSE_FILE_DEV) rm -f -v aion-api aion-chat aionapi-dashboard postgres redis localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
+		docker compose -f $(COMPOSE_FILE_DEV) rm -f -v aion-api aion-chat aion-ingest aion-streams aionapi-dashboard postgres redis kafka localstack jaeger otel-collector prometheus grafana loki fluent-bit 2>/dev/null || true
 	@echo "→ Removing dev images..."
 	@docker images --filter "reference=$(APPLICATION_NAME):dev" -q | xargs -r docker rmi -f || true
 	@docker images --filter "reference=aion-chat:dev" -q | xargs -r docker rmi -f || true
