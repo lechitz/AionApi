@@ -5,7 +5,7 @@
 GO_CACHE := $(CURDIR)/.cache/go-build
 MCP_SMOKE_USER_ID ?= 999
 
-.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks mcp-smoke mcp-smoke-readonly
+.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks mcp-smoke mcp-smoke-readonly record-projection-smoke
 
 # Execute unit tests
 test:
@@ -133,3 +133,8 @@ mcp-smoke-readonly:
 		echo "⚠️  aion-chat-dev is not running. Falling back to host repo execution."; \
 		cd ../aion-chat && AION_API_GRAPHQL_URL=http://localhost:5001/aion/api/v1/graphql .venv/bin/python scripts/mcp_smoke_test.py --read-only --user-id $(MCP_SMOKE_USER_ID) --env-file infrastructure/docker/environments/dev/.env.dev; \
 	fi
+
+record-projection-smoke:
+	@echo "Running record -> outbox -> kafka -> projection smoke..."
+	@mkdir -p $(GO_CACHE)
+	GOCACHE=$(GO_CACHE) go run ./hack/tools/record-projection-smoke

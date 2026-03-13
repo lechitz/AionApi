@@ -220,6 +220,7 @@ help:
 	@echo "     dc15-correlate           →  Correlate UI action logs across dashboard + api + chat (vars: SINCE, DRAFT_ID)"
 	@echo "     mcp-smoke                →  Run MCP smoke test through aion-chat against the current local stack"
 	@echo "     mcp-smoke-readonly       →  Run MCP smoke test in read-only mode"
+	@echo "     record-projection-smoke  →  Run cross-repo smoke for record -> outbox -> kafka -> projection"
 	@echo ""
 	@echo ""
 	@echo " 🔶 ┃ API DOCS (SWAGGER) ┃"
