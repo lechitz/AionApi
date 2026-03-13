@@ -222,6 +222,7 @@ help:
 	@echo "     mcp-smoke-readonly       →  Run MCP smoke test in read-only mode"
 	@echo "     record-projection-smoke  →  Run cross-repo smoke for record -> outbox -> kafka -> projection"
 	@echo "     ingest-event-smoke       →  Run cross-repo smoke for aion-ingest -> kafka envelope publication"
+	@echo "     outbox-diagnose          →  Inspect outbox backlog and sample pending/failed rows"
 	@echo ""
 	@echo ""
 	@echo " 🔶 ┃ API DOCS (SWAGGER) ┃"

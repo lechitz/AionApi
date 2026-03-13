@@ -22,8 +22,17 @@ make seed-helper
 go run ./hack/tools/graph-projection-export --user-id 999
 make record-projection-smoke
 make ingest-event-smoke
+make outbox-diagnose
 bash hack/dev/test-chat.sh
 ```
+
+## Tool Matrix
+
+| Tool | Make target | Purpose |
+| --- | --- | --- |
+| `record-projection-smoke` | `make record-projection-smoke` | Validate `record -> outbox -> kafka -> projection` end-to-end |
+| `ingest-event-smoke` | `make ingest-event-smoke` | Validate `aion-ingest -> kafka` envelope publication |
+| `outbox-diagnose` | `make outbox-diagnose` | Inspect outbox backlog, oldest pending age, and sample pending/failed rows |
 
 ## Design Notes
 

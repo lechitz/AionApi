@@ -32,7 +32,7 @@ type ingestEnvelope struct {
 
 func run(ctx context.Context, cfg config) error {
 	payload := []byte(`{"steps":42,"captured_at":"2026-03-13T16:30:00Z"}`)
-	expectedEventID := sha1Hex(payload)
+	expectedEventID := sha1Hex([]byte(strings.TrimSpace(cfg.source) + ":" + string(payload)))
 	expectedRawRef := "/data/raw/" + rawPayloadBucket + "/" + sanitizeSource(cfg.source) + "/" + expectedEventID + ".json"
 
 	startOffset, err := getLastOffset(cfg.kafkaBroker, cfg.topic)
