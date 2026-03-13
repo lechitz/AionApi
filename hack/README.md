@@ -24,6 +24,7 @@ make record-projection-smoke
 make record-projection-page-smoke
 make ingest-event-smoke
 make outbox-diagnose
+make event-backbone-gate-preflight
 make event-backbone-gate
 bash hack/dev/test-chat.sh
 ```
@@ -36,6 +37,7 @@ bash hack/dev/test-chat.sh
 | `record-projection-page-smoke` | `make record-projection-page-smoke` | Validate cursor pagination over `recordProjections` derived read model |
 | `ingest-event-smoke` | `make ingest-event-smoke` | Validate `aion-ingest -> kafka` envelope publication |
 | `outbox-diagnose` | `make outbox-diagnose` | Inspect outbox backlog, oldest pending age, and sample pending/failed rows |
+| `event-backbone-gate-preflight` | `make event-backbone-gate-preflight` | Verify local repo and service prerequisites before the full gate |
 | `event-backbone-gate` | `make event-backbone-gate` | Run the official v2 records gate across `AionApi` and `aionapi-dashboard` |
 
 ## Design Notes

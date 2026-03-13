@@ -12,6 +12,7 @@ Scripts here are intended for manual dev workflows, not production automation.
 | Script | Purpose |
 | --- | --- |
 | `check-and-setup-ollama.sh` | Ensure Ollama runtime/model availability |
+| `event-backbone-gate-preflight.sh` | Verify local v2 gate prerequisites across API, ingest, streams, and dashboard |
 | `diagnostico-ollama.sh` | End-to-end Ollama + Aion Chat diagnostics |
 | `force-insert-roles.sh` | Local DB role bootstrap/repair |
 | `test-aion-chat.sh` | Functional chat flow validation |
