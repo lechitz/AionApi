@@ -20,6 +20,8 @@ It follows the common `hack/` convention for non-production operational helpers.
 make seed-api-caller
 make seed-helper
 go run ./hack/tools/graph-projection-export --user-id 999
+make record-projection-smoke
+make ingest-event-smoke
 bash hack/dev/test-chat.sh
 ```
 

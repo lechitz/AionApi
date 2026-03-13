@@ -5,7 +5,7 @@
 GO_CACHE := $(CURDIR)/.cache/go-build
 MCP_SMOKE_USER_ID ?= 999
 
-.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks mcp-smoke mcp-smoke-readonly record-projection-smoke
+.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks mcp-smoke mcp-smoke-readonly record-projection-smoke ingest-event-smoke
 
 # Execute unit tests
 test:
@@ -138,3 +138,8 @@ record-projection-smoke:
 	@echo "Running record -> outbox -> kafka -> projection smoke..."
 	@mkdir -p $(GO_CACHE)
 	GOCACHE=$(GO_CACHE) go run ./hack/tools/record-projection-smoke
+
+ingest-event-smoke:
+	@echo "Running aion-ingest -> kafka smoke..."
+	@mkdir -p $(GO_CACHE)
+	GOCACHE=$(GO_CACHE) go run ./hack/tools/ingest-event-smoke
