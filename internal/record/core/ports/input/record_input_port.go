@@ -39,6 +39,7 @@ type RecordDeleter interface {
 type RecordService interface {
 	RecordCreator
 	RecordRetriever
+	RecordProjectionRetriever
 	RecordUpdater
 	RecordDeleter
 

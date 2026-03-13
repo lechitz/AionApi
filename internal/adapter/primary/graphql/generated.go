@@ -258,6 +258,8 @@ type ComplexityRoot struct {
 		InsightFeed              func(childComplexity int, window model.InsightWindow, limit *int32, date *string, timezone *string, categoryID *string, tagIds []string) int
 		MetricDefinitions        func(childComplexity int) int
 		RecordByID               func(childComplexity int, id string) int
+		RecordProjectionByID     func(childComplexity int, id string) int
+		RecordProjectionsLatest  func(childComplexity int, limit *int32) int
 		RecordStats              func(childComplexity int, filters *model.RecordStatsFilters) int
 		Records                  func(childComplexity int, limit *int32, afterEventTime *string, afterID *string) int
 		RecordsBetween           func(childComplexity int, startDate string, endDate string, limit *int32) int
@@ -289,6 +291,32 @@ type ComplexityRoot struct {
 		UpdatedAt       func(childComplexity int) int
 		UserID          func(childComplexity int) int
 		Value           func(childComplexity int) int
+	}
+
+	RecordProjection struct {
+		CreatedAtUtc       func(childComplexity int) int
+		Description        func(childComplexity int) int
+		DurationSeconds    func(childComplexity int) int
+		EventTimeUtc       func(childComplexity int) int
+		LastConsumedAtUtc  func(childComplexity int) int
+		LastEventID        func(childComplexity int) int
+		LastEventType      func(childComplexity int) int
+		LastEventVersion   func(childComplexity int) int
+		LastKafkaOffset    func(childComplexity int) int
+		LastKafkaPartition func(childComplexity int) int
+		LastKafkaTopic     func(childComplexity int) int
+		LastRequestID      func(childComplexity int) int
+		LastTraceID        func(childComplexity int) int
+		PayloadJSON        func(childComplexity int) int
+		RecordID           func(childComplexity int) int
+		RecordedAtUtc      func(childComplexity int) int
+		Source             func(childComplexity int) int
+		Status             func(childComplexity int) int
+		TagID              func(childComplexity int) int
+		Timezone           func(childComplexity int) int
+		UpdatedAtUtc       func(childComplexity int) int
+		UserID             func(childComplexity int) int
+		Value              func(childComplexity int) int
 	}
 
 	RecordStats struct {
@@ -361,8 +389,10 @@ type QueryResolver interface {
 	ChatContext(ctx context.Context) (*model.ChatContext, error)
 	ChatDataPack(ctx context.Context, limitRecords *int32, includeStats bool) (*model.ChatDataPack, error)
 	RecordByID(ctx context.Context, id string) (*model.Record, error)
+	RecordProjectionByID(ctx context.Context, id string) (*model.RecordProjection, error)
 	Records(ctx context.Context, limit *int32, afterEventTime *string, afterID *string) ([]*model.Record, error)
 	RecordsLatest(ctx context.Context, limit *int32) ([]*model.Record, error)
+	RecordProjectionsLatest(ctx context.Context, limit *int32) ([]*model.RecordProjection, error)
 	RecordsByTag(ctx context.Context, tagID string, limit *int32) ([]*model.Record, error)
 	RecordsByCategory(ctx context.Context, categoryID string, limit *int32) ([]*model.Record, error)
 	RecordsByDay(ctx context.Context, date *string) ([]*model.Record, error)
@@ -1428,6 +1458,28 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.RecordByID(childComplexity, args["id"].(string)), true
+	case "Query.recordProjectionById":
+		if e.complexity.Query.RecordProjectionByID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_recordProjectionById_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RecordProjectionByID(childComplexity, args["id"].(string)), true
+	case "Query.recordProjectionsLatest":
+		if e.complexity.Query.RecordProjectionsLatest == nil {
+			break
+		}
+
+		args, err := ec.field_Query_recordProjectionsLatest_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RecordProjectionsLatest(childComplexity, args["limit"].(*int32)), true
 	case "Query.recordStats":
 		if e.complexity.Query.RecordStats == nil {
 			break
@@ -1662,6 +1714,145 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Record.Value(childComplexity), true
+
+	case "RecordProjection.createdAtUTC":
+		if e.complexity.RecordProjection.CreatedAtUtc == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.CreatedAtUtc(childComplexity), true
+	case "RecordProjection.description":
+		if e.complexity.RecordProjection.Description == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.Description(childComplexity), true
+	case "RecordProjection.durationSeconds":
+		if e.complexity.RecordProjection.DurationSeconds == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.DurationSeconds(childComplexity), true
+	case "RecordProjection.eventTimeUTC":
+		if e.complexity.RecordProjection.EventTimeUtc == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.EventTimeUtc(childComplexity), true
+	case "RecordProjection.lastConsumedAtUTC":
+		if e.complexity.RecordProjection.LastConsumedAtUtc == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.LastConsumedAtUtc(childComplexity), true
+	case "RecordProjection.lastEventId":
+		if e.complexity.RecordProjection.LastEventID == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.LastEventID(childComplexity), true
+	case "RecordProjection.lastEventType":
+		if e.complexity.RecordProjection.LastEventType == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.LastEventType(childComplexity), true
+	case "RecordProjection.lastEventVersion":
+		if e.complexity.RecordProjection.LastEventVersion == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.LastEventVersion(childComplexity), true
+	case "RecordProjection.lastKafkaOffset":
+		if e.complexity.RecordProjection.LastKafkaOffset == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.LastKafkaOffset(childComplexity), true
+	case "RecordProjection.lastKafkaPartition":
+		if e.complexity.RecordProjection.LastKafkaPartition == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.LastKafkaPartition(childComplexity), true
+	case "RecordProjection.lastKafkaTopic":
+		if e.complexity.RecordProjection.LastKafkaTopic == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.LastKafkaTopic(childComplexity), true
+	case "RecordProjection.lastRequestId":
+		if e.complexity.RecordProjection.LastRequestID == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.LastRequestID(childComplexity), true
+	case "RecordProjection.lastTraceId":
+		if e.complexity.RecordProjection.LastTraceID == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.LastTraceID(childComplexity), true
+	case "RecordProjection.payloadJSON":
+		if e.complexity.RecordProjection.PayloadJSON == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.PayloadJSON(childComplexity), true
+	case "RecordProjection.recordId":
+		if e.complexity.RecordProjection.RecordID == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.RecordID(childComplexity), true
+	case "RecordProjection.recordedAtUTC":
+		if e.complexity.RecordProjection.RecordedAtUtc == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.RecordedAtUtc(childComplexity), true
+	case "RecordProjection.source":
+		if e.complexity.RecordProjection.Source == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.Source(childComplexity), true
+	case "RecordProjection.status":
+		if e.complexity.RecordProjection.Status == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.Status(childComplexity), true
+	case "RecordProjection.tagId":
+		if e.complexity.RecordProjection.TagID == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.TagID(childComplexity), true
+	case "RecordProjection.timezone":
+		if e.complexity.RecordProjection.Timezone == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.Timezone(childComplexity), true
+	case "RecordProjection.updatedAtUTC":
+		if e.complexity.RecordProjection.UpdatedAtUtc == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.UpdatedAtUtc(childComplexity), true
+	case "RecordProjection.userId":
+		if e.complexity.RecordProjection.UserID == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.UserID(childComplexity), true
+	case "RecordProjection.value":
+		if e.complexity.RecordProjection.Value == nil {
+			break
+		}
+
+		return e.complexity.RecordProjection.Value(childComplexity), true
 
 	case "RecordStats.avgDurationSeconds":
 		if e.complexity.RecordStats.AvgDurationSeconds == nil {
@@ -2354,6 +2545,28 @@ func (ec *executionContext) field_Query_recordById_args(ctx context.Context, raw
 		return nil, err
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_recordProjectionById_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_recordProjectionsLatest_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint32)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
 	return args, nil
 }
 
@@ -7867,6 +8080,113 @@ func (ec *executionContext) fieldContext_Query_recordById(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_recordProjectionById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_recordProjectionById,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecordProjectionByID(ctx, fc.Args["id"].(string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal *model.RecordProjection
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.RecordProjection
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalORecordProjection2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_recordProjectionById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "recordId":
+				return ec.fieldContext_RecordProjection_recordId(ctx, field)
+			case "userId":
+				return ec.fieldContext_RecordProjection_userId(ctx, field)
+			case "tagId":
+				return ec.fieldContext_RecordProjection_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_RecordProjection_description(ctx, field)
+			case "eventTimeUTC":
+				return ec.fieldContext_RecordProjection_eventTimeUTC(ctx, field)
+			case "recordedAtUTC":
+				return ec.fieldContext_RecordProjection_recordedAtUTC(ctx, field)
+			case "status":
+				return ec.fieldContext_RecordProjection_status(ctx, field)
+			case "timezone":
+				return ec.fieldContext_RecordProjection_timezone(ctx, field)
+			case "durationSeconds":
+				return ec.fieldContext_RecordProjection_durationSeconds(ctx, field)
+			case "value":
+				return ec.fieldContext_RecordProjection_value(ctx, field)
+			case "source":
+				return ec.fieldContext_RecordProjection_source(ctx, field)
+			case "lastEventId":
+				return ec.fieldContext_RecordProjection_lastEventId(ctx, field)
+			case "lastEventType":
+				return ec.fieldContext_RecordProjection_lastEventType(ctx, field)
+			case "lastEventVersion":
+				return ec.fieldContext_RecordProjection_lastEventVersion(ctx, field)
+			case "lastTraceId":
+				return ec.fieldContext_RecordProjection_lastTraceId(ctx, field)
+			case "lastRequestId":
+				return ec.fieldContext_RecordProjection_lastRequestId(ctx, field)
+			case "lastKafkaTopic":
+				return ec.fieldContext_RecordProjection_lastKafkaTopic(ctx, field)
+			case "lastKafkaPartition":
+				return ec.fieldContext_RecordProjection_lastKafkaPartition(ctx, field)
+			case "lastKafkaOffset":
+				return ec.fieldContext_RecordProjection_lastKafkaOffset(ctx, field)
+			case "lastConsumedAtUTC":
+				return ec.fieldContext_RecordProjection_lastConsumedAtUTC(ctx, field)
+			case "payloadJSON":
+				return ec.fieldContext_RecordProjection_payloadJSON(ctx, field)
+			case "createdAtUTC":
+				return ec.fieldContext_RecordProjection_createdAtUTC(ctx, field)
+			case "updatedAtUTC":
+				return ec.fieldContext_RecordProjection_updatedAtUTC(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RecordProjection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_recordProjectionById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_records(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -8035,6 +8355,113 @@ func (ec *executionContext) fieldContext_Query_recordsLatest(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_recordsLatest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_recordProjectionsLatest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_recordProjectionsLatest,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecordProjectionsLatest(ctx, fc.Args["limit"].(*int32))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.RecordProjection
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.RecordProjection
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjectionᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_recordProjectionsLatest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "recordId":
+				return ec.fieldContext_RecordProjection_recordId(ctx, field)
+			case "userId":
+				return ec.fieldContext_RecordProjection_userId(ctx, field)
+			case "tagId":
+				return ec.fieldContext_RecordProjection_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_RecordProjection_description(ctx, field)
+			case "eventTimeUTC":
+				return ec.fieldContext_RecordProjection_eventTimeUTC(ctx, field)
+			case "recordedAtUTC":
+				return ec.fieldContext_RecordProjection_recordedAtUTC(ctx, field)
+			case "status":
+				return ec.fieldContext_RecordProjection_status(ctx, field)
+			case "timezone":
+				return ec.fieldContext_RecordProjection_timezone(ctx, field)
+			case "durationSeconds":
+				return ec.fieldContext_RecordProjection_durationSeconds(ctx, field)
+			case "value":
+				return ec.fieldContext_RecordProjection_value(ctx, field)
+			case "source":
+				return ec.fieldContext_RecordProjection_source(ctx, field)
+			case "lastEventId":
+				return ec.fieldContext_RecordProjection_lastEventId(ctx, field)
+			case "lastEventType":
+				return ec.fieldContext_RecordProjection_lastEventType(ctx, field)
+			case "lastEventVersion":
+				return ec.fieldContext_RecordProjection_lastEventVersion(ctx, field)
+			case "lastTraceId":
+				return ec.fieldContext_RecordProjection_lastTraceId(ctx, field)
+			case "lastRequestId":
+				return ec.fieldContext_RecordProjection_lastRequestId(ctx, field)
+			case "lastKafkaTopic":
+				return ec.fieldContext_RecordProjection_lastKafkaTopic(ctx, field)
+			case "lastKafkaPartition":
+				return ec.fieldContext_RecordProjection_lastKafkaPartition(ctx, field)
+			case "lastKafkaOffset":
+				return ec.fieldContext_RecordProjection_lastKafkaOffset(ctx, field)
+			case "lastConsumedAtUTC":
+				return ec.fieldContext_RecordProjection_lastConsumedAtUTC(ctx, field)
+			case "payloadJSON":
+				return ec.fieldContext_RecordProjection_payloadJSON(ctx, field)
+			case "createdAtUTC":
+				return ec.fieldContext_RecordProjection_createdAtUTC(ctx, field)
+			case "updatedAtUTC":
+				return ec.fieldContext_RecordProjection_updatedAtUTC(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RecordProjection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_recordProjectionsLatest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -10032,6 +10459,673 @@ func (ec *executionContext) _Record_updatedAt(ctx context.Context, field graphql
 func (ec *executionContext) fieldContext_Record_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Record",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_recordId(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_recordId,
+		func(ctx context.Context) (any, error) {
+			return obj.RecordID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_recordId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_userId(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_userId,
+		func(ctx context.Context) (any, error) {
+			return obj.UserID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_tagId(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_tagId,
+		func(ctx context.Context) (any, error) {
+			return obj.TagID, nil
+		},
+		nil,
+		ec.marshalNID2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_tagId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_description(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_description,
+		func(ctx context.Context) (any, error) {
+			return obj.Description, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_eventTimeUTC(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_eventTimeUTC,
+		func(ctx context.Context) (any, error) {
+			return obj.EventTimeUtc, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_eventTimeUTC(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_recordedAtUTC(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_recordedAtUTC,
+		func(ctx context.Context) (any, error) {
+			return obj.RecordedAtUtc, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_recordedAtUTC(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_status(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_status,
+		func(ctx context.Context) (any, error) {
+			return obj.Status, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_timezone(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_timezone,
+		func(ctx context.Context) (any, error) {
+			return obj.Timezone, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_timezone(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_durationSeconds(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_durationSeconds,
+		func(ctx context.Context) (any, error) {
+			return obj.DurationSeconds, nil
+		},
+		nil,
+		ec.marshalOInt2ᚖint32,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_durationSeconds(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_value(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_value,
+		func(ctx context.Context) (any, error) {
+			return obj.Value, nil
+		},
+		nil,
+		ec.marshalOFloat2ᚖfloat64,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_source(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_source,
+		func(ctx context.Context) (any, error) {
+			return obj.Source, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_lastEventId(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_lastEventId,
+		func(ctx context.Context) (any, error) {
+			return obj.LastEventID, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_lastEventId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_lastEventType(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_lastEventType,
+		func(ctx context.Context) (any, error) {
+			return obj.LastEventType, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_lastEventType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_lastEventVersion(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_lastEventVersion,
+		func(ctx context.Context) (any, error) {
+			return obj.LastEventVersion, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_lastEventVersion(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_lastTraceId(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_lastTraceId,
+		func(ctx context.Context) (any, error) {
+			return obj.LastTraceID, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_lastTraceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_lastRequestId(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_lastRequestId,
+		func(ctx context.Context) (any, error) {
+			return obj.LastRequestID, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_lastRequestId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_lastKafkaTopic(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_lastKafkaTopic,
+		func(ctx context.Context) (any, error) {
+			return obj.LastKafkaTopic, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_lastKafkaTopic(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_lastKafkaPartition(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_lastKafkaPartition,
+		func(ctx context.Context) (any, error) {
+			return obj.LastKafkaPartition, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_lastKafkaPartition(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_lastKafkaOffset(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_lastKafkaOffset,
+		func(ctx context.Context) (any, error) {
+			return obj.LastKafkaOffset, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_lastKafkaOffset(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_lastConsumedAtUTC(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_lastConsumedAtUTC,
+		func(ctx context.Context) (any, error) {
+			return obj.LastConsumedAtUtc, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_lastConsumedAtUTC(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_payloadJSON(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_payloadJSON,
+		func(ctx context.Context) (any, error) {
+			return obj.PayloadJSON, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_payloadJSON(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_createdAtUTC(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_createdAtUTC,
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedAtUtc, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_createdAtUTC(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecordProjection_updatedAtUTC(ctx context.Context, field graphql.CollectedField, obj *model.RecordProjection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecordProjection_updatedAtUTC,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedAtUtc, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecordProjection_updatedAtUTC(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecordProjection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -14799,6 +15893,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "recordProjectionById":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_recordProjectionById(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "records":
 			field := field
 
@@ -14831,6 +15944,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_recordsLatest(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "recordProjectionsLatest":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_recordProjectionsLatest(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -15357,6 +16492,128 @@ func (ec *executionContext) _Record(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Record_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var recordProjectionImplementors = []string{"RecordProjection"}
+
+func (ec *executionContext) _RecordProjection(ctx context.Context, sel ast.SelectionSet, obj *model.RecordProjection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recordProjectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecordProjection")
+		case "recordId":
+			out.Values[i] = ec._RecordProjection_recordId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "userId":
+			out.Values[i] = ec._RecordProjection_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "tagId":
+			out.Values[i] = ec._RecordProjection_tagId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "description":
+			out.Values[i] = ec._RecordProjection_description(ctx, field, obj)
+		case "eventTimeUTC":
+			out.Values[i] = ec._RecordProjection_eventTimeUTC(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "recordedAtUTC":
+			out.Values[i] = ec._RecordProjection_recordedAtUTC(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._RecordProjection_status(ctx, field, obj)
+		case "timezone":
+			out.Values[i] = ec._RecordProjection_timezone(ctx, field, obj)
+		case "durationSeconds":
+			out.Values[i] = ec._RecordProjection_durationSeconds(ctx, field, obj)
+		case "value":
+			out.Values[i] = ec._RecordProjection_value(ctx, field, obj)
+		case "source":
+			out.Values[i] = ec._RecordProjection_source(ctx, field, obj)
+		case "lastEventId":
+			out.Values[i] = ec._RecordProjection_lastEventId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lastEventType":
+			out.Values[i] = ec._RecordProjection_lastEventType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lastEventVersion":
+			out.Values[i] = ec._RecordProjection_lastEventVersion(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lastTraceId":
+			out.Values[i] = ec._RecordProjection_lastTraceId(ctx, field, obj)
+		case "lastRequestId":
+			out.Values[i] = ec._RecordProjection_lastRequestId(ctx, field, obj)
+		case "lastKafkaTopic":
+			out.Values[i] = ec._RecordProjection_lastKafkaTopic(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lastKafkaPartition":
+			out.Values[i] = ec._RecordProjection_lastKafkaPartition(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lastKafkaOffset":
+			out.Values[i] = ec._RecordProjection_lastKafkaOffset(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lastConsumedAtUTC":
+			out.Values[i] = ec._RecordProjection_lastConsumedAtUTC(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "payloadJSON":
+			out.Values[i] = ec._RecordProjection_payloadJSON(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAtUTC":
+			out.Values[i] = ec._RecordProjection_createdAtUTC(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAtUTC":
+			out.Values[i] = ec._RecordProjection_updatedAtUTC(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -17010,6 +18267,60 @@ func (ec *executionContext) marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋAionApi�
 	return ec._Record(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjectionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.RecordProjection) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRecordProjection2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNRecordProjection2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection(ctx context.Context, sel ast.SelectionSet, v *model.RecordProjection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RecordProjection(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNRecordStats2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStats(ctx context.Context, sel ast.SelectionSet, v model.RecordStats) graphql.Marshaler {
 	return ec._RecordStats(ctx, sel, &v)
 }
@@ -17633,6 +18944,13 @@ func (ec *executionContext) marshalORecord2ᚖgithubᚗcomᚋlechitzᚋAionApi�
 		return graphql.Null
 	}
 	return ec._Record(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalORecordProjection2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection(ctx context.Context, sel ast.SelectionSet, v *model.RecordProjection) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RecordProjection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalORecordStatsFilters2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStatsFilters(ctx context.Context, v any) (*model.RecordStatsFilters, error) {

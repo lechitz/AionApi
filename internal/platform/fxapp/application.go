@@ -100,7 +100,9 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 	adminService := admin.NewService(adminRepository, authCacheStore, authCacheStore, deps.Log)
 	categoryService := category.NewService(categoryRepository, categoryCacheStore, deps.Log)
 	tagService := tag.NewService(tagRepository, tagCacheStore, deps.Log)
-	recordService := record.NewService(recordRepository, recordCacheStore, tagRepository, deps.Log).WithOutbox(outboxService)
+	recordService := record.NewService(recordRepository, recordCacheStore, tagRepository, deps.Log).
+		WithOutbox(outboxService).
+		WithProjectionReader(recordRepository)
 	chatService := chat.NewService(chatHTTPClient, chatHistoryRepository, chatHistoryCacheStore, auditService, deps.Log)
 
 	return &AppDependencies{

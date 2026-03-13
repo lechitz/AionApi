@@ -251,6 +251,32 @@ type Record struct {
 	UpdatedAt       string   `json:"updatedAt"`
 }
 
+type RecordProjection struct {
+	RecordID           string   `json:"recordId"`
+	UserID             string   `json:"userId"`
+	TagID              string   `json:"tagId"`
+	Description        *string  `json:"description,omitempty"`
+	EventTimeUtc       string   `json:"eventTimeUTC"`
+	RecordedAtUtc      *string  `json:"recordedAtUTC,omitempty"`
+	Status             *string  `json:"status,omitempty"`
+	Timezone           *string  `json:"timezone,omitempty"`
+	DurationSeconds    *int32   `json:"durationSeconds,omitempty"`
+	Value              *float64 `json:"value,omitempty"`
+	Source             *string  `json:"source,omitempty"`
+	LastEventID        string   `json:"lastEventId"`
+	LastEventType      string   `json:"lastEventType"`
+	LastEventVersion   string   `json:"lastEventVersion"`
+	LastTraceID        *string  `json:"lastTraceId,omitempty"`
+	LastRequestID      *string  `json:"lastRequestId,omitempty"`
+	LastKafkaTopic     string   `json:"lastKafkaTopic"`
+	LastKafkaPartition int32    `json:"lastKafkaPartition"`
+	LastKafkaOffset    string   `json:"lastKafkaOffset"`
+	LastConsumedAtUtc  string   `json:"lastConsumedAtUTC"`
+	PayloadJSON        string   `json:"payloadJSON"`
+	CreatedAtUtc       string   `json:"createdAtUTC"`
+	UpdatedAtUtc       string   `json:"updatedAtUTC"`
+}
+
 type RecordStats struct {
 	TotalRecords         int32    `json:"totalRecords"`
 	RecordsWithValue     int32    `json:"recordsWithValue"`

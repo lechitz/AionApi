@@ -58,6 +58,63 @@ func toModelOutSlice(records []domain.Record) []*gmodel.Record {
 	return result
 }
 
+func toProjectedModelOut(t domain.RecordProjection) *gmodel.RecordProjection {
+	out := &gmodel.RecordProjection{
+		RecordID:           strconv.FormatUint(t.RecordID, 10),
+		UserID:             strconv.FormatUint(t.UserID, 10),
+		TagID:              strconv.FormatUint(t.TagID, 10),
+		EventTimeUtc:       t.EventTimeUTC.UTC().Format(time.RFC3339),
+		LastEventID:        t.LastEventID,
+		LastEventType:      t.LastEventType,
+		LastEventVersion:   t.LastEventVersion,
+		LastKafkaTopic:     t.LastKafkaTopic,
+		LastKafkaPartition: int32(t.LastKafkaPartition),
+		LastKafkaOffset:    strconv.FormatInt(t.LastKafkaOffset, 10),
+		LastConsumedAtUtc:  t.LastConsumedAtUTC.UTC().Format(time.RFC3339),
+		PayloadJSON:        string(t.PayloadJSON),
+		CreatedAtUtc:       t.CreatedAtUTC.UTC().Format(time.RFC3339),
+		UpdatedAtUtc:       t.UpdatedAtUTC.UTC().Format(time.RFC3339),
+	}
+	if t.Description != nil {
+		out.Description = t.Description
+	}
+	if t.RecordedAtUTC != nil {
+		v := t.RecordedAtUTC.UTC().Format(time.RFC3339)
+		out.RecordedAtUtc = &v
+	}
+	if t.Status != nil {
+		out.Status = t.Status
+	}
+	if t.Timezone != nil {
+		out.Timezone = t.Timezone
+	}
+	if t.DurationSeconds != nil {
+		v := int32(*t.DurationSeconds)
+		out.DurationSeconds = &v
+	}
+	if t.Value != nil {
+		out.Value = t.Value
+	}
+	if t.Source != nil {
+		out.Source = t.Source
+	}
+	if t.LastTraceID != nil {
+		out.LastTraceID = t.LastTraceID
+	}
+	if t.LastRequestID != nil {
+		out.LastRequestID = t.LastRequestID
+	}
+	return out
+}
+
+func toProjectedModelOutSlice(items []domain.RecordProjection) []*gmodel.RecordProjection {
+	result := make([]*gmodel.RecordProjection, len(items))
+	for i, item := range items {
+		result[i] = toProjectedModelOut(item)
+	}
+	return result
+}
+
 // toCreateCommand converts a GraphQL CreateRecordInput into an input.CreateRecordCommand.
 func toCreateCommand(in gmodel.CreateRecordInput, userID uint64) input.CreateRecordCommand {
 	uid := userID

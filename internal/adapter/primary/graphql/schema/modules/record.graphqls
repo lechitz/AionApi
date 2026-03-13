@@ -17,6 +17,32 @@ type Record {
     updatedAt: String!
 }
 
+type RecordProjection {
+    recordId: ID!
+    userId: ID!
+    tagId: ID!
+    description: String
+    eventTimeUTC: String!
+    recordedAtUTC: String
+    status: String
+    timezone: String
+    durationSeconds: Int
+    value: Float
+    source: String
+    lastEventId: String!
+    lastEventType: String!
+    lastEventVersion: String!
+    lastTraceId: String
+    lastRequestId: String
+    lastKafkaTopic: String!
+    lastKafkaPartition: Int!
+    lastKafkaOffset: String!
+    lastConsumedAtUTC: String!
+    payloadJSON: String!
+    createdAtUTC: String!
+    updatedAtUTC: String!
+}
+
 input CreateRecordInput {
     tagId: ID!
     description: String
@@ -290,8 +316,10 @@ input CreateMetricAndWidgetInput {
 
 extend type Query {
     recordById(id: ID!): Record @auth(roles: "user")
+    recordProjectionById(id: ID!): RecordProjection @auth(roles: "user")
     records(limit: Int, afterEventTime: String, afterId: ID): [Record!]! @auth(roles: "user")
     recordsLatest(limit: Int): [Record!]! @auth(roles: "user")
+    recordProjectionsLatest(limit: Int): [RecordProjection!]! @auth(roles: "user")
     recordsByTag(tagId: ID!, limit: Int): [Record!]! @auth(roles: "user")
     recordsByCategory(categoryId: ID!, limit: Int): [Record!]! @auth(roles: "user")
     recordsByDay(date: String): [Record!]! @auth(roles: "user")

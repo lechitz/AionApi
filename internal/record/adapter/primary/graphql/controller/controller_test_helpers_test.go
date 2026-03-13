@@ -16,6 +16,7 @@ import (
 type recordServiceStub struct {
 	createFn                func(context.Context, input.CreateRecordCommand) (domain.Record, error)
 	getByIDFn               func(context.Context, uint64, uint64) (domain.Record, error)
+	getProjectedByIDFn      func(context.Context, uint64, uint64) (domain.RecordProjection, error)
 	listByUserFn            func(context.Context, uint64, int, *string, *int64) ([]domain.Record, error)
 	listByTagFn             func(context.Context, uint64, uint64, int) ([]domain.Record, error)
 	listByCatFn             func(context.Context, uint64, uint64, int) ([]domain.Record, error)
@@ -23,6 +24,7 @@ type recordServiceStub struct {
 	listAllUntilFn          func(context.Context, uint64, time.Time, int) ([]domain.Record, error)
 	listAllBetweenFn        func(context.Context, uint64, time.Time, time.Time, int) ([]domain.Record, error)
 	listLatestFn            func(context.Context, uint64, int) ([]domain.Record, error)
+	listProjectedLatestFn   func(context.Context, uint64, int) ([]domain.RecordProjection, error)
 	updateFn                func(context.Context, uint64, uint64, input.UpdateRecordCommand) (domain.Record, error)
 	deleteFn                func(context.Context, uint64, uint64) error
 	deleteAllFn             func(context.Context, uint64) error
@@ -65,6 +67,13 @@ func (s *recordServiceStub) GetByID(ctx context.Context, recordID uint64, userID
 		panic("unexpected GetByID call")
 	}
 	return s.getByIDFn(ctx, recordID, userID)
+}
+
+func (s *recordServiceStub) GetProjectedByID(ctx context.Context, recordID uint64, userID uint64) (domain.RecordProjection, error) {
+	if s.getProjectedByIDFn == nil {
+		panic("unexpected GetProjectedByID call")
+	}
+	return s.getProjectedByIDFn(ctx, recordID, userID)
 }
 
 func (s *recordServiceStub) ListByUser(ctx context.Context, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]domain.Record, error) {
@@ -114,6 +123,13 @@ func (s *recordServiceStub) ListLatest(ctx context.Context, userID uint64, limit
 		panic("unexpected ListLatest call")
 	}
 	return s.listLatestFn(ctx, userID, limit)
+}
+
+func (s *recordServiceStub) ListProjectedLatest(ctx context.Context, userID uint64, limit int) ([]domain.RecordProjection, error) {
+	if s.listProjectedLatestFn == nil {
+		panic("unexpected ListProjectedLatest call")
+	}
+	return s.listProjectedLatestFn(ctx, userID, limit)
 }
 
 func (s *recordServiceStub) Update(ctx context.Context, recordID uint64, userID uint64, cmd input.UpdateRecordCommand) (domain.Record, error) {

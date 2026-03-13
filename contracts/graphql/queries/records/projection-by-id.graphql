@@ -1,0 +1,2 @@
+query RecordProjectionById($id: ID!) { recordProjectionById(id: $id) { recordId userId tagId description eventTimeUTC recordedAtUTC status timezone durationSeconds value source lastEventId lastEventType lastEventVersion lastTraceId lastRequestId lastKafkaTopic lastKafkaPartition lastKafkaOffset lastConsumedAtUTC payloadJSON createdAtUTC updatedAtUTC } }
+

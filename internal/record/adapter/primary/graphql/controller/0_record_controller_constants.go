@@ -23,6 +23,9 @@ const (
 	// SpanGetByID is the span name for retrieving a record by ID.
 	SpanGetByID = "record.controller.get_by_id"
 
+	// SpanGetProjectedByID is the span name for retrieving a derived record projection by ID.
+	SpanGetProjectedByID = "record.controller.get_projected_by_id"
+
 	// SpanGetByName is the span name for retrieving a record by name.
 	SpanGetByName = "record.controller.get_by_name"
 
@@ -43,6 +46,9 @@ const (
 
 	// SpanListLatest is the span name for listing latest records.
 	SpanListLatest = "record.controller.list_latest"
+
+	// SpanListProjectedLatest is the span name for listing latest derived record projections.
+	SpanListProjectedLatest = "record.controller.list_projected_latest"
 
 	// SpanListByDay is the span name for listing records by day.
 	SpanListByDay = "record.controller.list_by_day"
@@ -143,6 +149,12 @@ const (
 
 	// MsgListLatestError is the log message for when a list latest operation fails.
 	MsgListLatestError = "error listing latest records"
+
+	// MsgGetProjectedByIDError is the log message for projected record retrieval failures.
+	MsgGetProjectedByIDError = "error getting projected record by id"
+
+	// MsgListProjectedLatestError is the log message for listing projected records failures.
+	MsgListProjectedLatestError = "error listing latest projected records"
 
 	// MsgInvalidDateFormat is the log message for invalid date format.
 	MsgInvalidDateFormat = "invalid date format"

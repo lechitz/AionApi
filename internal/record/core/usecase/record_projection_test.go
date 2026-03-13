@@ -1,0 +1,49 @@
+package usecase
+
+import (
+	"context"
+	"testing"
+
+	"github.com/lechitz/AionApi/internal/record/core/domain"
+)
+
+type projectionRepositoryStub struct {
+	item  domain.RecordProjection
+	items []domain.RecordProjection
+}
+
+func (p projectionRepositoryStub) GetProjectedByID(context.Context, uint64, uint64) (domain.RecordProjection, error) {
+	return p.item, nil
+}
+
+func (p projectionRepositoryStub) ListProjectedLatest(context.Context, uint64, int) ([]domain.RecordProjection, error) {
+	return p.items, nil
+}
+
+func TestService_GetProjectedByID(t *testing.T) {
+	t.Parallel()
+
+	svc := &Service{
+		RecordProjectionRepository: projectionRepositoryStub{
+			item: domain.RecordProjection{RecordID: 5177, LastEventType: "record.created"},
+		},
+	}
+
+	got, err := svc.GetProjectedByID(context.Background(), 5177, 7)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	if got.RecordID != 5177 {
+		t.Fatalf("expected record id 5177, got %d", got.RecordID)
+	}
+}
+
+func TestService_ListProjectedLatestRequiresRepository(t *testing.T) {
+	t.Parallel()
+
+	svc := &Service{}
+	_, err := svc.ListProjectedLatest(context.Background(), 7, 5)
+	if err != ErrProjectionRepositoryUnavailable {
+		t.Fatalf("expected ErrProjectionRepositoryUnavailable, got %v", err)
+	}
+}

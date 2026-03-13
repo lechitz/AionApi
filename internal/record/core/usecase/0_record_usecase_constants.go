@@ -40,6 +40,12 @@ const (
 	// SpanListLatest is the span name for listing latest records.
 	SpanListLatest = "record.list_latest"
 
+	// SpanGetProjectedByID is the span name for fetching one derived record projection.
+	SpanGetProjectedByID = "record.get_projected_by_id"
+
+	// SpanListProjectedLatest is the span name for listing latest derived record projections.
+	SpanListProjectedLatest = "record.list_projected_latest"
+
 	// SpanListByDay is the span name for listing records by day.
 	SpanListByDay = "record.list_by_day"
 
@@ -159,6 +165,12 @@ const (
 	// FailedToListRecords indicates failure to list records.
 	FailedToListRecords = "failed to list records"
 
+	// FailedToGetProjectedRecord indicates failure to retrieve one projected record.
+	FailedToGetProjectedRecord = "failed to get projected record"
+
+	// FailedToListProjectedRecords indicates failure to list projected records.
+	FailedToListProjectedRecords = "failed to list projected records"
+
 	// FailedToUpdateRecord indicates failure to update a record.
 	FailedToUpdateRecord = "failed to update record"
 
@@ -234,6 +246,9 @@ const (
 
 	// UserNotAuthenticated indicates user is not authenticated.
 	UserNotAuthenticated = "user not authenticated"
+
+	// ProjectionRepositoryUnavailable indicates derived projections are not wired.
+	ProjectionRepositoryUnavailable = "record projection repository unavailable"
 
 	// UserIDNegative indicates user ID cannot be negative.
 	UserIDNegative = "user id negative"
@@ -387,6 +402,9 @@ var (
 
 	// ErrUserNotAuthenticated is a sentinel error when user is not authenticated.
 	ErrUserNotAuthenticated = errors.New(UserNotAuthenticated)
+
+	// ErrProjectionRepositoryUnavailable is a sentinel error when derived projections are not configured.
+	ErrProjectionRepositoryUnavailable = errors.New(ProjectionRepositoryUnavailable)
 
 	// ErrUserIDNegative is a sentinel error when user ID is negative.
 	ErrUserIDNegative = errors.New(UserIDNegative)

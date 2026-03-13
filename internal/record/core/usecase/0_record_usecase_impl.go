@@ -15,11 +15,12 @@ import (
 
 // Service implements the record use cases.
 type Service struct {
-	RecordRepository output.RecordRepository
-	RecordCache      output.RecordCache
-	TagRepository    tagoutput.TagRepository
-	OutboxService    eventoutboxinput.Service
-	Logger           logger.ContextLogger
+	RecordRepository           output.RecordRepository
+	RecordProjectionRepository output.RecordProjectionRepository
+	RecordCache                output.RecordCache
+	TagRepository              tagoutput.TagRepository
+	OutboxService              eventoutboxinput.Service
+	Logger                     logger.ContextLogger
 }
 
 // NewService is a convention wrapper used by bootstrap to instantiate the record service.
@@ -35,6 +36,12 @@ func NewService(recordRepo output.RecordRepository, cache output.RecordCache, ta
 // WithOutbox attaches an optional outbox service without breaking existing constructor call sites.
 func (s *Service) WithOutbox(outboxService eventoutboxinput.Service) *Service {
 	s.OutboxService = outboxService
+	return s
+}
+
+// WithProjectionReader attaches an optional derived projection reader without breaking constructor call sites.
+func (s *Service) WithProjectionReader(projectionRepo output.RecordProjectionRepository) *Service {
+	s.RecordProjectionRepository = projectionRepo
 	return s
 }
 

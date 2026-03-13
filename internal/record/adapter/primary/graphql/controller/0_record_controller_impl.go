@@ -12,8 +12,10 @@ import (
 type RecordController interface {
 	Create(ctx context.Context, in model.CreateRecordInput, userID uint64) (*model.Record, error)
 	GetByID(ctx context.Context, recordID, userID uint64) (*model.Record, error)
+	GetProjectedByID(ctx context.Context, recordID, userID uint64) (*model.RecordProjection, error)
 	ListByUser(ctx context.Context, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]*model.Record, error)
 	ListLatest(ctx context.Context, userID uint64, limit int) ([]*model.Record, error)
+	ListProjectedLatest(ctx context.Context, userID uint64, limit int) ([]*model.RecordProjection, error)
 	ListByTag(ctx context.Context, tagID, userID uint64, limit int) ([]*model.Record, error)
 	ListByCategory(ctx context.Context, categoryID, userID uint64, limit int) ([]*model.Record, error)
 	ListByDay(ctx context.Context, userID uint64, date string) ([]*model.Record, error)

@@ -25,6 +25,17 @@ func (q *queryResolver) RecordByID(ctx context.Context, recordID string) (*model
 	return q.RecordController().GetByID(ctx, id, uid)
 }
 
+// RecordProjectionByID is the resolver for the recordProjectionById field.
+func (q *queryResolver) RecordProjectionByID(ctx context.Context, id string) (*model.RecordProjection, error) {
+	recordID, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	return q.RecordController().GetProjectedByID(ctx, recordID, uid)
+}
+
 // RecordsByTag is the resolver for the recordsByTag field.
 func (q *queryResolver) RecordsByTag(ctx context.Context, tagID string, limit *int32) ([]*model.Record, error) {
 	tid, err := strconv.ParseUint(tagID, 10, 64)
@@ -103,6 +114,18 @@ func (q *queryResolver) RecordsLatest(ctx context.Context, limit *int32) ([]*mod
 	}
 
 	return q.RecordController().ListLatest(ctx, uid, lim)
+}
+
+// RecordProjectionsLatest is the resolver for the recordProjectionsLatest field.
+func (q *queryResolver) RecordProjectionsLatest(ctx context.Context, limit *int32) ([]*model.RecordProjection, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+
+	lim := 10
+	if limit != nil && *limit > 0 {
+		lim = int(*limit)
+	}
+
+	return q.RecordController().ListProjectedLatest(ctx, uid, lim)
 }
 
 // RecordsByCategory is the resolver for the recordsByCategory field.

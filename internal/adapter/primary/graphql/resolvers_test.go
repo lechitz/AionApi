@@ -102,6 +102,23 @@ func (recordSvcStub) GetByID(context.Context, uint64, uint64) (recorddomain.Reco
 	return recorddomain.Record{ID: 1, UserID: 1, TagID: 1, EventTime: now, CreatedAt: now, UpdatedAt: now}, nil
 }
 
+func (recordSvcStub) GetProjectedByID(context.Context, uint64, uint64) (recorddomain.RecordProjection, error) {
+	now := time.Now().UTC()
+	return recorddomain.RecordProjection{
+		RecordID:          1,
+		UserID:            1,
+		TagID:             1,
+		EventTimeUTC:      now,
+		LastEventID:       "evt-1",
+		LastEventType:     "record.created",
+		LastEventVersion:  "v1",
+		LastKafkaTopic:    "aion.record.events.v1",
+		LastConsumedAtUTC: now,
+		CreatedAtUTC:      now,
+		UpdatedAtUTC:      now,
+	}, nil
+}
+
 func (recordSvcStub) ListByUser(context.Context, uint64, int, *string, *int64) ([]recorddomain.Record, error) {
 	return []recorddomain.Record{}, nil
 }
@@ -128,6 +145,10 @@ func (recordSvcStub) ListAllBetween(context.Context, uint64, time.Time, time.Tim
 
 func (recordSvcStub) ListLatest(context.Context, uint64, int) ([]recorddomain.Record, error) {
 	return []recorddomain.Record{}, nil
+}
+
+func (recordSvcStub) ListProjectedLatest(context.Context, uint64, int) ([]recorddomain.RecordProjection, error) {
+	return []recorddomain.RecordProjection{}, nil
 }
 
 func (recordSvcStub) Update(context.Context, uint64, uint64, recordinput.UpdateRecordCommand) (recorddomain.Record, error) {

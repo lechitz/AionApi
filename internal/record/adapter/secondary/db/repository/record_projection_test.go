@@ -1,0 +1,62 @@
+package repository
+
+import (
+	"errors"
+	"testing"
+	"time"
+
+	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
+	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
+)
+
+func TestRecordProjectionQueries(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	dbMock := mocks.NewMockDB(ctrl)
+	logger := mocks.NewMockContextLogger(ctrl)
+	repo := New(dbMock, logger)
+	now := time.Date(2026, time.March, 13, 15, 0, 0, 0, time.UTC)
+
+	t.Run("get projected by id success", func(t *testing.T) {
+		dbMock.EXPECT().WithContext(gomock.Any()).Return(dbMock)
+		dbMock.EXPECT().Raw(gomock.Any(), gomock.Any(), gomock.Any()).Return(dbMock)
+		dbMock.EXPECT().Scan(gomock.Any()).DoAndReturn(func(dest any) db.DB {
+			row, ok := dest.(*recordProjectionRow)
+			require.True(t, ok)
+			row.RecordID = 5177
+			row.UserID = 7
+			row.TagID = 32
+			row.LastEventID = "evt-1"
+			row.LastEventType = "record.created"
+			row.LastEventVersion = "v1"
+			row.LastKafkaTopic = "aion.record.events.v1"
+			row.LastKafkaPartition = 0
+			row.LastKafkaOffset = 1
+			row.EventTimeUTC = now
+			row.LastConsumedAtUTC = now
+			row.PayloadJSON = []byte(`{"record_id":5177}`)
+			row.CreatedAtUTC = now
+			row.UpdatedAtUTC = now
+			return dbMock
+		})
+		dbMock.EXPECT().Error().Return(nil)
+
+		got, err := repo.GetProjectedByID(t.Context(), 7, 5177)
+		require.NoError(t, err)
+		require.Equal(t, uint64(5177), got.RecordID)
+		require.Equal(t, int64(1), got.LastKafkaOffset)
+	})
+
+	t.Run("list projected latest error", func(t *testing.T) {
+		dbMock.EXPECT().WithContext(gomock.Any()).Return(dbMock)
+		dbMock.EXPECT().Raw(gomock.Any(), gomock.Any(), gomock.Any()).Return(dbMock)
+		dbMock.EXPECT().Scan(gomock.Any()).Return(dbMock)
+		dbMock.EXPECT().Error().Return(errors.New("query fail"))
+
+		_, err := repo.ListProjectedLatest(t.Context(), 7, 5)
+		require.Error(t, err)
+	})
+}
