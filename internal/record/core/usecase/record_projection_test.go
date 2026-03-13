@@ -20,6 +20,10 @@ func (p projectionRepositoryStub) ListProjectedLatest(context.Context, uint64, i
 	return p.items, nil
 }
 
+func (p projectionRepositoryStub) ListProjectedPage(context.Context, uint64, int, *string, *int64) ([]domain.RecordProjection, error) {
+	return p.items, nil
+}
+
 func TestService_GetProjectedByID(t *testing.T) {
 	t.Parallel()
 
@@ -45,5 +49,23 @@ func TestService_ListProjectedLatestRequiresRepository(t *testing.T) {
 	_, err := svc.ListProjectedLatest(context.Background(), 7, 5)
 	if err != ErrProjectionRepositoryUnavailable {
 		t.Fatalf("expected ErrProjectionRepositoryUnavailable, got %v", err)
+	}
+}
+
+func TestService_ListProjectedPageDefaultsLimit(t *testing.T) {
+	t.Parallel()
+
+	svc := &Service{
+		RecordProjectionRepository: projectionRepositoryStub{
+			items: []domain.RecordProjection{{RecordID: 1}},
+		},
+	}
+
+	got, err := svc.ListProjectedPage(context.Background(), 7, 0, nil, nil)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	if len(got) != 1 {
+		t.Fatalf("expected one projection, got %d", len(got))
 	}
 }

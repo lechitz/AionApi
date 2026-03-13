@@ -104,6 +104,23 @@ func (q *queryResolver) Records(ctx context.Context, limit *int32, afterEventTim
 	return q.RecordController().ListByUser(ctx, uid, lim, afterEventTime, afterIDInt)
 }
 
+// RecordProjections is the resolver for the recordProjections field.
+func (q *queryResolver) RecordProjections(ctx context.Context, limit *int32, afterEventTime *string, afterID *string) ([]*model.RecordProjection, error) {
+	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
+	lim := 50
+	if limit != nil && *limit > 0 {
+		lim = int(*limit)
+	}
+	var afterIDInt *int64
+	if afterID != nil && *afterID != "" {
+		if v, err := strconv.ParseInt(*afterID, 10, 64); err == nil {
+			afterIDInt = &v
+		}
+	}
+
+	return q.RecordController().ListProjectedPage(ctx, uid, lim, afterEventTime, afterIDInt)
+}
+
 // RecordsLatest is the resolver for the recordsLatest field.
 func (q *queryResolver) RecordsLatest(ctx context.Context, limit *int32) ([]*model.Record, error) {
 	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)

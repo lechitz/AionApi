@@ -35,3 +35,18 @@ func (s *Service) ListProjectedLatest(ctx context.Context, userID uint64, limit 
 	}
 	return s.RecordProjectionRepository.ListProjectedLatest(ctx, userID, limit)
 }
+
+// ListProjectedPage returns derived record projections using the same cursor shape as canonical records.
+func (s *Service) ListProjectedPage(ctx context.Context, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]domain.RecordProjection, error) {
+	if userID == 0 {
+		return nil, ErrUserIDIsRequired
+	}
+	if s.RecordProjectionRepository == nil {
+		return nil, ErrProjectionRepositoryUnavailable
+	}
+	if limit <= 0 {
+		limit = 50
+	}
+
+	return s.RecordProjectionRepository.ListProjectedPage(ctx, userID, limit, afterEventTime, afterID)
+}

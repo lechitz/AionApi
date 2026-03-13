@@ -77,3 +77,35 @@ func (c *controller) ListProjectedLatest(ctx context.Context, userID uint64, lim
 	span.SetStatus(codes.Ok, StatusFetched)
 	return out, nil
 }
+
+// ListProjectedPage returns cursor-based derived record projections for the user.
+func (c *controller) ListProjectedPage(ctx context.Context, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]*model.RecordProjection, error) {
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanListProjectedPage)
+	defer span.End()
+
+	span.SetAttributes(
+		attribute.String(commonkeys.Operation, SpanListProjectedPage),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+		attribute.Int(AttrLimit, limit),
+	)
+
+	if userID == 0 {
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		c.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
+	}
+
+	items, err := c.RecordService.ListProjectedPage(ctx, userID, limit, afterEventTime, afterID)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, MsgListProjectedPageError)
+		c.Logger.ErrorwCtx(ctx, MsgListProjectedPageError, commonkeys.Error, err.Error(), commonkeys.UserID, userID)
+		return nil, err
+	}
+
+	out := toProjectedModelOutSlice(items)
+	span.SetAttributes(attribute.Int(AttrCount, len(out)))
+	span.SetStatus(codes.Ok, StatusFetched)
+	return out, nil
+}

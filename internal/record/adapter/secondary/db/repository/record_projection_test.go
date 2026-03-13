@@ -59,4 +59,41 @@ func TestRecordProjectionQueries(t *testing.T) {
 		_, err := repo.ListProjectedLatest(t.Context(), 7, 5)
 		require.Error(t, err)
 	})
+
+	t.Run("list projected page with cursor", func(t *testing.T) {
+		at := now.Format(time.RFC3339)
+		afterID := int64(5176)
+
+		dbMock.EXPECT().WithContext(gomock.Any()).Return(dbMock)
+		dbMock.EXPECT().Raw(gomock.Any(), gomock.Any()).Return(dbMock)
+		dbMock.EXPECT().Where(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(dbMock)
+		dbMock.EXPECT().Order(gomock.Any()).Return(dbMock)
+		dbMock.EXPECT().Limit(10).Return(dbMock)
+		dbMock.EXPECT().Scan(gomock.Any()).DoAndReturn(func(dest any) db.DB {
+			rows, ok := dest.(*[]recordProjectionRow)
+			require.True(t, ok)
+			*rows = []recordProjectionRow{{
+				RecordID:          5177,
+				UserID:            7,
+				TagID:             32,
+				LastEventID:       "evt-2",
+				LastEventType:     "record.updated",
+				LastEventVersion:  "v1",
+				LastKafkaTopic:    "aion.record.events.v1",
+				LastKafkaOffset:   2,
+				EventTimeUTC:      now,
+				LastConsumedAtUTC: now,
+				PayloadJSON:       []byte(`{"record_id":5177}`),
+				CreatedAtUTC:      now,
+				UpdatedAtUTC:      now,
+			}}
+			return dbMock
+		})
+		dbMock.EXPECT().Error().Return(nil)
+
+		got, err := repo.ListProjectedPage(t.Context(), 7, 10, &at, &afterID)
+		require.NoError(t, err)
+		require.Len(t, got, 1)
+		require.Equal(t, uint64(5177), got[0].RecordID)
+	})
 }

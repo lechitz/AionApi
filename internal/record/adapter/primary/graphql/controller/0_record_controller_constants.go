@@ -50,6 +50,9 @@ const (
 	// SpanListProjectedLatest is the span name for listing latest derived record projections.
 	SpanListProjectedLatest = "record.controller.list_projected_latest"
 
+	// SpanListProjectedPage is the span name for cursor-based derived projection listing.
+	SpanListProjectedPage = "record.controller.list_projected_page"
+
 	// SpanListByDay is the span name for listing records by day.
 	SpanListByDay = "record.controller.list_by_day"
 
@@ -155,6 +158,9 @@ const (
 
 	// MsgListProjectedLatestError is the log message for listing projected records failures.
 	MsgListProjectedLatestError = "error listing latest projected records"
+
+	// MsgListProjectedPageError is the log message for cursor-based projected records failures.
+	MsgListProjectedPageError = "error listing projected records page"
 
 	// MsgInvalidDateFormat is the log message for invalid date format.
 	MsgInvalidDateFormat = "invalid date format"

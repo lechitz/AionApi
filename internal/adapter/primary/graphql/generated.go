@@ -259,6 +259,7 @@ type ComplexityRoot struct {
 		MetricDefinitions        func(childComplexity int) int
 		RecordByID               func(childComplexity int, id string) int
 		RecordProjectionByID     func(childComplexity int, id string) int
+		RecordProjections        func(childComplexity int, limit *int32, afterEventTime *string, afterID *string) int
 		RecordProjectionsLatest  func(childComplexity int, limit *int32) int
 		RecordStats              func(childComplexity int, filters *model.RecordStatsFilters) int
 		Records                  func(childComplexity int, limit *int32, afterEventTime *string, afterID *string) int
@@ -391,6 +392,7 @@ type QueryResolver interface {
 	RecordByID(ctx context.Context, id string) (*model.Record, error)
 	RecordProjectionByID(ctx context.Context, id string) (*model.RecordProjection, error)
 	Records(ctx context.Context, limit *int32, afterEventTime *string, afterID *string) ([]*model.Record, error)
+	RecordProjections(ctx context.Context, limit *int32, afterEventTime *string, afterID *string) ([]*model.RecordProjection, error)
 	RecordsLatest(ctx context.Context, limit *int32) ([]*model.Record, error)
 	RecordProjectionsLatest(ctx context.Context, limit *int32) ([]*model.RecordProjection, error)
 	RecordsByTag(ctx context.Context, tagID string, limit *int32) ([]*model.Record, error)
@@ -1469,6 +1471,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.RecordProjectionByID(childComplexity, args["id"].(string)), true
+	case "Query.recordProjections":
+		if e.complexity.Query.RecordProjections == nil {
+			break
+		}
+
+		args, err := ec.field_Query_recordProjections_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RecordProjections(childComplexity, args["limit"].(*int32), args["afterEventTime"].(*string), args["afterId"].(*string)), true
 	case "Query.recordProjectionsLatest":
 		if e.complexity.Query.RecordProjectionsLatest == nil {
 			break
@@ -2567,6 +2580,27 @@ func (ec *executionContext) field_Query_recordProjectionsLatest_args(ctx context
 		return nil, err
 	}
 	args["limit"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_recordProjections_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "limit", ec.unmarshalOInt2ᚖint32)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "afterEventTime", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["afterEventTime"] = arg1
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "afterId", ec.unmarshalOID2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["afterId"] = arg2
 	return args, nil
 }
 
@@ -8268,6 +8302,113 @@ func (ec *executionContext) fieldContext_Query_records(ctx context.Context, fiel
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_records_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_recordProjections(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_recordProjections,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecordProjections(ctx, fc.Args["limit"].(*int32), fc.Args["afterEventTime"].(*string), fc.Args["afterId"].(*string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				roles, err := ec.unmarshalOString2ᚖstring(ctx, "user")
+				if err != nil {
+					var zeroVal []*model.RecordProjection
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal []*model.RecordProjection
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, roles)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjectionᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_recordProjections(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "recordId":
+				return ec.fieldContext_RecordProjection_recordId(ctx, field)
+			case "userId":
+				return ec.fieldContext_RecordProjection_userId(ctx, field)
+			case "tagId":
+				return ec.fieldContext_RecordProjection_tagId(ctx, field)
+			case "description":
+				return ec.fieldContext_RecordProjection_description(ctx, field)
+			case "eventTimeUTC":
+				return ec.fieldContext_RecordProjection_eventTimeUTC(ctx, field)
+			case "recordedAtUTC":
+				return ec.fieldContext_RecordProjection_recordedAtUTC(ctx, field)
+			case "status":
+				return ec.fieldContext_RecordProjection_status(ctx, field)
+			case "timezone":
+				return ec.fieldContext_RecordProjection_timezone(ctx, field)
+			case "durationSeconds":
+				return ec.fieldContext_RecordProjection_durationSeconds(ctx, field)
+			case "value":
+				return ec.fieldContext_RecordProjection_value(ctx, field)
+			case "source":
+				return ec.fieldContext_RecordProjection_source(ctx, field)
+			case "lastEventId":
+				return ec.fieldContext_RecordProjection_lastEventId(ctx, field)
+			case "lastEventType":
+				return ec.fieldContext_RecordProjection_lastEventType(ctx, field)
+			case "lastEventVersion":
+				return ec.fieldContext_RecordProjection_lastEventVersion(ctx, field)
+			case "lastTraceId":
+				return ec.fieldContext_RecordProjection_lastTraceId(ctx, field)
+			case "lastRequestId":
+				return ec.fieldContext_RecordProjection_lastRequestId(ctx, field)
+			case "lastKafkaTopic":
+				return ec.fieldContext_RecordProjection_lastKafkaTopic(ctx, field)
+			case "lastKafkaPartition":
+				return ec.fieldContext_RecordProjection_lastKafkaPartition(ctx, field)
+			case "lastKafkaOffset":
+				return ec.fieldContext_RecordProjection_lastKafkaOffset(ctx, field)
+			case "lastConsumedAtUTC":
+				return ec.fieldContext_RecordProjection_lastConsumedAtUTC(ctx, field)
+			case "payloadJSON":
+				return ec.fieldContext_RecordProjection_payloadJSON(ctx, field)
+			case "createdAtUTC":
+				return ec.fieldContext_RecordProjection_createdAtUTC(ctx, field)
+			case "updatedAtUTC":
+				return ec.fieldContext_RecordProjection_updatedAtUTC(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RecordProjection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_recordProjections_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -15922,6 +16063,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_records(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "recordProjections":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_recordProjections(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

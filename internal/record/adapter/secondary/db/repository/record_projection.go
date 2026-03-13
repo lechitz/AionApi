@@ -151,3 +151,53 @@ func (r *RecordRepository) ListProjectedLatest(ctx context.Context, userID uint6
 	}
 	return out, nil
 }
+
+// ListProjectedPage returns derived projections ordered by event time desc with the same cursor contract as records().
+func (r *RecordRepository) ListProjectedPage(ctx context.Context, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]domain.RecordProjection, error) {
+	var rows []recordProjectionRow
+	query := r.db.WithContext(ctx).Raw(`
+		SELECT
+			record_id,
+			user_id,
+			tag_id,
+			description,
+			event_time_utc,
+			recorded_at_utc,
+			status,
+			timezone,
+			duration_seconds,
+			value,
+			source,
+			last_event_id,
+			last_event_type,
+			last_event_version,
+			last_trace_id,
+			last_request_id,
+			last_kafka_topic,
+			last_kafka_partition,
+			last_kafka_offset,
+			last_consumed_at_utc,
+			payload_json,
+			created_at_utc,
+			updated_at_utc
+		FROM aion_derived.record_projection_v1
+		WHERE user_id = ?
+	`, userID)
+
+	if afterEventTime != nil && afterID != nil {
+		query = query.Where("event_time_utc < ? OR (event_time_utc = ? AND record_id < ?)", *afterEventTime, *afterEventTime, *afterID)
+	}
+
+	if err := query.
+		Order("event_time_utc DESC, record_id DESC").
+		Limit(limit).
+		Scan(&rows).Error(); err != nil {
+		return nil, fmt.Errorf("list projected page: %w", err)
+	}
+
+	out := make([]domain.RecordProjection, len(rows))
+	for i := range rows {
+		out[i] = toRecordProjection(rows[i])
+	}
+	return out, nil
+}

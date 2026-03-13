@@ -123,6 +123,10 @@ func (recordSvcStub) ListByUser(context.Context, uint64, int, *string, *int64) (
 	return []recorddomain.Record{}, nil
 }
 
+func (recordSvcStub) ListProjectedPage(context.Context, uint64, int, *string, *int64) ([]recorddomain.RecordProjection, error) {
+	return []recorddomain.RecordProjection{}, nil
+}
+
 func (recordSvcStub) ListByTag(context.Context, uint64, uint64, int) ([]recorddomain.Record, error) {
 	return []recorddomain.Record{}, nil
 }

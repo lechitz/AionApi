@@ -14,6 +14,7 @@ type RecordController interface {
 	GetByID(ctx context.Context, recordID, userID uint64) (*model.Record, error)
 	GetProjectedByID(ctx context.Context, recordID, userID uint64) (*model.RecordProjection, error)
 	ListByUser(ctx context.Context, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]*model.Record, error)
+	ListProjectedPage(ctx context.Context, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]*model.RecordProjection, error)
 	ListLatest(ctx context.Context, userID uint64, limit int) ([]*model.Record, error)
 	ListProjectedLatest(ctx context.Context, userID uint64, limit int) ([]*model.RecordProjection, error)
 	ListByTag(ctx context.Context, tagID, userID uint64, limit int) ([]*model.Record, error)

@@ -18,6 +18,7 @@ type recordServiceStub struct {
 	getByIDFn               func(context.Context, uint64, uint64) (domain.Record, error)
 	getProjectedByIDFn      func(context.Context, uint64, uint64) (domain.RecordProjection, error)
 	listByUserFn            func(context.Context, uint64, int, *string, *int64) ([]domain.Record, error)
+	listProjectedPageFn     func(context.Context, uint64, int, *string, *int64) ([]domain.RecordProjection, error)
 	listByTagFn             func(context.Context, uint64, uint64, int) ([]domain.Record, error)
 	listByCatFn             func(context.Context, uint64, uint64, int) ([]domain.Record, error)
 	listByDayFn             func(context.Context, uint64, time.Time) ([]domain.Record, error)
@@ -81,6 +82,13 @@ func (s *recordServiceStub) ListByUser(ctx context.Context, userID uint64, limit
 		panic("unexpected ListByUser call")
 	}
 	return s.listByUserFn(ctx, userID, limit, afterEventTime, afterID)
+}
+
+func (s *recordServiceStub) ListProjectedPage(ctx context.Context, userID uint64, limit int, afterEventTime *string, afterID *int64) ([]domain.RecordProjection, error) {
+	if s.listProjectedPageFn == nil {
+		panic("unexpected ListProjectedPage call")
+	}
+	return s.listProjectedPageFn(ctx, userID, limit, afterEventTime, afterID)
 }
 
 func (s *recordServiceStub) ListByTag(ctx context.Context, tagID uint64, userID uint64, limit int) ([]domain.Record, error) {
