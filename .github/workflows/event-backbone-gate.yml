@@ -3,6 +3,9 @@ name: Event Backbone Gate
 on:
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   event-backbone-gate:
     name: Event Backbone Gate (self-hosted)
