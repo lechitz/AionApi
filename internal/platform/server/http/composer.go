@@ -18,6 +18,7 @@ import (
 	audithandler "github.com/lechitz/AionApi/internal/audit/adapter/primary/http/handler"
 	authhandler "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/handler"
 	chathandler "github.com/lechitz/AionApi/internal/chat/adapter/primary/http/handler"
+	realtimehandler "github.com/lechitz/AionApi/internal/realtime/adapter/primary/http/handler"
 	userhandler "github.com/lechitz/AionApi/internal/user/adapter/primary/http/handler"
 
 	"github.com/lechitz/AionApi/internal/platform/app"
@@ -154,6 +155,11 @@ func registerDomainRoutes(v1 ports.Router, cfg *config.Config, deps *app.Depende
 	if deps.AuditService != nil {
 		ah := audithandler.New(deps.AuditService, cfg, log)
 		audithandler.RegisterHTTP(v1, ah, deps.AuthService, log)
+	}
+
+	if deps.RealtimeService != nil {
+		rh := realtimehandler.New(deps.RealtimeService, cfg, log)
+		realtimehandler.RegisterHTTP(v1, rh, deps.AuthService, log)
 	}
 
 	gqlHandler, err := graphql.NewGraphqlHandler(

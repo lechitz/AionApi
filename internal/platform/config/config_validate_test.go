@@ -53,11 +53,19 @@ func baseConfig() config.Config {
 		Kafka: config.KafkaConfig{
 			Brokers:           "kafka:9092",
 			RecordEventsTopic: "aion.record.events.v1",
+			RecordProjectionEventsTopic: "aion.record_projection.events.v1",
 		},
 		Outbox: config.OutboxConfig{
 			PublishEnabled:  true,
 			PublishInterval: 2 * time.Second,
 			BatchSize:       50,
+		},
+		Realtime: config.RealtimeConfig{
+			Enabled: true,
+			StreamPath: "/events/stream",
+			HeartbeatInterval: 15 * time.Second,
+			SubscriberBuffer: 32,
+			ConsumerGroupPrefix: "aion-api-realtime",
 		},
 		Application: config.Application{
 			ContextRequest: config.MinContextRequest,
@@ -167,4 +175,16 @@ func TestConfigValidate_ObservabilityAndAppErrors(t *testing.T) {
 	cfg = baseConfig()
 	cfg.Outbox.BatchSize = 0
 	require.EqualError(t, cfg.Validate(), "OUTBOX_BATCH_SIZE must be at least 1")
+
+	cfg = baseConfig()
+	cfg.Kafka.RecordProjectionEventsTopic = ""
+	require.EqualError(t, cfg.Validate(), config.ErrKafkaRecordProjectionEventsTopicEmpty)
+
+	cfg = baseConfig()
+	cfg.Realtime.StreamPath = "/"
+	require.EqualError(t, cfg.Validate(), config.ErrRealtimeStreamPathTooShort)
+
+	cfg = baseConfig()
+	cfg.Realtime.HeartbeatInterval = 500 * time.Millisecond
+	require.EqualError(t, cfg.Validate(), "REALTIME_HEARTBEAT_INTERVAL must be at least 1s")
 }

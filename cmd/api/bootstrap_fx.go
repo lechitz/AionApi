@@ -14,6 +14,7 @@ func newFXAppWithOptions(extraOptions ...fx.Option) lifecycleApp {
 		fx.Invoke(configureSwagger),
 		fxapp.InfraModule,
 		fxapp.ApplicationModule,
+		fxapp.RealtimeModule,
 		fxapp.ServerModule,
 	}
 	options = append(options, extraOptions...)

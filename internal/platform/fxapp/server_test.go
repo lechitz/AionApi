@@ -50,6 +50,13 @@ func testFxConfig() *config.Config {
 		Application: config.Application{
 			Timeout: time.Second,
 		},
+		Realtime: config.RealtimeConfig{
+			Enabled: true,
+			StreamPath: "/events/stream",
+			HeartbeatInterval: 15 * time.Second,
+			SubscriberBuffer: 32,
+			ConsumerGroupPrefix: "aion-api-realtime",
+		},
 	}
 }
 
@@ -70,6 +77,7 @@ func TestProvideHTTPHandlerAndServer(t *testing.T) {
 	srv := ProvideHTTPServer(cfg, handler, log)
 	require.NotNil(t, srv)
 	require.Equal(t, "127.0.0.1:5001", srv.Addr)
+	require.Equal(t, 2*time.Second, srv.WriteTimeout)
 }
 
 func TestRunHTTPServerRegistersLifecycleHooks(t *testing.T) {

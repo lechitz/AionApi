@@ -16,6 +16,7 @@ type Config struct {
 	Cookie        CookieConfig
 	Kafka         KafkaConfig
 	Outbox        OutboxConfig
+	Realtime      RealtimeConfig
 	ServerHTTP    ServerHTTP
 	DB            DBConfig
 	ServerGraphql ServerGraphql
@@ -56,11 +57,35 @@ func (c *Config) validateKafka() error {
 	if c.Kafka.RecordEventsTopic == "" {
 		return errors.New(ErrKafkaRecordEventsTopicEmpty)
 	}
+	if c.Kafka.RecordProjectionEventsTopic == "" {
+		return errors.New(ErrKafkaRecordProjectionEventsTopicEmpty)
+	}
 	if c.Outbox.PublishInterval < MinOutboxPublishInterval {
 		return fmt.Errorf(ErrOutboxPublishIntervalMin, MinOutboxPublishInterval)
 	}
 	if c.Outbox.BatchSize < MinOutboxBatchSize {
 		return fmt.Errorf(ErrOutboxBatchSizeMin, MinOutboxBatchSize)
+	}
+	if c.Realtime.Enabled {
+		if err := validateHTTPPath(
+			c.Realtime.StreamPath,
+			false,
+			ErrRealtimeStreamPathEmpty,
+			ErrRealtimeStreamPathMustStart,
+			ErrRealtimeStreamPathTooShort,
+			ErrRealtimeStreamPathMustNotEndSlash,
+		); err != nil {
+			return err
+		}
+		if c.Realtime.HeartbeatInterval < MinRealtimeHeartbeatInterval {
+			return fmt.Errorf(ErrRealtimeHeartbeatIntervalMin, MinRealtimeHeartbeatInterval)
+		}
+		if c.Realtime.SubscriberBuffer < MinRealtimeSubscriberBuffer {
+			return fmt.Errorf(ErrRealtimeSubscriberBufferMin, MinRealtimeSubscriberBuffer)
+		}
+		if c.Realtime.ConsumerGroupPrefix == "" {
+			return errors.New(ErrRealtimeConsumerGroupPrefixEmpty)
+		}
 	}
 	return nil
 }
@@ -137,7 +162,7 @@ func (c *Config) validateHTTP() error {
 	if c.ServerHTTP.ReadTimeout < MinHTTPTimeout {
 		return fmt.Errorf(ErrHTTPReadTimeoutMin, MinHTTPTimeout)
 	}
-	if c.ServerHTTP.WriteTimeout < MinHTTPTimeout {
+	if c.ServerHTTP.WriteTimeout != 0 && c.ServerHTTP.WriteTimeout < MinHTTPTimeout {
 		return fmt.Errorf(ErrHTTPWriteTimeoutMin, MinHTTPTimeout)
 	}
 	if c.ServerHTTP.ReadHeaderTimeout <= 0 {

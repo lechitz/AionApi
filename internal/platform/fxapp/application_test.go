@@ -67,6 +67,7 @@ func TestProvideAppDependencies(t *testing.T) {
 	require.NotNil(t, got.TagService)
 	require.NotNil(t, got.RecordService)
 	require.NotNil(t, got.ChatService)
+	require.NotNil(t, got.RealtimeService)
 }
 
 func TestProvideHTTPClientAndKeyGenerator(t *testing.T) {

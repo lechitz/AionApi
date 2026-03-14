@@ -30,6 +30,7 @@ type ObservabilityConfig struct {
 type KafkaConfig struct {
 	Brokers           string `envconfig:"KAFKA_BROKERS"             default:"kafka:9092"`
 	RecordEventsTopic string `envconfig:"KAFKA_TOPIC_RECORD_EVENTS" default:"aion.record.events.v1"`
+	RecordProjectionEventsTopic string `envconfig:"KAFKA_TOPIC_RECORD_PROJECTION_EVENTS" default:"aion.record_projection.events.v1"`
 }
 
 // OutboxConfig holds runtime controls for the outbox publisher loop.
@@ -37,6 +38,15 @@ type OutboxConfig struct {
 	PublishEnabled  bool          `envconfig:"OUTBOX_PUBLISH_ENABLED"  default:"true"`
 	PublishInterval time.Duration `envconfig:"OUTBOX_PUBLISH_INTERVAL" default:"2s"`
 	BatchSize       int           `envconfig:"OUTBOX_BATCH_SIZE"       default:"50"`
+}
+
+// RealtimeConfig holds runtime controls for SSE and projection event fanout.
+type RealtimeConfig struct {
+	Enabled             bool          `envconfig:"REALTIME_ENABLED"                 default:"true"`
+	StreamPath          string        `envconfig:"REALTIME_STREAM_PATH"             default:"/events/stream"`
+	HeartbeatInterval   time.Duration `envconfig:"REALTIME_HEARTBEAT_INTERVAL"      default:"15s"`
+	SubscriberBuffer    int           `envconfig:"REALTIME_SUBSCRIBER_BUFFER"       default:"32"`
+	ConsumerGroupPrefix string        `envconfig:"REALTIME_CONSUMER_GROUP_PREFIX"   default:"aion-api-realtime"`
 }
 
 // CacheConfig holds Redis cache configuration.

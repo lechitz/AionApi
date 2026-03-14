@@ -21,6 +21,7 @@ make seed-api-caller
 make seed-helper
 go run ./hack/tools/graph-projection-export --user-id 999
 make record-projection-smoke
+make realtime-record-smoke
 make record-projection-page-smoke
 make ingest-event-smoke
 make outbox-diagnose
@@ -34,6 +35,7 @@ bash hack/dev/test-chat.sh
 | Tool | Make target | Purpose |
 | --- | --- | --- |
 | `record-projection-smoke` | `make record-projection-smoke` | Validate `record -> outbox -> kafka -> projection` end-to-end |
+| `realtime-record-smoke` | `make realtime-record-smoke` | Validate `record_projection_changed` SSE delivery after the derived row is materialized |
 | `record-projection-page-smoke` | `make record-projection-page-smoke` | Validate cursor pagination over `recordProjections` derived read model |
 | `ingest-event-smoke` | `make ingest-event-smoke` | Validate `aion-ingest -> kafka` envelope publication |
 | `outbox-diagnose` | `make outbox-diagnose` | Inspect outbox backlog, oldest pending age, and sample pending/failed rows |

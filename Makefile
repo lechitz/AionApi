@@ -221,6 +221,7 @@ help:
 	@echo "     mcp-smoke                →  Run MCP smoke test through aion-chat against the current local stack"
 	@echo "     mcp-smoke-readonly       →  Run MCP smoke test in read-only mode"
 	@echo "     record-projection-smoke  →  Run cross-repo smoke for record -> outbox -> kafka -> projection"
+	@echo "     realtime-record-smoke    →  Run SSE smoke for record projection readiness notifications"
 	@echo "     record-projection-page-smoke  →  Run cursor pagination smoke for derived record projections"
 	@echo "     ingest-event-smoke       →  Run cross-repo smoke for aion-ingest -> kafka envelope publication"
 	@echo "     outbox-diagnose          →  Inspect outbox backlog and sample pending/failed rows"

@@ -5,7 +5,7 @@
 GO_CACHE := $(CURDIR)/.cache/go-build
 MCP_SMOKE_USER_ID ?= 999
 
-.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks mcp-smoke mcp-smoke-readonly record-projection-smoke record-projection-page-smoke ingest-event-smoke outbox-diagnose event-backbone-gate event-backbone-gate-preflight
+.PHONY: test test-cover test-cover-detail test-html-report test-ci test-clean test-checks mcp-smoke mcp-smoke-readonly record-projection-smoke realtime-record-smoke record-projection-page-smoke ingest-event-smoke outbox-diagnose event-backbone-gate event-backbone-gate-preflight
 
 # Execute unit tests
 test:
@@ -139,6 +139,11 @@ record-projection-smoke:
 	@mkdir -p $(GO_CACHE)
 	GOCACHE=$(GO_CACHE) go run ./hack/tools/record-projection-smoke
 
+realtime-record-smoke:
+	@echo "Running record projection realtime SSE smoke..."
+	@mkdir -p $(GO_CACHE)
+	GOCACHE=$(GO_CACHE) go run ./hack/tools/realtime-record-smoke
+
 record-projection-page-smoke:
 	@echo "Running derived record projection pagination smoke..."
 	@mkdir -p $(GO_CACHE)
@@ -163,6 +168,7 @@ event-backbone-gate:
 	@$(MAKE) event-backbone-gate-preflight
 	@$(MAKE) outbox-diagnose
 	@$(MAKE) record-projection-smoke
+	@$(MAKE) realtime-record-smoke
 	@$(MAKE) record-projection-page-smoke
 	@$(MAKE) ingest-event-smoke
 	@echo "Running dashboard records smoke..."

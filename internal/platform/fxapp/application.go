@@ -25,6 +25,7 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/httpclient"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	realtime "github.com/lechitz/AionApi/internal/realtime/core/usecase"
 	recordCache "github.com/lechitz/AionApi/internal/record/adapter/secondary/cache"
 	recordRepo "github.com/lechitz/AionApi/internal/record/adapter/secondary/db/repository"
 	record "github.com/lechitz/AionApi/internal/record/core/usecase"
@@ -94,6 +95,7 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 	chatHTTPClient := chatClient.New(deps.HTTPClient, deps.Cfg.AionChat.BaseURL, deps.Log)
 	auditService := audit.NewService(auditActionEventRepository, deps.Log)
 	outboxService := eventOutbox.NewService(eventOutboxRepository, deps.Log)
+	realtimeService := realtime.NewService(deps.Log, deps.Cfg.Realtime.SubscriberBuffer)
 
 	authService := auth.NewService(adminRepository, authCacheStore, userRepository, userCacheStore, authCacheStore, tokenProvider, hasherProvider, deps.Log)
 	userService := user.NewService(userRepository, userRepository, userCacheStore, avatarStorage, authCacheStore, tokenProvider, hasherProvider, deps.Log)
@@ -116,6 +118,7 @@ func ProvideAppDependencies(deps appDepsParams) *AppDependencies {
 		ChatService:     chatService,
 		AuditService:    auditService,
 		OutboxService:   outboxService,
+		RealtimeService: realtimeService,
 		Logger:          deps.Log,
 	}
 }
