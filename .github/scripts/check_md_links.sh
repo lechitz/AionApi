@@ -47,7 +47,20 @@ check_file() {
       target="$dir/$link"
     fi
 
-    if [[ ! -e "$target" ]]; then
+    local resolved
+    if ! resolved="$(realpath -m "$target" 2>/dev/null)"; then
+      echo "BROKEN: $file -> $link"
+      fail=1
+      continue
+    fi
+
+    if [[ "$resolved" != "$ROOT_DIR" && "$resolved" != "$ROOT_DIR/"* ]]; then
+      echo "OUTSIDE-REPO: $file -> $link"
+      fail=1
+      continue
+    fi
+
+    if [[ ! -e "$resolved" ]]; then
       echo "BROKEN: $file -> $link"
       fail=1
     fi

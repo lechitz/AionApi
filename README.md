@@ -124,7 +124,7 @@ Related references:
 - [`contracts/graphql/queries/README.md`](./contracts/graphql/queries/README.md)
 - [`docs/graphql/README.md`](./docs/graphql/README.md)
 - [`internal/record/README.md`](./internal/record/README.md)
-- [`/Aion/notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md`](../notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md)
+- `notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md` lives in the wider Aion workspace and is not included in this repository checkout.
 
 <!-- docs-index:start -->
 ## Documentation Index
