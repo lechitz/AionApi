@@ -93,7 +93,7 @@ func TestSetRefreshCookie_AndClearRefreshCookie(t *testing.T) {
 
 func TestExtractTokens(t *testing.T) {
 	t.Run("refresh success", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 		req.AddCookie(&http.Cookie{Name: "refresh_token", Value: "abc"})
 		got, err := cookies.ExtractRefreshToken(req)
 		if err != nil || got != "abc" {
@@ -102,7 +102,7 @@ func TestExtractTokens(t *testing.T) {
 	})
 
 	t.Run("refresh missing", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 		got, err := cookies.ExtractRefreshToken(req)
 		if err == nil || got != "" {
 			t.Fatalf("expected missing refresh token error")
@@ -110,7 +110,7 @@ func TestExtractTokens(t *testing.T) {
 	})
 
 	t.Run("auth success", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 		req.AddCookie(&http.Cookie{Name: commonkeys.AuthTokenCookieName, Value: "jwt"})
 		got, err := cookies.ExtractAuthToken(req)
 		if err != nil || got != "jwt" {
@@ -119,7 +119,7 @@ func TestExtractTokens(t *testing.T) {
 	})
 
 	t.Run("auth empty", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 		req.AddCookie(&http.Cookie{Name: commonkeys.AuthTokenCookieName, Value: ""})
 		got, err := cookies.ExtractAuthToken(req)
 		if err != nil || got != "" {
