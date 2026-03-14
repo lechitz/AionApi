@@ -78,7 +78,8 @@ func TestListEvents_Success(t *testing.T) {
 		},
 	)
 
-	req := httptest.NewRequest(
+	req := httptest.NewRequestWithContext(
+		t.Context(),
 		http.MethodGet,
 		"/audit/events?trace_id=trace-1&draft_id=draft-1&status=failed&status=blocked&limit=20&offset=5&from_utc="+from+"&to_utc="+to,
 		nil,
@@ -102,7 +103,7 @@ func TestListEvents_Success(t *testing.T) {
 func TestListEvents_InvalidLimit(t *testing.T) {
 	h, _ := newAuditHandler(t)
 
-	req := httptest.NewRequest(http.MethodGet, "/audit/events?limit=abc", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/audit/events?limit=abc", nil)
 	req = req.WithContext(context.WithValue(req.Context(), ctxkeys.UserID, uint64(7)))
 	rec := httptest.NewRecorder()
 
@@ -113,7 +114,7 @@ func TestListEvents_InvalidLimit(t *testing.T) {
 func TestListEvents_UserIDParamNotAllowed(t *testing.T) {
 	h, _ := newAuditHandler(t)
 
-	req := httptest.NewRequest(http.MethodGet, "/audit/events?user_id=999", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/audit/events?user_id=999", nil)
 	req = req.WithContext(context.WithValue(req.Context(), ctxkeys.UserID, uint64(7)))
 	rec := httptest.NewRecorder()
 
@@ -134,7 +135,7 @@ func TestListEvents_AdminCanQueryOtherUser(t *testing.T) {
 
 	ctx := context.WithValue(t.Context(), ctxkeys.UserID, uint64(7))
 	ctx = context.WithValue(ctx, ctxkeys.Claims, map[string]any{"roles": []any{"admin"}})
-	req := httptest.NewRequest(http.MethodGet, "/audit/events?user_id=999", nil).WithContext(ctx)
+	req := httptest.NewRequestWithContext(ctx, http.MethodGet, "/audit/events?user_id=999", nil)
 	rec := httptest.NewRecorder()
 
 	h.ListEvents(rec, req)
@@ -145,7 +146,7 @@ func TestListEvents_ServiceError(t *testing.T) {
 	h, svc := newAuditHandler(t)
 	svc.EXPECT().ListEvents(gomock.Any(), gomock.Any()).Return(nil, errors.New("db down"))
 
-	req := httptest.NewRequest(http.MethodGet, "/audit/events", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/audit/events", nil)
 	req = req.WithContext(context.WithValue(req.Context(), ctxkeys.UserID, uint64(7)))
 	rec := httptest.NewRecorder()
 
