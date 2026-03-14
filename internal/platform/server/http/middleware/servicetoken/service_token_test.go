@@ -36,7 +36,7 @@ func TestServiceTokenMiddleware_NoHeader_PassesThrough(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 
@@ -54,7 +54,7 @@ func TestServiceTokenMiddleware_HeaderButNoConfiguredKey_ReturnsUnauthorized(t *
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	req.Header.Set(servicetoken.HeaderServiceKey, "abc")
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
@@ -70,7 +70,7 @@ func TestServiceTokenMiddleware_InvalidKey_ReturnsUnauthorized(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	req.Header.Set(servicetoken.HeaderServiceKey, "wrong")
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
@@ -91,7 +91,7 @@ func TestServiceTokenMiddleware_ValidKey_SetsServiceAccount(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/path", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/path", nil)
 	req.Header.Set(servicetoken.HeaderServiceKey, "expected")
 	req.Header.Set(servicetoken.HeaderServiceUser, "123")
 	w := httptest.NewRecorder()
@@ -117,7 +117,7 @@ func TestServiceTokenMiddleware_ValidKeyInvalidUserID_StillPasses(t *testing.T) 
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/path", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/path", nil)
 	req.Header.Set(servicetoken.HeaderServiceKey, "expected")
 	req.Header.Set(servicetoken.HeaderServiceUser, "invalid-id")
 	w := httptest.NewRecorder()

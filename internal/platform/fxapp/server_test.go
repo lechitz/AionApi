@@ -69,7 +69,7 @@ func TestProvideHTTPHandlerAndServer(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, handler)
 
-	req := httptest.NewRequest(http.MethodGet, "/aion/health", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/aion/health", nil)
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 	require.Equal(t, http.StatusOK, rec.Code)

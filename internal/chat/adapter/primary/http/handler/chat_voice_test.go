@@ -51,7 +51,7 @@ func newVoiceRequest(t *testing.T, audio []byte, language string) *http.Request 
 
 	require.NoError(t, writer.Close())
 
-	req := httptest.NewRequest(http.MethodPost, "/chat/audio", &buf)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/chat/audio", &buf)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	return req
 }
@@ -61,6 +61,7 @@ func TestChatVoice_Success(t *testing.T) {
 		if r.URL.Path != "/internal/process-audio" {
 			t.Errorf("unexpected path: %s", r.URL.Path)
 		}
+		r.Body = http.MaxBytesReader(w, r.Body, handler.MaxAudioSize)
 		if err := r.ParseMultipartForm(handler.MaxAudioSize); err != nil {
 			t.Errorf("unexpected multipart error: %v", err)
 		}

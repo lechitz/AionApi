@@ -36,7 +36,7 @@ func TestChiRouter_BasicVerbsAndServeHTTP(t *testing.T) {
 		{http.MethodDelete, "/d", http.StatusNoContent},
 	}
 	for _, tc := range cases {
-		req := httptest.NewRequest(tc.method, tc.path, nil)
+		req := httptest.NewRequestWithContext(t.Context(), tc.method, tc.path, nil)
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
 		if w.Code != tc.want {
@@ -58,7 +58,7 @@ func TestChiRouter_UseAppliesMiddleware(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/x", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/x", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
@@ -87,14 +87,14 @@ func TestChiRouter_GroupAndGroupWith(t *testing.T) {
 		}))
 	})
 
-	req := httptest.NewRequest(http.MethodGet, "/api/health", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/api/health", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected grouped route status 200, got %d", w.Code)
 	}
 
-	req = httptest.NewRequest(http.MethodGet, "/scoped", nil)
+	req = httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/scoped", nil)
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
@@ -120,14 +120,14 @@ func TestChiRouter_MountAndCustom404405(t *testing.T) {
 	}))
 	r.SetError(func(http.ResponseWriter, *http.Request, error) {})
 
-	req := httptest.NewRequest(http.MethodGet, "/m/anything", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/m/anything", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected mounted route status 200, got %d", w.Code)
 	}
 
-	req = httptest.NewRequest(http.MethodGet, "/not-found", nil)
+	req = httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/not-found", nil)
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusTeapot {
@@ -137,7 +137,7 @@ func TestChiRouter_MountAndCustom404405(t *testing.T) {
 	r.POST("/only-post", http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
-	req = httptest.NewRequest(http.MethodGet, "/only-post", nil)
+	req = httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/only-post", nil)
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusConflict {

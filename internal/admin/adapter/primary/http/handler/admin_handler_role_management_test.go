@@ -19,8 +19,8 @@ import (
 
 func makeRoleReq(t *testing.T, url string, withActor bool, claims map[string]any) *http.Request {
 	t.Helper()
-	req := httptest.NewRequest(http.MethodPut, url, nil)
-	ctx := t.Context()
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, url, nil)
+	ctx := req.Context()
 	if withActor {
 		ctx = context.WithValue(ctx, ctxkeys.UserID, uint64(100))
 	}

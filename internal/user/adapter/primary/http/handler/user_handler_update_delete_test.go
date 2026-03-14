@@ -21,7 +21,7 @@ import (
 func TestUpdateUserHandler(t *testing.T) {
 	t.Run("missing context", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPut, "/user", strings.NewReader(`{"name":"New"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/user", strings.NewReader(`{"name":"New"}`))
 		rec := httptest.NewRecorder()
 		h.UpdateUser(rec, req)
 		require.Equal(t, http.StatusUnauthorized, rec.Code)
@@ -29,7 +29,7 @@ func TestUpdateUserHandler(t *testing.T) {
 
 	t.Run("invalid body", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPut, "/user", strings.NewReader(`{"name":`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/user", strings.NewReader(`{"name":`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(10)))
 		rec := httptest.NewRecorder()
 		h.UpdateUser(rec, req)
@@ -38,7 +38,7 @@ func TestUpdateUserHandler(t *testing.T) {
 
 	t.Run("no fields", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPut, "/user", strings.NewReader(`{}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/user", strings.NewReader(`{}`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(10)))
 		rec := httptest.NewRecorder()
 		h.UpdateUser(rec, req)
@@ -50,7 +50,7 @@ func TestUpdateUserHandler(t *testing.T) {
 			return userdomain.User{}, errors.New("boom")
 		}}
 		h := handler.New(svc, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPut, "/user", strings.NewReader(`{"name":"New"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/user", strings.NewReader(`{"name":"New"}`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(10)))
 		rec := httptest.NewRecorder()
 		h.UpdateUser(rec, req)
@@ -59,7 +59,7 @@ func TestUpdateUserHandler(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPut, "/user", strings.NewReader(`{"name":"New Name"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/user", strings.NewReader(`{"name":"New Name"}`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(10)))
 		rec := httptest.NewRecorder()
 		h.UpdateUser(rec, req)
@@ -71,7 +71,7 @@ func TestUpdateUserHandler(t *testing.T) {
 func TestUpdatePasswordHandler(t *testing.T) {
 	t.Run("missing required fields", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPut, "/user/password", strings.NewReader(`{"password":"old"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/user/password", strings.NewReader(`{"password":"old"}`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(10)))
 		rec := httptest.NewRecorder()
 		h.UpdateUserPassword(rec, req)
@@ -80,7 +80,7 @@ func TestUpdatePasswordHandler(t *testing.T) {
 
 	t.Run("missing context", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPut, "/user/password", strings.NewReader(`{"password":"old","new_password":"new"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/user/password", strings.NewReader(`{"password":"old","new_password":"new"}`))
 		rec := httptest.NewRecorder()
 		h.UpdateUserPassword(rec, req)
 		require.Equal(t, http.StatusUnauthorized, rec.Code)
@@ -91,7 +91,7 @@ func TestUpdatePasswordHandler(t *testing.T) {
 			return "", sharederrors.ErrDomainConflict
 		}}
 		h := handler.New(svc, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPut, "/user/password", strings.NewReader(`{"password":"old","new_password":"new"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/user/password", strings.NewReader(`{"password":"old","new_password":"new"}`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(10)))
 		rec := httptest.NewRecorder()
 		h.UpdateUserPassword(rec, req)
@@ -101,7 +101,7 @@ func TestUpdatePasswordHandler(t *testing.T) {
 	t.Run("success sets cookie", func(t *testing.T) {
 		cfg := &config.Config{Cookie: config.CookieConfig{Path: "/", Domain: "localhost", SameSite: "Lax"}}
 		h := handler.New(&mockUserService{}, cfg, mockLogger{})
-		req := httptest.NewRequest(http.MethodPut, "/user/password", strings.NewReader(`{"password":"old","new_password":"new"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/user/password", strings.NewReader(`{"password":"old","new_password":"new"}`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(10)))
 		rec := httptest.NewRecorder()
 		h.UpdateUserPassword(rec, req)
@@ -114,7 +114,7 @@ func TestUpdatePasswordHandler(t *testing.T) {
 func TestSoftDeleteUserHandler(t *testing.T) {
 	t.Run("missing context", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodDelete, "/user", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/user", nil)
 		rec := httptest.NewRecorder()
 		h.SoftDeleteUser(rec, req)
 		require.Equal(t, http.StatusUnauthorized, rec.Code)
@@ -125,7 +125,7 @@ func TestSoftDeleteUserHandler(t *testing.T) {
 			return errors.New("boom")
 		}}
 		h := handler.New(svc, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodDelete, "/user", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/user", nil)
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(10)))
 		rec := httptest.NewRecorder()
 		h.SoftDeleteUser(rec, req)
@@ -135,7 +135,7 @@ func TestSoftDeleteUserHandler(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		cfg := &config.Config{Cookie: config.CookieConfig{Path: "/", Domain: "localhost", SameSite: "Lax"}}
 		h := handler.New(&mockUserService{}, cfg, mockLogger{})
-		req := httptest.NewRequest(http.MethodDelete, "/user", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/user", nil)
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(10)))
 		rec := httptest.NewRecorder()
 		h.SoftDeleteUser(rec, req)

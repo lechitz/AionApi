@@ -185,9 +185,9 @@ func TestGetLatestChatHistory_LargeLimit(t *testing.T) {
 
 	// Create 100 history items
 	expectedHistories := make([]domain.ChatHistory, 100)
-	for i := range 100 {
+	for i, chatID := 0, uint64(1); i < len(expectedHistories); i, chatID = i+1, chatID+1 {
 		expectedHistories[i] = domain.ChatHistory{
-			ChatID:     uint64(i + 1), //nolint:gosec // Test data, no overflow risk with i < 100
+			ChatID:     chatID,
 			UserID:     userID,
 			Message:    "Message " + string(rune(i)),
 			Response:   "Response " + string(rune(i)),

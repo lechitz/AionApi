@@ -21,7 +21,7 @@ func TestRequestIDMiddleware_GeneratesAndInjectsWhenMissing(t *testing.T) {
 		ctxReqID = val
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 
@@ -47,7 +47,7 @@ func TestRequestIDMiddleware_PreservesValidUUIDHeader(t *testing.T) {
 		ctxReqID = val
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	req.Header.Set(commonkeys.XRequestID, valid)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
@@ -63,7 +63,7 @@ func TestRequestIDMiddleware_ReplacesInvalidOrTooLongHeader(t *testing.T) {
 	tooLongInvalid := strings.Repeat("x", 129)
 
 	h := mw(http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {}))
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	req.Header.Set(commonkeys.XRequestID, tooLongInvalid)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)

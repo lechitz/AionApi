@@ -150,7 +150,7 @@ func TestChatText_Success(t *testing.T) {
 		},
 	}, &config.Config{}, mockLogger{})
 
-	req := httptest.NewRequest(http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello","context":{"k":"v"}}`))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello","context":{"k":"v"}}`))
 	req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(7)))
 	rec := httptest.NewRecorder()
 
@@ -168,14 +168,14 @@ func TestChatText_Errors(t *testing.T) {
 	}}, &config.Config{}, mockLogger{})
 
 	t.Run("missing user id", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello"}`))
 		rec := httptest.NewRecorder()
 		h.ChatText(rec, req)
 		require.Equal(t, http.StatusUnauthorized, rec.Code)
 	})
 
 	t.Run("invalid user id type", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello"}`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, "7"))
 		rec := httptest.NewRecorder()
 		h.ChatText(rec, req)
@@ -183,7 +183,7 @@ func TestChatText_Errors(t *testing.T) {
 	})
 
 	t.Run("invalid json", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/chat/text", strings.NewReader(`{"message":`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/chat/text", strings.NewReader(`{"message":`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(7)))
 		rec := httptest.NewRecorder()
 		h.ChatText(rec, req)
@@ -191,7 +191,7 @@ func TestChatText_Errors(t *testing.T) {
 	})
 
 	t.Run("validation error", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/chat/text", strings.NewReader(`{"message":"   "}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/chat/text", strings.NewReader(`{"message":"   "}`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(7)))
 		rec := httptest.NewRecorder()
 		h.ChatText(rec, req)
@@ -199,7 +199,7 @@ func TestChatText_Errors(t *testing.T) {
 	})
 
 	t.Run("service error", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello"}`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(7)))
 		rec := httptest.NewRecorder()
 		h.ChatText(rec, req)
@@ -213,7 +213,7 @@ func TestChatText_Errors(t *testing.T) {
 			},
 		}, &config.Config{}, mockLogger{})
 
-		req := httptest.NewRequest(http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello"}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/chat/text", strings.NewReader(`{"message":"hello"}`))
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(7)))
 		rec := httptest.NewRecorder()
 
@@ -233,7 +233,8 @@ func TestChatText_LogsUIActionMetadataWithConsent(t *testing.T) {
 		},
 	}, &config.Config{}, logger)
 
-	req := httptest.NewRequest(
+	req := httptest.NewRequestWithContext(
+		t.Context(),
 		http.MethodPost,
 		"/chat/text",
 		strings.NewReader(

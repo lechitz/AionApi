@@ -71,7 +71,7 @@ func TestRefresh_CookieMissing(t *testing.T) {
 
 	h := handlerpkg.New(svc, cfg, log)
 
-	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/", nil)
 	w := httptest.NewRecorder()
 
 	h.Refresh(w, req)
@@ -133,7 +133,7 @@ func TestRefresh_CookiePresent_Success(t *testing.T) {
 	h := handlerpkg.New(svc, cfg, log)
 
 	// build request with cookie
-	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/", nil)
 	token := "r-token-xyz"
 	req.AddCookie(&http.Cookie{Name: "refresh_token", Value: token})
 	w := httptest.NewRecorder()
@@ -180,7 +180,7 @@ func TestRefresh_ServiceError(t *testing.T) {
 
 	h := handlerpkg.New(svc, cfg, log)
 
-	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/", nil)
 	token := "some"
 	req.AddCookie(&http.Cookie{Name: "refresh_token", Value: token})
 	w := httptest.NewRecorder()

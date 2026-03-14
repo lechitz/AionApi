@@ -43,7 +43,7 @@ func TestRecoveryMiddleware_RecoversPanicAndReturns500(t *testing.T) {
 		panic("boom")
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/panic", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/panic", nil)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 
@@ -70,7 +70,7 @@ func TestRecoveryMiddleware_PassesThroughWithoutPanic(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/ok", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/ok", nil)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 

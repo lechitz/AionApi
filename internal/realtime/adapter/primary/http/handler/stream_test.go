@@ -23,7 +23,7 @@ func TestStreamWritesSSEEvent(t *testing.T) {
 		},
 	}, noopRealtimeHandlerLogger{})
 
-	req := httptest.NewRequest(http.MethodGet, "/events/stream", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/events/stream", nil)
 	ctx, cancel := context.WithCancel(req.Context())
 	req = req.WithContext(context.WithValue(ctx, ctxkeys.UserID, uint64(14)))
 	rec := httptest.NewRecorder()

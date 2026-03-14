@@ -121,6 +121,7 @@ func (h *Handler) parseVoiceRequest(
 	span trace.Span,
 ) (multipart.File, *multipart.FileHeader, string, bool) {
 	span.AddEvent(EventParseMultipartForm)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxAudioSize)
 	if err := r.ParseMultipartForm(MaxAudioSize); err != nil {
 		if isMultipartTooLargeError(err) {
 			span.SetStatus(codes.Error, ErrAudioFileTooLarge)
@@ -156,7 +157,13 @@ func (h *Handler) parseVoiceRequest(
 		return nil, nil, "", false
 	}
 
-	language := r.FormValue(FormFieldLanguage)
+	language := ""
+	if r.MultipartForm != nil {
+		languageValues := r.MultipartForm.Value[FormFieldLanguage]
+		if len(languageValues) > 0 {
+			language = languageValues[0]
+		}
+	}
 	return file, header, language, true
 }
 

@@ -18,7 +18,8 @@ import (
 func TestCreateUserHandler(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(
+		req := httptest.NewRequestWithContext(
+			t.Context(),
 			http.MethodPost,
 			"/user/create",
 			strings.NewReader(`{"name":"John Doe","username":"john","email":"john@example.com","password":"12345678"}`),
@@ -35,7 +36,7 @@ func TestCreateUserHandler(t *testing.T) {
 
 	t.Run("decode error", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPost, "/user/create", strings.NewReader(`{"name":`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/user/create", strings.NewReader(`{"name":`))
 		rec := httptest.NewRecorder()
 
 		h.Create(rec, req)
@@ -45,7 +46,12 @@ func TestCreateUserHandler(t *testing.T) {
 
 	t.Run("validation error", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPost, "/user/create", strings.NewReader(`{"name":"John","username":"john","email":"john@example.com","password":"123"}`))
+		req := httptest.NewRequestWithContext(
+			t.Context(),
+			http.MethodPost,
+			"/user/create",
+			strings.NewReader(`{"name":"John","username":"john","email":"john@example.com","password":"123"}`),
+		)
 		rec := httptest.NewRecorder()
 
 		h.Create(rec, req)
@@ -58,7 +64,8 @@ func TestCreateUserHandler(t *testing.T) {
 			return userdomain.User{}, sharederrors.ErrDomainConflict
 		}}
 		h := handler.New(svc, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(
+		req := httptest.NewRequestWithContext(
+			t.Context(),
 			http.MethodPost,
 			"/user/create",
 			strings.NewReader(`{"name":"John Doe","username":"john","email":"john@example.com","password":"12345678"}`),
@@ -72,7 +79,7 @@ func TestCreateUserHandler(t *testing.T) {
 
 	t.Run("large body", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodPost, "/user/create", strings.NewReader(strings.Repeat("a", (1<<20)+8)))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/user/create", strings.NewReader(strings.Repeat("a", (1<<20)+8)))
 		rec := httptest.NewRecorder()
 
 		h.Create(rec, req)
