@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------
 # Lint Workflow for AionAPI (Go)
-# Purpose: Run golangci-lint (via reviewdog), fieldalignment, and go vet.
+# Purpose: Run golangci-lint, fieldalignment, and go vet.
 # Extras: Ensures Swagger artifacts are up-to-date before linting.
 # Trigger: Every PR targeting 'main'.
 # NOTE: Your .golangci.yml should set `issues.exclude-generated: true`
@@ -20,8 +20,6 @@ env:
 
 permissions:
   contents: read
-  pull-requests: write
-  checks: write
 
 jobs:
   lint:
@@ -92,16 +90,9 @@ jobs:
       - name: Check GraphQL contracts drift
         run: make graphql.check-dirty
 
-      # 8) Run golangci-lint via reviewdog (PR review annotations)
-      - name: Run golangci-lint via reviewdog
-        uses: reviewdog/action-golangci-lint@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          golangci_lint_version: v2.5.0
-          golangci_lint_flags: --config=.golangci.yml ./...
-          level: warning
-          reporter: github-pr-review
-          fail_level: error
+      # 8) Run golangci-lint directly to avoid relying on blocked third-party actions
+      - name: Run golangci-lint
+        run: golangci-lint run --config=.golangci.yml ./...
 
       # 9) Install fieldalignment analyzer
       - name: Install fieldalignment
