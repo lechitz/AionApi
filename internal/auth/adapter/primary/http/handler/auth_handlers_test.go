@@ -197,7 +197,7 @@ func TestLogout_ServiceError(t *testing.T) {
 		},
 	})
 
-	req := httptest.NewRequest(http.MethodPost, "/auth/logout", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/auth/logout", nil)
 	ctx := context.WithValue(req.Context(), ctxkeys.UserID, uint64(99))
 	req = req.WithContext(ctx)
 	w := httptest.NewRecorder()
@@ -219,7 +219,7 @@ func TestLogout_Success(t *testing.T) {
 		},
 	})
 
-	req := httptest.NewRequest(http.MethodPost, "/auth/logout", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/auth/logout", nil)
 	ctx := context.WithValue(req.Context(), ctxkeys.UserID, uint64(77))
 	ctx = context.WithValue(ctx, ctxkeys.Token, "abcdefghij12345token")
 	req = req.WithContext(ctx)
@@ -250,7 +250,7 @@ func TestLogout_Success(t *testing.T) {
 func TestSession_MissingAuthCookie(t *testing.T) {
 	h := newTestHandler(t, &authServiceStub{})
 
-	req := httptest.NewRequest(http.MethodGet, "/auth/session", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/auth/session", nil)
 	w := httptest.NewRecorder()
 
 	h.Session(w, req)
@@ -267,7 +267,7 @@ func TestSession_ValidateError(t *testing.T) {
 		},
 	})
 
-	req := httptest.NewRequest(http.MethodGet, "/auth/session", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/auth/session", nil)
 	req.AddCookie(&http.Cookie{Name: commonkeys.AuthTokenCookieName, Value: "access-token"})
 	w := httptest.NewRecorder()
 
@@ -295,7 +295,7 @@ func TestSession_SuccessWithClaimsNormalization(t *testing.T) {
 		},
 	})
 
-	req := httptest.NewRequest(http.MethodGet, "/auth/session", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/auth/session", nil)
 	req.AddCookie(&http.Cookie{Name: commonkeys.AuthTokenCookieName, Value: "access-token"})
 	w := httptest.NewRecorder()
 
@@ -345,7 +345,7 @@ func TestSession_SuccessWithBearerToken(t *testing.T) {
 		},
 	})
 
-	req := httptest.NewRequest(http.MethodGet, "/auth/session", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/auth/session", nil)
 	req.Header.Set("Authorization", "Bearer bearer-token")
 	w := httptest.NewRecorder()
 
@@ -359,7 +359,7 @@ func TestSession_SuccessWithBearerToken(t *testing.T) {
 func TestLogin_ValidationRequiredFields(t *testing.T) {
 	h := newTestHandler(t, &authServiceStub{})
 
-	req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(`{"username":"   ","password":"   "}`))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/auth/login", strings.NewReader(`{"username":"   ","password":"   "}`))
 	w := httptest.NewRecorder()
 
 	h.Login(w, req)
@@ -424,7 +424,7 @@ func TestSession_ClaimVariant_InvalidExpStringReturnsNil(t *testing.T) {
 func TestSession_EmptyAccessTokenCookie(t *testing.T) {
 	h := newTestHandler(t, &authServiceStub{})
 
-	req := httptest.NewRequest(http.MethodGet, "/auth/session", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/auth/session", nil)
 	req.AddCookie(&http.Cookie{Name: commonkeys.AuthTokenCookieName, Value: ""})
 	w := httptest.NewRecorder()
 
@@ -451,7 +451,7 @@ func runSessionWithClaims(t *testing.T, claims map[string]any) struct {
 		},
 	})
 
-	req := httptest.NewRequest(http.MethodGet, "/auth/session", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/auth/session", nil)
 	req.AddCookie(&http.Cookie{Name: commonkeys.AuthTokenCookieName, Value: "access-token"})
 	w := httptest.NewRecorder()
 	h.Session(w, req)
