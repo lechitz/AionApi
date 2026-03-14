@@ -1,13 +1,15 @@
-# ============================================================Ajuste
-#                		   TOOLING
 # ============================================================
+#                               TOOLING
+# ============================================================
+
+GOLANGCI_LINT_VERSION ?= v2.8.0
 
 tools-install:
 	@echo "Installing development tools..."
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/segmentio/golines@latest
 	go install golang.org/x/tools/cmd/goimports@latest
-	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 	go install golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest
 	go install gotest.tools/gotestsum@latest
 	go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
