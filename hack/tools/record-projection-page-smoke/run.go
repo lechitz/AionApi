@@ -52,11 +52,17 @@ type smokeRecord struct {
 	eventTime   string
 }
 
+const smokeDescriptionPrefix = "codex page smoke"
+
 func run(ctx context.Context, cfg config) error {
 	client := &http.Client{Timeout: cfg.timeout}
 
 	token, err := login(ctx, client, cfg)
 	if err != nil {
+		return err
+	}
+
+	if err := cleanupExistingSmokeRecords(ctx, client, cfg, token); err != nil {
 		return err
 	}
 
@@ -117,6 +123,32 @@ func run(ctx context.Context, cfg config) error {
 	return nil
 }
 
+func cleanupExistingSmokeRecords(ctx context.Context, client *http.Client, cfg config, token string) error {
+	page, err := fetchPage(ctx, client, cfg.host, token, 50, nil)
+	if err != nil {
+		return err
+	}
+
+	stale := make([]smokeRecord, 0)
+	for _, item := range page {
+		if item.Description == nil || !strings.HasPrefix(*item.Description, smokeDescriptionPrefix) {
+			continue
+		}
+		stale = append(stale, smokeRecord{
+			id:          item.RecordID,
+			description: *item.Description,
+			eventTime:   item.EventTimeUTC,
+		})
+	}
+
+	if len(stale) == 0 {
+		return nil
+	}
+
+	cleanupRecords(ctx, client, cfg, token, stale)
+	return waitUntilRemoved(ctx, client, cfg, token, stale)
+}
+
 func login(ctx context.Context, client *http.Client, cfg config) (string, error) {
 	body, err := json.Marshal(map[string]string{
 		"username": cfg.username,
@@ -169,6 +201,29 @@ func cleanupRecords(ctx context.Context, client *http.Client, cfg config, token 
 	}
 }
 
+func waitUntilRemoved(ctx context.Context, client *http.Client, cfg config, token string, records []smokeRecord) error {
+	deadline := time.Now().Add(cfg.timeout)
+	for time.Now().Before(deadline) {
+		allGone := true
+		for _, item := range records {
+			projection, err := fetchProjectionByID(ctx, client, cfg.host, token, item.id)
+			if err != nil {
+				allGone = false
+				break
+			}
+			if projection != nil {
+				allGone = false
+				break
+			}
+		}
+		if allGone {
+			return nil
+		}
+		time.Sleep(cfg.pollInterval)
+	}
+	return errors.New("timed out waiting stale page smoke projections to be removed")
+}
+
 func deleteRecord(ctx context.Context, client *http.Client, cfg config, token string, recordID string) error {
 	query := fmt.Sprintf(`mutation { softDeleteRecord(input: { id: %q }) }`, recordID)
 	var deleted bool
@@ -178,8 +233,7 @@ func deleteRecord(ctx context.Context, client *http.Client, cfg config, token st
 func waitUntilProjected(ctx context.Context, client *http.Client, cfg config, token string, records []smokeRecord) error {
 	deadline := time.Now().Add(cfg.timeout)
 	for time.Now().Before(deadline) {
-		page, err := fetchPage(ctx, client, cfg.host, token, len(records), nil)
-		if err == nil && containsAllProjected(page, records) {
+		if projected, err := allProjectedByID(ctx, client, cfg.host, token, records); err == nil && projected {
 			return nil
 		}
 		time.Sleep(cfg.pollInterval)
@@ -187,26 +241,36 @@ func waitUntilProjected(ctx context.Context, client *http.Client, cfg config, to
 	return errors.New("timed out waiting for derived projections to contain all smoke records")
 }
 
-func containsAllProjected(page []pageProjectionResult, expected []smokeRecord) bool {
-	byID := make(map[string]pageProjectionResult, len(page))
-	for _, item := range page {
-		byID[item.RecordID] = item
-	}
-
+func allProjectedByID(ctx context.Context, client *http.Client, host string, token string, expected []smokeRecord) (bool, error) {
 	for _, item := range expected {
-		projection, ok := byID[item.id]
-		if !ok {
-			return false
+		projection, err := fetchProjectionByID(ctx, client, host, token, item.id)
+		if err != nil {
+			return false, err
+		}
+		if projection == nil {
+			return false, nil
 		}
 		if projection.Description == nil || *projection.Description != item.description {
-			return false
+			return false, nil
 		}
 		if projection.LastEventType != "record.created" {
-			return false
+			return false, nil
 		}
 	}
 
-	return true
+	return true, nil
+}
+
+func fetchProjectionByID(ctx context.Context, client *http.Client, host string, token string, recordID string) (*pageProjectionResult, error) {
+	query := fmt.Sprintf(`query { recordProjectionById(id: %q) { recordId description eventTimeUTC lastEventType } }`, recordID)
+	var result *pageProjectionResult
+	if err := graphql(ctx, client, host, token, query, "recordProjectionById", &result); err != nil {
+		if strings.Contains(err.Error(), "record not found") {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return result, nil
 }
 
 func fetchPage(ctx context.Context, client *http.Client, host string, token string, limit int, cursor *pageCursor) ([]pageProjectionResult, error) {
