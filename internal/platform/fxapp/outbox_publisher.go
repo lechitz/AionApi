@@ -83,6 +83,7 @@ func RunOutboxPublisher(
 
 	lc.Append(fx.Hook{
 		OnStart: func(context.Context) error {
+			// #nosec G118 -- Cancel is stored here and invoked during Fx OnStop.
 			workerCtx, workerCancel := context.WithCancel(context.Background())
 			cancel = workerCancel
 			wg.Add(1)

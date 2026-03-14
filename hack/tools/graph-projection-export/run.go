@@ -322,5 +322,6 @@ func writeOutput(outputPath string, payload []byte) error {
 	if err := os.MkdirAll(filepath.Dir(outputPath), 0o750); err != nil {
 		return err
 	}
+	// #nosec G304,G306,G703 -- This CLI intentionally allows the caller to choose the export destination path.
 	return os.WriteFile(outputPath, append(payload, '\n'), 0o600)
 }

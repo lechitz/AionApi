@@ -494,7 +494,7 @@ func TestNewGraphqlHandler(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, h)
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	rw := httptest.NewRecorder()
 	h.ServeHTTP(rw, req)
 	require.NotEqual(t, 500, rw.Code)

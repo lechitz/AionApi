@@ -28,6 +28,7 @@ func NewClient(client *http.Client) output.HTTPClient {
 
 // Do send an HTTP request and returns an HTTP response.
 func (c *instrumentedClient) Do(req *http.Request) (*http.Response, error) {
+	// #nosec G107,G704 -- The caller is responsible for constructing and validating the outbound request target.
 	return c.client.Do(req)
 }
 

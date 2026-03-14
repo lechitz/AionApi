@@ -171,6 +171,7 @@ func generateEnvFile() {
 
 	// Write to file
 	filePath := "infrastructure/db/seed/.env.local"
+	// #nosec G304,G306,G703 -- The destination path is a fixed local development file inside the repository.
 	if err := os.WriteFile(filePath, []byte(envContent), 0o600); err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing file: %v\n", err)
 		os.Exit(1)

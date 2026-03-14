@@ -25,7 +25,7 @@ func TestUpdateUserRoles(t *testing.T) {
 
 	t.Run("missing user id", func(t *testing.T) {
 		h := newHandler(mockAdminService{})
-		req := httptest.NewRequest(http.MethodPut, "/admin/users//roles", strings.NewReader(`{"roles":["admin"]}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/admin/users//roles", strings.NewReader(`{"roles":["admin"]}`))
 		rec := httptest.NewRecorder()
 
 		router := chi.NewRouter()
@@ -37,7 +37,7 @@ func TestUpdateUserRoles(t *testing.T) {
 
 	t.Run("invalid user id", func(t *testing.T) {
 		h := newHandler(mockAdminService{})
-		req := httptest.NewRequest(http.MethodPut, "/admin/users/abc/roles", strings.NewReader(`{"roles":["admin"]}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/admin/users/abc/roles", strings.NewReader(`{"roles":["admin"]}`))
 		rec := httptest.NewRecorder()
 
 		router := chi.NewRouter()
@@ -49,7 +49,7 @@ func TestUpdateUserRoles(t *testing.T) {
 
 	t.Run("invalid body", func(t *testing.T) {
 		h := newHandler(mockAdminService{})
-		req := httptest.NewRequest(http.MethodPut, "/admin/users/1/roles", strings.NewReader(`{"roles":`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/admin/users/1/roles", strings.NewReader(`{"roles":`))
 		rec := httptest.NewRecorder()
 
 		router := chi.NewRouter()
@@ -61,7 +61,7 @@ func TestUpdateUserRoles(t *testing.T) {
 
 	t.Run("validation error", func(t *testing.T) {
 		h := newHandler(mockAdminService{})
-		req := httptest.NewRequest(http.MethodPut, "/admin/users/1/roles", strings.NewReader(`{"roles":[]}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/admin/users/1/roles", strings.NewReader(`{"roles":[]}`))
 		rec := httptest.NewRecorder()
 
 		router := chi.NewRouter()
@@ -75,7 +75,7 @@ func TestUpdateUserRoles(t *testing.T) {
 		h := newHandler(mockAdminService{updateUserRolesFn: func(context.Context, admininput.UpdateUserRolesCommand) (admin.AdminUser, error) {
 			return admin.AdminUser{}, sharederrors.ErrDomainConflict
 		}})
-		req := httptest.NewRequest(http.MethodPut, "/admin/users/1/roles", strings.NewReader(`{"roles":["admin"]}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/admin/users/1/roles", strings.NewReader(`{"roles":["admin"]}`))
 		rec := httptest.NewRecorder()
 
 		router := chi.NewRouter()
@@ -87,7 +87,7 @@ func TestUpdateUserRoles(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		h := newHandler(mockAdminService{})
-		req := httptest.NewRequest(http.MethodPut, "/admin/users/1/roles", strings.NewReader(`{"roles":["admin"]}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/admin/users/1/roles", strings.NewReader(`{"roles":["admin"]}`))
 		rec := httptest.NewRecorder()
 
 		router := chi.NewRouter()
@@ -109,7 +109,7 @@ func TestUpdateUserRoles(t *testing.T) {
 		h := newHandler(mockAdminService{updateUserRolesFn: func(context.Context, admininput.UpdateUserRolesCommand) (admin.AdminUser, error) {
 			return admin.AdminUser{}, errors.New("boom")
 		}})
-		req := httptest.NewRequest(http.MethodPut, "/admin/users/1/roles", strings.NewReader(`{"roles":["admin"]}`))
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPut, "/admin/users/1/roles", strings.NewReader(`{"roles":["admin"]}`))
 		rec := httptest.NewRecorder()
 
 		router := chi.NewRouter()
