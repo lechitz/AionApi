@@ -81,7 +81,7 @@ func newTestHandler(t *testing.T, svc *authServiceStub) *handlerpkg.Handler {
 func TestLogin_InvalidJSON(t *testing.T) {
 	h := newTestHandler(t, &authServiceStub{})
 
-	req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader("{"))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/auth/login", strings.NewReader("{"))
 	w := httptest.NewRecorder()
 
 	h.Login(w, req)
@@ -94,7 +94,7 @@ func TestLogin_InvalidJSON(t *testing.T) {
 func TestLogin_ValidationError(t *testing.T) {
 	h := newTestHandler(t, &authServiceStub{})
 
-	req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(`{"username":"ab","password":"123"}`))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/auth/login", strings.NewReader(`{"username":"ab","password":"123"}`))
 	w := httptest.NewRecorder()
 
 	h.Login(w, req)
@@ -111,7 +111,7 @@ func TestLogin_ServiceError(t *testing.T) {
 		},
 	})
 
-	req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(`{"username":"validuser","password":"validpassword"}`))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/auth/login", strings.NewReader(`{"username":"validuser","password":"validpassword"}`))
 	w := httptest.NewRecorder()
 
 	h.Login(w, req)
@@ -134,7 +134,7 @@ func TestLogin_Success(t *testing.T) {
 		},
 	})
 
-	req := httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(`{"username":"validuser","password":"validpassword"}`))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/auth/login", strings.NewReader(`{"username":"validuser","password":"validpassword"}`))
 	w := httptest.NewRecorder()
 
 	h.Login(w, req)
@@ -177,7 +177,7 @@ func TestLogin_Success(t *testing.T) {
 func TestLogout_MissingUserIDInContext(t *testing.T) {
 	h := newTestHandler(t, &authServiceStub{})
 
-	req := httptest.NewRequest(http.MethodPost, "/auth/logout", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/auth/logout", nil)
 	w := httptest.NewRecorder()
 
 	h.Logout(w, req)
