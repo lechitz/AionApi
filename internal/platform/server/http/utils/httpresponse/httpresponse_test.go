@@ -138,7 +138,7 @@ func TestWriteError(t *testing.T) {
 			require.NoError(t, json.NewDecoder(rec.Body).Decode(&body))
 			assert.Equal(t, tt.wantStatus, body.Code)
 			assert.Equal(t, tt.message, body.Error)
-			assert.Equal(t, tt.err.Error(), body.Details)
+			assert.Empty(t, body.Details)
 			assert.False(t, body.Date.IsZero())
 		})
 	}
@@ -182,7 +182,7 @@ func TestWriteAuthAndDecodeError(t *testing.T) {
 			require.NoError(t, json.NewDecoder(rec.Body).Decode(&body))
 			assert.Equal(t, tt.wantStatus, body.Code)
 			assert.Equal(t, tt.wantMsg, body.Error)
-			assert.Equal(t, tt.err.Error(), body.Details)
+			assert.Empty(t, body.Details)
 		})
 	}
 }

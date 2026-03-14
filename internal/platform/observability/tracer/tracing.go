@@ -27,6 +27,9 @@ const (
 	// ErrFailedToInitializeOTLPExporter is logged when the OTLP trace exporter cannot be created.
 	ErrFailedToInitializeOTLPExporter = "failed to initialize OTLP trace exporter"
 
+	// WarnTracingDisabled is logged when tracing must be disabled because OTLP exporter bootstrap failed.
+	WarnTracingDisabled = "tracing disabled because OTLP exporter initialization failed"
+
 	// ErrFailedToShutdownTracerProvider is logged when the tracer provider fails to shut down.
 	ErrFailedToShutdownTracerProvider = "failed to shutdown tracer provider"
 
@@ -43,7 +46,8 @@ func InitTracer(cfg *config.Config, logger logger.ContextLogger) func() {
 	exporter, err := buildOTLPExporter(cfg, logger)
 	if err != nil {
 		logger.Errorw(ErrFailedToInitializeOTLPExporter, commonkeys.Error, err)
-		panic(err)
+		logger.Warnw(WarnTracingDisabled, commonkeys.Error, err)
+		return func() {}
 	}
 
 	resources := buildResource(cfg)

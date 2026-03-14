@@ -35,6 +35,12 @@ The dev compose profile is wired for hot reload across integrated services:
 - Kafka backbone via Redpanda-compatible local broker
 - `aion-ingest` and `aion-streams` bootstrap services in the same local network
 
+Important:
+
+- this integrated profile assumes a multi-repo workspace with sibling directories for `aionapi-dashboard`, `aion-chat`, `aion-ingest`, and `aion-streams`
+- an isolated clone of `AionApi` is not sufficient for the full `make build-dev` / `make dev` workflow
+- the event backbone gate is intended for a self-hosted runner or local machine that already satisfies those workspace assumptions
+
 Operational commands:
 
 ```bash

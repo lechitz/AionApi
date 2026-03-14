@@ -2,15 +2,6 @@ name: Event Backbone Gate
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'hack/**'
-      - 'makefiles/**'
-      - 'internal/eventoutbox/**'
-      - 'internal/record/**'
-      - 'internal/adapter/primary/graphql/**'
-      - 'infrastructure/docker/environments/dev/**'
-      - '.github/workflows/event-backbone-gate.yml'
 
 jobs:
   event-backbone-gate:

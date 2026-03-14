@@ -25,6 +25,9 @@ const (
 	// ErrFailedToInitializeOTLPMetricsExporter is logged when the OTLP metrics exporter cannot be created.
 	ErrFailedToInitializeOTLPMetricsExporter = "failed to initialize OTLP metric exporter"
 
+	// WarnMetricsDisabled is logged when metrics must be disabled because OTLP exporter bootstrap failed.
+	WarnMetricsDisabled = "metrics disabled because OTLP metric exporter initialization failed"
+
 	// ErrInvalidOTELExporterTimeout is logged when the timeout string cannot be parsed as a valid duration.
 	ErrInvalidOTELExporterTimeout = "invalid OTLP exporter timeout"
 
@@ -41,8 +44,9 @@ func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 	if err != nil {
 		if logger != nil {
 			logger.Errorw(ErrFailedToInitializeOTLPMetricsExporter, commonkeys.Error, err)
+			logger.Warnw(WarnMetricsDisabled, commonkeys.Error, err)
 		}
-		panic(err)
+		return func() {}
 	}
 
 	// Build resource with common attributes

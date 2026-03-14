@@ -6,7 +6,12 @@
 
 set -euo pipefail
 
-SERVICE_KEY="${AION_CHAT_SERVICE_KEY:-dev_s2s_secret_key_aion_chat_2024}"
+if [[ -z "${AION_CHAT_SERVICE_KEY:-}" ]]; then
+    echo "AION_CHAT_SERVICE_KEY is required"
+    exit 1
+fi
+
+SERVICE_KEY="${AION_CHAT_SERVICE_KEY}"
 BASE_URL="http://localhost:8000/internal/process"
 
 echo "🧪 INICIANDO TESTES DE VALIDAÇÃO AION CHAT"

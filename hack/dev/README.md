@@ -25,6 +25,14 @@ Scripts here are intended for manual dev workflows, not production automation.
 bash hack/dev/test-chat.sh
 ```
 
+## Workspace Assumption
+
+These scripts assume the current multi-repo Aion workspace and local services already running from `AionApi`.
+
+- use them from the integrated local stack, not from an isolated clone
+- provide required secrets such as `AION_CHAT_SERVICE_KEY` through local env files or shell env
+- do not rely on script-level hardcoded defaults for service credentials
+
 ## Design Notes
 
 - Keep scripts idempotent where possible.

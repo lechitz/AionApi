@@ -48,6 +48,23 @@ make seed-all
 make verify
 ```
 
+## Workspace Model
+
+`AionApi` is the operational hub of the current Aion v2 local stack.
+
+Current integrated development assumes a multi-repo workspace with sibling repositories beside this one, including:
+
+- `aionapi-dashboard`
+- `aion-chat`
+- `aion-ingest`
+- `aion-streams`
+
+Implications:
+
+- `make build-dev` and `make dev` are intended for this multi-repo workspace, not for an isolated clone of `AionApi`
+- the `event-backbone-gate` workflow and preflight are designed for a self-hosted runner with that workspace already available, and are intentionally manual (`workflow_dispatch`)
+- if you clone only `AionApi`, some integrated dev and runtime validation flows will not work until those sibling repos are also present
+
 ## Quality Gates
 
 ```bash
@@ -200,3 +217,10 @@ Repository README map by area.
 - Add release notes summary per version with API contract deltas.
 - Add contributor troubleshooting matrix for local setup failures.
 - Add CI/docs badges and links to pipeline checks.
+
+## License
+
+This repository is source-available but proprietary.
+
+- no right to use, copy, modify, distribute, deploy, or create derivative works is granted without prior written authorization
+- see [LICENSE](./LICENSE) for the binding terms

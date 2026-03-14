@@ -80,10 +80,9 @@ func WriteSuccess(w http.ResponseWriter, status int, result any, message string,
 func WriteError(w http.ResponseWriter, err error, message string, log logger.ContextLogger, headers ...map[string]string) {
 	status := sharederrors.MapErrorToHTTPStatus(err)
 	body := ResponseBody{
-		Date:    time.Now().UTC(),
-		Error:   message,
-		Details: err.Error(),
-		Code:    status,
+		Date:  time.Now().UTC(),
+		Error: message,
+		Code:  status,
 	}
 	if log != nil {
 		log.Errorw(logMsgHTTPError, commonkeys.Error, err, commonkeys.Message, message, commonkeys.Status, status)

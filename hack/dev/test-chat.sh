@@ -2,6 +2,11 @@
 # Script para testar o Aion Chat
 set -euo pipefail
 
+if [[ -z "${AION_CHAT_SERVICE_KEY:-}" ]]; then
+    echo "AION_CHAT_SERVICE_KEY is required"
+    exit 1
+fi
+
 echo "🤖 Testando Aion Chat..."
 echo ""
 
@@ -38,7 +43,7 @@ echo ""
 echo "3️⃣  Testando endpoint interno do aion-chat..."
 RESPONSE=$(curl -s -X POST http://localhost:8000/internal/process \
   -H "Content-Type: application/json" \
-  -H "X-Service-Key: ${AION_CHAT_SERVICE_KEY:-dev_s2s_secret_key_aion_chat_2024}" \
+  -H "X-Service-Key: ${AION_CHAT_SERVICE_KEY}" \
   --max-time 120 \
   -d '{
     "user_id": 1,

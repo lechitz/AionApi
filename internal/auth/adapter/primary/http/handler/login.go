@@ -13,7 +13,6 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -38,14 +37,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		Start(r.Context(), SpanLoginHandler)
 	defer span.End()
 
-	ip := r.RemoteAddr
-	userAgent := r.UserAgent()
-
-	span.SetAttributes(
-		attribute.String(tracingkeys.RequestIPKey, ip),
-		attribute.String(tracingkeys.RequestUserAgentKey, userAgent),
-	)
-
 	span.AddEvent(EventDecodeRequest)
 	r.Body = http.MaxBytesReader(w, r.Body, LoginMaxBodyBytes)
 	var loginReq dto.LoginUserRequest
@@ -58,8 +49,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		httpresponse.WriteDecodeErrorSpan(ctx, w, span, sharederrors.NewValidationError(ValidationFieldCredentials, err.Error()), h.Logger)
 		return
 	}
-	span.SetAttributes(attribute.String(commonkeys.Username, loginReq.Username))
-
 	span.AddEvent(EventAuthServiceLogin)
 	user, accessToken, refreshToken, err := h.Service.Login(ctx, loginReq.Username, loginReq.Password)
 	if err != nil {
@@ -83,8 +72,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	h.Logger.InfowCtx(ctx, MsgLoginSuccess,
 		commonkeys.UserID, strconv.FormatUint(user.ID, 10),
 		commonkeys.Name, loginResponse.Name,
-		tracingkeys.RequestIPKey, ip,
-		tracingkeys.RequestUserAgentKey, userAgent,
 	)
 
 	httpresponse.WriteSuccess(w, http.StatusOK, loginResponse, MsgLoginSuccess)

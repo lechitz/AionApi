@@ -31,7 +31,7 @@ It is the response boundary for HTTP adapters and relies on semantic errors from
 | `result` | `any` | Success payload |
 | `message` | `string` | Optional success message |
 | `error` | `string` | Client-facing error message |
-| `details` | `string` | Raw error detail (`err.Error()`) |
+| `details` | `string` | Reserved field; omitted by default to avoid leaking internal error details |
 | `code` | `int` | HTTP status code |
 
 ## Public API Reference
@@ -53,7 +53,7 @@ It is the response boundary for HTTP adapters and relies on semantic errors from
 | --- | --- |
 | `WriteAuthErrorSpan(...)` | Records error, sets span status error, sets `http.status_code`, then writes auth error |
 | `WriteDecodeErrorSpan(...)` | Records decode error and returns `400` response |
-| `WriteValidationErrorSpan(...)` | Records validation error and returns error response using `err.Error()` as message |
+| `WriteValidationErrorSpan(...)` | Records validation error and returns a validation-facing error response |
 | `WriteDomainErrorSpan(...)` | Records domain error and maps status via `sharederrors.MapErrorToHTTPStatus` |
 
 ## Status Mapping Behavior
@@ -70,7 +70,7 @@ This keeps status semantics centralized and consistent across all HTTP adapters.
 | --- | --- |
 | `204` responses do not write body/content-type | `TestWriteJSON`, `TestWriteNoContent` |
 | Success envelope has expected code/message/result/date | `TestWriteSuccess` |
-| Error envelope contains `error`, `details`, and mapped status | `TestWriteError`, `TestWriteAuthAndDecodeError` |
+| Error envelope contains `error` and mapped status without raw internal details | `TestWriteError`, `TestWriteAuthAndDecodeError` |
 | Custom response headers are preserved | `TestWriteError_WithCustomHeaders` |
 | Span helpers set `codes.Error` and `tracingkeys.HTTPStatusCodeKey` | `TestSpanErrorResponses` |
 
@@ -93,7 +93,7 @@ httpresponse.WriteSuccess(w, http.StatusCreated, result, "resource created")
 
 ## Package Improvements
 
-- Evaluate if `details` should be conditionally redacted in production paths to reduce sensitive error leakage risk.
+- Keep `details` omitted by default unless a future internal-only contract explicitly needs it.
 - Consider adding a helper for `202 Accepted` async flows to keep envelope semantics explicit.
 - Add explicit tests for `WriteSuccess`/`WriteError` with multiple header maps to validate merge precedence.
 - Consider documenting a strict policy for client-facing `message` vs internal `details` to improve consistency.
