@@ -60,12 +60,12 @@ func TestComposeHandler_HealthAndDocsRoutes(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, handler)
 
-	req := httptest.NewRequest(stdhttp.MethodGet, "/aion/health", nil)
+	req := httptest.NewRequestWithContext(t.Context(), stdhttp.MethodGet, "/aion/health", nil)
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 	require.Equal(t, stdhttp.StatusOK, rec.Code)
 
-	req = httptest.NewRequest(stdhttp.MethodGet, "/aion/docs", nil)
+	req = httptest.NewRequestWithContext(t.Context(), stdhttp.MethodGet, "/aion/docs", nil)
 	rec = httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 	require.Equal(t, stdhttp.StatusTemporaryRedirect, rec.Code)
@@ -83,28 +83,28 @@ func TestComposeHandler_DefaultFallbackRoutes(t *testing.T) {
 	require.NotNil(t, handler)
 
 	t.Run("root health", func(t *testing.T) {
-		req := httptest.NewRequest(stdhttp.MethodGet, "/health", nil)
+		req := httptest.NewRequestWithContext(t.Context(), stdhttp.MethodGet, "/health", nil)
 		rec := httptest.NewRecorder()
 		handler.ServeHTTP(rec, req)
 		require.Equal(t, stdhttp.StatusOK, rec.Code)
 	})
 
 	t.Run("root health with trailing slash", func(t *testing.T) {
-		req := httptest.NewRequest(stdhttp.MethodGet, "/health/", nil)
+		req := httptest.NewRequestWithContext(t.Context(), stdhttp.MethodGet, "/health/", nil)
 		rec := httptest.NewRecorder()
 		handler.ServeHTTP(rec, req)
 		require.Equal(t, stdhttp.StatusOK, rec.Code)
 	})
 
 	t.Run("alt health under api root", func(t *testing.T) {
-		req := httptest.NewRequest(stdhttp.MethodGet, "/api/v1/health", nil)
+		req := httptest.NewRequestWithContext(t.Context(), stdhttp.MethodGet, "/api/v1/health", nil)
 		rec := httptest.NewRecorder()
 		handler.ServeHTTP(rec, req)
 		require.Equal(t, stdhttp.StatusOK, rec.Code)
 	})
 
 	t.Run("docs alias fallback redirect", func(t *testing.T) {
-		req := httptest.NewRequest(stdhttp.MethodGet, "/docs", nil)
+		req := httptest.NewRequestWithContext(t.Context(), stdhttp.MethodGet, "/docs", nil)
 		rec := httptest.NewRecorder()
 		handler.ServeHTTP(rec, req)
 		require.Equal(t, stdhttp.StatusTemporaryRedirect, rec.Code)
