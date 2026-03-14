@@ -9,6 +9,7 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
 )
 
+// RegisterHTTP mounts realtime routes behind the auth middleware.
 func RegisterHTTP(r ports.Router, h *Handler, authService authInput.AuthService, log logger.ContextLogger) {
 	if h == nil || authService == nil {
 		return

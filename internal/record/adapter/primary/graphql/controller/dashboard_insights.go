@@ -13,7 +13,16 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-func (c *controller) InsightFeed(ctx context.Context, userID uint64, window model.InsightWindow, limit *int32, date *string, timezone *string, categoryID *string, tagIDs []string) ([]*model.InsightCard, error) {
+func (c *controller) InsightFeed(
+	ctx context.Context,
+	userID uint64,
+	window model.InsightWindow,
+	limit *int32,
+	date *string,
+	timezone *string,
+	categoryID *string,
+	tagIDs []string,
+) ([]*model.InsightCard, error) {
 	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanInsightFeed)
 	defer span.End()
@@ -72,7 +81,16 @@ func (c *controller) InsightFeed(ctx context.Context, userID uint64, window mode
 	return out, nil
 }
 
-func (c *controller) AnalyticsSeries(ctx context.Context, userID uint64, seriesKey string, window model.InsightWindow, date *string, timezone *string, categoryID *string, tagIDs []string) (*model.AnalyticsSeriesResult, error) {
+func (c *controller) AnalyticsSeries(
+	ctx context.Context,
+	userID uint64,
+	seriesKey string,
+	window model.InsightWindow,
+	date *string,
+	timezone *string,
+	categoryID *string,
+	tagIDs []string,
+) (*model.AnalyticsSeriesResult, error) {
 	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanAnalyticsSeries)
 	defer span.End()
@@ -138,7 +156,7 @@ func toGraphQLInsightCard(in domain.InsightCard) *model.InsightCard {
 		Summary:           in.Summary,
 		Status:            in.Status,
 		Window:            toGraphQLInsightWindow(in.Window),
-		Confidence:        int32(in.Confidence),
+		Confidence:        safeIntToInt32(in.Confidence),
 		MetricKeys:        in.MetricKeys,
 		RecommendedAction: in.RecommendedAction,
 		Evidence:          evidence,
@@ -166,13 +184,14 @@ func toGraphQLAnalyticsSeriesResult(in domain.AnalyticsSeriesResult) *model.Anal
 
 func toGraphQLInsightWindow(v domain.InsightWindow) model.InsightWindow {
 	switch v {
+	case domain.InsightWindow7D:
+		return model.InsightWindowWindow7d
 	case domain.InsightWindow30D:
 		return model.InsightWindowWindow30d
 	case domain.InsightWindow90D:
 		return model.InsightWindowWindow90d
-	default:
-		return model.InsightWindowWindow7d
 	}
+	return model.InsightWindowWindow7d
 }
 
 func stringOrEmpty(v *string) string {

@@ -1,3 +1,4 @@
+// Package main provides the realtime record smoke configuration loader.
 package main
 
 import (

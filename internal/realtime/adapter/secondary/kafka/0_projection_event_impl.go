@@ -7,11 +7,13 @@ import (
 	kafkago "github.com/segmentio/kafka-go"
 )
 
+// ProjectionEventReader reads projection-ready events from Kafka.
 type ProjectionEventReader struct {
 	reader *kafkago.Reader
 	logger logger.ContextLogger
 }
 
+// NewProjectionEventReader creates a reader bound to the realtime projection topic.
 func NewProjectionEventReader(brokers string, groupID string, topic string, log logger.ContextLogger) *ProjectionEventReader {
 	return &ProjectionEventReader{
 		reader: kafkago.NewReader(kafkago.ReaderConfig{
@@ -25,6 +27,7 @@ func NewProjectionEventReader(brokers string, groupID string, topic string, log 
 	}
 }
 
+// Close releases the underlying Kafka reader resources.
 func (r *ProjectionEventReader) Close() error {
 	return r.reader.Close()
 }

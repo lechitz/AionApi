@@ -1,3 +1,4 @@
+// Package main provides the record projection smoke configuration loader.
 package main
 
 import (

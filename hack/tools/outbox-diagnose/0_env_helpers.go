@@ -1,3 +1,4 @@
+// Package main provides env-loading helpers for the outbox diagnose tool.
 package main
 
 import (
@@ -7,11 +8,16 @@ import (
 )
 
 func loadEnvFile(path string) error {
+	if !strings.HasSuffix(path, ".env") && !strings.HasSuffix(path, ".env.dev") && !strings.HasSuffix(path, ".env.local") {
+		return os.ErrInvalid
+	}
+
+	//nolint:gosec // path comes from explicit operator flag for local diagnostics
 	file, err := os.Open(path)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {

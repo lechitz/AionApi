@@ -8,6 +8,7 @@ import (
 	"github.com/lechitz/AionApi/internal/realtime/core/domain"
 )
 
+// Service provides fan-out of realtime events to per-user subscribers.
 type Service struct {
 	logger           logger.ContextLogger
 	subscriberBuffer int
@@ -17,6 +18,7 @@ type Service struct {
 	subscribers map[uint64]map[uint64]chan domain.Event
 }
 
+// NewService creates a realtime service with the configured subscriber buffer.
 func NewService(log logger.ContextLogger, subscriberBuffer int) *Service {
 	if subscriberBuffer <= 0 {
 		subscriberBuffer = 1

@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/cookiejar"
+	"os"
 	"strings"
 	"time"
 )
@@ -19,6 +20,8 @@ const (
 	realtimeGraphqlPath = "/aion/api/v1/graphql"
 	realtimeStreamPath  = "/aion/api/v1/realtime/events/stream"
 )
+
+var errRealtimeProjectionNotFound = errors.New("record projection not found")
 
 type realtimeLoginEnvelope struct {
 	Result struct {
@@ -104,7 +107,9 @@ func run(ctx context.Context, cfg config) error {
 		return err
 	}
 
-	fmt.Printf("realtime record smoke passed for record_id=%s action=%s\n", recordID, payload.Action)
+	if _, err := fmt.Fprintf(os.Stdout, "realtime record smoke passed for record_id=%s action=%s\n", recordID, payload.Action); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -127,7 +132,9 @@ func realtimeLogin(ctx context.Context, client *http.Client, cfg config) (string
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	var envelope realtimeLoginEnvelope
 	if err := json.NewDecoder(resp.Body).Decode(&envelope); err != nil {
@@ -152,7 +159,9 @@ func consumeSSE(ctx context.Context, client *http.Client, cfg config, events cha
 		errs <- err
 		return
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
@@ -253,6 +262,10 @@ func waitRealtimeProjection(ctx context.Context, client *http.Client, cfg config
 	deadline := time.Now().Add(cfg.timeout)
 	for time.Now().Before(deadline) {
 		projection, err := fetchRealtimeProjection(ctx, client, cfg.host, token, recordID)
+		if errors.Is(err, errRealtimeProjectionNotFound) {
+			time.Sleep(cfg.pollInterval)
+			continue
+		}
 		if err == nil && projection != nil && projection.LastEventType == "record.created" && projection.Description != nil && *projection.Description == "codex realtime smoke" {
 			return nil
 		}
@@ -266,7 +279,7 @@ func fetchRealtimeProjection(ctx context.Context, client *http.Client, host stri
 	var result *realtimeProjectionResult
 	if err := realtimeGraphql(ctx, client, host, token, query, "recordProjectionById", &result); err != nil {
 		if strings.Contains(err.Error(), "record not found") {
-			return nil, nil
+			return nil, errRealtimeProjectionNotFound
 		}
 		return nil, err
 	}
@@ -290,7 +303,9 @@ func realtimeGraphql(ctx context.Context, client *http.Client, host string, toke
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	payload, err := io.ReadAll(resp.Body)
 	if err != nil {

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -101,7 +102,7 @@ func (r *RecordRepository) GetProjectedByID(ctx context.Context, userID uint64, 
 	}
 
 	if row.RecordID == 0 {
-		return domain.RecordProjection{}, fmt.Errorf("get projected record: record not found")
+		return domain.RecordProjection{}, errors.New("get projected record: record not found")
 	}
 
 	return toRecordProjection(row), nil

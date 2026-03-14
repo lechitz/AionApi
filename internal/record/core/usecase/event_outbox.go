@@ -12,10 +12,6 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 )
 
-func (s *Service) enqueueRecordOutboxEvent(ctx context.Context, eventType string, record domain.Record) {
-	s.enqueueRecordOutboxEventWithService(ctx, s.OutboxService, eventType, record)
-}
-
 func (s *Service) enqueueRecordOutboxEventWithService(ctx context.Context, outboxService eventoutboxinput.Service, eventType string, record domain.Record) {
 	if outboxService == nil {
 		return

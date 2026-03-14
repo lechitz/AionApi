@@ -1,3 +1,4 @@
+// Package main provides the ingest event smoke configuration loader.
 package main
 
 import (

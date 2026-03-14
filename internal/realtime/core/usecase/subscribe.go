@@ -7,6 +7,7 @@ import (
 	"github.com/lechitz/AionApi/internal/realtime/core/domain"
 )
 
+// Subscribe registers a per-user subscriber stream and returns a cleanup function.
 func (s *Service) Subscribe(ctx context.Context, userID uint64) (<-chan domain.Event, func()) {
 	subscriberID := s.nextSubscriberID()
 	ch := make(chan domain.Event, s.subscriberBuffer)

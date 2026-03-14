@@ -17,6 +17,7 @@ var (
 	errInvalidCategoryID = errors.New("invalid category id")
 	errInvalidTagIDs     = errors.New("invalid tag ids")
 	errInvalidWindow     = errors.New("invalid window")
+	errValueNotProvided  = errors.New("value not provided")
 )
 
 type exportConfig struct {
@@ -74,13 +75,19 @@ func loadConfig(args []string) (exportConfig, error) {
 	}
 
 	categoryID, err := parseOptionalUint64(categoryIDRaw, errInvalidCategoryID)
-	if err != nil {
+	if err != nil && !errors.Is(err, errValueNotProvided) {
 		return exportConfig{}, err
+	}
+	if errors.Is(err, errValueNotProvided) {
+		categoryID = nil
 	}
 
 	tagIDs, err := parseTagIDs(tagIDsRaw)
-	if err != nil {
+	if err != nil && !errors.Is(err, errValueNotProvided) {
 		return exportConfig{}, err
+	}
+	if errors.Is(err, errValueNotProvided) {
+		tagIDs = nil
 	}
 
 	return exportConfig{
@@ -130,7 +137,7 @@ func parseDate(raw string, timezone string) (time.Time, error) {
 func parseOptionalUint64(raw string, sentinel error) (*uint64, error) {
 	value := strings.TrimSpace(raw)
 	if value == "" {
-		return nil, nil
+		return nil, errValueNotProvided
 	}
 
 	parsed, err := strconv.ParseUint(value, 10, 64)
@@ -143,7 +150,7 @@ func parseOptionalUint64(raw string, sentinel error) (*uint64, error) {
 func parseTagIDs(raw string) ([]uint64, error) {
 	raw = strings.TrimSpace(raw)
 	if raw == "" {
-		return nil, nil
+		return nil, errValueNotProvided
 	}
 
 	parts := strings.Split(raw, ",")

@@ -14,25 +14,38 @@ const (
 type GraphNodeType string
 
 const (
-	GraphNodeTypeUser       GraphNodeType = "user"
-	GraphNodeTypeRecord     GraphNodeType = "record"
-	GraphNodeTypeTag        GraphNodeType = "tag"
-	GraphNodeTypeCategory   GraphNodeType = "category"
+	// GraphNodeTypeUser represents the user node in the graph projection.
+	GraphNodeTypeUser GraphNodeType = "user"
+	// GraphNodeTypeRecord represents a record node in the graph projection.
+	GraphNodeTypeRecord GraphNodeType = "record"
+	// GraphNodeTypeTag represents a tag node in the graph projection.
+	GraphNodeTypeTag GraphNodeType = "tag"
+	// GraphNodeTypeCategory represents a category node in the graph projection.
+	GraphNodeTypeCategory GraphNodeType = "category"
+	// GraphNodeTypeTimeBucket represents a time-bucket node in the graph projection.
 	GraphNodeTypeTimeBucket GraphNodeType = "time_bucket"
-	GraphNodeTypeInsight    GraphNodeType = "insight"
+	// GraphNodeTypeInsight represents an insight node in the graph projection.
+	GraphNodeTypeInsight GraphNodeType = "insight"
 )
 
 // GraphEdgeType identifies the supported relation classes in the v1 projection.
 type GraphEdgeType string
 
 const (
-	GraphEdgeTypeUserCreatedRecord        GraphEdgeType = "user_created_record"
-	GraphEdgeTypeRecordTaggedAs           GraphEdgeType = "record_tagged_as"
-	GraphEdgeTypeTagBelongsToCategory     GraphEdgeType = "tag_belongs_to_category"
-	GraphEdgeTypeRecordOccurredIn         GraphEdgeType = "record_occurred_in"
+	// GraphEdgeTypeUserCreatedRecord links the user node to a record node.
+	GraphEdgeTypeUserCreatedRecord GraphEdgeType = "user_created_record"
+	// GraphEdgeTypeRecordTaggedAs links a record node to its tag node.
+	GraphEdgeTypeRecordTaggedAs GraphEdgeType = "record_tagged_as"
+	// GraphEdgeTypeTagBelongsToCategory links a tag node to its category node.
+	GraphEdgeTypeTagBelongsToCategory GraphEdgeType = "tag_belongs_to_category"
+	// GraphEdgeTypeRecordOccurredIn links a record node to a time bucket.
+	GraphEdgeTypeRecordOccurredIn GraphEdgeType = "record_occurred_in"
+	// GraphEdgeTypeInsightSupportedByRecord links an insight to supporting records.
 	GraphEdgeTypeInsightSupportedByRecord GraphEdgeType = "insight_supported_by_record"
-	GraphEdgeTypeInsightScopedToTag       GraphEdgeType = "insight_scoped_to_tag"
-	GraphEdgeTypeInsightScopedToCategory  GraphEdgeType = "insight_scoped_to_category"
+	// GraphEdgeTypeInsightScopedToTag links an insight to a scoped tag.
+	GraphEdgeTypeInsightScopedToTag GraphEdgeType = "insight_scoped_to_tag"
+	// GraphEdgeTypeInsightScopedToCategory links an insight to a scoped category.
+	GraphEdgeTypeInsightScopedToCategory GraphEdgeType = "insight_scoped_to_category"
 )
 
 // GraphProjection node id prefixes are stable naming hints for future mappers/exports.
@@ -49,6 +62,7 @@ const (
 type GraphTimeBucketGranularity string
 
 const (
+	// GraphTimeBucketGranularityDay groups events by calendar day.
 	GraphTimeBucketGranularityDay GraphTimeBucketGranularity = "day"
 )
 

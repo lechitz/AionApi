@@ -1,3 +1,4 @@
+// Package kafka publishes canonical outbox events to Kafka topics.
 package kafka
 
 const (

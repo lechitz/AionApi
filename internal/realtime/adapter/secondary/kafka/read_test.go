@@ -1,3 +1,4 @@
+//nolint:testpackage // Tests validate package-private parsing helpers directly.
 package kafka
 
 import (

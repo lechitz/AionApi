@@ -1,3 +1,4 @@
+// Package main boots the outbox publisher command-line application.
 package main
 
 import (

@@ -51,10 +51,10 @@ func testFxConfig() *config.Config {
 			Timeout: time.Second,
 		},
 		Realtime: config.RealtimeConfig{
-			Enabled: true,
-			StreamPath: "/events/stream",
-			HeartbeatInterval: 15 * time.Second,
-			SubscriberBuffer: 32,
+			Enabled:             true,
+			StreamPath:          "/events/stream",
+			HeartbeatInterval:   15 * time.Second,
+			SubscriberBuffer:    32,
 			ConsumerGroupPrefix: "aion-api-realtime",
 		},
 	}

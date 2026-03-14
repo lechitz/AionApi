@@ -3,6 +3,7 @@ package controller_test
 import (
 	"context"
 	"errors"
+	"math"
 	"testing"
 	"time"
 
@@ -76,5 +77,6 @@ func TestGetByID_Success_MapsDurationBounds(t *testing.T) {
 	assert.Equal(t, "6", out.UserID)
 	assert.Equal(t, "7", out.TagID)
 	assert.Equal(t, desc, *out.Description)
-	assert.Nil(t, out.DurationSeconds)
+	require.NotNil(t, out.DurationSeconds)
+	assert.Equal(t, int32(math.MaxInt32), *out.DurationSeconds)
 }

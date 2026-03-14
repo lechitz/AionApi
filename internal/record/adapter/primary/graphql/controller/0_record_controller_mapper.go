@@ -2,6 +2,7 @@
 package controller
 
 import (
+	"math"
 	"strconv"
 	"time"
 
@@ -28,11 +29,8 @@ func toModelOut(t domain.Record) *gmodel.Record {
 		out.RecordedAt = &r
 	}
 	if t.DurationSecs != nil {
-		v := *t.DurationSecs
-		if v >= -2147483648 && v <= 2147483647 { // ensure safe conversion to int32
-			dv := int32(v)
-			out.DurationSeconds = &dv
-		}
+		dv := safeRecordIntToInt32(*t.DurationSecs)
+		out.DurationSeconds = &dv
 	}
 	if t.Value != nil {
 		out.Value = t.Value
@@ -68,7 +66,7 @@ func toProjectedModelOut(t domain.RecordProjection) *gmodel.RecordProjection {
 		LastEventType:      t.LastEventType,
 		LastEventVersion:   t.LastEventVersion,
 		LastKafkaTopic:     t.LastKafkaTopic,
-		LastKafkaPartition: int32(t.LastKafkaPartition),
+		LastKafkaPartition: safeRecordIntToInt32(t.LastKafkaPartition),
 		LastKafkaOffset:    strconv.FormatInt(t.LastKafkaOffset, 10),
 		LastConsumedAtUtc:  t.LastConsumedAtUTC.UTC().Format(time.RFC3339),
 		PayloadJSON:        string(t.PayloadJSON),
@@ -89,7 +87,7 @@ func toProjectedModelOut(t domain.RecordProjection) *gmodel.RecordProjection {
 		out.Timezone = t.Timezone
 	}
 	if t.DurationSeconds != nil {
-		v := int32(*t.DurationSeconds)
+		v := safeRecordIntToInt32(*t.DurationSeconds)
 		out.DurationSeconds = &v
 	}
 	if t.Value != nil {
@@ -161,4 +159,14 @@ func toCreateCommand(in gmodel.CreateRecordInput, userID uint64) input.CreateRec
 		Timezone:     in.Timezone,
 		Status:       in.Status,
 	}
+}
+
+func safeRecordIntToInt32(value int) int32 {
+	if value > math.MaxInt32 {
+		return math.MaxInt32
+	}
+	if value < math.MinInt32 {
+		return math.MinInt32
+	}
+	return int32(value)
 }

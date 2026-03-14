@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -16,6 +17,8 @@ const (
 	loginPath   = "/aion/api/v1/auth/login"
 	graphqlPath = "/aion/api/v1/graphql"
 )
+
+var errProjectionNotFound = errors.New("record projection not found")
 
 type loginEnvelope struct {
 	Result struct {
@@ -69,7 +72,9 @@ func run(ctx context.Context, cfg config) error {
 		return err
 	}
 
-	fmt.Printf("record projection smoke passed for record_id=%s\n", recordID)
+	if _, err := fmt.Fprintf(os.Stdout, "record projection smoke passed for record_id=%s\n", recordID); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -92,7 +97,9 @@ func login(ctx context.Context, client *http.Client, cfg config) (string, error)
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	var envelope loginEnvelope
 	if err := json.NewDecoder(resp.Body).Decode(&envelope); err != nil {
@@ -136,7 +143,9 @@ func waitProjection(ctx context.Context, client *http.Client, cfg config, token 
 			if expectPresent && projection != nil && projection.LastEventType == expectedEventType && projection.Description != nil && *projection.Description == expectedDescription {
 				return nil
 			}
-			if !expectPresent && projection == nil {
+		}
+		if errors.Is(err, errProjectionNotFound) {
+			if !expectPresent {
 				return nil
 			}
 		}
@@ -154,7 +163,7 @@ func fetchProjection(ctx context.Context, client *http.Client, host string, toke
 	var result *projectionResult
 	if err := graphql(ctx, client, host, token, query, "recordProjectionById", &result); err != nil {
 		if strings.Contains(err.Error(), "record not found") {
-			return nil, nil
+			return nil, errProjectionNotFound
 		}
 		return nil, err
 	}
@@ -178,7 +187,9 @@ func graphql(ctx context.Context, client *http.Client, host string, token string
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	payload, err := io.ReadAll(resp.Body)
 	if err != nil {

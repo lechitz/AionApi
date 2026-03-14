@@ -29,6 +29,7 @@ SELECT
 FROM aion_api.event_outbox;
 `
 
+// GetStats returns aggregate operational counters for the outbox table.
 func (r *EventRepository) GetStats(ctx context.Context) (domain.Stats, error) {
 	tr := otel.Tracer(OutboxTracerName)
 	ctx, span := tr.Start(ctx, "eventoutbox.repository.get_stats", trace.WithAttributes(

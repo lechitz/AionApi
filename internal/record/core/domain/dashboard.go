@@ -6,8 +6,11 @@ import "time"
 type InsightWindow string
 
 const (
-	InsightWindow7D  InsightWindow = "WINDOW_7D"
+	// InsightWindow7D is the default 7-day insight and analytics window.
+	InsightWindow7D InsightWindow = "WINDOW_7D"
+	// InsightWindow30D is the 30-day insight and analytics window.
 	InsightWindow30D InsightWindow = "WINDOW_30D"
+	// InsightWindow90D is the 90-day insight and analytics window.
 	InsightWindow90D InsightWindow = "WINDOW_90D"
 )
 

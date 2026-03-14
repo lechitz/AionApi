@@ -1,3 +1,4 @@
+// Package main defines constants for the graph projection export helper.
 package main
 
 import "time"

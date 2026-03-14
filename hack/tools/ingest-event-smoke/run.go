@@ -3,13 +3,14 @@ package main
 import (
 	"bytes"
 	"context"
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // deterministic compatibility with current ingest event id algorithm
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -62,7 +63,7 @@ func run(ctx context.Context, cfg config) error {
 		return fmt.Errorf("unexpected payload json: %s", string(envelope.PayloadJSON))
 	}
 
-	fmt.Printf("ingest event smoke passed for event_id=%s\n", envelope.EventID)
+	_, _ = fmt.Fprintf(os.Stdout, "ingest event smoke passed for event_id=%s\n", envelope.EventID)
 	return nil
 }
 
@@ -79,7 +80,7 @@ func postWebhook(ctx context.Context, cfg config, payload []byte) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusAccepted {
 		body, _ := io.ReadAll(resp.Body)
@@ -94,7 +95,7 @@ func getLastOffset(broker string, topic string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	return conn.ReadLastOffset()
 }
@@ -107,7 +108,7 @@ func waitIngestMessage(ctx context.Context, cfg config, startOffset int64, expec
 		MinBytes:  1,
 		MaxBytes:  10e6,
 	})
-	defer reader.Close()
+	defer func() { _ = reader.Close() }()
 
 	if err := reader.SetOffset(startOffset); err != nil {
 		return ingestEnvelope{}, err
@@ -141,6 +142,7 @@ func waitIngestMessage(ctx context.Context, cfg config, startOffset int64, expec
 }
 
 func sha1Hex(payload []byte) string {
+	//nolint:gosec // deterministic compatibility with current ingest event id algorithm
 	sum := sha1.Sum(payload)
 	return hex.EncodeToString(sum[:])
 }

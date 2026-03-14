@@ -51,8 +51,8 @@ func baseConfig() config.Config {
 			OtelExporterCompression:  "none",
 		},
 		Kafka: config.KafkaConfig{
-			Brokers:           "kafka:9092",
-			RecordEventsTopic: "aion.record.events.v1",
+			Brokers:                     "kafka:9092",
+			RecordEventsTopic:           "aion.record.events.v1",
 			RecordProjectionEventsTopic: "aion.record_projection.events.v1",
 		},
 		Outbox: config.OutboxConfig{
@@ -61,10 +61,10 @@ func baseConfig() config.Config {
 			BatchSize:       50,
 		},
 		Realtime: config.RealtimeConfig{
-			Enabled: true,
-			StreamPath: "/events/stream",
-			HeartbeatInterval: 15 * time.Second,
-			SubscriberBuffer: 32,
+			Enabled:             true,
+			StreamPath:          "/events/stream",
+			HeartbeatInterval:   15 * time.Second,
+			SubscriberBuffer:    32,
 			ConsumerGroupPrefix: "aion-api-realtime",
 		},
 		Application: config.Application{

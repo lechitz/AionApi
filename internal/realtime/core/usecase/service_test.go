@@ -1,3 +1,4 @@
+//nolint:testpackage // Tests validate internal service behavior without exporting helpers.
 package usecase
 
 import (

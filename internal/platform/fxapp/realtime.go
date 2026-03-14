@@ -12,11 +12,15 @@ import (
 	"go.uber.org/fx"
 )
 
+// RealtimeModule wires the realtime event consumer into the application lifecycle.
+//
+//nolint:gochecknoglobals // Fx modules are declared as package-level options across the application wiring.
 var RealtimeModule = fx.Options(
 	fx.Provide(ProvideRealtimeProjectionReader),
 	fx.Invoke(RunRealtimeProjectionConsumer),
 )
 
+// ProvideRealtimeProjectionReader builds the Kafka reader used by the realtime consumer.
 func ProvideRealtimeProjectionReader(
 	lc fx.Lifecycle,
 	cfg *config.Config,
@@ -41,6 +45,7 @@ func ProvideRealtimeProjectionReader(
 	return reader
 }
 
+// RunRealtimeProjectionConsumer starts the realtime consumer loop when the feature is enabled.
 func RunRealtimeProjectionConsumer(
 	lc fx.Lifecycle,
 	cfg *config.Config,

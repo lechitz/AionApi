@@ -88,7 +88,7 @@ func printStats(stats domain.Stats) {
 		oldestPendingAge = time.Since(stats.OldestPendingAtUTC.UTC()).Round(time.Second).String()
 	}
 
-	fmt.Printf("pending_count=%d published_count=%d failed_count=%d oldest_pending_age=%s\n",
+	_, _ = fmt.Fprintf(os.Stdout, "pending_count=%d published_count=%d failed_count=%d oldest_pending_age=%s\n",
 		stats.PendingCount,
 		stats.PublishedCount,
 		stats.FailedCount,
@@ -97,14 +97,14 @@ func printStats(stats domain.Stats) {
 }
 
 func printSample(title string, events []domain.Event) {
-	fmt.Printf("%s:\n", title)
+	_, _ = fmt.Fprintf(os.Stdout, "%s:\n", title)
 	if len(events) == 0 {
-		fmt.Println("  (empty)")
+		_, _ = fmt.Fprintln(os.Stdout, "  (empty)")
 		return
 	}
 
 	for _, event := range events {
-		fmt.Printf("  event_id=%s aggregate=%s/%s type=%s attempts=%d available_at=%s last_error=%q\n",
+		_, _ = fmt.Fprintf(os.Stdout, "  event_id=%s aggregate=%s/%s type=%s attempts=%d available_at=%s last_error=%q\n",
 			event.EventID,
 			event.AggregateType,
 			event.AggregateID,

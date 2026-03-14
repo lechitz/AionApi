@@ -12,6 +12,7 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 )
 
+// Stream serves the authenticated realtime SSE stream for the current user.
 func (h *Handler) Stream(w http.ResponseWriter, r *http.Request) {
 	flusher, ok := w.(http.Flusher)
 	if !ok {

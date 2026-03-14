@@ -1,3 +1,4 @@
+// Package repository persists and queries event outbox rows in PostgreSQL.
 package repository
 
 const (
@@ -29,16 +30,22 @@ const (
 
 const (
 	// StatusOutboxSaved indicates successful outbox persistence.
-	StatusOutboxSaved       = "event outbox row saved successfully"
-	StatusOutboxListed      = "event outbox rows listed successfully"
-	StatusOutboxPublished   = "event outbox row marked as published"
+	StatusOutboxSaved = "event outbox row saved successfully"
+	// StatusOutboxListed indicates successful listing of outbox rows.
+	StatusOutboxListed = "event outbox rows listed successfully"
+	// StatusOutboxPublished indicates one outbox row was marked as published.
+	StatusOutboxPublished = "event outbox row marked as published"
+	// StatusOutboxRescheduled indicates one outbox row was deferred for retry.
 	StatusOutboxRescheduled = "event outbox row rescheduled"
 )
 
 const (
 	// ErrSaveOutboxEventMsg is used when saving an outbox event fails.
-	ErrSaveOutboxEventMsg       = "error saving outbox event"
-	ErrListOutboxEventsMsg      = "error listing outbox events"
-	ErrMarkOutboxPublishedMsg   = "error marking outbox event as published"
+	ErrSaveOutboxEventMsg = "error saving outbox event"
+	// ErrListOutboxEventsMsg is used when listing outbox events fails.
+	ErrListOutboxEventsMsg = "error listing outbox events"
+	// ErrMarkOutboxPublishedMsg is used when marking an event as published fails.
+	ErrMarkOutboxPublishedMsg = "error marking outbox event as published"
+	// ErrRescheduleOutboxEventMsg is used when rescheduling an event fails.
 	ErrRescheduleOutboxEventMsg = "error rescheduling outbox event"
 )

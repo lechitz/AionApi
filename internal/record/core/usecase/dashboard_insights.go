@@ -181,8 +181,8 @@ func (s *Service) AnalyticsSeries(ctx context.Context, userID uint64, query inpu
 
 	seriesKey := strings.TrimSpace(query.SeriesKey)
 	points := make([]domain.AnalyticsPoint, 0, windowDays)
-	for i := 0; i < windowDays; i++ {
-		dayLocal := targetDate.AddDate(0, 0, -(windowDays-1-i))
+	for i := range windowDays {
+		dayLocal := targetDate.AddDate(0, 0, -(windowDays - 1 - i))
 		dayStartUTC := time.Date(dayLocal.Year(), dayLocal.Month(), dayLocal.Day(), 0, 0, 0, 0, loc).UTC()
 		dayEndUTC := time.Date(dayLocal.Year(), dayLocal.Month(), dayLocal.Day(), 23, 59, 59, int(time.Second-time.Nanosecond), loc).UTC()
 		dayRecords := filterRecordsBetween(records, dayStartUTC, dayEndUTC)
@@ -269,13 +269,14 @@ func insightPreviousRange(currentStartUTC time.Time, days int) (time.Time, time.
 
 func insightWindowDays(window domain.InsightWindow) int {
 	switch window {
+	case domain.InsightWindow7D:
+		return 7
 	case domain.InsightWindow30D:
 		return 30
 	case domain.InsightWindow90D:
 		return 90
-	default:
-		return 7
 	}
+	return 7
 }
 
 func buildConsistencyTrendInsight(records []domain.Record, window domain.InsightWindow, now time.Time, loc *time.Location, windowDays int) *domain.InsightCard {
@@ -316,7 +317,7 @@ func buildConsistencyTrendInsight(records []domain.Record, window domain.Insight
 		MetricKeys:        []string{"records.count"},
 		RecommendedAction: strPtr(action),
 		Evidence: []domain.InsightEvidence{
-			{Label: "dias ativos", Value: fmt.Sprintf("%d", activeDays), Kind: "count"},
+			{Label: "dias ativos", Value: strconv.Itoa(activeDays), Kind: "count"},
 			{Label: "janela", Value: fmt.Sprintf("%d dias", windowDays), Kind: "window"},
 		},
 		GeneratedAt: now,
@@ -347,7 +348,7 @@ func buildStreakRiskInsight(records []domain.Record, window domain.InsightWindow
 		RecommendedAction: strPtr(action),
 		Evidence: []domain.InsightEvidence{
 			{Label: "ultimo registro", Value: last.EventTime.In(loc).Format("2006-01-02"), Kind: "date"},
-			{Label: "dias sem atividade", Value: fmt.Sprintf("%d", idleDays), Kind: "count"},
+			{Label: "dias sem atividade", Value: strconv.Itoa(idleDays), Kind: "count"},
 		},
 		GeneratedAt: now,
 	}

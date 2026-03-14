@@ -1,7 +1,9 @@
+//nolint:testpackage // Tests exercise package-private SSE details and constants.
 package handler
 
 import (
 	"context"
+	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -21,7 +23,7 @@ func TestStreamWritesSSEEvent(t *testing.T) {
 		},
 	}, noopRealtimeHandlerLogger{})
 
-	req := httptest.NewRequest("GET", "/events/stream", nil)
+	req := httptest.NewRequest(http.MethodGet, "/events/stream", nil)
 	ctx, cancel := context.WithCancel(req.Context())
 	req = req.WithContext(context.WithValue(ctx, ctxkeys.UserID, uint64(14)))
 	rec := httptest.NewRecorder()

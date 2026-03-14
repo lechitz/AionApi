@@ -10,6 +10,7 @@ import (
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 )
 
+// ListByStatus returns outbox events filtered by status for operational diagnostics.
 func (r *EventRepository) ListByStatus(ctx context.Context, status string, limit int) ([]domain.Event, error) {
 	var rows []model.EventDB
 
@@ -30,6 +31,7 @@ func (r *EventRepository) ListByStatus(ctx context.Context, status string, limit
 	return mapper.EventsFromDB(rows), nil
 }
 
+// ListFailed returns pending outbox events that already have a last_error value.
 func (r *EventRepository) ListFailed(ctx context.Context, limit int) ([]domain.Event, error) {
 	var rows []model.EventDB
 

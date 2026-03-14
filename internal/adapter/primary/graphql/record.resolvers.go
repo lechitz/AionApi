@@ -215,7 +215,15 @@ func (q *queryResolver) InsightFeed(ctx context.Context, window model.InsightWin
 }
 
 // AnalyticsSeries is the resolver for the analyticsSeries field.
-func (q *queryResolver) AnalyticsSeries(ctx context.Context, seriesKey string, window model.InsightWindow, date *string, timezone *string, categoryID *string, tagIDs []string) (*model.AnalyticsSeriesResult, error) {
+func (q *queryResolver) AnalyticsSeries(
+	ctx context.Context,
+	seriesKey string,
+	window model.InsightWindow,
+	date *string,
+	timezone *string,
+	categoryID *string,
+	tagIDs []string,
+) (*model.AnalyticsSeriesResult, error) {
 	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
 	return q.RecordController().AnalyticsSeries(ctx, uid, seriesKey, window, date, timezone, categoryID, tagIDs)
 }

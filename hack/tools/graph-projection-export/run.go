@@ -81,6 +81,7 @@ func run(ctx context.Context, args []string) int {
 		return 1
 	}
 
+	//nolint:musttag // projection is an internal export payload built from typed domain structs
 	payload, err := json.MarshalIndent(projection, jsonIndentPrefix, jsonIndentValue)
 	if err != nil {
 		log.Errorw(logMsgExportFailed, commonkeys.Error, err.Error(), logFieldComponent, logValueComponent)
@@ -198,6 +199,8 @@ func windowRange(targetDate time.Time, timezone string, window recorddomain.Insi
 
 func windowDays(window recorddomain.InsightWindow) int {
 	switch window {
+	case recorddomain.InsightWindow7D:
+		return 7
 	case recorddomain.InsightWindow30D:
 		return 30
 	case recorddomain.InsightWindow90D:
@@ -316,8 +319,8 @@ func writeOutput(outputPath string, payload []byte) error {
 		return err
 	}
 
-	if err := os.MkdirAll(filepath.Dir(outputPath), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(outputPath), 0o750); err != nil {
 		return err
 	}
-	return os.WriteFile(outputPath, append(payload, '\n'), 0o644)
+	return os.WriteFile(outputPath, append(payload, '\n'), 0o600)
 }

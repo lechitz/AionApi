@@ -24,7 +24,16 @@ type RecordController interface {
 	ListAllBetween(ctx context.Context, userID uint64, startDate, endDate string, limit int) ([]*model.Record, error)
 	DashboardSnapshot(ctx context.Context, userID uint64, date string, timezone *string) (*model.DashboardSnapshot, error)
 	InsightFeed(ctx context.Context, userID uint64, window model.InsightWindow, limit *int32, date *string, timezone *string, categoryID *string, tagIDs []string) ([]*model.InsightCard, error)
-	AnalyticsSeries(ctx context.Context, userID uint64, seriesKey string, window model.InsightWindow, date *string, timezone *string, categoryID *string, tagIDs []string) (*model.AnalyticsSeriesResult, error)
+	AnalyticsSeries(
+		ctx context.Context,
+		userID uint64,
+		seriesKey string,
+		window model.InsightWindow,
+		date *string,
+		timezone *string,
+		categoryID *string,
+		tagIDs []string,
+	) (*model.AnalyticsSeriesResult, error)
 	ListMetricDefinitions(ctx context.Context, userID uint64) ([]*model.MetricDefinition, error)
 	Update(ctx context.Context, in model.UpdateRecordInput, userID uint64) (*model.Record, error)
 	SoftDelete(ctx context.Context, recordID, userID uint64) error

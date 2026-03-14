@@ -6,6 +6,7 @@ import (
 	"github.com/lechitz/AionApi/internal/realtime/core/domain"
 )
 
+// Publish fans out a realtime event to subscribers of the same user.
 func (s *Service) Publish(ctx context.Context, event domain.Event) {
 	s.mu.RLock()
 	subscribers := s.subscribers[event.UserID]

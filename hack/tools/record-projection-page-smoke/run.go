@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -53,6 +54,8 @@ type smokeRecord struct {
 }
 
 const smokeDescriptionPrefix = "codex page smoke"
+
+var errPageProjectionNotFound = errors.New("record projection not found")
 
 func run(ctx context.Context, cfg config) error {
 	client := &http.Client{Timeout: cfg.timeout}
@@ -119,7 +122,9 @@ func run(ctx context.Context, cfg config) error {
 		return errors.New("cursor pagination returned overlapping projection rows")
 	}
 
-	fmt.Printf("record projection page smoke passed for ids=%s,%s,%s\n", records[0].id, records[1].id, records[2].id)
+	if _, err := fmt.Fprintf(os.Stdout, "record projection page smoke passed for ids=%s,%s,%s\n", records[0].id, records[1].id, records[2].id); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -168,7 +173,9 @@ func login(ctx context.Context, client *http.Client, cfg config) (string, error)
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	var envelope loginEnvelope
 	if err := json.NewDecoder(resp.Body).Decode(&envelope); err != nil {
@@ -207,11 +214,11 @@ func waitUntilRemoved(ctx context.Context, client *http.Client, cfg config, toke
 		allGone := true
 		for _, item := range records {
 			projection, err := fetchProjectionByID(ctx, client, cfg.host, token, item.id)
-			if err != nil {
+			if err != nil && !errors.Is(err, errPageProjectionNotFound) {
 				allGone = false
 				break
 			}
-			if projection != nil {
+			if err == nil && projection != nil {
 				allGone = false
 				break
 			}
@@ -266,7 +273,7 @@ func fetchProjectionByID(ctx context.Context, client *http.Client, host string, 
 	var result *pageProjectionResult
 	if err := graphql(ctx, client, host, token, query, "recordProjectionById", &result); err != nil {
 		if strings.Contains(err.Error(), "record not found") {
-			return nil, nil
+			return nil, errPageProjectionNotFound
 		}
 		return nil, err
 	}
@@ -342,7 +349,9 @@ func graphqlWithVariables(ctx context.Context, client *http.Client, host string,
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	payload, err := io.ReadAll(resp.Body)
 	if err != nil {

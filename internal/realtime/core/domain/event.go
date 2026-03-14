@@ -1,7 +1,9 @@
+// Package domain defines the realtime event model exposed by the API.
 package domain
 
 import "time"
 
+// Event is the payload delivered to realtime subscribers.
 type Event struct {
 	Type           string    `json:"type"`
 	UserID         uint64    `json:"userId"`

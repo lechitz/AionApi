@@ -1,3 +1,4 @@
+// Package handler exposes realtime HTTP endpoints.
 package handler
 
 import (
@@ -8,12 +9,14 @@ import (
 	realtimeInput "github.com/lechitz/AionApi/internal/realtime/core/ports/input"
 )
 
+// Handler serves realtime SSE endpoints.
 type Handler struct {
 	Service realtimeInput.Service
 	Config  *config.Config
 	Logger  logger.ContextLogger
 }
 
+// New creates a realtime HTTP handler.
 func New(service realtimeInput.Service, cfg *config.Config, log logger.ContextLogger) *Handler {
 	return &Handler{
 		Service: service,

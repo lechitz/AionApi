@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/lechitz/AionApi/internal/record/core/domain"
@@ -47,7 +48,7 @@ func TestService_ListProjectedLatestRequiresRepository(t *testing.T) {
 
 	svc := &Service{}
 	_, err := svc.ListProjectedLatest(context.Background(), 7, 5)
-	if err != ErrProjectionRepositoryUnavailable {
+	if !errors.Is(err, ErrProjectionRepositoryUnavailable) {
 		t.Fatalf("expected ErrProjectionRepositoryUnavailable, got %v", err)
 	}
 }

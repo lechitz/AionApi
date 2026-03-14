@@ -113,8 +113,8 @@ func TestService_AnalyticsSeries_RespectsTimezoneBoundary(t *testing.T) {
 	assert.Equal(t, "records.count across 7 days", *got.Summary)
 	require.NotNil(t, got.Points[5].Value)
 	require.NotNil(t, got.Points[6].Value)
-	assert.Equal(t, 1.0, *got.Points[5].Value)
+	assert.InDelta(t, 1.0, *got.Points[5].Value, 0.000001)
 	assert.Equal(t, "2026-03-09", *got.Points[5].Label)
-	assert.Equal(t, 1.0, *got.Points[6].Value)
+	assert.InDelta(t, 1.0, *got.Points[6].Value, 0.000001)
 	assert.Equal(t, "2026-03-10", *got.Points[6].Label)
 }

@@ -63,10 +63,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: swagger-json
-          path: docs/swagger/swagger.json
+          path: contracts/openapi/swagger.json
 
       - name: Upload swagger.yaml
         uses: actions/upload-artifact@v4
         with:
           name: swagger-yaml
-          path: docs/swagger/swagger.yaml
+          path: contracts/openapi/swagger.yaml

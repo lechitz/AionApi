@@ -28,8 +28,8 @@ type ObservabilityConfig struct {
 
 // KafkaConfig holds Kafka broker and topic settings for canonical event publication.
 type KafkaConfig struct {
-	Brokers           string `envconfig:"KAFKA_BROKERS"             default:"kafka:9092"`
-	RecordEventsTopic string `envconfig:"KAFKA_TOPIC_RECORD_EVENTS" default:"aion.record.events.v1"`
+	Brokers                     string `envconfig:"KAFKA_BROKERS"             default:"kafka:9092"`
+	RecordEventsTopic           string `envconfig:"KAFKA_TOPIC_RECORD_EVENTS" default:"aion.record.events.v1"`
 	RecordProjectionEventsTopic string `envconfig:"KAFKA_TOPIC_RECORD_PROJECTION_EVENTS" default:"aion.record_projection.events.v1"`
 }
 
