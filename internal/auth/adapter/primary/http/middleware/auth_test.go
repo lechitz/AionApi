@@ -59,7 +59,7 @@ func TestAuthMiddleware_ServiceAccountBypass(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	ctx := context.WithValue(req.Context(), ctxkeys.ServiceAccount, true)
 	ctx = context.WithValue(ctx, ctxkeys.UserID, uint64(9))
 	req = req.WithContext(ctx)
@@ -77,7 +77,7 @@ func TestAuthMiddleware_MissingToken_ReturnsError(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 
@@ -96,7 +96,7 @@ func TestAuthMiddleware_InvalidToken_ReturnsUnauthorized(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	req.Header.Set("Authorization", "Bearer bad-token")
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
@@ -116,7 +116,7 @@ func TestAuthMiddleware_ValidateErrorRaw_ReturnsServerError(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	req.Header.Set("Authorization", "Bearer token")
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
@@ -146,7 +146,7 @@ func TestAuthMiddleware_ValidBearerSetsContext(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	req.Header.Set("Authorization", "Bearer good-token")
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
@@ -175,7 +175,7 @@ func TestAuthMiddleware_ValidCookieToken(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	req.AddCookie(&http.Cookie{Name: commonkeys.AuthTokenCookieName, Value: "cookie-token"})
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
