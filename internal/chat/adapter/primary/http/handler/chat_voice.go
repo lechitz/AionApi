@@ -3,11 +3,13 @@ package handler
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
@@ -120,6 +122,15 @@ func (h *Handler) parseVoiceRequest(
 ) (multipart.File, *multipart.FileHeader, string, bool) {
 	span.AddEvent(EventParseMultipartForm)
 	if err := r.ParseMultipartForm(MaxAudioSize); err != nil {
+		if isMultipartTooLargeError(err) {
+			span.SetStatus(codes.Error, ErrAudioFileTooLarge)
+			h.Logger.ErrorwCtx(ctx, LogAudioFileTooLarge, commonkeys.Error, err, LogKeyMax, MaxAudioSize)
+			httpresponse.WriteValidationErrorSpan(ctx, w, span,
+				sharederrors.NewValidationError(FormFieldAudio,
+					fmt.Sprintf("Audio file too large (max: %d bytes)", MaxAudioSize)), h.Logger)
+			return nil, nil, "", false
+		}
+
 		span.SetStatus(codes.Error, ErrFailedParseMultipartForm)
 		h.Logger.ErrorwCtx(ctx, LogFailedParseMultipartForm, commonkeys.Error, err)
 		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
@@ -139,7 +150,7 @@ func (h *Handler) parseVoiceRequest(
 	if header.Size > MaxAudioSize {
 		span.SetStatus(codes.Error, ErrAudioFileTooLarge)
 		h.Logger.ErrorwCtx(ctx, LogAudioFileTooLarge, LogKeySize, header.Size, LogKeyMax, MaxAudioSize)
-		httpresponse.WriteDecodeErrorSpan(ctx, w, span,
+		httpresponse.WriteValidationErrorSpan(ctx, w, span,
 			sharederrors.NewValidationError(FormFieldAudio,
 				fmt.Sprintf("Audio file too large: %d bytes (max: %d)", header.Size, MaxAudioSize)), h.Logger)
 		return nil, nil, "", false
@@ -147,6 +158,21 @@ func (h *Handler) parseVoiceRequest(
 
 	language := r.FormValue(FormFieldLanguage)
 	return file, header, language, true
+}
+
+func isMultipartTooLargeError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	if errors.Is(err, multipart.ErrMessageTooLarge) {
+		return true
+	}
+
+	message := strings.ToLower(err.Error())
+	return strings.Contains(message, "request body too large") ||
+		strings.Contains(message, "multipart: message too large") ||
+		strings.Contains(message, "message too large")
 }
 
 func (h *Handler) buildMultipartRequest(
