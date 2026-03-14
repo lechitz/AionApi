@@ -5,7 +5,7 @@
 GO_CACHE := $(CURDIR)/.cache/go-build
 GOLANGCI_CACHE := $(CURDIR)/.cache/golangci-lint
 
-.PHONY: format lint lint-fix fieldalignment fieldalignment-report go-check verify verify-ci
+.PHONY: format lint lint-fix fieldalignment fieldalignment-report go-check govet verify verify-ci
 
 # Run goimports and golines to format code
 format:
@@ -72,6 +72,12 @@ lint-fix:
 		echo "warning: 'golangci-lint' not found, skipping lint-fix (install with: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.0)"; \
 	fi
 
+# Run native go vet across the repo using the repo-local build cache.
+govet:
+	@echo "Running go vet..."
+	@mkdir -p $(GO_CACHE)
+	@GOCACHE=$(GO_CACHE) go vet ./...
+
 # General verify (checks code quality, but does not enforce committed artifacts)
 verify: go-check lint fieldalignment graphql mocks docs.validate docs-verify test test-cover-detail test-ci test-clean regression-gate-draft
 	@echo "Running test checks..."
@@ -79,7 +85,7 @@ verify: go-check lint fieldalignment graphql mocks docs.validate docs-verify tes
 	@echo "✅  Verify passed successfully!"
 
 # CI-style verify (stricter, enforces committed artifacts)
-verify-ci: tools.check docs.gen docs.check-dirty graphql.queries graphql.manifest graphql.validate graphql.check-dirty lint fieldalignment test
+verify-ci: tools.check docs.gen docs.check-dirty graphql.queries graphql.manifest graphql.validate graphql.check-dirty lint fieldalignment govet test
 	@echo "Running test checks..."
 	@$(MAKE) -s test-checks
 	@echo "✅  CI verify passed!"
