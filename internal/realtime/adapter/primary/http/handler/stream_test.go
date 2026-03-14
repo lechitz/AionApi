@@ -35,7 +35,7 @@ func TestStreamWritesSSEEvent(t *testing.T) {
 	}()
 
 	time.Sleep(20 * time.Millisecond)
-	service.Publish(context.Background(), domain.Event{
+	service.Publish(t.Context(), domain.Event{
 		Type:           "record_projection_changed",
 		UserID:         14,
 		RecordID:       42,

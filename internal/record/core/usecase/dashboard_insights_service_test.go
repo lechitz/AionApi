@@ -1,7 +1,6 @@
 package usecase_test
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -48,7 +47,7 @@ func TestService_InsightFeed_EmitsInsufficientDataEvidence(t *testing.T) {
 		GetAll(gomock.Any(), userID).
 		Return([]tagdomain.Tag{{ID: 10, UserID: userID, CategoryID: 1, Name: "Agua"}}, nil)
 
-	got, err := suite.RecordService.InsightFeed(context.Background(), userID, input.InsightFeedQuery{
+	got, err := suite.RecordService.InsightFeed(t.Context(), userID, input.InsightFeedQuery{
 		Window:   string(domain.InsightWindow7D),
 		Limit:    5,
 		Date:     date,
@@ -100,7 +99,7 @@ func TestService_AnalyticsSeries_RespectsTimezoneBoundary(t *testing.T) {
 		GetAll(gomock.Any(), userID).
 		Return([]tagdomain.Tag{{ID: 10, UserID: userID, CategoryID: 1, Name: "Agua"}}, nil)
 
-	got, err := suite.RecordService.AnalyticsSeries(context.Background(), userID, input.AnalyticsSeriesQuery{
+	got, err := suite.RecordService.AnalyticsSeries(t.Context(), userID, input.AnalyticsSeriesQuery{
 		SeriesKey: "records.count",
 		Window:    string(domain.InsightWindow7D),
 		Date:      date,

@@ -378,7 +378,14 @@ func buildActivityGapInsight(records []domain.Record, window domain.InsightWindo
 	}
 }
 
-func buildCategoryConcentrationInsight(records []domain.Record, defs []domain.MetricDefinition, window domain.InsightWindow, now time.Time, categoryID *uint64, tagIDs []uint64) *domain.InsightCard {
+func buildCategoryConcentrationInsight(
+	records []domain.Record,
+	defs []domain.MetricDefinition,
+	window domain.InsightWindow,
+	now time.Time,
+	categoryID *uint64,
+	tagIDs []uint64,
+) *domain.InsightCard {
 	if categoryID != nil || len(tagIDs) > 0 {
 		return nil
 	}

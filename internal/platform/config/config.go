@@ -8,19 +8,19 @@ import (
 
 // Config holds all configuration sections required to bootstrap the application.
 type Config struct {
+	Realtime      RealtimeConfig
+	Kafka         KafkaConfig
 	General       GeneralConfig
 	Secret        Secret
+	AvatarStorage AvatarStorageConfig
 	Observability ObservabilityConfig
 	AionChat      AionChatConfig
-	AvatarStorage AvatarStorageConfig
 	Cookie        CookieConfig
-	Kafka         KafkaConfig
-	Outbox        OutboxConfig
-	Realtime      RealtimeConfig
 	ServerHTTP    ServerHTTP
 	DB            DBConfig
 	ServerGraphql ServerGraphql
 	Cache         CacheConfig
+	Outbox        OutboxConfig
 	Application   Application
 }
 

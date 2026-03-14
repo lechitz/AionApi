@@ -111,7 +111,7 @@ func TestPublishPendingMarksPublishedOnSuccess(t *testing.T) {
 		backoff: DefaultPublishBackoff,
 	}
 
-	if err := service.PublishPending(context.Background(), 10); err != nil {
+	if err := service.PublishPending(t.Context(), 10); err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
 
@@ -160,7 +160,7 @@ func TestPublishPendingReschedulesFailedEvents(t *testing.T) {
 		backoff: 5 * time.Second,
 	}
 
-	err := service.PublishPending(context.Background(), 10)
+	err := service.PublishPending(t.Context(), 10)
 	if err == nil {
 		t.Fatal("expected error")
 	}
@@ -194,7 +194,7 @@ func TestPublishPendingReturnsListPendingError(t *testing.T) {
 		backoff:    DefaultPublishBackoff,
 	}
 
-	err := service.PublishPending(context.Background(), 10)
+	err := service.PublishPending(t.Context(), 10)
 	if err == nil || err.Error() != "db down" {
 		t.Fatalf("expected db down error, got %v", err)
 	}

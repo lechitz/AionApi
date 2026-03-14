@@ -2,8 +2,10 @@ package main
 
 import "flag"
 
-const defaultSampleLimit = 5
-const defaultEnvFile = "infrastructure/docker/environments/dev/.env.dev"
+const (
+	defaultSampleLimit = 5
+	defaultEnvFile     = "infrastructure/docker/environments/dev/.env.dev"
+)
 
 type config struct {
 	sampleLimit int

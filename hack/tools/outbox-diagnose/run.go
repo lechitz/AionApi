@@ -116,5 +116,7 @@ func printSample(title string, events []domain.Event) {
 	}
 }
 
-var _ keygen.Generator = staticKeyGen("")
-var _ logger.ContextLogger = noopLogger{}
+var (
+	_ keygen.Generator     = staticKeyGen("")
+	_ logger.ContextLogger = noopLogger{}
+)

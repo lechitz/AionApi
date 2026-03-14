@@ -219,7 +219,10 @@ func waitConnected(ctx context.Context, events <-chan sseEnvelope, errs <-chan e
 }
 
 func realtimeCreateRecord(ctx context.Context, client *http.Client, cfg config, token string) (string, error) {
-	query := fmt.Sprintf(`mutation { createRecord(input: { tagId: %q, description: "codex realtime smoke", source: "codex-realtime-smoke", status: "published" }) { id } }`, cfg.tagID)
+	query := fmt.Sprintf(
+		`mutation { createRecord(input: { tagId: %q, description: "codex realtime smoke", source: "codex-realtime-smoke", status: "published" }) { id } }`,
+		cfg.tagID,
+	)
 	var result realtimeCreateRecordResult
 	if err := realtimeGraphql(ctx, client, cfg.host, token, query, "createRecord", &result); err != nil {
 		return "", err
@@ -266,7 +269,8 @@ func waitRealtimeProjection(ctx context.Context, client *http.Client, cfg config
 			time.Sleep(cfg.pollInterval)
 			continue
 		}
-		if err == nil && projection != nil && projection.LastEventType == "record.created" && projection.Description != nil && *projection.Description == "codex realtime smoke" {
+		if err == nil && projection != nil && projection.LastEventType == "record.created" && projection.Description != nil &&
+			*projection.Description == "codex realtime smoke" {
 			return nil
 		}
 		time.Sleep(cfg.pollInterval)

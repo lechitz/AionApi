@@ -34,7 +34,7 @@ func TestService_GetProjectedByID(t *testing.T) {
 		},
 	}
 
-	got, err := svc.GetProjectedByID(context.Background(), 5177, 7)
+	got, err := svc.GetProjectedByID(t.Context(), 5177, 7)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -47,7 +47,7 @@ func TestService_ListProjectedLatestRequiresRepository(t *testing.T) {
 	t.Parallel()
 
 	svc := &Service{}
-	_, err := svc.ListProjectedLatest(context.Background(), 7, 5)
+	_, err := svc.ListProjectedLatest(t.Context(), 7, 5)
 	if !errors.Is(err, ErrProjectionRepositoryUnavailable) {
 		t.Fatalf("expected ErrProjectionRepositoryUnavailable, got %v", err)
 	}
@@ -62,7 +62,7 @@ func TestService_ListProjectedPageDefaultsLimit(t *testing.T) {
 		},
 	}
 
-	got, err := svc.ListProjectedPage(context.Background(), 7, 0, nil, nil)
+	got, err := svc.ListProjectedPage(t.Context(), 7, 0, nil, nil)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}

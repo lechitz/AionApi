@@ -188,7 +188,12 @@ func login(ctx context.Context, client *http.Client, cfg config) (string, error)
 }
 
 func createRecord(ctx context.Context, client *http.Client, cfg config, token string, description string, eventTime string) (string, error) {
-	query := fmt.Sprintf(`mutation { createRecord(input: { tagId: %q, description: %q, eventTime: %q, source: "codex-page-smoke", status: "published" }) { id } }`, cfg.tagID, description, eventTime)
+	query := fmt.Sprintf(
+		`mutation { createRecord(input: { tagId: %q, description: %q, eventTime: %q, source: "codex-page-smoke", status: "published" }) { id } }`,
+		cfg.tagID,
+		description,
+		eventTime,
+	)
 	var result createRecordResult
 	if err := graphql(ctx, client, cfg.host, token, query, "createRecord", &result); err != nil {
 		return "", err
@@ -329,7 +334,16 @@ func graphql(ctx context.Context, client *http.Client, host string, token string
 	return graphqlWithVariables(ctx, client, host, token, query, nil, field, out)
 }
 
-func graphqlWithVariables(ctx context.Context, client *http.Client, host string, token string, query string, variables map[string]any, field string, out interface{}) error {
+func graphqlWithVariables(
+	ctx context.Context,
+	client *http.Client,
+	host string,
+	token string,
+	query string,
+	variables map[string]any,
+	field string,
+	out interface{},
+) error {
 	body, err := json.Marshal(map[string]any{
 		"query":     query,
 		"variables": variables,

@@ -112,7 +112,10 @@ func login(ctx context.Context, client *http.Client, cfg config) (string, error)
 }
 
 func createRecord(ctx context.Context, client *http.Client, cfg config, token string) (string, error) {
-	query := fmt.Sprintf(`mutation { createRecord(input: { tagId: %q, description: "codex smoke created", source: "codex-smoke", status: "published" }) { id } }`, cfg.tagID)
+	query := fmt.Sprintf(
+		`mutation { createRecord(input: { tagId: %q, description: "codex smoke created", source: "codex-smoke", status: "published" }) { id } }`,
+		cfg.tagID,
+	)
 	var result createRecordResult
 	if err := graphql(ctx, client, cfg.host, token, query, "createRecord", &result); err != nil {
 		return "", err
@@ -135,12 +138,22 @@ func deleteRecord(ctx context.Context, client *http.Client, cfg config, token st
 	return graphql(ctx, client, cfg.host, token, query, "softDeleteRecord", &deleted)
 }
 
-func waitProjection(ctx context.Context, client *http.Client, cfg config, token string, recordID string, expectedEventType string, expectedDescription string, expectPresent bool) error {
+func waitProjection(
+	ctx context.Context,
+	client *http.Client,
+	cfg config,
+	token string,
+	recordID string,
+	expectedEventType string,
+	expectedDescription string,
+	expectPresent bool,
+) error {
 	deadline := time.Now().Add(cfg.timeout)
 	for time.Now().Before(deadline) {
 		projection, err := fetchProjection(ctx, client, cfg.host, token, recordID)
 		if err == nil {
-			if expectPresent && projection != nil && projection.LastEventType == expectedEventType && projection.Description != nil && *projection.Description == expectedDescription {
+			if expectPresent && projection != nil && projection.LastEventType == expectedEventType && projection.Description != nil &&
+				*projection.Description == expectedDescription {
 				return nil
 			}
 		}

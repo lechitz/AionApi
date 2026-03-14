@@ -209,7 +209,15 @@ func (q *queryResolver) DashboardSnapshot(ctx context.Context, date string, time
 }
 
 // InsightFeed is the resolver for the insightFeed field.
-func (q *queryResolver) InsightFeed(ctx context.Context, window model.InsightWindow, limit *int32, date *string, timezone *string, categoryID *string, tagIDs []string) ([]*model.InsightCard, error) {
+func (q *queryResolver) InsightFeed(
+	ctx context.Context,
+	window model.InsightWindow,
+	limit *int32,
+	date *string,
+	timezone *string,
+	categoryID *string,
+	tagIDs []string,
+) ([]*model.InsightCard, error) {
 	uid, _ := ctx.Value(ctxkeys.UserID).(uint64)
 	return q.RecordController().InsightFeed(ctx, uid, window, limit, date, timezone, categoryID, tagIDs)
 }

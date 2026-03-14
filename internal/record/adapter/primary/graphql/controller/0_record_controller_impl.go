@@ -23,7 +23,16 @@ type RecordController interface {
 	ListAllUntil(ctx context.Context, userID uint64, until string, limit int) ([]*model.Record, error)
 	ListAllBetween(ctx context.Context, userID uint64, startDate, endDate string, limit int) ([]*model.Record, error)
 	DashboardSnapshot(ctx context.Context, userID uint64, date string, timezone *string) (*model.DashboardSnapshot, error)
-	InsightFeed(ctx context.Context, userID uint64, window model.InsightWindow, limit *int32, date *string, timezone *string, categoryID *string, tagIDs []string) ([]*model.InsightCard, error)
+	InsightFeed(
+		ctx context.Context,
+		userID uint64,
+		window model.InsightWindow,
+		limit *int32,
+		date *string,
+		timezone *string,
+		categoryID *string,
+		tagIDs []string,
+	) ([]*model.InsightCard, error)
 	AnalyticsSeries(
 		ctx context.Context,
 		userID uint64,
