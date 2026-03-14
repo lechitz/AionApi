@@ -25,7 +25,7 @@ func (c CategoryRepository) Create(ctx context.Context, category domain.Category
 	defer span.End()
 
 	categoryDB := mapper.CategoryToDB(category)
-	if err := c.db.WithContext(ctx).Create(&categoryDB).Error; err != nil {
+	if err := c.db.WithContext(ctx).Create(&categoryDB).Error(); err != nil {
 		wrappedErr := fmt.Errorf("%s: %w", ErrCreateCategoryMsg, err)
 		span.SetStatus(codes.Error, wrappedErr.Error())
 		span.RecordError(wrappedErr)

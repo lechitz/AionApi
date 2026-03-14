@@ -20,8 +20,20 @@ type TagRetriever interface {
 	GetAll(ctx context.Context, userID uint64) ([]domain.Tag, error)
 }
 
+// TagUpdater defines an interface for updating a tag.
+type TagUpdater interface {
+	Update(ctx context.Context, cmd UpdateTagCommand) (domain.Tag, error)
+}
+
+// TagDeleter defines an interface for soft-deleting a tag.
+type TagDeleter interface {
+	SoftDelete(ctx context.Context, tagID, userID uint64) error
+}
+
 // TagService defines a contract that combines creating, retrieving, updating, and soft-deleting tags in the system.
 type TagService interface {
 	TagCreator
 	TagRetriever
+	TagUpdater
+	TagDeleter
 }

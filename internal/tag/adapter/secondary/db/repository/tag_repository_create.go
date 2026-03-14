@@ -25,7 +25,7 @@ func (r TagRepository) Create(ctx context.Context, tag domain.Tag) (domain.Tag, 
 	defer span.End()
 
 	row := mapper.TagToDB(tag)
-	if err := r.db.WithContext(ctx).Create(&row).Error; err != nil {
+	if err := r.db.WithContext(ctx).Create(&row).Error(); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, OpCreate)
 		r.logger.ErrorwCtx(ctx, ErrCreateTagMsg, commonkeys.Error, err.Error())

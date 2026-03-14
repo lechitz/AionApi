@@ -5,6 +5,9 @@ on:
   push:
     branches: [ main, feature/** ]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 permissions:
   contents: read
 
@@ -41,6 +44,15 @@ jobs:
       - name: Check Swagger docs drift
         run: make docs.check-dirty
 
+      - name: Generate GraphQL contracts and manifest
+        run: make graphql.queries graphql.manifest
+
+      - name: Validate GraphQL contracts against schema
+        run: make graphql.validate
+
+      - name: Check GraphQL contracts drift
+        run: make graphql.check-dirty
+
       - name: Build
         run: go build ./...
 
@@ -51,10 +63,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: swagger-json
-          path: docs/swagger/swagger.json
+          path: contracts/openapi/swagger.json
 
       - name: Upload swagger.yaml
         uses: actions/upload-artifact@v4
         with:
           name: swagger-yaml
-          path: docs/swagger/swagger.yaml
+          path: contracts/openapi/swagger.yaml

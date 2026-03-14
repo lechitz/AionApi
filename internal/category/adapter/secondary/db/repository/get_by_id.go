@@ -30,7 +30,7 @@ func (c CategoryRepository) GetByID(ctx context.Context, categoryID uint64, user
 	if err := c.db.WithContext(ctx).
 		Select("category_id, user_id, name, description, color_hex, icon, created_at, updated_at").
 		Where("category_id = ? AND user_id = ?", categoryID, userID).
-		First(&categoryDB).Error; err != nil {
+		First(&categoryDB).Error(); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Error, ErrCategoryNotFoundMsg)
 			span.RecordError(errors.New(ErrCategoryNotFoundMsg))

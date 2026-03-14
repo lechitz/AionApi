@@ -3,7 +3,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -27,24 +26,24 @@ func (h *controller) GetByName(ctx context.Context, categoryName string, userID 
 
 	// Basic guards (controller-level preconditions).
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 	if categoryName == "" {
-		span.SetStatus(codes.Error, ErrCategoryNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrCategoryNotFound, commonkeys.CategoryName, categoryName)
-		return nil, errors.New(ErrCategoryNotFound)
+		span.SetStatus(codes.Error, ErrCategoryNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrCategoryNotFound.Error(), commonkeys.CategoryName, categoryName)
+		return nil, ErrCategoryNotFound
 	}
 
 	// Delegate to the input port (use case).
 	category, err := h.CategoryService.GetByName(ctx, categoryName, userID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, ErrCategoryNotFound)
+		span.SetStatus(codes.Error, ErrCategoryNotFound.Error())
 		h.Logger.ErrorwCtx(
 			ctx,
-			ErrCategoryNotFound,
+			ErrCategoryNotFound.Error(),
 			commonkeys.Error, err.Error(),
 			commonkeys.UserID, userID,
 			commonkeys.CategoryName, categoryName,

@@ -1,0 +1,23 @@
+title AionAPI Entrypoint Flow
+
+participant "Operator" as OP
+participant "cmd/aion-api" as MAIN
+participant "config.Loader" as CFG
+participant "fxapp.InfraModule" as INFRA
+participant "fxapp.ApplicationModule" as APP
+participant "fxapp.ServerModule" as SRV
+participant "HTTP Server" as HTTP
+participant "Signals" as SIG
+
+OP->MAIN: Run process (binary start)
+MAIN->CFG: Load config
+CFG->MAIN: Config struct
+MAIN->MAIN: configureSwagger(cfg)
+MAIN->INFRA: Build infrastructure deps
+MAIN->APP: Build application deps
+MAIN->SRV: Compose and build server
+SRV->HTTP: Start listener
+SIG->MAIN: SIGTERM / SIGINT
+MAIN->HTTP: Graceful shutdown
+HTTP->MAIN: Server stopped
+MAIN->OP: Exit code

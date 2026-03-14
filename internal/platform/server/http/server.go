@@ -1,5 +1,9 @@
 // Package http provides a set of utilities for building http servers.
+//
+//revive:disable:var-naming // package intentionally kept as http to mirror its routing responsibility
 package http
+
+//revive:enable:var-naming
 
 import (
 	"context"

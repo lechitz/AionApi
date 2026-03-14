@@ -1,0 +1,19 @@
+title Platform Bootstrap Flow
+
+participant "Process" as P
+participant "config.Loader" as CFG
+participant "observability" as OBS
+participant "fxapp" as FX
+participant "http/server" as HTTP
+participant "adapters" as AD
+participant "usecases" as UC
+
+P->CFG: Load and validate config
+CFG->OBS: Setup tracing + metrics
+OBS->FX: Provide providers/loggers
+FX->HTTP: Compose HTTP server + routes
+HTTP->AD: Route request to adapter
+AD->UC: Call input ports
+UC->AD: Result or semantic error
+AD->HTTP: Response mapping
+HTTP->P: Response

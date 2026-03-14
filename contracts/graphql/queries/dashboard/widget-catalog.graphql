@@ -1,0 +1,1 @@
+query DashboardWidgetCatalog { dashboardWidgetCatalog { maxLargeWidgets sizes types } }

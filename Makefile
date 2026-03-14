@@ -6,6 +6,8 @@ APPLICATION_NAME := aion-api
 
 COMPOSE_FILE_DEV  := infrastructure/docker/environments/dev/docker-compose-dev.yaml
 ENV_FILE_DEV      := infrastructure/docker/environments/dev/.env.dev
+COMPOSE_FILE_MY   := infrastructure/docker/environments/my/docker-compose-my.yaml
+ENV_FILE_MY       := infrastructure/docker/environments/my/.env.my
 COMPOSE_FILE_PROD := infrastructure/docker/environments/prod/docker-compose-prod.yaml
 ENV_FILE_PROD     := infrastructure/docker/environments/prod/.env.prod
 
@@ -27,84 +29,223 @@ all: help
 help:
 	@echo ""
 	@echo ""
-	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
-	@echo "\033[48;5;235;33m┃                                            \033[1mAION API - CLI COMMANDS                                               ┃\033[0m"
-	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
+	@echo "┃==================================================================================================================┃"
+	@echo "┃                                            AION API - CLI COMMANDS                                               ┃"
+	@echo "┃==================================================================================================================┃"
 	@echo ""
 	@echo ""
-	@echo " 🔶 \033[48;5;235;33m┃ \033[1mTOOLING ┃\033[0m"
+	@echo " 🔶 ┃ TOOLING ┃"
 	@echo ""
-	@echo "    \033[0m tools-install        \033[1;37m    →  Install all development tools (goimports, golines, gofumpt, golangci-lint)"
-	@echo ""
-	@echo ""
-	@echo " 🔶 \033[48;5;235;33m┃ \033[1mDOCKER ENVIRONMENT COMMANDS ┃\033[0m"
-	@echo ""
-	@echo "  \033[1;37m- [DEV]\033[0m"
-	@echo ""
-	@echo "    \033[0m build-dev          \033[1;37m      →  Build the development Docker image"
-	@echo "    \033[0m dev-up             \033[1;37m      →  Start the development environment (resets DB)"
-	@echo "    \033[0m dev                \033[1;37m      →  Build + start dev (clean: aion-api only)"
-	@echo "    \033[0m dev-logs           \033[1;37m      →  Build + start dev (shows all logs)"
-	@echo "    \033[0m dev-clean          \033[1;37m      →  Build + start dev (clean logs, aion-api only)"
-	@echo "    \033[0m dev-down           \033[1;37m      →  Stop and remove dev environment containers/volumes"
-	@echo "    \033[0m clean-dev          \033[1;37m      →  Clean all dev containers, volumes, and images"
-	@echo ""
-	@echo "  \033[1;37m- [PROD]\033[0m"
-	@echo ""
-	@echo "    \033[0m build-prod         \033[1;37m      →  Build the production Docker image"
-	@echo "    \033[0m prod-up            \033[1;37m      →  Start the production environment"
-	@echo "    \033[0m prod-down          \033[1;37m      →  Stop and remove prod environment containers/volumes"
-	@echo "    \033[0m clean-prod         \033[1;37m      →  Clean all prod containers, volumes, and images"
-	@echo ""
-	@echo "  \033[1;37m- [GENERAL]\033[0m"
-	@echo ""
-	@echo "    \033[0m docker-clean-all    \033[1;37m     →  Remove ALL Docker containers, volumes, and images"
+	@echo "     tools-install            →  Install all development tools (goimports, golines, gofumpt, golangci-lint)"
+	@echo "     graph-projection-export  →  Export graph-projection-v1 JSON (vars: GRAPH_PROJECTION_USER_ID, DATE, CATEGORY_ID, TAG_IDS, OUTPUT)"
 	@echo ""
 	@echo ""
-	@echo " 🔶 \033[48;5;235;33m┃ \033[1mCODE GENERATION ┃\033[0m"
+	@echo " 🔶 ┃ DOCKER ENVIRONMENT COMMANDS ┃"
 	@echo ""
-	@echo "    \033[0m graphql             \033[1;37m     →  Generate GraphQL files with gqlgen"
-	@echo "    \033[0m mocks               \033[1;37m     →  Generate all GoMock mocks"
+	@echo "  - [MY - Personal Environment (Isolated DB)]"
+	@echo ""
+	@echo "     my                       →  Build ALL images + start FULL STACK (Personal Environment)"
+	@echo "                                  • Separate PostgreSQL database (aionapi_my)"
+	@echo "                                  • Separate Redis instance (redis-aion-my)"
+	@echo "                                  • Shares Ollama with dev (saves ~5GB+ per model)"
+	@echo "                                  • ⚠️  Requires ollama-dev running (make ollama-up)"
+	@echo "                                  • 🔥 HOT RELOAD enabled for all projects"
+	@echo "                                  • Config in: infrastructure/docker/environments/my/"
+	@echo "     my-fast                  →  Start Personal stack without rebuilding"
+	@echo "     my-down                  →  Stop Personal services (preserves volumes)"
+	@echo "     clean-my                 →  ⚠️ Remove Personal containers/volumes/images"
+	@echo ""
+	@echo "  - [DEV - Docker Full Stack]"
+	@echo ""
+	@echo "     build-dev                →  Build the development images used by the local stack"
+	@echo "     dev                      →  Start FULL STACK without rebuilding (default/fast)"
+	@echo "     dev-fast                 →  Same as make dev (compatibility alias)"
+	@echo "     rebuild-dev              →  Build ALL images + start FULL STACK"
+	@echo "                                  Rebuilds: aion-api, aion-chat, aionapi-dashboard"
+	@echo "                                  Preserves: Ollama models + PostgreSQL data (no re-download!)"
+	@echo "                                  🔥 HOT RELOAD enabled for all projects:"
+	@echo "                                     • Go: Air auto-recompile (~3-5s)"
+	@echo "                                     • Python: Uvicorn --reload (~1-2s)"
+	@echo "                                     • TypeScript: Vite HMR (<1s)"
+	@echo "     dev-down                 →  Stop services (keeps Ollama running, preserves all volumes)"
+	@echo "     clean-dev                →  ⚠️ Remove dev containers/volumes/images (keeps Ollama running)"
+	@echo ""
+	@echo "  - [DEV - Logs (individual services)]"
+	@echo ""
+	@echo "     logs-api                 →  Show aion-api logs"
+	@echo "     logs-api-publisher       →  Show aion-api-outbox-publisher logs"
+	@echo "     logs-chat                →  Show aion-chat logs"
+	@echo "     logs-ingest              →  Show aion-ingest logs"
+	@echo "     logs-streams             →  Show aion-streams logs"
+	@echo "     logs-streams-worker      →  Show aion-streams-worker logs"
+	@echo "     logs-dashboard           →  Show aionapi-dashboard logs"
+	@echo "     logs-postgres            →  Show PostgreSQL logs"
+	@echo "     logs-redis               →  Show Redis logs"
+	@echo "     logs-kafka               →  Show Kafka logs"
+	@echo "     logs-ollama              →  Show Ollama logs"
+	@echo "     logs-jaeger              →  Show Jaeger logs"
+	@echo "     logs-otel                →  Show OpenTelemetry Collector logs"
+	@echo "     logs-prometheus          →  Show Prometheus logs"
+	@echo "     logs-grafana             →  Show Grafana logs"
+	@echo "     logs-all                 →  Show all services logs"
+	@echo ""
+	@echo "  - [DEV - Ollama LLM Management]"
+	@echo ""
+	@echo "     ollama-up                →  Start Ollama service (if not running)"
+	@echo "     ollama-down              →  Stop Ollama (models preserved in volume)"
+	@echo "     ollama-status            →  Show Ollama status and installed models"
+	@echo "     ollama-restart           →  Restart Ollama service"
+	@echo "     ollama-logs              →  View Ollama logs"
+	@echo "     ollama-models            →  List installed models"
+	@echo "     ollama-pull              →  Download default model (or use MODEL=name)"
+	@echo "     ollama-clean             →  ⚠️ Remove Ollama volumes (deletes all models!)"
+	@echo ""
+	@echo "  - [DEV - Rebuild Individual Services (removes old image before rebuild)]"
+	@echo ""
+	@echo "     rebuild-dashboard        →  Stop + remove old image + rebuild aionapi-dashboard"
+	@echo "     rebuild-chat             →  Stop + remove old image + rebuild aion-chat"
+	@echo "     rebuild-api              →  Stop + remove old image + rebuild aion-api"
+	@echo ""
+	@echo "  - [DEV - Local (Hot-Reload)]"
+	@echo ""
+	@echo "     dev-local                →  Run API locally with Air hot-reload (installs Air if needed)"
+	@echo "     dev-local-deps           →  Start only dependencies (postgres, redis, etc) for local dev"
+	@echo "     dev-local-full           →  Run API locally without Air (go run)"
+	@echo "     dev-local-stop           →  Stop local dev dependencies (preserve containers)"
+	@echo "     dev-local-down           →  ⚠️ Remove local dev dependencies completely"
+	@echo "     air-install              →  Install Air (hot-reload tool)"
+	@echo ""
+	@echo "  - [PROD]"
+	@echo ""
+	@echo "     build-prod               →  Build the production Docker image"
+	@echo "     prod-up                  →  Start the production environment"
+	@echo "     prod-down                →  Stop and remove prod environment containers/volumes"
+	@echo "     clean-prod               →  ⚠️ Clean all prod containers, volumes, and images"
+	@echo ""
+	@echo "  - [CLEANUP & DIAGNOSTICS]"
+	@echo ""
+	@echo "     cache-reset              →  ⚠️ Flush Redis cache (dev)"
+	@echo "     docker-disk              →  Show Docker disk usage (quick diagnostic)"
+	@echo "     docker-prune-aion        →  Clean ONLY AionApi images/containers (safe, preserves volumes)"
+	@echo "     docker-prune-dangling    →  ⚠️ Remove dangling images (safe)"
+	@echo "     docker-prune-build-cache →  ⚠️ Clear Docker build cache"
+	@echo "     docker-prune-full        →  Full AionApi cleanup (containers + images + cache, preserves volumes)"
+	@echo "     docker-clean-all         →  ⚠️ Remove ALL Docker containers, volumes, and images (DESTRUCTIVE)"
+	@echo ""
+	@echo "  - [NETWORK/BANDWIDTH OPTIMIZATION]"
+	@echo ""
+	@echo "     network-audit            →  📊 Audit bandwidth consumption and optimizations"
+	@echo "     network-images           →  Show cached Docker images"
+	@echo "     images-update            →  🔄 Manually update base images (only when YOU want)"
+	@echo "     ollama-update            →  🔄 Update only Ollama image (~800 MB)"
 	@echo ""
 	@echo ""
-	@echo " 🔶 \033[48;5;235;33m┃ \033[1mCODE QUALITY ┃\033[0m"
+	@echo " 🔶 ┃ CODE GENERATION ┃"
 	@echo ""
-	@echo "    \033[0m format               \033[1;37m    →  Format Go code using goimports/golines/gofumpt"
-	@echo "    \033[0m lint                 \033[1;37m    →  Run golangci-lint (static code analysis)"
-	@echo "    \033[0m lint-fix             \033[1;37m    →  Run golangci-lint with --fix (auto-fix where possible)"
-	@echo "    \033[0m verify               \033[1;37m    →  Run full pre-commit pipeline (format, mocks, lint, tests, coverage, codegen)"
+	@echo "     graphql                  →  Generate GraphQL files with gqlgen"
+	@echo "     mocks                    →  Generate all GoMock mocks"
 	@echo ""
 	@echo ""
-	@echo " 🔶 \033[48;5;235;33m┃ \033[1mMIGRATIONS ┃\033[0m"
+	@echo " 🔶 ┃ CODE QUALITY ┃"
 	@echo ""
-	@echo "    \033[0m migrate-up           \033[1;37m    →  Run all migrations (up)"
-	@echo "    \033[0m migrate-down         \033[1;37m    →  Rollback the last migration"
-	@echo "    \033[0m migrate-force VERSION=\033[1;32mX \033[1;37m →  Force DB to specific version"
-	@echo "    \033[0m migrate-new          \033[1;37m    →  Create new migration (with prompt)"
-	@echo ""
-	@echo ""
-	@echo " 🔶 \033[48;5;235;33m┃ \033[1mSEEDS ┃\033[0m"
-	@echo ""
-	@echo "    \033[0m seed-users           \033[1;37m    →  Seed the users table"
-	@echo "    \033[0m seed-categories      \033[1;37m    →  Seed the categories table"
-	@echo "    \033[0m seed-all             \033[1;37m    →  Run all seed scripts"
+	@echo "     format                   →  Format Go code using goimports/golines/gofumpt"
+	@echo "     lint                     →  Run golangci-lint (static code analysis)"
+	@echo "     lint-fix                 →  Run golangci-lint with --fix (auto-fix where possible)"
+	@echo "     verify                   →  Run full pre-commit pipeline (format, mocks, lint, tests, coverage, codegen)"
 	@echo ""
 	@echo ""
-	@echo " 🔶 \033[48;5;235;33m┃ \033[1mTESTING ┃\033[0m"
+	@echo " 🔶 ┃ MIGRATIONS ┃"
 	@echo ""
-	@echo "    \033[0m test                 \033[1;37m    →  Run unit tests"
-	@echo "    \033[0m test-cover           \033[1;37m    →  Run tests with coverage report (excludes mocks)"
-	@echo "    \033[0m test-html-report     \033[1;37m    →  Generate HTML test report (requires go-test-html-report)"
+	@echo "  - [General (requires MIGRATION_DB env)]"
+	@echo ""
+	@echo "     migrate-install          →  Install golang-migrate CLI"
+	@echo "     migrate-up               →  Run all migrations (up)"
+	@echo "     migrate-down             →  Rollback the last migration"
+	@echo "     migrate-force VERSION=X  →  Force DB to specific version"
+	@echo "     migrate-new              →  Create new migration (with prompt)"
+	@echo ""
+	@echo "  - [DEV Environment (uses localhost:5432)]"
+	@echo ""
+	@echo "     migrate-dev-up           →  Apply all migrations to dev DB"
+	@echo "     migrate-dev-down         →  Rollback last migration on dev DB"
+	@echo "     migrate-dev-status       →  Show current migration version"
+	@echo "     migrate-dev-reset        →  ⚠️ Drop all and re-apply migrations"
 	@echo ""
 	@echo ""
-	@echo " 🔶 \033[48;5;235;33m┃ \033[1mAPI DOCS (SWAGGER) ┃\033[0m"
+	@echo " 🔶 ┃ SEEDS ┃"
 	@echo ""
-	@echo "    \033[0m docs.gen            \033[1;37m     →  Generate Swagger artifacts (docs.go, swagger.json/yaml)"
-	@echo "    \033[0m docs.check-dirty    \033[1;37m     →  Fail if Swagger artifacts are out-of-date"
-	@echo "    \033[0m docs.clean          \033[1;37m     →  Remove generated Swagger artifacts"
+	@echo "  - [Quick Start]"
+	@echo ""
+	@echo "     db-full                  →  🚀 ONE COMMAND: reset DB + migrations + essential + realistic 3-month profile"
+	@echo "     db-reset                 →  ⚠️ Reset DB + re-apply migrations"
+	@echo ""
+	@echo "  - [Essential Data]"
+	@echo ""
+	@echo "     seed-essential           →  Seed roles + admin user only"
+	@echo "     seed-roles               →  Seed system roles (owner, admin, user, blocked)"
+	@echo "     seed-admin               →  Seed admin user (username: aion)"
+	@echo ""
+	@echo "  - [Test Data]"
+	@echo ""
+	@echo "     seed-test                →  🧪 Realistic profile: legacy+new taxonomy + metrics/goals + ~3 months (50-60/day)"
+	@echo "     seed-clean-test          →  Remove ONLY realistic test profile (testuser), keeps admin"
+	@echo "     hash-gen PASS='pwd'      →  🔐 Generate bcrypt hash for password (use to create seeds)"
+	@echo ""
+	@echo "  - [Cleanup & Reset]"
+	@echo ""
+	@echo "     reset-user-data          →  🔄 Delete ALL users + data (keeps roles) ⚠️ Removes admin too!"
+	@echo "     seed-clean-all           →  Truncate seeded tables (dev only)"
+	@echo ""
+	@echo "  - [Legacy/Alternative Seeds]"
+	@echo ""
+	@echo "     seed-users               →  Seed the users table"
+	@echo "     seed-categories          →  Seed the categories table"
+	@echo "     seed-all                 →  Run all seed scripts"
+	@echo "     seed-user1-all           →  Seed full dataset for default user (id=1)"
+	@echo "     seed-everybody           →  Alias for seed-all"
+	@echo "     seed-api-caller          →  Gera dados via chamadas HTTP/GraphQL (modo estrito, sem criar usuário)"
+	@echo "     seed-api-caller-bootstrap  →  Gera dados via API e cria usuário se login falhar"
+	@echo "     seed-api-caller-clean     →  Limpa registros via API e roda modo estrito"
+	@echo "     seed-caller              →  Gera via API para N usuários (cria se faltar) - use N=9 ou n=9"
 	@echo ""
 	@echo ""
-	@echo "\033[48;5;235;33m┃==================================================================================================================┃\033[0m"
+	@echo " 🔶 ┃ TESTING ┃"
+	@echo ""
+	@echo "     test                     →  Run unit tests"
+	@echo "     test-cover               →  Run tests with coverage summary (package + %)"
+	@echo "     test-cover-detail        →  Run tests with coverage report (excludes mocks)"
+	@echo "     test-html-report         →  Generate HTML test report (requires go-test-html-report)"
+	@echo "     regression-gate-draft    →  Run cross-repo draft-flow regression gate (dashboard + chat + api)"
+	@echo "     e2e-draft-smoke          →  Run dashboard Playwright smoke for DC-08/DC-09 (host deps required)"
+	@echo "     dc15-correlate           →  Correlate UI action logs across dashboard + api + chat (vars: SINCE, DRAFT_ID)"
+	@echo "     mcp-smoke                →  Run MCP smoke test through aion-chat against the current local stack"
+	@echo "     mcp-smoke-readonly       →  Run MCP smoke test in read-only mode"
+	@echo "     record-projection-smoke  →  Run cross-repo smoke for record -> outbox -> kafka -> projection"
+	@echo "     realtime-record-smoke    →  Run SSE smoke for record projection readiness notifications"
+	@echo "     record-projection-page-smoke  →  Run cursor pagination smoke for derived record projections"
+	@echo "     ingest-event-smoke       →  Run cross-repo smoke for aion-ingest -> kafka envelope publication"
+	@echo "     outbox-diagnose          →  Inspect outbox backlog and sample pending/failed rows"
+	@echo "     event-backbone-gate-preflight  →  Check local stack and repo prerequisites for the v2 gate"
+	@echo "     event-backbone-gate      →  Run the full v2 records gate across api, streams, ingest, and dashboard"
+	@echo ""
+	@echo ""
+	@echo " 🔶 ┃ API DOCS (SWAGGER) ┃"
+	@echo ""
+	@echo "     docs.gen                 →  Generate Swagger artifacts (docs.go, swagger.json/yaml)"
+	@echo "     docs.check-dirty         →  Fail if Swagger artifacts are out-of-date"
+	@echo "     docs.clean               →  Remove generated Swagger artifacts"
+	@echo ""
+	@echo ""
+	@echo " 🔶 ┃ API CALLS ┃"
+	@echo ""
+	@echo "     call-login               →  POST /auth/login (vars: USER, PASS, SAVE_TOKEN=true to cache)"
+	@echo "     call-health              →  GET /aion/health (also available at /aion/api/v1/health)"
+	@echo "     call-me                  →  GET /user/me (needs TOKEN or .cache/aion/token)"
+	@echo "     call-chat                →  POST /chat (needs MESSAGE + token)"
+	@echo "     call-graphql             →  POST /graphql (vars: QUERY or QUERY_FILE)"
+	@echo ""
+	@echo ""
+	@echo "┃==================================================================================================================┃"
 	@echo ""
 
 # ============================================================
@@ -113,7 +254,7 @@ help:
 
 -include makefiles/*.mk
 
-.PHONY: graphql mocks docs.gen docs.validate docs.check-dirty lint test test-cover test-ci test-clean
+.PHONY: graphql mocks docs.gen docs.validate docs.check-dirty docs-verify lint test test-cover test-cover-detail test-ci test-clean
 
 # Short aliases
 .PHONY: install-tools
@@ -121,17 +262,43 @@ install-tools: tools-install
 
 .PHONY: \
 	help tools-install tools.check \
-	build-dev dev-up dev-down dev dev-clean clean-dev \
+	graph-projection-export \
+	build-dev rebuild-dev dev-full dev-up dev-down dev dev-fast dev-attach dev-logs dev-clean clean-dev \
+	logs-api logs-chat logs-dashboard logs-postgres logs-redis logs-ollama logs-jaeger logs-otel logs-prometheus logs-grafana logs-all \
+	ollama-up ollama-down ollama-status ollama-restart ollama-logs ollama-models ollama-pull ollama-clean \
+	dev-local dev-local-deps dev-local-full dev-local-stop dev-local-down air-install \
 	build-prod prod-up prod-down prod clean-prod \
-	docker-clean-all \
+	docker-clean-all docker-disk docker-prune-aion docker-prune-dangling docker-prune-build-cache docker-prune-full \
+	cache-reset \
 	graphql mocks \
 	format lint lint-fix verify \
-	test test-cover test-html-report test-ci test-clean \
-	migrate-up migrate-down migrate-force migrate-new \
-	docs.gen docs.check-dirty docs.clean docs.validate
+	test test-cover test-cover-detail test-html-report test-ci test-clean \
+	regression-gate-draft e2e-draft-smoke dc15-correlate \
+	mcp-smoke mcp-smoke-readonly \
+	migrate-up migrate-down migrate-force migrate-new migrate-install \
+	migrate-dev-up migrate-dev-down migrate-dev-status migrate-dev-reset \
+	docs.gen docs.check-dirty docs.clean docs.validate docs-verify
 
 docs-serve:
-	@.venv-docs/bin/mkdocs serve
+	@.venv-docs/bin/python -m mkdocs serve
 
 docs-build:
-	@.venv-docs/bin/mkdocs build
+	@.venv-docs/bin/python -m mkdocs build
+
+docs-verify:
+	@.venv-docs/bin/python -m mkdocs build --strict
+
+regression-gate-draft:
+	@./hack/regression-gate-draft-flow.sh
+
+e2e-draft-smoke:
+	@cd ../aionapi-dashboard && npm run test:e2e:draft
+
+dc15-correlate:
+	@./hack/dc15-correlate-ui-action.sh --since "$${SINCE:-45m}" $${DRAFT_ID:+--draft-id "$$DRAFT_ID"}
+
+# Include debug makefile (opt-in to avoid overriding targets and noisy warnings)
+# Usage: make INCLUDE_DEBUG_MK=1 debug-roles
+ifeq ($(INCLUDE_DEBUG_MK),1)
+-include makefiles/debug.mk
+endif

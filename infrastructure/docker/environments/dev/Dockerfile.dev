@@ -1,0 +1,23 @@
+# Development Dockerfile with Air hot reload
+# This file is used ONLY in docker-compose-dev.yaml for development
+# Production uses infrastructure/docker/Dockerfile (multi-stage with Alpine)
+
+FROM golang:1.25
+
+WORKDIR /app
+
+# Install Air for hot reload (air-verse is the new package name)
+RUN go install github.com/air-verse/air@latest
+
+# Copy go.mod and go.sum for dependency caching
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Note: Source code will be mounted via volume (not copied here)
+# This allows Air to detect changes and recompile automatically
+
+# Expose port
+EXPOSE 5001
+
+# Run Air instead of compiled binary
+CMD ["air", "-c", ".air.toml"]

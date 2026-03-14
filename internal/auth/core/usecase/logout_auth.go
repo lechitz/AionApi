@@ -25,20 +25,20 @@ func (s *Service) Logout(ctx context.Context, userID uint64) error {
 	)
 	defer span.End()
 
-	span.AddEvent(EventRevokeToken)
-	// Delete access token
+	span.AddEvent(EventRevokeAccessToken)
 	if err := s.authStore.Delete(ctx, userID, commonkeys.TokenTypeAccess); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToDeleteToken)
 		s.logger.ErrorwCtx(ctx, ErrorToDeleteToken, commonkeys.Error, err.Error())
-		return fmt.Errorf("%s: %w", ErrorToDeleteToken, err)
+		return fmt.Errorf("%w: %w", ErrTokenDeletion, err)
 	}
-	// Delete refresh token
+
+	span.AddEvent(EventRevokeRefreshToken)
 	if err := s.authStore.Delete(ctx, userID, commonkeys.TokenTypeRefresh); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToDeleteToken)
 		s.logger.ErrorwCtx(ctx, ErrorToDeleteToken, commonkeys.Error, err.Error())
-		return fmt.Errorf("%s: %w", ErrorToDeleteToken, err)
+		return fmt.Errorf("%w: %w", ErrTokenDeletion, err)
 	}
 
 	span.AddEvent(EventTokenRevoked)

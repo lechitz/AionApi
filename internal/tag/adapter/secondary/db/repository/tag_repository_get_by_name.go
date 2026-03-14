@@ -29,12 +29,13 @@ func (r TagRepository) GetByName(ctx context.Context, tagName string, userID uin
 
 	var tagDB model.TagDB
 	err := r.db.WithContext(ctx).
-		Where("user_id = ? AND name = ?", userID, tagName).
-		First(&tagDB).Error
+		Where("user_id = ? AND LOWER(name) = LOWER(?)", userID, tagName).
+		First(&tagDB).Error()
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			span.SetStatus(codes.Ok, ErrTagNotFoundMsg)
-			return domain.Tag{}, nil
+			span.SetStatus(codes.Error, ErrTagNotFoundMsg)
+			span.RecordError(errors.New(ErrTagNotFoundMsg))
+			return domain.Tag{}, errors.New(ErrTagNotFoundMsg)
 		}
 		span.RecordError(err)
 		span.SetStatus(codes.Error, OpGetByName)

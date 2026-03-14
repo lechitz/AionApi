@@ -2,6 +2,7 @@
 package controller
 
 import (
+	"math"
 	"strconv"
 	"time"
 
@@ -13,13 +14,12 @@ import (
 // toModelOut converts a domain.Record to a GraphQL model.Record.
 func toModelOut(t domain.Record) *gmodel.Record {
 	out := &gmodel.Record{
-		ID:         strconv.FormatUint(t.ID, 10),
-		UserID:     strconv.FormatUint(t.UserID, 10),
-		CategoryID: strconv.FormatUint(t.CategoryID, 10),
-		Title:      t.Title,
-		EventTime:  t.EventTime.UTC().Format(time.RFC3339),
-		CreatedAt:  t.CreatedAt.UTC().Format(time.RFC3339),
-		UpdatedAt:  t.UpdatedAt.UTC().Format(time.RFC3339),
+		ID:        strconv.FormatUint(t.ID, 10),
+		UserID:    strconv.FormatUint(t.UserID, 10),
+		TagID:     strconv.FormatUint(t.TagID, 10),
+		EventTime: t.EventTime.UTC().Format(time.RFC3339),
+		CreatedAt: t.CreatedAt.UTC().Format(time.RFC3339),
+		UpdatedAt: t.UpdatedAt.UTC().Format(time.RFC3339),
 	}
 	if t.Description != nil {
 		out.Description = t.Description
@@ -29,11 +29,8 @@ func toModelOut(t domain.Record) *gmodel.Record {
 		out.RecordedAt = &r
 	}
 	if t.DurationSecs != nil {
-		v := *t.DurationSecs
-		if v >= -2147483648 && v <= 2147483647 { // ensure safe conversion to int32
-			dv := int32(v)
-			out.DurationSeconds = &dv
-		}
+		dv := safeRecordIntToInt32(*t.DurationSecs)
+		out.DurationSeconds = &dv
 	}
 	if t.Value != nil {
 		out.Value = t.Value
@@ -47,20 +44,78 @@ func toModelOut(t domain.Record) *gmodel.Record {
 	if t.Status != nil {
 		out.Status = t.Status
 	}
-	// TagID is required
-	outTag := strconv.FormatUint(t.TagID, 10)
-	out.TagID = outTag
 	return out
+}
+
+// toModelOutSlice converts a slice of domain.Record to a slice of GraphQL model.Record pointers.
+func toModelOutSlice(records []domain.Record) []*gmodel.Record {
+	result := make([]*gmodel.Record, len(records))
+	for i, rec := range records {
+		result[i] = toModelOut(rec)
+	}
+	return result
+}
+
+func toProjectedModelOut(t domain.RecordProjection) *gmodel.RecordProjection {
+	out := &gmodel.RecordProjection{
+		RecordID:           strconv.FormatUint(t.RecordID, 10),
+		UserID:             strconv.FormatUint(t.UserID, 10),
+		TagID:              strconv.FormatUint(t.TagID, 10),
+		EventTimeUtc:       t.EventTimeUTC.UTC().Format(time.RFC3339),
+		LastEventID:        t.LastEventID,
+		LastEventType:      t.LastEventType,
+		LastEventVersion:   t.LastEventVersion,
+		LastKafkaTopic:     t.LastKafkaTopic,
+		LastKafkaPartition: safeRecordIntToInt32(t.LastKafkaPartition),
+		LastKafkaOffset:    strconv.FormatInt(t.LastKafkaOffset, 10),
+		LastConsumedAtUtc:  t.LastConsumedAtUTC.UTC().Format(time.RFC3339),
+		PayloadJSON:        string(t.PayloadJSON),
+		CreatedAtUtc:       t.CreatedAtUTC.UTC().Format(time.RFC3339),
+		UpdatedAtUtc:       t.UpdatedAtUTC.UTC().Format(time.RFC3339),
+	}
+	if t.Description != nil {
+		out.Description = t.Description
+	}
+	if t.RecordedAtUTC != nil {
+		v := t.RecordedAtUTC.UTC().Format(time.RFC3339)
+		out.RecordedAtUtc = &v
+	}
+	if t.Status != nil {
+		out.Status = t.Status
+	}
+	if t.Timezone != nil {
+		out.Timezone = t.Timezone
+	}
+	if t.DurationSeconds != nil {
+		v := safeRecordIntToInt32(*t.DurationSeconds)
+		out.DurationSeconds = &v
+	}
+	if t.Value != nil {
+		out.Value = t.Value
+	}
+	if t.Source != nil {
+		out.Source = t.Source
+	}
+	if t.LastTraceID != nil {
+		out.LastTraceID = t.LastTraceID
+	}
+	if t.LastRequestID != nil {
+		out.LastRequestID = t.LastRequestID
+	}
+	return out
+}
+
+func toProjectedModelOutSlice(items []domain.RecordProjection) []*gmodel.RecordProjection {
+	result := make([]*gmodel.RecordProjection, len(items))
+	for i, item := range items {
+		result[i] = toProjectedModelOut(item)
+	}
+	return result
 }
 
 // toCreateCommand converts a GraphQL CreateRecordInput into an input.CreateRecordCommand.
 func toCreateCommand(in gmodel.CreateRecordInput, userID uint64) input.CreateRecordCommand {
 	uid := userID
-
-	var categoryID uint64
-	if v, err := strconv.ParseUint(in.CategoryID, 10, 64); err == nil {
-		categoryID = v
-	}
 
 	// parse eventTime
 	var eventTime time.Time
@@ -94,8 +149,6 @@ func toCreateCommand(in gmodel.CreateRecordInput, userID uint64) input.CreateRec
 
 	return input.CreateRecordCommand{
 		UserID:       uid,
-		CategoryID:   categoryID,
-		Title:        in.Title,
 		Description:  in.Description,
 		TagID:        tagID,
 		EventTime:    eventTime,
@@ -106,4 +159,14 @@ func toCreateCommand(in gmodel.CreateRecordInput, userID uint64) input.CreateRec
 		Timezone:     in.Timezone,
 		Status:       in.Status,
 	}
+}
+
+func safeRecordIntToInt32(value int) int32 {
+	if value > math.MaxInt32 {
+		return math.MaxInt32
+	}
+	if value < math.MinInt32 {
+		return math.MinInt32
+	}
+	return int32(value)
 }

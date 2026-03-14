@@ -1,0 +1,16 @@
+title Admin Domain Flow
+
+participant AdminClient
+participant "Admin HTTP Handler" as Handler
+participant "Admin Usecase" as Usecase
+participant "Admin Repository" as Repo
+participant Database
+
+AdminClient->Handler: Admin request (roles/block/update)
+Handler->Usecase: Validate + authorize + command
+Usecase->Repo: Read/write admin data
+Repo->Database: Query/update
+Database->Repo: Result
+Repo->Usecase: Domain result
+Usecase->Handler: Response or semantic error
+Handler->AdminClient: HTTP response

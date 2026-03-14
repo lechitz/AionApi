@@ -20,6 +20,8 @@ type TokenServiceTestSuite struct {
 	TokenStore     *mocks.MockAuthStore
 	AuthProvider   *mocks.MockAuthProvider
 	UserRepository *mocks.MockUserRepository
+	UserCache      *mocks.MockUserCache
+	RoleCache      *mocks.MockRoleCache
 }
 
 // TokenServiceTest initializes and returns a TokenServiceTestSuite with mocked output ports.
@@ -27,21 +29,29 @@ func TokenServiceTest(t *testing.T) *TokenServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	userRepository := mocks.NewMockUserRepository(ctrl)
+	userCache := mocks.NewMockUserCache(ctrl)
 	logger := mocks.NewMockContextLogger(ctrl)
 	hasher := mocks.NewMockHasher(ctrl)
 	authStore := mocks.NewMockAuthStore(ctrl)
 	authProvider := mocks.NewMockAuthProvider(ctrl)
+	rolesReader := mocks.NewMockRolesReader(ctrl)
+	roleCache := mocks.NewMockRoleCache(ctrl)
 
 	ExpectLoggerDefaultBehavior(logger)
+	roleCache.EXPECT().GetRoles(gomock.Any(), gomock.Any()).Return(nil, nil).AnyTimes()
+	roleCache.EXPECT().SaveRoles(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
-	svc := usecase.NewService(userRepository, authStore, authProvider, hasher, logger)
+	svc := usecase.NewService(rolesReader, roleCache, userRepository, userCache, authStore, authProvider, hasher, logger)
 
 	return &TokenServiceTestSuite{
-		Ctrl:         ctrl,
-		Logger:       logger,
-		TokenStore:   authStore,
-		AuthProvider: authProvider,
-		TokenService: svc,
-		Ctx:          t.Context(),
+		Ctrl:           ctrl,
+		Logger:         logger,
+		TokenStore:     authStore,
+		AuthProvider:   authProvider,
+		UserRepository: userRepository,
+		UserCache:      userCache,
+		RoleCache:      roleCache,
+		TokenService:   svc,
+		Ctx:            t.Context(),
 	}
 }

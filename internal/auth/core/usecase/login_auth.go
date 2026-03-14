@@ -4,14 +4,13 @@ package usecase
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"strconv"
+	"strings"
 	"time"
 
 	authDomain "github.com/lechitz/AionApi/internal/auth/core/domain"
 	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	userDomain "github.com/lechitz/AionApi/internal/user/core/domain"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -19,10 +18,12 @@ import (
 )
 
 // Login authenticates a user by validating credentials and generates a new token if valid.
-func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (userDomain.User, string, string, error) {
+func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (authDomain.AuthenticatedUser, string, string, error) {
 	tracer := otel.Tracer(TracerName)
 	ctx, span := tracer.Start(ctx, SpanLogin)
 	defer span.End()
+
+	usernameReq = strings.ToLower(strings.TrimSpace(usernameReq))
 
 	span.SetAttributes(
 		attribute.String(commonkeys.Operation, SpanLogin),
@@ -35,12 +36,12 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToGetUserByUserName)
 		s.logger.ErrorwCtx(ctx, ErrorToGetUserByUserName, commonkeys.Error, err.Error())
-		return userDomain.User{}, "", "", errors.New(ErrorToGetUserByUserName)
+		return authDomain.AuthenticatedUser{}, "", "", ErrGetUserByUsername
 	}
 	if user.ID == 0 {
 		span.SetStatus(codes.Error, UserNotFoundOrInvalidCredentials)
 		s.logger.WarnwCtx(ctx, UserNotFoundOrInvalidCredentials, commonkeys.Username, usernameReq)
-		return userDomain.User{}, "", "", errors.New(UserNotFoundOrInvalidCredentials)
+		return authDomain.AuthenticatedUser{}, "", "", ErrUserNotFoundOrInvalidCredentials
 	}
 
 	span.AddEvent(EventComparePassword)
@@ -48,22 +49,41 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 		span.RecordError(err)
 		span.SetStatus(codes.Error, InvalidCredentials)
 		s.logger.WarnwCtx(ctx, ErrorToCompareHashAndPassword, commonkeys.Username, user.Username)
-		return userDomain.User{}, "", "", errors.New(InvalidCredentials)
+		return authDomain.AuthenticatedUser{}, "", "", ErrInvalidCredentials
 	}
 
-	roles := user.Roles
+	roles, err := s.getRolesWithCache(ctx, user.ID)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, ErrorToGetRoles)
+		s.logger.ErrorwCtx(ctx, ErrorToGetRoles,
+			commonkeys.UserID, strconv.FormatUint(user.ID, 10),
+			commonkeys.Error, err.Error(),
+		)
+		return authDomain.AuthenticatedUser{}, "", "", err
+	}
+
 	claims := map[string]any{
-		claimskeys.Roles: roles,
-		claimskeys.Name:  user.Name,
+		claimskeys.Username: user.Username,
+		claimskeys.Email:    user.Email,
+		claimskeys.Roles:    roles,
+		claimskeys.Name:     user.Name,
 	}
 
-	// Delegate token generation and storage to reduce function length.
 	accessToken, refreshToken, err := s.generateAndStoreTokens(ctx, user.ID, claims)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, ErrorToCreateToken)
 		s.logger.ErrorwCtx(ctx, ErrorToCreateToken, commonkeys.Error, err.Error())
-		return userDomain.User{}, "", "", errors.New(ErrorToCreateToken)
+		return authDomain.AuthenticatedUser{}, "", "", ErrTokenCreation
+	}
+
+	span.AddEvent(EventCacheUserProfile)
+	if err := s.userCache.SaveUser(ctx, user, 0); err != nil {
+		s.logger.WarnwCtx(ctx, LogFailedToCacheUserProfile,
+			commonkeys.UserID, user.ID,
+			commonkeys.Error, err,
+		)
 	}
 
 	span.AddEvent(EventLoginSuccess)
@@ -71,7 +91,15 @@ func (s *Service) Login(ctx context.Context, usernameReq, passwordReq string) (u
 	span.SetStatus(codes.Ok, SuccessToLogin)
 
 	s.logger.InfowCtx(ctx, SuccessToLogin, commonkeys.UserID, strconv.FormatUint(user.ID, 10))
-	return user, accessToken, refreshToken, nil
+
+	authUser := authDomain.AuthenticatedUser{
+		ID:       user.ID,
+		Name:     user.Name,
+		Username: user.Username,
+		Email:    user.Email,
+		Roles:    roles,
+	}
+	return authUser, accessToken, refreshToken, nil
 }
 
 // helper to compute TTL from claims 'exp' value.
@@ -113,7 +141,7 @@ func claimsTTLFromVerifyResult(claims map[string]any) time.Duration {
 // observability and error handling.
 func (s *Service) generateAndStoreTokens(ctx context.Context, userID uint64, claims map[string]any) (string, string, error) {
 	tracer := otel.Tracer(TracerName)
-	ctx, span := tracer.Start(ctx, "generateAndStoreTokens")
+	ctx, span := tracer.Start(ctx, SpanGenerateAndStoreTokens)
 	defer span.End()
 
 	span.AddEvent(EventGenerateToken)
@@ -131,20 +159,19 @@ func (s *Service) generateAndStoreTokens(ctx context.Context, userID uint64, cla
 	}
 
 	accessAuth := authDomain.NewAccessToken(accessValue, userID).ToAuth()
-	span.AddEvent(EventSaveTokenToStore)
+	span.AddEvent(EventSaveAccessTokenToStore)
 	if accessTTL > 0 {
 		if err := s.authStore.Save(ctx, accessAuth, accessTTL); err != nil {
 			return "", "", err
 		}
 	}
 
-	span.AddEvent("generate_refresh_token")
+	span.AddEvent(EventGenerateRefreshToken)
 	refreshValue, err := s.authProvider.GenerateRefreshToken(userID)
 	if err != nil {
 		return "", "", err
 	}
 
-	// compute TTL for refresh token
 	refreshTTL := time.Duration(0)
 	if refreshValue != "" {
 		if c, err := s.authProvider.Verify(refreshValue); err == nil {
@@ -153,6 +180,7 @@ func (s *Service) generateAndStoreTokens(ctx context.Context, userID uint64, cla
 	}
 
 	refreshAuth := authDomain.NewRefreshToken(refreshValue, userID).ToAuth()
+	span.AddEvent(EventSaveRefreshTokenToStore)
 	if refreshTTL > 0 {
 		if err := s.authStore.Save(ctx, refreshAuth, refreshTTL); err != nil {
 			return "", "", err

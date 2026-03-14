@@ -7,10 +7,12 @@
 # ============================================================
 
 SWAG_VERSION ?= v1.16.6
-SWAG_BIN     ?= $(shell command -v swag || echo "$$(go env GOPATH)/bin/swag")
-SWAG_OUT     ?= docs/swagger
-SWAG_MAIN    ?= ./cmd/aion-api/main.go
+SWAG_BIN     = $(shell [ -x "$(CURDIR)/.cache/bin/swag" ] && echo "$(CURDIR)/.cache/bin/swag" || command -v swag || echo "$$(go env GOPATH)/bin/swag")
+SWAG_OUT     ?= contracts/openapi
+SWAG_DIRS    ?= ./cmd/api,./internal/admin/adapter/primary/http/handler,./internal/auth/adapter/primary/http/handler,./internal/chat/adapter/primary/http/handler,./internal/user/adapter/primary/http/handler
+SWAG_MAIN    ?= swagger.go
 SWAG_PKG     ?= docs
+GO_CACHE     ?= $(CURDIR)/.cache/go-build
 
 PERL_BIN     ?= $(shell command -v perl)
 
@@ -20,8 +22,27 @@ tools.s:
 	@echo ">> ensuring tools"
 
 swag: tools.s
-	@echo ">> installing swag $(SWAG_VERSION)"
-	@GOBIN=$$(go env GOPATH)/bin go install github.com/swaggo/swag/cmd/swag@$(SWAG_VERSION)
+	@echo ">> ensuring swag $(SWAG_VERSION)"
+	@mkdir -p "$(GO_CACHE)"
+	@if [ -x "$(SWAG_BIN)" ]; then \
+		INSTALLED_VERSION=$$(go version -m "$(SWAG_BIN)" 2>/dev/null | awk '$$1=="mod" && $$2=="github.com/swaggo/swag"{print $$3}' | head -n1); \
+		if [ -z "$$INSTALLED_VERSION" ]; then \
+			INSTALLED_VERSION=$$($(SWAG_BIN) --version | awk '{print $$3}'); \
+		fi; \
+		echo ">> swag already present at $(SWAG_BIN) (version: $$INSTALLED_VERSION)"; \
+		if [ "$$INSTALLED_VERSION" != "$(SWAG_VERSION)" ]; then \
+			echo ">> installing swag $(SWAG_VERSION) to .cache/bin"; \
+			GOCACHE=$(GO_CACHE) GOBIN="$(CURDIR)/.cache/bin" go install github.com/swaggo/swag/cmd/swag@$(SWAG_VERSION) || { \
+				echo "⚠️  failed to install swag $(SWAG_VERSION); using existing $$INSTALLED_VERSION at $(SWAG_BIN)"; \
+			}; \
+		fi; \
+	else \
+		echo ">> installing swag $(SWAG_VERSION)"; \
+		GOCACHE=$(GO_CACHE) GOBIN="$(CURDIR)/.cache/bin" go install github.com/swaggo/swag/cmd/swag@$(SWAG_VERSION) || { \
+			echo "❌ failed to install swag (likely offline). Install manually if needed: go install github.com/swaggo/swag/cmd/swag@$(SWAG_VERSION)"; \
+			exit 1; \
+		}; \
+	fi
 
 docs.gen: swag
 	@echo ">> generating swagger docs"
@@ -30,7 +51,8 @@ docs.gen: swag
 		-o "$(SWAG_OUT)" \
 		--packageName "$(SWAG_PKG)" \
 		--parseDependency \
-		--parseInternal
+		--parseInternal \
+		-d "$(SWAG_DIRS)"
 
 	@echo ">> patching generated docs.go for lint (godot + nolintlint, with reasons; idempotent)"
 	@[ -n "$(PERL_BIN)" ] || (echo "Perl not found. Please install Perl to patch generated docs."; exit 1)
@@ -58,7 +80,8 @@ docs.validate: swag
 		-o "$(SWAG_OUT)" \
 		--packageName "$(SWAG_PKG)" \
 		--parseDependency \
-		--parseInternal
+		--parseInternal \
+		-d "$(SWAG_DIRS)"
 	@echo ">> patching generated docs.go for lint (godot + nolintlint, with reasons; idempotent)"
 	@[ -n "$(PERL_BIN)" ] || (echo "Perl not found. Please install Perl to patch generated docs."; exit 1)
 	@[ -f "$(SWAG_OUT)/docs.go" ] || (echo "$(SWAG_OUT)/docs.go not found"; exit 1)

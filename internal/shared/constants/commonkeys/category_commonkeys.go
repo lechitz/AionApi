@@ -14,7 +14,7 @@ const (
 	// CategoryDescription is the key for category description.
 	CategoryDescription = "description"
 
-	// CategoryIcon is the key for category icon.
+	// CategoryIcon is the key for category icon key.
 	CategoryIcon = "icon"
 
 	// CategoryColor is the key for category color (hex).

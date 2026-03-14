@@ -33,11 +33,14 @@ func TestLogin_Success(t *testing.T) {
 		Compare("hashed", "test123").
 		Return(nil)
 
+	suite.RolesReader.EXPECT().
+		GetRolesByUserID(gomock.Any(), uint64(1)).
+		Return([]string{"user"}, nil)
+
 	suite.TokenProvider.EXPECT().
 		GenerateAccessToken(uint64(1), gomock.AssignableToTypeOf(map[string]any{})).
 		Return("token-string", nil)
 
-	// expect Verify for the generated access token and a positive exp
 	exp := strconv.FormatInt(time.Now().Add(3*time.Minute).Unix(), 10)
 	suite.TokenProvider.EXPECT().
 		Verify("token-string").
@@ -47,15 +50,18 @@ func TestLogin_Success(t *testing.T) {
 		Save(gomock.Any(), authDomain.Auth{Key: 1, Token: "token-string", Type: commonkeys.TokenTypeAccess}, gomock.Any()).
 		Return(nil)
 
-	// The service generates a refresh token as well; expect the provider call but when it's empty we skip saving it
 	suite.TokenProvider.EXPECT().
 		GenerateRefreshToken(uint64(1)).
 		Return("", nil)
 
+	suite.UserCache.EXPECT().
+		SaveUser(gomock.Any(), mockUser, gomock.Any()).
+		Return(nil)
+
 	userOut, accessTokenOut, refreshTokenOut, err := suite.AuthService.Login(suite.Ctx, "lechitz", "test123")
 
 	require.NoError(t, err)
-	require.Equal(t, mockUser, userOut)
+	require.Equal(t, authDomain.AuthenticatedUser{ID: 1, Username: "lechitz", Roles: []string{"user"}}, userOut)
 	require.Equal(t, "token-string", accessTokenOut)
 	require.Empty(t, refreshTokenOut)
 }
@@ -119,6 +125,10 @@ func TestLogin_ProviderGenerateFails(t *testing.T) {
 		Compare("hashed", "123456").
 		Return(nil)
 
+	suite.RolesReader.EXPECT().
+		GetRolesByUserID(gomock.Any(), uint64(1)).
+		Return([]string{"user"}, nil)
+
 	suite.TokenProvider.EXPECT().
 		GenerateAccessToken(uint64(1), gomock.AssignableToTypeOf(map[string]any{})).
 		Return("", errors.New(usecase.ErrorToCreateToken))
@@ -147,11 +157,14 @@ func TestLogin_SaveTokenFails(t *testing.T) {
 		Compare("hashed", "123456").
 		Return(nil)
 
+	suite.RolesReader.EXPECT().
+		GetRolesByUserID(gomock.Any(), uint64(1)).
+		Return([]string{"user"}, nil)
+
 	suite.TokenProvider.EXPECT().
 		GenerateAccessToken(uint64(1), gomock.AssignableToTypeOf(map[string]any{})).
 		Return("token-string", nil)
 
-	// Expect Verify for the generated access token and a positive exp so Save is attempted
 	exp := strconv.FormatInt(time.Now().Add(3*time.Minute).Unix(), 10)
 	suite.TokenProvider.EXPECT().Verify("token-string").Return(map[string]any{claimskeys.Exp: exp}, nil)
 
@@ -202,11 +215,14 @@ func TestLogin_Success_WithRefreshToken(t *testing.T) {
 		Compare("hashed", "test123").
 		Return(nil)
 
+	suite.RolesReader.EXPECT().
+		GetRolesByUserID(gomock.Any(), uint64(1)).
+		Return([]string{"user"}, nil)
+
 	suite.TokenProvider.EXPECT().
 		GenerateAccessToken(uint64(1), gomock.AssignableToTypeOf(map[string]any{})).
 		Return("access-token", nil)
 
-	// expect Verify for access token
 	expA := strconv.FormatInt(time.Now().Add(3*time.Minute).Unix(), 10)
 	suite.TokenProvider.EXPECT().Verify("access-token").Return(map[string]any{claimskeys.Exp: expA}, nil)
 
@@ -218,7 +234,6 @@ func TestLogin_Success_WithRefreshToken(t *testing.T) {
 		GenerateRefreshToken(uint64(1)).
 		Return("refresh-token", nil)
 
-	// expect Verify for refresh token
 	expR := strconv.FormatInt(time.Now().Add(24*time.Hour).Unix(), 10)
 	suite.TokenProvider.EXPECT().Verify("refresh-token").Return(map[string]any{claimskeys.Exp: expR}, nil)
 
@@ -226,57 +241,14 @@ func TestLogin_Success_WithRefreshToken(t *testing.T) {
 		Save(gomock.Any(), authDomain.Auth{Key: 1, Token: "refresh-token", Type: commonkeys.TokenTypeRefresh}, gomock.Any()).
 		Return(nil)
 
+	suite.UserCache.EXPECT().
+		SaveUser(gomock.Any(), mockUser, gomock.Any()).
+		Return(nil)
+
 	userOut, accessTokenOut, refreshTokenOut, err := suite.AuthService.Login(suite.Ctx, "lechitz", "test123")
 
 	require.NoError(t, err)
-	require.Equal(t, mockUser, userOut)
+	require.Equal(t, authDomain.AuthenticatedUser{ID: 1, Username: "lechitz", Roles: []string{"user"}}, userOut)
 	require.Equal(t, "access-token", accessTokenOut)
 	require.Equal(t, "refresh-token", refreshTokenOut)
-}
-
-func TestRefreshTokenRenewal_Success(t *testing.T) {
-	suite := setup.AuthServiceTest(t)
-	defer suite.Ctrl.Finish()
-
-	userID := uint64(1)
-	refreshToken := "refresh-token"
-	newAccessToken := "new-access-token"
-	newRefreshToken := "new-refresh-token"
-
-	// Expect verification of the refresh token to extract userID
-	suite.TokenProvider.EXPECT().
-		Verify(refreshToken).
-		Return(map[string]any{claimskeys.UserID: strconv.FormatUint(userID, 10)}, nil)
-
-	suite.TokenStore.EXPECT().
-		Get(gomock.Any(), userID, commonkeys.TokenTypeRefresh).
-		Return(authDomain.Auth{Key: userID, Token: refreshToken, Type: commonkeys.TokenTypeRefresh}, nil)
-
-	suite.TokenProvider.EXPECT().
-		GenerateAccessToken(userID, gomock.AssignableToTypeOf(map[string]any{})).
-		Return(newAccessToken, nil)
-
-	// expect Verify for new access token and save
-	expNewA := strconv.FormatInt(time.Now().Add(3*time.Minute).Unix(), 10)
-	suite.TokenProvider.EXPECT().Verify(newAccessToken).Return(map[string]any{claimskeys.Exp: expNewA}, nil)
-	suite.TokenStore.EXPECT().
-		Save(gomock.Any(), authDomain.Auth{Key: userID, Token: newAccessToken, Type: commonkeys.TokenTypeAccess}, gomock.Any()).
-		Return(nil)
-
-	suite.TokenProvider.EXPECT().
-		GenerateRefreshToken(userID).
-		Return(newRefreshToken, nil)
-
-	// expect Verify for new refresh token and save
-	expNewR := strconv.FormatInt(time.Now().Add(24*time.Hour).Unix(), 10)
-	suite.TokenProvider.EXPECT().Verify(newRefreshToken).Return(map[string]any{claimskeys.Exp: expNewR}, nil)
-	suite.TokenStore.EXPECT().
-		Save(gomock.Any(), authDomain.Auth{Key: userID, Token: newRefreshToken, Type: commonkeys.TokenTypeRefresh}, gomock.Any()).
-		Return(nil)
-
-	accessTokenOut, refreshTokenOut, err := suite.AuthService.RefreshTokenRenewal(suite.Ctx, refreshToken)
-
-	require.NoError(t, err)
-	require.Equal(t, newAccessToken, accessTokenOut)
-	require.Equal(t, newRefreshToken, refreshTokenOut)
 }

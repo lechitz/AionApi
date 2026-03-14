@@ -6,52 +6,101 @@ import (
 	"fmt"
 	"time"
 
+	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 	"github.com/lechitz/AionApi/internal/record/core/ports/input"
-	tagdomain "github.com/lechitz/AionApi/internal/tag/core/domain"
+	"github.com/lechitz/AionApi/internal/record/core/ports/output"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Create creates a new record after validating inputs.
 func (s *Service) Create(ctx context.Context, cmd input.CreateRecordCommand) (domain.Record, error) {
-	if cmd.Title == "" {
-		return domain.Record{}, errors.New("title required")
-	}
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanCreate)
+	defer span.End()
+
+	span.SetAttributes(
+		attribute.String(commonkeys.Operation, SpanCreate),
+	)
+
+	span.AddEvent(EventValidateInput)
 
 	userID, err := getUserIDFromContext(ctx)
 	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, ErrToValidateRecord)
+		s.Logger.ErrorwCtx(ctx, ErrToValidateRecord, commonkeys.Error, err.Error())
 		return domain.Record{}, err
 	}
 
 	eventTime := resolveEventTime(cmd)
 
 	if err := validateRecordedAt(cmd.RecordedAt); err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, ErrToValidateRecord)
+		s.Logger.ErrorwCtx(ctx, ErrToValidateRecord, commonkeys.Error, err.Error())
 		return domain.Record{}, err
 	}
 
-	finalTagID, err := s.resolveTagID(ctx, cmd.TagID, cmd.CategoryID, userID)
+	finalTagID, err := s.resolveTagID(ctx, cmd.TagID, userID)
 	if err != nil {
-		return domain.Record{}, err
+		span.RecordError(err)
+		span.SetStatus(codes.Error, FailedToCreateRecord)
+		s.Logger.ErrorwCtx(ctx, FailedToCreateRecord, commonkeys.Error, err.Error())
+		return domain.Record{}, fmt.Errorf("%w: %w", ErrCreateRecord, err)
 	}
+
+	// Apply default values for optional fields
+	recordedAt := resolveRecordedAt(cmd.RecordedAt)
+	status := resolveStatus(cmd.Status)
+	timezone := resolveTimezone(cmd.Timezone)
 
 	rec := domain.Record{
 		UserID:       userID,
-		Title:        cmd.Title,
 		Description:  cmd.Description,
-		CategoryID:   cmd.CategoryID,
+		TagID:        finalTagID,
 		EventTime:    eventTime,
-		RecordedAt:   cmd.RecordedAt,
+		RecordedAt:   recordedAt,
 		DurationSecs: cmd.DurationSecs,
 		Value:        cmd.Value,
 		Source:       cmd.Source,
-		Timezone:     cmd.Timezone,
-		Status:       cmd.Status,
-		TagID:        finalTagID,
+		Timezone:     timezone,
+		Status:       status,
 	}
 
-	created, err := s.RecordRepository.Create(ctx, rec)
-	if err != nil {
-		return domain.Record{}, err
+	var created domain.Record
+	if err := s.runWithinRecordOutboxTransaction(ctx, func(recordRepo output.RecordRepository, outboxService eventoutboxinput.Service) error {
+		span.AddEvent(EventRepositoryCreate)
+		var createErr error
+		created, createErr = recordRepo.Create(ctx, rec)
+		if createErr != nil {
+			return createErr
+		}
+
+		if outboxService != nil {
+			s.enqueueRecordOutboxEventWithService(ctx, outboxService, RecordEventTypeCreatedV1, created)
+		}
+		return nil
+	}); err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, FailedToCreateRecord)
+		s.Logger.ErrorwCtx(ctx, FailedToCreateRecord, commonkeys.Error, err)
+		return domain.Record{}, fmt.Errorf("%w: %w", ErrCreateRecord, err)
 	}
+
+	s.saveToCacheAndInvalidate(ctx, span, created)
+
+	span.AddEvent(EventSuccess)
+	span.SetStatus(codes.Ok, StatusCreated)
+	s.Logger.InfowCtx(ctx, LogRecordCreatedSuccessfully,
+		commonkeys.RecordID, created.ID,
+		commonkeys.UserID, created.UserID,
+	)
+
 	return created, nil
 }
 
@@ -69,74 +118,101 @@ func resolveEventTime(cmd input.CreateRecordCommand) time.Time {
 // validateRecordedAt ensures recordedAt is not in the future.
 func validateRecordedAt(recordedAt *time.Time) error {
 	if recordedAt != nil && recordedAt.After(time.Now().UTC()) {
-		return errors.New("recordedAt cannot be in the future")
+		return ErrRecordedAtFuture
 	}
 	return nil
 }
 
-// resolveTagID handles tag validation and auto-creation logic.
-func (s *Service) resolveTagID(ctx context.Context, tagID, categoryID uint64, userID uint64) (uint64, error) {
-	if tagID != 0 {
-		return s.resolveExistingTag(ctx, tagID, categoryID, userID)
+// resolveRecordedAt returns the provided recordedAt or defaults to now.
+func resolveRecordedAt(recordedAt *time.Time) *time.Time {
+	if recordedAt != nil {
+		return recordedAt
 	}
-	return s.createAutoTag(ctx, categoryID, userID)
+	now := time.Now().UTC()
+	return &now
 }
 
-// resolveExistingTag validates an existing tag or creates a category-specific one.
-func (s *Service) resolveExistingTag(ctx context.Context, tagID, categoryID uint64, userID uint64) (uint64, error) {
+// resolveStatus returns the provided status or defaults to "published".
+func resolveStatus(status *string) *string {
+	if status != nil && *status != "" {
+		return status
+	}
+	defaultStatus := DefaultRecordStatus
+	return &defaultStatus
+}
+
+// resolveTimezone returns the provided timezone or defaults to "America/Sao_Paulo".
+func resolveTimezone(timezone *string) *string {
+	if timezone != nil && *timezone != "" {
+		return timezone
+	}
+	defaultTZ := DefaultTimezone
+	return &defaultTZ
+}
+
+// resolveTagID validates that the tag exists and belongs to the user.
+func (s *Service) resolveTagID(ctx context.Context, tagID uint64, userID uint64) (uint64, error) {
+	if tagID == 0 {
+		return 0, ErrTagIDIsRequired
+	}
+
+	// Validate tag exists and belongs to user
 	tagObj, err := s.TagRepository.GetByID(ctx, tagID, userID)
 	if err != nil {
-		return 0, fmt.Errorf("lookup tag: %w", err)
+		return 0, fmt.Errorf(ErrLookupTagFormat, err)
 	}
 
 	if tagObj.ID == 0 {
-		return s.createAutoTag(ctx, categoryID, userID)
-	}
-
-	if tagObj.CategoryID != categoryID {
-		return s.createCategorySpecificTag(ctx, tagObj, categoryID, userID)
+		return 0, errors.New(TagNotFound)
 	}
 
 	return tagID, nil
 }
 
-// createCategorySpecificTag creates a tag for a specific category.
-func (s *Service) createCategorySpecificTag(ctx context.Context, original tagdomain.Tag, categoryID uint64, userID uint64) (uint64, error) {
-	candidate := tagdomain.Tag{
-		Name:       original.Name,
-		UserID:     userID,
-		CategoryID: categoryID,
+// saveToCacheAndInvalidate saves the record to cache and invalidates related list caches.
+// This is a best-effort operation - errors are logged but don't fail the operation.
+func (s *Service) saveToCacheAndInvalidate(ctx context.Context, span trace.Span, record domain.Record) {
+	span.AddEvent(EventSaveToCache)
+	if err := s.RecordCache.SaveRecord(ctx, record, 0); err != nil {
+		s.Logger.WarnwCtx(ctx, LogFailedSaveRecordToCacheAfterCreation,
+			commonkeys.RecordID, record.ID,
+			commonkeys.UserID, record.UserID,
+			commonkeys.Error, err,
+		)
 	}
 
-	createdTag, err := s.TagRepository.Create(ctx, candidate)
-	if err != nil {
-		// Fallback to a derived unique name per category
-		alt := tagdomain.Tag{
-			Name:       fmt.Sprintf("%s@cat-%d", original.Name, categoryID),
-			UserID:     userID,
-			CategoryID: categoryID,
+	span.AddEvent(EventInvalidateCache)
+	eventDate := CacheDayStart(record.EventTime)
+
+	if err := s.RecordCache.DeleteRecordsByDay(ctx, record.UserID, eventDate); err != nil {
+		s.Logger.WarnwCtx(ctx, LogFailedInvalidateDayCache,
+			commonkeys.UserID, record.UserID,
+			commonkeys.Date, eventDate.Format(DateFormatISO8601Date),
+			commonkeys.Error, err,
+		)
+	}
+
+	// Get tag to find category for cache invalidation
+	if record.TagID != 0 {
+		tagObj, err := s.TagRepository.GetByID(ctx, record.TagID, record.UserID)
+		if err == nil && tagObj.ID != 0 {
+			// Invalidate category cache (records are accessed via tag → category)
+			if err := s.RecordCache.DeleteRecordsByCategory(ctx, tagObj.CategoryID, record.UserID); err != nil {
+				s.Logger.WarnwCtx(ctx, LogFailedInvalidateCategoryCache,
+					commonkeys.CategoryID, tagObj.CategoryID,
+					commonkeys.UserID, record.UserID,
+					commonkeys.Error, err,
+				)
+			}
 		}
-		createdTag, err = s.TagRepository.Create(ctx, alt)
-		if err != nil {
-			return 0, fmt.Errorf("create category tag: %w", err)
+
+		// Invalidate tag cache
+		if err := s.RecordCache.DeleteRecordsByTag(ctx, record.TagID, record.UserID); err != nil {
+			s.Logger.WarnwCtx(ctx, LogFailedInvalidateTagCache,
+				commonkeys.TagID, record.TagID,
+				commonkeys.UserID, record.UserID,
+				commonkeys.Error, err,
+			)
 		}
 	}
-
-	return createdTag.ID, nil
-}
-
-// createAutoTag creates a new auto-generated tag for a category.
-func (s *Service) createAutoTag(ctx context.Context, categoryID uint64, userID uint64) (uint64, error) {
-	newTag := tagdomain.Tag{
-		Name:       fmt.Sprintf("auto-tag-%d", time.Now().UTC().UnixNano()),
-		UserID:     userID,
-		CategoryID: categoryID,
-	}
-
-	createdTag, err := s.TagRepository.Create(ctx, newTag)
-	if err != nil {
-		return 0, fmt.Errorf("create auto tag: %w", err)
-	}
-
-	return createdTag.ID, nil
 }

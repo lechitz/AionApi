@@ -23,6 +23,14 @@ func (s *Service) ListAll(ctx context.Context, userID uint64) ([]domain.Category
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 	)
 
+	span.AddEvent(EventCheckCache)
+	cachedCategories, err := s.CategoryCache.GetCategoryList(ctx, userID)
+	if err == nil && cachedCategories != nil {
+		span.AddEvent(EventCacheHit)
+		span.SetStatus(codes.Ok, StatusRetrievedAll)
+		return cachedCategories, nil
+	}
+
 	span.AddEvent(EventRepositoryListAll)
 	categories, err := s.CategoryRepository.ListAll(ctx, userID)
 	if err != nil {
@@ -30,6 +38,15 @@ func (s *Service) ListAll(ctx context.Context, userID uint64) ([]domain.Category
 		span.SetStatus(codes.Error, FailedToGetAllCategories)
 		s.Logger.ErrorwCtx(ctx, FailedToGetAllCategories, commonkeys.Error, err)
 		return nil, err
+	}
+
+	span.AddEvent(EventSaveToCache)
+	err = s.CategoryCache.SaveCategoryList(ctx, userID, categories, 0) // use default TTL
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, WarnFailedToSaveCategoryListToCache,
+			commonkeys.UserID, userID,
+			commonkeys.Error, err,
+		)
 	}
 
 	span.AddEvent(EventSuccess)

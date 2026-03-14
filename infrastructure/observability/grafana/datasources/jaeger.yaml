@@ -1,0 +1,30 @@
+apiVersion: 1
+
+datasources:
+  - name: Jaeger
+    type: jaeger
+    access: proxy
+    url: http://jaeger:16686
+    editable: false
+    jsonData:
+      # Prometheus metrics correlation
+      tracesToMetrics:
+        datasourceUid: 'PBFA97CFB590B2093'
+        tags:
+          - key: 'service.name'
+            value: 'service'
+          - key: 'http.method'
+            value: 'method'
+          - key: 'http.status_code'
+            value: 'status_code'
+        queries:
+          - name: 'Request Rate'
+            query: 'sum(rate(http_server_request_duration_seconds_count{service="${__tags.service}"}[5m]))'
+          - name: 'Error Rate'
+            query: 'sum(rate(http_server_request_duration_seconds_count{service="${__tags.service}",http_response_status_code=~"5.."}[5m])) / sum(rate(http_server_request_duration_seconds_count{service="${__tags.service}"}[5m]))'
+          - name: 'Duration P95'
+            query: 'histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{service="${__tags.service}"}[5m])) by (le))'
+      spanBar:
+        type: 'Tag'
+        tag: 'http.status_code'
+

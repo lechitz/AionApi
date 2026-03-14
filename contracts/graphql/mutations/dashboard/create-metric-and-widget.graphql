@@ -1,0 +1,1 @@
+mutation CreateMetricAndWidget($input: CreateMetricAndWidgetInput!) { createMetricAndWidget(input: $input) { id viewId metricDefinitionId widgetType size orderIndex titleOverride configJson isActive createdAt updatedAt } }

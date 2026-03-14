@@ -28,6 +28,14 @@ func (s *Service) GetByName(ctx context.Context, categoryName string, userID uin
 		return domain.Category{}, errors.New(CategoryNameIsRequired)
 	}
 
+	span.AddEvent(EventCheckCache)
+	cachedCategory, err := s.CategoryCache.GetCategoryByName(ctx, categoryName, userID)
+	if err == nil && cachedCategory.ID != 0 {
+		span.AddEvent(EventCacheHit)
+		span.SetStatus(codes.Ok, StatusRetrievedByName)
+		return cachedCategory, nil
+	}
+
 	span.AddEvent(EventRepositoryGet)
 	category, err := s.CategoryRepository.GetByName(ctx, categoryName, userID)
 	if err != nil {
@@ -35,6 +43,24 @@ func (s *Service) GetByName(ctx context.Context, categoryName string, userID uin
 		span.SetStatus(codes.Error, FailedToGetCategoryByName)
 		s.Logger.ErrorwCtx(ctx, FailedToGetCategoryByName, commonkeys.CategoryName, categoryName, commonkeys.Error, err)
 		return domain.Category{}, err
+	}
+
+	span.AddEvent(EventSaveToCache)
+	err = s.CategoryCache.SaveCategoryByName(ctx, category, 0) // use default TTL
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, WarnFailedToSaveCategoryToCacheByName,
+			commonkeys.CategoryName, category.Name,
+			commonkeys.Error, err,
+		)
+	}
+	if category.ID != 0 {
+		err = s.CategoryCache.SaveCategory(ctx, category, 0) // also cache by ID
+		if err != nil {
+			s.Logger.WarnwCtx(ctx, WarnFailedToSaveCategoryToCacheByID,
+				commonkeys.CategoryID, category.ID,
+				commonkeys.Error, err,
+			)
+		}
 	}
 
 	span.AddEvent(EventSuccess)

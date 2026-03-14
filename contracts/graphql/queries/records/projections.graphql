@@ -1,0 +1,1 @@
+query RecordProjections($limit: Int, $afterEventTime: String, $afterId: ID) { recordProjections(limit: $limit, afterEventTime: $afterEventTime, afterId: $afterId) { recordId userId tagId description eventTimeUTC recordedAtUTC durationSeconds value source timezone status createdAtUTC updatedAtUTC lastEventType } }

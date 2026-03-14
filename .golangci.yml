@@ -89,6 +89,49 @@ linters:
     paths:
       - "adapter/primary/graph/.*\\.go$"
     rules:
+      - path: "internal/record/core/usecase/dashboard_insights.go"
+        linters:
+          - funlen
+      - path: "internal/record/core/usecase/graph_projection_mapper.go"
+        linters:
+          - funlen
+          - gocognit
+      - path: "internal/platform/config/environments.go"
+        linters:
+          - golines
+      - path: "internal/record/core/usecase/graph_projection_mapper_test.go"
+        linters:
+          - testpackage
+      - path: "internal/record/core/usecase/record_projection_test.go"
+        linters:
+          - testpackage
+      - path: "internal/record/core/usecase/transaction_test.go"
+        linters:
+          - testpackage
+      - path: "hack/tools/graph-projection-export/config_test.go"
+        linters:
+          - gocognit
+      - path: "internal/eventoutbox/adapter/secondary/db/repository/event_outbox_stats_repository_test.go"
+        linters:
+          - testpackage
+      - path: "internal/eventoutbox/adapter/secondary/kafka/0_event_publisher_helpers_test.go"
+        linters:
+          - testpackage
+      - path: "internal/eventoutbox/core/usecase/publish_pending_test.go"
+        linters:
+          - testpackage
+      - path: "internal/record/adapter/secondary/db/repository/record_projection_test.go"
+        linters:
+          - testpackage
+      - path: "internal/record/core/domain/graph_projection_test.go"
+        linters:
+          - testpackage
+      - path: "internal/record/core/usecase/dashboard_insights_helpers_test.go"
+        linters:
+          - testpackage
+      - path: "internal/record/core/usecase/dashboard_insights_scope_test.go"
+        linters:
+          - testpackage
       - path: '(.+)_test\.go'
         linters:
           - asasalint

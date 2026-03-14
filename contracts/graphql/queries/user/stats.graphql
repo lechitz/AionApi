@@ -1,0 +1,1 @@
+query UserStats { userStats { totalRecords totalCategories totalTags recordsThisWeek recordsThisMonth mostUsedCategory { id name count } mostUsedTag { id name count } } }

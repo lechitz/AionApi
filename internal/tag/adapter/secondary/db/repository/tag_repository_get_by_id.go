@@ -30,7 +30,7 @@ func (r TagRepository) GetByID(ctx context.Context, tagID, userID uint64) (domai
 	var tagDB model.TagDB
 	err := r.db.WithContext(ctx).
 		Where("user_id = ? AND tag_id = ?", userID, tagID).
-		First(&tagDB).Error
+		First(&tagDB).Error()
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, ErrTagNotFoundMsg)

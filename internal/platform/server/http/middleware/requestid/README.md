@@ -1,69 +1,73 @@
-# HTTP Middleware — Request ID (Platform)
+# HTTP Request ID Middleware
 
-**Folder:** `internal/platform/server/http/middleware/requestid`
+**Path:** `internal/platform/server/http/middleware/requestid`
 
-## Responsibility
+## Overview
 
-* Ensure **every request** carries a stable **`X-Request-ID`**.
-* Accept client-provided IDs (if present & non-empty) or **generate a UUIDv4**.
-* Propagate the ID to:
+This package guarantees a valid request correlation ID for every HTTP request.
+It normalizes `X-Request-ID`, stores it in request context, and echoes it in the response header.
 
-    * the **request context** (for logs/traces/handlers), and
-    * the **response header** (so clients can correlate).
-* Stay framework-agnostic via the **router port** middleware signature.
+## Package Scope
 
-## How it works
+| Area | Responsibility |
+| --- | --- |
+| Header normalization | Read and sanitize incoming `X-Request-ID` |
+| Fallback generation | Create UUID when incoming ID is missing or invalid |
+| Context propagation | Store final ID under `ctxkeys.RequestID` |
+| Response propagation | Set the same value in response header for client correlation |
 
-* Constructor: `New() func(http.Handler) http.Handler`
+## Files
 
-    * Reads `X-Request-ID` (header name from `commonkeys.XRequestID`).
-    * If missing/blank → `uuid.NewString()`.
-    * Stores in context under `ctxkeys.RequestID` and sets the header on both request (for downstream middlewares/handlers) and response.
-    * Calls `next.ServeHTTP` with the updated context.
+| File | Purpose |
+| --- | --- |
+| `request_id_middleware.go` | Request ID validation/generation and context/header propagation |
 
-> No domain logic here—pure platform concern for correlation and observability.
+## Public API Reference
+
+| Function | Returns | Description |
+| --- | --- | --- |
+| `New()` | `func(http.Handler) http.Handler` | Middleware that ensures valid request ID and propagates it |
+| `isUUID(s string)` | `bool` | Internal helper for UUID format validation |
+
+## Runtime Behavior
+
+1. Read `X-Request-ID` from request headers (`commonkeys.XRequestID`).
+2. Trim whitespace.
+3. If missing, too long (`>128`), or not UUID, replace with `uuid.NewString()`.
+4. Inject final value into request context (`ctxkeys.RequestID`).
+5. Set response header `X-Request-ID` with the same final value.
+6. Continue request chain with enriched context.
 
 ## Usage
 
-Register early in your HTTP composer:
-
 ```go
-// composer.go
-r.Use(recovery.New(genericHandler)) // catch panics first
-r.Use(requestid.New())              // ensure every request has an ID
+r.Use(requestid.New())
 ```
 
-### Reading the Request ID
+## Accessing Request ID in Handlers
 
 ```go
-func (h *Handler) SomeEndpoint(w http.ResponseWriter, r *http.Request) {
-    rid, _ := r.Context().Value(ctxkeys.RequestID).(string)
-    h.Logger.Infow("processing request", "request_id", rid)
-    // ...
-}
+rid, _ := r.Context().Value(ctxkeys.RequestID).(string)
+logger.Infow("request received", "request_id", rid)
 ```
 
-Clients will also see the same value echoed back in the `X-Request-ID` response header.
+## Design Notes
 
-## Observability
+- Keep this middleware early in the HTTP chain so every downstream log/trace can use the same request ID.
+- Keep request ID semantics transport-level only; no domain coupling.
+- Use shared constants (`commonkeys`, `ctxkeys`) to avoid key drift.
 
-* The ID becomes a **correlation key** across:
+## Package Improvements
 
-    * structured logs (`request_id` field),
-    * tracing (added as an attribute if your handlers/middlewares record it),
-    * client–server exchanges (header present on both sides).
+- Remove the unreachable `else if len(reqID) > maxLen` branch, since the previous `if` already handles `len(reqID) > maxLen`.
+- Add unit tests for: valid incoming UUID, invalid UUID fallback, oversized header fallback, and whitespace-only header.
+- Consider accepting additional safe ID formats if interoperability with upstream gateways becomes necessary.
+- Add explicit tracing helper guidance for binding `ctxkeys.RequestID` into span attributes in adapters.
 
-## Conventions
+---
 
-* Prefer **UUIDv4** when generating new IDs.
-* Treat client-provided IDs as opaque values—**do not parse** or validate beyond non-empty.
-* Keep the middleware **stateless** and **idempotent**.
-
-## Testing hints
-
-* With a pre-set `X-Request-ID`, assert the same value is present in:
-
-    * request context (`ctxkeys.RequestID`),
-    * response header.
-* Without a header, assert a **non-empty UUID-like** value is generated and propagated consistently.
-* Combine with the **Recovery** middleware and ensure the same ID appears in 500 responses/logs after a panic.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../../../README.md)
+<!-- doc-nav:end -->

@@ -35,6 +35,14 @@ func (s *Service) GetByID(ctx context.Context, tagID uint64, userID uint64) (dom
 		return domain.Tag{}, errors.New(UserIDIsRequired)
 	}
 
+	span.AddEvent("CheckCache")
+	cachedTag, err := s.TagCache.GetTag(ctx, tagID, userID)
+	if err == nil && cachedTag.ID != 0 {
+		span.AddEvent("CacheHit")
+		span.SetStatus(codes.Ok, StatusRetrievedByName)
+		return cachedTag, nil
+	}
+
 	span.AddEvent(EventRepositoryGet)
 	tag, err := s.TagRepository.GetByID(ctx, tagID, userID)
 	if err != nil {
@@ -44,6 +52,11 @@ func (s *Service) GetByID(ctx context.Context, tagID uint64, userID uint64) (dom
 		return domain.Tag{}, err
 	}
 
+	span.AddEvent("SaveToCache")
+	err = s.TagCache.SaveTag(ctx, tag, 0) // use default TTL
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, "failed to save tag to cache", commonkeys.TagID, tagID, commonkeys.Error, err.Error())
+	}
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusRetrievedByName)
 	return tag, nil

@@ -3,7 +3,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -25,15 +24,16 @@ func (h *controller) SoftDelete(ctx context.Context, categoryID, userID uint64) 
 
 	// Basic guards (controller-level preconditions).
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		return errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return ErrUserIDNotFound
 	}
 	if categoryID == 0 {
-		span.SetStatus(codes.Error, ErrCategoryIDNotFound)
-		return errors.New(ErrCategoryIDNotFound)
+		span.SetStatus(codes.Error, ErrCategoryIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrCategoryIDNotFound.Error(), commonkeys.CategoryID, categoryID)
+		return ErrCategoryIDNotFound
 	}
 
-	// Delegate to the input port (use case).
 	if err := h.CategoryService.SoftDelete(ctx, categoryID, userID); err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, MsgSoftDeleteError)

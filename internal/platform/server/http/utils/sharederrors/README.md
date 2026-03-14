@@ -1,62 +1,104 @@
-# Shared Errors
+# HTTP Shared Errors
 
-**Folder:** `internal/shared/sharederrors`
+**Path:** `internal/platform/server/http/utils/sharederrors`
 
-## Responsibility
-* Provide **reusable semantic error types** (e.g., NotFound, Unauthorized, Conflict) used across use cases and adapters.
-* Enable **uniform HTTP mapping** via `internal/shared/httpresponse` so handlers don’t reinvent status codes.
+## Overview
 
-## How it works
-* Exposes constructors/helpers for common categories:
-  - **Validation** (bad input, missing fields)
-  - **Unauthorized / Forbidden**
-  - **NotFound**
-  - **Conflict / AlreadyExists / Uniqueness**
-  - **TooManyRequests**
-  - **Internal / Unexpected**
-* Each error carries a **stable code** and a human-safe message. Transport layers map codes to HTTP status.
+This package centralizes HTTP-facing semantic errors and status-code mapping for handlers and adapter boundaries.
+It keeps transport error behavior consistent without leaking infrastructure details.
 
-## Typical mapping (by `httpresponse`)
-* `validation` → **400 Bad Request**
-* `unauthorized` → **401 Unauthorized**
-* `forbidden` → **403 Forbidden**
-* `not_found` → **404 Not Found**
-* `conflict` → **409 Conflict**
-* `rate_limited` → **429 Too Many Requests**
-* `internal` → **500 Internal Server Error**
+## Package Scope
 
-## Usage
+| Area | Responsibility |
+| --- | --- |
+| Typed errors | Define explicit error types (`ValidationError`, `UnauthorizedError`, etc.) |
+| Sentinel errors | Provide reusable `errors.Is` targets for common conflicts/validation failures |
+| Status mapping | Convert known errors to stable HTTP status codes |
+| Message constants | Keep shared error messages consistent and reusable |
+
+## Files
+
+| File | Purpose |
+| --- | --- |
+| `errors.go` | Error constants, custom error types, constructors, and sentinel errors |
+| `map_error_http.go` | `MapErrorToHTTPStatus(err)` translation from semantic errors to HTTP status |
+
+## Public API Reference
+
+### Constructors and Helpers
+
+| Function | Returns | Notes |
+| --- | --- | --- |
+| `ErrMissingUserID()` | `error` | Missing user id in context |
+| `ErrUnauthorized(reason)` | `error` | Unauthorized with optional reason |
+| `ErrForbidden(reason)` | `error` | Forbidden with optional reason |
+| `NewValidationError(field, reason)` | `error` | Validation error with field context |
+| `NewAuthenticationError(reason)` | `error` | Authentication failure, mapped as unauthorized |
+| `AtLeastOneFieldRequired(fields...)` | `error` | Validation helper for partial update commands |
+| `MissingFields(fields...)` | `error` | Validation helper for required field checks |
+| `MapErrorToHTTPStatus(err)` | `int` | Main package entrypoint used by HTTP response layer |
+
+### Typed Errors
+
+| Type | Typical status |
+| --- | --- |
+| `ValidationError` | `400 Bad Request` |
+| `UnauthorizedError` | `401 Unauthorized` |
+| `ForbiddenError` | `403 Forbidden` |
+| `MissingUserIDError` | `401 Unauthorized` |
+| `AuthenticationError` | `401 Unauthorized` |
+
+### Sentinel Errors
+
+| Sentinel | Typical status |
+| --- | --- |
+| `ErrParseUserID` | `400 Bad Request` |
+| `ErrNoFieldsToUpdate` | `400 Bad Request` |
+| `ErrUsernameExists` | `409 Conflict` |
+| `ErrEmailExists` | `409 Conflict` |
+| `ErrDomainConflict` | `409 Conflict` |
+
+## HTTP Mapping Summary
+
+| Condition | Status code |
+| --- | --- |
+| `nil` error | `200 OK` |
+| Validation errors | `400` |
+| Unauthorized/authentication errors | `401` |
+| Forbidden errors | `403` |
+| `httperrors.ErrResourceNotFound` | `404` |
+| `httperrors.ErrMethodNotAllowed` | `405` |
+| Conflict errors | `409` |
+| Any unknown error | `500` |
+
+## Usage Example
+
 ```go
-// In a use case:
-if username == "" {
-  return sharederrors.Validation("username is required")
-}
-
-// In a repository when a row is missing:
-return sharederrors.NotFound("user not found")
-````
-
-```go
-// In an HTTP handler:
 if err != nil {
-  // Centralized mapping + standardized envelope
-  httpresponse.WriteError(ctx, w, logger, err)
-  return
+    status := sharederrors.MapErrorToHTTPStatus(err)
+    httpresponse.WriteError(ctx, w, logger, err)
+    _ = status // status can be used for metrics/log decoration if needed
+    return
 }
 ```
 
-## Design notes
+## Design Notes
 
-* Keep messages **non-sensitive**; log metadata only.
-* Prefer these errors over ad-hoc strings to keep telemetry and responses consistent.
+- Keep this package transport-semantic only (no domain orchestration).
+- Prefer `errors.As` for typed errors and `errors.Is` for sentinels.
+- Reuse constants from `internal/shared/constants/commonkeys` when composing field-based validation errors.
 
-## Testing hints
+## Package Improvements
 
-* Assert **error codes**, not string messages.
-* Table-test the HTTP mapping: each error → expected status and envelope.
+- Consolidate duplicated semantics for missing user id (`ErrMissingUserID`, `ErrMissingUserIDParam`) into a single source of truth.
+- Evaluate whether `MissingFields()` should explicitly handle `len(fields) == 0` to avoid ambiguous validation messages.
+- Consider exposing a small test table in package docs to lock the expected map (`error -> status`) behavior.
+- Standardize naming between constructor-style functions (`NewValidationError`) and `Err*` helpers for API consistency.
 
-```
+---
 
-Say the word and I’ll send the next one.
-::contentReference[oaicite:0]{index=0}
-```
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../../../README.md)
+<!-- doc-nav:end -->

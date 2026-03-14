@@ -1,0 +1,1 @@
+mutation DeleteDashboardWidget($input: DeleteDashboardWidgetInput!) { deleteDashboardWidget(input: $input) }

@@ -6,6 +6,7 @@ type Tag {
     name: String!
     categoryId: ID!
     description: String
+    icon: String # single emoji
     createdAt: String!      # ISO8601 timestamp
     updatedAt: String!      # ISO8601 timestamp
 }
@@ -14,6 +15,19 @@ input CreateTagInput {
     name: String!
     categoryId: ID!
     description: String
+    icon: String # single emoji
+}
+
+input UpdateTagInput {
+    id: ID!
+    name: String
+    categoryId: ID
+    description: String
+    icon: String # single emoji
+}
+
+input DeleteTagInput {
+    id: ID!
 }
 
 extend type Query {
@@ -25,5 +39,6 @@ extend type Query {
 
 extend type Mutation {
     createTag(input: CreateTagInput!): Tag! @auth(roles: "user")
+    updateTag(input: UpdateTagInput!): Tag! @auth(roles: "user")
+    softDeleteTag(input: DeleteTagInput!): Boolean! @auth(roles: "user")
 }
-

@@ -1,14 +1,36 @@
+//revive:disable:var-naming // keep package name http to mirror the external dependency naming for adapters
 package http
+
+//revive:enable:var-naming
 
 import "time"
 
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
+
+// TracerName is the tracer name for Aion-Chat client.
+// Format: aionapi.<domain>.<layer> .
+const TracerName = "aionapi.chat.client"
+
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
 const (
-	// TracerAionChatClient is the tracer name for Aion-Chat client.
-	TracerAionChatClient = "chat.client.aion_chat"
 	// SpanSendMessage is the span name for sending a message.
-	SpanSendMessage = "SendMessage"
-	// DefaultTimeout is the default timeout for HTTP requests.
-	DefaultTimeout = 30 * time.Second
+	SpanSendMessage = "chat.client.send_message"
+)
+
+// -----------------------------------------------------------------------------
+// Configuration
+// -----------------------------------------------------------------------------
+
+const (
+	// DefaultTimeout is the default timeout for HTTP requests to Aion-Chat.
+	// Increased to 60s to handle larger conversation histories with LLM processing.
+	DefaultTimeout = 60 * time.Second
 )
 
 // HTTP path(s) used by Aion-Chat service.
@@ -27,23 +49,37 @@ const (
 	ContentTypeJSON = "application/json"
 )
 
-// Attribute keys used for tracing and span attributes.
+// -----------------------------------------------------------------------------
+// Span Attributes
+// Format: aion.<domain>.<attribute>
+// -----------------------------------------------------------------------------
+
 const (
 	// AttrHTTPURL is the attribute key for the HTTP URL.
 	AttrHTTPURL = "http.url"
 	// AttrHTTPMethod is the attribute key for the HTTP method.
 	AttrHTTPMethod = "http.method"
 	// AttrUserID is the attribute key for the user ID.
-	AttrUserID = "user_id"
+	AttrUserID = "aion.user_id"
 	// AttrHTTPStatusCode is the attribute key for the HTTP status code.
 	AttrHTTPStatusCode = "http.status_code"
 	// AttrTokensUsed is the attribute key for the number of tokens used.
-	AttrTokensUsed = "tokens_used"
+	AttrTokensUsed = "aion.chat.tokens_used"
 	// AttrResponseLength is the attribute key for the response length.
-	AttrResponseLength = "response_length"
+	AttrResponseLength = "aion.chat.response_length"
+	// AttrResponseLengthShort is the log key for response length.
+	AttrResponseLengthShort = "response_length"
+	// AttrStatusCode is the log key for status code.
+	AttrStatusCode = "status_code"
+	// AttrBody is the log key for response body.
+	AttrBody = "body"
 )
 
-// Log messages used by the client adapter.
+// =============================================================================
+// BUSINESS LOGIC - Log and Error Messages
+// =============================================================================
+
+// Log messages.
 const (
 	// MsgCallingAionChatService indicates that a call to Aion-Chat service is being made.
 	MsgCallingAionChatService = "Calling Aion-Chat service"
@@ -51,7 +87,7 @@ const (
 	MsgAionChatResponseReceived = "Aion-Chat response received"
 )
 
-// Error messages used for tracing, logging and httpresponse wrapping.
+// Error messages.
 const (
 	// ErrFailedMarshal indicates a failure to marshal the request.
 	ErrFailedMarshal = "failed to marshal request"
@@ -67,10 +103,20 @@ const (
 	ErrFailedUnmarshal = "failed to unmarshal response"
 	// ErrAionChatRequestFailed indicates that the request to Aion-Chat service failed.
 	ErrAionChatRequestFailed = "aion-chat request failed"
+	// MsgAionChatRequestCancelled indicates the request was cancelled by client.
+	MsgAionChatRequestCancelled = "aion-chat request cancelled"
 )
 
-// Status names for semantic span states.
+// Status descriptions.
 const (
 	// StatusMessageSent indicates that the message was sent successfully.
 	StatusMessageSent = "message_sent"
+	// StatusRequestCancelled indicates request was cancelled by client.
+	StatusRequestCancelled = "request_cancelled"
+)
+
+// HTTP status codes used by Aion-Chat integration.
+const (
+	// StatusCodeClientClosedRequest is non-standard 499 used for client cancellations.
+	StatusCodeClientClosedRequest = 499
 )

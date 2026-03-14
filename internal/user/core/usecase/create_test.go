@@ -33,7 +33,6 @@ func TestCreateUser_Success(t *testing.T) {
 		Username: "username",
 		Email:    "user@example.com",
 		Password: "hashed123",
-		Roles:    []string{"user"},
 	}
 
 	suite.UserRepository.EXPECT().
@@ -54,6 +53,10 @@ func TestCreateUser_Success(t *testing.T) {
 			u.ID = 1
 			return u, nil
 		})
+
+	suite.UserCache.EXPECT().
+		SaveUser(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(nil)
 
 	got, err := suite.UserService.Create(suite.Ctx, cmd)
 

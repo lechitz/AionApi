@@ -17,7 +17,7 @@ import (
 
 // GetByUsername retrieves a user by username. Returns a zero-value user if not found.
 func (up UserRepository) GetByUsername(ctx context.Context, username string) (domain.User, error) {
-	tr := otel.Tracer(TracerUserRepository)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanGetByUsername, trace.WithAttributes(
 		attribute.String(commonkeys.Username, username),
 		attribute.String(commonkeys.Operation, OperationGetByUsername),
@@ -28,7 +28,7 @@ func (up UserRepository) GetByUsername(ctx context.Context, username string) (do
 	err := up.db.WithContext(ctx).
 		Select(SelectByUsernameColumns).
 		Where(commonkeys.Username+" = ?", username).
-		First(&userDB).Error
+		First(&userDB).Error()
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			span.SetStatus(codes.Ok, StatusUserNotFoundOK)
@@ -41,7 +41,9 @@ func (up UserRepository) GetByUsername(ctx context.Context, username string) (do
 		return domain.User{}, err
 	}
 
+	user := mapper.UserFromDB(userDB)
+
 	span.SetStatus(codes.Ok, StatusUserRetrievedByUsername)
 	up.logger.InfowCtx(ctx, LogUserRetrievedByUsername, commonkeys.UserID, userDB.ID, commonkeys.Username, userDB.Username)
-	return mapper.UserFromDB(userDB), nil
+	return user, nil
 }

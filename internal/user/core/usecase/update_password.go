@@ -11,8 +11,10 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // UpdatePassword updates a user's password after validating the old password and hashing the new password, then returns the updated user and a new token.
@@ -26,27 +28,14 @@ func (s *Service) UpdatePassword(ctx context.Context, userID uint64, oldPassword
 		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
 	)
 
-	user, err := s.userRepository.GetByID(ctx, userID)
+	user, err := s.getUserWithCache(ctx, span, userID)
 	if err != nil {
-		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToGetSelf))
-		span.RecordError(err)
-		s.logger.ErrorwCtx(ctx, ErrorToGetSelf, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(user.ID, 10))
-		return "", fmt.Errorf("%s: %w", ErrorToGetSelf, err)
+		return "", err
 	}
 
-	if err := s.hasher.Compare(user.Password, oldPassword); err != nil {
-		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToCompareHashAndPassword))
-		span.RecordError(err)
-		s.logger.ErrorwCtx(ctx, ErrorToCompareHashAndPassword, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(user.ID, 10))
-		return "", fmt.Errorf("%s: %w", ErrorToCompareHashAndPassword, err)
-	}
-
-	hashedPassword, err := s.hasher.Hash(newPassword)
+	hashedPassword, err := s.validateAndHashPassword(ctx, span, user, oldPassword, newPassword)
 	if err != nil {
-		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToHashPassword))
-		span.RecordError(err)
-		s.logger.ErrorwCtx(ctx, ErrorToHashPassword, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(user.ID, 10))
-		return "", fmt.Errorf("%s: %w", ErrorToHashPassword, err)
+		return "", err
 	}
 
 	fields := map[string]interface{}{
@@ -59,32 +48,12 @@ func (s *Service) UpdatePassword(ctx context.Context, userID uint64, oldPassword
 		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToUpdatePassword))
 		span.RecordError(err)
 		s.logger.ErrorwCtx(ctx, ErrorToUpdatePassword, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(user.ID, 10))
-		return "", fmt.Errorf("%s: %w", ErrorToUpdatePassword, err)
+		return "", fmt.Errorf("%w: %w", ErrUpdatePassword, err)
 	}
 
-	tokenValue, err := s.tokenProvider.GenerateRefreshToken(updatedUser.ID)
-	if err != nil || tokenValue == "" {
-		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgCreateToken))
-		if err != nil {
-			span.RecordError(err)
-			s.logger.ErrorwCtx(ctx, ErrorToCreateToken, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10))
-			return "", fmt.Errorf("%s: %w", ErrorToCreateToken, err)
-		}
-		s.logger.ErrorwCtx(ctx, ErrorToCreateToken, commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10))
-		return "", fmt.Errorf("%s: empty token", ErrorToCreateToken)
-	}
-
-	// compute TTL from tokenValue via Verify
-	expiration := time.Duration(0)
-	if c, err := s.tokenProvider.Verify(tokenValue); err == nil {
-		expiration = claimsTTLFromVerifyResult(c)
-	}
-
-	if err := s.authStore.Save(ctx, domain.NewAccessToken(tokenValue, updatedUser.ID).ToAuth(), expiration); err != nil {
-		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgCreateToken))
-		span.RecordError(err)
-		s.logger.ErrorwCtx(ctx, ErrorToCreateToken, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(updatedUser.ID, 10))
-		return "", fmt.Errorf("%s: %w", ErrorToCreateToken, err)
+	tokenValue, err := s.generateAndSaveRefreshToken(ctx, span, updatedUser.ID)
+	if err != nil {
+		return "", err
 	}
 
 	span.SetAttributes(
@@ -96,35 +65,113 @@ func (s *Service) UpdatePassword(ctx context.Context, userID uint64, oldPassword
 	return tokenValue, nil
 }
 
-// helper to compute TTL from claims 'exp' value (copied from auth usecase).
+// getUserWithCache attempts to fetch user from cache first, falling back to database if needed.
+// This helper maintains the cache-first pattern and proper instrumentation.
+func (s *Service) getUserWithCache(ctx context.Context, span trace.Span, userID uint64) (userdomain.User, error) {
+	span.AddEvent(SpanEventCheckCache)
+	user, err := s.userCache.GetUserByID(ctx, userID)
+	if err != nil || user.ID == 0 {
+		span.AddEvent(SpanEventCacheMiss)
+		user, err = s.userRepository.GetByID(ctx, userID)
+		if err != nil {
+			span.SetAttributes(attribute.String(commonkeys.Status, ErrorToGetSelf))
+			span.RecordError(err)
+			s.logger.ErrorwCtx(ctx, ErrorToGetSelf, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(userID, 10))
+			return userdomain.User{}, fmt.Errorf("%s: %w", ErrorToGetSelf, err)
+		}
+		return user, nil
+	}
+
+	span.AddEvent(SpanEventCacheHit)
+	s.logger.InfowCtx(ctx, InfoUserRetrievedFromCache, commonkeys.UserID, strconv.FormatUint(userID, 10))
+	return user, nil
+}
+
+// validateAndHashPassword verifies the old password and generates hash for new password.
+// Returns the hashed password or an error if validation/hashing fails.
+func (s *Service) validateAndHashPassword(ctx context.Context, span trace.Span, user userdomain.User, oldPassword, newPassword string) (string, error) {
+	if err := s.hasher.Compare(user.Password, oldPassword); err != nil {
+		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToCompareHashAndPassword))
+		span.RecordError(err)
+		s.logger.ErrorwCtx(ctx, ErrorToCompareHashAndPassword, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(user.ID, 10))
+		return "", fmt.Errorf("%w: %w", ErrCompareHashAndPassword, err)
+	}
+
+	hashedPassword, err := s.hasher.Hash(newPassword)
+	if err != nil {
+		span.SetAttributes(attribute.String(commonkeys.Status, ErrorToHashPassword))
+		span.RecordError(err)
+		s.logger.ErrorwCtx(ctx, ErrorToHashPassword, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(user.ID, 10))
+		return "", fmt.Errorf("%s: %w", ErrorToHashPassword, err)
+	}
+
+	return hashedPassword, nil
+}
+
+// generateAndSaveRefreshToken creates a new refresh token and saves it to the auth store.
+// The token is saved with TTL extracted from JWT claims to ensure automatic expiration.
+func (s *Service) generateAndSaveRefreshToken(ctx context.Context, span trace.Span, userID uint64) (string, error) {
+	tokenValue, err := s.tokenProvider.GenerateRefreshToken(userID)
+	if err != nil || tokenValue == "" {
+		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgCreateToken))
+		if err != nil {
+			span.RecordError(err)
+			s.logger.ErrorwCtx(ctx, ErrorToCreateToken, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(userID, 10))
+			return "", fmt.Errorf("%w: %w", ErrCreateToken, err)
+		}
+		s.logger.ErrorwCtx(ctx, ErrorToCreateToken, commonkeys.UserID, strconv.FormatUint(userID, 10))
+		return "", fmt.Errorf("%w: empty token", ErrCreateToken)
+	}
+
+	// Compute TTL from token claims to sync Redis expiration with JWT expiration
+	expiration := time.Duration(0)
+	if claims, err := s.tokenProvider.Verify(tokenValue); err == nil {
+		expiration = claimsTTLFromVerifyResult(claims)
+	}
+
+	if err := s.authStore.Save(ctx, domain.NewAccessToken(tokenValue, userID).ToAuth(), expiration); err != nil {
+		span.SetAttributes(attribute.String(commonkeys.Status, sharederrors.ErrMsgCreateToken))
+		span.RecordError(err)
+		s.logger.ErrorwCtx(ctx, ErrorToCreateToken, commonkeys.Error, err.Error(), commonkeys.UserID, strconv.FormatUint(userID, 10))
+		return "", fmt.Errorf("%w: %w", ErrCreateToken, err)
+	}
+
+	return tokenValue, nil
+}
+
+// claimsTTLFromVerifyResult computes the TTL (Time To Live) from JWT claims 'exp' value.
+// This ensures tokens expire in Redis at the same time as the JWT itself.
+// Returns 0 if the expiration claim is missing or invalid.
 func claimsTTLFromVerifyResult(claims map[string]any) time.Duration {
 	if claims == nil {
 		return 0
 	}
-	v, ok := claims[claimskeys.Exp]
-	if !ok {
+
+	expirationValue, exists := claims[claimskeys.Exp]
+	if !exists {
 		return 0
 	}
-	switch x := v.(type) {
+
+	switch typedValue := expirationValue.(type) {
 	case float64:
-		exp := int64(x)
-		return time.Until(time.Unix(exp, 0))
+		expirationUnix := int64(typedValue)
+		return time.Until(time.Unix(expirationUnix, 0))
 	case int64:
-		return time.Until(time.Unix(x, 0))
+		return time.Until(time.Unix(typedValue, 0))
 	case int:
-		return time.Until(time.Unix(int64(x), 0))
+		return time.Until(time.Unix(int64(typedValue), 0))
 	case string:
-		n, err := strconv.ParseInt(x, 10, 64)
+		expirationUnix, err := strconv.ParseInt(typedValue, 10, 64)
 		if err != nil {
 			return 0
 		}
-		return time.Until(time.Unix(n, 0))
+		return time.Until(time.Unix(expirationUnix, 0))
 	case json.Number:
-		n, err := x.Int64()
+		expirationUnix, err := typedValue.Int64()
 		if err != nil {
 			return 0
 		}
-		return time.Until(time.Unix(n, 0))
+		return time.Until(time.Unix(expirationUnix, 0))
 	default:
 		return 0
 	}

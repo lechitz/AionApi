@@ -3,7 +3,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -15,8 +14,8 @@ import (
 
 // Create is the GraphQL-facing entrypoint for creating a new category.
 func (h *controller) Create(ctx context.Context, in model.CreateCategoryInput, userID uint64) (*model.Category, error) {
-	tr := otel.Tracer(TracerName)
-	ctx, span := tr.Start(ctx, SpanCreate)
+	tracer := otel.Tracer(TracerName)
+	ctx, span := tracer.Start(ctx, SpanCreate)
 	defer span.End()
 
 	span.SetAttributes(
@@ -26,15 +25,14 @@ func (h *controller) Create(ctx context.Context, in model.CreateCategoryInput, u
 
 	// Basic guards (controller-level preconditions).
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	cmd := toCreateCommand(in, userID)
 
-	// Delegate to the input port (use case).
-	domainOut, err := h.CategoryService.Create(ctx, cmd)
+	category, err := h.CategoryService.Create(ctx, cmd)
 	if err != nil {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, MsgCreateError)
@@ -48,7 +46,7 @@ func (h *controller) Create(ctx context.Context, in model.CreateCategoryInput, u
 		return nil, err
 	}
 
-	out := toModelOut(domainOut)
+	out := toModelOut(category)
 	span.SetAttributes(
 		attribute.String(commonkeys.CategoryID, out.ID),
 		attribute.String(commonkeys.CategoryName, out.Name),

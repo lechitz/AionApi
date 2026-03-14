@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "icons": [
+    { "key": "work/briefcase.svg", "label": "Trabalho" },
+    { "key": "study/book.svg", "label": "Estudos" },
+    { "key": "health/heart.svg", "label": "Saúde" },
+    { "key": "finance/wallet.svg", "label": "Financeiro" },
+    { "key": "personal/user.svg", "label": "Pessoal" },
+    { "key": "fitness/dumbbell.svg", "label": "Fitness" },
+    { "key": "mind/brain.svg", "label": "Mente" },
+    { "key": "food/leaf.svg", "label": "Alimentação" },
+    { "key": "family/home.svg", "label": "Família" },
+    { "key": "travel/plane.svg", "label": "Viagens" },
+    { "key": "music/note.svg", "label": "Música" }
+  ]
+}

@@ -1,2 +1,2 @@
 #!/bin/sh
-exec ./aion-api
+exec /usr/local/bin/aion-api

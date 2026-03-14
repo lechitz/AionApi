@@ -12,8 +12,10 @@ import (
 	authmw "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/middleware"
 	authInput "github.com/lechitz/AionApi/internal/auth/core/ports/input"
 	categoryInput "github.com/lechitz/AionApi/internal/category/core/ports/input"
+	chatInput "github.com/lechitz/AionApi/internal/chat/core/ports/input"
 	recordInput "github.com/lechitz/AionApi/internal/record/core/ports/input"
 	tagInput "github.com/lechitz/AionApi/internal/tag/core/ports/input"
+	userInput "github.com/lechitz/AionApi/internal/user/core/ports/input"
 
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
@@ -27,6 +29,8 @@ func NewGraphqlHandler(
 	categoryService categoryInput.CategoryService,
 	tagService tagInput.TagService,
 	recordService recordInput.RecordService,
+	chatService chatInput.ChatService,
+	userService userInput.UserService,
 	log logger.ContextLogger,
 	cfg *config.Config,
 ) (http.Handler, error) {
@@ -39,6 +43,8 @@ func NewGraphqlHandler(
 		CategoryService: categoryService,
 		TagService:      tagService,
 		RecordService:   recordService,
+		ChatService:     chatService,
+		UserService:     userService,
 		Logger:          log,
 	}
 

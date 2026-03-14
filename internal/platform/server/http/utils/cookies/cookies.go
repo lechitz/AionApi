@@ -18,7 +18,7 @@ func SetAuthCookie(w http.ResponseWriter, token string, cfg config.CookieConfig)
 		Path:     cfg.Path,
 		Domain:   cfg.Domain,
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   secureFlag(cfg),
 		SameSite: mapSameSite(cfg.SameSite),
 		MaxAge:   cfg.MaxAge,
 	})
@@ -33,7 +33,7 @@ func ClearAuthCookie(w http.ResponseWriter, cfg config.CookieConfig) {
 		MaxAge:   -1,
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   secureFlag(cfg),
 		SameSite: http.SameSiteStrictMode,
 	})
 }
@@ -46,15 +46,39 @@ func SetRefreshCookie(w http.ResponseWriter, token string, cfg config.CookieConf
 		Path:     cfg.Path,
 		Domain:   cfg.Domain,
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   secureFlag(cfg),
 		SameSite: mapSameSite(cfg.SameSite),
 		MaxAge:   cfg.MaxAge * 7,
+	})
+}
+
+// ClearRefreshCookie invalidates the refresh token cookie by setting its value to empty and expiration to a past timestamp.
+// Used by auth logout to prevent stale refresh tokens in browsers.
+func ClearRefreshCookie(w http.ResponseWriter, cfg config.CookieConfig) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    "",
+		Path:     cfg.Path,
+		MaxAge:   -1,
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+		Secure:   secureFlag(cfg),
+		SameSite: http.SameSiteStrictMode,
 	})
 }
 
 // ExtractRefreshToken retrieves the refresh token from the request cookies.
 func ExtractRefreshToken(r *http.Request) (string, error) {
 	c, err := r.Cookie("refresh_token")
+	if err != nil || c == nil || c.Value == "" {
+		return "", err
+	}
+	return c.Value, nil
+}
+
+// ExtractAuthToken retrieves the authentication (access) token from the request cookies.
+func ExtractAuthToken(r *http.Request) (string, error) {
+	c, err := r.Cookie(commonkeys.AuthTokenCookieName)
 	if err != nil || c == nil || c.Value == "" {
 		return "", err
 	}
@@ -73,4 +97,10 @@ func mapSameSite(sameSite string) http.SameSite {
 	default:
 		return http.SameSiteDefaultMode
 	}
+}
+
+// secureFlag allows disabling Secure in dev/local when HTTPS is not available.
+// Respects config-driven value (default true via envconfig).
+func secureFlag(cfg config.CookieConfig) bool {
+	return cfg.Secure
 }

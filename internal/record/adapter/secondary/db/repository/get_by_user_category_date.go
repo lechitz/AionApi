@@ -15,7 +15,7 @@ func (r *RecordRepository) GetByUserCategoryDate(ctx context.Context, userID uin
 
 	if err := r.db.WithContext(ctx).
 		Where("user_id = ? AND category_id = ? AND event_time = ? AND deleted_at IS NULL", userID, categoryID, date).
-		First(&recordDB).Error; err != nil {
+		First(&recordDB).Error(); err != nil {
 		return domain.Record{}, err
 	}
 

@@ -1,6 +1,10 @@
 // Package http centralizes HTTP server constants to avoid magic strings.
 // NOTE: Values here serve as defaults. In the composer, we allow overrides via cfg.
+//
+//revive:disable:var-naming // keep package name aligned with HTTP server module naming
 package http
+
+//revive:enable:var-naming
 
 // Default routes and mount points.
 const (

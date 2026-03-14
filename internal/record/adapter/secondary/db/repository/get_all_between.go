@@ -17,7 +17,7 @@ func (r *RecordRepository) ListAllBetween(ctx context.Context, userID uint64, st
 		Where("user_id = ? AND event_time >= ? AND event_time <= ? AND deleted_at IS NULL", userID, startDate, endDate).
 		Order("event_time DESC, id DESC").
 		Limit(limit).
-		Find(&recordsDB).Error; err != nil {
+		Find(&recordsDB).Error(); err != nil {
 		return nil, err
 	}
 

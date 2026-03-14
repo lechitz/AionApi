@@ -1,31 +1,45 @@
 // Package controller contains GraphQL-facing controllers for the Category context.
 package controller
 
-// Tracing spans used for OpenTelemetry instrumentation.
-const (
-	// TracerName is the name of the tracer for Category GraphQL controllers.
-	TracerName = "aionapi.graphql.category"
+import "errors"
 
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
+
+// TracerName is the name of the tracer for Category GraphQL controllers.
+// Format: aionapi.<domain>.<layer>.
+const TracerName = "aionapi.category.controller"
+
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
+const (
 	// SpanCreate is the span name for creating a category.
-	SpanCreate = "category.create"
+	SpanCreate = "category.controller.create"
 
 	// SpanUpdate is the span name for updating a category.
-	SpanUpdate = "category.update"
+	SpanUpdate = "category.controller.update"
 
 	// SpanSoftDelete is the span name for soft-deleting a category.
-	SpanSoftDelete = "category.soft_delete"
+	SpanSoftDelete = "category.controller.soft_delete"
 
 	// SpanListAll is the span name for listing all categories.
-	SpanListAll = "category.list_all"
+	SpanListAll = "category.controller.list_all"
 
 	// SpanGetByID is the span name for retrieving a category by ID.
-	SpanGetByID = "category.get_by_id"
+	SpanGetByID = "category.controller.get_by_id"
 
 	// SpanGetByName is the span name for retrieving a category by name.
-	SpanGetByName = "category.get_by_name"
+	SpanGetByName = "category.controller.get_by_name"
 )
 
-// Status messages represent the outcome of controller operations.
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
+
 const (
 	// StatusCreated indicates that a category has been successfully created.
 	StatusCreated = "created"
@@ -43,7 +57,14 @@ const (
 	StatusFetched = "fetched"
 )
 
-// Log/messages and error strings used in logging and error reporting.
+// =============================================================================
+// BUSINESS LOGIC - Error and Log Messages
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Log Messages
+// -----------------------------------------------------------------------------
+
 const (
 	// MsgCreated is the log message for when a category is created.
 	MsgCreated = "category created"
@@ -62,19 +83,26 @@ const (
 
 	// MsgUpdateError is the log message for when an update operation fails.
 	MsgUpdateError = "error updating category"
+)
 
-	// ErrUserIDNotFound is the error message when the user ID is missing or invalid.
-	ErrUserIDNotFound = "user id not found"
+// -----------------------------------------------------------------------------
+// Sentinel Errors
+// Use errors.Is() for type-safe error comparison
+// -----------------------------------------------------------------------------
 
-	// ErrCategoryIDNotFound is the error message when the category ID is missing or invalid.
-	ErrCategoryIDNotFound = "category id not found"
+var (
+	// ErrUserIDNotFound is the error when the user ID is missing or invalid.
+	ErrUserIDNotFound = errors.New("user id not found")
 
-	// ErrInvalidCategoryID is the error message when the category ID cannot be parsed or is invalid.
-	ErrInvalidCategoryID = "invalid category id"
+	// ErrCategoryIDNotFound is the error when the category ID is missing or invalid.
+	ErrCategoryIDNotFound = errors.New("category id not found")
 
-	// ErrCategoryNotFound is the error message when a category cannot be found.
-	ErrCategoryNotFound = "category not found"
+	// ErrInvalidCategoryID is the error when the category ID cannot be parsed or is invalid.
+	ErrInvalidCategoryID = errors.New("invalid category id")
 
-	// ErrCategoriesNotFound is the error message when no categories can be found for a user.
-	ErrCategoriesNotFound = "categories not found"
+	// ErrCategoryNotFound is the error when a category cannot be found.
+	ErrCategoryNotFound = errors.New("category not found")
+
+	// ErrCategoriesNotFound is the error when no categories can be found for a user.
+	ErrCategoriesNotFound = errors.New("categories not found")
 )

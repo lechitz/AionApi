@@ -2,117 +2,114 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"time"
+	"strconv"
 
+	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
 	"github.com/lechitz/AionApi/internal/record/core/domain"
 	"github.com/lechitz/AionApi/internal/record/core/ports/input"
-	tagdomain "github.com/lechitz/AionApi/internal/tag/core/domain"
+	"github.com/lechitz/AionApi/internal/record/core/ports/output"
+	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Update applies partial changes to an existing record owned by the user.
 func (s *Service) Update(ctx context.Context, recordID uint64, userID uint64, cmd input.UpdateRecordCommand) (domain.Record, error) {
+	tr := otel.Tracer(TracerName)
+	ctx, span := tr.Start(ctx, SpanUpdate)
+	defer span.End()
+
+	span.SetAttributes(
+		attribute.String(commonkeys.Operation, SpanUpdate),
+		attribute.String(commonkeys.RecordID, strconv.FormatUint(recordID, 10)),
+		attribute.String(commonkeys.UserID, strconv.FormatUint(userID, 10)),
+	)
+
+	span.AddEvent(EventValidateInput)
 	if recordID == 0 || userID == 0 {
-		return domain.Record{}, errors.New("invalid recordID or userID")
+		span.RecordError(ErrInvalidRecordIDOrUserID)
+		span.SetStatus(codes.Error, ErrToValidateRecord)
+		s.Logger.ErrorwCtx(ctx, ErrToValidateRecord, commonkeys.Error, ErrInvalidRecordIDOrUserID.Error())
+		return domain.Record{}, ErrInvalidRecordIDOrUserID
 	}
 
-	existing, err := s.RecordRepository.GetByID(ctx, recordID, userID)
-	if err != nil {
-		return domain.Record{}, err
+	if cmd.TagID != nil {
+		tag, err := s.TagRepository.GetByID(ctx, *cmd.TagID, userID)
+		if err != nil || tag.ID == 0 {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, FailedToUpdateRecord)
+			s.Logger.ErrorwCtx(ctx, FailedToUpdateRecord, commonkeys.Error, TagNotFound)
+			return domain.Record{}, fmt.Errorf("%w: %s", ErrUpdateRecord, TagNotFound)
+		}
 	}
 
-	// Determine target category and tag after patch
-	targetCategoryID := resolveUint64(existing.CategoryID, cmd.CategoryID)
-	targetTagID := resolveUint64(existing.TagID, cmd.TagID)
+	var updated domain.Record
+	if err := s.runWithinRecordOutboxTransaction(ctx, func(recordRepo output.RecordRepository, outboxService eventoutboxinput.Service) error {
+		span.AddEvent(EventRepositoryGet)
+		existing, getErr := recordRepo.GetByID(ctx, recordID, userID)
+		if getErr != nil {
+			return fmt.Errorf("%w: %w", ErrGetRecord, getErr)
+		}
 
-	// Ensure tag-category alignment and pick the final tag id
-	finalTagID, err := s.ensureTagCategoryAlignment(ctx, userID, targetCategoryID, targetTagID)
-	if err != nil {
-		return domain.Record{}, err
+		finalTagID := existing.TagID
+		if cmd.TagID != nil {
+			finalTagID = *cmd.TagID
+		}
+
+		existing = applyRecordPatch(existing, cmd, finalTagID)
+
+		span.AddEvent(EventRepositoryUpdate)
+		var updateErr error
+		updated, updateErr = recordRepo.Update(ctx, existing)
+		if updateErr != nil {
+			return updateErr
+		}
+
+		if outboxService != nil {
+			s.enqueueRecordOutboxEventWithService(ctx, outboxService, RecordEventTypeUpdatedV1, updated)
+		}
+
+		return nil
+	}); err != nil {
+		span.RecordError(err)
+		if isGetRecordError(err) {
+			span.SetStatus(codes.Error, FailedToGetRecord)
+			s.Logger.ErrorwCtx(ctx, FailedToGetRecord,
+				commonkeys.RecordID, recordID,
+				commonkeys.UserID, userID,
+				commonkeys.Error, err,
+			)
+			return domain.Record{}, err
+		}
+		span.SetStatus(codes.Error, FailedToUpdateRecord)
+		s.Logger.ErrorwCtx(ctx, FailedToUpdateRecord,
+			commonkeys.RecordID, recordID,
+			commonkeys.Error, err,
+		)
+		return domain.Record{}, fmt.Errorf("%w: %w", ErrUpdateRecord, err)
 	}
 
-	// Apply patch-like updates to the entity
-	existing = applyRecordPatch(existing, cmd, targetCategoryID, finalTagID)
+	// Invalidate all related caches
+	s.invalidateRecordCaches(ctx, span, updated)
 
-	updated, err := s.RecordRepository.Update(ctx, existing)
-	if err != nil {
-		return domain.Record{}, err
-	}
+	span.AddEvent(EventSuccess)
+	span.SetStatus(codes.Ok, StatusUpdated)
+	s.Logger.InfowCtx(ctx, LogRecordUpdatedSuccessfully,
+		commonkeys.RecordID, updated.ID,
+		commonkeys.UserID, updated.UserID,
+	)
+
 	return updated, nil
 }
 
-// resolveUint64 returns ptr value if provided, otherwise the fallback.
-func resolveUint64(fallback uint64, ptr *uint64) uint64 {
-	if ptr != nil {
-		return *ptr
-	}
-	return fallback
-}
-
-// ensureTagCategoryAlignment guarantees we have a tag ID that belongs to the given category.
-// If tagID is zero/invalid or belongs to a different category, it creates an appropriate tag.
-func (s *Service) ensureTagCategoryAlignment(ctx context.Context, userID, categoryID, tagID uint64) (uint64, error) {
-	if tagID == 0 {
-		created, err := s.TagRepository.Create(ctx, tagdomain.Tag{
-			Name:       fmt.Sprintf("auto-tag-%d", time.Now().UTC().UnixNano()),
-			UserID:     userID,
-			CategoryID: categoryID,
-		})
-		if err != nil {
-			return 0, fmt.Errorf("create auto tag: %w", err)
-		}
-		return created.ID, nil
-	}
-
-	// fetch tag and ensure category match
-	t, err := s.TagRepository.GetByID(ctx, tagID, userID)
-	if err != nil {
-		return 0, fmt.Errorf("lookup tag: %w", err)
-	}
-	if t.ID == 0 {
-		created, err := s.TagRepository.Create(ctx, tagdomain.Tag{
-			Name:       fmt.Sprintf("auto-tag-%d", time.Now().UTC().UnixNano()),
-			UserID:     userID,
-			CategoryID: categoryID,
-		})
-		if err != nil {
-			return 0, fmt.Errorf("create auto tag: %w", err)
-		}
-		return created.ID, nil
-	}
-	if t.CategoryID != categoryID {
-		candidate := tagdomain.Tag{
-			Name:       t.Name,
-			UserID:     userID,
-			CategoryID: categoryID,
-		}
-		created, err := s.TagRepository.Create(ctx, candidate)
-		if err != nil {
-			alt := tagdomain.Tag{
-				Name:       fmt.Sprintf("%s@cat-%d", t.Name, categoryID),
-				UserID:     userID,
-				CategoryID: categoryID,
-			}
-			created, err = s.TagRepository.Create(ctx, alt)
-			if err != nil {
-				return 0, fmt.Errorf("create category tag: %w", err)
-			}
-		}
-		return created.ID, nil
-	}
-	return tagID, nil
-}
-
-// applyRecordPatch mutates a copy of the record with fields from cmd and the resolved IDs.
-func applyRecordPatch(r domain.Record, cmd input.UpdateRecordCommand, categoryID, tagID uint64) domain.Record {
-	if cmd.Title != nil {
-		r.Title = *cmd.Title
-	}
+// applyRecordPatch mutates a copy of the record with fields from cmd and the resolved tag ID.
+func applyRecordPatch(r domain.Record, cmd input.UpdateRecordCommand, tagID uint64) domain.Record {
 	if cmd.Description != nil {
 		r.Description = cmd.Description
 	}
-	r.CategoryID = categoryID
 	r.TagID = tagID
 	if cmd.EventTime != nil {
 		r.EventTime = *cmd.EventTime
@@ -136,4 +133,53 @@ func applyRecordPatch(r domain.Record, cmd input.UpdateRecordCommand, categoryID
 		r.Status = cmd.Status
 	}
 	return r
+}
+
+// invalidateRecordCaches invalidates all caches related to the updated record.
+// This is a best-effort operation - errors are logged but don't fail the operation.
+func (s *Service) invalidateRecordCaches(ctx context.Context, span trace.Span, record domain.Record) {
+	span.AddEvent(EventInvalidateCache)
+
+	// Invalidate the specific record cache
+	if err := s.RecordCache.DeleteRecord(ctx, record.ID, record.UserID); err != nil {
+		s.Logger.WarnwCtx(ctx, LogFailedInvalidateRecordCache,
+			commonkeys.RecordID, record.ID,
+			commonkeys.UserID, record.UserID,
+			commonkeys.Error, err,
+		)
+	}
+
+	// Invalidate day cache for the event date
+	eventDate := CacheDayStart(record.EventTime)
+	if err := s.RecordCache.DeleteRecordsByDay(ctx, record.UserID, eventDate); err != nil {
+		s.Logger.WarnwCtx(ctx, LogFailedInvalidateDayCache,
+			commonkeys.UserID, record.UserID,
+			commonkeys.Date, eventDate.Format(DateFormatISO8601Date),
+			commonkeys.Error, err,
+		)
+	}
+
+	// Get tag to find category for cache invalidation
+	if record.TagID != 0 {
+		tag, err := s.TagRepository.GetByID(ctx, record.TagID, record.UserID)
+		if err == nil && tag.ID != 0 {
+			// Invalidate category cache
+			if err := s.RecordCache.DeleteRecordsByCategory(ctx, tag.CategoryID, record.UserID); err != nil {
+				s.Logger.WarnwCtx(ctx, LogFailedInvalidateCategoryCache,
+					commonkeys.CategoryID, tag.CategoryID,
+					commonkeys.UserID, record.UserID,
+					commonkeys.Error, err,
+				)
+			}
+		}
+
+		// Invalidate tag cache
+		if err := s.RecordCache.DeleteRecordsByTag(ctx, record.TagID, record.UserID); err != nil {
+			s.Logger.WarnwCtx(ctx, LogFailedInvalidateTagCache,
+				commonkeys.TagID, record.TagID,
+				commonkeys.UserID, record.UserID,
+				commonkeys.Error, err,
+			)
+		}
+	}
 }

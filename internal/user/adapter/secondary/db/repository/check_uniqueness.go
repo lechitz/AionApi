@@ -18,7 +18,7 @@ import (
 // CheckUniqueness verifies whether username and/or email are already taken.
 // It returns which fields are taken and (optionally) the owner IDs.
 func (up UserRepository) CheckUniqueness(ctx context.Context, username, email string) (output.UserUniqueness, error) {
-	tr := otel.Tracer(TracerUserRepository)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanCheckUniqueness, trace.WithAttributes(
 		attribute.String(commonkeys.Username, username),
 		attribute.String(commonkeys.Email, email),
@@ -39,7 +39,7 @@ func (up UserRepository) CheckUniqueness(ctx context.Context, username, email st
 			Model(&model.UserDB{}).
 			Select(commonkeys.UserID).
 			Where(field+" = ?", value).
-			First(&u).Error
+			First(&u).Error()
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return 0, false, nil

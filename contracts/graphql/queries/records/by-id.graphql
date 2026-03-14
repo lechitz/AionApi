@@ -1,0 +1,1 @@
+query RecordById($id: ID!) { recordById(id: $id) { id userId tagId description eventTime recordedAt durationSeconds value source timezone status createdAt updatedAt } }

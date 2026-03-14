@@ -1,0 +1,1 @@
+query InsightFeed($window: InsightWindow!, $limit: Int, $date: String, $timezone: String, $categoryId: ID, $tagIds: [ID!]) { insightFeed(window: $window, limit: $limit, date: $date, timezone: $timezone, categoryId: $categoryId, tagIds: $tagIds) { id type title summary status window confidence metricKeys recommendedAction evidence { label value kind } generatedAt } }

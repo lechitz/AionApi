@@ -7,6 +7,7 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/generic/dto"
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -15,8 +16,9 @@ import (
 
 // HealthCheck Health Check responds to health check requests with service metadata and status.
 func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
+	reqID, _ := r.Context().Value(ctxkeys.RequestID).(string)
+
 	if r.Method != http.MethodGet && r.Method != http.MethodHead {
-		reqID := r.Header.Get(commonkeys.XRequestID)
 		h.Logger.Warnw(MsgMethodNotAllowed,
 			commonkeys.Method, r.Method,
 			commonkeys.URLPath, r.URL.Path,
@@ -30,8 +32,6 @@ func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	_, span := otel.Tracer(TracerGenericHandler).
 		Start(r.Context(), TracerHealthCheckHandler)
 	defer span.End()
-
-	reqID := r.Header.Get(commonkeys.XRequestID)
 
 	span.AddEvent(EventHealthCheck,
 		trace.WithAttributes(

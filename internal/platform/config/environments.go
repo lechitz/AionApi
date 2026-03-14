@@ -26,12 +26,42 @@ type ObservabilityConfig struct {
 	OtelExporterInsecure     bool   `envconfig:"OTEL_EXPORTER_INSECURE"      default:"true"`
 }
 
+// KafkaConfig holds Kafka broker and topic settings for canonical event publication.
+type KafkaConfig struct {
+	Brokers                     string `envconfig:"KAFKA_BROKERS"                        default:"kafka:9092"`
+	RecordEventsTopic           string `envconfig:"KAFKA_TOPIC_RECORD_EVENTS"            default:"aion.record.events.v1"`
+	RecordProjectionEventsTopic string `envconfig:"KAFKA_TOPIC_RECORD_PROJECTION_EVENTS" default:"aion.record_projection.events.v1"`
+}
+
+// OutboxConfig holds runtime controls for the outbox publisher loop.
+type OutboxConfig struct {
+	PublishEnabled  bool          `envconfig:"OUTBOX_PUBLISH_ENABLED"  default:"true"`
+	PublishInterval time.Duration `envconfig:"OUTBOX_PUBLISH_INTERVAL" default:"2s"`
+	BatchSize       int           `envconfig:"OUTBOX_BATCH_SIZE"       default:"50"`
+}
+
+// RealtimeConfig holds runtime controls for SSE and projection event fanout.
+type RealtimeConfig struct {
+	StreamPath          string        `envconfig:"REALTIME_STREAM_PATH"           default:"/events/stream"`
+	ConsumerGroupPrefix string        `envconfig:"REALTIME_CONSUMER_GROUP_PREFIX" default:"aion-api-realtime"`
+	HeartbeatInterval   time.Duration `envconfig:"REALTIME_HEARTBEAT_INTERVAL"    default:"15s"`
+	SubscriberBuffer    int           `envconfig:"REALTIME_SUBSCRIBER_BUFFER"     default:"32"`
+	Enabled             bool          `envconfig:"REALTIME_ENABLED"               default:"true"`
+}
+
 // CacheConfig holds Redis cache configuration.
+// Each bounded context uses a separate Redis database for isolation.
 type CacheConfig struct {
 	Addr     string `envconfig:"CACHE_ADDR"     default:"redis-aion:6379"`
 	Password string `envconfig:"CACHE_PASSWORD"`
 
-	DB             int           `envconfig:"CACHE_REPO"            default:"0"`
+	AuthDB     int `envconfig:"CACHE_AUTH_DB"     default:"0"`
+	CategoryDB int `envconfig:"CACHE_CATEGORY_DB" default:"1"`
+	TagDB      int `envconfig:"CACHE_TAG_DB"      default:"2"`
+	RecordDB   int `envconfig:"CACHE_RECORD_DB"   default:"3"`
+	UserDB     int `envconfig:"CACHE_USER_DB"     default:"4"`
+	ChatDB     int `envconfig:"CACHE_CHAT_DB"     default:"5"`
+
 	PoolSize       int           `envconfig:"CACHE_POOL_SIZE"       default:"10"`
 	ConnectTimeout time.Duration `envconfig:"CACHE_CONNECT_TIMEOUT" default:"5s"`
 }
@@ -40,8 +70,8 @@ type CacheConfig struct {
 type CookieConfig struct {
 	Domain   string `envconfig:"COOKIE_DOMAIN"   default:"localhost"`
 	Path     string `envconfig:"COOKIE_PATH"     default:"/"`
-	SameSite string `envconfig:"COOKIE_SAMESITE" default:"Strict"`
-	Secure   bool   `envconfig:"COOKIE_SECURE"   default:"true"`
+	SameSite string `envconfig:"COOKIE_SAMESITE" default:"Lax"`
+	Secure   bool   `envconfig:"COOKIE_SECURE"   default:"false"`
 	MaxAge   int    `envconfig:"COOKIE_MAX_AGE"  default:"0"`
 }
 
@@ -107,4 +137,17 @@ type AionChatConfig struct {
 	BaseURL    string        `envconfig:"AION_CHAT_URL"         default:"http://aion-chat:8000"`
 	ServiceKey string        `envconfig:"AION_CHAT_SERVICE_KEY" default:""`
 	Timeout    time.Duration `envconfig:"AION_CHAT_TIMEOUT"     default:"30s"`
+}
+
+// AvatarStorageConfig holds S3-compatible storage config for avatar uploads.
+type AvatarStorageConfig struct {
+	Provider      string `envconfig:"AVATAR_STORAGE_PROVIDER"     default:"s3"`
+	S3Endpoint    string `envconfig:"AVATAR_S3_ENDPOINT"          default:"http://localstack:4566"`
+	S3Region      string `envconfig:"AVATAR_S3_REGION"            default:"us-east-1"`
+	S3Bucket      string `envconfig:"AVATAR_S3_BUCKET"            default:"aion-assets"`
+	S3Prefix      string `envconfig:"AVATAR_S3_PREFIX"            default:"avatars"`
+	PublicBaseURL string `envconfig:"AVATAR_PUBLIC_BASE_URL"      default:"http://localhost:4566/aion-assets"`
+	AccessKeyID   string `envconfig:"AVATAR_S3_ACCESS_KEY_ID"     default:"test"`
+	SecretKey     string `envconfig:"AVATAR_S3_SECRET_ACCESS_KEY" default:"test"`
+	MaxUploadMB   int    `envconfig:"AVATAR_MAX_UPLOAD_MB"        default:"20"`
 }

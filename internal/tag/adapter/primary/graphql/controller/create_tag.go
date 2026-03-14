@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -20,9 +19,9 @@ func (h *controller) Create(ctx context.Context, in model.CreateTagInput, userID
 
 	categoryID, err := strconv.ParseUint(in.CategoryID, 10, 64)
 	if err != nil {
-		span.SetStatus(codes.Error, ErrInvalidCategoryID)
-		h.Logger.ErrorwCtx(ctx, ErrInvalidCategoryID, commonkeys.CategoryID, in.CategoryID, commonkeys.Error, err.Error())
-		return nil, errors.New(ErrInvalidCategoryID)
+		span.SetStatus(codes.Error, ErrInvalidCategoryID.Error())
+		h.Logger.ErrorwCtx(ctx, ErrInvalidCategoryID.Error(), commonkeys.CategoryID, in.CategoryID, commonkeys.Error, err.Error())
+		return nil, ErrInvalidCategoryID
 	}
 
 	span.SetAttributes(
@@ -34,14 +33,13 @@ func (h *controller) Create(ctx context.Context, in model.CreateTagInput, userID
 
 	// Basic guards (controller-level preconditions).
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
-	cmd := toCreateCommand(in, userID, categoryID)
+	cmd := toCreateTagCommand(in, userID, categoryID)
 
-	// Delegate to the input port (use case).
 	domainOut, err := h.TagService.Create(ctx, cmd)
 	if err != nil {
 		span.RecordError(err)

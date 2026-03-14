@@ -1,4 +1,42 @@
 services:
+  kafka:
+    image: redpandadata/redpanda:v24.3.5
+    container_name: kafka-dev
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp
+      - "1"
+      - --memory
+      - "1G"
+      - --reserve-memory
+      - "0M"
+      - --node-id
+      - "0"
+      - --check=false
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
+      - --advertise-kafka-addr
+      - PLAINTEXT://kafka:9092,OUTSIDE://localhost:19092
+      - --pandaproxy-addr
+      - 0.0.0.0:8082
+      - --advertise-pandaproxy-addr
+      - kafka:8082
+    ports:
+      - "19092:19092"
+      - "8082:8082"
+      - "9644:9644"
+    networks:
+      - rede_local
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health --exit-when-healthy >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
   postgres:
     image: postgres:16
     container_name: postgres-dev
@@ -7,16 +45,16 @@ services:
       - .env.dev
     volumes:
       - postgres-data-dev:/var/lib/postgresql/data
-      - ../../../db/migrations:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
       - rede_local
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
 
   redis:
     image: redis:7.2
@@ -27,9 +65,34 @@ services:
       - rede_local
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
+      start_period: 10s
+
+  localstack:
+    image: localstack/localstack:3
+    container_name: localstack-dev
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - ./localstack/init:/etc/localstack/init/ready.d
+      - ../../../assets:/opt/localstack/assets:ro
+    networks:
+      - rede_local
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4566/_localstack/health >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.101.0
@@ -43,6 +106,9 @@ services:
     networks:
       - rede_local
     restart: unless-stopped
+    depends_on:
+      jaeger:
+        condition: service_healthy
 
   prometheus:
     image: prom/prometheus:v2.53.0
@@ -79,22 +145,268 @@ services:
     image: jaegertracing/all-in-one:1.57
     container_name: jaeger-dev
     restart: unless-stopped
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+      - COLLECTOR_OTLP_ENABLED=true
     ports:
       - "16686:16686"   # UI Web
-      - "9411:9411"     # Zipkin ingest
+      - "4317:4317"     # OTLP gRPC (otel-collector)
     networks:
       - rede_local
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:16686/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  loki:
+    image: grafana/loki:2.9.8
+    container_name: loki-dev
+    command: ["-config.file=/etc/loki/loki.yaml"]
+    ports:
+      - "3100:3100"
+    volumes:
+      - ../../../observability/loki/loki.yaml:/etc/loki/loki.yaml:ro
+      - loki-data-dev:/loki
+    networks:
+      - rede_local
+    restart: unless-stopped
+
+  fluent-bit:
+    image: fluent/fluent-bit:2.2.2
+    container_name: fluent-bit-dev
+    depends_on:
+      - loki
+    env_file:
+      - .env.dev
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - fluentbit-data:/fluent-bit/state
+      - ../../../observability/fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - ../../../observability/fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
+    networks:
+      - rede_local
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-dev
+    # OPTIMIZATION: Avoids re-downloading ~800MB on every 'make dev'
+    # Use 'docker pull ollama/ollama:latest' manually when you want to update
+    pull_policy: missing
+    tty: true
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    networks:
+      - rede_local
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    # GPU support enabled - NVIDIA RTX 3050 6GB
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  aion-chat:
+    build:
+      context: ../../../../../aion-chat
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: aion-chat-dev
+    restart: unless-stopped
+    env_file:
+      - ../../../../../aion-chat/infrastructure/docker/environments/dev/.env.dev
+    environment:
+      # HOT RELOAD: Enables Uvicorn --reload
+      - DEV_MODE=true
+      - TZ=America/Sao_Paulo
+    ports:
+      - "8000:8000"
+    volumes:
+      # HOT RELOAD: Mounts Python code
+      - ../../../../../aion-chat/src:/app/src
+    networks:
+      - rede_local
+    depends_on:
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  aion-ingest:
+    image: aion-ingest:dev
+    build:
+      context: ../../../../../aion-ingest
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: aion-ingest-dev
+    restart: unless-stopped
+    environment:
+      - APP_NAME=aion-ingest
+      - HTTP_HOST=0.0.0.0
+      - HTTP_PORT=8091
+      - LOG_LEVEL=INFO
+      - KAFKA_BROKERS=kafka:9092
+      - KAFKA_TOPIC_INGEST=aion.ingest.events.v1
+      - RAW_PAYLOAD_BUCKET=aion-raw-events
+      - RAW_PAYLOAD_DIR=/data/raw
+      - GRACEFUL_TIMEOUT_SECS=10
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+    ports:
+      - "8091:8091"
+    volumes:
+      - aion-ingest-raw-dev:/data/raw
+    networks:
+      - rede_local
+    depends_on:
+      kafka:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8091/health >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  aion-streams:
+    image: aion-streams:dev
+    build:
+      context: ../../../../../aion-streams
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: aion-streams-dev
+    restart: unless-stopped
+    environment:
+      - APP_NAME=aion-streams
+      - ADMIN_HOST=0.0.0.0
+      - ADMIN_PORT=8092
+      - LOG_LEVEL=INFO
+      - KAFKA_BROKERS=kafka:9092
+      - CONSUMER_GROUP=aion-streams-v1
+      - INPUT_TOPIC=aion.record.events.v1
+      - DLQ_TOPIC=aion.record.events.dlq.v1
+      - MAX_RETRIES=3
+      - RETRY_BACKOFF_MS=250
+      - PROJECTION_STORE_DSN=postgres://aion:aion123@postgres:5432/aionapi?sslmode=disable
+      - READINESS_MAX_STALENESS_SECS=120
+      - GRACEFUL_TIMEOUT_SECS=10
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+    ports:
+      - "8092:8092"
+    networks:
+      - rede_local
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8092/health >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  aion-streams-worker:
+    image: aion-streams:dev
+    build:
+      context: ../../../../../aion-streams
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: aion-streams-worker-dev
+    restart: unless-stopped
+    entrypoint: ["aion-streams-worker"]
+    environment:
+      - APP_NAME=aion-streams
+      - LOG_LEVEL=INFO
+      - KAFKA_BROKERS=kafka:9092
+      - CONSUMER_GROUP=aion-streams-v1
+      - INPUT_TOPIC=aion.record.events.v1
+      - DLQ_TOPIC=aion.record.events.dlq.v1
+      - MAX_RETRIES=3
+      - RETRY_BACKOFF_MS=250
+      - PROJECTION_STORE_DSN=postgres://aion:aion123@postgres:5432/aionapi?sslmode=disable
+      - GRACEFUL_TIMEOUT_SECS=10
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+    networks:
+      - rede_local
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+
+  aion-api-outbox-publisher:
+    image: aion-api:dev
+    build:
+      context: ../../../..
+      dockerfile: infrastructure/docker/environments/dev/Dockerfile.dev
+    container_name: aion-api-outbox-publisher-dev
+    env_file:
+      - .env.dev
+    environment:
+      - TZ=America/Sao_Paulo
+      - APP_NAME=aion-api-outbox-publisher
+    entrypoint: ["air", "-c", ".air.outbox-publisher.toml"]
+    volumes:
+      - ../../../..:/app
+      - go-mod-cache:/go/pkg/mod
+      - go-build-cache:/root/.cache/go-build
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    networks:
+      - rede_local
+    restart: unless-stopped
 
   aion-api:
     image: aion-api:dev
     build:
       context: ../../../..
-      dockerfile: infrastructure/docker/Dockerfile
+      # HOT RELOAD: Uses Dockerfile.dev with Air
+      dockerfile: infrastructure/docker/environments/dev/Dockerfile.dev
     container_name: aion-api-dev
     env_file:
       - .env.dev
+    environment:
+      - TZ=America/Sao_Paulo
     ports:
       - "5001:5001" # REST + GraphQL
+    volumes:
+      # HOT RELOAD: Mounts Go code
+      - ../../../..:/app
+      # Preserves Go modules cache
+      - go-mod-cache:/go/pkg/mod
+      - go-build-cache:/root/.cache/go-build
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -102,21 +414,77 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      kafka:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
       otel-collector:
+        condition: service_started
+      aion-chat:
+        condition: service_healthy
+      aion-ingest:
+        condition: service_healthy
+      aion-streams:
+        condition: service_healthy
+      aion-streams-worker:
+        condition: service_started
+      aion-api-outbox-publisher:
         condition: service_started
     networks:
       - rede_local
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- \"http://localhost:$$HTTP_PORT$$HTTP_CONTEXT$$HTTP_API_ROOT$$HTTP_HEALTH_ROUTE\" >/dev/null 2>&1"]
-      interval: 600s
+      interval: 10s
       timeout: 5s
-      start_period: 30s
-      retries: 3
+      start_period: 40s
+      retries: 5
+
+  aionapi-dashboard:
+    image: aionapi-dashboard:dev
+    build:
+      context: ../../../../../aionapi-dashboard
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: aionapi-dashboard-dev
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - VITE_API_URL=http://localhost:5001/aion/api/v1
+      - VITE_AUTH_URL=http://localhost:5001/aion/api/v1/auth
+      - VITE_HEALTHCHECK_ENABLED=true
+      - VITE_ASSETS_BASE_URL=http://localhost:4566/aion-assets/category-icons
+    volumes:
+      # HOT RELOAD: Mounts source code for Vite HMR
+      - ../../../../../aionapi-dashboard/src:/app/src
+      - ../../../../../aionapi-dashboard/public:/app/public
+      - ../../../../../aionapi-dashboard/index.html:/app/index.html
+      - ../../../../../aionapi-dashboard/vite.config.ts:/app/vite.config.ts
+      - ../../../../../aionapi-dashboard/tsconfig.json:/app/tsconfig.json
+      - ../../../../../aionapi-dashboard/tsconfig.app.json:/app/tsconfig.app.json
+      - ../../../../../aionapi-dashboard/tsconfig.node.json:/app/tsconfig.node.json
+      # Preserves node_modules (DO NOT overwrite!)
+      - aionapi-dashboard-node-modules:/app/node_modules
+    networks:
+      - rede_local
+    depends_on:
+      aion-api:
+        condition: service_healthy
 
 networks:
   rede_local:
+    name: rede_local
+    driver: bridge
 
 volumes:
   postgres-data-dev:
   grafana-data:
+  localstack-data:
+  ollama-models:
+  loki-data-dev:
+  fluentbit-data:
+  aion-ingest-raw-dev:
+  # HOT RELOAD: Named volumes to preserve dependencies
+  aionapi-dashboard-node-modules:
+  go-mod-cache:
+  go-build-cache:

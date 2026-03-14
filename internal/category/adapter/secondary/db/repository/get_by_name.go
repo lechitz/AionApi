@@ -28,12 +28,13 @@ func (c CategoryRepository) GetByName(ctx context.Context, categoryName string, 
 
 	var categoryDB model.CategoryDB
 	err := c.db.WithContext(ctx).
-		Where("user_id = ? AND name = ?", userID, categoryName).
-		First(&categoryDB).Error
+		Where("user_id = ? AND LOWER(name) = LOWER(?)", userID, categoryName).
+		First(&categoryDB).Error()
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			span.SetStatus(codes.Ok, ErrCategoryNotFoundMsg)
-			return domain.Category{}, nil
+			span.SetStatus(codes.Error, ErrCategoryNotFoundMsg)
+			span.RecordError(errors.New(ErrCategoryNotFoundMsg))
+			return domain.Category{}, errors.New(ErrCategoryNotFoundMsg)
 		}
 
 		span.SetStatus(codes.Error, err.Error())

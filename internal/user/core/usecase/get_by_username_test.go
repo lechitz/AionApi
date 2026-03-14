@@ -2,9 +2,11 @@
 package usecase_test
 
 import (
+	"errors"
 	"testing"
 
 	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/AionApi/internal/user/core/usecase"
 	"github.com/lechitz/AionApi/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -23,9 +25,17 @@ func TestGetUserByUsername_Success(t *testing.T) {
 		Email:    "f@example.com",
 	}
 
+	suite.UserCache.EXPECT().
+		GetUserByUsername(gomock.Any(), username).
+		Return(userdomain.User{}, errors.New("cache miss"))
+
 	suite.UserRepository.EXPECT().
 		GetByUsername(gomock.Any(), username).
 		Return(u, nil)
+
+	suite.UserCache.EXPECT().
+		SaveUser(gomock.Any(), u, gomock.Any()).
+		Return(nil)
 
 	got, err := suite.UserService.GetUserByUsername(suite.Ctx, username)
 	require.NoError(t, err)
@@ -38,6 +48,10 @@ func TestGetUserByUsername_Error(t *testing.T) {
 
 	username := "ghost"
 
+	suite.UserCache.EXPECT().
+		GetUserByUsername(gomock.Any(), username).
+		Return(userdomain.User{}, errors.New("cache miss"))
+
 	suite.UserRepository.EXPECT().
 		GetByUsername(gomock.Any(), username).
 		Return(userdomain.User{}, gorm.ErrRecordNotFound)
@@ -45,4 +59,27 @@ func TestGetUserByUsername_Error(t *testing.T) {
 	got, err := suite.UserService.GetUserByUsername(suite.Ctx, username)
 	require.Error(t, err)
 	require.Equal(t, userdomain.User{}, got)
+}
+
+// TestGetUserByUsername_SentinelError validates that GetByUsername returns wrapped ErrGetUserByUsername.
+func TestGetUserByUsername_SentinelError(t *testing.T) {
+	suite := setup.UserServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	username := "nonexistent"
+	dbErr := errors.New("user not found")
+
+	suite.UserCache.EXPECT().
+		GetUserByUsername(gomock.Any(), username).
+		Return(userdomain.User{}, errors.New("cache miss"))
+
+	suite.UserRepository.EXPECT().
+		GetByUsername(gomock.Any(), username).
+		Return(userdomain.User{}, dbErr)
+
+	_, err := suite.UserService.GetUserByUsername(suite.Ctx, username)
+
+	require.Error(t, err)
+	require.ErrorIs(t, err, usecase.ErrGetUserByUsername, "error should wrap ErrGetUserByUsername sentinel error")
+	require.ErrorContains(t, err, "user not found")
 }

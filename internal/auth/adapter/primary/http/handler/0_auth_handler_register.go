@@ -18,6 +18,7 @@ func RegisterHTTP(r ports.Router, h *Handler) {
 		// Protected endpoints require an authenticated context.
 		authmw := middleware.New(h.Service, h.Logger)
 		ar.GroupWith(authmw.Auth, func(pr ports.Router) {
+			pr.GET("/session", http.HandlerFunc(h.Session))
 			pr.POST("/logout", http.HandlerFunc(h.Logout))
 		})
 	})

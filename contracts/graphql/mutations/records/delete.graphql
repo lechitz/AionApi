@@ -1,0 +1,1 @@
+mutation SoftDeleteRecord($input: DeleteRecordInput!) { softDeleteRecord(input: $input) }

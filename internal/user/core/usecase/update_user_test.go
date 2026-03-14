@@ -32,6 +32,10 @@ func TestUpdateUser_Success(t *testing.T) {
 		Update(gomock.Any(), uid, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(expected, nil)
 
+	suite.UserCache.EXPECT().
+		DeleteUser(gomock.Any(), uid, expected.Username, expected.Email).
+		Return(nil)
+
 	got, err := suite.UserService.UpdateUser(suite.Ctx, uid, cmd)
 	require.NoError(t, err)
 	require.Equal(t, expected, got)
@@ -52,6 +56,10 @@ func TestUpdateUser_UpdateOnlyUsername(t *testing.T) {
 		Update(gomock.Any(), uid, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(expected, nil)
 
+	suite.UserCache.EXPECT().
+		DeleteUser(gomock.Any(), uid, expected.Username, expected.Email).
+		Return(nil)
+
 	got, err := suite.UserService.UpdateUser(suite.Ctx, uid, cmd)
 	require.NoError(t, err)
 	require.Equal(t, expected, got)
@@ -71,6 +79,10 @@ func TestUpdateUser_UpdateOnlyEmail(t *testing.T) {
 	suite.UserRepository.EXPECT().
 		Update(gomock.Any(), uid, gomock.AssignableToTypeOf(map[string]interface{}{})).
 		Return(expected, nil)
+
+	suite.UserCache.EXPECT().
+		DeleteUser(gomock.Any(), uid, expected.Username, expected.Email).
+		Return(nil)
 
 	got, err := suite.UserService.UpdateUser(suite.Ctx, uid, cmd)
 	require.NoError(t, err)

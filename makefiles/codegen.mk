@@ -37,6 +37,7 @@ SHELL := /usr/bin/env bash
 
 # Repository root (works from subdirectories too)
 ROOT_DIR := $(shell git rev-parse --show-toplevel 2>/dev/null || pwd)
+GO_CACHE := $(ROOT_DIR)/.cache/go-build
 
 # Output (FLAT): all mocks live directly under tests/mocks/
 MOCKS_DIR := $(ROOT_DIR)/tests/mocks
@@ -102,8 +103,12 @@ GRAPHQL_SOURCES := $(shell find "$(GRAPH_DIR)/schema" -type f -name "*.graphqls"
 graphql:
 	@echo "Generating GraphQL code with gqlgen..."
 	@echo "Schemas found:"; if [ -n "$(GRAPHQL_SOURCES)" ]; then printf "  %s\n" $(GRAPHQL_SOURCES); else echo "  (no .graphqls found)"; fi
-	cd "$(GRAPH_DIR)" && go run github.com/99designs/gqlgen generate
-	cd "$(ROOT_DIR)" && go mod tidy
+	@mkdir -p "$(GO_CACHE)"
+	cd "$(GRAPH_DIR)" && GOCACHE=$(GO_CACHE) go run github.com/99designs/gqlgen generate
+	@echo ""
+	@echo "Applying introspection patch (required for aion-chat)..."
+	@$(ROOT_DIR)/hack/tools/patch-introspection.sh
+	cd "$(ROOT_DIR)" && GOCACHE=$(GO_CACHE) go mod tidy
 	@echo "✅  GraphQL code generated successfully."
 
 # --------------------------------------------------------------------
@@ -171,7 +176,7 @@ mocks: verify_mockgen
 	fi
 	@$(MAKE) --no-print-directory $(GENERATED_MOCKS)
 	@if [ -z "$(GENERATED_MOCKS)" ]; then \
-		echo "ℹ️  No eligible files found under ports/output."; \
+		echo "No eligible files found under ports/output."; \
 	else \
 		echo "✅  All mocks generated successfully at: $(MOCKS_DIR)"; \
 	fi
@@ -205,7 +210,7 @@ endif
 clean_mocks:
 	@if [ -d "$(MOCKS_DIR)" ]; then \
 		rm -rf "$(MOCKS_DIR)"; \
-		echo "🧹  Cleaned: $(MOCKS_DIR)"; \
+		echo "Cleaned: $(MOCKS_DIR)"; \
 	else \
-		echo "ℹ️  Nothing to clean at $(MOCKS_DIR)"; \
+		echo "Nothing to clean at $(MOCKS_DIR)"; \
 	fi

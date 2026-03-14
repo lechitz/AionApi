@@ -4,6 +4,9 @@
 *.dll
 *.so
 *.dylib
+/api
+/seed-caller
+/seed-helper
 
 # Test binary, built with `go test -c`
 *.test
@@ -24,6 +27,9 @@ go.work.sum
 # env file
 .env.dev
 .env.prod
+.env.local
+.env.my
+**/seed/.env.local
 
 # IDE files
 .idea
@@ -33,9 +39,17 @@ go.work.sum
 site/
 /infrastructure/docker/environments/dev/.env
 
-# Personal, local-only docs (private workspace for notes/ideas)
+# Personal "my" environment - keep your local configs private
+/infrastructure/docker/environments/my/
+
+# Personal, local-only docs (private workspace for docs/ideas)
 docs/personal/
 notes/
+**/docs.md
+agents/
+scripts/
+!/.github/scripts/
+!/.github/scripts/**
 
 # Local module cache used by Go
 .gocache
@@ -43,3 +57,21 @@ notes/
 
 # Go build cache
 .gotmp/
+
+# Local caches
+/.cache/
+
+# Air hot-reload temporary directory
+tmp/
+build-errors.log
+.cache/
+
+# Local seed env and generated files
+/infrastructure/db/seed/.env
+/infrastructure/db/seed/api_success.log
+/bin/seed-helper
+*.env.backup*
+tmp/
+
+# Test data work tags
+infrastructure/db/seed/test_timeline_data.sql

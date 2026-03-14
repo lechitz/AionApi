@@ -1,171 +1,226 @@
 # AionApi
 
-This repository hosts AionApi — a modular backend service implemented in Go that exposes both REST and GraphQL APIs for habit and diary management. The project follows a Ports & Adapters (Hexagonal) architecture and is designed for testability, observability, and iterative development.
+AionApi is a production-oriented Go backend that exposes REST and GraphQL APIs for habit and diary workflows, built with Hexagonal/Clean Architecture and strong observability.
 
+## Why This Project
 
----
+AionApi focuses on three goals:
 
-## Quick links
-- Documentation site: [AionApi - Github Pages](https://lechitz.github.io/AionApi/)
+- keep business logic isolated from transport and infrastructure
+- provide stable API contracts for multiple clients
+- keep operations visible and debuggable in local and production-like environments
 
-> Visit the live [AionApi - Swagger UI](https://lechitz.github.io/AionApi/swagger-ui/) to interact with the API and try requests.
----
+## Quick Links
 
-## Overview
+- Documentation portal: [AionApi Docs](https://lechitz.github.io/AionApi/)
+- REST explorer: [Swagger UI](https://lechitz.github.io/AionApi/swagger-ui/)
+- OpenAPI contract: `contracts/openapi/swagger.yaml`
+- GraphQL schema artifact: [`docs/graphql/schema.graphql`](./docs/graphql/schema.graphql)
+- Documentation ownership map: [`.github/DOCUMENTATION_OWNERSHIP.md`](./.github/DOCUMENTATION_OWNERSHIP.md)
 
-Aion is a habit management system focused on helping users organize, track and analyze routines to improve physical, mental and emotional well-being. The API provides endpoints for user management, authentication, categories, tags and diary entries (personal and professional).
+## Architecture At A Glance
 
-### Technology stack
-- Go 1.24
-- chi router for HTTP
-- gqlgen for GraphQL
-- GORM for PostgreSQL integration
-- Redis for caching / session management
-- Docker & Docker Compose for local environments
-- OpenTelemetry (OTel) for traces and metrics
-- Jaeger / Prometheus / Grafana for observability
-- zap for structured logging
+| Layer | Purpose |
+| --- | --- |
+| `internal/<ctx>/core` | Domain, ports, and usecases (business logic) |
+| `internal/<ctx>/adapter/primary` | HTTP/GraphQL input adapters |
+| `internal/<ctx>/adapter/secondary` | DB/cache/provider output adapters |
+| `internal/platform` | App bootstrap, server, config, and observability wiring |
+| `infrastructure` | Docker, migrations, observability stack |
 
-### Key features (current / planned)
-- Habit and diary entry management (personal and diary contexts)
-- Tagging and category system with GraphQL support
-- Authentication (access and refresh tokens) and session invalidation
-- Database migrations and seed data for reproducible dev environments
-- Observability (traces, metrics, dashboards)
-- Developer-friendly tooling: codegen, mocks, linters and formatting
+## Core Stack
 
----
+- Go
+- Chi (HTTP routing)
+- gqlgen (GraphQL)
+- PostgreSQL + GORM
+- Redis
+- OpenTelemetry + Prometheus + Grafana + Loki
+- Docker / Docker Compose
 
-## Project management
+## Fast Local Workflow
 
-This repository is organized using a public [AionApi - GitHub Projects](https://github.com/users/lechitz/projects/1) where tasks, issues, and epics are tracked. The board provides visibility into ongoing work and completed milestones, keeping development structured and transparent.
-
----
-
-## Installation
-
-### Prerequisites
-- Go 1.24 or newer
-- Git
-- Docker & Docker Compose (for containerized development)
-- Make (GNU Make)
-
-Clone and prepare
 ```bash
-git clone git@github.com:lechitz/AionApi.git
-cd AionApi
-```
-Install development tools (recommended)
-```bash
-make -f makefiles/tooling.mk tools-install
-```
-Download modules
-```bash
-go mod download
-```
-
----
-
-## Configuration
-
-Copy the example environment and edit for local development:
-```bash
-cp infrastructure/docker/environments/example/.env.example infrastructure/docker/environments/dev/.env.dev
-# edit infrastructure/docker/environments/dev/.env.dev
-```
-Start the development environment (Docker)
-```bash
+make tools-install
 make dev
-```
-Run migrations (example)
-```bash
-export MIGRATE_BIN="$(go env GOPATH)/bin/migrate"
-export MIGRATION_DB="postgres://aion:aion@localhost:5432/aionapi?sslmode=disable"
-export MIGRATION_PATH="infrastructure/db/migrations"
 make migrate-up
-```
-Seed sample data (optional)
-```bash
 make seed-all
+make verify
 ```
 
----
+## Workspace Model
 
-## Development & common commands
+`AionApi` is the operational hub of the current Aion v2 local stack.
 
-Run formatting and linting
-```bash
-make lint        # format + golangci-lint checks
-make lint-fix    # attempt autofix
-```
-Run tests and coverage
+Current integrated development assumes a multi-repo workspace with sibling repositories beside this one, including:
+
+- `aionapi-dashboard`
+- `aion-chat`
+- `aion-ingest`
+- `aion-streams`
+
+Implications:
+
+- `make build-dev` and `make dev` are intended for this multi-repo workspace, not for an isolated clone of `AionApi`
+- the `event-backbone-gate` workflow and preflight are designed for a self-hosted runner with that workspace already available, and are intentionally manual (`workflow_dispatch`)
+- if you clone only `AionApi`, some integrated dev and runtime validation flows will not work until those sibling repos are also present
+
+## Quality Gates
+
 ```bash
 make test
-make test-cover  # generates coverage report in tests/coverage/
+make test-cover-detail
+make docs-verify
+make graphql.queries graphql.manifest graphql.validate
+make verify
 ```
-Code generation
+
+## GraphQL Contract Workflow
+
 ```bash
-make graphql  # gqlgen codegen
-make mocks    # generate gomock mocks in tests/mocks/
-```
-Build the server binary
-```bash
-go build -o bin/aion-api ./cmd/aion-api
-```
-Run the built server (example)
-```bash
-export APP_ENV=development
-export DATABASE_URL=postgres://aion:aion@localhost:5432/aionapi?sslmode=disable
-./bin/aion-api
+make graphql.queries
+make graphql.manifest
+make graphql.validate
+make graphql.check-dirty
 ```
 
----
+## Canonical v1 Insight Surface
 
-## API summary
+The v1 personal-intelligence layer is intentionally narrow and backend-owned.
 
-REST base prefix: `/aion-api/v1`
-- `GET  /aion/health` — service health
-- `POST /aion-api/v1/user/create` — create user
-- `GET  /aion-api/v1/user/all` — list users
-- `GET  /aion-api/v1/user/{user_id}` — get user by ID
-- `PUT  /aion-api/v1/user` — update user
-- `PUT  /aion-api/v1/user/password` — update logged user's password
-- `DELETE /aion-api/v1/user` — soft-delete logged user
-- `POST /aion-api/v1/auth/login` — login and obtain tokens
-- `POST /aion-api/v1/auth/logout` — invalidate session
+Canonical GraphQL operations:
 
-GraphQL endpoint (example): `/aion-api/v1/graphql`
-- Queries: `GetAllCategories`, `GetCategoryByID`, `GetCategoryByName`, `GetAllTags`, `GetTagByID`
-- Mutations: `CreateCategory`, `CreateTag`, `UpdateCategory`, `SoftDeleteCategory`
+- `insightFeed`
+- `analyticsSeries`
 
-For full API spec, consult `swagger/swagger.yaml` and the generated JSON (`swagger/swagger.json`).
+Current contract rules:
 
----
+- `AionApi` is the authority for schema, resolver behavior, and shared GraphQL artifacts.
+- shared query documents under `contracts/graphql` must stay aligned with the live schema
+- consumers such as `aionapi-dashboard` and `aion-chat` may adapt presentation, but must not invent richer business semantics than the backend exposes
 
-## Architecture (preview)
+Current v1 scope model:
 
-The codebase follows a Hexagonal architecture (Ports & Adapters): business logic (usecases) is isolated from transport and infrastructure. Primary adapters (HTTP/GraphQL) are thin layers that map requests to input ports and format responses. Secondary adapters implement persistence, cache and external integrations behind defined interfaces.
+- recency windows: `WINDOW_7D`, `WINDOW_30D`, `WINDOW_90D`
+- optional `date`
+- optional `timezone`
+- optional `categoryId`
+- optional `tagIds`
 
-For a detailed architecture overview, see: [AionApi - Architecture](https://lechitz.github.io/AionApi/architecture/)
+Current v1 series support:
 
----
+- `analyticsSeries` is intentionally narrow
+- `records.count` is the canonical v1 series key
 
-## Observability & monitoring
+Current v1 insight semantics:
 
-The platform integrates OpenTelemetry. Configuration for local preview is available under `infrastructure/observability/` and includes collector config, Prometheus and Grafana dashboards. To enable local OTLP exporter, set:
-```bash
-export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
-export OTEL_SERVICE_NAME="AionApi"
-export OTEL_SERVICE_VERSION="0.1.0"
-```
+- deterministic, explainable insights
+- dominant insight is the first item in `insightFeed`
+- secondary insights remain ordered after the dominant item
+- consumers should treat `status`, `confidence`, `summary`, `recommendedAction`, and `evidence` as backend-owned meaning
 
+Related references:
 
+- [`contracts/graphql/queries/README.md`](./contracts/graphql/queries/README.md)
+- [`docs/graphql/README.md`](./docs/graphql/README.md)
+- [`internal/record/README.md`](./internal/record/README.md)
+- `notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md` lives in the wider Aion workspace and is not included in this repository checkout.
 
----
+<!-- docs-index:start -->
+## Documentation Index
+
+Repository README map by area.
+
+### cmd
+- [`cmd/README.md`](./cmd/README.md)
+
+### contracts
+- [`contracts/graphql/queries/README.md`](./contracts/graphql/queries/README.md)
+- [`contracts/openapi/README.md`](./contracts/openapi/README.md)
+
+### docs
+- [`docs/assets/README.md`](./docs/assets/README.md)
+- [`docs/collections/README.md`](./docs/collections/README.md)
+- [`docs/diagram/README.md`](./docs/diagram/README.md)
+- [`docs/graphql/README.md`](./docs/graphql/README.md)
+- [`docs/swagger-ui/README.md`](./docs/swagger-ui/README.md)
+
+### hack
+- [`hack/README.md`](./hack/README.md)
+- [`hack/dev/README.md`](./hack/dev/README.md)
+- [`hack/tools/seed-caller/README.md`](./hack/tools/seed-caller/README.md)
+- [`hack/tools/seed-helper/README.md`](./hack/tools/seed-helper/README.md)
+
+### infrastructure
+- [`infrastructure/README.md`](./infrastructure/README.md)
+- [`infrastructure/db/README.md`](./infrastructure/db/README.md)
+- [`infrastructure/db/migrations/README.md`](./infrastructure/db/migrations/README.md)
+- [`infrastructure/db/seed/README.md`](./infrastructure/db/seed/README.md)
+- [`infrastructure/docker/README.md`](./infrastructure/docker/README.md)
+- [`infrastructure/docker/environments/README.md`](./infrastructure/docker/environments/README.md)
+- [`infrastructure/docker/environments/example/README.md`](./infrastructure/docker/environments/example/README.md)
+- [`infrastructure/observability/README.md`](./infrastructure/observability/README.md)
+- [`infrastructure/observability/fluentbit/README.md`](./infrastructure/observability/fluentbit/README.md)
+- [`infrastructure/observability/grafana/README.md`](./infrastructure/observability/grafana/README.md)
+- [`infrastructure/observability/loki/README.md`](./infrastructure/observability/loki/README.md)
+- [`infrastructure/observability/otel/README.md`](./infrastructure/observability/otel/README.md)
+- [`infrastructure/observability/prometheus/README.md`](./infrastructure/observability/prometheus/README.md)
+
+### internal
+- [`internal/README.md`](./internal/README.md)
+- [`internal/adapter/README.md`](./internal/adapter/README.md)
+- [`internal/adapter/primary/README.md`](./internal/adapter/primary/README.md)
+- [`internal/adapter/primary/graphql/README.md`](./internal/adapter/primary/graphql/README.md)
+- [`internal/adapter/secondary/README.md`](./internal/adapter/secondary/README.md)
+- [`internal/admin/README.md`](./internal/admin/README.md)
+- [`internal/auth/README.md`](./internal/auth/README.md)
+- [`internal/category/README.md`](./internal/category/README.md)
+- [`internal/chat/README.md`](./internal/chat/README.md)
+- [`internal/platform/README.md`](./internal/platform/README.md)
+- [`internal/platform/config/README.md`](./internal/platform/config/README.md)
+- [`internal/platform/fxapp/README.md`](./internal/platform/fxapp/README.md)
+- [`internal/platform/httpclient/README.md`](./internal/platform/httpclient/README.md)
+- [`internal/platform/observability/README.md`](./internal/platform/observability/README.md)
+- [`internal/platform/ports/README.md`](./internal/platform/ports/README.md)
+- [`internal/platform/server/README.md`](./internal/platform/server/README.md)
+- [`internal/platform/server/http/README.md`](./internal/platform/server/http/README.md)
+- [`internal/platform/server/http/generic/README.md`](./internal/platform/server/http/generic/README.md)
+- [`internal/platform/server/http/middleware/README.md`](./internal/platform/server/http/middleware/README.md)
+- [`internal/platform/server/http/middleware/cors/README.md`](./internal/platform/server/http/middleware/cors/README.md)
+- [`internal/platform/server/http/middleware/recovery/README.md`](./internal/platform/server/http/middleware/recovery/README.md)
+- [`internal/platform/server/http/middleware/requestid/README.md`](./internal/platform/server/http/middleware/requestid/README.md)
+- [`internal/platform/server/http/middleware/servicetoken/README.md`](./internal/platform/server/http/middleware/servicetoken/README.md)
+- [`internal/platform/server/http/ports/README.md`](./internal/platform/server/http/ports/README.md)
+- [`internal/platform/server/http/router/README.md`](./internal/platform/server/http/router/README.md)
+- [`internal/platform/server/http/utils/README.md`](./internal/platform/server/http/utils/README.md)
+- [`internal/platform/server/http/utils/cookies/README.md`](./internal/platform/server/http/utils/cookies/README.md)
+- [`internal/platform/server/http/utils/httpresponse/README.md`](./internal/platform/server/http/utils/httpresponse/README.md)
+- [`internal/platform/server/http/utils/sharederrors/README.md`](./internal/platform/server/http/utils/sharederrors/README.md)
+- [`internal/record/README.md`](./internal/record/README.md)
+- [`internal/shared/README.md`](./internal/shared/README.md)
+- [`internal/shared/constants/README.md`](./internal/shared/constants/README.md)
+- [`internal/tag/README.md`](./internal/tag/README.md)
+- [`internal/user/README.md`](./internal/user/README.md)
+
+### makefiles
+- [`makefiles/README.md`](./makefiles/README.md)
+
+### tests
+- [`tests/coverage/README.md`](./tests/coverage/README.md)
+- [`tests/setup/README.md`](./tests/setup/README.md)
+
+<!-- docs-index:end -->
+
+## Package Improvements
+
+- Add architecture decision records (ADRs) for critical platform/domain choices.
+- Add release notes summary per version with API contract deltas.
+- Add contributor troubleshooting matrix for local setup failures.
+- Add CI/docs badges and links to pipeline checks.
 
 ## License
 
-This project is available under the MIT License — see the `LICENSE` file for details.
+This repository is source-available but proprietary.
 
----
-
+- no right to use, copy, modify, distribute, deploy, or create derivative works is granted without prior written authorization
+- see [LICENSE](./LICENSE) for the binding terms

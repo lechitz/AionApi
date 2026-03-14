@@ -1,0 +1,1 @@
+mutation DeleteGoalTemplate($input: DeleteGoalTemplateInput!) { deleteGoalTemplate(input: $input) }

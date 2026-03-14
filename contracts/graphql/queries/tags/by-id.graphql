@@ -1,0 +1,1 @@
+query TagById($id: ID!) { tagById(id: $id) { id userId name categoryId description icon createdAt updatedAt } }

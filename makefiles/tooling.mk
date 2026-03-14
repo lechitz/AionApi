@@ -13,7 +13,7 @@ tools-install:
 	go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 	go install github.com/99designs/gqlgen@latest
 	go install go.uber.org/mock/mockgen@latest
-	go install github.com/swaggo/swag/cmd/swag@latest
+	go install github.com/swaggo/swag/cmd/swag@v1.16.6
 	@echo "✅  Tools installed successfully."
 
 # Check for required development tools and fail if any are missing.
@@ -34,3 +34,20 @@ tools.check:
 		exit 1; \
 	fi; \
 	echo "All required development tools are present.";
+
+.PHONY: graph-projection-export
+GRAPH_PROJECTION_USER_ID ?= 999
+GRAPH_PROJECTION_WINDOW ?= WINDOW_30D
+GRAPH_PROJECTION_TIMEZONE ?= America/Sao_Paulo
+
+graph-projection-export:
+	@export $$(cat $(ENV_FILE_DEV) | grep -v '^#' | xargs) && \
+		DB_HOST=localhost \
+		go run ./hack/tools/graph-projection-export \
+			--user-id "$(GRAPH_PROJECTION_USER_ID)" \
+			--window "$(GRAPH_PROJECTION_WINDOW)" \
+			--timezone "$(GRAPH_PROJECTION_TIMEZONE)" \
+			$(if $(DATE),--date "$(DATE)",) \
+			$(if $(CATEGORY_ID),--category-id "$(CATEGORY_ID)",) \
+			$(if $(TAG_IDS),--tag-ids "$(TAG_IDS)",) \
+			$(if $(OUTPUT),--output "$(OUTPUT)",)

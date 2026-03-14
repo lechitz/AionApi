@@ -1,0 +1,32 @@
+# Chat domain schema (extends root types defined in root.graphqls)
+
+type ChatMessage {
+    id: ID!
+    userId: ID!
+    message: String!
+    response: String!
+    tokensUsed: Int!
+    functionCalls: JSON
+    createdAt: String!      # ISO8601 timestamp
+    updatedAt: String!      # ISO8601 timestamp
+}
+
+type ChatContext {
+    recentChats: [ChatMessage!]!
+    totalRecords: Int!
+    totalCategories: Int!
+    totalTags: Int!
+}
+
+type ChatDataPack {
+    categories: [Category!]!
+    tags: [Tag!]!
+    recentRecords: [Record!]!
+    userStats: UserStats
+}
+
+extend type Query {
+    chatHistory(limit: Int, offset: Int): [ChatMessage!]! @auth(roles: "user")
+    chatContext: ChatContext! @auth(roles: "user")
+    chatDataPack(limitRecords: Int, includeStats: Boolean!): ChatDataPack! @auth(roles: "user")
+}

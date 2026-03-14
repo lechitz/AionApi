@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -26,25 +25,25 @@ func (h *controller) GetByCategoryID(ctx context.Context, categoryID, userID uin
 
 	// Controller-level preconditions.
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
 	if categoryID == 0 {
-		span.SetStatus(codes.Error, ErrCategoryNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrCategoryNotFound, commonkeys.CategoryID, categoryID)
-		return nil, errors.New(ErrCategoryNotFound)
+		span.SetStatus(codes.Error, ErrCategoryNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrCategoryNotFound.Error(), commonkeys.CategoryID, categoryID)
+		return nil, ErrCategoryNotFound
 	}
 
 	// Delegate to use case (input port).
 	tags, err := h.TagService.GetByCategoryID(ctx, categoryID, userID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, ErrFailedToListTags)
+		span.SetStatus(codes.Error, ErrFailedToListTags.Error())
 		h.Logger.ErrorwCtx(
 			ctx,
-			ErrFailedToListTags,
+			ErrFailedToListTags.Error(),
 			commonkeys.Error, err.Error(),
 			commonkeys.UserID, userID,
 			commonkeys.CategoryID, categoryID,

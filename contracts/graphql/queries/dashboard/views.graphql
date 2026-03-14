@@ -1,0 +1,1 @@
+query DashboardViews { dashboardViews { id name isDefault widgets { id viewId metricDefinitionId widgetType size orderIndex titleOverride configJson isActive createdAt updatedAt } createdAt updatedAt } }

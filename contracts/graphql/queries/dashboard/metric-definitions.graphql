@@ -1,0 +1,1 @@
+query MetricDefinitions { metricDefinitions { id metricKey displayName categoryId tagId tagIds valueSource aggregation unit goalDefault isActive } }

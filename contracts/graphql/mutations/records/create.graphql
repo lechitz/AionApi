@@ -1,0 +1,1 @@
+mutation CreateRecord($input: CreateRecordInput!) { createRecord(input: $input) { id userId tagId description eventTime recordedAt durationSeconds value source timezone status createdAt updatedAt } }

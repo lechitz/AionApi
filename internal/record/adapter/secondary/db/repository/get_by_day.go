@@ -19,7 +19,7 @@ func (r *RecordRepository) ListByDay(ctx context.Context, userID uint64, date ti
 	if err := r.db.WithContext(ctx).
 		Where("user_id = ? AND event_time >= ? AND event_time < ? AND deleted_at IS NULL", userID, startOfDay, endOfDay).
 		Order("event_time ASC, id ASC").
-		Find(&recordsDB).Error; err != nil {
+		Find(&recordsDB).Error(); err != nil {
 		return nil, err
 	}
 

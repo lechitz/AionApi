@@ -18,6 +18,7 @@ type UserServiceTestSuite struct {
 	Ctrl           *gomock.Controller
 	Logger         *mocks.MockContextLogger
 	UserRepository *mocks.MockUserRepository
+	UserCache      *mocks.MockUserCache
 	TokenStore     *mocks.MockAuthStore
 	TokenProvider  *mocks.MockAuthProvider
 	Hasher         *mocks.MockHasher
@@ -31,6 +32,7 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 	ctrl := gomock.NewController(t)
 
 	userRepo := mocks.NewMockUserRepository(ctrl)
+	userCache := mocks.NewMockUserCache(ctrl)
 	tokenStore := mocks.NewMockAuthStore(ctrl)
 	tokenProvider := mocks.NewMockAuthProvider(ctrl)
 	hasher := mocks.NewMockHasher(ctrl)
@@ -41,6 +43,9 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 
 	svc := usecase.NewService(
 		userRepo,
+		nil,
+		userCache,
+		nil,
 		tokenStore,
 		tokenProvider,
 		hasher,
@@ -51,6 +56,7 @@ func UserServiceTest(t *testing.T) *UserServiceTestSuite {
 		Ctrl:           ctrl,
 		Logger:         log,
 		UserRepository: userRepo,
+		UserCache:      userCache,
 		TokenStore:     tokenStore,
 		TokenProvider:  tokenProvider,
 		Hasher:         hasher,

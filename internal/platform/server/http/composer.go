@@ -1,5 +1,9 @@
 // Package http provides the HTTP server composition for all adapters and routes.
+//
+//revive:disable:var-naming // keep using http to clearly denote the server layer
 package http
+
+//revive:enable:var-naming
 
 import (
 	"fmt"
@@ -10,11 +14,14 @@ import (
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql"
 	httpSwagger "github.com/swaggo/http-swagger"
 
+	adminhandler "github.com/lechitz/AionApi/internal/admin/adapter/primary/http/handler"
+	audithandler "github.com/lechitz/AionApi/internal/audit/adapter/primary/http/handler"
 	authhandler "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/handler"
 	chathandler "github.com/lechitz/AionApi/internal/chat/adapter/primary/http/handler"
+	realtimehandler "github.com/lechitz/AionApi/internal/realtime/adapter/primary/http/handler"
 	userhandler "github.com/lechitz/AionApi/internal/user/adapter/primary/http/handler"
 
-	"github.com/lechitz/AionApi/internal/platform/bootstrap"
+	"github.com/lechitz/AionApi/internal/platform/app"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	genericHandler "github.com/lechitz/AionApi/internal/platform/server/http/generic/handler"
@@ -29,16 +36,24 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
+type httpRouteConfig struct {
+	apiContext   string
+	swaggerMount string
+	docsAlias    string
+	routeHealth  string
+}
+
 // ComposeHandler assembles the HTTP handler with platform middlewares, domain routes, Swagger UI and GraphQL.
-func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log logger.ContextLogger) (http.Handler, error) {
+func ComposeHandler(cfg *config.Config, deps *app.Dependencies, log logger.ContextLogger) (http.Handler, error) {
+	// Define the main router for the HTTP server
 	router := chi.New()
 
 	genericHandlers := genericHandler.New(log, cfg.General)
 
 	// Global middlewares
 	router.Use(
-		recovery.New(genericHandlers),
 		requestid.New(),
+		recovery.New(genericHandlers),
 		cors.New(),
 	)
 
@@ -47,7 +62,31 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 	router.SetMethodNotAllowed(http.HandlerFunc(genericHandlers.MethodNotAllowedHandler))
 	router.SetError(genericHandlers.ErrorHandler)
 
-	// Resolve context and mount points from config with safe fallbacks
+	routes := resolveHTTPRouteConfig(cfg)
+	router.Group(routes.apiContext, func(api ports.Router) {
+		mountSwaggerAndDocs(api, routes)
+		api.Group(cfg.ServerHTTP.APIRoot, func(v1 ports.Router) {
+			registerDomainRoutes(v1, cfg, deps, log)
+		})
+	})
+
+	// OpenTelemetry HTTP wrapper: instrument the main router but expose health route uninstrumented
+	instrumented := otelhttp.NewHandler(router, fmt.Sprintf(OTelHTTPHandlerNameFormat, cfg.Observability.OtelServiceName))
+
+	mux := http.NewServeMux()
+
+	corsMiddleware := cors.New()
+	requestIDMiddleware := requestid.New()
+	healthHandler := requestIDMiddleware(http.HandlerFunc(genericHandlers.HealthCheck))
+
+	mountHealthRoutes(mux, corsMiddleware(healthHandler), routes, cfg.ServerHTTP.APIRoot)
+
+	mux.Handle("/", instrumented)
+
+	return mux, nil
+}
+
+func resolveHTTPRouteConfig(cfg *config.Config) httpRouteConfig {
 	apiContext := cfg.ServerHTTP.Context
 	if apiContext == "" {
 		apiContext = "/"
@@ -68,78 +107,86 @@ func ComposeHandler(cfg *config.Config, deps *bootstrap.AppDependencies, log log
 		routeHealth = DefaultRouteHealth
 	}
 
-	router.Group(apiContext, func(api ports.Router) {
-		// Swagger UI + OpenAPI JSON mounted under the API context
-		swaggerDocURL := path.Clean(apiContext + "/" +
-			strings.TrimPrefix(swaggerMount, "/") + "/" + DefaultSwaggerDocFile)
+	return httpRouteConfig{
+		apiContext:   apiContext,
+		swaggerMount: swaggerMount,
+		docsAlias:    docsAlias,
+		routeHealth:  routeHealth,
+	}
+}
 
-		api.Mount(swaggerMount, httpSwagger.Handler(
-			httpSwagger.URL(swaggerDocURL),
-			httpSwagger.DeepLinking(true),
-			httpSwagger.DocExpansion("none"),
-			httpSwagger.DomID("swagger-ui"),
-		))
+func mountSwaggerAndDocs(api ports.Router, routes httpRouteConfig) {
+	swaggerDocURL := path.Clean(routes.apiContext + "/" +
+		strings.TrimPrefix(routes.swaggerMount, "/") + "/" + DefaultSwaggerDocFile)
 
-		// Friendly alias: {apiContext}{docsAlias} -> {apiContext}{swaggerMount}/{swaggerIndex}
-		api.GET(docsAlias, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, path.Join(apiContext, swaggerMount, DefaultSwaggerIndexFile), http.StatusTemporaryRedirect)
-		}))
+	api.Mount(routes.swaggerMount, httpSwagger.Handler(
+		httpSwagger.URL(swaggerDocURL),
+		httpSwagger.DeepLinking(true),
+		httpSwagger.DocExpansion("none"),
+		httpSwagger.DomID("swagger-ui"),
+	))
 
-		// Group API Root (ex.: /api/v1)
-		api.Group(cfg.ServerHTTP.APIRoot, func(v1 ports.Router) {
-			// REST endpoints
-			if deps.AuthService != nil {
-				ah := authhandler.New(deps.AuthService, cfg, log)
-				authhandler.RegisterHTTP(v1, ah)
-			}
+	api.GET(routes.docsAlias, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, path.Join(routes.apiContext, routes.swaggerMount, DefaultSwaggerIndexFile), http.StatusTemporaryRedirect)
+	}))
+}
 
-			if deps.UserService != nil {
-				uh := userhandler.New(deps.UserService, cfg, log)
-				userhandler.RegisterHTTP(v1, uh, deps.AuthService, log)
-			}
+func registerDomainRoutes(v1 ports.Router, cfg *config.Config, deps *app.Dependencies, log logger.ContextLogger) {
+	if deps.AuthService != nil {
+		ah := authhandler.New(deps.AuthService, cfg, log)
+		authhandler.RegisterHTTP(v1, ah)
+	}
 
-			if deps.ChatService != nil {
-				ch := chathandler.New(deps.ChatService, cfg, log)
-				chathandler.RegisterHTTP(v1, ch, deps.AuthService, log)
-			}
+	if deps.UserService != nil {
+		uh := userhandler.New(deps.UserService, cfg, log)
+		userhandler.RegisterHTTP(v1, uh, deps.AuthService, log)
+	}
 
-			// GraphQL endpoint
-			gqlHandler, err := graphql.NewGraphqlHandler(
-				deps.AuthService,
-				deps.CategoryService,
-				deps.TagService,
-				deps.RecordService,
-				log,
-				cfg,
-			)
-			if err != nil {
-				log.Errorw(LogErrComposeGraphQL, commonkeys.Error, err)
-				return
-			}
+	if deps.AdminService != nil {
+		ah := adminhandler.New(deps.AdminService, cfg, log)
+		adminhandler.RegisterHTTP(v1, ah, deps.AuthService, log)
+	}
 
-			// Wrap GraphQL handler with service-token middleware so trusted services can impersonate users when calling GraphQL
-			wrappedGQL := servicetoken.New(cfg, log)(gqlHandler)
+	if deps.ChatService != nil {
+		ch := chathandler.New(deps.ChatService, cfg, log)
+		chathandler.RegisterHTTP(v1, ch, deps.AuthService, log)
+	}
 
-			v1.Mount(cfg.ServerGraphql.Path, wrappedGQL)
-		})
-	})
+	if deps.AuditService != nil {
+		ah := audithandler.New(deps.AuditService, cfg, log)
+		audithandler.RegisterHTTP(v1, ah, deps.AuthService, log)
+	}
 
-	// OpenTelemetry HTTP wrapper: instrument the main router but expose health route uninstrumented
-	instrumented := otelhttp.NewHandler(router, fmt.Sprintf(OTelHTTPHandlerNameFormat, cfg.Observability.OtelServiceName))
+	if deps.RealtimeService != nil {
+		rh := realtimehandler.New(deps.RealtimeService, cfg, log)
+		realtimehandler.RegisterHTTP(v1, rh, deps.AuthService, log)
+	}
 
-	mux := http.NewServeMux()
-	pathClean := path.Clean(apiContext + "/" + strings.TrimPrefix(routeHealth, "/"))
+	gqlHandler, err := graphql.NewGraphqlHandler(
+		deps.AuthService,
+		deps.CategoryService,
+		deps.TagService,
+		deps.RecordService,
+		deps.ChatService,
+		deps.UserService,
+		log,
+		cfg,
+	)
+	if err != nil {
+		log.Errorw(LogErrComposeGraphQL, commonkeys.Error, err)
+		return
+	}
 
-	corsMiddleware := cors.New()
-	mux.Handle(pathClean, corsMiddleware(http.HandlerFunc(genericHandlers.HealthCheck)))
-	mux.Handle(pathClean+"/", corsMiddleware(http.HandlerFunc(genericHandlers.HealthCheck)))
+	wrappedGQL := servicetoken.New(cfg, log)(gqlHandler)
+	v1.Mount(cfg.ServerGraphql.Path, wrappedGQL)
+}
 
-	// Backwards compatibility: also expose health under {apiContext}{APIRoot}{routeHealth} (e.g., /aion/api/v1/health)
-	altHealth := path.Clean(apiContext + "/" + strings.TrimPrefix(cfg.ServerHTTP.APIRoot, "/") + "/" + strings.TrimPrefix(routeHealth, "/"))
-	mux.Handle(altHealth, corsMiddleware(http.HandlerFunc(genericHandlers.HealthCheck)))
-	mux.Handle(altHealth+"/", corsMiddleware(http.HandlerFunc(genericHandlers.HealthCheck)))
+func mountHealthRoutes(mux *http.ServeMux, healthHandler http.Handler, routes httpRouteConfig, apiRoot string) {
+	pathClean := path.Clean(routes.apiContext + "/" + strings.TrimPrefix(routes.routeHealth, "/"))
+	mux.Handle(pathClean, healthHandler)
+	mux.Handle(pathClean+"/", healthHandler)
 
-	mux.Handle("/", instrumented)
-
-	return mux, nil
+	altHealth := path.Clean(routes.apiContext + "/" + strings.TrimPrefix(apiRoot, "/") + "/" + strings.TrimPrefix(routes.routeHealth, "/"))
+	mux.Handle(altHealth, healthHandler)
+	mux.Handle(altHealth+"/", healthHandler)
 }

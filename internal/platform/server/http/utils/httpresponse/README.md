@@ -1,119 +1,107 @@
-# HTTP Response Helpers (Shared)
+# HTTP Response Utilities
 
-**Folder:** `internal/shared/httpresponse`
+**Path:** `internal/platform/server/http/utils/httpresponse`
 
-## Responsibility
+## Overview
 
-* Give all controllers a **single place** to format HTTP responses.
-* **Encode JSON** consistently and set the right headers (e.g., `Content-Type`).
-* **Map domain/semantic errors** (`sharederrors`) to HTTP status codes in a uniform way.
-* Attach **minimal, useful metadata** (e.g., timestamps; request IDs when available) to error responses for operability.
+This package standardizes HTTP JSON responses across handlers, including success envelopes, error envelopes, and span-aware error helpers.
+It is the response boundary for HTTP adapters and relies on semantic errors from `sharederrors`.
 
-## How it works
+## Package Scope
 
-* Exposes small helpers to:
+| Area | Responsibility |
+| --- | --- |
+| JSON writing | Encode payloads and set HTTP headers consistently |
+| Success responses | Build normalized success envelope (`ResponseBody`) |
+| Error responses | Map semantic errors to status and write normalized error envelope |
+| Span-aware helpers | Record OTel span status/attributes before returning HTTP errors |
 
-    * write **success bodies** (JSON),
-    * write **error bodies** from `sharederrors` (standard envelope + status),
-    * set common headers.
-* Integrates with `logger.ContextLogger` for **structured logs** and uses `commonkeys` to keep log/field names consistent.
-* Treats domain errors as **first-class**, avoiding ad-hoc strings in handlers.
+## Files
 
-> Keep handlers **thin**: decode/validate → call input port → pass result/error to `httpresponse`.
+| File | Purpose |
+| --- | --- |
+| `httpresponse.go` | Response envelope, writers, and span-aware helpers |
+| `httpresponse_test.go` | Table-driven tests for response/status/headers and tracing behavior |
 
-## Error mapping (recommended)
+## Response Envelope
 
-`sharederrors` → HTTP status (typical mapping):
+| Field | Type | Description |
+| --- | --- | --- |
+| `date` | `time.Time` | UTC timestamp for response generation |
+| `result` | `any` | Success payload |
+| `message` | `string` | Optional success message |
+| `error` | `string` | Client-facing error message |
+| `details` | `string` | Reserved field; omitted by default to avoid leaking internal error details |
+| `code` | `int` | HTTP status code |
 
-* `ErrInvalidInput`, validation issues → **400 Bad Request**
-* `ErrUnauthorized` → **401 Unauthorized**
-* `ErrForbidden` → **403 Forbidden**
-* `ErrNotFound` → **404 Not Found**
-* `ErrConflict` / uniqueness violations → **409 Conflict**
-* `ErrTooManyRequests` → **429 Too Many Requests**
-* `ErrInternal` / unknown → **500 Internal Server Error**
+## Public API Reference
 
-The helper centralizes this mapping so every adapter returns the **same** status and body shape.
+### Core Writers
 
-## Conventions
+| Function | Behavior |
+| --- | --- |
+| `WriteJSON(w, status, payload, headers...)` | Writes raw JSON payload; skips body for `204 No Content` |
+| `WriteSuccess(w, status, result, message, headers...)` | Writes standardized success envelope |
+| `WriteError(w, err, message, log, headers...)` | Maps error status, logs (`Errorw`), writes standardized error envelope |
+| `WriteDecodeError(w, err, log, headers...)` | Shortcut for malformed body (`Invalid request body`) |
+| `WriteAuthError(w, err, log, headers...)` | Shortcut for auth failures (`Unauthorized`) |
+| `WriteNoContent(w, headers...)` | Writes `204` with optional headers |
 
-* Always return **JSON**; set `Content-Type: application/json; charset=utf-8`.
-* **Never** leak secrets (passwords, tokens, raw auth headers) into logs or bodies.
-* Prefer **semantic domain errors** from `sharederrors`; avoid building HTTP status logic inside handlers.
-* Include metadata that helps operability (e.g., `request_id`, `timestamp`) but avoid PII.
+### Span-aware Writers
 
-## Typical usage
+| Function | Trace behavior |
+| --- | --- |
+| `WriteAuthErrorSpan(...)` | Records error, sets span status error, sets `http.status_code`, then writes auth error |
+| `WriteDecodeErrorSpan(...)` | Records decode error and returns `400` response |
+| `WriteValidationErrorSpan(...)` | Records validation error and returns a validation-facing error response |
+| `WriteDomainErrorSpan(...)` | Records domain error and maps status via `sharederrors.MapErrorToHTTPStatus` |
 
-### Success response
+## Status Mapping Behavior
+
+`WriteError` and domain span helpers delegate status mapping to:
+
+- `sharederrors.MapErrorToHTTPStatus(err)`
+
+This keeps status semantics centralized and consistent across all HTTP adapters.
+
+## Tested Behaviors
+
+| Behavior | Verified by |
+| --- | --- |
+| `204` responses do not write body/content-type | `TestWriteJSON`, `TestWriteNoContent` |
+| Success envelope has expected code/message/result/date | `TestWriteSuccess` |
+| Error envelope contains `error` and mapped status without raw internal details | `TestWriteError`, `TestWriteAuthAndDecodeError` |
+| Custom response headers are preserved | `TestWriteError_WithCustomHeaders` |
+| Span helpers set `codes.Error` and `tracingkeys.HTTPStatusCodeKey` | `TestSpanErrorResponses` |
+
+## Usage Example
 
 ```go
-func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-    // ...decode + call input port...
-    out := struct {
-        ID   uint64 `json:"id"`
-        Name string `json:"name"`
-    }{ID: created.ID, Name: created.Name}
-
-    // Example helper: write a 201 JSON response.
-    // httpresponse.WriteJSON(w, http.StatusCreated, out)
+if err != nil {
+    httpresponse.WriteError(w, err, "failed to create resource", log)
+    return
 }
+
+httpresponse.WriteSuccess(w, http.StatusCreated, result, "resource created")
 ```
 
-### Error response (uniform mapping)
+## Design Notes
 
-```go
-func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
-    // ...decode + call input port...
-    if err != nil {
-        // Single call that:
-        // 1) maps sharederrors -> status,
-        // 2) emits a standardized error envelope,
-        // 3) logs with ContextLogger (metadata only).
-        // httpresponse.WriteError(r.Context(), w, h.Logger, err)
-        return
-    }
-}
-```
+- Keep handlers thin by delegating response shape and status mapping to this package.
+- Keep transport concerns here; domain usecases should not depend on this package.
+- Use `Write*Span` helpers at adapter boundaries where tracing is active.
 
-> The exact function names may differ in your implementation; the pattern above shows **where** and **how** to use this package.
+## Package Improvements
 
-## Envelope (illustrative)
-
-Successful:
-
-```json
-{
-  "data": { ... },
-  "timestamp": "2024-06-16T09:02:00Z"
-}
-```
-
-Error:
-
-```json
-{
-  "error": {
-    "code": "not_found",
-    "message": "resource not found"
-  },
-  "meta": {
-    "request_id": "...",
-    "timestamp": "2024-06-16T09:02:00Z"
-  }
-}
-```
-
-*(Field names are representative—the package standardizes them so all adapters look alike.)*
-
-## Testing hints
-
-* Use `httptest.NewRecorder()` to assert:
-
-    * correct **status code** for each `sharederrors` type,
-    * **Content-Type** header is JSON,
-    * error envelope fields (`error.code`, `meta.request_id`, etc.) are present.
-* Table-driven tests make it easy to verify all mappings (400/401/403/404/409/429/500).
+- Keep `details` omitted by default unless a future internal-only contract explicitly needs it.
+- Consider adding a helper for `202 Accepted` async flows to keep envelope semantics explicit.
+- Add explicit tests for `WriteSuccess`/`WriteError` with multiple header maps to validate merge precedence.
+- Consider documenting a strict policy for client-facing `message` vs internal `details` to improve consistency.
 
 ---
 
-Centralizing response formatting and error mapping here keeps adapters **small, predictable, and easy to change** without touching domain code.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../../../README.md)
+<!-- doc-nav:end -->

@@ -1,0 +1,1 @@
+mutation UpsertMetricDefinition($input: UpsertMetricDefinitionInput!) { upsertMetricDefinition(input: $input) { id metricKey displayName categoryId tagId tagIds valueSource aggregation unit goalDefault isActive } }

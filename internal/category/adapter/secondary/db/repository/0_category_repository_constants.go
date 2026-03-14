@@ -2,76 +2,99 @@
 // This file centralizes all magic strings/constants used by the repository.
 package repository
 
-// Tracer & span names (OpenTelemetry)
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
 
 // TracerName is the tracer name used by the category repository.
-const TracerName = "CategoryRepository"
+// Format: aionapi.<domain>.<layer>.
+const TracerName = "aionapi.category.repository"
 
-// SpanCreateRepo is the span name for creating a category.
-const SpanCreateRepo = "Create"
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
 
-// SpanGetByIDRepo is the span name for fetching a category by ID.
-const SpanGetByIDRepo = "GetByID"
+const (
+	// SpanCreateRepo is the span name for creating a category.
+	SpanCreateRepo = "category.repository.create"
 
-// SpanGetByNameRepo is the span name for fetching a category by name.
-const SpanGetByNameRepo = "GetByName"
+	// SpanGetByIDRepo is the span name for fetching a category by ID.
+	SpanGetByIDRepo = "category.repository.get_by_id"
 
-// SpanListAllRepo is the span name for listing all categories.
-const SpanListAllRepo = "ListAll"
+	// SpanGetByNameRepo is the span name for fetching a category by name.
+	SpanGetByNameRepo = "category.repository.get_by_name"
 
-// SpanSoftDeleteRepo is the span name for soft-deleting a category.
-const SpanSoftDeleteRepo = "SoftDelete"
+	// SpanListAllRepo is the span name for listing all categories.
+	SpanListAllRepo = "category.repository.list_all"
 
-// SpanUpdateRepo is the span name for updating a category.
-const SpanUpdateRepo = "Update"
+	// SpanSoftDeleteRepo is the span name for soft-deleting a category.
+	SpanSoftDeleteRepo = "category.repository.soft_delete"
 
-// Span attribute values
+	// SpanUpdateRepo is the span name for updating a category.
+	SpanUpdateRepo = "category.repository.update"
+)
 
-// OpCreate is the attribute value for the "create" operation.
-const OpCreate = "create"
+// -----------------------------------------------------------------------------
+// Span Attributes
+// Format: aion.<domain>.<attribute>
+// -----------------------------------------------------------------------------
 
-// OpGetByID is the attribute value for the "get by id" operation.
-const OpGetByID = "get_by_id"
+const (
+	// OpCreate is the attribute value for the "create" operation.
+	OpCreate = "create"
 
-// OpGetByName is the attribute value for the "get by name" operation.
-const OpGetByName = "get_by_name"
+	// OpGetByID is the attribute value for the "get by id" operation.
+	OpGetByID = "get_by_id"
 
-// OpListAll is the attribute value for the "list all" operation.
-const OpListAll = "list_all"
+	// OpGetByName is the attribute value for the "get by name" operation.
+	OpGetByName = "get_by_name"
 
-// OpSoftDelete is the attribute value for the "soft delete" operation.
-const OpSoftDelete = "soft_delete"
+	// OpListAll is the attribute value for the "list all" operation.
+	OpListAll = "list_all"
 
-// OpUpdate is the attribute value for the "update" operation.
-const OpUpdate = "update"
+	// OpSoftDelete is the attribute value for the "soft delete" operation.
+	OpSoftDelete = "soft_delete"
 
-// Status messages (used with span.SetStatus/SetStatus + logs)
+	// OpUpdate is the attribute value for the "update" operation.
+	OpUpdate = "update"
+)
 
-// StatusCategoryCreated indicates the category was created successfully.
-const StatusCategoryCreated = "category created successfully"
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
 
-// StatusRetrievedByID indicates a category was retrieved by ID successfully.
-const StatusRetrievedByID = "category retrieved by id successfully"
+const (
+	// StatusCategoryCreated indicates the category was created successfully.
+	StatusCategoryCreated = "category created successfully"
 
-// StatusRetrievedByName indicates a category was retrieved by Name successfully.
-const StatusRetrievedByName = "category retrieved by name successfully"
+	// StatusRetrievedByID indicates a category was retrieved by ID successfully.
+	StatusRetrievedByID = "category retrieved by id successfully"
 
-// StatusFetchedAll indicates all categories were retrieved successfully.
-const StatusFetchedAll = "all categories retrieved successfully"
+	// StatusRetrievedByName indicates a category was retrieved by Name successfully.
+	StatusRetrievedByName = "category retrieved by name successfully"
 
-// StatusSoftDeleted indicates a category was soft-deleted successfully.
-const StatusSoftDeleted = "category soft deleted successfully"
+	// StatusFetchedAll indicates all categories were retrieved successfully.
+	StatusFetchedAll = "all categories retrieved successfully"
 
-// StatusUpdated indicates a category was updated successfully.
-const StatusUpdated = "category updated successfully"
+	// StatusSoftDeleted indicates a category was soft-deleted successfully.
+	StatusSoftDeleted = "category soft deleted successfully"
 
-// Error/log messages
+	// StatusUpdated indicates a category was updated successfully.
+	StatusUpdated = "category updated successfully"
+)
 
-// ErrCreateCategoryMsg is the error message used when creation fails.
-const ErrCreateCategoryMsg = "error creating category"
+// =============================================================================
+// BUSINESS LOGIC - Error Messages
+// =============================================================================
 
-// ErrGetCategoryMsg is the error message used when a generic get fails.
-const ErrGetCategoryMsg = "error getting category"
+const (
+	// ErrCreateCategoryMsg is the error message used when creation fails.
+	ErrCreateCategoryMsg = "error creating category"
 
-// ErrCategoryNotFoundMsg is the error message used when a category is not found.
-const ErrCategoryNotFoundMsg = "category not found"
+	// ErrGetCategoryMsg is the error message used when a generic get fails.
+	ErrGetCategoryMsg = "error getting category"
+
+	// ErrCategoryNotFoundMsg is the error message used when a category is not found.
+	ErrCategoryNotFoundMsg = "category not found"
+)

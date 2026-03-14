@@ -3,7 +3,6 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
@@ -26,19 +25,18 @@ func (h *controller) ListAll(ctx context.Context, userID uint64) ([]*model.Categ
 
 	// Basic guards (controller-level preconditions).
 	if userID == 0 {
-		span.SetStatus(codes.Error, ErrUserIDNotFound)
-		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound, commonkeys.UserID, userID)
-		return nil, errors.New(ErrUserIDNotFound)
+		span.SetStatus(codes.Error, ErrUserIDNotFound.Error())
+		h.Logger.ErrorwCtx(ctx, ErrUserIDNotFound.Error(), commonkeys.UserID, userID)
+		return nil, ErrUserIDNotFound
 	}
 
-	// Delegate to the input port (use case).
 	all, err := h.CategoryService.ListAll(ctx, userID)
 	if err != nil {
 		span.RecordError(err)
-		span.SetStatus(codes.Error, ErrCategoriesNotFound)
+		span.SetStatus(codes.Error, ErrCategoriesNotFound.Error())
 		h.Logger.ErrorwCtx(
 			ctx,
-			ErrCategoriesNotFound,
+			ErrCategoriesNotFound.Error(),
 			commonkeys.Error, err.Error(),
 			commonkeys.UserID, strconv.FormatUint(userID, 10),
 		)

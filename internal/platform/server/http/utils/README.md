@@ -1,85 +1,53 @@
-# Handler Helpers (Shared)
+# Platform HTTP Utilities Layer
 
-**Folder:** `internal/shared/handlerhelpers`
+**Path:** `internal/platform/server/http/utils`
 
-## Responsibility
+## Overview
 
-* Give HTTP/GQL controllers a **single, consistent way** to validate inputs and write responses.
-* Centralize **error → HTTP mapping**, **tracing attributes**, and **structured logs** so handlers stay thin.
-* Provide small **validation/parsing helpers** that are transport-agnostic.
+This package aggregates shared HTTP utility modules used by platform and context adapters.
+It provides a consistent foundation for response writing, semantic error handling, and auth cookie operations.
 
-## How it works
+## Subpackages
 
-* Response helpers wrap `httpresponse` and `sharederrors`, attaching **OTel attributes** from `tracingkeys` and logging metadata with `logger.ContextLogger` (using keys from `commonkeys`).
-* Validation helpers run at the **transport boundary** (controllers/DTOs), keeping the domain clean.
+| Subpackage | Responsibility |
+| --- | --- |
+| `sharederrors/` | HTTP-facing semantic errors and error-to-status mapping |
+| `httpresponse/` | Standard response envelope and response writer helpers |
+| `cookies/` | Auth/refresh cookie lifecycle and extraction helpers |
 
-> No persistence/ORM or business logic here—only reusable, side-effect-light utilities.
+## Layer Responsibilities
 
-## What’s inside
+| Concern | Utility module |
+| --- | --- |
+| Standard JSON success/error envelope | `httpresponse` |
+| Stable semantic error taxonomy | `sharederrors` |
+| HTTP status mapping from semantic errors | `sharederrors` + `httpresponse` |
+| Cookie security and token transport | `cookies` |
 
-* `response.go` — helpers to standardize success/error responses and emit tracing/logs with canonical keys.
-* `validation.go` — small, reusable validators (e.g., required fields checker) intended for DTO/boundary validation.
+## Typical Request/Response Path
 
-## Conventions
+1. Handler/usecase returns success payload or semantic error.
+2. `sharederrors` defines the semantic category.
+3. `httpresponse` maps status and writes standardized JSON response.
+4. `cookies` helpers set/clear/extract auth cookies when needed.
 
-* **Validate early** (in DTOs/handlers) and return **semantic domain errors** (`sharederrors`) instead of ad-hoc strings.
-* **Never** log sensitive payloads (passwords/tokens). Prefer **metadata** (IDs, counts, statuses).
-* Always set OTel attributes like status code, request ID, and operation name via `tracingkeys` + `commonkeys`.
+## Design Notes
 
-## Examples
+- Keep all utilities in this layer transport-focused and reusable across contexts.
+- Domain/business rules must not be added to utility packages.
+- Subpackage READMEs contain implementation details; this README is the high-level integration view.
 
-### Required fields at the boundary
+## Package Improvements
 
-```go
-if err := handlerhelpers.CheckRequiredFields(map[string]string{
-    "username": req.Username,
-    "password": req.Password,
-}); err != nil {
-    // Convert to a bad-request using your standard response writer
-    // (e.g., httpresponse + sharederrors) and return.
-    return
-}
-```
-
-### Logging + tracing-friendly error responses
-
-```go
-func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
-    ctx := r.Context()
-    // ... decode/validate ...
-
-    // On domain/validation error:
-    // handlerhelpers will (a) map to the proper HTTP status,
-    // (b) attach OTel span attributes (status_code, request_id, etc.),
-    // (c) write a standardized error body.
-    // Example usage mirrors your local helpers pattern.
-    // handlerhelpers.WriteDomainError(ctx, w, err, h.Logger)
-}
-```
-
-*(Use the exact helper(s) exposed in `response.go` per your project’s pattern.)*
-
-## Design notes
-
-* Keys come from `internal/shared/constants`:
-
-    * `commonkeys` for log/HTTP fields,
-    * `tracingkeys` for span attributes.
-* Keep helpers **pure and small** so they are easy to test and reuse across adapters (HTTP & GraphQL).
-
-## Testing hints
-
-* Use `httptest.NewRecorder()` to assert:
-
-    * status code mapping,
-    * error envelope shape,
-    * presence of request/trace IDs in headers (when applicable).
-* With gomock, assert **metadata keys** rather than free-form strings:
-
-```go
-logger.EXPECT().Errorw(gomock.Any(), commonkeys.UserID, gomock.Any()).AnyTimes()
-```
+- Add cross-package tests validating end-to-end behavior (`sharederrors` -> `httpresponse`) for common error classes.
+- Define a shared guideline for when to include `details` in error responses across environments.
+- Align cookie token names and other transport keys with shared constants to remove hardcoded literals.
+- Add a “recommended usage matrix” mapping common handler scenarios to utility helpers.
 
 ---
 
-Keep handlers **thin**: decode + validate → call input port → map/return response. These helpers make the “thin” part effortless and consistent.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../../README.md)
+<!-- doc-nav:end -->

@@ -9,7 +9,7 @@ import (
 
 const (
 	// CategoryTable is the name of the database table for tag categories.
-	CategoryTable = "aion_api.tag_categories"
+	CategoryTable = "aion_api.categories"
 )
 
 // CategoryDB represents the database model for a handler domain with metadata and user association.
@@ -23,6 +23,8 @@ type CategoryDB struct {
 	Icon        string         `gorm:"column:icon"`
 	ID          uint64         `gorm:"primaryKey;column:category_id"`
 	UserID      uint64         `gorm:"column:user_id"`
+	UsageCount  int            `gorm:"column:usage_count;default:0"`
+	LastUsedAt  *time.Time     `gorm:"column:last_used_at"`
 }
 
 // TableName specifies the database table name for the CategoryDB model.

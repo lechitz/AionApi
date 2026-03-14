@@ -8,15 +8,19 @@ import (
 
 // Config holds all configuration sections required to bootstrap the application.
 type Config struct {
+	Realtime      RealtimeConfig
+	Kafka         KafkaConfig
 	General       GeneralConfig
 	Secret        Secret
+	AvatarStorage AvatarStorageConfig
 	Observability ObservabilityConfig
 	AionChat      AionChatConfig
 	Cookie        CookieConfig
-	Cache         CacheConfig
 	ServerHTTP    ServerHTTP
 	DB            DBConfig
 	ServerGraphql ServerGraphql
+	Cache         CacheConfig
+	Outbox        OutboxConfig
 	Application   Application
 }
 
@@ -37,8 +41,51 @@ func (c *Config) Validate() error {
 	if err := c.validateObservability(); err != nil {
 		return err
 	}
+	if err := c.validateKafka(); err != nil {
+		return err
+	}
 	if err := c.validateApp(); err != nil {
 		return err
+	}
+	return nil
+}
+
+func (c *Config) validateKafka() error {
+	if c.Kafka.Brokers == "" {
+		return errors.New(ErrKafkaBrokersEmpty)
+	}
+	if c.Kafka.RecordEventsTopic == "" {
+		return errors.New(ErrKafkaRecordEventsTopicEmpty)
+	}
+	if c.Kafka.RecordProjectionEventsTopic == "" {
+		return errors.New(ErrKafkaRecordProjectionEventsTopicEmpty)
+	}
+	if c.Outbox.PublishInterval < MinOutboxPublishInterval {
+		return fmt.Errorf(ErrOutboxPublishIntervalMin, MinOutboxPublishInterval)
+	}
+	if c.Outbox.BatchSize < MinOutboxBatchSize {
+		return fmt.Errorf(ErrOutboxBatchSizeMin, MinOutboxBatchSize)
+	}
+	if c.Realtime.Enabled {
+		if err := validateHTTPPath(
+			c.Realtime.StreamPath,
+			false,
+			ErrRealtimeStreamPathEmpty,
+			ErrRealtimeStreamPathMustStart,
+			ErrRealtimeStreamPathTooShort,
+			ErrRealtimeStreamPathMustNotEndSlash,
+		); err != nil {
+			return err
+		}
+		if c.Realtime.HeartbeatInterval < MinRealtimeHeartbeatInterval {
+			return fmt.Errorf(ErrRealtimeHeartbeatIntervalMin, MinRealtimeHeartbeatInterval)
+		}
+		if c.Realtime.SubscriberBuffer < MinRealtimeSubscriberBuffer {
+			return fmt.Errorf(ErrRealtimeSubscriberBufferMin, MinRealtimeSubscriberBuffer)
+		}
+		if c.Realtime.ConsumerGroupPrefix == "" {
+			return errors.New(ErrRealtimeConsumerGroupPrefixEmpty)
+		}
 	}
 	return nil
 }
@@ -115,7 +162,7 @@ func (c *Config) validateHTTP() error {
 	if c.ServerHTTP.ReadTimeout < MinHTTPTimeout {
 		return fmt.Errorf(ErrHTTPReadTimeoutMin, MinHTTPTimeout)
 	}
-	if c.ServerHTTP.WriteTimeout < MinHTTPTimeout {
+	if c.ServerHTTP.WriteTimeout != 0 && c.ServerHTTP.WriteTimeout < MinHTTPTimeout {
 		return fmt.Errorf(ErrHTTPWriteTimeoutMin, MinHTTPTimeout)
 	}
 	if c.ServerHTTP.ReadHeaderTimeout <= 0 {

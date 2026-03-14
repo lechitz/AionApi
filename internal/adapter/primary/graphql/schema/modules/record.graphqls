@@ -1,12 +1,11 @@
 ## Record domain schema (extends root types defined in root.graphqls)
+## Note: category is obtained via Tag relationship (Record → Tag → Category)
 
 type Record {
     id: ID!
     userId: ID!
-    categoryId: ID!
-    title: String!
-    description: String
     tagId: ID!
+    description: String
     eventTime: String!
     recordedAt: String
     durationSeconds: Int
@@ -18,11 +17,35 @@ type Record {
     updatedAt: String!
 }
 
-input CreateRecordInput {
-    title: String!
-    description: String
-    categoryId: ID!
+type RecordProjection {
+    recordId: ID!
+    userId: ID!
     tagId: ID!
+    description: String
+    eventTimeUTC: String!
+    recordedAtUTC: String
+    status: String
+    timezone: String
+    durationSeconds: Int
+    value: Float
+    source: String
+    lastEventId: String!
+    lastEventType: String!
+    lastEventVersion: String!
+    lastTraceId: String
+    lastRequestId: String
+    lastKafkaTopic: String!
+    lastKafkaPartition: Int!
+    lastKafkaOffset: String!
+    lastConsumedAtUTC: String!
+    payloadJSON: String!
+    createdAtUTC: String!
+    updatedAtUTC: String!
+}
+
+input CreateRecordInput {
+    tagId: ID!
+    description: String
     eventTime: String
     recordedAt: String
     durationSeconds: Int
@@ -34,9 +57,7 @@ input CreateRecordInput {
 
 input UpdateRecordInput {
     id: ID!
-    title: String
     description: String
-    categoryId: ID
     tagId: ID
     eventTime: String
     recordedAt: String
@@ -51,13 +72,270 @@ input DeleteRecordInput {
     id: ID!
 }
 
+input SearchFilters {
+    query: String!
+    categoryIds: [ID!]
+    tagIds: [ID!]
+    startDate: String
+    endDate: String
+    limit: Int
+    offset: Int
+}
+
+input RecordStatsFilters {
+    query: String
+    categoryIds: [ID!]
+    tagIds: [ID!]
+    startDate: String
+    endDate: String
+    limit: Int
+}
+
+type RecordStats {
+    totalRecords: Int!
+    recordsWithValue: Int!
+    totalDurationSeconds: Int!
+    sumValue: Float!
+    avgValue: Float!
+    avgDurationSeconds: Float!
+    minValue: Float
+    maxValue: Float
+}
+
+type DashboardMetric {
+    metricKey: String!
+    label: String!
+    value: Float!
+    unit: String!
+    target: Float
+    progressPct: Float!
+    status: String!
+}
+
+type DashboardGoal {
+    goalId: ID!
+    title: String!
+    metricKey: String!
+    currentValue: Float!
+    targetValue: Float!
+    progressPct: Float!
+    status: String!
+}
+
+type DashboardSnapshot {
+    date: String!
+    timezone: String!
+    metrics: [DashboardMetric!]!
+    goals: [DashboardGoal!]!
+}
+
+enum InsightWindow {
+    WINDOW_7D
+    WINDOW_30D
+    WINDOW_90D
+}
+
+type InsightEvidence {
+    label: String!
+    value: String!
+    kind: String!
+}
+
+type InsightCard {
+    id: ID!
+    type: String!
+    title: String!
+    summary: String!
+    status: String!
+    window: InsightWindow!
+    confidence: Int!
+    metricKeys: [String!]!
+    recommendedAction: String
+    evidence: [InsightEvidence!]!
+    generatedAt: String!
+}
+
+type AnalyticsPoint {
+    timestamp: String!
+    value: Float
+    label: String
+}
+
+type AnalyticsSeriesResult {
+    seriesKey: String!
+    window: InsightWindow!
+    points: [AnalyticsPoint!]!
+    summary: String
+}
+
+type MetricDefinition {
+    id: ID!
+    metricKey: String!
+    displayName: String!
+    categoryId: ID
+    tagId: ID!
+    tagIds: [ID!]!
+    valueSource: String!
+    aggregation: String!
+    unit: String!
+    goalDefault: Float
+    isActive: Boolean!
+}
+
+type GoalTemplate {
+    id: ID!
+    metricKey: String!
+    title: String!
+    targetValue: Float!
+    comparison: String!
+    period: String!
+    isActive: Boolean!
+}
+
+enum DashboardWidgetSize {
+    SMALL
+    MEDIUM
+    LARGE
+}
+
+enum DashboardWidgetType {
+    KPI_NUMBER
+    GOAL_PROGRESS
+    TREND_LINE
+    CHECKLIST
+    INSIGHT_FEED
+}
+
+type DashboardWidget {
+    id: ID!
+    viewId: ID!
+    metricDefinitionId: ID
+    widgetType: DashboardWidgetType!
+    size: DashboardWidgetSize!
+    orderIndex: Int!
+    titleOverride: String
+    configJson: JSON
+    isActive: Boolean!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type DashboardView {
+    id: ID!
+    name: String!
+    isDefault: Boolean!
+    widgets: [DashboardWidget!]!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type DashboardWidgetCatalog {
+    maxLargeWidgets: Int!
+    sizes: [DashboardWidgetSize!]!
+    types: [DashboardWidgetType!]!
+}
+
+type MetricDefinitionSuggestion {
+    metricKey: String!
+    displayName: String!
+    categoryId: ID
+    tagIds: [ID!]!
+    valueSource: String!
+    aggregation: String!
+    unit: String!
+    reason: String!
+}
+
+input UpsertMetricDefinitionInput {
+    id: ID
+    metricKey: String!
+    displayName: String!
+    categoryId: ID
+    tagId: ID!
+    tagIds: [ID!]
+    valueSource: String
+    aggregation: String
+    unit: String
+    goalDefault: Float
+    isActive: Boolean
+}
+
+input UpsertGoalTemplateInput {
+    id: ID
+    metricKey: String!
+    title: String!
+    targetValue: Float!
+    comparison: String
+    period: String
+    isActive: Boolean
+}
+
+input DeleteGoalTemplateInput {
+    id: ID!
+}
+
+input CreateDashboardViewInput {
+    name: String!
+    isDefault: Boolean
+}
+
+input SetDefaultDashboardViewInput {
+    viewId: ID!
+}
+
+input UpsertDashboardWidgetInput {
+    id: ID
+    viewId: ID!
+    metricDefinitionId: ID
+    widgetType: DashboardWidgetType!
+    size: DashboardWidgetSize!
+    orderIndex: Int
+    titleOverride: String
+    configJson: JSON
+    isActive: Boolean
+}
+
+input ReorderDashboardWidgetItemInput {
+    id: ID!
+    orderIndex: Int!
+}
+
+input ReorderDashboardWidgetsInput {
+    viewId: ID!
+    items: [ReorderDashboardWidgetItemInput!]!
+}
+
+input DeleteDashboardWidgetInput {
+    id: ID!
+}
+
+input CreateMetricAndWidgetInput {
+    metric: UpsertMetricDefinitionInput!
+    widget: UpsertDashboardWidgetInput!
+}
+
 extend type Query {
     recordById(id: ID!): Record @auth(roles: "user")
+    recordProjectionById(id: ID!): RecordProjection @auth(roles: "user")
     records(limit: Int, afterEventTime: String, afterId: ID): [Record!]! @auth(roles: "user")
+    recordProjections(limit: Int, afterEventTime: String, afterId: ID): [RecordProjection!]! @auth(roles: "user")
+    recordsLatest(limit: Int): [Record!]! @auth(roles: "user")
+    recordProjectionsLatest(limit: Int): [RecordProjection!]! @auth(roles: "user")
     recordsByTag(tagId: ID!, limit: Int): [Record!]! @auth(roles: "user")
-    recordsByDay(date: String!): [Record!]! @auth(roles: "user")
+    recordsByCategory(categoryId: ID!, limit: Int): [Record!]! @auth(roles: "user")
+    recordsByDay(date: String): [Record!]! @auth(roles: "user")
     recordsUntil(until: String!, limit: Int): [Record!]! @auth(roles: "user")
     recordsBetween(startDate: String!, endDate: String!, limit: Int): [Record!]! @auth(roles: "user")
+    searchRecords(filters: SearchFilters!): [Record!]! @auth(roles: "user")
+    recordStats(filters: RecordStatsFilters): RecordStats! @auth(roles: "user")
+    dashboardSnapshot(date: String!, timezone: String): DashboardSnapshot! @auth(roles: "user")
+    insightFeed(window: InsightWindow!, limit: Int, date: String, timezone: String, categoryId: ID, tagIds: [ID!]): [InsightCard!]! @auth(roles: "user")
+    analyticsSeries(seriesKey: String!, window: InsightWindow!, date: String, timezone: String, categoryId: ID, tagIds: [ID!]): AnalyticsSeriesResult! @auth(roles: "user")
+    metricDefinitions: [MetricDefinition!]! @auth(roles: "user")
+    dashboardViews: [DashboardView!]! @auth(roles: "user")
+    dashboardView(id: ID!): DashboardView @auth(roles: "user")
+    dashboardWidgetCatalog: DashboardWidgetCatalog! @auth(roles: "user")
+    suggestMetricDefinitions(limit: Int): [MetricDefinitionSuggestion!]! @auth(roles: "user")
 }
 
 extend type Mutation {
@@ -65,4 +343,13 @@ extend type Mutation {
     updateRecord(input: UpdateRecordInput!): Record! @auth(roles: "user")
     softDeleteRecord(input: DeleteRecordInput!): Boolean! @auth(roles: "user")
     softDeleteAllRecords: Boolean! @auth(roles: "user")
+    upsertMetricDefinition(input: UpsertMetricDefinitionInput!): MetricDefinition! @auth(roles: "user")
+    upsertGoalTemplate(input: UpsertGoalTemplateInput!): GoalTemplate! @auth(roles: "user")
+    deleteGoalTemplate(input: DeleteGoalTemplateInput!): Boolean! @auth(roles: "user")
+    createDashboardView(input: CreateDashboardViewInput!): DashboardView! @auth(roles: "user")
+    setDefaultDashboardView(input: SetDefaultDashboardViewInput!): DashboardView! @auth(roles: "user")
+    upsertDashboardWidget(input: UpsertDashboardWidgetInput!): DashboardWidget! @auth(roles: "user")
+    reorderDashboardWidgets(input: ReorderDashboardWidgetsInput!): [DashboardWidget!]! @auth(roles: "user")
+    deleteDashboardWidget(input: DeleteDashboardWidgetInput!): Boolean! @auth(roles: "user")
+    createMetricAndWidget(input: CreateMetricAndWidgetInput!): DashboardWidget! @auth(roles: "user")
 }

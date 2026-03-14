@@ -13,7 +13,6 @@ import (
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
 	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -26,28 +25,20 @@ import (
 // @Tags         Auth
 // @Accept       json
 // @Produce      json
-// @Param        login  body      dto.LoginUserRequest  true  "Login payload"
+// @Param        login  body      dto.LoginUserRequest   true  "Login payload"
 // @Success      200    {object}  dto.LoginUserResponse  "Login succeeded"
-// @Header       200    {string}  Set-Cookie  "auth_token=<opaque or JWT>; Path=/; HttpOnly; Secure (if enabled)"
-// @Failure      400    {string}  string  "Invalid request payload or validation error"
-// @Failure      401    {string}  string  "Invalid credentials"
-// @Failure      500    {string}  string  "Internal server error"
+// @Header       200    {string}  Set-Cookie             "auth_token=<opaque or JWT>; Path=/; HttpOnly; Secure (if enabled)"
+// @Failure      400    {string}  string                 "Invalid request payload or validation error"
+// @Failure      401    {string}  string                 "Invalid credentials"
+// @Failure      500    {string}  string                 "Internal server error"
 // @Router       /auth/login [post].
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx, span := otel.Tracer(TracerAuthHandler).
 		Start(r.Context(), SpanLoginHandler)
 	defer span.End()
 
-	ip := r.RemoteAddr
-	userAgent := r.UserAgent()
-
-	span.SetAttributes(
-		attribute.String(tracingkeys.RequestIPKey, ip),
-		attribute.String(tracingkeys.RequestUserAgentKey, userAgent),
-	)
-
 	span.AddEvent(EventDecodeRequest)
-	r.Body = http.MaxBytesReader(w, r.Body, 1<<20) // 1MB
+	r.Body = http.MaxBytesReader(w, r.Body, LoginMaxBodyBytes)
 	var loginReq dto.LoginUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
 		httpresponse.WriteDecodeErrorSpan(ctx, w, span, err, h.Logger)
@@ -55,11 +46,9 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := validateLoginRequest(loginReq); err != nil {
-		httpresponse.WriteDecodeErrorSpan(ctx, w, span, sharederrors.NewValidationError("credentials", err.Error()), h.Logger)
+		httpresponse.WriteDecodeErrorSpan(ctx, w, span, sharederrors.NewValidationError(ValidationFieldCredentials, err.Error()), h.Logger)
 		return
 	}
-	span.SetAttributes(attribute.String(commonkeys.Username, loginReq.Username))
-
 	span.AddEvent(EventAuthServiceLogin)
 	user, accessToken, refreshToken, err := h.Service.Login(ctx, loginReq.Username, loginReq.Password)
 	if err != nil {
@@ -75,7 +64,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		Token: accessToken,
 		ID:    user.ID,
 		Name:  user.Name,
-		Roles: user.Roles,
 	}
 
 	span.AddEvent(EventLoginSuccess)
@@ -84,8 +72,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	h.Logger.InfowCtx(ctx, MsgLoginSuccess,
 		commonkeys.UserID, strconv.FormatUint(user.ID, 10),
 		commonkeys.Name, loginResponse.Name,
-		tracingkeys.RequestIPKey, ip,
-		tracingkeys.RequestUserAgentKey, userAgent,
 	)
 
 	httpresponse.WriteSuccess(w, http.StatusOK, loginResponse, MsgLoginSuccess)

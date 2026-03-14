@@ -2,6 +2,26 @@
 
 package model
 
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"strconv"
+)
+
+type AnalyticsPoint struct {
+	Timestamp string   `json:"timestamp"`
+	Value     *float64 `json:"value,omitempty"`
+	Label     *string  `json:"label,omitempty"`
+}
+
+type AnalyticsSeriesResult struct {
+	SeriesKey string            `json:"seriesKey"`
+	Window    InsightWindow     `json:"window"`
+	Points    []*AnalyticsPoint `json:"points"`
+	Summary   *string           `json:"summary,omitempty"`
+}
+
 type Category struct {
 	ID          string  `json:"id"`
 	UserID      string  `json:"userId"`
@@ -11,6 +31,37 @@ type Category struct {
 	Icon        *string `json:"icon,omitempty"`
 }
 
+type CategoryCount struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Count int32  `json:"count"`
+}
+
+type ChatContext struct {
+	RecentChats     []*ChatMessage `json:"recentChats"`
+	TotalRecords    int32          `json:"totalRecords"`
+	TotalCategories int32          `json:"totalCategories"`
+	TotalTags       int32          `json:"totalTags"`
+}
+
+type ChatDataPack struct {
+	Categories    []*Category `json:"categories"`
+	Tags          []*Tag      `json:"tags"`
+	RecentRecords []*Record   `json:"recentRecords"`
+	UserStats     *UserStats  `json:"userStats,omitempty"`
+}
+
+type ChatMessage struct {
+	ID            string  `json:"id"`
+	UserID        string  `json:"userId"`
+	Message       string  `json:"message"`
+	Response      string  `json:"response"`
+	TokensUsed    int32   `json:"tokensUsed"`
+	FunctionCalls *string `json:"functionCalls,omitempty"`
+	CreatedAt     string  `json:"createdAt"`
+	UpdatedAt     string  `json:"updatedAt"`
+}
+
 type CreateCategoryInput struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description,omitempty"`
@@ -18,11 +69,19 @@ type CreateCategoryInput struct {
 	Icon        *string `json:"icon,omitempty"`
 }
 
+type CreateDashboardViewInput struct {
+	Name      string `json:"name"`
+	IsDefault *bool  `json:"isDefault,omitempty"`
+}
+
+type CreateMetricAndWidgetInput struct {
+	Metric *UpsertMetricDefinitionInput `json:"metric"`
+	Widget *UpsertDashboardWidgetInput  `json:"widget"`
+}
+
 type CreateRecordInput struct {
-	Title           string   `json:"title"`
-	Description     *string  `json:"description,omitempty"`
-	CategoryID      string   `json:"categoryId"`
 	TagID           string   `json:"tagId"`
+	Description     *string  `json:"description,omitempty"`
 	EventTime       *string  `json:"eventTime,omitempty"`
 	RecordedAt      *string  `json:"recordedAt,omitempty"`
 	DurationSeconds *int32   `json:"durationSeconds,omitempty"`
@@ -36,14 +95,138 @@ type CreateTagInput struct {
 	Name        string  `json:"name"`
 	CategoryID  string  `json:"categoryId"`
 	Description *string `json:"description,omitempty"`
+	Icon        *string `json:"icon,omitempty"`
+}
+
+type DashboardGoal struct {
+	GoalID       string  `json:"goalId"`
+	Title        string  `json:"title"`
+	MetricKey    string  `json:"metricKey"`
+	CurrentValue float64 `json:"currentValue"`
+	TargetValue  float64 `json:"targetValue"`
+	ProgressPct  float64 `json:"progressPct"`
+	Status       string  `json:"status"`
+}
+
+type DashboardMetric struct {
+	MetricKey   string   `json:"metricKey"`
+	Label       string   `json:"label"`
+	Value       float64  `json:"value"`
+	Unit        string   `json:"unit"`
+	Target      *float64 `json:"target,omitempty"`
+	ProgressPct float64  `json:"progressPct"`
+	Status      string   `json:"status"`
+}
+
+type DashboardSnapshot struct {
+	Date     string             `json:"date"`
+	Timezone string             `json:"timezone"`
+	Metrics  []*DashboardMetric `json:"metrics"`
+	Goals    []*DashboardGoal   `json:"goals"`
+}
+
+type DashboardView struct {
+	ID        string             `json:"id"`
+	Name      string             `json:"name"`
+	IsDefault bool               `json:"isDefault"`
+	Widgets   []*DashboardWidget `json:"widgets"`
+	CreatedAt string             `json:"createdAt"`
+	UpdatedAt string             `json:"updatedAt"`
+}
+
+type DashboardWidget struct {
+	ID                 string              `json:"id"`
+	ViewID             string              `json:"viewId"`
+	MetricDefinitionID *string             `json:"metricDefinitionId,omitempty"`
+	WidgetType         DashboardWidgetType `json:"widgetType"`
+	Size               DashboardWidgetSize `json:"size"`
+	OrderIndex         int32               `json:"orderIndex"`
+	TitleOverride      *string             `json:"titleOverride,omitempty"`
+	ConfigJSON         *string             `json:"configJson,omitempty"`
+	IsActive           bool                `json:"isActive"`
+	CreatedAt          string              `json:"createdAt"`
+	UpdatedAt          string              `json:"updatedAt"`
+}
+
+type DashboardWidgetCatalog struct {
+	MaxLargeWidgets int32                 `json:"maxLargeWidgets"`
+	Sizes           []DashboardWidgetSize `json:"sizes"`
+	Types           []DashboardWidgetType `json:"types"`
 }
 
 type DeleteCategoryInput struct {
 	ID string `json:"id"`
 }
 
+type DeleteDashboardWidgetInput struct {
+	ID string `json:"id"`
+}
+
+type DeleteGoalTemplateInput struct {
+	ID string `json:"id"`
+}
+
 type DeleteRecordInput struct {
 	ID string `json:"id"`
+}
+
+type DeleteTagInput struct {
+	ID string `json:"id"`
+}
+
+type GoalTemplate struct {
+	ID          string  `json:"id"`
+	MetricKey   string  `json:"metricKey"`
+	Title       string  `json:"title"`
+	TargetValue float64 `json:"targetValue"`
+	Comparison  string  `json:"comparison"`
+	Period      string  `json:"period"`
+	IsActive    bool    `json:"isActive"`
+}
+
+type InsightCard struct {
+	ID                string             `json:"id"`
+	Type              string             `json:"type"`
+	Title             string             `json:"title"`
+	Summary           string             `json:"summary"`
+	Status            string             `json:"status"`
+	Window            InsightWindow      `json:"window"`
+	Confidence        int32              `json:"confidence"`
+	MetricKeys        []string           `json:"metricKeys"`
+	RecommendedAction *string            `json:"recommendedAction,omitempty"`
+	Evidence          []*InsightEvidence `json:"evidence"`
+	GeneratedAt       string             `json:"generatedAt"`
+}
+
+type InsightEvidence struct {
+	Label string `json:"label"`
+	Value string `json:"value"`
+	Kind  string `json:"kind"`
+}
+
+type MetricDefinition struct {
+	ID          string   `json:"id"`
+	MetricKey   string   `json:"metricKey"`
+	DisplayName string   `json:"displayName"`
+	CategoryID  *string  `json:"categoryId,omitempty"`
+	TagID       string   `json:"tagId"`
+	TagIds      []string `json:"tagIds"`
+	ValueSource string   `json:"valueSource"`
+	Aggregation string   `json:"aggregation"`
+	Unit        string   `json:"unit"`
+	GoalDefault *float64 `json:"goalDefault,omitempty"`
+	IsActive    bool     `json:"isActive"`
+}
+
+type MetricDefinitionSuggestion struct {
+	MetricKey   string   `json:"metricKey"`
+	DisplayName string   `json:"displayName"`
+	CategoryID  *string  `json:"categoryId,omitempty"`
+	TagIds      []string `json:"tagIds"`
+	ValueSource string   `json:"valueSource"`
+	Aggregation string   `json:"aggregation"`
+	Unit        string   `json:"unit"`
+	Reason      string   `json:"reason"`
 }
 
 type Mutation struct {
@@ -55,10 +238,8 @@ type Query struct {
 type Record struct {
 	ID              string   `json:"id"`
 	UserID          string   `json:"userId"`
-	CategoryID      string   `json:"categoryId"`
-	Title           string   `json:"title"`
-	Description     *string  `json:"description,omitempty"`
 	TagID           string   `json:"tagId"`
+	Description     *string  `json:"description,omitempty"`
 	EventTime       string   `json:"eventTime"`
 	RecordedAt      *string  `json:"recordedAt,omitempty"`
 	DurationSeconds *int32   `json:"durationSeconds,omitempty"`
@@ -70,14 +251,91 @@ type Record struct {
 	UpdatedAt       string   `json:"updatedAt"`
 }
 
+type RecordProjection struct {
+	RecordID           string   `json:"recordId"`
+	UserID             string   `json:"userId"`
+	TagID              string   `json:"tagId"`
+	Description        *string  `json:"description,omitempty"`
+	EventTimeUtc       string   `json:"eventTimeUTC"`
+	RecordedAtUtc      *string  `json:"recordedAtUTC,omitempty"`
+	Status             *string  `json:"status,omitempty"`
+	Timezone           *string  `json:"timezone,omitempty"`
+	DurationSeconds    *int32   `json:"durationSeconds,omitempty"`
+	Value              *float64 `json:"value,omitempty"`
+	Source             *string  `json:"source,omitempty"`
+	LastEventID        string   `json:"lastEventId"`
+	LastEventType      string   `json:"lastEventType"`
+	LastEventVersion   string   `json:"lastEventVersion"`
+	LastTraceID        *string  `json:"lastTraceId,omitempty"`
+	LastRequestID      *string  `json:"lastRequestId,omitempty"`
+	LastKafkaTopic     string   `json:"lastKafkaTopic"`
+	LastKafkaPartition int32    `json:"lastKafkaPartition"`
+	LastKafkaOffset    string   `json:"lastKafkaOffset"`
+	LastConsumedAtUtc  string   `json:"lastConsumedAtUTC"`
+	PayloadJSON        string   `json:"payloadJSON"`
+	CreatedAtUtc       string   `json:"createdAtUTC"`
+	UpdatedAtUtc       string   `json:"updatedAtUTC"`
+}
+
+type RecordStats struct {
+	TotalRecords         int32    `json:"totalRecords"`
+	RecordsWithValue     int32    `json:"recordsWithValue"`
+	TotalDurationSeconds int32    `json:"totalDurationSeconds"`
+	SumValue             float64  `json:"sumValue"`
+	AvgValue             float64  `json:"avgValue"`
+	AvgDurationSeconds   float64  `json:"avgDurationSeconds"`
+	MinValue             *float64 `json:"minValue,omitempty"`
+	MaxValue             *float64 `json:"maxValue,omitempty"`
+}
+
+type RecordStatsFilters struct {
+	Query       *string  `json:"query,omitempty"`
+	CategoryIds []string `json:"categoryIds,omitempty"`
+	TagIds      []string `json:"tagIds,omitempty"`
+	StartDate   *string  `json:"startDate,omitempty"`
+	EndDate     *string  `json:"endDate,omitempty"`
+	Limit       *int32   `json:"limit,omitempty"`
+}
+
+type ReorderDashboardWidgetItemInput struct {
+	ID         string `json:"id"`
+	OrderIndex int32  `json:"orderIndex"`
+}
+
+type ReorderDashboardWidgetsInput struct {
+	ViewID string                             `json:"viewId"`
+	Items  []*ReorderDashboardWidgetItemInput `json:"items"`
+}
+
+type SearchFilters struct {
+	Query       string   `json:"query"`
+	CategoryIds []string `json:"categoryIds,omitempty"`
+	TagIds      []string `json:"tagIds,omitempty"`
+	StartDate   *string  `json:"startDate,omitempty"`
+	EndDate     *string  `json:"endDate,omitempty"`
+	Limit       *int32   `json:"limit,omitempty"`
+	Offset      *int32   `json:"offset,omitempty"`
+}
+
+type SetDefaultDashboardViewInput struct {
+	ViewID string `json:"viewId"`
+}
+
 type Tag struct {
 	ID          string  `json:"id"`
 	UserID      string  `json:"userId"`
 	Name        string  `json:"name"`
 	CategoryID  string  `json:"categoryId"`
 	Description *string `json:"description,omitempty"`
+	Icon        *string `json:"icon,omitempty"`
 	CreatedAt   string  `json:"createdAt"`
 	UpdatedAt   string  `json:"updatedAt"`
+}
+
+type TagCount struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Count int32  `json:"count"`
 }
 
 type UpdateCategoryInput struct {
@@ -90,9 +348,7 @@ type UpdateCategoryInput struct {
 
 type UpdateRecordInput struct {
 	ID              string   `json:"id"`
-	Title           *string  `json:"title,omitempty"`
 	Description     *string  `json:"description,omitempty"`
-	CategoryID      *string  `json:"categoryId,omitempty"`
 	TagID           *string  `json:"tagId,omitempty"`
 	EventTime       *string  `json:"eventTime,omitempty"`
 	RecordedAt      *string  `json:"recordedAt,omitempty"`
@@ -101,4 +357,233 @@ type UpdateRecordInput struct {
 	Source          *string  `json:"source,omitempty"`
 	Timezone        *string  `json:"timezone,omitempty"`
 	Status          *string  `json:"status,omitempty"`
+}
+
+type UpdateTagInput struct {
+	ID          string  `json:"id"`
+	Name        *string `json:"name,omitempty"`
+	CategoryID  *string `json:"categoryId,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Icon        *string `json:"icon,omitempty"`
+}
+
+type UpsertDashboardWidgetInput struct {
+	ID                 *string             `json:"id,omitempty"`
+	ViewID             string              `json:"viewId"`
+	MetricDefinitionID *string             `json:"metricDefinitionId,omitempty"`
+	WidgetType         DashboardWidgetType `json:"widgetType"`
+	Size               DashboardWidgetSize `json:"size"`
+	OrderIndex         *int32              `json:"orderIndex,omitempty"`
+	TitleOverride      *string             `json:"titleOverride,omitempty"`
+	ConfigJSON         *string             `json:"configJson,omitempty"`
+	IsActive           *bool               `json:"isActive,omitempty"`
+}
+
+type UpsertGoalTemplateInput struct {
+	ID          *string `json:"id,omitempty"`
+	MetricKey   string  `json:"metricKey"`
+	Title       string  `json:"title"`
+	TargetValue float64 `json:"targetValue"`
+	Comparison  *string `json:"comparison,omitempty"`
+	Period      *string `json:"period,omitempty"`
+	IsActive    *bool   `json:"isActive,omitempty"`
+}
+
+type UpsertMetricDefinitionInput struct {
+	ID          *string  `json:"id,omitempty"`
+	MetricKey   string   `json:"metricKey"`
+	DisplayName string   `json:"displayName"`
+	CategoryID  *string  `json:"categoryId,omitempty"`
+	TagID       string   `json:"tagId"`
+	TagIds      []string `json:"tagIds,omitempty"`
+	ValueSource *string  `json:"valueSource,omitempty"`
+	Aggregation *string  `json:"aggregation,omitempty"`
+	Unit        *string  `json:"unit,omitempty"`
+	GoalDefault *float64 `json:"goalDefault,omitempty"`
+	IsActive    *bool    `json:"isActive,omitempty"`
+}
+
+type UserStats struct {
+	TotalRecords     int32          `json:"totalRecords"`
+	TotalCategories  int32          `json:"totalCategories"`
+	TotalTags        int32          `json:"totalTags"`
+	RecordsThisWeek  int32          `json:"recordsThisWeek"`
+	RecordsThisMonth int32          `json:"recordsThisMonth"`
+	MostUsedCategory *CategoryCount `json:"mostUsedCategory,omitempty"`
+	MostUsedTag      *TagCount      `json:"mostUsedTag,omitempty"`
+}
+
+type DashboardWidgetSize string
+
+const (
+	DashboardWidgetSizeSmall  DashboardWidgetSize = "SMALL"
+	DashboardWidgetSizeMedium DashboardWidgetSize = "MEDIUM"
+	DashboardWidgetSizeLarge  DashboardWidgetSize = "LARGE"
+)
+
+var AllDashboardWidgetSize = []DashboardWidgetSize{
+	DashboardWidgetSizeSmall,
+	DashboardWidgetSizeMedium,
+	DashboardWidgetSizeLarge,
+}
+
+func (e DashboardWidgetSize) IsValid() bool {
+	switch e {
+	case DashboardWidgetSizeSmall, DashboardWidgetSizeMedium, DashboardWidgetSizeLarge:
+		return true
+	}
+	return false
+}
+
+func (e DashboardWidgetSize) String() string {
+	return string(e)
+}
+
+func (e *DashboardWidgetSize) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = DashboardWidgetSize(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid DashboardWidgetSize", str)
+	}
+	return nil
+}
+
+func (e DashboardWidgetSize) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *DashboardWidgetSize) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e DashboardWidgetSize) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type DashboardWidgetType string
+
+const (
+	DashboardWidgetTypeKpiNumber    DashboardWidgetType = "KPI_NUMBER"
+	DashboardWidgetTypeGoalProgress DashboardWidgetType = "GOAL_PROGRESS"
+	DashboardWidgetTypeTrendLine    DashboardWidgetType = "TREND_LINE"
+	DashboardWidgetTypeChecklist    DashboardWidgetType = "CHECKLIST"
+	DashboardWidgetTypeInsightFeed  DashboardWidgetType = "INSIGHT_FEED"
+)
+
+var AllDashboardWidgetType = []DashboardWidgetType{
+	DashboardWidgetTypeKpiNumber,
+	DashboardWidgetTypeGoalProgress,
+	DashboardWidgetTypeTrendLine,
+	DashboardWidgetTypeChecklist,
+	DashboardWidgetTypeInsightFeed,
+}
+
+func (e DashboardWidgetType) IsValid() bool {
+	switch e {
+	case DashboardWidgetTypeKpiNumber, DashboardWidgetTypeGoalProgress, DashboardWidgetTypeTrendLine, DashboardWidgetTypeChecklist, DashboardWidgetTypeInsightFeed:
+		return true
+	}
+	return false
+}
+
+func (e DashboardWidgetType) String() string {
+	return string(e)
+}
+
+func (e *DashboardWidgetType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = DashboardWidgetType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid DashboardWidgetType", str)
+	}
+	return nil
+}
+
+func (e DashboardWidgetType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *DashboardWidgetType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e DashboardWidgetType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type InsightWindow string
+
+const (
+	InsightWindowWindow7d  InsightWindow = "WINDOW_7D"
+	InsightWindowWindow30d InsightWindow = "WINDOW_30D"
+	InsightWindowWindow90d InsightWindow = "WINDOW_90D"
+)
+
+var AllInsightWindow = []InsightWindow{
+	InsightWindowWindow7d,
+	InsightWindowWindow30d,
+	InsightWindowWindow90d,
+}
+
+func (e InsightWindow) IsValid() bool {
+	switch e {
+	case InsightWindowWindow7d, InsightWindowWindow30d, InsightWindowWindow90d:
+		return true
+	}
+	return false
+}
+
+func (e InsightWindow) String() string {
+	return string(e)
+}
+
+func (e *InsightWindow) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = InsightWindow(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid InsightWindow", str)
+	}
+	return nil
+}
+
+func (e InsightWindow) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *InsightWindow) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e InsightWindow) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }

@@ -6,6 +6,8 @@ import (
 	"errors"
 	"strconv"
 
+	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
+	dbport "github.com/lechitz/AionApi/internal/platform/ports/output/db"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/record/core/ports/output"
 	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
@@ -14,37 +16,60 @@ import (
 
 // Service implements the record use cases.
 type Service struct {
-	RecordRepository output.RecordRepository
-	TagRepository    tagoutput.TagRepository
-	Logger           logger.ContextLogger
+	RecordRepository           output.RecordRepository
+	RecordProjectionRepository output.RecordProjectionRepository
+	RecordCache                output.RecordCache
+	TagRepository              tagoutput.TagRepository
+	OutboxService              eventoutboxinput.Service
+	TransactionManager         dbport.DB
+	Logger                     logger.ContextLogger
 }
 
 // NewService is a convention wrapper used by bootstrap to instantiate the record service.
-func NewService(repo output.RecordRepository, tagRepo tagoutput.TagRepository, logger logger.ContextLogger) *Service {
+func NewService(recordRepo output.RecordRepository, cache output.RecordCache, tagRepo tagoutput.TagRepository, logger logger.ContextLogger) *Service {
 	return &Service{
-		RecordRepository: repo,
+		RecordRepository: recordRepo,
+		RecordCache:      cache,
 		TagRepository:    tagRepo,
 		Logger:           logger,
 	}
+}
+
+// WithOutbox attaches an optional outbox service without breaking existing constructor call sites.
+func (s *Service) WithOutbox(outboxService eventoutboxinput.Service) *Service {
+	s.OutboxService = outboxService
+	return s
+}
+
+// WithTransactionManager attaches an optional transaction manager without breaking constructor call sites.
+func (s *Service) WithTransactionManager(database dbport.DB) *Service {
+	s.TransactionManager = database
+	return s
+}
+
+// WithProjectionReader attaches an optional derived projection reader without breaking constructor call sites.
+func (s *Service) WithProjectionReader(projectionRepo output.RecordProjectionRepository) *Service {
+	s.RecordProjectionRepository = projectionRepo
+	return s
 }
 
 // getUserIDFromContext extracts a numeric user ID from context, supporting common types.
 func getUserIDFromContext(ctx context.Context) (uint64, error) {
 	v := ctx.Value(ctxkeys.UserID)
 	if v == nil {
-		return 0, errors.New("user not authenticated")
+		return 0, errors.New(UserNotAuthenticated)
 	}
 	switch id := v.(type) {
 	case uint64:
 		return id, nil
 	case int64:
 		if id < 0 {
-			return 0, errors.New("user id negative")
+			return 0, errors.New(UserIDNegative)
 		}
 		return uint64(id), nil
 	case int:
 		if id < 0 {
-			return 0, errors.New("user id negative")
+			return 0, errors.New(UserIDNegative)
 		}
 		return uint64(id), nil
 	case string:
@@ -52,8 +77,8 @@ func getUserIDFromContext(ctx context.Context) (uint64, error) {
 		if u, err := strconv.ParseUint(id, 10, 64); err == nil {
 			return u, nil
 		}
-		return 0, errors.New("user id string not supported")
+		return 0, errors.New(UserIDStringNotSupported)
 	default:
-		return 0, errors.New("invalid user id in context")
+		return 0, errors.New(InvalidUserIDInContext)
 	}
 }

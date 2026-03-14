@@ -30,6 +30,23 @@ func (s *Service) SoftDelete(ctx context.Context, categoryID uint64, userID uint
 		return errors.New(FailedToSoftDeleteCategory)
 	}
 
+	span.AddEvent(EventInvalidateCache)
+	err := s.CategoryCache.DeleteCategory(ctx, categoryID, userID)
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, WarnFailedToInvalidateCategoryCache,
+			commonkeys.CategoryID, strconv.FormatUint(categoryID, 10),
+			commonkeys.Error, err,
+		)
+	}
+
+	err = s.CategoryCache.DeleteCategoryList(ctx, userID)
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, WarnFailedToInvalidateCategoryListCache,
+			commonkeys.UserID, strconv.FormatUint(userID, 10),
+			commonkeys.Error, err,
+		)
+	}
+
 	span.AddEvent(EventSuccess)
 	span.SetStatus(codes.Ok, StatusSoftDeleted)
 	s.Logger.InfowCtx(ctx, SuccessfullySoftDeletedCategory, commonkeys.CategoryID, strconv.FormatUint(categoryID, 10))

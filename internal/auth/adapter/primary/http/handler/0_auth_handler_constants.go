@@ -1,50 +1,78 @@
-// Package handler contains constants used throughout the auth handler.middleware
+// Package handler contains constants used throughout the auth handler.
 package handler
 
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
+
 // TracerAuthHandler is the tracer name for auth handler operations in OpenTelemetry.
+// Format: aionapi.<domain>.<layer> .
 const TracerAuthHandler = "aionapi.auth.handler"
 
-// Span names for OpenTelemetry auth handler operations.
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
+// Span names for auth handler operations.
 const (
-	SpanLoginHandler   = "auth.login"
-	SpanLogoutHandler  = "auth.logout"
-	SpanRefreshHandler = "auth.refresh"
+	SpanLoginHandler   = "auth.handler.login"
+	SpanLogoutHandler  = "auth.handler.logout"
+	SpanRefreshHandler = "auth.handler.refresh"
+	SpanSessionHandler = "auth.handler.session"
 )
 
-// Attribute keys used in spans for auth handlers.
+// -----------------------------------------------------------------------------
+// Event Names
+// Format: <domain>.<action>.<detail>
+// -----------------------------------------------------------------------------
+
+// Event names for auth handler tracing.
 const (
-	AttrRefreshTokenPresent = "refresh_token_present"
+	EventDecodeRequest      = "auth.handler.decode_request"
+	EventAuthServiceLogin   = "auth.handler.service_login"
+	EventAuthServiceLogout  = "auth.handler.service_logout"
+	EventAuthServiceRefresh = "auth.handler.service_refresh"
+	EventLoginSuccess       = "auth.handler.login_success"
+	EventLogoutSuccess      = "auth.handler.logout_success"
+	EventRefreshSuccess     = "auth.handler.refresh_success"
+	EventSessionSuccess     = "auth.handler.session_success"
 )
 
-// Event names for key points within auth handler spans.
+// -----------------------------------------------------------------------------
+// Status Names
+// -----------------------------------------------------------------------------
+
+// Status descriptions for auth handler spans.
 const (
-	EventDecodeRequest     = "decode_request"
-	EventAuthServiceLogin  = "auth_service.login"
-	EventAuthServiceLogout = "auth_service.logout"
-	EventLoginSuccess      = "auth.login.success"
-	EventLogoutSuccess     = "auth.logout.success"
+	StatusLoginSuccess   = "login_success"
+	StatusLogoutSuccess  = "logout_success"
+	StatusRefreshSuccess = "refresh_success"
+	StatusSessionSuccess = "session_success"
 )
 
-// Status names for semantic span states.
-const (
-	StatusLoginSuccess  = "login_success"
-	StatusLogoutSuccess = "logout_success"
-)
+// =============================================================================
+// BUSINESS LOGIC - Error and Success Messages
+// =============================================================================
 
-// Error messages used in auth handler (for response, tracing and logs).
+// Error messages.
 const (
 	ErrMissingUserID = "missing user id in context"
 	ErrLogin         = "error on login"
 	ErrLogout        = "error on logout"
+	ErrRefresh       = "error on refresh"
+	ErrSession       = "error on session"
 )
 
-// Success messages used in auth handler.
+// Success messages.
 const (
-	MsgLoginSuccess  = "user logged in successfully"
-	MsgLogoutSuccess = "user logged out successfully"
+	MsgLoginSuccess   = "user logged in successfully"
+	MsgLogoutSuccess  = "user logged out successfully"
+	MsgRefreshSuccess = "token refreshed successfully"
+	MsgSessionSuccess = "session fetched successfully"
 )
 
-// Log message keys for structured and leveled logging.
+// Log message keys.
 const (
 	LogMissingUserID = "missing user id"
 	LogLogoutFailed  = "logout failed"
@@ -57,4 +85,40 @@ const (
 	ErrMinPasswordLength = "password must have at least 8 characters"
 	MinUsernameLength    = 3
 	MinPasswordLength    = 8
+)
+
+// =============================================================================
+// HTTP - Request limits and validation field names
+// =============================================================================
+
+const (
+	// LoginMaxBodyBytes limits the /auth/login payload size.
+	LoginMaxBodyBytes int64 = 1 << 20 // 1MB
+
+	// ValidationFieldCredentials is the field name used in validation errors for login credentials.
+	ValidationFieldCredentials = "credentials"
+)
+
+// =============================================================================
+// SESSION - Errors and tracing attribute keys
+// =============================================================================
+
+const (
+	// ErrMissingAccessToken is returned when access cookie is missing or empty.
+	ErrMissingAccessToken = "missing access token"
+
+	// AttrAccessTokenPresent records whether access token cookie was present. Never store the token value.
+	AttrAccessTokenPresent = "access_token_present" // #nosec G101: attribute name, not a credential
+)
+
+// =============================================================================
+// REFRESH - Errors and tracing attribute keys
+// =============================================================================
+
+const (
+	// ErrMissingRefreshToken is returned when refresh cookie is missing or empty.
+	ErrMissingRefreshToken = "missing refresh token"
+
+	// AttrRefreshTokenPresent records whether refresh token cookie was present. Never store the token value.
+	AttrRefreshTokenPresent = "refresh_token_present" // #nosec G101: attribute name, not a credential
 )

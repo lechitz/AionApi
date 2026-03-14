@@ -16,6 +16,7 @@ type ChatMessage struct {
 // ChatResult represents the result of processing a chat message.
 type ChatResult struct {
 	Response      string
+	UI            map[string]interface{}
 	Sources       []interface{}
 	FunctionCalls []string
 	TokensUsed    int

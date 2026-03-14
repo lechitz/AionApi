@@ -1,0 +1,13 @@
+title Platform HTTP Client Flow
+
+participant "adapter" as A
+participant "httpclient" as HC
+participant "otel transport" as OTEL
+participant "external service" as ES
+
+A->HC: Build request
+HC->OTEL: Inject trace headers
+OTEL->ES: Outbound HTTP call
+ES->OTEL: Response
+OTEL->HC: Record span/attrs
+HC->A: Response

@@ -1,0 +1,1 @@
+query CategoryById($id: ID!) { categoryById(id: $id) { id userId name description colorHex icon } }

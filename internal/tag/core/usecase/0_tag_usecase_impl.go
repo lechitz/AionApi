@@ -12,13 +12,15 @@ import (
 // Service provides operations for managing tags including creation, retrieval, updates, and soft deletion, using a repository and contextlogger.
 type Service struct {
 	TagRepository output.TagRepository
+	TagCache      output.TagCache
 	Logger        logger.ContextLogger
 }
 
 // NewService creates and returns a new instance of Service with the given repository and contextlogger dependencies.
-func NewService(tagRepository output.TagRepository, logger logger.ContextLogger) *Service {
+func NewService(tagRepository output.TagRepository, tagCache output.TagCache, logger logger.ContextLogger) *Service {
 	return &Service{
 		TagRepository: tagRepository,
+		TagCache:      tagCache,
 		Logger:        logger,
 	}
 }

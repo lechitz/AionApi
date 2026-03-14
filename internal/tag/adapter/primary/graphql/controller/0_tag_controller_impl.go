@@ -11,10 +11,12 @@ import (
 // TagController is the contract used by GraphQL resolvers.
 type TagController interface {
 	Create(ctx context.Context, in model.CreateTagInput, userID uint64) (*model.Tag, error)
+	Update(ctx context.Context, in model.UpdateTagInput, userID uint64) (*model.Tag, error)
 	GetByID(ctx context.Context, tagID, userID uint64) (*model.Tag, error)
 	GetByName(ctx context.Context, tagName string, userID uint64) (*model.Tag, error)
 	GetByCategoryID(ctx context.Context, categoryID uint64, userID uint64) ([]*model.Tag, error)
 	GetAll(ctx context.Context, userID uint64) ([]*model.Tag, error)
+	SoftDelete(ctx context.Context, tagID, userID uint64) error
 }
 
 // controller is the controller for the tag service.

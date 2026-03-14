@@ -1,0 +1,1 @@
+query RecordsByCategory($categoryId: ID!, $limit: Int) { recordsByCategory(categoryId: $categoryId, limit: $limit) { id userId tagId description eventTime recordedAt durationSeconds value source timezone status createdAt updatedAt } }

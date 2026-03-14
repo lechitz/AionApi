@@ -1,0 +1,1 @@
+query DashboardSnapshot($date: String!, $timezone: String) { dashboardSnapshot(date: $date, timezone: $timezone) { date timezone metrics { metricKey label value unit target progressPct status } goals { goalId title metricKey currentValue targetValue progressPct status } } }

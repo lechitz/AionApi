@@ -80,10 +80,9 @@ func WriteSuccess(w http.ResponseWriter, status int, result any, message string,
 func WriteError(w http.ResponseWriter, err error, message string, log logger.ContextLogger, headers ...map[string]string) {
 	status := sharederrors.MapErrorToHTTPStatus(err)
 	body := ResponseBody{
-		Date:    time.Now().UTC(),
-		Error:   message,
-		Details: err.Error(),
-		Code:    status,
+		Date:  time.Now().UTC(),
+		Error: message,
+		Code:  status,
 	}
 	if log != nil {
 		log.Errorw(logMsgHTTPError, commonkeys.Error, err, commonkeys.Message, message, commonkeys.Status, status)
@@ -136,6 +135,17 @@ func WriteDecodeErrorSpan(ctx context.Context, w http.ResponseWriter, span trace
 		log.ErrorwCtx(ctx, logMsgDecodeError, commonkeys.Error, err.Error())
 	}
 	WriteDecodeError(w, err, log)
+}
+
+// WriteValidationErrorSpan records trace/log metadata for a validation error, then writes the HTTP response.
+func WriteValidationErrorSpan(ctx context.Context, w http.ResponseWriter, span trace.Span, err error, log logger.ContextLogger) {
+	span.RecordError(err)
+	span.SetStatus(codes.Error, err.Error())
+	span.SetAttributes(attribute.Int(tracingkeys.HTTPStatusCodeKey, http.StatusBadRequest))
+	if log != nil {
+		log.ErrorwCtx(ctx, logMsgDomainError, commonkeys.Error, err.Error())
+	}
+	WriteError(w, err, err.Error(), log)
 }
 
 // WriteDomainErrorSpan records trace/log metadata for a domain error, then writes the HTTP response.

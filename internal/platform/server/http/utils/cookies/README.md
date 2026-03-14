@@ -1,63 +1,94 @@
-# HTTP Utils
+# HTTP Cookie Utilities
 
-**Folder:** `internal/platform/server/http/utils/httpresponse`
+**Path:** `internal/platform/server/http/utils/cookies`
 
-## Responsibility
+## Overview
 
-* Provide tiny, reusable helpers for **HTTP cookie** handling.
-* Standardize how **auth/session cookies** are created, configured, and cleared across adapters.
-* Keep security flags and lifetimes **centralized** (driven by `internal/platform/config`).
+This package centralizes authentication cookie behavior for HTTP adapters.
+It defines how access/refresh cookies are created, cleared, and extracted from incoming requests using platform configuration.
 
-## How it works
+## Package Scope
 
-* Helpers read cookie-related settings from **platform `config`** (name, domain, path, TTL, SameSite, Secure/HTTPOnly).
-* Values like the canonical cookie name reuse **shared constants** (e.g., `commonkeys.AuthTokenCookieName`) to avoid drift.
-* Utilities write the `Set-Cookie` header using sane defaults for production (HttpOnly + Secure, explicit `Max-Age`/`Expires`, `SameSite`).
+| Area | Responsibility |
+| --- | --- |
+| Access cookie lifecycle | Set and clear auth token cookie (`commonkeys.AuthTokenCookieName`) |
+| Refresh cookie lifecycle | Set and clear refresh token cookie (`refresh_token`) |
+| Token extraction | Read access/refresh values from request cookies |
+| Security flags | Apply `HttpOnly`, `Secure`, `SameSite`, and cookie path/domain from config |
 
-## Key helpers
+## Files
 
-* `SetAuthCookie(w http.ResponseWriter, token string, cfg config.<...>)`
+| File | Purpose |
+| --- | --- |
+| `cookies.go` | Cookie set/clear/extract helpers and SameSite/Secure mapping |
 
-    * Writes a secure, HTTP-only cookie containing the auth token.
-    * Applies TTL from config (sets both `Max-Age` and `Expires`).
-    * Honors domain/path and SameSite/Secure flags from config.
-* (If/when added) **Clear/Unset helper**
+## Public API Reference
 
-    * Writes a past-date cookie with `Max-Age=0` to remove it (useful for logout flows).
+### Cookie Write Helpers
 
-> Exact function signatures may evolve; the behavior above is what adapters should rely on.
+| Function | Behavior |
+| --- | --- |
+| `SetAuthCookie(w, token, cfg)` | Writes auth cookie using configured path/domain/samesite/max-age |
+| `ClearAuthCookie(w, cfg)` | Expires auth cookie immediately (`MaxAge=-1`, `Expires=Unix(0,0)`) |
+| `SetRefreshCookie(w, token, cfg)` | Writes refresh cookie with `MaxAge = cfg.MaxAge * 7` |
+| `ClearRefreshCookie(w, cfg)` | Expires refresh cookie immediately |
 
-## Conventions
+### Cookie Read Helpers
 
-* **Never** log raw cookie values or tokens.
-* Always set:
+| Function | Returns |
+| --- | --- |
+| `ExtractAuthToken(r)` | Access token value from auth cookie |
+| `ExtractRefreshToken(r)` | Refresh token value from `refresh_token` cookie |
 
-    * `HttpOnly=true`
-    * `Secure=true` (except in strictly local dev over HTTP)
-    * An explicit `SameSite` policy (e.g., `Lax` for browser flows; `None` only when you also set `Secure`)
-* Prefer **short-lived** cookies and renew on sensitive state changes (e.g., password update).
-* Keep cookie names/keys in **`internal/shared/constants`** to ensure consistency.
+### Internal Mapping Helpers
 
-## Example (illustrative)
+| Helper | Purpose |
+| --- | --- |
+| `mapSameSite(sameSite string)` | Maps `Strict`/`Lax`/`None` to `http.SameSite*` |
+| `secureFlag(cfg)` | Resolves secure flag from `config.CookieConfig` |
+
+## Cookie Policy Summary
+
+| Property | Auth cookie | Refresh cookie |
+| --- | --- | --- |
+| `HttpOnly` | `true` | `true` |
+| `Secure` | Config-driven | Config-driven |
+| `SameSite` | Config-driven on set, `Strict` on clear | Config-driven on set, `Strict` on clear |
+| `Path` | `cfg.Path` | `cfg.Path` |
+| `Domain` | `cfg.Domain` | `cfg.Domain` |
+| `MaxAge` | `cfg.MaxAge` | `cfg.MaxAge * 7` |
+
+## Usage Example
 
 ```go
-func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-    // ... authenticate user, get signed token ...
-    // httputils.SetAuthCookie(w, token, h.Config) // apply platform-wide flags
-    // httpresponse.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+cookies.SetAuthCookie(w, accessToken, cfg.Cookie)
+cookies.SetRefreshCookie(w, refreshToken, cfg.Cookie)
+
+// Later in request flow:
+authToken, err := cookies.ExtractAuthToken(r)
+if err != nil {
+    // handle missing/invalid auth cookie
 }
+_ = authToken
 ```
 
-## Testing hints
+## Design Notes
 
-* Use `httptest.NewRecorder()` and assert on `rec.Header().Get("Set-Cookie")`:
+- Keep cookie mechanics in one package to avoid duplicated security options in handlers.
+- Keep token naming stable to preserve client compatibility.
+- Use config-driven secure behavior for local development and production parity.
 
-    * Contains **cookie name** and **value**.
-    * Includes `HttpOnly`, `Secure`, `SameSite=<expected>`.
-    * Has **`Max-Age`** and **`Expires`** consistent with configured TTL.
-* For logout/clear, assert a cookie with `Max-Age=0` and an **expired `Expires`**.
+## Package Improvements
 
-## Design notes
+- Replace hardcoded refresh cookie name (`"refresh_token"`) with a shared constant in `internal/shared/constants/commonkeys`.
+- Add focused unit tests for `mapSameSite`, extraction edge cases, and cookie attributes written by each helper.
+- Consider explicit validation/log-free handling when `SameSite=None` and `Secure=false` to avoid invalid browser behavior.
+- Evaluate configurability for refresh cookie lifetime instead of fixed multiplier (`cfg.MaxAge * 7`).
 
-* All cookie logic lives here to keep **handlers thin** and reduce copy-paste of security flags.
-* Configuration-driven behavior lets you switch environments (dev/prod) without touching adapters.
+---
+
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../../../README.md)
+<!-- doc-nav:end -->

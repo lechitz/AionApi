@@ -16,7 +16,7 @@ import (
 
 // Save persists the token for the given userID with a TTL.
 func (s *Store) Save(ctx context.Context, token domain.Auth, expiration time.Duration) error {
-	tr := otel.Tracer(SpanTracerTokenStore)
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanNameTokenSave, trace.WithAttributes(
 		attribute.String(commonkeys.Operation, OperationSave),
 		attribute.String(commonkeys.Entity, commonkeys.EntityToken),
@@ -26,11 +26,11 @@ func (s *Store) Save(ctx context.Context, token domain.Auth, expiration time.Dur
 
 	cacheKey := fmt.Sprintf(TokenUserKeyFormat, token.Key, token.Type)
 
-	// if no expiration passed, fall back to default
 	if expiration <= 0 {
 		expiration = TokenExpirationDefault
 	}
 
+	span.AddEvent(EventSaveTokenToCache)
 	if err := s.cache.Set(ctx, cacheKey, token.Token, expiration); err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)

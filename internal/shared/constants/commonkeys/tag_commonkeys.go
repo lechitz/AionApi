@@ -8,8 +8,20 @@ const (
 	TagID = "tag_id"
 
 	// TagName is the key for a tag name.
-	TagName = "tag_name"
+	TagName = "name"
+
+	// TagDescription is the key for a tag description.
+	TagDescription = "description"
+
+	// TagIcon is the key for a tag icon.
+	TagIcon = "icon"
 
 	// TagCreatedAt is the key for the tag created at.
 	TagCreatedAt = "created_at"
+
+	// TagUpdatedAt is the key for the tag updated at.
+	TagUpdatedAt = "updated_at"
+
+	// TagDeletedAt is the key for the tag deleted at.
+	TagDeletedAt = "deleted_at"
 )

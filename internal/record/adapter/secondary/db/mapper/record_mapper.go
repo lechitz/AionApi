@@ -11,9 +11,7 @@ func RecordFromDB(record model.Record) domain.Record {
 	return domain.Record{
 		ID:           record.ID,
 		UserID:       record.UserID,
-		Title:        record.Title,
 		Description:  record.Description,
-		CategoryID:   record.CategoryID,
 		TagID:        record.TagID,
 		EventTime:    record.EventTime,
 		RecordedAt:   record.RecordedAt,
@@ -33,9 +31,7 @@ func RecordToDB(record domain.Record) model.Record {
 	return model.Record{
 		ID:           record.ID,
 		UserID:       record.UserID,
-		Title:        record.Title,
 		Description:  record.Description,
-		CategoryID:   record.CategoryID,
 		TagID:        record.TagID,
 		EventTime:    record.EventTime,
 		RecordedAt:   record.RecordedAt,

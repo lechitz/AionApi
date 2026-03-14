@@ -1,56 +1,79 @@
-# HTTP Router Adapters (Platform)
+# Platform HTTP Server Layer
 
-**Folder:** `internal/platform/server/http/router`
+**Path:** `internal/platform/server/http`
 
-## What is this?
+## Overview
 
-A home for **concrete router adapters** that implement the platform routing contract.
-Contexts (Auth/User/etc.) never import these directly—they only depend on the port:
+This package composes the application HTTP surface: router adapter, middlewares, generic handlers, REST registrations, GraphQL mount, Swagger mount, and health endpoints.
+It is the platform entrypoint for transport-level HTTP orchestration.
 
-* **Contract:** `internal/platform/server/http/ports.Router`
+## Package Scope
 
-## Structure
+| Area | Responsibility |
+| --- | --- |
+| Handler composition | Build the main HTTP handler tree (`ComposeHandler`) |
+| Server configuration | Build `http.Server` with config-driven timeouts and limits |
+| Platform wiring | Apply cross-cutting middlewares and fallback handlers |
+| Endpoint mounting | Mount REST adapters, GraphQL, Swagger, and health routes |
+| HTTP sentinel errors | Provide shared transport errors (`404`, `405`, `500`) |
 
-* One subfolder per engine:
+## Subpackages
 
-    * `chi/` – current adapter using `github.com/go-chi/chi/v5`
-    * (optional) `mux/`, `echo/`, etc. — add here if you want alternatives
-* Each adapter exposes a `New() ports.Router`.
+| Subpackage | Role |
+| --- | --- |
+| `ports/` | Framework-agnostic router contract |
+| `router/` | Concrete router adapter implementations (currently `chi`) |
+| `middleware/` | Cross-cutting HTTP middleware chain |
+| `generic/` | Generic handlers (`health`, `not found`, `method not allowed`, `recovery/error`) |
+| `utils/` | Shared response/error/cookie helpers |
+| `errors/` | Shared sentinel HTTP errors |
 
-## Choosing the adapter
+## Core Files
 
-Selection happens **only** in the platform HTTP composer:
+| File | Purpose |
+| --- | --- |
+| `composer.go` | Assembles full handler graph (middlewares + routes + GraphQL + Swagger + health) |
+| `server.go` | Builds `http.Server` from config and composed handler |
+| `http_constants.go` | Constants for routing/mount defaults and logging |
 
-```go
-// internal/platform/server/http/composer.go
-import chiadapter "github.com/lechitz/AionApi/internal/platform/server/http/router/chi"
+## Composition Flow (`ComposeHandler`)
 
-r := chiadapter.New() // returns ports.Router
-```
+1. Instantiate router adapter (`chi.New()`).
+2. Register global middlewares (`requestid`, `recovery`, `cors`).
+3. Set fallback handlers (`NotFound`, `MethodNotAllowed`, `Error`).
+4. Resolve mount points from config (`context`, `swagger`, `docs`, `health`).
+5. Mount Swagger UI and docs alias under API context.
+6. Mount REST modules under API root.
+   - Includes `audit` HTTP module (`GET /audit/events`).
+7. Build and mount GraphQL handler; wrap with `servicetoken` middleware.
+8. Wrap main router with `otelhttp` instrumentation.
+9. Expose health routes via a dedicated mux path (including backward-compatible path).
 
-Swap engines by importing a different subfolder and calling its `New()`.
+## Server Build (`Build` / `FromHTTP`)
 
-## Why this matters
+| Concern | Source |
+| --- | --- |
+| Listen address | `cfg.ServerHTTP.Host` + `cfg.ServerHTTP.Port` |
+| Timeouts/limits | `cfg.ServerHTTP.*Timeout`, `MaxHeaderBytes` |
+| Base context | Application context propagated via `BaseContext` |
 
-* **Decoupling:** Context registrars (`RegisterHTTP`) use only `ports.Router`.
-* **Swap-friendly:** You can change the routing engine without touching domain code.
-* **Consistency:** Same API for grouping, mounting (e.g., GraphQL), and defaults (404/405).
+## Design Notes
 
-## Authoring a new adapter
+- This layer must remain transport/platform-focused; no domain usecase logic.
+- Context modules register endpoints through adapters; composition happens here.
+- Subpackage READMEs contain detailed contracts/behavior; this README is the integration-level view.
 
-1. Create `internal/platform/server/http/router/<impl>/`.
-2. Implement all methods of `ports.Router`.
-3. Export `New() ports.Router`.
-4. Update the composer to use your `<impl>.New()`.
+## Package Improvements
 
-## Rules of use
+- Add integration tests for `ComposeHandler` route map (Swagger, docs alias, GraphQL mount, health aliases).
+- Ensure middleware ordering in code matches documented recommendation (`recovery` outermost) or update docs/code for consistency.
+- Consider adding a small table mapping mounted routes to owning adapters for discoverability.
+- Add a short section documenting failure behavior when GraphQL handler composition fails inside route setup.
 
-* Context code must import **only** `internal/platform/server/http/ports`.
-* Prefer `Mount()` to attach composite handlers (e.g., GraphQL) at a path.
-* Use `GroupWith(middleware, fn)` to protect subtrees.
-* `SetError(...)` is stored for platform recovery/error paths (frameworks don’t call it automatically).
+---
 
-## Testing (quick hint)
-
-* Table-test context registrars with a **fake** `ports.Router`.
-* Smoke-test concrete adapters (404/405, grouping, mount) within their subfolder.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../README.md)
+<!-- doc-nav:end -->

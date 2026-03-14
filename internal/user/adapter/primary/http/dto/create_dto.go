@@ -5,7 +5,9 @@ package dto
 
 import (
 	"errors"
+	"net/url"
 	"regexp"
+	"strings"
 
 	"github.com/lechitz/AionApi/internal/user/core/ports/input"
 )
@@ -23,6 +25,16 @@ const (
 	InvalidPasswordLength = "password must be at least 8 characters"
 	// InvalidEmail is the error message for an invalid email format.
 	InvalidEmail = "invalid email format"
+	// InvalidLocale is the error message for an invalid locale format.
+	InvalidLocale = "locale must be 2-16 characters (e.g., en, en-US)"
+	// InvalidTimezone is the error message for an invalid timezone format.
+	InvalidTimezone = "timezone must be up to 64 characters (e.g., America/Sao_Paulo)"
+	// InvalidLocation is the error message for an invalid location length.
+	InvalidLocation = "location must be up to 255 characters"
+	// InvalidBio is the error message for an invalid bio length.
+	InvalidBio = "bio must be up to 1000 characters"
+	// InvalidAvatarURL is the error message for an invalid avatar URL.
+	InvalidAvatarURL = "avatar_url must be a valid URL"
 
 	// emailRegex is the regular expression for email validation.
 	emailRegex = `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
@@ -46,6 +58,26 @@ type CreateUserRequest struct {
 	// Password is the user's credential (minimum length: 8).
 	// Example: "P@ssw0rd123"
 	Password string `json:"password" example:"P@ssw0rd123"`
+
+	// Locale is the optional user locale (e.g., "en-US").
+	// Example: "en-US"
+	Locale *string `json:"locale,omitempty" example:"en-US"`
+
+	// Timezone is the optional user timezone (IANA format).
+	// Example: "America/Sao_Paulo"
+	Timezone *string `json:"timezone,omitempty" example:"America/Sao_Paulo"`
+
+	// Location is the optional user location.
+	// Example: "São Paulo, BR"
+	Location *string `json:"location,omitempty" example:"São Paulo, BR"`
+
+	// Bio is an optional short bio for the user.
+	// Example: "Backend engineer passionate about observability."
+	Bio *string `json:"bio,omitempty" example:"Backend engineer passionate about observability."`
+
+	// AvatarURL is an optional URL for the user's avatar.
+	// Example: "https://example.com/avatar.png"
+	AvatarURL *string `json:"avatar_url,omitempty" example:"https://example.com/avatar.png"`
 }
 
 // ValidateUser validates the user input for required fields and basic constraints.
@@ -68,16 +100,26 @@ func (r *CreateUserRequest) ValidateUser() error {
 	if !regexp.MustCompile(emailRegex).MatchString(r.Email) {
 		return errors.New(InvalidEmail)
 	}
+
+	if err := validateOptionalProfileFields(r.Locale, r.Timezone, r.Location, r.Bio, r.AvatarURL); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 // ToCommand converts the request into a domain command for user creation.
 func (r *CreateUserRequest) ToCommand() input.CreateUserCommand {
 	return input.CreateUserCommand{
-		Name:     r.Name,
-		Username: r.Username,
-		Email:    r.Email,
-		Password: r.Password,
+		Name:      strings.TrimSpace(r.Name),
+		Username:  strings.TrimSpace(r.Username),
+		Email:     strings.TrimSpace(r.Email),
+		Password:  r.Password,
+		Locale:    normalizeOptional(r.Locale),
+		Timezone:  normalizeOptional(r.Timezone),
+		Location:  normalizeOptional(r.Location),
+		Bio:       normalizeOptional(r.Bio),
+		AvatarURL: normalizeOptional(r.AvatarURL),
 	}
 }
 
@@ -98,4 +140,51 @@ type CreateUserResponse struct {
 	// ID is the created user's identifier.
 	// Example: 42
 	ID uint64 `json:"id" example:"42"`
+}
+
+func validateOptionalProfileFields(locale, timezone, location, bio, avatarURL *string) error {
+	if locale != nil {
+		val := strings.TrimSpace(*locale)
+		if len(val) < 2 || len(val) > 16 {
+			return errors.New(InvalidLocale)
+		}
+	}
+	if timezone != nil {
+		val := strings.TrimSpace(*timezone)
+		if val == "" || len(val) > 64 {
+			return errors.New(InvalidTimezone)
+		}
+	}
+	if location != nil {
+		val := strings.TrimSpace(*location)
+		if len(val) > 255 {
+			return errors.New(InvalidLocation)
+		}
+	}
+	if bio != nil {
+		val := strings.TrimSpace(*bio)
+		if len(val) > 1000 {
+			return errors.New(InvalidBio)
+		}
+	}
+	if avatarURL != nil {
+		val := strings.TrimSpace(*avatarURL)
+		if val != "" {
+			if _, err := url.ParseRequestURI(val); err != nil {
+				return errors.New(InvalidAvatarURL)
+			}
+		}
+	}
+	return nil
+}
+
+func normalizeOptional(value *string) *string {
+	if value == nil {
+		return nil
+	}
+	trimmed := strings.TrimSpace(*value)
+	if trimmed == "" {
+		return nil
+	}
+	return &trimmed
 }

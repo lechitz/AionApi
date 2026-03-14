@@ -4,14 +4,17 @@ package metric
 import (
 	"context"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lechitz/AionApi/internal/platform/config"
 	"github.com/lechitz/AionApi/internal/platform/observability"
 	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -21,6 +24,9 @@ import (
 const (
 	// ErrFailedToInitializeOTLPMetricsExporter is logged when the OTLP metrics exporter cannot be created.
 	ErrFailedToInitializeOTLPMetricsExporter = "failed to initialize OTLP metric exporter"
+
+	// WarnMetricsDisabled is logged when metrics must be disabled because OTLP exporter bootstrap failed.
+	WarnMetricsDisabled = "metrics disabled because OTLP metric exporter initialization failed"
 
 	// ErrInvalidOTELExporterTimeout is logged when the timeout string cannot be parsed as a valid duration.
 	ErrInvalidOTELExporterTimeout = "invalid OTLP exporter timeout"
@@ -38,9 +44,14 @@ func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 	if err != nil {
 		if logger != nil {
 			logger.Errorw(ErrFailedToInitializeOTLPMetricsExporter, commonkeys.Error, err)
+			logger.Warnw(WarnMetricsDisabled, commonkeys.Error, err)
 		}
-		panic(err)
+		return func() {}
 	}
+
+	// Build resource with common attributes
+	hostname, _ := os.Hostname()
+	instanceID := uuid.NewString()
 
 	provider := metric.NewMeterProvider(
 		metric.WithReader(metric.NewPeriodicReader(exporter)),
@@ -48,6 +59,9 @@ func InitOtelMetrics(cfg *config.Config, logger logger.ContextLogger) func() {
 			semconv.SchemaURL,
 			semconv.ServiceNameKey.String(cfg.Observability.OtelServiceName),
 			semconv.ServiceVersionKey.String(cfg.Observability.OtelServiceVersion),
+			attribute.String("deployment.environment", cfg.General.Env),
+			attribute.String("host.name", hostname),
+			attribute.String("service.instance.id", instanceID),
 		)),
 	)
 

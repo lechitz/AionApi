@@ -1,31 +1,54 @@
 // Package middleware constants contains constants related to authentication operations.
 package middleware
 
-const (
-	// TracerAuthMiddleware is the tracer name used by the auth middleware.
-	TracerAuthMiddleware = "aionapi.auth.middleware"
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
 
+// TracerAuthMiddleware is the tracer name used by the auth middleware.
+// Format: aionapi.<domain>.<layer> .
+const TracerAuthMiddleware = "aionapi.auth.middleware"
+
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
+
+const (
 	// SpanAuthMiddleware is the span name for the auth middleware.
-	SpanAuthMiddleware = "auth_middleware"
+	SpanAuthMiddleware = "auth.middleware"
 
 	// SpanErrorMissingToken is the span name for missing token errors.
-	SpanErrorMissingToken = "missing_token"
+	SpanErrorMissingToken = "auth.middleware.missing_token" // #nosec G101: span name, not a credential
 
 	// SpanErrorTokenInvalid is the span name for invalid token errors.
-	SpanErrorTokenInvalid = "invalid_token"
+	SpanErrorTokenInvalid = "auth.middleware.invalid_token" // #nosec G101: span name, not a credential
 
 	// SpanStatusAuthenticated is the span status for successful authentication.
 	SpanStatusAuthenticated = "authenticated"
+)
 
+// -----------------------------------------------------------------------------
+// Span Attributes
+// Format: aion.<domain>.<attribute>
+// -----------------------------------------------------------------------------
+
+const (
 	// AttrAuthMiddlewareError is the attribute key used to log auth middleware errors.
-	AttrAuthMiddlewareError = "auth_mw.error"
+	AttrAuthMiddlewareError = "aion.auth.error"
 
 	// AttrAuthMiddlewareUserID is the attribute key used to log auth middleware user ID.
-	AttrAuthMiddlewareUserID = "auth_mw.user_id"
+	AttrAuthMiddlewareUserID = "aion.user_id"
 
 	// AttrAuthMiddlewareStatus is the attribute key used to log auth middleware status.
-	AttrAuthMiddlewareStatus = "auth_mw.status"
+	AttrAuthMiddlewareStatus = "aion.auth.status"
+)
 
+// =============================================================================
+// BUSINESS LOGIC - Status and Messages
+// =============================================================================
+
+const (
 	// StatusAuthenticated is the status string used when a request is authenticated.
 	StatusAuthenticated = "authenticated"
 

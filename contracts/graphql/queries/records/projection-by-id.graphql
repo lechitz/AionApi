@@ -1,0 +1,1 @@
+query RecordProjectionById($id: ID!) { recordProjectionById(id: $id) { recordId userId tagId description eventTimeUTC recordedAtUTC durationSeconds value source timezone status createdAtUTC updatedAtUTC lastEventType } }

@@ -13,8 +13,8 @@ import (
 )
 
 // ProcessMessage processes a chat message by forwarding it to the Aion-Chat service.
-func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message string) (*domain.ChatResult, error) {
-	tr := otel.Tracer(TracerChatService)
+func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message string, requestContext map[string]interface{}) (*domain.ChatResult, error) {
+	tr := otel.Tracer(TracerName)
 	ctx, span := tr.Start(ctx, SpanProcessMessage)
 	defer span.End()
 
@@ -24,15 +24,24 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 	)
 
 	s.logger.InfowCtx(ctx, LogProcessingChatMessage, LogKeyUserID, userID, LogKeyMessageLength, len(message))
-
-	req := &dto.InternalChatRequest{
-		UserID:  userID,
-		Message: message,
-		Context: map[string]interface{}{
-			ContextKeyTimezone: DefaultTimezone, // TODO: Get from user settings
-		},
+	if uiActionType, draftID := extractUIActionMetadata(requestContext); uiActionType != "" {
+		s.logger.InfowCtx(
+			ctx,
+			LogChatRequestIncludesUIAction,
+			LogKeyUserID, userID,
+			LogKeyUIActionType, uiActionType,
+			LogKeyDraftID, draftID,
+		)
 	}
 
+	// Fetch recent conversation history from cache (6 messages = 3 exchanges for context)
+	const historyLimit = 6
+	conversationHistory := s.fetchConversationHistory(ctx, userID, historyLimit)
+
+	// Build request with conversation context
+	req := buildChatRequest(userID, message, conversationHistory, requestContext)
+
+	// Call external Aion-Chat service
 	resp, err := s.aionChatClient.SendMessage(ctx, req)
 	if err != nil {
 		span.RecordError(err)
@@ -44,8 +53,10 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 		return nil, err
 	}
 
+	// Build result
 	result := &domain.ChatResult{
 		Response:      resp.Response,
+		UI:            resp.UI,
 		Sources:       convertSources(resp.Sources),
 		TokensUsed:    resp.TokensUsed,
 		FunctionCalls: extractFunctionNames(resp.FunctionCalls),
@@ -63,7 +74,26 @@ func (s *ChatService) ProcessMessage(ctx context.Context, userID uint64, message
 		LogKeyResponseLength, len(resp.Response),
 	)
 
+	// Best-effort sync audit persistence for UI actions.
+	s.persistAuditActionEvent(ctx, userID, requestContext, result)
+
+	// Save chat history asynchronously (non-blocking)
+	go s.saveChatInteraction(context.Background(), userID, message, resp.Response, resp.TokensUsed, resp.FunctionCalls)
+
 	return result, nil
+}
+
+func extractUIActionMetadata(requestContext map[string]interface{}) (string, string) {
+	if requestContext == nil {
+		return "", ""
+	}
+	uiAction, ok := requestContext[ContextKeyUIAction].(map[string]interface{})
+	if !ok || uiAction == nil {
+		return "", ""
+	}
+	actionType, _ := uiAction[ContextKeyUIActionType].(string)
+	draftID, _ := uiAction[ContextKeyDraftID].(string)
+	return actionType, draftID
 }
 
 // convertSources converts the sources from the internal response to domain format.

@@ -1,0 +1,1 @@
+query TagByName($name: String!) { tagByName(name: $name) { id userId name categoryId description icon createdAt updatedAt } }

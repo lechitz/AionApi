@@ -13,14 +13,13 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-// ---------- Helpers ----------
-
 func perfectTag() domain.Tag {
 	return domain.Tag{
 		UserID:      1,
 		CategoryID:  2,
 		Name:        "Read",
 		Description: "Daily reading practice",
+		Icon:        "📚",
 	}
 }
 
@@ -34,10 +33,14 @@ func makeCreateTagCmdFromDomain(d domain.Tag) input.CreateTagCommand {
 		UserID:      d.UserID,
 		CategoryID:  d.CategoryID,
 		Description: desc,
+		Icon: func() *string {
+			if d.Icon != "" {
+				return &d.Icon
+			}
+			return nil
+		}(),
 	}
 }
-
-// ---------- Tests ----------
 
 func TestCreateTag_ErrorToValidateCreateTagRequired_Name(t *testing.T) {
 	suite := setup.TagServiceTest(t)
@@ -60,6 +63,21 @@ func TestCreateTag_ErrorToValidateCreateTagRequired_DescriptionExceedLimit(t *te
 
 	tag := perfectTag()
 	tag.Description = strings.Repeat("x", 201) // > 200
+
+	cmd := makeCreateTagCmdFromDomain(tag)
+
+	created, err := suite.TagService.Create(suite.Ctx, cmd)
+
+	require.Error(t, err)
+	require.Equal(t, domain.Tag{}, created)
+}
+
+func TestCreateTag_ErrorToValidateCreateTagRequired_IconInvalid(t *testing.T) {
+	suite := setup.TagServiceTest(t)
+	defer suite.Ctrl.Finish()
+
+	tag := perfectTag()
+	tag.Icon = "work"
 
 	cmd := makeCreateTagCmdFromDomain(tag)
 
@@ -103,6 +121,7 @@ func TestCreateTag_ErrorToCreateTag(t *testing.T) {
 			CategoryID:  tag.CategoryID,
 			Name:        tag.Name,
 			Description: tag.Description,
+			Icon:        tag.Icon,
 		}).
 		Return(domain.Tag{}, errors.New(usecase.FailedToCreateTag))
 
@@ -133,11 +152,20 @@ func TestCreateTag_PtrOrEmpty_NilPointersBecomeEmptyStrings(t *testing.T) {
 		CategoryID:  tag.CategoryID,
 		Name:        tag.Name,
 		Description: "",
+		Icon:        usecase.DefaultTagIcon,
 	}
 
 	suite.TagRepository.EXPECT().
 		Create(gomock.Any(), expectedCreate).
 		Return(expectedCreate, nil)
+
+	suite.TagCache.EXPECT().
+		DeleteTagList(gomock.Any(), tag.UserID).
+		Return(nil)
+
+	suite.TagCache.EXPECT().
+		DeleteTagsByCategory(gomock.Any(), tag.CategoryID, tag.UserID).
+		Return(nil)
 
 	created, err := suite.TagService.Create(suite.Ctx, cmd)
 	require.NoError(t, err)
@@ -161,8 +189,17 @@ func TestCreateTag_Success(t *testing.T) {
 			CategoryID:  tag.CategoryID,
 			Name:        tag.Name,
 			Description: tag.Description,
+			Icon:        tag.Icon,
 		}).
 		Return(tag, nil)
+
+	suite.TagCache.EXPECT().
+		DeleteTagList(gomock.Any(), tag.UserID).
+		Return(nil)
+
+	suite.TagCache.EXPECT().
+		DeleteTagsByCategory(gomock.Any(), tag.CategoryID, tag.UserID).
+		Return(nil)
 
 	created, err := suite.TagService.Create(suite.Ctx, cmd)
 

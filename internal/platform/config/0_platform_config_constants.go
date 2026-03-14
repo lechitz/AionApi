@@ -32,6 +32,18 @@ const (
 
 	// MinDBMaxRetries is the minimum allowed value for the maximum number of retries.
 	MinDBMaxRetries = 1
+
+	// MinOutboxPublishInterval is the minimum allowed interval for one outbox publish loop.
+	MinOutboxPublishInterval = 1 * time.Second
+
+	// MinOutboxBatchSize is the minimum allowed number of outbox rows per publish batch.
+	MinOutboxBatchSize = 1
+
+	// MinRealtimeHeartbeatInterval is the minimum allowed SSE heartbeat interval.
+	MinRealtimeHeartbeatInterval = 1 * time.Second
+
+	// MinRealtimeSubscriberBuffer is the minimum allowed subscriber buffer size.
+	MinRealtimeSubscriberBuffer = 1
 )
 
 // ErrFailedToProcessEnvVars is returned when environment variables cannot be processed.
@@ -76,8 +88,20 @@ const (
 	ErrDBRetryIntervalMin   = "DB_CONNECT_RETRY_INTERVAL must be at least %v"
 	ErrDBMaxRetriesMin      = "DB_CONNECT_MAX_RETRIES must be at least %d"
 
-	ErrOtelEndpointEmpty      = "OTel Exporter endpoint cannot be empty"
-	ErrOtelCompressionInvalid = "OTel Exporter compression must be either 'none' or 'gzip', got: %s"
+	ErrOtelEndpointEmpty                     = "OTel Exporter endpoint cannot be empty"
+	ErrOtelCompressionInvalid                = "OTel Exporter compression must be either 'none' or 'gzip', got: %s"
+	ErrKafkaBrokersEmpty                     = "KAFKA_BROKERS cannot be empty"
+	ErrKafkaRecordEventsTopicEmpty           = "KAFKA_TOPIC_RECORD_EVENTS cannot be empty"
+	ErrKafkaRecordProjectionEventsTopicEmpty = "KAFKA_TOPIC_RECORD_PROJECTION_EVENTS cannot be empty"
+	ErrOutboxPublishIntervalMin              = "OUTBOX_PUBLISH_INTERVAL must be at least %v"
+	ErrOutboxBatchSizeMin                    = "OUTBOX_BATCH_SIZE must be at least %d"
+	ErrRealtimeStreamPathEmpty               = "REALTIME_STREAM_PATH is required"
+	ErrRealtimeStreamPathMustStart           = "REALTIME_STREAM_PATH must start with '/'"
+	ErrRealtimeStreamPathTooShort            = "REALTIME_STREAM_PATH must be longer than '/'"
+	ErrRealtimeStreamPathMustNotEndSlash     = "REALTIME_STREAM_PATH must not end with '/'"
+	ErrRealtimeHeartbeatIntervalMin          = "REALTIME_HEARTBEAT_INTERVAL must be at least %v"
+	ErrRealtimeSubscriberBufferMin           = "REALTIME_SUBSCRIBER_BUFFER must be at least %d"
+	ErrRealtimeConsumerGroupPrefixEmpty      = "REALTIME_CONSUMER_GROUP_PREFIX cannot be empty"
 
 	ErrAppContextReqMin      = "context request timeout must be at least %v"
 	ErrAppShutdownTimeoutMin = "shutdown timeout must be at least %s second"

@@ -18,6 +18,27 @@ const (
 	// Email is the key for the user's email.
 	Email = "email"
 
+	// Locale is the key for the user's locale.
+	Locale = "locale"
+
+	// Timezone is the key for the user's timezone.
+	Timezone = "timezone"
+
+	// Location is the key for the user's location.
+	Location = "location"
+
+	// Bio is the key for the user's bio.
+	Bio = "bio"
+
+	// AvatarURL is the key for the user's avatar URL.
+	AvatarURL = "avatar_url"
+
+	// OnboardingCompleted is the key for the user's onboarding completion status.
+	OnboardingCompleted = "onboarding_completed"
+
+	// Role is the key for a single user's role.
+	Role = "role"
+
 	// Roles is the key for the user's role.
 	Roles = "roles"
 

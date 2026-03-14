@@ -1,5 +1,9 @@
 // Package crypto implements output.JWTKeyGenerator.
+//
+//revive:disable:var-naming // package name intentionally matches domain terminology used across the codebase
 package crypto
+
+//revive:enable:var-naming
 
 import (
 	"crypto/rand"

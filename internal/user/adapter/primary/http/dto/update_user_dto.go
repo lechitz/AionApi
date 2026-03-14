@@ -22,14 +22,43 @@ type UpdateUserRequest struct {
 	// Email is the new email address for the user.
 	// Example: "alice@example.com"
 	Email *string `json:"email,omitempty" example:"alice@example.com"`
+
+	// Locale is the optional locale (e.g., "en-US").
+	Locale *string `json:"locale,omitempty" example:"en-US"`
+
+	// Timezone is the optional timezone (IANA).
+	Timezone *string `json:"timezone,omitempty" example:"America/Sao_Paulo"`
+
+	// Location is an optional city/country description.
+	Location *string `json:"location,omitempty" example:"São Paulo, BR"`
+
+	// Bio is an optional short bio for the user.
+	Bio *string `json:"bio,omitempty" example:"Backend engineer passionate about observability."`
+
+	// AvatarURL is an optional URL for the user's avatar.
+	AvatarURL *string `json:"avatar_url,omitempty" example:"https://example.com/avatar.png"`
+
+	// OnboardingCompleted indicates if the user has completed the onboarding flow.
+	OnboardingCompleted *bool `json:"onboarding_completed,omitempty" example:"true"`
+}
+
+// Validate ensures provided fields meet basic constraints.
+func (r UpdateUserRequest) Validate() error {
+	return validateOptionalProfileFields(r.Locale, r.Timezone, r.Location, r.Bio, r.AvatarURL)
 }
 
 // ToCommand converts the request to a domain command.
 func (r UpdateUserRequest) ToCommand() input.UpdateUserCommand {
 	return input.UpdateUserCommand{
-		Name:     r.Name,
-		Username: r.Username,
-		Email:    r.Email,
+		Name:                normalizeOptional(r.Name),
+		Username:            normalizeOptional(r.Username),
+		Email:               normalizeOptional(r.Email),
+		Locale:              normalizeOptional(r.Locale),
+		Timezone:            normalizeOptional(r.Timezone),
+		Location:            normalizeOptional(r.Location),
+		Bio:                 normalizeOptional(r.Bio),
+		AvatarURL:           normalizeOptional(r.AvatarURL),
+		OnboardingCompleted: r.OnboardingCompleted,
 	}
 }
 
@@ -54,4 +83,22 @@ type UpdateUserResponse struct {
 	// ID is the user's unique identifier.
 	// Example: 42
 	ID uint64 `json:"user_id" example:"42"`
+
+	// Locale returned after update.
+	Locale *string `json:"locale,omitempty" example:"en-US"`
+
+	// Timezone returned after update.
+	Timezone *string `json:"timezone,omitempty" example:"America/Sao_Paulo"`
+
+	// Location returned after update.
+	Location *string `json:"location,omitempty" example:"São Paulo, BR"`
+
+	// Bio returned after update.
+	Bio *string `json:"bio,omitempty" example:"Backend engineer passionate about observability."`
+
+	// AvatarURL returned after update.
+	AvatarURL *string `json:"avatar_url,omitempty" example:"https://example.com/avatar.png"`
+
+	// OnboardingCompleted indicates if the user has completed the onboarding flow.
+	OnboardingCompleted bool `json:"onboarding_completed" example:"true"`
 }

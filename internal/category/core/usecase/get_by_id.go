@@ -29,6 +29,14 @@ func (s *Service) GetByID(ctx context.Context, categoryID, userID uint64) (domai
 		return domain.Category{}, errors.New(CategoryIDIsRequired)
 	}
 
+	span.AddEvent(EventCheckCache)
+	cachedCategory, err := s.CategoryCache.GetCategory(ctx, categoryID, userID)
+	if err == nil && cachedCategory.ID != 0 {
+		span.AddEvent(EventCacheHit)
+		span.SetStatus(codes.Ok, StatusRetrievedByID)
+		return cachedCategory, nil
+	}
+
 	span.AddEvent(EventRepositoryGet)
 	categoryDB, err := s.CategoryRepository.GetByID(ctx, categoryID, userID)
 	if err != nil {
@@ -36,6 +44,15 @@ func (s *Service) GetByID(ctx context.Context, categoryID, userID uint64) (domai
 		span.SetStatus(codes.Error, FailedToGetCategoryByID)
 		s.Logger.ErrorwCtx(ctx, FailedToGetCategoryByID, commonkeys.CategoryID, strconv.FormatUint(categoryID, 10), commonkeys.Error, err.Error())
 		return domain.Category{}, errors.New(FailedToGetCategoryByID)
+	}
+
+	span.AddEvent(EventSaveToCache)
+	err = s.CategoryCache.SaveCategory(ctx, categoryDB, 0) // use default TTL
+	if err != nil {
+		s.Logger.WarnwCtx(ctx, WarnFailedToSaveCategoryToCache,
+			commonkeys.CategoryID, categoryDB.ID,
+			commonkeys.Error, err.Error(),
+		)
 	}
 
 	span.AddEvent(EventSuccess)

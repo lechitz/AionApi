@@ -1,60 +1,64 @@
-# HTTP Middleware — Recovery (Platform)
+# HTTP Recovery Middleware
 
-**Folder:** `internal/platform/server/http/middleware/recovery`
+**Path:** `internal/platform/server/http/middleware/recovery`
 
-## Responsibility
+## Overview
 
-* Catch **panics** anywhere in the HTTP pipeline and convert them into a safe **500 Internal Server Error**.
-* Guarantee a **request ID** on the response (generate one if missing) to aid correlation.
-* Delegate response formatting + logging to the platform **Generic Recovery Handler**.
-* Preserve **observability**: mark spans as error and attach useful attributes.
+This package provides panic-recovery middleware for the HTTP server.
+Its only responsibility is to intercept panics in the request pipeline and delegate standardized error handling to the generic recovery handler.
 
-## How it works
+## Package Scope
 
-* Constructor: `New(recoveryHandler *generic.Handler) func(http.Handler) http.Handler`
+| Area | Responsibility |
+| --- | --- |
+| Panic interception | Catch runtime panics from downstream handlers/middlewares |
+| Error correlation | Generate a unique error identifier per recovered panic |
+| Delegation | Forward recovered payload to `generic/handler.RecoveryHandler` |
+| Safety | Prevent process crash and preserve API availability |
 
-    * Wraps `next` with a `defer`/`recover()` guard.
-    * If a panic occurs:
+## Files
 
-        * Ensures an `X-Request-ID` (creates a UUID when absent).
-        * Calls the platform **Generic Recovery** controller to:
+| File | Purpose |
+| --- | --- |
+| `recover_middleware.go` | Exposes `New(recoveryHandler)` middleware with `defer` + `recover` flow |
 
-            * log with structure, include request ID
-            * capture stack (internally)
-            * emit an OTel span with `status=Error`
-            * return a standardized 500 JSON body.
-* Depends only on the **router port** middleware signature (`func(http.Handler) http.Handler`).
+## Public API Reference
+
+| Function | Returns | Description |
+| --- | --- | --- |
+| `New(recoveryHandler *handler.Handler)` | `func(http.Handler) http.Handler` | Wraps request execution and delegates panic handling to generic recovery handler |
+
+## Runtime Flow
+
+1. Request enters middleware.
+2. Middleware executes downstream chain with a `defer` recovery guard.
+3. If a panic occurs, middleware generates `errorID` using `uuid.New().String()`.
+4. Middleware calls `recoveryHandler.RecoveryHandler(w, r, rec, errorID)`.
+5. The generic handler writes the sanitized HTTP 500 response and telemetry/log details.
 
 ## Usage
 
-Apply globally in the HTTP composer so it wraps **all** routes and middlewares:
-
 ```go
-// composer.go
-r.Use(recovery.New(genericHandler))  // <- outermost guard
+r.Use(recovery.New(genericRecoveryHandler))
 ```
 
-> Order matters: keep Recovery **first** in the chain so it can catch panics from every subsequent middleware/handler.
-> If you also use `requestid` middleware, it can come after Recovery—Recovery will still generate a fallback request ID if needed.
+## Design Notes
 
-## Observability
+- Keep recovery middleware thin: detect panic and delegate; do not format responses directly here.
+- Place this middleware high in the chain so panics from subsequent middlewares are also recovered.
+- Keep business/domain behavior outside middleware scope.
 
-* The Recovery handler:
+## Package Improvements
 
-    * starts/annotates an OTel span for the failing request
-    * sets canonical attributes (e.g., request ID)
-    * marks span `Error` and records the panic message/stack (without leaking it to clients).
+- Add dedicated middleware tests to validate panic interception and delegation behavior.
+- Validate nil `recoveryHandler` at construction time or document expected non-nil contract explicitly.
+- Consider exposing a deterministic `errorID` generator interface for easier testability.
+- Add a short package-level example showing recommended middleware ordering in the HTTP stack.
 
-## Conventions
+---
 
-* Keep client messages **generic** (no internal details). Detailed error context goes to logs/spans.
-* Never perform domain logic here—this is a **platform** concern only.
-* Do not import concrete routers; wire via the **router port**.
-
-## Testing hints
-
-* Build a tiny handler that `panic`s and mount it behind the middleware:
-
-    * Assert response `500`, JSON envelope shape, and presence of `X-Request-ID`.
-    * Verify no server crash and that logs/spans mark the request as error.
-* When combined with `requestid` middleware, assert the **same** request ID flows through.
+<!-- doc-nav:start -->
+## Navigation
+- [Back to parent layer](../README.md)
+- [Back to root README](../../../../../../README.md)
+<!-- doc-nav:end -->

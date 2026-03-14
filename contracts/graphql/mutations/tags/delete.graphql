@@ -1,0 +1,1 @@
+mutation SoftDeleteTag($input: DeleteTagInput!) { softDeleteTag(input: $input) }

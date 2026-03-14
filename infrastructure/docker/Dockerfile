@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1.4
-FROM golang:1.24 AS builder
+# Use Go 1.25 to satisfy go.mod requirement (go 1.25.4 locally).
+FROM golang:1.25 AS builder
 
 WORKDIR /app
 
@@ -15,16 +16,18 @@ ARG BUILD_LDFLAGS="-s -w"
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -ldflags="${BUILD_LDFLAGS}" -o aion-api ./cmd/aion-api
+    go build -ldflags="${BUILD_LDFLAGS}" -o aion-api ./cmd/api && \
+    go build -ldflags="${BUILD_LDFLAGS}" -o aion-api-outbox-publisher ./cmd/outbox-publisher
 
 FROM alpine:3.19.1
 
 WORKDIR /app
 
-COPY --from=builder /app/aion-api .
+COPY --from=builder /app/aion-api /usr/local/bin/aion-api
+COPY --from=builder /app/aion-api-outbox-publisher /usr/local/bin/aion-api-outbox-publisher
 
-COPY infrastructure/docker/scripts/entrypoint.sh .
+COPY infrastructure/docker/scripts/entrypoint.sh /entrypoint.sh
 
-RUN chmod +x ./entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

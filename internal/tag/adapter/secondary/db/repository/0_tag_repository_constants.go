@@ -2,85 +2,120 @@
 // This file centralizes all magic strings/constants used by the repository.
 package repository
 
-// Tracer & span names (OpenTelemetry)
+// =============================================================================
+// TRACING - OpenTelemetry Instrumentation
+// =============================================================================
 
 // TracerName is the tracer name used by the Tag repository.
-const TracerName = "TagRepository"
+// Format: aionapi.<domain>.<layer> .
+const TracerName = "aionapi.tag.repository"
 
-// SpanCreateRepo is the span name for creating a Tag.
-const SpanCreateRepo = "Create"
+// -----------------------------------------------------------------------------
+// Span Names
+// Format: <domain>.<operation>
+// -----------------------------------------------------------------------------
 
-// SpanGetByNameRepo is the span name for fetching a Tag by name.
-const SpanGetByNameRepo = "GetByName"
+const (
+	// SpanCreateRepo is the span name for creating a Tag.
+	SpanCreateRepo = "tag.repository.create"
 
-// SpanGetAllRepo is the span name for fetching all Tags for a user.
-const SpanGetAllRepo = "GetAll"
+	// SpanUpdateRepo is the span name for updating a Tag.
+	SpanUpdateRepo = "tag.repository.update"
 
-// SpanGetByCategoryRepo is the span name for fetching Tags by category.
-const SpanGetByCategoryRepo = "GetByCategory"
+	// SpanGetByNameRepo is the span name for fetching a Tag by name.
+	SpanGetByNameRepo = "tag.repository.get_by_name"
 
-// Span attribute values
+	// SpanGetAllRepo is the span name for fetching all Tags for a user.
+	SpanGetAllRepo = "tag.repository.get_all"
 
-// OpCreate is the attribute value for the "create" operation.
-const OpCreate = "create"
+	// SpanGetByCategoryRepo is the span name for fetching Tags by category.
+	SpanGetByCategoryRepo = "tag.repository.get_by_category"
 
-// OpGetByName is the attribute value for the "get by name" operation.
-const OpGetByName = "get_by_name"
+	// SpanSoftDeleteRepo is the span name for soft-deleting a Tag.
+	SpanSoftDeleteRepo = "tag.repository.soft_delete"
+)
 
-// OpGetByID is the attribute value for the "get by id" operation.
-const OpGetByID = "get_by_id"
+// -----------------------------------------------------------------------------
+// Span Attributes
+// Format: aion.<domain>.<attribute>
+// -----------------------------------------------------------------------------
 
-// OpGetAll is the attribute value for the "get all" operation.
-const OpGetAll = "get_all"
+const (
+	// OpCreate is the attribute value for the "create" operation.
+	OpCreate = "create"
 
-// OpGetByCategory is the attribute value for the "get by category" operation.
-const OpGetByCategory = "get_by_category"
+	// OpUpdate is the attribute value for the "update" operation.
+	OpUpdate = "update"
 
-// Status messages (used with span.SetStatus/SetStatus + logs)
+	// OpGetByName is the attribute value for the "get by name" operation.
+	OpGetByName = "get_by_name"
 
-// StatusTagCreated indicates the Tag (handler) was created successfully.
-const StatusTagCreated = "Tag created successfully"
+	// OpGetByID is the attribute value for the "get by id" operation.
+	OpGetByID = "get_by_id"
 
-// StatusRetrievedByID indicates a Tag was retrieved by ID successfully.
-const StatusRetrievedByID = "Tag retrieved by id successfully"
+	// OpGetAll is the attribute value for the "get all" operation.
+	OpGetAll = "get_all"
 
-// StatusRetrievedAll indicates all Tags were retrieved successfully.
-const StatusRetrievedAll = "Tags retrieved successfully"
+	// OpGetByCategory is the attribute value for the "get by category" operation.
+	OpGetByCategory = "get_by_category"
 
-// StatusRetrievedByCategory indicates Tags were retrieved by category successfully.
-const StatusRetrievedByCategory = "Tags retrieved by category successfully"
+	// OpSoftDelete is the attribute value for the "soft delete" operation.
+	OpSoftDelete = "soft_delete"
+)
 
-// StatusRetrievedByName indicates a Tag was retrieved by Name successfully.
-const StatusRetrievedByName = "Tag retrieved by name successfully"
+// -----------------------------------------------------------------------------
+// Status Descriptions
+// -----------------------------------------------------------------------------
 
-// StatusFetchedAll indicates all categories were retrieved successfully.
-const StatusFetchedAll = "all categories retrieved successfully"
+const (
+	// StatusTagCreated indicates the Tag was created successfully.
+	StatusTagCreated = "tag created successfully"
 
-// StatusSoftDeleted indicates a Tag was soft-deleted successfully.
-const StatusSoftDeleted = "Tag soft deleted successfully"
+	// StatusRetrievedByID indicates a Tag was retrieved by ID successfully.
+	StatusRetrievedByID = "tag retrieved by id successfully"
 
-// StatusUpdated indicates a Tag was updated successfully.
-const StatusUpdated = "Tag updated successfully"
+	// StatusRetrievedAll indicates all Tags were retrieved successfully.
+	StatusRetrievedAll = "tags retrieved successfully"
 
-// Error/log messages
+	// StatusRetrievedByCategory indicates Tags were retrieved by category successfully.
+	StatusRetrievedByCategory = "tags retrieved by category successfully"
 
-// ErrCreateTagMsg is the error message used when creation fails.
-const ErrCreateTagMsg = "error creating Tag"
+	// StatusRetrievedByName indicates a Tag was retrieved by Name successfully.
+	StatusRetrievedByName = "tag retrieved by name successfully"
 
-// ErrGetTagByIDMsg is the error message used when a generic get fails.
-const ErrGetTagByIDMsg = "error getting Tag by ID"
+	// StatusFetchedAll indicates all categories were retrieved successfully.
+	StatusFetchedAll = "all categories retrieved successfully"
 
-// ErrGetAllTagsMsg is the error message used when getting all Tags fails.
-const ErrGetAllTagsMsg = "error getting all Tags for user"
+	// StatusSoftDeleted indicates a Tag was soft-deleted successfully.
+	StatusSoftDeleted = "tag soft deleted successfully"
 
-// ErrGetTagsByCategoryMsg is the error message used when getting Tags by category fails.
-const ErrGetTagsByCategoryMsg = "error getting Tags by category"
+	// StatusUpdated indicates a Tag was updated successfully.
+	StatusUpdated = "tag updated successfully"
+)
 
-// ErrGetTagByNameMsg is the error message used when a generic get fails.
-const ErrGetTagByNameMsg = "error getting Tag by name"
+// =============================================================================
+// BUSINESS LOGIC - Error Messages
+// =============================================================================
 
-// ErrTagNotFoundMsg is the error message used when a Tag is not found.
-const ErrTagNotFoundMsg = "Tag not found"
+const (
+	// ErrCreateTagMsg is the error message used when creation fails.
+	ErrCreateTagMsg = "error creating tag"
 
-// ErrNoTagsFoundMsg is the error message used when no Tags are found for a user.
-const ErrNoTagsFoundMsg = "no Tags found for user"
+	// ErrGetTagByIDMsg is the error message used when a generic get fails.
+	ErrGetTagByIDMsg = "error getting tag by ID"
+
+	// ErrGetAllTagsMsg is the error message used when getting all Tags fails.
+	ErrGetAllTagsMsg = "error getting all tags for user"
+
+	// ErrGetTagsByCategoryMsg is the error message used when getting Tags by category fails.
+	ErrGetTagsByCategoryMsg = "error getting tags by category"
+
+	// ErrGetTagByNameMsg is the error message used when a generic get fails.
+	ErrGetTagByNameMsg = "error getting tag by name"
+
+	// ErrTagNotFoundMsg is the error message used when a Tag is not found.
+	ErrTagNotFoundMsg = "tag not found"
+
+	// ErrNoTagsFoundMsg is the error message used when no Tags are found for a user.
+	ErrNoTagsFoundMsg = "no tags found for user"
+)

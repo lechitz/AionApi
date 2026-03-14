@@ -10,6 +10,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 
+	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
 	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
 
 	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
@@ -19,7 +20,7 @@ import (
 func (h *Handler) RecoveryHandler(w http.ResponseWriter, r *http.Request, recovered interface{}, errorID string) {
 	ctx := r.Context()
 
-	reqID := r.Header.Get(commonkeys.XRequestID)
+	reqID, _ := ctx.Value(ctxkeys.RequestID).(string)
 	stack := string(debug.Stack())
 	ip := r.RemoteAddr
 	userAgent := r.UserAgent()
