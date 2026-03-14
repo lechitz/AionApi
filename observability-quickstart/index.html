@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://lechitz.github.io/AionApi/platform/">
+        <link rel="canonical" href="https://lechitz.github.io/AionApi/observability-quickstart/">
       
       
-        <link rel="prev" href="../architecture/">
+        <link rel="prev" href="../collections/">
       
       
-        <link rel="next" href="../rest-api/">
+        <link rel="next" href="../ollama-gpu/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Platform Runtime - AionApi Docs</title>
+        <title>Observability Quickstart - AionApi Docs</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#platform-runtime" class="md-skip">
+        <a href="#observability-quickstart" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Platform Runtime
+              Observability Quickstart
             
           </span>
         </div>
@@ -390,8 +390,6 @@
       
   
   
-    
-  
   
   
     
@@ -404,11 +402,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
@@ -429,7 +429,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -472,37 +472,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Platform Runtime
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../platform/" class="md-nav__link">
         
   
   
@@ -518,131 +491,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#platform-surface" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Platform Surface
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration Model
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bootstrap-composition-root" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Bootstrap (Composition Root)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#http-runtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HTTP Runtime
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="HTTP Runtime">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#middleware-order" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Middleware Order
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#graphql-runtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        GraphQL Runtime
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#observability-runtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Observability Runtime
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#operational-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Operational Commands
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-step" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Step
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -860,8 +708,10 @@
       
   
   
+    
   
   
+  
     
     
     
@@ -872,13 +722,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
@@ -899,7 +747,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -914,10 +762,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../observability-quickstart/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability Quickstart
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -933,6 +808,114 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apply-observability-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apply Observability Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validate-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validate Services
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generate-traffic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generate Traffic
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#grafana-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grafana Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loki-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loki Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Step
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1145,10 +1128,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#platform-surface" class="md-nav__link">
+  <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform Surface
+        Prerequisites
       
     </span>
   </a>
@@ -1156,10 +1139,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration-model" class="md-nav__link">
+  <a href="#apply-observability-setup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Configuration Model
+        Apply Observability Setup
       
     </span>
   </a>
@@ -1167,10 +1150,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bootstrap-composition-root" class="md-nav__link">
+  <a href="#validate-services" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bootstrap (Composition Root)
+        Validate Services
       
     </span>
   </a>
@@ -1178,38 +1161,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#http-runtime" class="md-nav__link">
+  <a href="#generate-traffic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        HTTP Runtime
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="HTTP Runtime">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#middleware-order" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Middleware Order
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#graphql-runtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        GraphQL Runtime
+        Generate Traffic
       
     </span>
   </a>
@@ -1217,10 +1172,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#observability-runtime" class="md-nav__link">
+  <a href="#grafana-verification" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Observability Runtime
+        Grafana Verification
       
     </span>
   </a>
@@ -1228,10 +1183,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#operational-commands" class="md-nav__link">
+  <a href="#loki-verification" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Operational Commands
+        Loki Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
       
     </span>
   </a>
@@ -1269,134 +1235,68 @@
   
 
 
-<h1 id="platform-runtime">Platform Runtime<a class="headerlink" href="#platform-runtime" title="Permanent link">&para;</a></h1>
-<p>This page documents the cross-cutting runtime layer: configuration, bootstrap wiring, HTTP/GraphQL server composition, and observability setup.</p>
-<h2 id="platform-surface">Platform Surface<a class="headerlink" href="#platform-surface" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>internal/platform/
-  bootstrap/
-  config/
-  server/
-    http/
-    graph/
-  observability/
+<h1 id="observability-quickstart">Observability Quickstart<a class="headerlink" href="#observability-quickstart" title="Permanent link">&para;</a></h1>
+<p>Use this guide to apply and validate the local observability stack (Prometheus, Grafana, Jaeger, Loki).</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Docker and Docker Compose running</li>
+<li>Dev environment available (<code>infrastructure/docker/environments/dev</code>)</li>
+<li>Local stack bootstrapped (<code>make dev</code>)</li>
+</ul>
+<h2 id="apply-observability-setup">Apply Observability Setup<a class="headerlink" href="#apply-observability-setup" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>./infrastructure/observability/scripts/setup-improvements.sh
 </code></pre></div>
-<h2 id="configuration-model">Configuration Model<a class="headerlink" href="#configuration-model" title="Permanent link">&para;</a></h2>
-<p>Configuration is loaded from environment variables into a typed struct with validation and normalization.</p>
+<p>The script restarts required services and performs baseline checks.</p>
+<h2 id="validate-services">Validate Services<a class="headerlink" href="#validate-services" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Area</th>
-<th>Examples</th>
+<th>Service</th>
+<th>URL</th>
+<th>Expected</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>HTTP</td>
-<td><code>SERVER_HTTP_PORT</code>, <code>SERVER_HTTP_CONTEXT</code>, <code>SHUTDOWN_TIMEOUT</code></td>
+<td>Grafana</td>
+<td><code>http://localhost:3000</code></td>
+<td>Login page available (<code>aion/aion</code>)</td>
 </tr>
 <tr>
-<td>GraphQL</td>
-<td><code>GRAPHQL_PATH</code>, <code>GRAPHQL_TIMEOUT</code>, <code>GRAPHQL_PLAYGROUND</code></td>
+<td>Prometheus</td>
+<td><code>http://localhost:9090</code></td>
+<td>Targets up</td>
 </tr>
 <tr>
-<td>Database</td>
-<td><code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_MAX_OPEN_CONNS</code></td>
-</tr>
-<tr>
-<td>Cache</td>
-<td><code>CACHE_ADDR</code>, <code>CACHE_DB</code></td>
-</tr>
-<tr>
-<td>Observability</td>
-<td><code>OTEL_EXPORTER_OTLP_ENDPOINT</code>, <code>OTEL_SERVICE_NAME</code></td>
+<td>Jaeger</td>
+<td><code>http://localhost:16686</code></td>
+<td>Service list available</td>
 </tr>
 </tbody>
 </table>
-<h2 id="bootstrap-composition-root">Bootstrap (Composition Root)<a class="headerlink" href="#bootstrap-composition-root" title="Permanent link">&para;</a></h2>
-<p>Bootstrap builds concrete adapters and returns application dependencies plus cleanup logic.</p>
-<p>Responsibilities:</p>
+<h2 id="generate-traffic">Generate Traffic<a class="headerlink" href="#generate-traffic" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..50<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8080/aion/health<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre></div>
+<p>Then confirm traces and metrics appear in dashboards.</p>
+<h2 id="grafana-verification">Grafana Verification<a class="headerlink" href="#grafana-verification" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Connect Postgres/Redis and initialize providers.</li>
-<li>Instantiate repositories/stores implementing output ports.</li>
-<li>Build usecases implementing input ports.</li>
-<li>Return <code>AppDependencies</code> and graceful <code>cleanup(ctx)</code>.</li>
+<li>Open <strong>AionAPI - RED Metrics Dashboard (Professional)</strong>.</li>
+<li>Confirm latency, error-rate, and throughput panels are populated.</li>
+<li>Use trace links from exemplars to jump into Jaeger.</li>
 </ol>
-<h2 id="http-runtime">HTTP Runtime<a class="headerlink" href="#http-runtime" title="Permanent link">&para;</a></h2>
-<p>HTTP uses a router port abstraction with a <code>chi</code> implementation.</p>
-<table>
-<thead>
-<tr>
-<th>Part</th>
-<th>Responsibility</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Router port</td>
-<td>Framework-agnostic contract</td>
-</tr>
-<tr>
-<td>Middleware</td>
-<td>Recovery, request ID, auth and policy chain</td>
-</tr>
-<tr>
-<td>Composer</td>
-<td>Route mounting and global defaults</td>
-</tr>
-<tr>
-<td>Generic handlers</td>
-<td>Health, 404/405, and centralized error mapping</td>
-</tr>
-</tbody>
-</table>
-<h3 id="middleware-order">Middleware Order<a class="headerlink" href="#middleware-order" title="Permanent link">&para;</a></h3>
-<p>Keep recovery outermost and request-id early to preserve traceability across logs and spans.</p>
-<h2 id="graphql-runtime">GraphQL Runtime<a class="headerlink" href="#graphql-runtime" title="Permanent link">&para;</a></h2>
-<p>GraphQL is mounted in platform server and delegates to context controllers/resolvers.</p>
+<h2 id="loki-verification">Loki Verification<a class="headerlink" href="#loki-verification" title="Permanent link">&para;</a></h2>
+<p>In Grafana Explore, choose Loki datasource and run:</p>
+<div class="highlight"><pre><span></span><code>{container_name=&quot;/aion-api-dev&quot;} | json
+</code></pre></div>
+<p>Filter by fields like <code>trace_id</code> and <code>request_id</code> to correlate logs with traces.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Schema modules live under <code>internal/adapter/primary/graphql/schema/modules/</code>.</li>
-<li>Regenerate runtime artifacts with <code>make graphql</code>.</li>
-<li>Keep controllers thin and usecases authoritative.</li>
+<li>Empty dashboards: verify Prometheus scrape targets are healthy.</li>
+<li>No traces in Jaeger: check OTLP endpoint env vars in API container.</li>
+<li>Missing logs in Loki: verify Fluent Bit container status and labels.</li>
 </ul>
-<h2 id="observability-runtime">Observability Runtime<a class="headerlink" href="#observability-runtime" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Signal</th>
-<th>Stack</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Traces</td>
-<td>OpenTelemetry + OTLP exporter + Jaeger</td>
-</tr>
-<tr>
-<td>Metrics</td>
-<td>Prometheus + Grafana dashboards</td>
-</tr>
-<tr>
-<td>Logs</td>
-<td>Structured logs + Fluent Bit/Loki integration</td>
-</tr>
-</tbody>
-</table>
-<p>Recommended local environment:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">OTEL_EXPORTER_OTLP_ENDPOINT</span><span class="o">=</span><span class="s2">&quot;http://localhost:4318&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">OTEL_SERVICE_NAME</span><span class="o">=</span><span class="s2">&quot;AionApi&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">OTEL_SERVICE_VERSION</span><span class="o">=</span><span class="s2">&quot;0.1.0&quot;</span>
-</code></pre></div>
-<h2 id="operational-commands">Operational Commands<a class="headerlink" href="#operational-commands" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>make<span class="w"> </span>dev-up
-make<span class="w"> </span>dev-down
-make<span class="w"> </span>verify
-make<span class="w"> </span>docs-build
-</code></pre></div>
 <h2 id="next-step">Next Step<a class="headerlink" href="#next-step" title="Permanent link">&para;</a></h2>
-<ul>
-<li>API usage: <a href="../graphql-api/">GraphQL Guide</a></li>
-<li>Operational validation: <a href="../observability-quickstart/">Observability Quickstart</a></li>
-</ul>
+<p>Read <a href="../platform/">Platform Runtime</a> for runtime-level observability wiring and conventions.</p>
 
 
 

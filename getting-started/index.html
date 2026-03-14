@@ -6,28 +6,35 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Backend Go — Hexagonal, REST/GraphQL, Observability">
+        <meta name="description" content="Production-grade Go backend with Hexagonal Architecture, REST/GraphQL APIs, and observability.">
       
       
       
+        <link rel="canonical" href="https://lechitz.github.io/AionApi/getting-started/">
       
-        <link rel="prev" href="../architecture/">
       
+        <link rel="prev" href="../overview/">
+      
+      
+        <link rel="next" href="../architecture/">
       
       
         
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <link rel="icon" href="../assets/logo/Aion.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
-        <title>Getting Started - AionApi</title>
+        <title>Getting Started - AionApi Docs</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -41,10 +48,12 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../assets/stylesheets/extra.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -55,7 +64,14 @@
   </head>
   
   
-    <body dir="ltr">
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="blue">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -80,10 +96,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="AionApi" class="md-header__button md-logo" aria-label="AionApi" data-md-component="logo">
+    <a href=".." title="AionApi Docs" class="md-header__button md-logo" aria-label="AionApi Docs" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo/Aion.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -94,7 +109,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            AionApi
+            AionApi Docs
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -106,6 +121,18 @@
         </div>
       </div>
     </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
     
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
@@ -136,6 +163,8 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
       
     </form>
     <div class="md-search__output">
@@ -190,13 +219,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="AionApi" class="md-nav__button md-logo" aria-label="AionApi" data-md-component="logo">
+    <a href=".." title="AionApi Docs" class="md-nav__button md-logo" aria-label="AionApi Docs" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo/Aion.png" alt="logo">
 
     </a>
-    AionApi
+    AionApi Docs
   </label>
   
     <div class="md-nav__source">
@@ -217,6 +245,60 @@
       
   
   
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Start Here
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Start Here
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
   
   
     <li class="md-nav__item">
@@ -227,7 +309,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Introduction
   
 
     
@@ -239,22 +321,23 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
   
     <li class="md-nav__item">
-      <a href="../architecture/" class="md-nav__link">
+      <a href="../overview/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Architecture
+    Overview
   
 
     
@@ -266,9 +349,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
     
@@ -334,17 +418,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tldr-fast-path" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TL;DR (fast path)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -356,10 +429,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#repository-layout-essentials" class="md-nav__link">
+  <a href="#1-clone-and-install-tools" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Repository layout (essentials)
+        1) Clone and Install Tools
       
     </span>
   </a>
@@ -367,10 +440,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#environment-configuration" class="md-nav__link">
+  <a href="#2-start-local-stack" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Environment configuration
+        2) Start Local Stack
       
     </span>
   </a>
@@ -378,10 +451,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bring-up-the-dev-stack" class="md-nav__link">
+  <a href="#3-apply-migrations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bring up the DEV stack
+        3) Apply Migrations
       
     </span>
   </a>
@@ -389,22 +462,77 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#database-migrations-seeds" class="md-nav__link">
+  <a href="#4-optional-seeds" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Database: migrations &amp; seeds
+        4) Optional Seeds
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Database: migrations &amp; seeds">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-validate-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5) Validate Health
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hot-reload-dev" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hot Reload (Dev)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#codegen-and-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codegen and Tests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-quick-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Quick Checks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Quick Checks">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#install-migrate-once" class="md-nav__link">
+  <a href="#rest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Install migrate (once)
+        REST
       
     </span>
   </a>
@@ -412,32 +540,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#environment-variables-expected-by-migration-targets" class="md-nav__link">
+  <a href="#graphql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Environment variables expected by migration targets
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#applyrollback-migrations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Apply/rollback migrations
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#seeds" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Seeds
+        GraphQL
       
     </span>
   </a>
@@ -450,10 +556,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tests-coverage-code-quality" class="md-nav__link">
+  <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tests, coverage &amp; code quality
+        Troubleshooting
       
     </span>
   </a>
@@ -461,104 +567,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#codegen-graphql-mocks" class="md-nav__link">
+  <a href="#next-step" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Codegen (GraphQL &amp; Mocks)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-the-api-rest" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using the API (REST)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Using the API (REST)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create-user" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Create user
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#login-obtain-token" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Login (obtain token)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#list-users-protected-route" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        List users (protected route)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-the-api-graphql" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using the API (GraphQL)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#observability-optional-in-dev" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Observability (optional in DEV)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tips-troubleshooting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tips &amp; Troubleshooting
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#whats-next" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What’s next
+        Next Step
       
     </span>
   </a>
@@ -572,6 +584,14 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
@@ -579,15 +599,69 @@
   
   
   
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="https://lechitz.github.io/AionApi/swagger-ui/" class="md-nav__link">
+      <a href="../architecture/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Swagger UI
+    System Design
   
 
     
@@ -596,6 +670,505 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rest-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../graphql-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../graphql-playground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL Playground
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../graphql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL Artifacts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../collections/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Collections
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform & Ops
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Platform & Ops
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability-quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ollama-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ollama GPU (Optional)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagram/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagrams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../swagger-ui-bundle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Swagger UI Bundle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -627,17 +1200,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tldr-fast-path" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TL;DR (fast path)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -649,10 +1211,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#repository-layout-essentials" class="md-nav__link">
+  <a href="#1-clone-and-install-tools" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Repository layout (essentials)
+        1) Clone and Install Tools
       
     </span>
   </a>
@@ -660,10 +1222,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#environment-configuration" class="md-nav__link">
+  <a href="#2-start-local-stack" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Environment configuration
+        2) Start Local Stack
       
     </span>
   </a>
@@ -671,10 +1233,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bring-up-the-dev-stack" class="md-nav__link">
+  <a href="#3-apply-migrations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bring up the DEV stack
+        3) Apply Migrations
       
     </span>
   </a>
@@ -682,22 +1244,77 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#database-migrations-seeds" class="md-nav__link">
+  <a href="#4-optional-seeds" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Database: migrations &amp; seeds
+        4) Optional Seeds
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Database: migrations &amp; seeds">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-validate-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5) Validate Health
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hot-reload-dev" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hot Reload (Dev)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#codegen-and-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codegen and Tests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-quick-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Quick Checks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Quick Checks">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#install-migrate-once" class="md-nav__link">
+  <a href="#rest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Install migrate (once)
+        REST
       
     </span>
   </a>
@@ -705,32 +1322,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#environment-variables-expected-by-migration-targets" class="md-nav__link">
+  <a href="#graphql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Environment variables expected by migration targets
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#applyrollback-migrations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Apply/rollback migrations
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#seeds" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Seeds
+        GraphQL
       
     </span>
   </a>
@@ -743,10 +1338,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tests-coverage-code-quality" class="md-nav__link">
+  <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tests, coverage &amp; code quality
+        Troubleshooting
       
     </span>
   </a>
@@ -754,104 +1349,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#codegen-graphql-mocks" class="md-nav__link">
+  <a href="#next-step" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Codegen (GraphQL &amp; Mocks)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-the-api-rest" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using the API (REST)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Using the API (REST)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create-user" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Create user
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#login-obtain-token" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Login (obtain token)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#list-users-protected-route" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        List users (protected route)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-the-api-graphql" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using the API (GraphQL)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#observability-optional-in-dev" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Observability (optional in DEV)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tips-troubleshooting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tips &amp; Troubleshooting
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#whats-next" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What’s next
+        Next Step
       
     </span>
   </a>
@@ -879,237 +1380,153 @@
 
 
 <h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
-<p>Welcome to <strong>AionApi</strong>. This page takes you from zero to a working local environment with Docker, the database migrated, tests passing, and a few REST/GraphQL calls verified.</p>
-<hr />
-<h2 id="tldr-fast-path">TL;DR (fast path)<a class="headerlink" href="#tldr-fast-path" title="Permanent link">&para;</a></h2>
-<pre><code class="language-bash"># 1) Clone and enter the project
-git clone https://github.com/lechitz/AionApi.git
-cd AionApi
-
-# 2) (Optional, recommended) install local dev tools
-make tools-install
-
-# 3) Bring up the DEV stack (Docker + Postgres)
-make dev
-
-# 4) Apply database migrations
-export MIGRATE_BIN=&quot;$(go env GOPATH)/bin/migrate&quot;
-export MIGRATION_DB=&quot;postgres://aion:aion@localhost:5432/aionapi?sslmode=disable&quot;
-export MIGRATION_PATH=&quot;infrastructure/db/migrations&quot;
-make migrate-up
-
-# 5) (Optional) Seed sample data
-make seed-all
-
-# 6) Health check
-curl -s http://localhost:8080/aion/health | jq
-</code></pre>
-<p>If things are ok, you should see a JSON payload containing the service name/version/environment.</p>
-<hr />
+<p>This guide takes you from clone to a healthy local AionApi environment with migrations and baseline validation.</p>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Required version</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Go</td>
+<td>1.24+</td>
+<td>Required for local commands and tooling</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>Recent</td>
+<td>Compose v2 required</td>
+</tr>
+<tr>
+<td>GNU Make</td>
+<td>Recent</td>
+<td>Primary task runner</td>
+</tr>
+<tr>
+<td>jq</td>
+<td>Optional</td>
+<td>Better JSON output in terminal</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-clone-and-install-tools">1) Clone and Install Tools<a class="headerlink" href="#1-clone-and-install-tools" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/lechitz/AionApi.git
+<span class="nb">cd</span><span class="w"> </span>AionApi
+make<span class="w"> </span>tools-install
+</code></pre></div>
+<h2 id="2-start-local-stack">2) Start Local Stack<a class="headerlink" href="#2-start-local-stack" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>dev
+</code></pre></div>
+<p>Core services expected in dev mode:</p>
 <ul>
-<li><strong>Go</strong> 1.24+</li>
-<li><strong>Docker</strong> and <strong>Docker Compose</strong> (v2)</li>
-<li><strong>make</strong> (GNU Make)</li>
-<li>(Optional) <strong>jq</strong> to pretty-print JSON on the CLI</li>
+<li>API: <code>http://localhost:8080</code></li>
+<li>Postgres: <code>localhost:5432</code></li>
+<li>Localstack: <code>localhost:4566</code></li>
 </ul>
-<blockquote>
-<p>If you prefer not to install Go on your host (using only Docker), you still need the <code>migrate</code> CLI to run DB migrations via Make. Use <code>make tools-install</code> to install all expected tools under your <code>GOPATH/bin</code>.</p>
-</blockquote>
-<hr />
-<h2 id="repository-layout-essentials">Repository layout (essentials)<a class="headerlink" href="#repository-layout-essentials" title="Permanent link">&para;</a></h2>
-<pre><code>AionApi/
-├─ infrastructure/
-│  ├─ db/
-│  │  ├─ migrations/         # *.sql (schema &amp; changesets)
-│  │  └─ seed/               # sample data
-│  └─ docker/
-│     ├─ Dockerfile          # app build
-│     └─ environments/
-│        └─ dev/docker-compose-dev.yaml
-├─ internal/                 # domain, ports &amp; adapters (HTTP/GraphQL/DB/etc.)
-├─ makefiles/                # grouped Make targets (migrate, docker, test, etc.)
-├─ Makefile                  # includes makefiles/*
-└─ README.md
-</code></pre>
-<hr />
-<h2 id="environment-configuration">Environment configuration<a class="headerlink" href="#environment-configuration" title="Permanent link">&para;</a></h2>
-<p>For local development, <code>docker-compose-dev.yaml</code> already provides sensible defaults (Postgres on <code>localhost:5432</code>, API on <code>localhost:8080</code>).
-If you need to customize values, create a <code>.env.dev</code> (optional):</p>
-<pre><code class="language-bash"># illustrative example — adjust to your needs
-cp infrastructure/docker/environments/example/.env.example infrastructure/docker/environments/dev/.env.dev
-# edit infrastructure/docker/environments/dev/.env.dev
-</code></pre>
-<blockquote>
-<p>If you skip <code>.env.dev</code>, the compose defaults are enough to boot the stack.</p>
-</blockquote>
-<hr />
-<h2 id="bring-up-the-dev-stack">Bring up the DEV stack<a class="headerlink" href="#bring-up-the-dev-stack" title="Permanent link">&para;</a></h2>
-<pre><code class="language-bash">make dev       # (= image build + docker compose up)
-# or, if you built recently:
-make dev-up
-# to stop and remove volumes for this stack:
-make dev-down
-</code></pre>
-<p>Expected services:</p>
+<h2 id="3-apply-migrations">3) Apply Migrations<a class="headerlink" href="#3-apply-migrations" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">MIGRATE_BIN</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>go<span class="w"> </span>env<span class="w"> </span>GOPATH<span class="k">)</span><span class="s2">/bin/migrate&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MIGRATION_DB</span><span class="o">=</span><span class="s2">&quot;postgres://aion:aion@localhost:5432/aionapi?sslmode=disable&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MIGRATION_PATH</span><span class="o">=</span><span class="s2">&quot;infrastructure/db/migrations&quot;</span>
+make<span class="w"> </span>migrate-up
+</code></pre></div>
+<h2 id="4-optional-seeds">4) Optional Seeds<a class="headerlink" href="#4-optional-seeds" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>seed-all
+</code></pre></div>
+<h2 id="5-validate-health">5) Validate Health<a class="headerlink" href="#5-validate-health" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8080/aion/health<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+</code></pre></div>
+<h2 id="development-commands">Development Commands<a class="headerlink" href="#development-commands" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make dev</code></td>
+<td>Build and start dev stack</td>
+</tr>
+<tr>
+<td><code>make dev-fast</code></td>
+<td>Start quickly without full rebuild</td>
+</tr>
+<tr>
+<td><code>make dev-down</code></td>
+<td>Stop stack, keep volumes</td>
+</tr>
+<tr>
+<td><code>make dev-clean</code></td>
+<td>Stop stack and remove volumes</td>
+</tr>
+<tr>
+<td><code>make rebuild-api</code></td>
+<td>Force rebuild only API service</td>
+</tr>
+<tr>
+<td><code>make rebuild-chat</code></td>
+<td>Force rebuild only chat service</td>
+</tr>
+<tr>
+<td><code>make rebuild-dashboard</code></td>
+<td>Force rebuild only dashboard service</td>
+</tr>
+<tr>
+<td><code>make verify</code></td>
+<td>Local quality pipeline</td>
+</tr>
+</tbody>
+</table>
+<h2 id="hot-reload-dev">Hot Reload (Dev)<a class="headerlink" href="#hot-reload-dev" title="Permanent link">&para;</a></h2>
+<p><code>make dev</code> is configured for hot reload across services in the dev compose profile:</p>
 <ul>
-<li><strong>Postgres</strong>: <code>localhost:5432</code> (db <code>aionapi</code>, user <code>aion</code>, pass <code>aion</code>)</li>
-<li><strong>API</strong>: <code>localhost:8080</code> (REST base prefix: <code>/aion-api</code>, GraphQL: <code>/graphql</code>)</li>
+<li>API (Go): Air reloads on <code>.go</code> changes.</li>
+<li>Chat (Python): Uvicorn reloads on <code>.py</code> changes.</li>
+<li>Dashboard (TypeScript): Vite HMR updates UI on <code>.ts/.tsx/.css</code> changes.</li>
 </ul>
-<p>Health check:</p>
-<pre><code class="language-bash">curl -s http://localhost:8080/aion/health | jq
-</code></pre>
-<hr />
-<h2 id="database-migrations-seeds">Database: migrations &amp; seeds<a class="headerlink" href="#database-migrations-seeds" title="Permanent link">&para;</a></h2>
-<h3 id="install-migrate-once">Install <code>migrate</code> (once)<a class="headerlink" href="#install-migrate-once" title="Permanent link">&para;</a></h3>
-<pre><code class="language-bash">make tools-install
-# ensures: migrate, golangci-lint, gqlgen, etc. in your $GOPATH/bin
-</code></pre>
-<h3 id="environment-variables-expected-by-migration-targets">Environment variables expected by migration targets<a class="headerlink" href="#environment-variables-expected-by-migration-targets" title="Permanent link">&para;</a></h3>
-<pre><code class="language-bash">export MIGRATE_BIN=&quot;$(go env GOPATH)/bin/migrate&quot;
-export MIGRATION_DB=&quot;postgres://aion:aion@localhost:5432/aionapi?sslmode=disable&quot;
-export MIGRATION_PATH=&quot;infrastructure/db/migrations&quot;
-</code></pre>
-<h3 id="applyrollback-migrations">Apply/rollback migrations<a class="headerlink" href="#applyrollback-migrations" title="Permanent link">&para;</a></h3>
-<pre><code class="language-bash">make migrate-up        # apply all &quot;up&quot; migrations
-make migrate-down      # rollback one step
-# advanced usage:
-make migrate-force VERSION=20250101010101  # force version (⚠️ beware)
-</code></pre>
-<h3 id="seeds">Seeds<a class="headerlink" href="#seeds" title="Permanent link">&para;</a></h3>
-<pre><code class="language-bash"># executes SQL seed scripts inside the DEV Postgres container
-make seed-users
-make seed-categories
-make seed-all
-</code></pre>
-<hr />
-<h2 id="tests-coverage-code-quality">Tests, coverage &amp; code quality<a class="headerlink" href="#tests-coverage-code-quality" title="Permanent link">&para;</a></h2>
-<pre><code class="language-bash">make test           # unit tests with -race
-make test-cover     # coverage + HTML at tests/coverage/coverage.html
-make test-html-report
-make format         # goimports + golines (gofumpt)
-make lint           # golangci-lint
-make lint-fix       # attempt autofix
-make verify         # local pipeline: graphql → mocks → lint → test → coverage
-</code></pre>
-<p>Open the coverage report in your browser:</p>
-<pre><code>tests/coverage/coverage.html
-</code></pre>
-<hr />
-<h2 id="codegen-graphql-mocks">Codegen (GraphQL &amp; Mocks)<a class="headerlink" href="#codegen-graphql-mocks" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>These targets keep generated artifacts in sync with the source code.</p>
-</blockquote>
-<pre><code class="language-bash"># (re)generate GraphQL types/resolvers from *.graphqls
-make graphql
-
-# generate mocks (GoMock) for output-port interfaces (saved in tests/mocks/)
-make mocks
-# namespaced filenames to avoid basename collisions:
-make mocks NAMESPACE=1
-# generate only for a specific context:
-make mocks CONTEXT=user
-</code></pre>
-<hr />
-<h2 id="using-the-api-rest">Using the API (REST)<a class="headerlink" href="#using-the-api-rest" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>REST base prefix: <strong><code>/aion-api</code></strong></p>
-</blockquote>
-<h3 id="create-user">Create user<a class="headerlink" href="#create-user" title="Permanent link">&para;</a></h3>
-<pre><code class="language-bash">curl -X POST http://localhost:8080/aion-api/v1/users/create \
-  -H 'Content-Type: application/json' \
-  -d '{
-    &quot;username&quot;: &quot;alice&quot;,
-    &quot;email&quot;: &quot;alice@example.com&quot;,
-    &quot;password&quot;: &quot;s3cret&quot;
-  }'
-</code></pre>
-<h3 id="login-obtain-token">Login (obtain token)<a class="headerlink" href="#login-obtain-token" title="Permanent link">&para;</a></h3>
-<pre><code class="language-bash">TOKEN=$(curl -s -X POST http://localhost:8080/aion-api/v1/auth/login \
-  -H 'Content-Type: application/json' \
-  -d '{&quot;username&quot;:&quot;alice&quot;,&quot;password&quot;:&quot;s3cret&quot;}' | jq -r '.token')
-echo &quot;$TOKEN&quot;
-</code></pre>
-<h3 id="list-users-protected-route">List users (protected route)<a class="headerlink" href="#list-users-protected-route" title="Permanent link">&para;</a></h3>
-<pre><code class="language-bash">curl -H &quot;Authorization: Bearer $TOKEN&quot; \
-  http://localhost:8080/aion-api/v1/users/all | jq
-</code></pre>
-<blockquote>
-<p>Other useful routes:
-<code>GET /aion-api/v1/users/{user_id}</code>
-<code>PUT /aion-api/v1/users/</code> (update self)
-<code>PUT /aion-api/v1/users/password</code>
-<code>DELETE /aion-api/v1/users/</code></p>
-</blockquote>
-<hr />
-<h2 id="using-the-api-graphql">Using the API (GraphQL)<a class="headerlink" href="#using-the-api-graphql" title="Permanent link">&para;</a></h2>
+<p>Expected behavior:</p>
 <ul>
-<li><strong>Endpoint</strong>: <code>http://localhost:8080/graphql</code></li>
+<li>Most code edits do not require full container rebuild.</li>
+<li>Use targeted rebuild commands only when Dockerfile/dependency layers changed.</li>
 </ul>
-<p>List categories (query):</p>
-<pre><code class="language-bash">curl -s http://localhost:8080/graphql \
-  -H 'Content-Type: application/json' \
-  -d '{&quot;query&quot;:&quot;query { listAllCategories { id name colorHex } }&quot;}' | jq
-</code></pre>
-<p>Create category (mutation):</p>
-<pre><code class="language-bash">curl -s http://localhost:8080/graphql \
-  -H 'Content-Type: application/json' \
-  -d '{&quot;query&quot;:&quot;mutation { createCategory(input:{name:\&quot;Work\&quot;, colorHex:\&quot;#3366FF\&quot;}) { id name colorHex } }&quot;}' | jq
-</code></pre>
-<blockquote>
-<p>If your instance requires auth for GraphQL, include <code>Authorization: Bearer $TOKEN</code> in the headers.</p>
-</blockquote>
-<hr />
-<h2 id="observability-optional-in-dev">Observability (optional in DEV)<a class="headerlink" href="#observability-optional-in-dev" title="Permanent link">&para;</a></h2>
-<p>The platform is wired for <strong>OpenTelemetry</strong> (traces/metrics).
-To export to a local Collector, configure environment variables like:</p>
-<pre><code class="language-bash">export OTEL_EXPORTER_OTLP_ENDPOINT=&quot;http://localhost:4318&quot;
-export OTEL_SERVICE_NAME=&quot;AionApi&quot;
-export OTEL_SERVICE_VERSION=&quot;0.1.0&quot;
-</code></pre>
-<p>Useful files:</p>
+<p>Useful logs:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>logs-api
+make<span class="w"> </span>logs-chat
+make<span class="w"> </span>logs-dashboard
+</code></pre></div>
+<h2 id="codegen-and-tests">Codegen and Tests<a class="headerlink" href="#codegen-and-tests" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>graphql
+make<span class="w"> </span>mocks
+make<span class="w"> </span><span class="nb">test</span>
+make<span class="w"> </span>test-cover
+make<span class="w"> </span>lint
+</code></pre></div>
+<h2 id="api-quick-checks">API Quick Checks<a class="headerlink" href="#api-quick-checks" title="Permanent link">&para;</a></h2>
+<h3 id="rest">REST<a class="headerlink" href="#rest" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8080/aion-api/v1/users/all
+</code></pre></div>
+<h3 id="graphql">GraphQL<a class="headerlink" href="#graphql" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8080/graphql<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s1">&#39;Content-Type: application/json&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;query&quot;:&quot;query { listAllCategories { id name colorHex } }&quot;}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>infrastructure/observability/otel/otel-collector-config.yaml</code></li>
-<li><code>infrastructure/observability/grafana/</code> (dashboards)</li>
-<li><code>infrastructure/observability/prometheus/prometheus.yml</code></li>
+<li>Migration errors: verify <code>MIGRATION_DB</code> and that Postgres is ready.</li>
+<li>Missing tools: rerun <code>make tools-install</code> and check <code>$(go env GOPATH)/bin</code> in <code>PATH</code>.</li>
+<li>Port conflicts: stop local services already using 8080/5432/4566.</li>
+<li>Hot reload not updating:</li>
+<li>check service logs (<code>make logs-api</code>, <code>make logs-chat</code>, <code>make logs-dashboard</code>)</li>
+<li>ensure source volumes are mounted in dev compose profile</li>
+<li>run targeted rebuild (<code>make rebuild-api</code>, <code>make rebuild-chat</code>, or <code>make rebuild-dashboard</code>)</li>
 </ul>
-<blockquote>
-<p>You can extend your local stack to include these services via Docker Compose, as needed.</p>
-</blockquote>
-<hr />
-<h2 id="tips-troubleshooting">Tips &amp; Troubleshooting<a class="headerlink" href="#tips-troubleshooting" title="Permanent link">&para;</a></h2>
-<ul>
-<li>
-<p><strong><code>migrate: command not found</code></strong>
-  Run <code>make tools-install</code> and ensure <code>$(go env GOPATH)/bin</code> is in your <code>PATH</code>.</p>
-</li>
-<li>
-<p><strong>Cannot connect to Postgres</strong>
-  Check running containers with <code>docker ps</code>, free port <code>5432</code>, and the DSN in <code>MIGRATION_DB</code>.</p>
-</li>
-<li>
-<p><strong>Port 8080 is already in use</strong>
-  Stop the service occupying it or change the HTTP port via env vars and restart.</p>
-</li>
-<li>
-<p><strong>401 on protected routes</strong>
-  Verify the <code>Authorization: Bearer &lt;TOKEN&gt;</code> header is present and the token is valid.</p>
-</li>
-<li>
-<p><strong>Unexpected 404/405</strong>
-  Remember the REST <strong>base prefix</strong> <code>/aion-api</code>.</p>
-</li>
-</ul>
-<hr />
-<h2 id="whats-next">What’s next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Architecture</strong>: high-level view (Ports &amp; Adapters), conventions, and boundaries.</li>
-<li><strong>Platform</strong>: Config, Router (port + chi), Observability.</li>
-<li><strong>API Reference</strong>: details for each REST route and GraphQL operation.</li>
-</ul>
-<blockquote>
-<p>These pages will be published in the next sections of the documentation.</p>
-</blockquote>
+<h2 id="next-step">Next Step<a class="headerlink" href="#next-step" title="Permanent link">&para;</a></h2>
+<p>Continue with <a href="../architecture/">System Design</a> for architecture and boundaries.</p>
 
 
 
@@ -1131,6 +1548,12 @@ export OTEL_SERVICE_VERSION=&quot;0.1.0&quot;
 
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
         
       </main>
       
@@ -1161,10 +1584,10 @@ export OTEL_SERVICE_VERSION=&quot;0.1.0&quot;
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.instant", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.instant", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

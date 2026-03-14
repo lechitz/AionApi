@@ -1,0 +1,10 @@
+title Seed Helper Flow
+
+participant "Operator" as OP
+participant "seed-helper" as CLI
+participant "Filesystem" as FS
+
+OP->CLI: Run command
+CLI->CLI: Generate hash/token
+CLI->FS: Write .env.local (generate-env)
+CLI->OP: Print output / exit

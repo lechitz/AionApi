@@ -1,0 +1,23 @@
+title Auth Domain Flow
+
+participant Client
+participant "Auth HTTP Handler" as Handler
+participant "Auth Middleware" as Middleware
+participant "Auth Usecase" as Usecase
+participant "Auth Store" as Store
+participant TokenProvider
+
+Client->Handler: Login/Refresh/Logout
+Handler->Usecase: Validate credentials/refresh/logout
+Usecase->TokenProvider: Generate/validate token
+Usecase->Store: Save/Get/Delete token reference
+Store->Usecase: Token reference
+Usecase->Handler: Result or semantic error
+Handler->Client: HTTP response
+
+Client->Middleware: Protected request
+Middleware->Usecase: Validate token
+Usecase->Store: Get token reference
+Store->Usecase: Token reference
+Usecase->Middleware: UserID + claims
+Middleware->Client: Continue request

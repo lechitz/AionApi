@@ -1,0 +1,1013 @@
+{
+	"info": {
+		"_postman_id": "800127e6-6e33-45bb-a711-0c58470a5e61",
+		"name": "AionApi - Complete 2026",
+		"description": "Complete API collection for AionApi including Auth, User, Admin, Chat, GraphQL and Health endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29364746"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"// Captura automaticamente um token retornado pelo login.",
+									"try {",
+									"  const json = pm.response.json();",
+									"  const token = json?.token || json?.access_token || json?.accessToken || json?.data?.token || json?.data?.access_token || json?.data?.accessToken;",
+									"  if (token) {",
+									"    pm.collectionVariables.set('authToken', token);",
+									"  }",
+									"} catch (e) {}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"aion\",\n    \"password\": \"testpassword123\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/login",
+							"host": ["{{baseURL}}"],
+							"path": ["auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/auth/refresh",
+							"host": ["{{baseURL}}"],
+							"path": ["auth", "refresh"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Session",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/auth/session",
+							"host": ["{{baseURL}}"],
+							"path": ["auth", "session"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": ["pm.cookies.clear();", "pm.environment.unset(\"session_cookie\");"],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/auth/logout",
+							"host": ["{{baseURL}}"],
+							"path": ["auth", "logout"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for login, logout, token management, and session snapshot (roles for UIs)."
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test User\",\n    \"username\": \"testuser\",\n    \"email\": \"test@example.com\",\n    \"password\": \"testpassword123\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{baseURL}}/user/create",
+							"host": ["{{baseURL}}"],
+							"path": ["user", "create"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/user/all",
+							"host": ["{{baseURL}}"],
+							"path": ["user", "all"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Me",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/user/me",
+							"host": ["{{baseURL}}"],
+							"path": ["user", "me"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By ID",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/user/1",
+							"host": ["{{baseURL}}"],
+							"path": ["user", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Name\",\n    \"username\": \"updateduser\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{baseURL}}/user",
+							"host": ["{{baseURL}}"],
+							"path": ["user"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"testpassword123\",\n    \"new_password\": \"newpassword456\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{baseURL}}/user/password",
+							"host": ["{{baseURL}}"],
+							"path": ["user", "password"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/user",
+							"host": ["{{baseURL}}"],
+							"path": ["user"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints (create is public, others require authentication)"
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Promote to Admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+						},
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{baseURL}}/admin/users/2/promote-admin",
+							"host": ["{{baseURL}}"],
+							"path": ["admin", "users", "2", "promote-admin"]
+						},
+						"description": "Adds admin role to user (requires owner or admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Demote Admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+						},
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{baseURL}}/admin/users/2/demote-admin",
+							"host": ["{{baseURL}}"],
+							"path": ["admin", "users", "2", "demote-admin"]
+						},
+						"description": "Removes admin role from user (requires owner or admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Block User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+						},
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{baseURL}}/admin/users/2/block",
+							"host": ["{{baseURL}}"],
+							"path": ["admin", "users", "2", "block"]
+						},
+						"description": "Blocks user (cannot block same or higher hierarchy)"
+					},
+					"response": []
+				},
+				{
+					"name": "Unblock User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+						},
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{baseURL}}/admin/users/2/unblock",
+							"host": ["{{baseURL}}"],
+							"path": ["admin", "users", "2", "unblock"]
+						},
+						"description": "Unblocks user (requires owner or admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Roles (Legacy)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+						},
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"roles\": [\"user\", \"admin\"]\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{baseURL}}/admin/users/2/roles",
+							"host": ["{{baseURL}}"],
+							"path": ["admin", "users", "2", "roles"]
+						},
+						"description": "Generic role update endpoint (legacy)"
+					},
+					"response": []
+				}
+			],
+			"description": "Admin endpoints for user role management and moderation (requires admin/owner privileges)"
+		},
+		{
+			"name": "Chat",
+			"item": [
+				{
+					"name": "Send Message",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+						},
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message\": \"What categories do I have?\"\n}",
+							"options": {"raw": {"language": "json"}}
+						},
+						"url": {
+							"raw": "{{baseURL}}/chat/text",
+							"host": ["{{baseURL}}"],
+							"path": ["chat", "text"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "AI Chat endpoints (requires authentication)"
+		},
+		{
+			"name": "GraphQL - User",
+			"auth": {
+				"type": "bearer",
+				"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+			},
+			"item": [
+				{
+					"name": "User Stats",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query UserStats {\n  userStats {\n    totalRecords\n    totalCategories\n    totalTags\n    recordsThisWeek\n    recordsThisMonth\n    mostUsedCategory {\n      id\n      name\n      count\n    }\n    mostUsedTag {\n      id\n      name\n      count\n    }\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "GraphQL User operations"
+		},
+		{
+			"name": "GraphQL - Chat",
+			"auth": {
+				"type": "bearer",
+				"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+			},
+			"item": [
+				{
+					"name": "Chat History",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query ChatHistory($limit: Int, $offset: Int) {\n  chatHistory(limit: $limit, offset: $offset) {\n    id\n    userId\n    message\n    response\n    tokensUsed\n    functionCalls\n    createdAt\n  }\n}",
+								"variables": "{\n  \"limit\": 20,\n  \"offset\": 0\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chat Context",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query ChatContext {\n  chatContext {\n    totalRecords\n    totalCategories\n    totalTags\n    recentChats {\n      id\n      message\n      response\n      createdAt\n    }\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "GraphQL Chat operations"
+		},
+		{
+			"name": "GraphQL - Category",
+			"auth": {
+				"type": "bearer",
+				"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+			},
+			"item": [
+				{
+					"name": "Create Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"// Salva o ID criado para reuso ({{categoryId}}).",
+									"try {",
+									"  const json = pm.response.json();",
+									"  const id = json?.data?.createCategory?.id;",
+									"  if (id) pm.collectionVariables.set('categoryId', id);",
+									"} catch (e) {}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateCategory($input: CreateCategoryInput!) {\n  createCategory(input: $input) {\n    id\n    name\n    description\n    colorHex\n    icon\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"name\": \"fitness\",\n    \"description\": \"Physical health activities\",\n    \"colorHex\": \"#FF5722\",\n    \"icon\": \"🏋️\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category By ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query CategoryById($id: ID!) {\n  categoryById(id: $id) {\n    id\n    userId\n    name\n    description\n    colorHex\n    icon\n  }\n}",
+								"variables": "{\n  \"id\": \"1\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category By Name",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query CategoryByName($name: String!) {\n  categoryByName(name: $name) {\n    id\n    name\n    description\n    colorHex\n    icon\n  }\n}",
+								"variables": "{\n  \"name\": \"fitness\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Categories",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Categories {\n  categories {\n    id\n    name\n    description\n    colorHex\n    icon\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation UpdateCategory($input: UpdateCategoryInput!) {\n  updateCategory(input: $input) {\n    id\n    name\n    description\n    colorHex\n    icon\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"id\": \"1\",\n    \"name\": \"fitness_updated\",\n    \"colorHex\": \"#00BCD4\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation SoftDeleteCategory($input: DeleteCategoryInput!) {\n  softDeleteCategory(input: $input)\n}",
+								"variables": "{\n  \"input\": {\n    \"id\": \"1\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "GraphQL Category operations"
+		},
+		{
+			"name": "GraphQL - Tag",
+			"auth": {
+				"type": "bearer",
+				"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+			},
+			"item": [
+				{
+					"name": "Create Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"// Salva o ID criado para reuso ({{tagId}}).",
+									"try {",
+									"  const json = pm.response.json();",
+									"  const id = json?.data?.createTag?.id;",
+									"  if (id) pm.collectionVariables.set('tagId', id);",
+									"} catch (e) {}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateTag($input: CreateTagInput!) {\n  createTag(input: $input) {\n    id\n    name\n    categoryId\n    description\n    createdAt\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"name\": \"Running\",\n    \"categoryId\": \"1\",\n    \"description\": \"Running activities\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tag",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation UpdateTag($input: UpdateTagInput!) {\n  updateTag(input: $input) {\n    id\n    name\n    categoryId\n    description\n    updatedAt\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"id\": \"{{tagId}}\",\n    \"name\": \"Running Updated\",\n    \"description\": \"Updated description\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tag By ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query TagById($id: ID!) {\n  tagById(id: $id) {\n    id\n    name\n    categoryId\n    description\n  }\n}",
+								"variables": "{\n  \"id\": \"1\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tag By Name",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query TagByName($name: String!) {\n  tagByName(name: $name) {\n    id\n    name\n    categoryId\n    description\n  }\n}",
+								"variables": "{\n  \"name\": \"Running\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tags By Category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query TagsByCategoryId($categoryId: ID!) {\n  tagsByCategoryId(categoryId: $categoryId) {\n    id\n    name\n    categoryId\n    description\n  }\n}",
+								"variables": "{\n  \"categoryId\": \"1\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Tags",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Tags {\n  tags {\n    id\n    name\n    categoryId\n    description\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Tag (Soft)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation SoftDeleteTag($input: DeleteTagInput!) {\n  softDeleteTag(input: $input)\n}",
+								"variables": "{\n  \"input\": {\n    \"id\": \"{{tagId}}\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "GraphQL Tag operations"
+		},
+		{
+			"name": "GraphQL - Record",
+			"auth": {
+				"type": "bearer",
+				"bearer": [{"key": "token", "value": "{{authToken}}", "type": "string"}]
+			},
+			"item": [
+				{
+					"name": "Create Record",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateRecord($input: CreateRecordInput!) {\n  createRecord(input: $input) {\n    id\n    title\n    categoryId\n    tagId\n    eventTime\n    durationSeconds\n    value\n    status\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"title\": \"Morning run\",\n    \"description\": \"5km run in the park\",\n    \"categoryId\": \"1\",\n    \"tagId\": \"1\",\n    \"eventTime\": \"2026-01-01T06:00:00Z\",\n    \"recordedAt\": \"2026-01-01T07:00:00Z\",\n    \"durationSeconds\": 1800,\n    \"value\": 5.0,\n    \"source\": \"mobile_app\",\n    \"timezone\": \"America/Sao_Paulo\",\n    \"status\": \"completed\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Record By ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query RecordById($id: ID!) {\n  recordById(id: $id) {\n    id\n    title\n    categoryId\n    tagId\n    eventTime\n    durationSeconds\n    value\n    status\n  }\n}",
+								"variables": "{\n  \"id\": \"1\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Records Latest",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query RecordsLatest($limit: Int) {\n  recordsLatest(limit: $limit) {\n    id\n    tagId\n    eventTime\n    value\n    status\n  }\n}",
+								"variables": "{\n  \"limit\": 20\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Records By Category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query RecordsByCategory($categoryId: ID!, $limit: Int) {\n  recordsByCategory(categoryId: $categoryId, limit: $limit) {\n    id\n    tagId\n    eventTime\n    value\n    status\n  }\n}",
+								"variables": "{\n  \"categoryId\": \"{{categoryId}}\",\n  \"limit\": 50\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Records",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query SearchRecords($filters: SearchFilters!) {\n  searchRecords(filters: $filters) {\n    id\n    tagId\n    eventTime\n    value\n    status\n  }\n}",
+								"variables": "{\n  \"filters\": {\n    \"query\": \"run\",\n    \"categoryIds\": [\"{{categoryId}}\"],\n    \"tagIds\": [\"{{tagId}}\"],\n    \"startDate\": \"2026-01-01T00:00:00Z\",\n    \"endDate\": \"2026-01-31T23:59:59Z\",\n    \"limit\": 50,\n    \"offset\": 0\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Record",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation UpdateRecord($input: UpdateRecordInput!) {\n  updateRecord(input: $input) {\n    id\n    title\n    description\n    durationSeconds\n    value\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"id\": \"1\",\n    \"title\": \"Updated run\",\n    \"value\": 5.5\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Record",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation SoftDeleteRecord($input: DeleteRecordInput!) {\n  softDeleteRecord(input: $input)\n}",
+								"variables": "{\n  \"input\": {\n    \"id\": \"1\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete All Records",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation SoftDeleteAllRecords {\n  softDeleteAllRecords\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/graphql",
+							"host": ["{{baseURL}}"],
+							"path": ["graphql"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "GraphQL Record operations"
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health (Root)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/aion/health",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5001",
+							"path": ["aion", "health"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Health (API)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/health",
+							"host": ["{{baseURL}}"],
+							"path": ["health"]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Service health check endpoints (no authentication required)"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [""]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [""]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:5001/aion/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "categoryId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "tagId",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}

@@ -6,30 +6,35 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Backend Go — Hexagonal, REST/GraphQL, Observability">
+        <meta name="description" content="Production-grade Go backend with Hexagonal Architecture, REST/GraphQL APIs, and observability.">
       
       
       
+        <link rel="canonical" href="https://lechitz.github.io/AionApi/architecture/">
       
-        <link rel="prev" href="..">
+      
+        <link rel="prev" href="../getting-started/">
       
       
-        <link rel="next" href="../getting-started/">
+        <link rel="next" href="../platform/">
       
       
         
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <link rel="icon" href="../assets/logo/Aion.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
-        <title>Architecture - AionApi</title>
+        <title>System Design - AionApi Docs</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -43,10 +48,12 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../assets/stylesheets/extra.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -57,7 +64,14 @@
   </head>
   
   
-    <body dir="ltr">
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="blue">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -66,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#architecture-aionapi" class="md-skip">
+        <a href="#system-design" class="md-skip">
           Skip to content
         </a>
       
@@ -82,10 +96,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="AionApi" class="md-header__button md-logo" aria-label="AionApi" data-md-component="logo">
+    <a href=".." title="AionApi Docs" class="md-header__button md-logo" aria-label="AionApi Docs" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo/Aion.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -96,18 +109,30 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            AionApi
+            AionApi Docs
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Architecture
+              System Design
             
           </span>
         </div>
       </div>
     </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
     
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
@@ -138,6 +163,8 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
       
     </form>
     <div class="md-search__output">
@@ -192,13 +219,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="AionApi" class="md-nav__button md-logo" aria-label="AionApi" data-md-component="logo">
+    <a href=".." title="AionApi Docs" class="md-nav__button md-logo" aria-label="AionApi Docs" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo/Aion.png" alt="logo">
 
     </a>
-    AionApi
+    AionApi Docs
   </label>
   
     <div class="md-nav__source">
@@ -221,6 +247,60 @@
   
   
   
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Start Here
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Start Here
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href=".." class="md-nav__link">
         
@@ -229,7 +309,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Introduction
   
 
     
@@ -241,9 +321,127 @@
     </li>
   
 
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
     
@@ -265,7 +463,7 @@
   <span class="md-ellipsis">
     
   
-    Architecture
+    System Design
   
 
     
@@ -283,7 +481,7 @@
   <span class="md-ellipsis">
     
   
-    Architecture
+    System Design
   
 
     
@@ -309,10 +507,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#high-level-layout" class="md-nav__link">
+  <a href="#architecture-snapshot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        High-level layout
+        Architecture Snapshot
       
     </span>
   </a>
@@ -320,10 +518,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#design-principles" class="md-nav__link">
+  <a href="#project-layout" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Design principles
+        Project Layout
       
     </span>
   </a>
@@ -331,33 +529,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#components-and-responsibilities" class="md-nav__link">
+  <a href="#request-lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Components and responsibilities
+        Request Lifecycle
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#request-lifecycle-detailed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Request lifecycle (detailed)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Request lifecycle (detailed)">
+    <nav class="md-nav" aria-label="Request Lifecycle">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#rest-flow-example-update-password" class="md-nav__link">
+  <a href="#rest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        REST flow (example: Update password)
+        REST
       
     </span>
   </a>
@@ -365,10 +552,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#graphql-flow-example-create-category" class="md-nav__link">
+  <a href="#graphql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GraphQL flow (example: Create Category)
+        GraphQL
       
     </span>
   </a>
@@ -381,10 +568,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#error-model-and-http-mapping" class="md-nav__link">
+  <a href="#layer-responsibilities" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Error model and HTTP mapping
+        Layer Responsibilities
       
     </span>
   </a>
@@ -392,32 +579,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#persistence-and-migrations" class="md-nav__link">
+  <a href="#error-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Persistence and migrations
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#authentication-security" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Authentication &amp; security
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#observability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Observability
+        Error Mapping
       
     </span>
   </a>
@@ -428,7 +593,7 @@
   <a href="#testing-strategy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Testing strategy
+        Testing Strategy
       
     </span>
   </a>
@@ -436,10 +601,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#code-generation-developer-tooling" class="md-nav__link">
+  <a href="#decision-checklist-before-coding" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Code generation &amp; developer tooling
+        Decision Checklist (Before Coding)
       
     </span>
   </a>
@@ -447,43 +612,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#adding-a-new-bounded-context-checklist" class="md-nav__link">
+  <a href="#next-step" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding a new bounded context — checklist
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#deployment-and-operational-notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Deployment and operational notes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#diagram-mermaid" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Diagram (Mermaid)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conventions-style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Conventions &amp; style
+        Next Step
       
     </span>
   </a>
@@ -497,22 +629,23 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/" class="md-nav__link">
+      <a href="../platform/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Getting Started
+    Platform Runtime
   
 
     
@@ -524,6 +657,14 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
@@ -531,15 +672,69 @@
   
   
   
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="https://lechitz.github.io/AionApi/swagger-ui/" class="md-nav__link">
+      <a href="../rest-api/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Swagger UI
+    REST API
   
 
     
@@ -548,6 +743,388 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../graphql-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../graphql-playground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL Playground
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../graphql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL Artifacts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../collections/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Collections
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform & Ops
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Platform & Ops
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability-quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ollama-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ollama GPU (Optional)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagram/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagrams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../swagger-ui-bundle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Swagger UI Bundle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -579,10 +1156,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#high-level-layout" class="md-nav__link">
+  <a href="#architecture-snapshot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        High-level layout
+        Architecture Snapshot
       
     </span>
   </a>
@@ -590,10 +1167,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#design-principles" class="md-nav__link">
+  <a href="#project-layout" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Design principles
+        Project Layout
       
     </span>
   </a>
@@ -601,33 +1178,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#components-and-responsibilities" class="md-nav__link">
+  <a href="#request-lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Components and responsibilities
+        Request Lifecycle
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#request-lifecycle-detailed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Request lifecycle (detailed)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Request lifecycle (detailed)">
+    <nav class="md-nav" aria-label="Request Lifecycle">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#rest-flow-example-update-password" class="md-nav__link">
+  <a href="#rest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        REST flow (example: Update password)
+        REST
       
     </span>
   </a>
@@ -635,10 +1201,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#graphql-flow-example-create-category" class="md-nav__link">
+  <a href="#graphql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GraphQL flow (example: Create Category)
+        GraphQL
       
     </span>
   </a>
@@ -651,10 +1217,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#error-model-and-http-mapping" class="md-nav__link">
+  <a href="#layer-responsibilities" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Error model and HTTP mapping
+        Layer Responsibilities
       
     </span>
   </a>
@@ -662,32 +1228,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#persistence-and-migrations" class="md-nav__link">
+  <a href="#error-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Persistence and migrations
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#authentication-security" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Authentication &amp; security
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#observability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Observability
+        Error Mapping
       
     </span>
   </a>
@@ -698,7 +1242,7 @@
   <a href="#testing-strategy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Testing strategy
+        Testing Strategy
       
     </span>
   </a>
@@ -706,10 +1250,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#code-generation-developer-tooling" class="md-nav__link">
+  <a href="#decision-checklist-before-coding" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Code generation &amp; developer tooling
+        Decision Checklist (Before Coding)
       
     </span>
   </a>
@@ -717,43 +1261,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#adding-a-new-bounded-context-checklist" class="md-nav__link">
+  <a href="#next-step" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding a new bounded context — checklist
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#deployment-and-operational-notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Deployment and operational notes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#diagram-mermaid" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Diagram (Mermaid)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conventions-style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Conventions &amp; style
+        Next Step
       
     </span>
   </a>
@@ -780,194 +1291,160 @@
   
 
 
-<h1 id="architecture-aionapi">Architecture — AionApi<a class="headerlink" href="#architecture-aionapi" title="Permanent link">&para;</a></h1>
-<p>This document describes the architectural principles, component responsibilities, and runtime flows in AionApi. It is intended as a technical reference for maintainers and for guiding future extensions.</p>
-<blockquote>
-<p>Summary</p>
-<ul>
-<li>Hexagonal (Ports &amp; Adapters) architecture: core business logic is independent of transport and infrastructure.</li>
-<li>Primary adapters (HTTP / GraphQL) are thin; usecases contain business rules and orchestrations.</li>
-<li>Observability-first: OpenTelemetry tracing, Prometheus metrics, and Grafana dashboards.</li>
-<li>Consistent error model, standard response envelope, and strict use of context propagation.</li>
-</ul>
-</blockquote>
-<hr />
-<h2 id="high-level-layout">High-level layout<a class="headerlink" href="#high-level-layout" title="Permanent link">&para;</a></h2>
-<p>Top-level layout (simplified):</p>
-<pre><code>AionApi/
-├─ cmd/                      # application entrypoints
-├─ internal/                 # bounded contexts and platform (bootstrap, server, config)
-│  ├─ &lt;bounded-context&gt;/     # auth, user, category, tag, habit, admin ...
-│  │  ├─ core/               # business logic
-|  |  │  ├─ domain/          # entities, value objects
-│  │  │  ├─ ports/           # input/output interfaces
-│  │  │  └─ usecase/         # application services
-│  │  ├─ adapter/            # primary (http/graphql) + secondary (db/cache/token)
-│  └─ platform/              # config, bootstrap, server, observability
-├─ infrastructure/           # docker, migrations, observability resources
-├─ docs/                     # MkDocs site
-├─ swagger/                  # OpenAPI artifacts
-└─ tests/                    # test helpers and generated mocks
-</code></pre>
-<p>Bounded contexts include <code>auth</code>, <code>user</code>, <code>category</code>, <code>tag</code>, <code>habit</code>, and <code>admin</code>. Each context defines its own domain model, ports, and adapters.</p>
-<hr />
-<h2 id="design-principles">Design principles<a class="headerlink" href="#design-principles" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Explicit contracts: the core defines input and output ports (interfaces) so implementations can vary without changing business code.</li>
-<li>Single responsibility: adapters are responsible only for translation and transport concerns; usecases handle business rules.</li>
-<li>Testability: core logic is pure Go and easy to unit-test with table-driven tests + mocks for ports.</li>
-<li>Observability: every handler, usecase and repository opens a span and adds structured attributes.</li>
-<li>Config-driven timeouts and limits: no hard-coded timeouts; read from configuration with safe defaults.</li>
-</ul>
-<hr />
-<h2 id="components-and-responsibilities">Components and responsibilities<a class="headerlink" href="#components-and-responsibilities" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Core (Usecases)</li>
-<li>Located at <code>internal/&lt;ctx&gt;/core/usecase</code>.</li>
-<li>
-<p>Implement application flows, validations, and orchestrations. Return domain values or typed semantic errors.</p>
-</li>
-<li>
-<p>Primary adapters (HTTP / GraphQL)</p>
-</li>
-<li>Located at <code>internal/&lt;ctx&gt;/adapter/primary</code>.</li>
-<li>
-<p>Decode requests, validate DTOs, start traces/spans, call usecases, map domain → transport response.</p>
-</li>
-<li>
-<p>Secondary adapters (DB, Cache, Token, Logger)</p>
-</li>
-<li>Located at <code>internal/&lt;ctx&gt;/adapter/secondary</code>.</li>
-<li>
-<p>Implement output ports declared by the core. They keep infra-specific code isolated (GORM, redis client, external SDKs).</p>
-</li>
-<li>
-<p>Platform layer</p>
-</li>
-<li>
-<p><code>internal/platform</code> contains bootstrap wiring, server setup (HTTP / GraphQL), shared middleware, config loader, and observability wiring.</p>
-</li>
-<li>
-<p>Shared packages</p>
-</li>
-<li><code>internal/shared/*</code> holds shared helpers: <code>sharederrors</code>, <code>httpresponse</code>, <code>constants</code>, and test helpers.</li>
-</ul>
-<hr />
-<h2 id="request-lifecycle-detailed">Request lifecycle (detailed)<a class="headerlink" href="#request-lifecycle-detailed" title="Permanent link">&para;</a></h2>
-<h3 id="rest-flow-example-update-password">REST flow (example: Update password)<a class="headerlink" href="#rest-flow-example-update-password" title="Permanent link">&para;</a></h3>
+<h1 id="system-design">System Design<a class="headerlink" href="#system-design" title="Permanent link">&para;</a></h1>
+<p>AionApi follows Hexagonal (Ports &amp; Adapters) architecture with clear bounded contexts and strict dependency direction.</p>
+<h2 id="architecture-snapshot">Architecture Snapshot<a class="headerlink" href="#architecture-snapshot" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dependency rule</td>
+<td>Core (<code>domain</code>, <code>ports</code>, <code>usecase</code>) does not import adapters or infrastructure</td>
+</tr>
+<tr>
+<td>Context isolation</td>
+<td>Contexts do not import each other directly</td>
+</tr>
+<tr>
+<td>Thin adapters</td>
+<td>Transport and persistence layers translate only</td>
+</tr>
+<tr>
+<td>Semantic errors</td>
+<td>Core returns semantic errors; adapters map to HTTP/GraphQL</td>
+</tr>
+<tr>
+<td>Observability</td>
+<td>Handlers, usecases, and repositories create spans and propagate context</td>
+</tr>
+</tbody>
+</table>
+<h2 id="project-layout">Project Layout<a class="headerlink" href="#project-layout" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>cmd/                      # Entrypoints
+internal/
+  &lt;context&gt;/
+    core/
+      domain/
+      ports/
+      usecase/
+    adapter/
+      primary/            # HTTP / GraphQL
+      secondary/          # DB / cache / providers
+  platform/               # Bootstrap, server, config, observability
+  shared/                 # Shared constants, errors, response helpers
+infrastructure/           # Docker, migrations, observability stack
+docs/                     # MkDocs portal
+</code></pre></div>
+<h2 id="request-lifecycle">Request Lifecycle<a class="headerlink" href="#request-lifecycle" title="Permanent link">&para;</a></h2>
+<h3 id="rest">REST<a class="headerlink" href="#rest" title="Permanent link">&para;</a></h3>
 <ol>
-<li>HTTP request arrives at handler (<code>adapter/primary/http</code>).</li>
-<li>Handler parses the request and validates the DTO.</li>
-<li>Handler starts a trace span and sets common attributes (route, method, user_id if available).</li>
-<li>Handler calls the usecase input port with <code>context.Context</code>.</li>
-<li>Usecase executes domain logic, calling output ports (repositories, caches, token provider).</li>
-<li>Output adapters perform context-aware IO (e.g. <code>db.WithContext(ctx)</code>) and map infra errors to semantic domain errors.</li>
-<li>Usecase returns domain values or a semantic error.</li>
-<li>Handler maps results to a standardized JSON envelope (<code>internal/shared/httpresponse</code>) and ends the span.</li>
+<li>Request enters primary adapter (<code>handler</code>).</li>
+<li>Handler validates input and starts tracing span.</li>
+<li>Handler calls input port (usecase) with <code>context.Context</code>.</li>
+<li>Usecase orchestrates business logic via output ports.</li>
+<li>Secondary adapters execute IO with context and map infra errors.</li>
+<li>Handler maps semantic errors to HTTP response envelope.</li>
 </ol>
-<h3 id="graphql-flow-example-create-category">GraphQL flow (example: Create Category)<a class="headerlink" href="#graphql-flow-example-create-category" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Resolver → GraphQL handler → DTO mapping → usecase → repository → domain mapping → resolver returns GraphQL model.</li>
-<li>GraphQL middleware should also start a top-level span and propagate context to resolvers.</li>
-</ul>
-<hr />
-<h2 id="error-model-and-http-mapping">Error model and HTTP mapping<a class="headerlink" href="#error-model-and-http-mapping" title="Permanent link">&para;</a></h2>
-<ul>
-<li>The repository uses typed semantic errors (validation, not_found, conflict, unauthorized, internal, etc.) defined in <code>internal/shared/sharederrors</code>.</li>
-<li>The adapter maps these semantic errors to HTTP status codes consistently:</li>
-<li>validation → 400</li>
-<li>unauthorized → 401</li>
-<li>forbidden → 403</li>
-<li>not_found → 404</li>
-<li>conflict → 409</li>
-<li>internal → 500</li>
-<li>All responses use a consistent envelope shape to simplify clients and monitoring.</li>
-</ul>
-<hr />
-<h2 id="persistence-and-migrations">Persistence and migrations<a class="headerlink" href="#persistence-and-migrations" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Migrations are SQL files under <code>infrastructure/db/migrations</code> and applied with the <code>migrate</code> CLI via Make targets (<code>make migrate-up</code>).</li>
-<li>Repositories implement explicit mapping between DB models and domain models to keep the domain clean of ORM types.</li>
-<li>Repositories always use context-aware DB operations and return translated semantic errors.</li>
-<li>Soft deletes: the application ensures reads exclude logically deleted rows and updates return not-found when no rows were affected.</li>
-</ul>
-<hr />
-<h2 id="authentication-security">Authentication &amp; security<a class="headerlink" href="#authentication-security" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Authentication usecase issues access and refresh tokens through an <code>AuthProvider</code> output port.</li>
-<li>Tokens may be stored / referenced in a cache (<code>AuthStore</code>) for revocation support.</li>
-<li>HTTP authentication middleware validates <code>Authorization: Bearer &lt;token&gt;</code> and populates context with <code>user_id</code> and claims.</li>
-<li>Secrets must never be logged (the logger and helpers ensure sensitive fields are redacted).</li>
-<li>Follow OWASP guidance for JWT usage, cookie flags and CORS policies.</li>
-</ul>
-<hr />
-<h2 id="observability">Observability<a class="headerlink" href="#observability" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Tracing: OpenTelemetry spans are created at the handler and propagated into usecases and repositories. Naming convention: <code>aionapi.&lt;context&gt;.&lt;component&gt;</code> (e.g. <code>aionapi.user.usecase</code>).</li>
-<li>Metrics: Prometheus instrumentation and scrape config live under <code>infrastructure/observability/prometheus</code>.</li>
-<li>Dashboards &amp; logs: Grafana dashboards and Fluent Bit/Loki configs are under <code>infrastructure/observability</code>.</li>
-</ul>
-<p>Suggested local env to enable OTLP export:</p>
-<pre><code class="language-bash">export OTEL_EXPORTER_OTLP_ENDPOINT=&quot;http://localhost:4318&quot;
-export OTEL_SERVICE_NAME=&quot;AionApi&quot;
-export OTEL_SERVICE_VERSION=&quot;0.1.0&quot;
-</code></pre>
-<hr />
-<h2 id="testing-strategy">Testing strategy<a class="headerlink" href="#testing-strategy" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Unit tests: focus on usecases; use gomock-generated mocks for output ports (<code>tests/mocks</code>), and helper suites in <code>tests/setup</code>.</li>
-<li>Integration tests: exercise adapters and real infra (run against Dockerized Postgres/Redis). Use a dedicated test DB and cleanup strategy.</li>
-<li>End-to-end / smoke tests: run against the full <code>make dev</code> stack and validate common flows (health, login, create user, basic GraphQL ops).</li>
-<li>Coverage: <code>make test-cover</code> produces coverage artifacts in <code>tests/coverage/</code>.</li>
-</ul>
-<hr />
-<h2 id="code-generation-developer-tooling">Code generation &amp; developer tooling<a class="headerlink" href="#code-generation-developer-tooling" title="Permanent link">&para;</a></h2>
-<ul>
-<li>GraphQL: schema fragments live in contexts; <code>make graphql</code> collects them and runs <code>gqlgen</code>.</li>
-<li>Mocks: <code>make mocks</code> runs <code>mockgen</code> and stores generated mocks under <code>tests/mocks</code>.</li>
-<li>Quality: <code>make lint</code>, <code>make lint-fix</code>, <code>make format</code> and <code>golangci-lint</code> configuration are part of the developer workflow.</li>
-</ul>
-<hr />
-<h2 id="adding-a-new-bounded-context-checklist">Adding a new bounded context — checklist<a class="headerlink" href="#adding-a-new-bounded-context-checklist" title="Permanent link">&para;</a></h2>
+<h3 id="graphql">GraphQL<a class="headerlink" href="#graphql" title="Permanent link">&para;</a></h3>
 <ol>
-<li>Create <code>internal/&lt;ctx&gt;/core/domain</code> for entities and value objects.</li>
-<li>Define input/output ports under <code>internal/&lt;ctx&gt;/core/ports</code>.</li>
-<li>Implement usecases in <code>internal/&lt;ctx&gt;/core/usecase</code>.</li>
-<li>Add primary adapters (<code>adapter/primary/http</code> and/or <code>graphql</code>) for transport.</li>
-<li>Add secondary adapters (<code>adapter/secondary/db</code>, <code>cache</code>, <code>token</code>) implementing the output ports.</li>
-<li>Wire concrete adapters in <code>internal/platform/bootstrap</code>.</li>
-<li>Mount routes in <code>internal/platform/server/http/composer.go</code>.</li>
-<li>Add tests and generate mocks (<code>make mocks</code>).</li>
-<li>Document the context in <code>docs/</code> and update <code>mkdocs.yml</code> nav if needed.</li>
+<li>Resolver/controller receives operation.</li>
+<li>Controller maps DTO/input and calls usecase.</li>
+<li>Usecase returns domain result or semantic error.</li>
+<li>GraphQL adapter maps output to schema model and response errors.</li>
 </ol>
-<hr />
-<h2 id="deployment-and-operational-notes">Deployment and operational notes<a class="headerlink" href="#deployment-and-operational-notes" title="Permanent link">&para;</a></h2>
+<h2 id="layer-responsibilities">Layer Responsibilities<a class="headerlink" href="#layer-responsibilities" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Responsibility</th>
+<th>Must avoid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Domain</td>
+<td>Entities and invariants</td>
+<td>Infra imports, transport types</td>
+</tr>
+<tr>
+<td>Usecase</td>
+<td>Business orchestration</td>
+<td>SQL/GORM/HTTP details</td>
+</tr>
+<tr>
+<td>Primary adapter</td>
+<td>Validation, mapping, response</td>
+<td>Business rules</td>
+</tr>
+<tr>
+<td>Secondary adapter</td>
+<td>Infrastructure IO and error translation</td>
+<td>Domain orchestration</td>
+</tr>
+<tr>
+<td>Platform</td>
+<td>Wiring, config, server setup</td>
+<td>Domain decisions</td>
+</tr>
+</tbody>
+</table>
+<h2 id="error-mapping">Error Mapping<a class="headerlink" href="#error-mapping" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Semantic error</th>
+<th>HTTP status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>validation</code></td>
+<td>400</td>
+</tr>
+<tr>
+<td><code>unauthorized</code></td>
+<td>401</td>
+</tr>
+<tr>
+<td><code>forbidden</code></td>
+<td>403</td>
+</tr>
+<tr>
+<td><code>not_found</code></td>
+<td>404</td>
+</tr>
+<tr>
+<td><code>conflict</code></td>
+<td>409</td>
+</tr>
+<tr>
+<td><code>internal</code></td>
+<td>500</td>
+</tr>
+</tbody>
+</table>
+<h2 id="testing-strategy">Testing Strategy<a class="headerlink" href="#testing-strategy" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Use environment-specific config files for production vs staging vs local development.  </li>
-<li>Keep secrets in a secure vault or secrets manager (do not commit to repo).  </li>
-<li>CI jobs should run <code>make lint</code>, <code>make test</code>, and <code>make docs.gen</code> (if docs changes are present).  </li>
-<li>Consider blue/green or rolling deployment patterns for production services.</li>
+<li>Usecases: table-driven unit tests with mocks.</li>
+<li>Adapters: mapping and boundary behavior tests.</li>
+<li>Contract/tooling: regenerate GraphQL and mocks when ports/schema change.</li>
+<li>Quality gate: <code>make verify</code> before merge.</li>
 </ul>
-<hr />
-<h2 id="diagram-mermaid">Diagram (Mermaid)<a class="headerlink" href="#diagram-mermaid" title="Permanent link">&para;</a></h2>
-<p>You can embed a Mermaid diagram into MkDocs (if plugin enabled). Example:</p>
-<pre><code class="language-mermaid">flowchart LR
-  Client --&gt;|HTTP/GraphQL| Handler[Handler (primary adapter)]
-  Handler --&gt;|calls| Usecase[Usecase (core)]
-  Usecase --&gt; Repo[Repository (secondary adapter)]
-  Usecase --&gt; AuthProvider[AuthProvider (secondary)]
-  Repo --&gt; DB[(Postgres)]
-  AuthProvider --&gt; Cache[(Redis)]
-</code></pre>
-<hr />
-<h2 id="conventions-style">Conventions &amp; style<a class="headerlink" href="#conventions-style" title="Permanent link">&para;</a></h2>
+<h2 id="decision-checklist-before-coding">Decision Checklist (Before Coding)<a class="headerlink" href="#decision-checklist-before-coding" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Always propagate <code>context.Context</code> and honor cancellations and deadlines.  </li>
-<li>Keep handlers thin: validation, tracing, DTO mapping, usecase invocation, response mapping.  </li>
-<li>Keep usecases pure from infra concerns; use small interfaces for side effects.  </li>
-<li>Avoid magic strings — centralize keys in <code>internal/shared/constants</code>.</li>
+<li>Is logic in the correct layer?</li>
+<li>Is context propagated to all boundaries?</li>
+<li>Are errors semantic and safely mapped?</li>
+<li>Are spans/logs present at adapter/usecase/repository boundaries?</li>
 </ul>
-<hr />
+<h2 id="next-step">Next Step<a class="headerlink" href="#next-step" title="Permanent link">&para;</a></h2>
+<p>Read <a href="../platform/">Platform Runtime</a> for server composition, configuration, and observability runtime details.</p>
 
 
 
@@ -989,6 +1466,12 @@ export OTEL_SERVICE_VERSION=&quot;0.1.0&quot;
 
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
         
       </main>
       
@@ -1019,10 +1502,10 @@ export OTEL_SERVICE_VERSION=&quot;0.1.0&quot;
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.instant", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.instant", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

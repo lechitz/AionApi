@@ -2,24 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>AionApi — Swagger UI</title>
+  <title>AionApi - Swagger UI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css"/>
-  <style>
-    body { margin: 0; }
-    #swagger-ui { height: 100vh; }
-  </style>
+  <meta name="description" content="AionApi OpenAPI interactive documentation"/>
+  <link rel="stylesheet" href="./swagger-ui.css"/>
+  <link rel="stylesheet" href="./custom.css"/>
 </head>
 <body>
+  <header class="aion-swagger-header">
+    <div class="aion-swagger-header__brand">AionApi</div>
+    <div class="aion-swagger-header__meta">OpenAPI Explorer</div>
+  </header>
   <div id="swagger-ui"></div>
-  <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
+  <script src="./swagger-ui-bundle.js"></script>
   <script>
-    window.onload = function() {
+    window.onload = function () {
       SwaggerUIBundle({
-        // load the spec from the published GitHub Pages URL for the AionApi project site.
         url: "https://lechitz.github.io/AionApi/swagger/swagger.yaml",
         dom_id: '#swagger-ui',
         deepLinking: true,
+        docExpansion: "list",
+        persistAuthorization: true,
         presets: [
           SwaggerUIBundle.presets.apis,
         ],

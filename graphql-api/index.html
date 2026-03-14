@@ -6,26 +6,35 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Backend Go — Hexagonal, REST/GraphQL, Observability">
+        <meta name="description" content="Production-grade Go backend with Hexagonal Architecture, REST/GraphQL APIs, and observability.">
       
       
       
+        <link rel="canonical" href="https://lechitz.github.io/AionApi/graphql-api/">
       
+      
+        <link rel="prev" href="../rest-api/">
+      
+      
+        <link rel="next" href="../graphql-playground/">
       
       
         
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <link rel="icon" href="../assets/logo/Aion.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
-        <title>GraphQL API Reference - AionApi</title>
+        <title>GraphQL Guide - AionApi Docs</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -39,10 +48,12 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../assets/stylesheets/extra.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -53,7 +64,14 @@
   </head>
   
   
-    <body dir="ltr">
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="blue">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -62,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#graphql-api-reference" class="md-skip">
+        <a href="#graphql-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -78,10 +96,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="AionApi" class="md-header__button md-logo" aria-label="AionApi" data-md-component="logo">
+    <a href=".." title="AionApi Docs" class="md-header__button md-logo" aria-label="AionApi Docs" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo/Aion.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -92,18 +109,30 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            AionApi
+            AionApi Docs
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              GraphQL API Reference
+              GraphQL Guide
             
           </span>
         </div>
       </div>
     </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
     
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
@@ -134,6 +163,8 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
       
     </form>
     <div class="md-search__output">
@@ -188,13 +219,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="AionApi" class="md-nav__button md-logo" aria-label="AionApi" data-md-component="logo">
+    <a href=".." title="AionApi Docs" class="md-nav__button md-logo" aria-label="AionApi Docs" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo/Aion.png" alt="logo">
 
     </a>
-    AionApi
+    AionApi Docs
   </label>
   
     <div class="md-nav__source">
@@ -217,6 +247,60 @@
   
   
   
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Start Here
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Start Here
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href=".." class="md-nav__link">
         
@@ -225,7 +309,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Introduction
   
 
     
@@ -237,22 +321,23 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
   
     <li class="md-nav__item">
-      <a href="../architecture/" class="md-nav__link">
+      <a href="../overview/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Architecture
+    Overview
   
 
     
@@ -264,9 +349,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -291,6 +377,14 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
@@ -298,15 +392,69 @@
   
   
   
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="https://lechitz.github.io/AionApi/swagger-ui/" class="md-nav__link">
+      <a href="../architecture/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Swagger UI
+    System Design
   
 
     
@@ -315,6 +463,679 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rest-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canonical-query-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Canonical Query Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canonical-mutation-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Canonical Mutation Example
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Canonical Mutation Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-via-curl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example via curl
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-operation-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Operation Catalog
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contract-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contract Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regeneration-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regeneration Workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Step
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../graphql-playground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL Playground
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../graphql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GraphQL Artifacts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../collections/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Collections
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform & Ops
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Platform & Ops
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability-quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ollama-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ollama GPU (Optional)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagram/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagrams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../swagger-ui-bundle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Swagger UI Bundle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -346,10 +1167,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#graphql-playground" class="md-nav__link">
+  <a href="#endpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🎮 GraphQL Playground
+        Endpoints
       
     </span>
   </a>
@@ -357,456 +1178,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#autenticacao" class="md-nav__link">
+  <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🔐 Autenticação
+        Authentication
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="🔐 Autenticação">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#obter-token" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Obter Token
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#records-registros" class="md-nav__link">
+  <a href="#canonical-query-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        📦 Records (Registros)
+        Canonical Query Example
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="📦 Records (Registros)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#queries" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Queries
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Queries">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#recordbyid-buscar-por-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        recordById - Buscar por ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#records-listar-todos-com-paginacao" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        records - Listar todos (com paginação)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#recordsbytag-listar-por-tag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        recordsByTag - Listar por tag
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#recordsbyday-listar-por-dia" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        recordsByDay - Listar por dia
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#recordsuntil-listar-ate-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        recordsUntil - Listar até data
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#recordsbetween-listar-entre-datas" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        recordsBetween - Listar entre datas
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mutations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mutations
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Mutations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#createrecord-criar-registro" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        createRecord - Criar registro
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#updaterecord-atualizar-registro" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        updateRecord - Atualizar registro
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#softdeleterecord-deletar-registro" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        softDeleteRecord - Deletar registro
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#softdeleteallrecords-deletar-todos-os-registros" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        softDeleteAllRecords - Deletar todos os registros
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#tags" class="md-nav__link">
+  <a href="#canonical-mutation-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🏷️ Tags
+        Canonical Mutation Example
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="🏷️ Tags">
+    <nav class="md-nav" aria-label="Canonical Mutation Example">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#queries_1" class="md-nav__link">
+  <a href="#variables" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Queries
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Queries">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#tags-listar-todas" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        tags - Listar todas
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tagbyid-buscar-por-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        tagById - Buscar por ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tagbyname-buscar-por-nome" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        tagByName - Buscar por nome
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tagsbycategoryid-listar-por-categoria" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        tagsByCategoryId - Listar por categoria
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mutations_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mutations
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Mutations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#createtag-criar-tag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        createTag - Criar tag
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#categories" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        📂 Categories
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="📂 Categories">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#queries_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Queries
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Queries">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#categories-listar-todas" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        categories - Listar todas
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#categorybyid-buscar-por-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        categoryById - Buscar por ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#categorybyname-buscar-por-nome" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        categoryByName - Buscar por nome
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mutations_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mutations
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Mutations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#createcategory-criar-categoria" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        createCategory - Criar categoria
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#updatecategory-atualizar-categoria" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        updateCategory - Atualizar categoria
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#softdeletecategory-deletar-categoria" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        softDeleteCategory - Deletar categoria
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tipos-e-inputs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        📊 Tipos e Inputs
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="📊 Tipos e Inputs">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#record" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Record
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tag
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#category" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Category
+        Variables
       
     </span>
   </a>
@@ -819,71 +1228,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dicas-de-uso" class="md-nav__link">
+  <a href="#example-via-curl" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🔍 Dicas de Uso
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="🔍 Dicas de Uso">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-campos-seletivos" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Campos Seletivos
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-aliases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Aliases
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-fragments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Fragments
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-variaveis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Variáveis
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tratamento-de-erros" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        🐛 Tratamento de Erros
+        Example via curl
       
     </span>
   </a>
@@ -891,10 +1239,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#recursos-adicionais" class="md-nav__link">
+  <a href="#complete-operation-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        📚 Recursos Adicionais
+        Complete Operation Catalog
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contract-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contract Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regeneration-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regeneration Workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Step
       
     </span>
   </a>
@@ -921,561 +1313,96 @@
   
 
 
-<h1 id="graphql-api-reference">GraphQL API Reference<a class="headerlink" href="#graphql-api-reference" title="Permanent link">&para;</a></h1>
-<p>A API GraphQL do Aion oferece uma interface flexível e tipada para interagir com todos os recursos da plataforma.</p>
-<h2 id="graphql-playground">🎮 GraphQL Playground<a class="headerlink" href="#graphql-playground" title="Permanent link">&para;</a></h2>
-<p>Acesse o playground interativo para testar queries e mutations:</p>
+<h1 id="graphql-guide">GraphQL Guide<a class="headerlink" href="#graphql-guide" title="Permanent link">&para;</a></h1>
+<p>This page is the practical GraphQL entrypoint for AionApi consumers.</p>
+<h2 id="endpoints">Endpoints<a class="headerlink" href="#endpoints" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>http://localhost:8080/graphql</code></td>
+<td>Main GraphQL endpoint</td>
+</tr>
+<tr>
+<td><code>http://localhost:8080/graphql/playground</code></td>
+<td>Native server playground (if enabled)</td>
+</tr>
+<tr>
+<td><code>graphql-playground.md</code></td>
+<td>Docs-hosted operation explorer (informative by default)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h2>
+<p>Most operations require Bearer token authentication:</p>
+<div class="highlight"><pre><span></span><code><span class="err">Authorization: Bearer &lt;JWT_TOKEN&gt;</span>
+</code></pre></div>
+<h2 id="canonical-query-example">Canonical Query Example<a class="headerlink" href="#canonical-query-example" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">query</span><span class="w"> </span><span class="nf">Categories</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">categories</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">id</span>
+<span class="w">    </span><span class="n">name</span>
+<span class="w">    </span><span class="n">description</span>
+<span class="w">    </span><span class="n">colorHex</span>
+<span class="w">    </span><span class="n">icon</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="canonical-mutation-example">Canonical Mutation Example<a class="headerlink" href="#canonical-mutation-example" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">mutation</span><span class="w"> </span><span class="nf">CreateCategory</span><span class="p">(</span><span class="nv">$input</span><span class="p">:</span><span class="w"> </span><span class="nc">CreateCategoryInput</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">createCategory</span><span class="p">(</span><span class="n">input</span><span class="p">:</span><span class="w"> </span><span class="nv">$input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">id</span>
+<span class="w">    </span><span class="n">name</span>
+<span class="w">    </span><span class="n">colorHex</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="variables">Variables<a class="headerlink" href="#variables" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Work&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Work items&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;colorHex&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#FF8B42&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;icon&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;briefcase&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="example-via-curl">Example via <code>curl</code><a class="headerlink" href="#example-via-curl" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8080/graphql<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s1">&#39;Content-Type: application/json&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;query&quot;:&quot;query Categories { categories { id name colorHex } }&quot;}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+</code></pre></div>
+<h2 id="complete-operation-catalog">Complete Operation Catalog<a class="headerlink" href="#complete-operation-catalog" title="Permanent link">&para;</a></h2>
+<p>Use the docs-hosted page for all queries and mutations:</p>
 <ul>
-<li>Básico: <code>http://localhost:5001/aion/api/v1/graphql/playground</code></li>
-<li>Com exemplos prontos: <code>http://localhost:5001/aion/api/v1/graphql/playground/examples</code></li>
+<li><a href="../graphql-playground/">GraphQL Playground</a></li>
 </ul>
-<p>O Playground oferece:
-- ✅ Autocompletar com schema introspection
-- 📖 Documentação inline de todos os tipos
-- 🔍 Validação de queries em tempo real
-- 📝 Histórico de queries executadas</p>
-<h2 id="autenticacao">🔐 Autenticação<a class="headerlink" href="#autenticacao" title="Permanent link">&para;</a></h2>
-<p>Todas as queries e mutations (exceto login) requerem autenticação via Bearer token:</p>
-<pre><code class="language-http">Authorization: Bearer YOUR_JWT_TOKEN
-</code></pre>
-<h3 id="obter-token">Obter Token<a class="headerlink" href="#obter-token" title="Permanent link">&para;</a></h3>
-<pre><code class="language-graphql">mutation Login {
-  login(username: &quot;user&quot;, password: &quot;password&quot;) {
-    token
-  }
-}
-</code></pre>
-<hr />
-<h2 id="records-registros">📦 Records (Registros)<a class="headerlink" href="#records-registros" title="Permanent link">&para;</a></h2>
-<h3 id="queries">Queries<a class="headerlink" href="#queries" title="Permanent link">&para;</a></h3>
-<h4 id="recordbyid-buscar-por-id"><code>recordById</code> - Buscar por ID<a class="headerlink" href="#recordbyid-buscar-por-id" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query RecordById($id: ID!) {
-  recordById(id: $id) {
-    id
-    userId
-    categoryId
-    tagId
-    title
-    description
-    eventTime
-    recordedAt
-    durationSeconds
-    value
-    source
-    timezone
-    status
-    createdAt
-    updatedAt
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;1&quot;
-}
-</code></pre>
-<hr />
-<h4 id="records-listar-todos-com-paginacao"><code>records</code> - Listar todos (com paginação)<a class="headerlink" href="#records-listar-todos-com-paginacao" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query Records($limit: Int, $afterEventTime: String, $afterId: ID) {
-  records(limit: $limit, afterEventTime: $afterEventTime, afterId: $afterId) {
-    id
-    title
-    categoryId
-    tagId
-    eventTime
-    durationSeconds
-    value
-    status
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;limit&quot;: 50,
-  &quot;afterEventTime&quot;: null,
-  &quot;afterId&quot;: null
-}
-</code></pre>
-<hr />
-<h4 id="recordsbytag-listar-por-tag"><code>recordsByTag</code> - Listar por tag<a class="headerlink" href="#recordsbytag-listar-por-tag" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query RecordsByTag($tagId: ID!, $limit: Int) {
-  recordsByTag(tagId: $tagId, limit: $limit) {
-    id
-    title
-    tagId
-    eventTime
-    durationSeconds
-    value
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;tagId&quot;: &quot;1&quot;,
-  &quot;limit&quot;: 20
-}
-</code></pre>
-<hr />
-<h4 id="recordsbyday-listar-por-dia"><code>recordsByDay</code> - Listar por dia<a class="headerlink" href="#recordsbyday-listar-por-dia" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query RecordsByDay($date: String!) {
-  recordsByDay(date: $date) {
-    id
-    title
-    eventTime
-    durationSeconds
-    value
-    status
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;date&quot;: &quot;2025-01-06&quot;
-}
-</code></pre>
-<hr />
-<h4 id="recordsuntil-listar-ate-data"><code>recordsUntil</code> - Listar até data<a class="headerlink" href="#recordsuntil-listar-ate-data" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query RecordsUntil($until: String!, $limit: Int) {
-  recordsUntil(until: $until, limit: $limit) {
-    id
-    title
-    eventTime
-    durationSeconds
-    value
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;until&quot;: &quot;2025-01-10T23:59:59Z&quot;,
-  &quot;limit&quot;: 50
-}
-</code></pre>
-<hr />
-<h4 id="recordsbetween-listar-entre-datas"><code>recordsBetween</code> - Listar entre datas<a class="headerlink" href="#recordsbetween-listar-entre-datas" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query RecordsBetween($startDate: String!, $endDate: String!, $limit: Int) {
-  recordsBetween(startDate: $startDate, endDate: $endDate, limit: $limit) {
-    id
-    title
-    eventTime
-    durationSeconds
-    value
-    status
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;startDate&quot;: &quot;2025-01-05T00:00:00Z&quot;,
-  &quot;endDate&quot;: &quot;2025-01-09T23:59:59Z&quot;,
-  &quot;limit&quot;: 100
-}
-</code></pre>
-<hr />
-<h3 id="mutations">Mutations<a class="headerlink" href="#mutations" title="Permanent link">&para;</a></h3>
-<h4 id="createrecord-criar-registro"><code>createRecord</code> - Criar registro<a class="headerlink" href="#createrecord-criar-registro" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">mutation CreateRecord($input: CreateRecordInput!) {
-  createRecord(input: $input) {
-    id
-    title
-    categoryId
-    tagId
-    eventTime
-    durationSeconds
-    value
-    status
-    createdAt
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;input&quot;: {
-    &quot;title&quot;: &quot;Treino de corrida&quot;,
-    &quot;description&quot;: &quot;Corrida leve no parque&quot;,
-    &quot;categoryId&quot;: &quot;1&quot;,
-    &quot;tagId&quot;: &quot;4&quot;,
-    &quot;eventTime&quot;: &quot;2025-01-14T06:00:00Z&quot;,
-    &quot;recordedAt&quot;: &quot;2025-01-14T07:30:00Z&quot;,
-    &quot;durationSeconds&quot;: 2400,
-    &quot;value&quot;: 5.5,
-    &quot;source&quot;: &quot;mobile_app&quot;,
-    &quot;timezone&quot;: &quot;America/Sao_Paulo&quot;,
-    &quot;status&quot;: &quot;completed&quot;
-  }
-}
-</code></pre>
-<hr />
-<h4 id="updaterecord-atualizar-registro"><code>updateRecord</code> - Atualizar registro<a class="headerlink" href="#updaterecord-atualizar-registro" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">mutation UpdateRecord($input: UpdateRecordInput!) {
-  updateRecord(input: $input) {
-    id
-    title
-    description
-    categoryId
-    tagId
-    eventTime
-    durationSeconds
-    value
-    status
-    updatedAt
-  }
-}
-</code></pre>
-<p><strong>Variables (atualização parcial):</strong></p>
-<pre><code class="language-json">{
-  &quot;input&quot;: {
-    &quot;id&quot;: &quot;1&quot;,
-    &quot;title&quot;: &quot;Treino atualizado&quot;,
-    &quot;durationSeconds&quot;: 3000,
-    &quot;value&quot;: 6.0
-  }
-}
-</code></pre>
-<hr />
-<h4 id="softdeleterecord-deletar-registro"><code>softDeleteRecord</code> - Deletar registro<a class="headerlink" href="#softdeleterecord-deletar-registro" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">mutation SoftDeleteRecord($input: DeleteRecordInput!) {
-  softDeleteRecord(input: $input)
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;input&quot;: {
-    &quot;id&quot;: &quot;1&quot;
-  }
-}
-</code></pre>
-<hr />
-<h4 id="softdeleteallrecords-deletar-todos-os-registros"><code>softDeleteAllRecords</code> - Deletar todos os registros<a class="headerlink" href="#softdeleteallrecords-deletar-todos-os-registros" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">mutation SoftDeleteAllRecords {
-  softDeleteAllRecords
-}
-</code></pre>
-<p><strong>Sem variables</strong> - deleta todos os records do usuário autenticado.</p>
-<hr />
-<h2 id="tags">🏷️ Tags<a class="headerlink" href="#tags" title="Permanent link">&para;</a></h2>
-<h3 id="queries_1">Queries<a class="headerlink" href="#queries_1" title="Permanent link">&para;</a></h3>
-<h4 id="tags-listar-todas"><code>tags</code> - Listar todas<a class="headerlink" href="#tags-listar-todas" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query Tags {
-  tags {
-    id
-    userId
-    name
-    categoryId
-    description
-    createdAt
-    updatedAt
-  }
-}
-</code></pre>
-<hr />
-<h4 id="tagbyid-buscar-por-id"><code>tagById</code> - Buscar por ID<a class="headerlink" href="#tagbyid-buscar-por-id" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query TagById($id: ID!) {
-  tagById(id: $id) {
-    id
-    userId
-    name
-    categoryId
-    description
-    createdAt
-    updatedAt
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;1&quot;
-}
-</code></pre>
-<hr />
-<h4 id="tagbyname-buscar-por-nome"><code>tagByName</code> - Buscar por nome<a class="headerlink" href="#tagbyname-buscar-por-nome" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query TagByName($name: String!) {
-  tagByName(name: $name) {
-    id
-    userId
-    name
-    categoryId
-    description
-    createdAt
-    updatedAt
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;name&quot;: &quot;Golang&quot;
-}
-</code></pre>
-<hr />
-<h4 id="tagsbycategoryid-listar-por-categoria"><code>tagsByCategoryId</code> - Listar por categoria<a class="headerlink" href="#tagsbycategoryid-listar-por-categoria" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query TagsByCategoryId($categoryId: ID!) {
-  tagsByCategoryId(categoryId: $categoryId) {
-    id
-    name
-    categoryId
-    description
-    createdAt
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;categoryId&quot;: &quot;1&quot;
-}
-</code></pre>
-<hr />
-<h3 id="mutations_1">Mutations<a class="headerlink" href="#mutations_1" title="Permanent link">&para;</a></h3>
-<h4 id="createtag-criar-tag"><code>createTag</code> - Criar tag<a class="headerlink" href="#createtag-criar-tag" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">mutation CreateTag($input: CreateTagInput!) {
-  createTag(input: $input) {
-    id
-    name
-    categoryId
-    description
-    createdAt
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;input&quot;: {
-    &quot;name&quot;: &quot;Yoga&quot;,
-    &quot;categoryId&quot;: &quot;1&quot;,
-    &quot;description&quot;: &quot;Yoga practice sessions&quot;
-  }
-}
-</code></pre>
-<hr />
-<h2 id="categories">📂 Categories<a class="headerlink" href="#categories" title="Permanent link">&para;</a></h2>
-<h3 id="queries_2">Queries<a class="headerlink" href="#queries_2" title="Permanent link">&para;</a></h3>
-<h4 id="categories-listar-todas"><code>categories</code> - Listar todas<a class="headerlink" href="#categories-listar-todas" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query Categories {
-  categories {
-    id
-    userId
-    name
-    description
-    colorHex
-    icon
-  }
-}
-</code></pre>
-<hr />
-<h4 id="categorybyid-buscar-por-id"><code>categoryById</code> - Buscar por ID<a class="headerlink" href="#categorybyid-buscar-por-id" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query CategoryById($id: ID!) {
-  categoryById(id: $id) {
-    id
-    userId
-    name
-    description
-    colorHex
-    icon
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;1&quot;
-}
-</code></pre>
-<hr />
-<h4 id="categorybyname-buscar-por-nome"><code>categoryByName</code> - Buscar por nome<a class="headerlink" href="#categorybyname-buscar-por-nome" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">query CategoryByName($name: String!) {
-  categoryByName(name: $name) {
-    id
-    userId
-    name
-    description
-    colorHex
-    icon
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;name&quot;: &quot;saude_fisica&quot;
-}
-</code></pre>
-<hr />
-<h3 id="mutations_2">Mutations<a class="headerlink" href="#mutations_2" title="Permanent link">&para;</a></h3>
-<h4 id="createcategory-criar-categoria"><code>createCategory</code> - Criar categoria<a class="headerlink" href="#createcategory-criar-categoria" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">mutation CreateCategory($input: CreateCategoryInput!) {
-  createCategory(input: $input) {
-    id
-    name
-    description
-    colorHex
-    icon
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;input&quot;: {
-    &quot;name&quot;: &quot;hobbies&quot;,
-    &quot;description&quot;: &quot;Atividades recreativas&quot;,
-    &quot;colorHex&quot;: &quot;#FF5722&quot;,
-    &quot;icon&quot;: &quot;palette&quot;
-  }
-}
-</code></pre>
-<hr />
-<h4 id="updatecategory-atualizar-categoria"><code>updateCategory</code> - Atualizar categoria<a class="headerlink" href="#updatecategory-atualizar-categoria" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">mutation UpdateCategory($input: UpdateCategoryInput!) {
-  updateCategory(input: $input) {
-    id
-    name
-    description
-    colorHex
-    icon
-  }
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;input&quot;: {
-    &quot;id&quot;: &quot;1&quot;,
-    &quot;name&quot;: &quot;fitness&quot;,
-    &quot;colorHex&quot;: &quot;#00BCD4&quot;
-  }
-}
-</code></pre>
-<hr />
-<h4 id="softdeletecategory-deletar-categoria"><code>softDeleteCategory</code> - Deletar categoria<a class="headerlink" href="#softdeletecategory-deletar-categoria" title="Permanent link">&para;</a></h4>
-<pre><code class="language-graphql">mutation SoftDeleteCategory($input: DeleteCategoryInput!) {
-  softDeleteCategory(input: $input)
-}
-</code></pre>
-<p><strong>Variables:</strong></p>
-<pre><code class="language-json">{
-  &quot;input&quot;: {
-    &quot;id&quot;: &quot;1&quot;
-  }
-}
-</code></pre>
-<hr />
-<h2 id="tipos-e-inputs">📊 Tipos e Inputs<a class="headerlink" href="#tipos-e-inputs" title="Permanent link">&para;</a></h2>
-<h3 id="record">Record<a class="headerlink" href="#record" title="Permanent link">&para;</a></h3>
-<pre><code class="language-graphql">type Record {
-  id: ID!
-  userId: ID!
-  categoryId: ID!
-  tagId: ID!
-  title: String!
-  description: String
-  eventTime: String!
-  recordedAt: String
-  durationSeconds: Int
-  value: Float
-  source: String
-  timezone: String
-  status: String
-  createdAt: String!
-  updatedAt: String!
-}
-</code></pre>
-<h3 id="tag">Tag<a class="headerlink" href="#tag" title="Permanent link">&para;</a></h3>
-<pre><code class="language-graphql">type Tag {
-  id: ID!
-  userId: ID!
-  name: String!
-  categoryId: ID!
-  description: String
-  createdAt: String!
-  updatedAt: String!
-}
-</code></pre>
-<h3 id="category">Category<a class="headerlink" href="#category" title="Permanent link">&para;</a></h3>
-<pre><code class="language-graphql">type Category {
-  id: ID!
-  userId: ID!
-  name: String!
-  description: String
-  colorHex: String
-  icon: String
-}
-</code></pre>
-<hr />
-<h2 id="dicas-de-uso">🔍 Dicas de Uso<a class="headerlink" href="#dicas-de-uso" title="Permanent link">&para;</a></h2>
-<h3 id="1-campos-seletivos">1. Campos Seletivos<a class="headerlink" href="#1-campos-seletivos" title="Permanent link">&para;</a></h3>
-<p>Peça apenas os campos que você precisa:</p>
-<pre><code class="language-graphql">query Records {
-  records(limit: 10) {
-    id
-    title
-    eventTime
-  }
-}
-</code></pre>
-<h3 id="2-aliases">2. Aliases<a class="headerlink" href="#2-aliases" title="Permanent link">&para;</a></h3>
-<p>Use aliases para queries múltiplas:</p>
-<pre><code class="language-graphql">query MultipleQueries {
-  running: recordsByTag(tagId: &quot;4&quot;, limit: 5) {
-    id
-    title
-  }
-  gym: recordsByTag(tagId: &quot;7&quot;, limit: 5) {
-    id
-    title
-  }
-}
-</code></pre>
-<h3 id="3-fragments">3. Fragments<a class="headerlink" href="#3-fragments" title="Permanent link">&para;</a></h3>
-<p>Reutilize campos com fragments:</p>
-<pre><code class="language-graphql">fragment RecordFields on Record {
-  id
-  title
-  eventTime
-  durationSeconds
-  value
-}
-
-query {
-  recordById(id: &quot;1&quot;) {
-    ...RecordFields
-  }
-}
-</code></pre>
-<h3 id="4-variaveis">4. Variáveis<a class="headerlink" href="#4-variaveis" title="Permanent link">&para;</a></h3>
-<p>Sempre use variáveis ao invés de valores fixos:</p>
-<pre><code class="language-graphql"># ✅ Bom
-query RecordById($id: ID!) {
-  recordById(id: $id) { ... }
-}
-
-# ❌ Evite
-query {
-  recordById(id: &quot;1&quot;) { ... }
-}
-</code></pre>
-<hr />
-<h2 id="tratamento-de-erros">🐛 Tratamento de Erros<a class="headerlink" href="#tratamento-de-erros" title="Permanent link">&para;</a></h2>
-<p>Respostas de erro seguem a especificação GraphQL:</p>
-<pre><code class="language-json">{
-  &quot;errors&quot;: [
-    {
-      &quot;message&quot;: &quot;record not found&quot;,
-      &quot;path&quot;: [&quot;recordById&quot;],
-      &quot;extensions&quot;: {
-        &quot;code&quot;: &quot;NOT_FOUND&quot;
-      }
-    }
-  ],
-  &quot;data&quot;: {
-    &quot;recordById&quot;: null
-  }
-}
-</code></pre>
-<hr />
-<h2 id="recursos-adicionais">📚 Recursos Adicionais<a class="headerlink" href="#recursos-adicionais" title="Permanent link">&para;</a></h2>
+<h2 id="contract-artifacts">Contract Artifacts<a class="headerlink" href="#contract-artifacts" title="Permanent link">&para;</a></h2>
+<p>Use generated artifacts for tooling and integration:</p>
 <ul>
-<li><a href="https://spec.graphql.org/">GraphQL Spec</a></li>
-<li><a href="https://gqlgen.com/">gqlgen Documentation</a></li>
-<li><a href="https://graphql.org/learn/best-practices/">Best Practices</a></li>
+<li>Flattened SDL: <a href="../graphql/schema.graphql"><code>docs/graphql/schema.graphql</code></a></li>
+<li>GraphQL docs/artifacts: <a href="../graphql/">GraphQL Artifacts</a></li>
+<li>Shared queries for consumers: <code>contracts/graphql/queries/</code></li>
 </ul>
-<hr />
-<p><strong>URL do Playground</strong>: <a href="http://localhost:5001/aion/api/v1/graphql/playground">http://localhost:5001/aion/api/v1/graphql/playground</a></p>
-<p><strong>Endpoint GraphQL</strong>: <code>http://localhost:5001/aion/api/v1/graphql</code></p>
+<h2 id="regeneration-workflow">Regeneration Workflow<a class="headerlink" href="#regeneration-workflow" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>graphql
+make<span class="w"> </span>graphql.schema
+</code></pre></div>
+<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Keep business logic in usecases, not in resolvers/controllers.</li>
+<li>Use context propagation in handlers and repositories.</li>
+<li>Keep schema modules cohesive by bounded context.</li>
+<li>Regenerate artifacts in the same PR as schema changes.</li>
+</ul>
+<h2 id="next-step">Next Step<a class="headerlink" href="#next-step" title="Permanent link">&para;</a></h2>
+<p>Use <a href="../rest-api/">REST API</a> for endpoint-level REST exploration in the same docs portal.</p>
 
 
 
@@ -1497,6 +1424,12 @@ query {
 
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
         
       </main>
       
@@ -1527,10 +1460,10 @@ query {
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.instant", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.instant", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

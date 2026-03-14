@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://lechitz.github.io/AionApi/platform/">
+        <link rel="canonical" href="https://lechitz.github.io/AionApi/diagram/">
       
       
-        <link rel="prev" href="../architecture/">
+        <link rel="prev" href="../ollama-gpu/">
       
       
-        <link rel="next" href="../rest-api/">
+        <link rel="next" href="../assets/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Platform Runtime - AionApi Docs</title>
+        <title>Diagrams - AionApi Docs</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#platform-runtime" class="md-skip">
+        <a href="#architecture-diagrams" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Platform Runtime
+              Diagrams
             
           </span>
         </div>
@@ -390,8 +390,6 @@
       
   
   
-    
-  
   
   
     
@@ -404,11 +402,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
@@ -429,7 +429,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -472,37 +472,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Platform Runtime
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../platform/" class="md-nav__link">
         
   
   
@@ -518,131 +491,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#platform-surface" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Platform Surface
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration Model
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bootstrap-composition-root" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Bootstrap (Composition Root)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#http-runtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HTTP Runtime
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="HTTP Runtime">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#middleware-order" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Middleware Order
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#graphql-runtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        GraphQL Runtime
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#observability-runtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Observability Runtime
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#operational-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Operational Commands
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-step" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Step
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -977,8 +825,10 @@
       
   
   
+    
   
   
+  
     
     
     
@@ -989,13 +839,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
@@ -1016,7 +864,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1031,10 +879,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../diagram/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagrams
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1050,6 +925,81 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagram-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagram Catalog
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editing Workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#package-improvements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Package Improvements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Navigation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1145,10 +1095,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#platform-surface" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform Surface
+        Overview
       
     </span>
   </a>
@@ -1156,10 +1106,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration-model" class="md-nav__link">
+  <a href="#diagram-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Configuration Model
+        Diagram Catalog
       
     </span>
   </a>
@@ -1167,10 +1117,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bootstrap-composition-root" class="md-nav__link">
+  <a href="#editing-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bootstrap (Composition Root)
+        Editing Workflow
       
     </span>
   </a>
@@ -1178,38 +1128,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#http-runtime" class="md-nav__link">
+  <a href="#package-improvements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        HTTP Runtime
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="HTTP Runtime">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#middleware-order" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Middleware Order
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#graphql-runtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        GraphQL Runtime
+        Package Improvements
       
     </span>
   </a>
@@ -1217,32 +1139,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#observability-runtime" class="md-nav__link">
+  <a href="#navigation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Observability Runtime
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#operational-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Operational Commands
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-step" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Step
+        Navigation
       
     </span>
   </a>
@@ -1269,134 +1169,90 @@
   
 
 
-<h1 id="platform-runtime">Platform Runtime<a class="headerlink" href="#platform-runtime" title="Permanent link">&para;</a></h1>
-<p>This page documents the cross-cutting runtime layer: configuration, bootstrap wiring, HTTP/GraphQL server composition, and observability setup.</p>
-<h2 id="platform-surface">Platform Surface<a class="headerlink" href="#platform-surface" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>internal/platform/
-  bootstrap/
-  config/
-  server/
-    http/
-    graph/
-  observability/
-</code></pre></div>
-<h2 id="configuration-model">Configuration Model<a class="headerlink" href="#configuration-model" title="Permanent link">&para;</a></h2>
-<p>Configuration is loaded from environment variables into a typed struct with validation and normalization.</p>
+<h1 id="architecture-diagrams">Architecture Diagrams<a class="headerlink" href="#architecture-diagrams" title="Permanent link">&para;</a></h1>
+<p><strong>Path:</strong> <code>docs/diagram</code></p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>This folder stores architecture and flow diagrams in two formats:
+- editable source (<code>*.sequence.txt</code>)
+- rendered output (<code>images/*.svg</code>)</p>
+<h2 id="diagram-catalog">Diagram Catalog<a class="headerlink" href="#diagram-catalog" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Area</th>
-<th>Examples</th>
+<th>Source file</th>
+<th>Rendered SVG</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>HTTP</td>
-<td><code>SERVER_HTTP_PORT</code>, <code>SERVER_HTTP_CONTEXT</code>, <code>SHUTDOWN_TIMEOUT</code></td>
+<td><code>cmd-aion-api.sequence.txt</code></td>
+<td><code>images/cmd-aion-api.svg</code></td>
+<td>API entrypoint flow</td>
 </tr>
 <tr>
-<td>GraphQL</td>
-<td><code>GRAPHQL_PATH</code>, <code>GRAPHQL_TIMEOUT</code>, <code>GRAPHQL_PLAYGROUND</code></td>
+<td><code>cmd-api-seed-caller.sequence.txt</code></td>
+<td><code>images/cmd-api-seed-caller.svg</code></td>
+<td>Seed caller flow</td>
 </tr>
 <tr>
-<td>Database</td>
-<td><code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_MAX_OPEN_CONNS</code></td>
+<td><code>cmd-seed-helper.sequence.txt</code></td>
+<td><code>images/cmd-seed-helper.svg</code></td>
+<td>Seed helper flow</td>
 </tr>
 <tr>
-<td>Cache</td>
-<td><code>CACHE_ADDR</code>, <code>CACHE_DB</code></td>
+<td><code>internal-admin.sequence.txt</code></td>
+<td><code>images/internal-admin.svg</code></td>
+<td>Admin context flow</td>
 </tr>
 <tr>
-<td>Observability</td>
-<td><code>OTEL_EXPORTER_OTLP_ENDPOINT</code>, <code>OTEL_SERVICE_NAME</code></td>
+<td><code>internal-auth.sequence.txt</code></td>
+<td><code>images/internal-auth.svg</code></td>
+<td>Auth context flow</td>
+</tr>
+<tr>
+<td><code>internal-adapter-primary-graphql.sequence.txt</code></td>
+<td><code>images/internal-adapter-primary-graphql.svg</code></td>
+<td>Primary GraphQL adapter flow</td>
+</tr>
+<tr>
+<td><code>internal-platform.sequence.txt</code></td>
+<td><code>images/internal-platform.svg</code></td>
+<td>Platform bootstrap flow</td>
+</tr>
+<tr>
+<td><code>internal-platform-server.sequence.txt</code></td>
+<td><code>images/internal-platform-server.svg</code></td>
+<td>HTTP server routing flow</td>
+</tr>
+<tr>
+<td><code>internal-platform-httpclient.sequence.txt</code></td>
+<td><code>images/internal-platform-httpclient.svg</code></td>
+<td>HTTP client flow</td>
 </tr>
 </tbody>
 </table>
-<h2 id="bootstrap-composition-root">Bootstrap (Composition Root)<a class="headerlink" href="#bootstrap-composition-root" title="Permanent link">&para;</a></h2>
-<p>Bootstrap builds concrete adapters and returns application dependencies plus cleanup logic.</p>
-<p>Responsibilities:</p>
+<h2 id="editing-workflow">Editing Workflow<a class="headerlink" href="#editing-workflow" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Connect Postgres/Redis and initialize providers.</li>
-<li>Instantiate repositories/stores implementing output ports.</li>
-<li>Build usecases implementing input ports.</li>
-<li>Return <code>AppDependencies</code> and graceful <code>cleanup(ctx)</code>.</li>
+<li>Edit <code>*.sequence.txt</code> source.</li>
+<li>Render/export SVG (e.g., sequencediagram.org).</li>
+<li>Replace corresponding file under <code>images/</code>.</li>
+<li>Commit source and rendered artifact together.</li>
 </ol>
-<h2 id="http-runtime">HTTP Runtime<a class="headerlink" href="#http-runtime" title="Permanent link">&para;</a></h2>
-<p>HTTP uses a router port abstraction with a <code>chi</code> implementation.</p>
-<table>
-<thead>
-<tr>
-<th>Part</th>
-<th>Responsibility</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Router port</td>
-<td>Framework-agnostic contract</td>
-</tr>
-<tr>
-<td>Middleware</td>
-<td>Recovery, request ID, auth and policy chain</td>
-</tr>
-<tr>
-<td>Composer</td>
-<td>Route mounting and global defaults</td>
-</tr>
-<tr>
-<td>Generic handlers</td>
-<td>Health, 404/405, and centralized error mapping</td>
-</tr>
-</tbody>
-</table>
-<h3 id="middleware-order">Middleware Order<a class="headerlink" href="#middleware-order" title="Permanent link">&para;</a></h3>
-<p>Keep recovery outermost and request-id early to preserve traceability across logs and spans.</p>
-<h2 id="graphql-runtime">GraphQL Runtime<a class="headerlink" href="#graphql-runtime" title="Permanent link">&para;</a></h2>
-<p>GraphQL is mounted in platform server and delegates to context controllers/resolvers.</p>
+<h2 id="package-improvements">Package Improvements<a class="headerlink" href="#package-improvements" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Schema modules live under <code>internal/adapter/primary/graphql/schema/modules/</code>.</li>
-<li>Regenerate runtime artifacts with <code>make graphql</code>.</li>
-<li>Keep controllers thin and usecases authoritative.</li>
+<li>Add diagram naming conventions for new contexts/features.</li>
+<li>Add lightweight quality checklist (actors, direction, error path).</li>
+<li>Add script/target to validate missing source↔svg pairs.</li>
+<li>Add timestamp/version metadata in diagram headers for traceability.</li>
 </ul>
-<h2 id="observability-runtime">Observability Runtime<a class="headerlink" href="#observability-runtime" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Signal</th>
-<th>Stack</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Traces</td>
-<td>OpenTelemetry + OTLP exporter + Jaeger</td>
-</tr>
-<tr>
-<td>Metrics</td>
-<td>Prometheus + Grafana dashboards</td>
-</tr>
-<tr>
-<td>Logs</td>
-<td>Structured logs + Fluent Bit/Loki integration</td>
-</tr>
-</tbody>
-</table>
-<p>Recommended local environment:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">OTEL_EXPORTER_OTLP_ENDPOINT</span><span class="o">=</span><span class="s2">&quot;http://localhost:4318&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">OTEL_SERVICE_NAME</span><span class="o">=</span><span class="s2">&quot;AionApi&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">OTEL_SERVICE_VERSION</span><span class="o">=</span><span class="s2">&quot;0.1.0&quot;</span>
-</code></pre></div>
-<h2 id="operational-commands">Operational Commands<a class="headerlink" href="#operational-commands" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>make<span class="w"> </span>dev-up
-make<span class="w"> </span>dev-down
-make<span class="w"> </span>verify
-make<span class="w"> </span>docs-build
-</code></pre></div>
-<h2 id="next-step">Next Step<a class="headerlink" href="#next-step" title="Permanent link">&para;</a></h2>
+<hr />
+<!-- doc-nav:start -->
+<h2 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">&para;</a></h2>
 <ul>
-<li>API usage: <a href="../graphql-api/">GraphQL Guide</a></li>
-<li>Operational validation: <a href="../observability-quickstart/">Observability Quickstart</a></li>
+<li><a href="../">Back to root README</a></li>
 </ul>
+<!-- doc-nav:end -->
 
 
 

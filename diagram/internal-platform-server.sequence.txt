@@ -1,0 +1,19 @@
+title Platform HTTP Server Flow
+
+participant "Client" as C
+participant "router" as R
+participant "middleware" as M
+participant "handler" as H
+participant "adapter" as A
+participant "usecase" as UC
+
+C->R: HTTP request
+R->M: Apply global middleware
+M->H: Dispatch to handler
+H->A: Map DTOs + call input port
+A->UC: Execute usecase
+UC->A: Result or semantic error
+A->H: Transport mapping
+H->M: Response
+M->R: Response
+R->C: HTTP response
