@@ -124,10 +124,10 @@ Related references:
 - [`contracts/graphql/queries/README.md`](./contracts/graphql/queries/README.md)
 - [`docs/graphql/README.md`](./docs/graphql/README.md)
 - [`internal/record/README.md`](./internal/record/README.md)
-- `notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md` lives in the wider Aion workspace and is not included in this repository checkout.
 
 <!-- docs-index:start -->
-## Documentation Index
+<details>
+<summary><strong>Documentation Index</strong></summary>
 
 Repository README map by area.
 
@@ -209,14 +209,8 @@ Repository README map by area.
 - [`tests/coverage/README.md`](./tests/coverage/README.md)
 - [`tests/setup/README.md`](./tests/setup/README.md)
 
+</details>
 <!-- docs-index:end -->
-
-## Package Improvements
-
-- Add architecture decision records (ADRs) for critical platform/domain choices.
-- Add release notes summary per version with API contract deltas.
-- Add contributor troubleshooting matrix for local setup failures.
-- Add CI/docs badges and links to pipeline checks.
 
 ## License
 
