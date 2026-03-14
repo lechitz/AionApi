@@ -23,7 +23,7 @@ func TestUserReadHandlers(t *testing.T) {
 			return []userdomain.User{{ID: 1, Username: "u1", Email: "u1@example.com", CreatedAt: time.Now().UTC()}}, nil
 		}}
 		h := handler.New(svc, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodGet, "/user/all", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/user/all", nil)
 		rec := httptest.NewRecorder()
 
 		h.ListAll(rec, req)
@@ -37,7 +37,7 @@ func TestUserReadHandlers(t *testing.T) {
 			return nil, errors.New("boom")
 		}}
 		h := handler.New(svc, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodGet, "/user/all", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/user/all", nil)
 		rec := httptest.NewRecorder()
 
 		h.ListAll(rec, req)
@@ -47,7 +47,7 @@ func TestUserReadHandlers(t *testing.T) {
 
 	t.Run("get me missing user id", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodGet, "/user/me", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/user/me", nil)
 		rec := httptest.NewRecorder()
 
 		h.GetMe(rec, req)
@@ -57,7 +57,7 @@ func TestUserReadHandlers(t *testing.T) {
 
 	t.Run("get me success", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodGet, "/user/me", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/user/me", nil)
 		req = req.WithContext(context.WithValue(t.Context(), ctxkeys.UserID, uint64(7)))
 		rec := httptest.NewRecorder()
 
@@ -69,7 +69,7 @@ func TestUserReadHandlers(t *testing.T) {
 
 	t.Run("get user by id missing param", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodGet, "/user/anything", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/user/anything", nil)
 		rec := httptest.NewRecorder()
 		h.GetUserByID(rec, req)
 
@@ -78,7 +78,7 @@ func TestUserReadHandlers(t *testing.T) {
 
 	t.Run("get user by id invalid param", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodGet, "/user/abc", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/user/abc", nil)
 		rec := httptest.NewRecorder()
 
 		router := chi.NewRouter()
@@ -93,7 +93,7 @@ func TestUserReadHandlers(t *testing.T) {
 			return userdomain.User{}, httperrors.ErrResourceNotFound
 		}}
 		h := handler.New(svc, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodGet, "/user/9", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/user/9", nil)
 		rec := httptest.NewRecorder()
 
 		router := chi.NewRouter()
@@ -105,7 +105,7 @@ func TestUserReadHandlers(t *testing.T) {
 
 	t.Run("get user by id success", func(t *testing.T) {
 		h := handler.New(&mockUserService{}, &config.Config{}, mockLogger{})
-		req := httptest.NewRequest(http.MethodGet, "/user/9", nil)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/user/9", nil)
 		rec := httptest.NewRecorder()
 
 		router := chi.NewRouter()

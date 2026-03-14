@@ -38,8 +38,12 @@ func newGenericHandler() *handler.Handler {
 
 func TestHealthCheck_Success(t *testing.T) {
 	h := newGenericHandler()
-	req := httptest.NewRequest(http.MethodGet, "/health", nil)
-	req = req.WithContext(context.WithValue(req.Context(), ctxkeys.RequestID, "r-1"))
+	req := httptest.NewRequestWithContext(
+		context.WithValue(t.Context(), ctxkeys.RequestID, "r-1"),
+		http.MethodGet,
+		"/health",
+		nil,
+	)
 	w := httptest.NewRecorder()
 
 	h.HealthCheck(w, req)
@@ -70,8 +74,12 @@ func TestHealthCheck_Success(t *testing.T) {
 
 func TestHealthCheck_MethodNotAllowed(t *testing.T) {
 	h := newGenericHandler()
-	req := httptest.NewRequest(http.MethodPost, "/health", nil)
-	req = req.WithContext(context.WithValue(req.Context(), ctxkeys.RequestID, "r-2"))
+	req := httptest.NewRequestWithContext(
+		context.WithValue(t.Context(), ctxkeys.RequestID, "r-2"),
+		http.MethodPost,
+		"/health",
+		nil,
+	)
 	w := httptest.NewRecorder()
 
 	h.HealthCheck(w, req)
@@ -83,8 +91,12 @@ func TestHealthCheck_MethodNotAllowed(t *testing.T) {
 
 func TestMethodNotAllowedHandler(t *testing.T) {
 	h := newGenericHandler()
-	req := httptest.NewRequest(http.MethodPost, "/x", nil)
-	req = req.WithContext(context.WithValue(req.Context(), ctxkeys.RequestID, "r-3"))
+	req := httptest.NewRequestWithContext(
+		context.WithValue(t.Context(), ctxkeys.RequestID, "r-3"),
+		http.MethodPost,
+		"/x",
+		nil,
+	)
 	w := httptest.NewRecorder()
 
 	h.MethodNotAllowedHandler(w, req)
@@ -96,8 +108,12 @@ func TestMethodNotAllowedHandler(t *testing.T) {
 
 func TestNotFoundHandler(t *testing.T) {
 	h := newGenericHandler()
-	req := httptest.NewRequest(http.MethodGet, "/not-found", nil)
-	req = req.WithContext(context.WithValue(req.Context(), ctxkeys.RequestID, "r-4"))
+	req := httptest.NewRequestWithContext(
+		context.WithValue(t.Context(), ctxkeys.RequestID, "r-4"),
+		http.MethodGet,
+		"/not-found",
+		nil,
+	)
 	w := httptest.NewRecorder()
 
 	h.NotFoundHandler(w, req)
@@ -109,8 +125,12 @@ func TestNotFoundHandler(t *testing.T) {
 
 func TestErrorHandler(t *testing.T) {
 	h := newGenericHandler()
-	req := httptest.NewRequest(http.MethodGet, "/err", nil)
-	req = req.WithContext(context.WithValue(req.Context(), ctxkeys.RequestID, "r-5"))
+	req := httptest.NewRequestWithContext(
+		context.WithValue(t.Context(), ctxkeys.RequestID, "r-5"),
+		http.MethodGet,
+		"/err",
+		nil,
+	)
 	w := httptest.NewRecorder()
 
 	h.ErrorHandler(w, req, errors.New("boom"))
@@ -122,8 +142,12 @@ func TestErrorHandler(t *testing.T) {
 
 func TestRecoveryHandler(t *testing.T) {
 	h := newGenericHandler()
-	req := httptest.NewRequest(http.MethodGet, "/panic", nil)
-	req = req.WithContext(context.WithValue(req.Context(), ctxkeys.RequestID, "r-6"))
+	req := httptest.NewRequestWithContext(
+		context.WithValue(t.Context(), ctxkeys.RequestID, "r-6"),
+		http.MethodGet,
+		"/panic",
+		nil,
+	)
 	w := httptest.NewRecorder()
 
 	h.RecoveryHandler(w, req, "panic payload", "err-id")

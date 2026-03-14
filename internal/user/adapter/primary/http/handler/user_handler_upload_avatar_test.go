@@ -35,7 +35,7 @@ func TestUploadAvatar_Success(t *testing.T) {
 	h := handler.New(svc, &config.Config{}, mockLogger{})
 
 	body, contentType := buildAvatarMultipart(t, "avatar", "avatar.png", []byte{0x89, 0x50})
-	req := httptest.NewRequest(http.MethodPost, "/user/avatar/upload", body)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/user/avatar/upload", body)
 	req.Header.Set("Content-Type", contentType)
 	rec := httptest.NewRecorder()
 
@@ -51,7 +51,7 @@ func TestUploadAvatar_MissingFile(t *testing.T) {
 	writer := multipart.NewWriter(body)
 	require.NoError(t, writer.Close())
 
-	req := httptest.NewRequest(http.MethodPost, "/user/avatar/upload", body)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/user/avatar/upload", body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	rec := httptest.NewRecorder()
 
@@ -68,7 +68,7 @@ func TestUploadAvatar_UsecaseError(t *testing.T) {
 	h := handler.New(svc, &config.Config{}, mockLogger{})
 
 	body, contentType := buildAvatarMultipart(t, "avatar", "avatar.png", []byte{0x89, 0x50})
-	req := httptest.NewRequest(http.MethodPost, "/user/avatar/upload", body)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/user/avatar/upload", body)
 	req.Header.Set("Content-Type", contentType)
 	rec := httptest.NewRecorder()
 

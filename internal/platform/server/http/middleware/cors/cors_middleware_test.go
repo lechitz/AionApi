@@ -14,7 +14,7 @@ func TestCORSMiddleware_AllowsConfiguredOriginAndCredentials(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	req.Header.Set("Origin", "http://localhost:5000")
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
@@ -36,7 +36,7 @@ func TestCORSMiddleware_HandlesPreflight(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	}))
 
-	req := httptest.NewRequest(http.MethodOptions, "/", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodOptions, "/", nil)
 	req.Header.Set("Origin", "http://localhost:5173")
 	req.Header.Set("Access-Control-Request-Method", "POST")
 	req.Header.Set("Access-Control-Request-Headers", "Content-Type, Authorization")
