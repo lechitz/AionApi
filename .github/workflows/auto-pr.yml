@@ -20,8 +20,12 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
-  validate-branch:
+  auto-pr:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,8 +36,38 @@ jobs:
             exit 1
           fi
 
-      - name: Explain manual PR flow
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create pull request when missing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          existing_pr="$(gh pr list --repo "$REPOSITORY" --head "$BRANCH_NAME" --state open --json number --jq '.[0].number // empty')"
+          if [[ -n "$existing_pr" ]]; then
+            echo "Open PR already exists for branch $BRANCH_NAME: #$existing_pr"
+            exit 0
+          fi
+
+          title="Auto PR - ${BRANCH_NAME}"
+
+          gh pr create \
+            --repo "$REPOSITORY" \
+            --base main \
+            --head "$BRANCH_NAME" \
+            --title "$title" \
+            --body "$(cat <<EOF
+          ## Aion - Pull Request Description
+
+          This PR was automatically created for the branch \`$BRANCH_NAME\`.
+
+          > Please ensure that this branch is linked to a corresponding issue before merging.
+          EOF
+          )"
+
+      - name: Explain result
         run: |
           echo "Branch naming is valid."
-          echo "Automatic PR creation is intentionally disabled because third-party PR actions are blocked by repository policy."
-          echo "Open the pull request manually or with GitHub CLI."
+          echo "An automatic PR was created if no open PR already existed for this branch."
