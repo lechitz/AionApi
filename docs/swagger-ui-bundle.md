@@ -6,7 +6,7 @@ This page documents how the static Swagger UI bundle is published in GitHub Page
 
 - Static bundle directory: `docs/swagger-ui/`
 - Entry file: `docs/swagger-ui/index.html`
-- OpenAPI source URL used by UI: `https://lechitz.github.io/AionApi/swagger/swagger.yaml`
+- OpenAPI source URL used by UI: `../swagger/swagger.yaml` (published as `/swagger/swagger.yaml` on GitHub Pages)
 
 ## Files in the Bundle
 
