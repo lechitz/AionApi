@@ -11,7 +11,15 @@ name: Lint
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - feature/**
+      - bugfix/**
+      - refactor/**
+      - docs/**
+      - tests/**
+      - devops/**
+      - database/**
   pull_request:
     branches: [ "*" ]
 
