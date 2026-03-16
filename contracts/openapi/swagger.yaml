@@ -1029,6 +1029,37 @@ paths:
       summary: List all users
       tags:
       - Users
+  /user/avatar:
+    delete:
+      consumes:
+      - application/json
+      description: Removes the authenticated user's avatar and returns the updated
+        profile payload.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Avatar removed
+          schema:
+            $ref: '#/definitions/dto.UpdateUserResponse'
+        "401":
+          description: Unauthorized or missing user context
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      - CookieAuth: []
+      summary: Delete current user avatar
+      tags:
+      - Users
   /user/avatar/upload:
     post:
       consumes:

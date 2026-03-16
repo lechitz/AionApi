@@ -36,6 +36,7 @@ type UserReader interface {
 // UserUpdater defines methods for updating user information and user passwords in the system.
 type UserUpdater interface {
 	UpdateUser(ctx context.Context, userID uint64, cmd UpdateUserCommand) (domain.User, error)
+	RemoveAvatar(ctx context.Context, userID uint64) (domain.User, error)
 	UpdatePassword(ctx context.Context, userID uint64, oldPassword, newPassword string) (string, error)
 }
 

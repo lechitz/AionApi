@@ -26,6 +26,6 @@ func TestNewAndRegisterHTTP(t *testing.T) {
 	require.Equal(t, []string{"/create", "/avatar/upload", "/start", "/{registration_id}/complete"}, r.posts)
 	require.Equal(t, []string{"/all", "/me", "/{user_id}"}, r.gets)
 	require.Equal(t, []string{"/", "/password", "/{registration_id}/profile", "/{registration_id}/avatar"}, r.puts)
-	require.Equal(t, []string{"/"}, r.deletes)
+	require.Equal(t, []string{"/avatar", "/"}, r.deletes)
 	require.Equal(t, 1, r.groupWithCalls)
 }

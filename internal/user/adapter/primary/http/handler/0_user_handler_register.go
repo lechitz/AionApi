@@ -24,6 +24,7 @@ func RegisterHTTP(r ports.Router, h *Handler, authService authinput.AuthService,
 				pr.GET("/me", http.HandlerFunc(h.GetMe))
 				pr.GET("/{user_id}", http.HandlerFunc(h.GetUserByID))
 				pr.PUT("/", http.HandlerFunc(h.UpdateUser))
+				pr.DELETE("/avatar", http.HandlerFunc(h.DeleteAvatar))
 				pr.PUT("/password", http.HandlerFunc(h.UpdateUserPassword))
 				pr.DELETE("/", http.HandlerFunc(h.SoftDeleteUser))
 			})

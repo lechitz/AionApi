@@ -295,6 +295,10 @@ func (userSvcStub) UpdateUser(context.Context, uint64, userinput.UpdateUserComma
 	return userdomain.User{}, nil
 }
 
+func (userSvcStub) RemoveAvatar(context.Context, uint64) (userdomain.User, error) {
+	return userdomain.User{}, nil
+}
+
 func (userSvcStub) UpdatePassword(context.Context, uint64, string, string) (string, error) {
 	return "", nil
 }
