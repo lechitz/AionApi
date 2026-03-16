@@ -31,6 +31,11 @@ jobs:
       - name: Build site
         run: mkdocs build --strict
 
+      - name: Publish OpenAPI contract into the site artifact
+        run: |
+          mkdir -p site/swagger
+          cp contracts/openapi/swagger.yaml site/swagger/swagger.yaml
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
