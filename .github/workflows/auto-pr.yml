@@ -52,13 +52,7 @@ jobs:
           fi
 
           title="Auto PR - ${BRANCH_NAME}"
-
-          gh pr create \
-            --repo "$REPOSITORY" \
-            --base main \
-            --head "$BRANCH_NAME" \
-            --title "$title" \
-            --body "$(cat <<EOF
+          body="$(cat <<EOF
           ## Aion - Pull Request Description
 
           This PR was automatically created for the branch \`$BRANCH_NAME\`.
@@ -66,6 +60,30 @@ jobs:
           > Please ensure that this branch is linked to a corresponding issue before merging.
           EOF
           )"
+
+          set +e
+          pr_output="$(gh pr create \
+            --repo "$REPOSITORY" \
+            --base main \
+            --head "$BRANCH_NAME" \
+            --title "$title" \
+            --body "$body" 2>&1)"
+          pr_status=$?
+          set -e
+
+          if [[ $pr_status -eq 0 ]]; then
+            echo "$pr_output"
+            exit 0
+          fi
+
+          if [[ "$pr_output" == *"GitHub Actions is not permitted to create or approve pull requests"* ]]; then
+            echo "Auto-PR skipped: repository settings do not allow GitHub Actions to create pull requests."
+            echo "Enable: Settings > Actions > General > Workflow permissions > Allow GitHub Actions to create and approve pull requests."
+            exit 0
+          fi
+
+          echo "$pr_output"
+          exit $pr_status
 
       - name: Explain result
         run: |
