@@ -35,6 +35,9 @@ const (
 	// SpanUpdateUser is the span name for updating a user.
 	SpanUpdateUser = "user.update"
 
+	// SpanDeleteAvatar is the span name for deleting the current avatar.
+	SpanDeleteAvatar = "user.delete_avatar"
+
 	// SpanUpdateUserPassword is the span name for updating a user password.
 	SpanUpdateUserPassword = "user.update_password" // #nosec G101
 
@@ -122,6 +125,9 @@ const (
 	// ErrorToUpdateUser indicates an error when updating the user.
 	ErrorToUpdateUser = "error to update user"
 
+	// ErrorToDeleteAvatar indicates an error when removing the user avatar.
+	ErrorToDeleteAvatar = "error to delete avatar"
+
 	// ErrorToGetUserByUsername indicates an error when fetching a user by username.
 	ErrorToGetUserByUsername = "error to get user by username"
 
@@ -148,6 +154,9 @@ const (
 
 	// SuccessUserUpdated indicates the user was updated successfully.
 	SuccessUserUpdated = "user updated successfully"
+
+	// SuccessUserAvatarDeleted indicates the user avatar was deleted successfully.
+	SuccessUserAvatarDeleted = "user avatar deleted successfully"
 
 	// SuccessUserSoftDeleted indicates a user was softly deleted successfully.
 	SuccessUserSoftDeleted = "user soft deleted successfully"
@@ -184,6 +193,9 @@ const (
 
 	// WarnFailedToInvalidateUserCache is a warning message when invalidating user cache fails.
 	WarnFailedToInvalidateUserCache = "failed to invalidate user cache after update"
+
+	// WarnFailedToInvalidateUserCacheAfterAvatarDelete is a warning message when invalidating user cache fails after avatar delete.
+	WarnFailedToInvalidateUserCacheAfterAvatarDelete = "failed to invalidate user cache after avatar delete"
 
 	// WarnFailedToInvalidateUserCacheAfterDelete is a warning message when invalidating user cache fails after soft delete.
 	WarnFailedToInvalidateUserCacheAfterDelete = "failed to invalidate user cache after soft delete"
@@ -278,6 +290,9 @@ var (
 
 	// ErrUpdateUser is a sentinel error for user update failures.
 	ErrUpdateUser = errors.New(ErrorToUpdateUser)
+
+	// ErrDeleteAvatar is a sentinel error for avatar delete failures.
+	ErrDeleteAvatar = errors.New(ErrorToDeleteAvatar)
 
 	// ErrCompareHashAndPassword is a sentinel error for password comparison failures.
 	ErrCompareHashAndPassword = errors.New(ErrorToCompareHashAndPassword)

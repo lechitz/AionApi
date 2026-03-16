@@ -884,6 +884,55 @@
                 }
             }
         },
+        "/user/avatar": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Removes the authenticated user's avatar and returns the updated profile payload.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete current user avatar",
+                "responses": {
+                    "200": {
+                        "description": "Avatar removed",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized or missing user context",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/user/avatar/upload": {
             "post": {
                 "description": "Uploads an avatar image (PNG/JPEG/WEBP) and returns a URL payload suitable for user create/update.",

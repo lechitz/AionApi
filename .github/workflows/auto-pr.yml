@@ -17,11 +17,19 @@ on:
       - devops/*
       - database/*
 
+concurrency:
+  group: auto-pr-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
-  create-pr:
+  auto-pr:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,25 +40,56 @@ jobs:
             exit 1
           fi
 
-      - name: Extract label from branch
-        id: extract
-        run: echo "label=${GITHUB_REF##refs/heads/}" | cut -d'/' -f1 >> $GITHUB_OUTPUT
-
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          title: "Auto PR - ${{ github.ref_name }}"
-          body: |
-            ## Aion - Pull Request Description
+      - name: Create pull request when missing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          existing_pr="$(gh pr list --repo "$REPOSITORY" --head "$BRANCH_NAME" --state open --json number --jq '.[0].number // empty')"
+          if [[ -n "$existing_pr" ]]; then
+            echo "Open PR already exists for branch $BRANCH_NAME: #$existing_pr"
+            exit 0
+          fi
 
-            This PR was automatically created for the branch `${{ github.ref_name }}`.
+          title="Auto PR - ${BRANCH_NAME}"
+          body="$(cat <<EOF
+          ## Aion - Pull Request Description
 
-            > Please ensure that this branch is linked to a corresponding issue before merging.
-          labels: |
-            auto-pr
-            ${{ steps.extract.outputs.label }}
+          This PR was automatically created for the branch \`$BRANCH_NAME\`.
+
+          > Please ensure that this branch is linked to a corresponding issue before merging.
+          EOF
+          )"
+
+          set +e
+          pr_output="$(gh pr create \
+            --repo "$REPOSITORY" \
+            --base main \
+            --head "$BRANCH_NAME" \
+            --title "$title" \
+            --body "$body" 2>&1)"
+          pr_status=$?
+          set -e
+
+          if [[ $pr_status -eq 0 ]]; then
+            echo "$pr_output"
+            exit 0
+          fi
+
+          if [[ "$pr_output" == *"GitHub Actions is not permitted to create or approve pull requests"* ]]; then
+            echo "Auto-PR skipped: repository settings do not allow GitHub Actions to create pull requests."
+            echo "Enable: Settings > Actions > General > Workflow permissions > Allow GitHub Actions to create and approve pull requests."
+            exit 0
+          fi
+
+          echo "$pr_output"
+          exit $pr_status
+
+      - name: Explain result
+        run: |
+          echo "Branch naming is valid."
+          echo "An automatic PR was created if no open PR already existed for this branch."

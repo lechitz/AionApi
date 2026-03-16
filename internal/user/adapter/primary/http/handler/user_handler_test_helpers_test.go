@@ -26,6 +26,7 @@ type mockUserService struct {
 	listAllFn                   func(ctx context.Context) ([]userdomain.User, error)
 	getUserStatsFn              func(ctx context.Context, userID uint64) (userdomain.UserStats, error)
 	updateUserFn                func(ctx context.Context, userID uint64, cmd userinput.UpdateUserCommand) (userdomain.User, error)
+	removeAvatarFn              func(ctx context.Context, userID uint64) (userdomain.User, error)
 	updatePasswordFn            func(ctx context.Context, userID uint64, oldPassword, newPassword string) (string, error)
 	softDeleteUserFn            func(ctx context.Context, userID uint64) error
 	uploadAvatarFn              func(ctx context.Context, cmd userinput.UploadAvatarCommand) (string, string, int64, error)
@@ -133,6 +134,14 @@ func (m *mockUserService) UpdatePassword(ctx context.Context, userID uint64, old
 		return m.updatePasswordFn(ctx, userID, oldPassword, newPassword)
 	}
 	return "new-token", nil
+}
+
+func (m *mockUserService) RemoveAvatar(ctx context.Context, userID uint64) (userdomain.User, error) {
+	m.calledUpdateUserID = userID
+	if m.removeAvatarFn != nil {
+		return m.removeAvatarFn(ctx, userID)
+	}
+	return userdomain.User{ID: userID, Username: "updated", Email: "updated@example.com", UpdatedAt: time.Now().UTC()}, nil
 }
 
 func (m *mockUserService) SoftDeleteUser(ctx context.Context, userID uint64) error {
