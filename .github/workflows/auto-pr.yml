@@ -17,6 +17,10 @@ on:
       - devops/*
       - database/*
 
+concurrency:
+  group: auto-pr-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
