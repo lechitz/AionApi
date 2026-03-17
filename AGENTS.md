@@ -1,6 +1,6 @@
 # AionAPI - Excellence Guide for Agents
 
-If this repo is being used from the workspace root `../`, follow the workspace [`AGENTS.md`](../AGENTS.md) for global shortcuts, `!issue` behavior, and Project 2 operations. This file remains the local authority for AionAPI architecture and implementation rules.
+If this repo is being used from the workspace root `../`, follow the workspace root `AGENTS.md` for global shortcuts, `!issue` behavior, and Project 2 operations. This file remains the local authority for AionAPI architecture and implementation rules.
 
 This document defines the professional standard expected when working on AionAPI. Follow these rules for any change, review, or proposal.
 
