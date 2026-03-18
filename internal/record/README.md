@@ -23,6 +23,9 @@ Handles record lifecycle and query flows with strict user-scoped validation.
 - Keep adapters mapping-only.
 - Keep persistence concerns in secondary adapters.
 - Dashboard white-label layout rules are enforced in usecase layer (including large-card limits).
+- Widget layout remains a two-tier v1 contract:
+  - `AionApi` owns widget types, coarse sizes, view persistence, ordering, and large-card limits
+  - `aionapi-dashboard` owns the richer visual grammar stored in `configJson`, including grid dimensions and free placement coordinates
 - Insight generation and analytics aggregation for v1 belong here, not in dashboard local state.
 - Graph projection contracts for optional export/lab workflows belong here too, but they stay derived and non-authoritative.
 - Scope semantics should stay consistent across GraphQL surfaces:

@@ -38,6 +38,18 @@ These artifacts currently include the main read and dashboard surfaces consumed 
 - dashboard reads such as `dashboardSnapshot`, `insightFeed`, `analyticsSeries`, `metricDefinitions`, `dashboardViews`, `dashboardView`, `dashboardWidgetCatalog`, and `suggestMetricDefinitions`
 - dashboard mutations such as `createDashboardView`, `setDefaultDashboardView`, `upsertDashboardWidget`, `reorderDashboardWidgets`, `deleteDashboardWidget`, and `createMetricAndWidget`
 
+For the widget system specifically, the published GraphQL contract is
+intentionally coarse for v1:
+
+- `dashboardWidgetCatalog` exposes canonical widget types, coarse sizes, and
+  large-card limits
+- widget records expose persisted `configJson`, but `AionApi` currently treats
+  the richer visual layout grammar inside that JSON as a dashboard-owned concern
+  rather than a server-validated schema
+
+Consumers should not assume the backend already owns minimum/recommended grid
+sizes, free-placement rules, or Radar widget scope semantics.
+
 Consumer-facing query documents live under `contracts/graphql/` and should remain aligned with the schema snapshot here.
 
 ## Insight And Analytics Governance
