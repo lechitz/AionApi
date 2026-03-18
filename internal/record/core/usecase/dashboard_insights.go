@@ -247,11 +247,7 @@ func resolveInsightLocation(timezone string) (*time.Location, string) {
 }
 
 func normalizeInsightDate(date time.Time, loc *time.Location) time.Time {
-	if date.IsZero() {
-		date = time.Now().In(loc)
-	}
-	date = date.In(loc)
-	return time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, loc)
+	return normalizeDashboardDate(date, loc)
 }
 
 func insightRangeForWindow(targetDate time.Time, loc *time.Location, window domain.InsightWindow) (time.Time, time.Time, int) {

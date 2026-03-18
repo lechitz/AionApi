@@ -68,7 +68,7 @@ func (c *controller) DashboardSnapshot(ctx context.Context, userID uint64, date 
 
 func parseDateOrDefault(date string) (time.Time, error) {
 	if date == "" {
-		return time.Now(), nil
+		return time.Time{}, nil
 	}
 	return time.Parse("2006-01-02", date)
 }

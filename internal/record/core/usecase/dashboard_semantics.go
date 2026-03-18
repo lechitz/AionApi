@@ -37,10 +37,7 @@ func (s *Service) DashboardSnapshot(ctx context.Context, userID uint64, query in
 	}
 
 	day := query.Date
-	if day.IsZero() {
-		day = time.Now().In(loc)
-	}
-	localDay := time.Date(day.In(loc).Year(), day.In(loc).Month(), day.In(loc).Day(), 0, 0, 0, 0, loc)
+	localDay := normalizeDashboardDate(day, loc)
 	startUTC := localDay.UTC()
 	endUTC := localDay.Add(24*time.Hour - time.Nanosecond).UTC()
 
