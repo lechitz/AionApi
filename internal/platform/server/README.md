@@ -2,29 +2,24 @@
 
 **Path:** `internal/platform/server`
 
-## Overview
+## Purpose
 
-Server-level platform composition layer.
-Currently focused on HTTP stack composition, routing abstraction, middleware chain, and generic handlers.
+This layer owns server runtime composition.
+Today it is HTTP-only.
 
-## Subpackages
+## Current Flow
 
-| Subpackage | Role |
+| Area | Role |
 | --- | --- |
-| `http/` | HTTP server composition and transport infrastructure |
+| `http/` | compose handlers, router adapters, middleware, generic fallbacks, and the `http.Server` instance |
 
-## Design Notes
+`fxapp.ServerModule` consumes this layer to compose the runtime handler and start the server lifecycle.
 
-- Keep this layer transport/platform-focused.
-- Context modules register endpoints via platform ports, not router-specific APIs.
-- Detailed HTTP behavior is documented in `internal/platform/server/http/README.md`.
+## Boundaries
 
-## Package Improvements
-
-- Add transport roadmap section if additional protocols are introduced.
-- Add startup/shutdown lifecycle contract notes.
-- Add links to integration tests for composed server behavior.
-- Add extension guide for new server transports.
+- context packages register routes through the HTTP port abstractions, not directly against concrete routers
+- protocol-specific behavior belongs in `http/`; only cross-protocol server composition should live here in the future
+- startup and shutdown ownership stays with `fxapp`, not with the bounded contexts
 
 ---
 

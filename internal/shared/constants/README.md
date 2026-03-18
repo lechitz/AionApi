@@ -2,31 +2,25 @@
 
 **Path:** `internal/shared/constants`
 
-## Overview
+## Purpose
 
-Centralized string and key constants for headers, claims, context keys, logging, and tracing attributes.
-This package removes magic strings and keeps cross-cutting telemetry consistent.
+This package centralizes the stable cross-cutting keys reused by multiple parts of the runtime.
 
-## Responsibilities
+## Current Namespaces
 
-| Area | Responsibility |
+| Namespace | Role |
 | --- | --- |
-| Key centralization | Single source of truth for common keys |
-| Consistency | Stabilize logs/headers/traces across contexts |
-| Safety | Reduce typo and drift risk across packages |
+| `claimskeys/` | JWT claim names |
+| `commonkeys/` | log fields, request keys, cookie names, and other shared labels |
+| `ctxkeys/` | typed context keys |
+| `roles/` | shared role names |
+| `tracingkeys/` | legacy HTTP/request tracing attributes kept for compatibility |
 
-## Design Notes
+## Boundaries
 
-- Keep only constants and minimal helper types.
-- Do not place business/domain logic here.
-- Preserve key stability to avoid dashboard/query regressions.
-
-## Package Improvements
-
-- Add a key taxonomy map by domain concern.
-- Add automated duplicate-key detection.
-- Add changelog guidance for key renames/deprecations.
-- Add examples for when to use `ctxkeys` vs `commonkeys`.
+- keep only constants and minimal helper types here
+- tracing and status strings specific to one bounded context should stay local to that context
+- renaming shared keys is a compatibility change because it can affect auth, logs, traces, dashboards, and clients at once
 
 ---
 

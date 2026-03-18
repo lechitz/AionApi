@@ -2,36 +2,23 @@
 
 **Path:** `internal/platform/httpclient`
 
-## Overview
+## Purpose
 
-Shared outbound HTTP client factory with OpenTelemetry instrumentation.
-Used by secondary adapters that call external HTTP services.
+This package builds the shared outbound HTTP client used by secondary adapters.
 
-## Responsibilities
+## Current Flow
 
-| Area | Responsibility |
+| Piece | Responsibility |
 | --- | --- |
-| Outbound tracing | Attach spans and propagate trace context |
-| Client standardization | Centralize timeout/transport defaults |
-| DI integration | Provide reusable client via Fx wiring |
+| `NewInstrumentedClient` | wrap the base transport with `otelhttp` unless instrumentation is disabled |
+| `NewClient` | expose the stdlib client through the `platform/ports/output/httpclient.HTTPClient` interface |
+| `fxapp.InfraModule` | provide the client with timeout derived from config (`AionChat.Timeout` fallback) |
 
-## Usage Pattern
+## Boundaries
 
-- Inject `*http.Client` into adapters.
-- Keep service-specific logic in adapter packages.
-
-## Design Notes
-
-- Keep this package generic and transport-level.
-- Avoid embedding service-specific URLs/protocol logic.
-- Prefer constructor injection over ad-hoc client creation.
-
-## Package Improvements
-
-- Add test helpers for deterministic transport mocking.
-- Add policy for default timeout values by environment.
-- Add sample instrumentation verification test.
-- Add guidance for retries/circuit breaking integration.
+- adapters should depend on the output port, not on raw `*http.Client`
+- service-specific URLs, payload semantics, and retries belong in the owning adapter
+- this package owns transport instrumentation and generic request helpers only
 
 ---
 

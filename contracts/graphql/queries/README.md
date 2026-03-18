@@ -24,9 +24,11 @@ It is part of the canonical consumer contract and must remain aligned with:
 | `queries/records/` | Record read operations |
 | `queries/chat/` | Chat read operations |
 | `queries/user/` | User read operations |
+| `queries/dashboard/` | Dashboard and insight read operations |
 | `mutations/categories/` | Category write operations |
 | `mutations/tags/` | Tag write operations |
 | `mutations/records/` | Record write operations |
+| `mutations/dashboard/` | Dashboard and metric write operations |
 
 ## Query Inventory
 
@@ -45,6 +47,9 @@ It is part of the canonical consumer contract and must remain aligned with:
 - `queries/records/list.graphql`
 - `queries/records/by-id.graphql`
 - `queries/records/latest.graphql`
+- `queries/records/projection-by-id.graphql`
+- `queries/records/projections.graphql`
+- `queries/records/projections-latest.graphql`
 - `queries/records/by-tag.graphql`
 - `queries/records/by-category.graphql`
 - `queries/records/by-day.graphql`
@@ -99,7 +104,8 @@ Consumer compatibility rules:
 
 Governance reference:
 
-- `/Aion/notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md`
+- `aion-docs/planning/v1/adr/adr-005-insight-contract-policy.md`
+- `aion-docs/planning/v1/reference/dashboard-backend-consumption.md`
 
 ## Mutation Inventory
 
@@ -119,14 +125,27 @@ Governance reference:
 - `mutations/records/delete.graphql`
 - `mutations/records/delete-all.graphql`
 
+### Dashboard
+- `mutations/dashboard/upsert-metric-definition.graphql`
+- `mutations/dashboard/upsert-goal-template.graphql`
+- `mutations/dashboard/delete-goal-template.graphql`
+- `mutations/dashboard/create-view.graphql`
+- `mutations/dashboard/set-default-view.graphql`
+- `mutations/dashboard/upsert-widget.graphql`
+- `mutations/dashboard/reorder-widgets.graphql`
+- `mutations/dashboard/delete-widget.graphql`
+- `mutations/dashboard/create-metric-and-widget.graphql`
+
 ## Notes
 
+- Live schema modules and backend behavior remain the top authority if a shared document lags behind.
 - Keep operation names stable for observability and client cache behavior.
 - Keep selection sets consistent across clients unless a consumer needs a narrower shape.
 - Validate operation documents against current schema in CI.
 - Regenerate contract files + manifest with: `make graphql.queries graphql.manifest`.
 - Validate schema compatibility with: `make graphql.validate`.
 - Treat `queries/dashboard/insight-feed.graphql` and `queries/dashboard/analytics-series.graphql` as backend-owned public contracts for v1 surfaces such as `Radar`, `Analytics`, and MCP read tools.
+- Treat record projection queries as the preferred read surface for derived dashboard/chat consumers; legacy `recordsLatest` remains available for compatibility while downstream migration completes.
 
 ---
 

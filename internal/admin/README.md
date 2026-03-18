@@ -2,31 +2,39 @@
 
 **Path:** `internal/admin`
 
-## Overview
+## Purpose
 
-Administrative domain operations for user governance and privileged actions.
-Implements admin-focused usecases exposed via primary adapters.
+`internal/admin` owns privileged user-governance operations and role hierarchy enforcement.
 
-## Typical Responsibilities
+## Current HTTP Surface
 
-| Area | Responsibility |
+All current admin routes are authenticated and mounted under `/admin/users/{user_id}`:
+
+| Route | Responsibility |
 | --- | --- |
-| User governance | Block/unblock/promote/demote role-sensitive operations |
-| Authorization boundary | Enforce admin-level policies via core contracts |
-| Transport exposure | Provide HTTP/GraphQL adapter integration |
+| `PUT /roles` | replace role set through the legacy role-update endpoint |
+| `PUT /promote-admin` | add admin privilege with hierarchy validation |
+| `PUT /demote-admin` | remove admin privilege with hierarchy validation |
+| `PUT /block` | apply blocked role/state |
+| `PUT /unblock` | remove blocked role/state |
 
-## Design Notes
+## Runtime Contract
 
-- Keep admin rules centralized in core usecases.
-- Keep adapters thin and mapping-only.
-- Use semantic errors and safe observability metadata.
+- transport protection comes from auth middleware
+- authorization semantics and role hierarchy validation stay inside the admin core
+- role storage remains backend-owned through `aion_api.roles` and `aion_api.user_roles`
+- the admin repository also acts as the source-of-truth `RolesReader` consumed by auth-related flows
 
-## Package Improvements
+## Boundaries
 
-- Add operation matrix (admin action -> required role -> port call).
-- Add explicit audit logging guidance for admin actions.
-- Add edge-case tests for role transition conflicts.
-- Add clear policy notes for privileged operation idempotency.
+- There is no current GraphQL admin surface.
+- Admin adapters stay thin; privileged transition rules stay in core/domain logic.
+- This context governs roles and user-state transitions, not generic user profile editing.
+
+## Related Docs
+
+- [`../auth/README.md`](../auth/README.md)
+- [`../user/README.md`](../user/README.md)
 
 ---
 

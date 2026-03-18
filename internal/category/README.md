@@ -2,31 +2,40 @@
 
 **Path:** `internal/category`
 
-## Overview
+## Purpose
 
-Category management domain for user-scoped classification entities.
-Supports CRUD-style operations and transport exposure through primary adapters.
+`internal/category` owns user-scoped category lifecycle and lookup flows.
 
-## Typical Responsibilities
+## Current Surface
 
-| Area | Responsibility |
-| --- | --- |
-| Category lifecycle | Create/read/update/soft-delete category entities |
-| Validation | Enforce required fields and user scoping |
-| Adapter integration | Expose operations through GraphQL/HTTP controllers |
+Current transport exposure is GraphQL-driven through the category controller surface:
 
-## Design Notes
+- create category
+- update category
+- soft-delete category
+- get by id
+- get by name
+- list all categories for the authenticated user
 
-- Keep invariants and uniqueness checks in core.
-- Keep transport mapping outside usecases.
-- Preserve semantic error usage for adapter mapping.
+There is no dedicated REST category surface in the current runtime.
 
-## Package Improvements
+## Runtime Contract
 
-- Add operation table with expected semantic errors.
-- Add tests for update/soft-delete edge cases.
-- Add explicit field normalization guidelines.
-- Add interaction notes with `tag`/`record` relations.
+- core usecases own create/read/update/soft-delete semantics
+- cache adapters support lookup by id, by name, and list results
+- DB adapters remain the authority for persistence and ownership checks
+- domain output carries `usageCount` and `lastUsedAt`, which are consumed by higher-level product surfaces
+
+## Boundaries
+
+- Category rules stay user-scoped and must not leak cross-user data.
+- Relationship semantics with tags and records belong here and in the collaborating repositories/adapters, not in transport code.
+- Transport controllers only map GraphQL types and user context into category commands.
+
+## Related Docs
+
+- [`../tag/README.md`](../tag/README.md)
+- [`../record/README.md`](../record/README.md)
 
 ---
 

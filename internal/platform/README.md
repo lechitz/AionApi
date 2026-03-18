@@ -2,34 +2,27 @@
 
 **Path:** `internal/platform`
 
-## Overview
+## Purpose
 
-Cross-cutting platform layer for configuration, dependency graph assembly, observability, shared ports, and server runtime composition.
-It provides the operational foundation used by all bounded contexts.
+`internal/platform` provides the domain-agnostic runtime foundation used by all bounded contexts.
 
-## Subpackages
+## Current Areas
 
-| Subpackage | Role |
+| Area | Role |
 | --- | --- |
-| `config/` | Typed env loading and validation |
-| `fxapp/` | Dependency graph and lifecycle wiring |
-| `observability/` | Tracing/metrics provider bootstrap |
-| `ports/` | Shared output port contracts |
-| `httpclient/` | Shared instrumented outbound HTTP client |
-| `server/` | HTTP server composition and transport wiring |
+| `app/` | shared dependency bundle exposed to primary adapters |
+| `config/` | typed env loading and validation |
+| `fxapp/` | Fx module composition and lifecycle wiring |
+| `httpclient/` | shared OTEL-instrumented outbound HTTP client |
+| `observability/` | tracer and metrics bootstrap |
+| `ports/` | reusable output-port contracts |
+| `server/` | server composition and HTTP runtime wiring |
 
-## Design Notes
+## Boundaries
 
-- Keep platform code domain-agnostic.
-- Keep runtime wiring centralized and explicit.
-- Keep subpackages independently documented for deeper details.
-
-## Package Improvements
-
-- Add platform startup sequence diagram linking all subpackages.
-- Add compatibility table (config keys -> platform modules).
-- Add observability integration checklist for new modules.
-- Add convention guide for introducing new platform services.
+- keep platform code free from product or domain semantics
+- centralize runtime wiring here instead of scattering it across contexts
+- if a helper is specific to one context, it should stay with that context instead of moving into `platform`
 
 ---
 

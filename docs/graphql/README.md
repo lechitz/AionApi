@@ -4,19 +4,20 @@
 
 ## Overview
 
-This folder stores generated GraphQL contract artifacts used by consumers and tooling.
-It complements schema modules under `internal/adapter/primary/graphql/schema/modules/`.
+This folder stores generated GraphQL artifacts used by consumers and tooling.
+It complements, but does not replace, the live schema modules under `internal/adapter/primary/graphql/schema/modules/`
+and the shared operation set under `contracts/graphql/`.
 
 ## Files
 
 | File | Purpose |
 | --- | --- |
-| `schema.graphql` | Flattened SDL representation of the current GraphQL schema |
+| `schema.graphql` | Flattened SDL snapshot generated from the current schema modules |
 
 ## Regeneration Workflow
 
 ```bash
-make graphql.schema
+make graphql.schema graphql.queries graphql.manifest
 ```
 
 If your local setup includes introspection export targets, run them after server startup.
@@ -24,25 +25,24 @@ If your local setup includes introspection export targets, run them after server
 ## Related Sources
 
 - Schema modules: `internal/adapter/primary/graphql/schema/modules/`
-- Shared queries: `contracts/graphql/queries/`
+- Shared operations: `contracts/graphql/queries/` and `contracts/graphql/mutations/`
+- Contract manifest: `contracts/graphql/manifest.json`
+- Ownership map: `.github/DOCUMENTATION_OWNERSHIP.md`
 
-## Dashboard White Label Contract Notes
+## Public Contract Notes
 
-The schema now exposes dashboard layout and composition primitives:
+These artifacts currently include the main read and dashboard surfaces consumed by the workspace:
 
-- `dashboardViews`, `dashboardView`
-- `dashboardWidgetCatalog`
-- `suggestMetricDefinitions`
-- `createDashboardView`, `setDefaultDashboardView`
-- `upsertDashboardWidget`, `reorderDashboardWidgets`, `deleteDashboardWidget`
-- `createMetricAndWidget`
+- legacy record reads such as `recordsLatest`
+- derived projection reads such as `recordProjectionById`, `recordProjections`, and `recordProjectionsLatest`
+- dashboard reads such as `dashboardSnapshot`, `insightFeed`, `analyticsSeries`, `metricDefinitions`, `dashboardViews`, `dashboardView`, `dashboardWidgetCatalog`, and `suggestMetricDefinitions`
+- dashboard mutations such as `createDashboardView`, `setDefaultDashboardView`, `upsertDashboardWidget`, `reorderDashboardWidgets`, `deleteDashboardWidget`, and `createMetricAndWidget`
 
-The same schema also exposes the canonical v1 intelligence surface used across the product:
+Consumer-facing query documents live under `contracts/graphql/` and should remain aligned with the schema snapshot here.
 
-- `insightFeed`
-- `analyticsSeries`
+## Insight And Analytics Governance
 
-Those operations back:
+`insightFeed` and `analyticsSeries` remain the canonical v1 intelligence surface used across:
 
 - `Radar`
 - canonical `Analytics`
@@ -52,13 +52,15 @@ Those operations back:
 For compatibility policy and ownership, refer to:
 
 - `contracts/graphql/queries/README.md`
-- `/Aion/notes/v1-0-0/v1-gov-04-insight-api-contract-policy.md`
+- `aion-docs/planning/v1/adr/adr-005-insight-contract-policy.md`
+- `aion-docs/planning/v1/reference/dashboard-backend-consumption.md`
 
 ## Design Notes
 
 - Treat files here as generated artifacts.
 - Regenerate after schema changes in the same PR.
-- Keep docs artifacts aligned with consumer tooling expectations.
+- Keep this folder aligned with consumer tooling expectations, but treat `contracts/graphql/` as the reusable public operation surface.
+- If this folder drifts from live modules or shared operations, the live modules win.
 
 ## Package Improvements
 
@@ -66,6 +68,7 @@ For compatibility policy and ownership, refer to:
 - Add optional introspection generation target with health checks.
 - Add version metadata header for schema snapshots.
 - Add compatibility note for codegen consumers.
+- Expose a lightweight diff check between `schema.graphql` and published shared operations.
 
 ---
 

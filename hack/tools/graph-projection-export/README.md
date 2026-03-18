@@ -8,10 +8,17 @@ Internal tool for exporting the `graph-projection-v1` payload from canonical Aio
 go run ./hack/tools/graph-projection-export --user-id 999
 go run ./hack/tools/graph-projection-export --user-id 999 --window WINDOW_90D --output ./tmp/graph.json
 go run ./hack/tools/graph-projection-export --user-id 999 --category-id 3 --tag-ids 14,15
+make graph-projection-export GRAPH_PROJECTION_USER_ID=999 GRAPH_PROJECTION_WINDOW=WINDOW_30D
 ```
 
-## Notes
+## Inputs
 
-- This is a dev/lab tool, not a public runtime endpoint.
-- Graph rules remain in `internal/record/core/...`.
-- The tool only bootstraps config, DB and repositories, then delegates to canonical services/mappers.
+- required: `--user-id`
+- optional: `--window`, `--date`, `--timezone`, `--category-id`, `--tag-ids`, `--output`
+- the `make graph-projection-export` target loads the dev env file, forces `DB_HOST=localhost`, and forwards those flags
+
+## Boundaries
+
+- this is a dev and debugging tool, not a public contract or runtime endpoint
+- graph rules remain owned by `internal/record/core/...`
+- the tool bootstraps config, DB, repositories, and canonical mappers; it should not fork business logic

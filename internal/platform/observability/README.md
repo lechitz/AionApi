@@ -2,32 +2,42 @@
 
 **Path:** `internal/platform/observability`
 
-## Overview
+## Purpose
 
-Platform-level observability bootstrap for tracing and metrics.
-This package configures telemetry providers and shared resource metadata.
+This package owns observability bootstrap helpers for `AionApi`.
+It initializes trace and metric exporters, normalizes OTLP settings, and defines the shared resource metadata attached to telemetry.
 
-## Responsibilities
+## Structure
 
-| Area | Responsibility |
+| Path | Responsibility |
 | --- | --- |
-| Tracing setup | Initialize tracer provider/exporters |
-| Metrics setup | Initialize meter provider/exporters |
-| Shared metadata | Apply service/env/version resource attributes |
-| Collector integration | Route telemetry to OTEL pipeline |
+| `tracer/` | OTLP HTTP trace exporter bootstrap and global tracer provider |
+| `metric/` | OTLP HTTP metric exporter bootstrap and global meter provider |
+| `helpers.go` | shared header parsing and endpoint normalization helpers |
 
-## Design Notes
+## Current Runtime Behavior
 
-- Keep bootstrap concerns separate from instrumentation points.
-- Align telemetry keys with shared constants.
-- Keep exporter configuration environment-driven.
+- tracing and metrics both bootstrap from `cfg.Observability`
+- OTLP endpoints accept `host:port` or full `http(s)://...` values and are normalized before exporter creation
+- resource attributes include:
+  - `service.name`
+  - `service.version`
+  - `deployment.environment`
+  - `host.name`
+  - `service.instance.id`
+- tracing installs W3C `TraceContext` + `Baggage` propagators globally
+- if exporter initialization fails, the app degrades gracefully and returns a no-op cleanup function instead of aborting startup
 
-## Package Improvements
+## Boundaries
 
-- Add provider initialization sequence diagram.
-- Add health check guidance for collector/exporters.
-- Add clear defaults/sampling policy documentation.
-- Add integration tests with local collector fixture.
+- Instrumentation points live in handlers, controllers, usecases, repositories, and runtime boundaries outside this package.
+- Collector/container wiring belongs to `infrastructure/observability`.
+- Sampling and exporter behavior remain config-driven; do not hardcode environment-specific endpoints elsewhere.
+
+## Related Docs
+
+- [`../../../infrastructure/observability/README.md`](../../../infrastructure/observability/README.md)
+- [`../config/README.md`](../config/README.md)
 
 ---
 

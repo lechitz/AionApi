@@ -2,31 +2,41 @@
 
 **Path:** `internal/tag`
 
-## Overview
+## Purpose
 
-Tag domain for user-scoped labeling tied to categories and records.
-Provides tag lifecycle operations with uniqueness and ownership constraints.
+`internal/tag` owns user-scoped tag lifecycle, category association, and lookup flows used by record and dashboard surfaces.
 
-## Typical Responsibilities
+## Current Surface
 
-| Area | Responsibility |
-| --- | --- |
-| Tag lifecycle | Create/read/update/soft-delete tags |
-| Domain constraints | Enforce per-user uniqueness and category relation |
-| Adapter exposure | Provide GraphQL/HTTP-facing controller operations |
+Current transport exposure is GraphQL-driven through the tag controller surface:
 
-## Design Notes
+- create tag
+- update tag
+- soft-delete tag
+- get by id
+- get by name
+- get by category
+- list all tags for the authenticated user
 
-- Keep validation and uniqueness in core.
-- Keep resolver/controller mapping separate from domain logic.
-- Keep semantic error contracts stable for transport mapping.
+There is no dedicated REST tag surface in the current runtime.
 
-## Package Improvements
+## Runtime Contract
 
-- Add uniqueness conflict behavior table.
-- Add tests for category reassignment/update edge cases.
-- Add guidance for icon/metadata normalization.
-- Add notes for tag usage impact on record queries.
+- tags remain owned by one user and one category
+- core usecases enforce uniqueness, ownership, and category relation rules
+- cache adapters support id/name/category/list lookups
+- DB persistence is authoritative and backs derived fields such as `usageCount` and `lastUsedAt`
+
+## Boundaries
+
+- Transport controllers should only map GraphQL types and authenticated user context.
+- Tag/category consistency belongs in the tag and category cores plus their repositories.
+- Record queries may consume tag semantics, but tag lifecycle ownership stays here.
+
+## Related Docs
+
+- [`../category/README.md`](../category/README.md)
+- [`../record/README.md`](../record/README.md)
 
 ---
 

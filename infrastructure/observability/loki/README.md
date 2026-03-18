@@ -2,29 +2,21 @@
 
 **Path:** `infrastructure/observability/loki`
 
-## Overview
+## Purpose
 
-Loki storage/query configuration for centralized log retention and exploration.
-Logs are typically ingested via Fluent Bit and consumed in Grafana.
+This package configures Loki as the log store queried by Grafana.
 
-## Files
+## Current File
 
-| File | Purpose |
+| File | Responsibility |
 | --- | --- |
-| `loki.yaml` | Loki single-binary/server configuration |
+| `loki.yaml` | single-binary Loki config with filesystem storage and 7-day retention |
 
-## Design Notes
+## Boundaries
 
-- Keep retention and storage config explicit by environment profile.
-- Align labels with ingestion pipeline for searchable logs.
-- Separate storage concerns from parser/collection concerns.
-
-## Package Improvements
-
-- Add retention policy rationale and expected volume guidance.
-- Add startup verification checklist (`ready`, ingestion path, query path).
-- Add notes for scaling beyond local single-binary mode.
-- Add sanity tests for label cardinality controls.
+- ingestion labels must stay compatible with Fluent Bit output and Grafana queries
+- this config targets the current local and prod-like single-node setup, not a scaled Loki deployment
+- parser behavior belongs upstream in Fluent Bit, not here
 
 ---
 

@@ -2,31 +2,23 @@
 
 **Path:** `infrastructure/observability/grafana`
 
-## Overview
+## Purpose
 
-Grafana provisioning files for dashboards and datasources.
-These assets make Grafana startup deterministic across local environments.
+This package makes Grafana startup deterministic by provisioning datasources and dashboards from versioned files.
 
-## Structure
+## Current Layout
 
 | Folder | Purpose |
 | --- | --- |
-| `dashboards/` | Versioned dashboard JSON files |
-| `datasources/` | Datasource provisioning files |
-| `provisioning/` | Dashboard provider configuration |
+| `dashboards/` | checked-in dashboard JSON, including RED and HTTP request views |
+| `datasources/` | Prometheus, Loki, and Jaeger datasource definitions |
+| `provisioning/` | dashboard provider configuration loaded at container startup |
 
-## Design Notes
+## Boundaries
 
-- Treat dashboard JSON as versioned code artifacts.
-- Keep datasource naming stable to avoid dashboard breakage.
-- Do not store secrets in dashboard definitions.
-
-## Package Improvements
-
-- Add dashboard ownership map and review policy.
-- Add JSON validation/lint in CI.
-- Add changelog for major dashboard redesigns.
-- Add screenshot snapshots for baseline visual regression.
+- dashboard JSON and datasource YAML are code artifacts and should be reviewed like source
+- datasource names must stay stable or existing dashboards will break
+- this package provisions Grafana only; scrape, storage, and transport behavior live in the other observability components
 
 ---
 

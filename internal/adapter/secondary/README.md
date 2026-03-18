@@ -2,31 +2,24 @@
 
 **Path:** `internal/adapter/secondary`
 
-## Overview
+## Purpose
 
-Secondary adapters implement output ports and connect core usecases to external systems.
-They are responsible for IO translation and infrastructure error adaptation.
+This layer holds shared outbound implementations reused across the application.
 
-## Responsibilities
+## Current Packages
 
-| Area | Responsibility |
+| Package | Role |
 | --- | --- |
-| Port implementation | Implement output contracts from core/platform ports |
-| Infra translation | Convert IO/vendor behavior into semantic application behavior |
-| Boundary observability | Emit logs/traces around external calls |
+| `contextlogger/` | structured logger implementation |
+| `crypto/` | key generation helpers |
+| `hasher/` | bcrypt password hashing |
+| `token/` | JWT token provider and expiry helpers |
 
-## Design Notes
+## Boundaries
 
-- Keep infra-specific details out of core.
-- Keep adapters replaceable and minimal.
-- Do not put business orchestration in secondary adapters.
-
-## Package Improvements
-
-- Add implementation matrix (port -> concrete adapter package).
-- Add error translation guidelines by adapter type.
-- Add retry/timeout policy references for external IO.
-- Add adapter conformance testing guide.
+- context-owned DB, cache, HTTP, Kafka, and storage adapters stay inside the owning bounded context
+- packages here implement reusable platform or security concerns shared across contexts
+- business semantics must remain in core/usecase layers and input/output ports
 
 ---
 

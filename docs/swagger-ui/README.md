@@ -2,31 +2,34 @@
 
 **Path:** `docs/swagger-ui`
 
-## Overview
+## Purpose
 
-Static Swagger UI assets used to browse the generated OpenAPI contract.
-This folder is intended for documentation hosting, not runtime API logic.
+This folder contains the static Swagger UI bundle used for published documentation hosting.
+
+It is not the runtime HTTP implementation.
+The live API server mounts Swagger with `http-swagger` inside `internal/platform/server/http/composer.go`.
+
+## Current Relationship To Runtime
+
+- static hosting: files in this folder
+- live runtime mount: `${HTTP_CONTEXT}${HTTP_SWAGGER_MOUNT_PATH}`
+- docs alias redirect: `${HTTP_CONTEXT}${HTTP_DOCS_ALIAS_PATH}` -> `${HTTP_CONTEXT}${HTTP_SWAGGER_MOUNT_PATH}/index.html`
+- contract source: `contracts/openapi/swagger.json`
 
 ## Files
 
 | File | Purpose |
 | --- | --- |
-| `index.html` | Swagger UI entrypoint |
-| `swagger-ui-bundle.js`, `swagger-ui.css` | Upstream Swagger UI distribution assets |
-| `custom.css` | Local visual overrides |
+| `index.html` | Static Swagger UI entrypoint |
+| `swagger-ui-bundle.js`, `swagger-ui.css` | Vendored upstream Swagger UI assets |
+| `custom.css` | Local presentation overrides for hosted docs |
 
-## Usage Notes
+## Rules
 
-- Regenerate OpenAPI before reviewing UI output.
-- Keep relative references compatible with static hosting paths.
-- Validate UI after bumping Swagger UI distribution files.
-
-## Package Improvements
-
-- Add source/version note for bundled Swagger UI release.
-- Add quick test checklist after asset upgrades.
-- Add minimal customization policy to keep overrides maintainable.
-- Add a link to OpenAPI generation workflow (`make swag`).
+- Regenerate the OpenAPI contract before reviewing or publishing UI output.
+- Keep static asset paths compatible with the GitHub Pages/docs hosting layout.
+- Do not treat this folder as the source of truth for REST behavior; it renders the generated contract.
+- After asset upgrades, verify both hosted docs and the runtime Swagger mount.
 
 ---
 

@@ -2,31 +2,26 @@
 
 **Path:** `infrastructure`
 
-## Overview
+## Purpose
 
-Operational infrastructure assets for container runtime, database lifecycle, and observability stack.
-This layer supports local development and deployment-oriented workflows.
+This layer owns repo-local infrastructure assets used to run, provision, and observe `AionApi`.
+It supports the multi-repo local stack, prod-like compose profiles, and database lifecycle work.
 
-## Subpackages
+## Current Areas
 
-| Subpackage | Responsibility |
+| Area | Responsibility |
 | --- | --- |
-| `docker/` | Image and environment runtime definitions |
-| `db/` | Migration and seed SQL assets |
-| `observability/` | Logs/metrics/traces infrastructure configs |
+| `assets/` | static support assets published through the local asset bucket |
+| `db/` | schema migrations and local seed datasets |
+| `docker/` | Docker image build, compose profiles, and entrypoint wiring |
+| `observability/` | OTel, Prometheus, Loki, Fluent Bit, and Grafana configs |
 
-## Design Notes
+## Boundaries
 
-- Keep infrastructure concerns separate from application/business code.
-- Favor reproducible, versioned configuration assets.
-- Keep sensitive runtime values outside committed docs/config templates.
-
-## Package Improvements
-
-- Add infra quick-start flowchart (docker + db + observability bootstrap).
-- Add “who owns what” matrix per infrastructure subpackage.
-- Add policy section for secret management across profiles.
-- Add compatibility matrix between app version and infra dependencies.
+- keep business logic out of `infrastructure`
+- treat versioned SQL, compose files, and telemetry configs as code
+- cross-repo orchestration still depends on sibling repos in the workspace; this folder owns only the `AionApi` side of that wiring
+- secrets and machine-specific values belong in ignored env files, not committed infra docs
 
 ---
 

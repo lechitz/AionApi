@@ -2,31 +2,26 @@
 
 **Path:** `internal/platform/ports`
 
-## Overview
+## Purpose
 
-Cross-cutting output port contracts (cache, logger, hasher, keygen, etc.) used across contexts.
-These interfaces keep core/business logic decoupled from vendor implementations.
+This folder defines shared output-port contracts reused across the application.
 
-## Responsibilities
+## Current Output Ports
 
-| Area | Responsibility |
+| Package | Role |
 | --- | --- |
-| Contract definition | Define minimal technology-agnostic interfaces |
-| Decoupling | Prevent direct dependency on infra libraries in core |
-| Testability | Enable mock generation for unit tests |
+| `output/cache` | cache operations and lifecycle |
+| `output/db` | database abstraction and transaction support |
+| `output/hasher` | password hashing |
+| `output/httpclient` | outbound HTTP requests with instrumentation |
+| `output/keygen` | key generation helpers |
+| `output/logger` | structured logger contract |
 
-## Design Notes
+## Boundaries
 
-- Keep interfaces focused and small.
-- Avoid vendor/framework types in port contracts.
-- Treat ports as stable contracts used by multiple contexts.
-
-## Package Improvements
-
-- Add contract index table linking each port to adapters.
-- Add versioning policy for breaking contract changes.
-- Add examples showing preferred usage from usecases.
-- Add CI check for stale/unmocked new ports.
+- keep interfaces small and technology-agnostic
+- ports exist to decouple core logic from vendor implementations
+- adding a new port here means the contract is shared across multiple boundaries, not just one context
 
 ---
 

@@ -2,32 +2,48 @@
 
 **Path:** `internal/user`
 
-## Overview
+## Purpose
 
-User domain for account lifecycle, profile updates, password changes, and soft deletion.
-It centralizes identity-related business rules and security-sensitive flows.
+`internal/user` owns account lifecycle, public registration, profile/avatar management, password changes, and soft deletion.
 
-## Typical Responsibilities
+## Current HTTP Surface
 
-| Area | Responsibility |
-| --- | --- |
-| Account lifecycle | Create/read/update/delete user operations |
-| Credential management | Password validation/hash/update flows |
-| Identity constraints | Username/email uniqueness and normalization |
-| Session interplay | Token/store coordination for sensitive user changes |
+### Public routes
 
-## Design Notes
+- `POST /user/create`
+- `POST /user/avatar/upload`
+- `POST /registration/start`
+- `PUT /registration/{registration_id}/profile`
+- `PUT /registration/{registration_id}/avatar`
+- `POST /registration/{registration_id}/complete`
 
-- Keep user rules and security checks in core usecases.
-- Keep transport concerns in primary adapters.
-- Keep storage/hash/token integrations behind output ports.
+### Authenticated routes
 
-## Package Improvements
+- `GET /user/all`
+- `GET /user/me`
+- `GET /user/{user_id}`
+- `PUT /user/`
+- `DELETE /user/avatar`
+- `PUT /user/password`
+- `DELETE /user/`
 
-- Add end-to-end flow diagrams for create/update-password/delete.
-- Add tests for race/conflict scenarios on unique fields.
-- Add clear policy for PII-safe logging at boundaries.
-- Add compatibility notes for auth/session invalidation behavior.
+## Runtime Contract
+
+- password updates refresh the auth cookie/token on success
+- cache layers must never store password hashes or raw passwords
+- registration is a multi-step public flow separate from the authenticated profile-update surface
+- avatar upload/removal is owned here even when backed by external object storage
+
+## Boundaries
+
+- identity, password, and registration rules stay in core usecases
+- transport adapters own request decoding, auth context extraction, and cookie refresh wiring
+- auth/session semantics collaborate with `internal/auth`, but profile and account ownership stay here
+
+## Related Docs
+
+- [`../auth/README.md`](../auth/README.md)
+- [`../platform/server/http/utils/cookies/README.md`](../platform/server/http/utils/cookies/README.md)
 
 ---
 

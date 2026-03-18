@@ -2,29 +2,21 @@
 
 **Path:** `infrastructure/observability/prometheus`
 
-## Overview
+## Purpose
 
-Prometheus scrape configuration for metrics collection in local observability stack.
-It scrapes OTel collector and other configured targets.
+This package defines Prometheus scraping for the local observability stack.
 
-## Files
+## Current File
 
-| File | Purpose |
+| File | Responsibility |
 | --- | --- |
-| `prometheus.yml` | Scrape jobs, intervals, and target definitions |
+| `prometheus.yml` | scrapes the OTEL collector metrics endpoint every 5 seconds |
 
-## Design Notes
+## Boundaries
 
-- Keep scrape intervals appropriate for environment scale.
-- Keep target naming predictable for dashboard query reuse.
-- Verify target health after config updates.
-
-## Package Improvements
-
-- Add example queries used by core dashboards.
-- Add validation target for config syntax in CI.
-- Add guidance for adding new scrape jobs safely.
-- Add cardinality warning section for high-volume labels.
+- new scrape targets should only be added when they are intentionally part of the local operator surface
+- metric naming and labels remain owned by the emitting services and OTEL pipeline
+- dashboards that depend on new metrics should ship with scrape changes in the same PR
 
 ---
 

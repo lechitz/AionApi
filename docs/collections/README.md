@@ -2,30 +2,28 @@
 
 **Path:** `docs/collections`
 
-## Overview
+## Purpose
 
-This folder contains API client collections (Postman/Insomnia) used for manual QA and local integration checks.
-OpenAPI remains the source contract; collections are consumer-friendly artifacts.
+This folder publishes consumer-friendly request collections for manual QA and local integration checks.
+The canonical REST contract still lives in `contracts/openapi/swagger.yaml`.
 
-## Scope
+## Current Artifact
 
-| Area | Responsibility |
+| Path | Purpose |
 | --- | --- |
-| Manual testing support | Provide ready-to-run request collections |
-| Contract consumption | Reflect REST contract for external tooling |
+| `postman/AionApi.postman_collection.json` | Postman collection covering auth, user, admin, chat, GraphQL, and health flows |
 
-## Design Notes
+## Usage
 
-- Keep environment placeholders (`{{baseURL}}`, tokens) in collection files.
-- Never commit real secrets/tokens.
-- Update collections when contract changes materially affect consumers.
+- import the collection into Postman
+- set `{{baseURL}}` to the target API origin
+- use collection variables or cookies for auth; never commit real tokens back into the file
 
-## Package Improvements
+## Boundaries
 
-- Add collection versioning notes linked to API releases.
-- Add validation step to ensure collections import cleanly.
-- Add quick start section with expected local environment variables.
-- Add mapping table from collection folders to API domains.
+- update this artifact when consumer-facing REST flows change materially
+- do not treat the collection as a source of truth over OpenAPI or runtime behavior
+- keep secrets, personal environments, and local-only values outside the checked-in JSON
 
 ---
 

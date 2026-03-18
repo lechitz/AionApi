@@ -2,26 +2,37 @@
 
 ## Purpose
 
-This package is the process entrypoint for the API binary. It owns bootstrap concerns only.
+`cmd/api` is the process entrypoint for the `AionApi` binary.
+It owns bootstrap, lifecycle, and process-level metadata only.
 
-## File Responsibilities
+## Current Runtime Flow
 
-- `main.go`: process entrypoint only (`main` + `run`).
-- `bootstrap_runtime.go`: runtime bootstrap flow (load config, start app, wait signal, graceful stop).
-- `bootstrap_fx.go`: Fx composition root (`newFXApp`) with platform modules.
-- `bootstrap_config.go`: env-driven bootstrap timeouts (`BOOTSTRAP_START_TIMEOUT`, `BOOTSTRAP_STOP_TIMEOUT`).
-- `swagger.go`: Swagger annotation block and runtime Swagger metadata wiring from loaded config.
+1. `main.go` invokes `run`.
+2. `bootstrap_config.go` resolves bootstrap start/stop timeouts.
+3. `bootstrap_fx.go` builds the Fx application graph through the platform composition root.
+4. `bootstrap_runtime.go` loads config, starts the app, waits for OS signals, and performs graceful shutdown.
+5. `swagger.go` exposes the Swagger annotation block and injects runtime metadata used by the published REST docs.
 
-## When To Change Each File
+## Files
 
-- `main.go`: only when entrypoint invocation itself changes.
-- `bootstrap_runtime.go`: startup/shutdown lifecycle, signal handling, bootstrap logging.
-- `bootstrap_fx.go`: dependency graph/modules that compose the application process.
-- `bootstrap_config.go`: bootstrap env vars and validation rules.
-- `swagger.go`: swagger metadata annotation and runtime swagger metadata mapping.
+| File | Responsibility |
+| --- | --- |
+| `main.go` | Minimal process entrypoint |
+| `bootstrap_runtime.go` | App startup, signal wait, shutdown path |
+| `bootstrap_fx.go` | Fx dependency graph and module wiring |
+| `bootstrap_config.go` | Bootstrap timeout parsing and validation |
+| `swagger.go` | Runtime Swagger metadata and annotation ownership |
 
 ## Boundaries
 
-- Keep domain logic out of `cmd/api`.
-- Keep environment/runtime concerns in `cmd/api`, not in domain packages.
-- Keep shared runtime wiring in `internal/platform/fxapp`.
+- No domain or usecase logic belongs in `cmd/api`.
+- Route registration, GraphQL construction, and server wiring belong in `internal/platform`.
+- Bootstrap-only env knobs stay here; durable config sections stay under `internal/platform/config`.
+
+## Validate
+
+```bash
+go run ./cmd/api
+make dev
+make verify
+```

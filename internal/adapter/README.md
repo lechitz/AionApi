@@ -2,30 +2,22 @@
 
 **Path:** `internal/adapter`
 
-## Overview
+## Purpose
 
-Shared adapter layer containing transport-facing primary adapters and infrastructure-facing secondary adapters.
-It provides cross-context adapter infrastructure and conventions.
+`internal/adapter` holds adapter code that is shared across more than one bounded context.
 
-## Subpackages
+## Current Split
 
 | Subpackage | Role |
 | --- | --- |
-| `primary/` | Inbound transport adapters (client -> usecase boundary) |
-| `secondary/` | Outbound infra adapters (usecase -> external systems) |
+| `primary/` | shared inbound transport infrastructure |
+| `secondary/` | shared outbound infrastructure implementations |
 
-## Design Notes
+## Boundaries
 
-- Keep adapter responsibilities directional and explicit.
-- Keep core boundaries clean: no domain rules in adapters.
-- Detailed behavior for each side is documented in respective subpackage READMEs.
-
-## Package Improvements
-
-- Add adapter boundary checklist (inbound vs outbound responsibilities).
-- Add sample request flow bridging primary -> core -> secondary.
-- Add lint/convention checks for forbidden dependency direction.
-- Add adapter testing guidance by adapter type.
+- context-specific HTTP, DB, cache, or storage adapters should stay inside the owning context
+- only cross-context adapter infrastructure belongs here
+- adapters translate transport or vendor behavior; they do not own business orchestration
 
 ---
 

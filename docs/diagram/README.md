@@ -2,11 +2,13 @@
 
 **Path:** `docs/diagram`
 
-## Overview
+## Purpose
 
-This folder stores architecture and flow diagrams in two formats:
-- editable source (`*.sequence.txt`)
-- rendered output (`images/*.svg`)
+This folder stores reference diagrams for entrypoints and selected internal flows.
+Each diagram is kept in two forms:
+
+- editable source: `*.sequence.txt`
+- rendered artifact: `images/*.svg`
 
 ## Diagram Catalog
 
@@ -29,12 +31,11 @@ This folder stores architecture and flow diagrams in two formats:
 3. Replace corresponding file under `images/`.
 4. Commit source and rendered artifact together.
 
-## Package Improvements
+## Boundaries
 
-- Add diagram naming conventions for new contexts/features.
-- Add lightweight quality checklist (actors, direction, error path).
-- Add script/target to validate missing source↔svg pairs.
-- Add timestamp/version metadata in diagram headers for traceability.
+- these diagrams are explanatory snapshots, not canonical contracts
+- if a diagram conflicts with runtime code or README docs closer to the boundary, the code and local README win
+- add a new diagram only when it clarifies a non-obvious boundary, bootstrap path, or operator flow
 
 ---
 

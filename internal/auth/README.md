@@ -2,31 +2,42 @@
 
 **Path:** `internal/auth`
 
-## Overview
+## Purpose
 
-Authentication and session domain logic for login/logout/token validation flows.
-Provides security-oriented contracts used by transport adapters and other contexts.
+`internal/auth` owns login, session validation, refresh-token rotation, logout, and role/session cache integration.
 
-## Typical Responsibilities
+It is the backend authority for authenticated HTTP session state used by REST handlers and GraphQL auth enforcement.
+
+## Current HTTP Surface
+
+| Route | Access | Current behavior |
+| --- | --- | --- |
+| `POST /auth/login` | public | validates credentials, returns access token + user snapshot, sets auth and refresh cookies |
+| `POST /auth/refresh` | public | rotates access and refresh tokens from the refresh cookie |
+| `GET /auth/session` | authenticated | validates bearer token or auth cookie and returns session snapshot |
+| `POST /auth/logout` | authenticated | revokes current server-side session state and clears cookies |
+
+## Internal Shape
 
 | Area | Responsibility |
 | --- | --- |
-| Authentication | Validate credentials and issue/revoke tokens |
-| Session lifecycle | Manage logout/session invalidation paths |
-| Claims context | Populate/validate identity data used by adapters/directives |
+| `core/usecase` | `Login`, `Validate`, `RefreshTokenRenewal`, `Logout`, and role-cache orchestration |
+| `core/ports/output` | auth provider, auth store, roles reader, role cache contracts |
+| `adapter/secondary/cache` | Redis-backed token/session and role-cache operations |
+| `adapter/primary/http/handler` | REST transport mapping for `/auth/*` routes |
+| `adapter/primary/http/middleware` | protected-route middleware that injects authenticated user context |
 
-## Design Notes
+## Boundaries
 
-- Keep security rules in core usecases.
-- Keep cryptographic operations behind output ports.
-- Keep error responses semantic and transport-safe.
+- Cookie transport rules are owned by `internal/platform/server/http/utils/cookies`, not by core usecases.
+- GraphQL `@auth` enforcement lives in the central GraphQL adapter, but validation semantics ultimately come from this context.
+- Security-sensitive integrations stay behind output ports; transport adapters only decode, map, and emit cookies/responses.
 
-## Package Improvements
+## Related Docs
 
-- Add token lifecycle diagram (issue/refresh/revoke).
-- Add threat-model notes for transport integrations.
-- Add tests for replay/invalid token edge cases.
-- Add explicit compatibility notes for auth middleware/directives.
+- [`../platform/server/http/utils/cookies/README.md`](../platform/server/http/utils/cookies/README.md)
+- [`../platform/server/http/middleware/servicetoken/README.md`](../platform/server/http/middleware/servicetoken/README.md)
+- [`../adapter/primary/graphql/README.md`](../adapter/primary/graphql/README.md)
 
 ---
 

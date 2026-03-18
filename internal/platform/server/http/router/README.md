@@ -2,49 +2,45 @@
 
 **Path:** `internal/platform/server/http/router`
 
-## Overview
+## Purpose
 
-This package contains concrete router adapters that implement the `ports.Router` contract.
-It isolates framework-specific routing details from context modules and keeps route registration portable.
+This package contains concrete router adapters behind the framework-agnostic `ports.Router` contract.
 
-## Package Scope
+## Current Adapter
 
-| Area | Responsibility |
-| --- | --- |
-| Port implementation | Implement `internal/platform/server/http/ports.Router` |
-| Framework encapsulation | Hide chi-specific APIs from contexts and registrars |
-| Middleware composition | Apply global and scoped middlewares through router adapter methods |
-| Fallback wiring | Configure `NotFound`, `MethodNotAllowed`, and optional error callback hooks |
+`chi/` is the active implementation.
 
-## Subpackages
+It currently supports:
 
-| Subpackage | Role |
-| --- | --- |
-| `chi/` | Current `chi/v5` adapter implementing the router port |
+- global middleware via `Use(...)`
+- grouped routes via `Group(...)` and `GroupWith(...)`
+- handler mounts via `Mount(...)`
+- method helpers for `GET`, `POST`, `PUT`, and `DELETE`
+- custom `NotFound` and `MethodNotAllowed` handlers
+- optional `SetError(...)` callback storage
 
-## Current Adapter Summary (`chi/`)
+## Important Nuance
 
-| Capability | Implementation notes |
-| --- | --- |
-| Global middleware | `Use(...)` with nil-guard |
-| Route groups | `Group(prefix, fn)` and `GroupWith(mw, fn)` |
-| Mounted handlers | `Mount(prefix, handler)` |
-| Method routing | `Handle`, `GET`, `POST`, `PUT`, `DELETE` |
-| Fallback handlers | `SetNotFound`, `SetMethodNotAllowed` |
-| Error callback | `SetError` stores callback (not automatically invoked by chi) |
+`SetError(...)` does not cause chi to invoke a centralized error callback automatically.
+The current adapter only stores the callback so the port surface stays consistent with platform expectations.
 
-## Design Notes
+In practice:
 
-- Context registrars should depend only on `ports.Router`, never on `chi` directly.
-- Adapter remains thin: route wiring only, no business or transport mapping logic.
-- Router swapping should be done in composer wiring, not in domain/context packages.
+- panic handling is done by middleware
+- 404/405 behavior is done by explicit fallback handlers
+- transport error mapping is done in handlers/utilities
 
-## Package Improvements
+## Boundaries
 
-- Add contract tests validating that `chi` adapter behavior matches `ports.Router` expectations.
-- Clarify and/or remove `SetError` if it is not consumed by platform flow to avoid dead API surface.
-- Consider adding optional support for additional verbs (e.g., `PATCH`) if required by upcoming endpoints.
-- Add a short “how to add a new adapter” section in this README with required method parity checklist.
+- Bounded contexts must depend on `ports.Router`, never on `chi` directly.
+- Any new adapter must preserve the same method and grouping semantics expected by current registrars.
+- Business logic and response mapping do not belong here.
+
+## Validate
+
+```bash
+go test ./internal/platform/server/http/router/...
+```
 
 ---
 

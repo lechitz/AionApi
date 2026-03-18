@@ -2,73 +2,67 @@
 
 **Path:** `internal/platform/server/http`
 
-## Overview
+## Purpose
 
-This package composes the application HTTP surface: router adapter, middlewares, generic handlers, REST registrations, GraphQL mount, Swagger mount, and health endpoints.
-It is the platform entrypoint for transport-level HTTP orchestration.
+This package composes the complete HTTP transport surface for `AionApi`.
+It owns router creation, middleware wiring, Swagger/docs mounts, REST registrar composition, GraphQL mount, and health endpoints.
 
-## Package Scope
+## Current Composition
 
-| Area | Responsibility |
+| Concern | Current behavior |
 | --- | --- |
-| Handler composition | Build the main HTTP handler tree (`ComposeHandler`) |
-| Server configuration | Build `http.Server` with config-driven timeouts and limits |
-| Platform wiring | Apply cross-cutting middlewares and fallback handlers |
-| Endpoint mounting | Mount REST adapters, GraphQL, Swagger, and health routes |
-| HTTP sentinel errors | Provide shared transport errors (`404`, `405`, `500`) |
+| Main router | `chi` adapter created in `ComposeHandler` |
+| Global middleware order | `requestid` -> `recovery` -> `cors` |
+| Fallback handlers | `NotFound`, `MethodNotAllowed`, and generic error callback are wired from `generic/handler` |
+| Swagger/docs | mounted under `cfg.ServerHTTP.Context` with alias redirect to `.../swagger/index.html` |
+| REST routes | mounted under `cfg.ServerHTTP.Context + cfg.ServerHTTP.APIRoot` |
+| GraphQL | mounted inside the API root at `cfg.ServerGraphql.Path`, wrapped by `servicetoken` |
+| OTel HTTP wrapper | wraps the main router, not the dedicated health mux |
+| Health routes | exposed separately at both `${context}${health}` and `${context}${apiRoot}${health}` |
 
-## Subpackages
+## Conditional Route Registration
 
-| Subpackage | Role |
-| --- | --- |
-| `ports/` | Framework-agnostic router contract |
-| `router/` | Concrete router adapter implementations (currently `chi`) |
-| `middleware/` | Cross-cutting HTTP middleware chain |
-| `generic/` | Generic handlers (`health`, `not found`, `method not allowed`, `recovery/error`) |
-| `utils/` | Shared response/error/cookie helpers |
-| `errors/` | Shared sentinel HTTP errors |
+`registerDomainRoutes` mounts REST modules only when their dependencies are present:
 
-## Core Files
+- auth
+- user
+- admin
+- chat
+- audit
+- realtime
+
+GraphQL handler construction is also dependency-driven and mounted only after successful composition.
+
+## Health Exception
+
+Health endpoints intentionally bypass the instrumented main router.
+They currently run through:
+
+- `requestid`
+- `cors`
+
+They do not go through `otelhttp` or the main router fallback chain.
+
+## Key Files
 
 | File | Purpose |
 | --- | --- |
-| `composer.go` | Assembles full handler graph (middlewares + routes + GraphQL + Swagger + health) |
-| `server.go` | Builds `http.Server` from config and composed handler |
-| `http_constants.go` | Constants for routing/mount defaults and logging |
+| `composer.go` | route/middleware composition and mount logic |
+| `server.go` | `http.Server` construction from config |
+| `http_constants.go` | default route and mount constants |
 
-## Composition Flow (`ComposeHandler`)
+## Boundaries
 
-1. Instantiate router adapter (`chi.New()`).
-2. Register global middlewares (`requestid`, `recovery`, `cors`).
-3. Set fallback handlers (`NotFound`, `MethodNotAllowed`, `Error`).
-4. Resolve mount points from config (`context`, `swagger`, `docs`, `health`).
-5. Mount Swagger UI and docs alias under API context.
-6. Mount REST modules under API root.
-   - Includes `audit` HTTP module (`GET /audit/events`).
-7. Build and mount GraphQL handler; wrap with `servicetoken` middleware.
-8. Wrap main router with `otelhttp` instrumentation.
-9. Expose health routes via a dedicated mux path (including backward-compatible path).
+- No domain usecase logic belongs here.
+- Bounded contexts register handlers through adapters; this package only composes them.
+- Shared transport primitives live in `middleware/`, `generic/`, `router/`, `ports/`, and `utils/`.
 
-## Server Build (`Build` / `FromHTTP`)
+## Validate
 
-| Concern | Source |
-| --- | --- |
-| Listen address | `cfg.ServerHTTP.Host` + `cfg.ServerHTTP.Port` |
-| Timeouts/limits | `cfg.ServerHTTP.*Timeout`, `MaxHeaderBytes` |
-| Base context | Application context propagated via `BaseContext` |
-
-## Design Notes
-
-- This layer must remain transport/platform-focused; no domain usecase logic.
-- Context modules register endpoints through adapters; composition happens here.
-- Subpackage READMEs contain detailed contracts/behavior; this README is the integration-level view.
-
-## Package Improvements
-
-- Add integration tests for `ComposeHandler` route map (Swagger, docs alias, GraphQL mount, health aliases).
-- Ensure middleware ordering in code matches documented recommendation (`recovery` outermost) or update docs/code for consistency.
-- Consider adding a small table mapping mounted routes to owning adapters for discoverability.
-- Add a short section documenting failure behavior when GraphQL handler composition fails inside route setup.
+```bash
+go test ./internal/platform/server/http/...
+make verify
+```
 
 ---
 

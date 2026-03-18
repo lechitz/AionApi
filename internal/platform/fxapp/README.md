@@ -2,31 +2,31 @@
 
 **Path:** `internal/platform/fxapp`
 
-## Overview
+## Purpose
 
-Dependency graph composition and lifecycle wiring using Uber Fx.
-This package assembles infrastructure, platform, and domain dependencies for runtime startup.
+This package is the Uber Fx composition root for `AionApi`.
+It wires infrastructure providers, application services, HTTP runtime, realtime consumption, and the dedicated outbox publisher process.
 
-## Responsibilities
+## Current Modules
 
-| Area | Responsibility |
+| Module | Role |
 | --- | --- |
-| Module composition | Group providers/invokes by platform area |
-| Dependency injection | Build runtime object graph |
-| Lifecycle hooks | Coordinate start/stop and graceful shutdown |
+| `InfraModule` | logger, config, cache, DB, HTTP client, observability init |
+| `ApplicationModule` | compose repositories, use cases, and `app.Dependencies` |
+| `ServerModule` | compose HTTP handler, build server, and manage lifecycle |
+| `RealtimeModule` | start Kafka projection consumer when realtime is enabled |
+| `OutboxPublisherModule` | start the periodic Kafka outbox publisher loop |
 
-## Design Notes
+## Runtime Use
 
-- Keep module boundaries explicit.
-- Prefer provider granularity that matches bounded contexts.
-- Log and surface startup/shutdown failures clearly.
+- `cmd/api` boots `InfraModule`, `ApplicationModule`, `RealtimeModule`, and `ServerModule`
+- `cmd/outbox-publisher` boots `InfraModule` and `OutboxPublisherModule`
 
-## Package Improvements
+## Boundaries
 
-- Add module dependency graph diagram.
-- Add startup failure troubleshooting section.
-- Add conventions for adding new providers/invokes.
-- Add smoke test for app boot sequence.
+- Fx wiring belongs here, not in the bounded contexts
+- providers should expose stable contracts and delegate behavior to owning packages
+- if startup behavior changes, update the matching command README and runtime docs in the same PR
 
 ---
 

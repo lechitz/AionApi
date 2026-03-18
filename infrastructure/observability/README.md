@@ -2,33 +2,35 @@
 
 **Path:** `infrastructure/observability`
 
-## Overview
+## Purpose
 
-Infrastructure assets for logs, metrics, and traces.
-This package composes collector, storage, scraping, and visualization layers.
+This folder owns the repo-local telemetry configs mounted by the Docker profiles.
+It covers traces, metrics, logs, and Grafana provisioning for the local and prod-like stacks.
 
-## Subpackages
+## Current Signal Flow
 
-| Subpackage | Responsibility |
+1. Aion services emit OTLP telemetry to the collector.
+2. `otel/` exports traces to Jaeger and metrics to a Prometheus scrape endpoint.
+3. `prometheus/` scrapes the collector.
+4. `fluentbit/` tails Docker logs and forwards them to `loki/`.
+5. `grafana/` provisions datasources and dashboards over Prometheus, Loki, and Jaeger.
+
+## Current Areas
+
+| Area | Responsibility |
 | --- | --- |
-| `otel/` | Telemetry ingestion and routing |
-| `prometheus/` | Metrics scraping |
-| `loki/` | Log storage/query backend |
-| `fluentbit/` | Log collection/forwarding |
-| `grafana/` | Dashboards and datasource provisioning |
+| `otel/` | telemetry ingestion and routing |
+| `prometheus/` | metrics scraping |
+| `loki/` | log storage/query backend |
+| `fluentbit/` | log collection and forwarding |
+| `grafana/` | datasource and dashboard provisioning |
+| `scripts/` | ad-hoc operator helpers; not the canonical source of truth |
 
-## Design Notes
+## Boundaries
 
-- Keep each observability concern isolated by component.
-- Use in-repo config for deterministic local environments.
-- Align naming conventions across logs, metrics, and traces.
-
-## Package Improvements
-
-- Add end-to-end observability startup verification runbook.
-- Add architecture diagram of signal flow by component.
-- Add environment-specific override strategy documentation.
-- Add minimum supported tool versions (Grafana/Prometheus/Loki/OTel).
+- compose profiles and config files are canonical; helper scripts are secondary
+- keep telemetry wiring deterministic and versioned in-repo
+- if a dashboard or query depends on a label or exporter, update the relevant config in the same change
 
 ---
 

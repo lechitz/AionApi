@@ -2,29 +2,29 @@
 
 **Path:** `infrastructure/observability/otel`
 
-## Overview
+## Purpose
 
-Collector pipeline configuration for traces and metrics emitted by Aion services.
-It centralizes telemetry routing to downstream backends.
+This package routes OTLP telemetry emitted by Aion services.
 
-## Files
+## Current Pipeline
 
-| File | Purpose |
+| Stage | Behavior |
 | --- | --- |
-| `otel-collector-config.yaml` | Receivers, processors, exporters for telemetry pipeline |
+| Receiver | accepts OTLP over HTTP and gRPC |
+| Processor | filters health spans and batches telemetry |
+| Exporter | sends traces to Jaeger and exposes metrics for Prometheus scraping |
 
-## Design Notes
+## Source File
 
-- Keep exporter endpoints configurable per environment.
-- Keep attribute naming aligned with `tracingkeys` conventions.
-- Tune processors to reduce noise while preserving signal.
+| File | Responsibility |
+| --- | --- |
+| `otel-collector-config.yaml` | receiver, processor, and exporter wiring |
 
-## Package Improvements
+## Boundaries
 
-- Add pipeline diagram (receiver -> processor -> exporter).
-- Add config validation checks in CI.
-- Add troubleshooting matrix for exporter connectivity issues.
-- Add documented defaults for sampling/timeout behavior.
+- attribute naming and span semantics remain owned by the application code
+- collector routing lives here, not in Grafana or Prometheus
+- if exporter endpoints change in compose, this config must change in the same PR
 
 ---
 

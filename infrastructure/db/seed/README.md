@@ -2,65 +2,36 @@
 
 **Path:** `infrastructure/db/seed`
 
-## Overview
+## Purpose
 
-SQL seed scripts used for local development, QA datasets, and deterministic test baselines.
-These scripts populate data directly in Postgres for fast environment setup.
+This folder owns direct SQL seed artifacts for local development, QA, and deterministic reset flows.
+It is optimized for fast Postgres bootstrap, not for production data loading.
 
-## Scope
+## Current Files
 
-| Area | Responsibility |
+| Pattern | Purpose |
 | --- | --- |
-| Core seed data | Roles, users, relationships |
-| Generated datasets | Categories, tags, records, test timelines |
-| Seed logging/artifacts | Optional run artifacts for local tooling |
+| `roles.sql`, `user_roles.sql`, `admin_user.sql` | role and admin bootstrap |
+| `*_generate.sql` | generated categories, tags, users, and records |
+| `test_*.sql` | scenario-oriented datasets for timeline and demo coverage |
+| `.env.example` | helper env template for local seed tooling |
 
-## Key Files
-
-| File pattern | Purpose |
-| --- | --- |
-| `*_generate.sql` | Parameterized data generators |
-| `roles.sql`, `user_roles.sql`, `admin_user.sql` | Security/role bootstrap |
-| `test_*.sql` | Scenario-focused test datasets |
-
-## Usage
+## Common Flows
 
 ```bash
-make seed-all N=10
-make populate N=100
+make seed-essential
+make seed-test
+make seed-clean-all
 make db-full
 ```
 
-## Realistic Demo Flow
+`db-full` remains the fastest path to a realistic local profile with roles, admin, taxonomy, dashboard tables, and high-volume records.
 
-Use this flow when you want a production-like local environment:
+## Boundaries
 
-```bash
-make dev
-make db-full
-```
-
-What `db-full` prepares:
-- reset + full migrations
-- roles + admin account
-- realistic user `testuser` / `Test@123`
-- merged taxonomy (legacy + new operational categories/tags)
-- dashboard metric definitions + goal templates
-- dashboard white-label layout tables ready (`dashboard_views`, `dashboard_widgets`)
-- ~3 months of records with high daily volume (about 50-60/day)
-
-## Design Notes
-
-- Prefer idempotent SQL where possible.
-- Keep data representative but lightweight for local workflows.
-- Avoid embedding secrets in seed files.
-
-## Package Improvements
-
-- Add automated seed validation against current schema version.
-- Add documented dependency order between seed scripts.
-- Add optional “small/medium/large” seed profiles.
-- Move local artifacts (e.g., transient logs) to ignored output folder.
+- keep seed data representative but disposable
+- do not let seed scripts redefine schema ownership or hide migration gaps
+- API-driven seed callers and synthetic generation flows belong under `hack/tools` and complement, rather than replace, these SQL assets
 
 ---
 

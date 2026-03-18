@@ -2,30 +2,32 @@
 
 **Path:** `infrastructure/db`
 
-## Overview
+## Purpose
 
-Database infrastructure assets for schema lifecycle and seed datasets.
-This package is split into migration contracts and seed scripts.
+`infrastructure/db` owns the Postgres lifecycle for `AionApi`.
+It splits durable schema evolution from local and QA seed data.
 
-## Subpackages
+## Current Areas
 
-| Subpackage | Responsibility |
+| Area | Responsibility |
 | --- | --- |
-| `migrations/` | Versioned schema evolution |
-| `seed/` | Deterministic local/test data provisioning |
+| `migrations/` | ordered schema evolution for auth, records, dashboard, audit, and event-outbox tables |
+| `seed/` | direct-SQL bootstrap data for local development and deterministic test baselines |
 
-## Design Notes
+## Operational Use
 
-- Keep schema changes migration-driven.
-- Keep seed data separate from schema evolution.
-- Align SQL artifacts with repository expectations in DB adapters.
+```bash
+make migrate-dev-up
+make migrate-dev-status
+make db-full
+make seed-test
+```
 
-## Package Improvements
+## Boundaries
 
-- Add a simple compatibility matrix (migration version vs seed assumptions).
-- Add DB bootstrap script for first-time local setup.
-- Add schema verification query snippets for quick checks.
-- Add naming conventions for new SQL artifacts.
+- schema changes must land as migrations, not ad-hoc SQL edits
+- seed data may assume a dev/test environment, but it must not redefine schema ownership
+- API-based seed callers live under `hack/tools`; this folder owns the direct SQL side of local data provisioning
 
 ---
 
