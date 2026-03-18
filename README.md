@@ -16,6 +16,7 @@ AionApi focuses on three goals:
 - REST explorer: [Swagger UI](https://lechitz.github.io/AionApi/swagger-ui/)
 - OpenAPI contract: `contracts/openapi/swagger.yaml`
 - GraphQL schema artifact: [`docs/graphql/schema.graphql`](./docs/graphql/schema.graphql)
+- GraphQL shared mutations: [`contracts/graphql/mutations/README.md`](./contracts/graphql/mutations/README.md)
 - Documentation ownership map: [`.github/DOCUMENTATION_OWNERSHIP.md`](./.github/DOCUMENTATION_OWNERSHIP.md)
 
 ## Architecture At A Glance
@@ -133,8 +134,11 @@ Repository README map by area.
 
 ### cmd
 - [`cmd/README.md`](./cmd/README.md)
+- [`cmd/api/README.md`](./cmd/api/README.md)
+- [`cmd/outbox-publisher/README.md`](./cmd/outbox-publisher/README.md)
 
 ### contracts
+- [`contracts/graphql/mutations/README.md`](./contracts/graphql/mutations/README.md)
 - [`contracts/graphql/queries/README.md`](./contracts/graphql/queries/README.md)
 - [`contracts/openapi/README.md`](./contracts/openapi/README.md)
 
@@ -148,6 +152,7 @@ Repository README map by area.
 ### hack
 - [`hack/README.md`](./hack/README.md)
 - [`hack/dev/README.md`](./hack/dev/README.md)
+- [`hack/tools/graph-projection-export/README.md`](./hack/tools/graph-projection-export/README.md)
 - [`hack/tools/seed-caller/README.md`](./hack/tools/seed-caller/README.md)
 - [`hack/tools/seed-helper/README.md`](./hack/tools/seed-helper/README.md)
 
@@ -173,9 +178,11 @@ Repository README map by area.
 - [`internal/adapter/primary/graphql/README.md`](./internal/adapter/primary/graphql/README.md)
 - [`internal/adapter/secondary/README.md`](./internal/adapter/secondary/README.md)
 - [`internal/admin/README.md`](./internal/admin/README.md)
+- [`internal/audit/README.md`](./internal/audit/README.md)
 - [`internal/auth/README.md`](./internal/auth/README.md)
 - [`internal/category/README.md`](./internal/category/README.md)
 - [`internal/chat/README.md`](./internal/chat/README.md)
+- [`internal/eventoutbox/README.md`](./internal/eventoutbox/README.md)
 - [`internal/platform/README.md`](./internal/platform/README.md)
 - [`internal/platform/config/README.md`](./internal/platform/config/README.md)
 - [`internal/platform/fxapp/README.md`](./internal/platform/fxapp/README.md)
@@ -186,9 +193,6 @@ Repository README map by area.
 - [`internal/platform/server/http/README.md`](./internal/platform/server/http/README.md)
 - [`internal/platform/server/http/generic/README.md`](./internal/platform/server/http/generic/README.md)
 - [`internal/platform/server/http/middleware/README.md`](./internal/platform/server/http/middleware/README.md)
-- [`internal/platform/server/http/middleware/cors/README.md`](./internal/platform/server/http/middleware/cors/README.md)
-- [`internal/platform/server/http/middleware/recovery/README.md`](./internal/platform/server/http/middleware/recovery/README.md)
-- [`internal/platform/server/http/middleware/requestid/README.md`](./internal/platform/server/http/middleware/requestid/README.md)
 - [`internal/platform/server/http/middleware/servicetoken/README.md`](./internal/platform/server/http/middleware/servicetoken/README.md)
 - [`internal/platform/server/http/ports/README.md`](./internal/platform/server/http/ports/README.md)
 - [`internal/platform/server/http/router/README.md`](./internal/platform/server/http/router/README.md)

@@ -2,46 +2,37 @@
 
 **Path:** `cmd`
 
-## Overview
+## Purpose
 
-This layer contains executable application entrypoints.
-Current canonical runtime entrypoint is `cmd/api`.
+`cmd` owns long-lived process entrypoints only.
+The current repo ships two binaries:
 
-## Structure
+| Folder | Binary | Role |
+| --- | --- | --- |
+| `api/` | `aion-api` | HTTP, GraphQL, health, and runtime bootstrap |
+| `outbox-publisher/` | `aion-api-outbox-publisher` | background publisher for durable outbox rows |
 
-| Folder | Role |
-| --- | --- |
-| `api/` | Main API bootstrap and runtime startup |
+## Current Flow
 
-## Responsibilities
+- each command keeps `main.go` minimal and delegates to `runWithDeps`
+- bootstrap timeout parsing stays local to the entrypoint
+- the Fx composition root lives under `internal/platform/fxapp`
+- durable config, DB wiring, HTTP server, and Kafka adapters stay outside `cmd`
 
-| Area | Responsibility |
-| --- | --- |
-| Bootstrap | Initialize platform dependencies and wiring |
-| Runtime | Start HTTP/GraphQL servers and middlewares |
-| Lifecycle | Handle graceful shutdown and cleanup |
+## Boundaries
 
-## Build and Run
+- do not place domain, repository, or transport logic in `cmd`
+- add a new subfolder here only when a new binary/process exists
+- dev and lab tools belong under `hack/`, not beside runtime entrypoints
+
+## Validate
 
 ```bash
-go build -o bin/api ./cmd/api
 go run ./cmd/api
-# local stack with dependencies
+go run ./cmd/outbox-publisher
 make dev
+make logs-api-publisher
 ```
-
-## Design Notes
-
-- Keep entrypoints orchestration-only.
-- Domain rules belong to bounded contexts under `internal/<ctx>/core`.
-- Dev-only scripts/tools should live under `hack/`.
-
-## Package Improvements
-
-- Add startup sequence diagram (config -> deps -> server).
-- Add troubleshooting for missing env/infra dependencies.
-- Add explicit local vs container run matrix.
-- Add link to health/metrics endpoints for runtime checks.
 
 ---
 

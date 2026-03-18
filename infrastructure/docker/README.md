@@ -2,63 +2,39 @@
 
 **Path:** `infrastructure/docker`
 
-## Overview
+## Purpose
 
-Docker build/runtime assets for local and production-like environments.
-This package defines container images, compose profiles, and environment wiring.
+This folder owns the container image and compose wiring used to run `AionApi` in local, personal, and prod-like profiles.
 
-## What It Contains
+## Current Layout
 
-- root `Dockerfile`: production-oriented API image build (multi-stage).
-- `environments/`: profile-specific compose/env definitions (`dev`, `prod`, `example`).
-- `scripts/`: utility helpers for build/run/clean flows.
+| Path | Responsibility |
+| --- | --- |
+| `Dockerfile` | multi-stage image that builds `aion-api` and `aion-api-outbox-publisher` |
+| `scripts/entrypoint.sh` | default container entrypoint; starts `aion-api` |
+| `environments/dev/` | integrated hot-reload stack used in the multi-repo workspace |
+| `environments/my/` | personal isolated stack with its own compose and env files |
+| `environments/prod/` | prod-like compose profile |
+| `environments/example/` | env template for creating new profiles |
 
-## Main Flows
-
-- Dev: `make dev` (or `make dev-up` / `make clean`) using `environments/dev/docker-compose-dev.yaml` and `.env.dev`.
-- Prod-like: `make prod` using `environments/prod/docker-compose-prod.yaml` and `.env.prod`.
-- Custom profile: start from `environments/example/.env.example`.
-
-## Design Notes
-
-- Keep environment-specific details inside profile folders.
-- Keep production and development image concerns separated.
-- Keep compose/runtime behavior reproducible via Make targets.
-
-## Dev Hot Reload Notes
-
-The dev compose profile is wired for hot reload across integrated services:
-
-- API: `infrastructure/docker/environments/dev/Dockerfile.dev` (Air)
-- Chat: source mount + Uvicorn reload in dev mode
-- Dashboard: source mounts + Vite HMR
-- Kafka backbone via Redpanda-compatible local broker
-- `aion-ingest` and `aion-streams` bootstrap services in the same local network
-
-Important:
-
-- this integrated profile assumes a multi-repo workspace with sibling directories for `aionapi-dashboard`, `aion-chat`, `aion-ingest`, and `aion-streams`
-- an isolated clone of `AionApi` is not sufficient for the full `make build-dev` / `make dev` workflow
-- the event backbone gate is intended for a self-hosted runner or local machine that already satisfies those workspace assumptions
-
-Operational commands:
+## Operational Flows
 
 ```bash
+make build-dev
 make dev
-make dev-fast
-make rebuild-api
-make rebuild-chat
-make rebuild-dashboard
+make rebuild-dev
+make my
+make prod-up
 ```
 
-Use targeted rebuild commands when dependency layers or Dockerfiles changed.
+The `dev` profile also runs the outbox publisher, observability stack, and sibling services from `aion-chat`, `aionapi-dashboard`, `aion-ingest`, and `aion-streams`.
 
-## Best Practices
+## Boundaries
 
-- Do not store real secrets in `.env.*`; keep secrets outside git.
-- Keep service parity between dev and prod; change only tuning/security details.
-- Use `make build-dev` / `make build-prod` for reproducible images (BuildKit enabled).
-- Preserve healthchecks (Postgres/Redis/API) when adding services.
+- an isolated clone of `AionApi` can build the image, but the full `make dev` flow assumes the complete `/Aion` workspace
+- keep environment-specific values in profile env files, not in the root `Dockerfile`
+- if container behavior differs from runtime code, the entrypoint script, compose profile, and Make targets are the canonical sources
+- this folder owns image and compose wiring only; app configuration remains in `internal/platform/config`
 
 ---
 

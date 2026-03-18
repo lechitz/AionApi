@@ -2,30 +2,22 @@
 
 **Path:** `infrastructure/observability/fluentbit`
 
-## Overview
+## Purpose
 
-Fluent Bit pipeline configuration for collecting and forwarding container/application logs.
-In local stack, it forwards logs to Loki for querying in Grafana.
+This package collects container logs from the Docker host and forwards them to Loki.
 
-## Files
+## Current Flow
 
-| File | Purpose |
+| File | Responsibility |
 | --- | --- |
-| `fluent-bit.conf` | Input/filter/output pipeline definition |
-| `parsers.conf` | Log parser configuration |
+| `fluent-bit.conf` | tail Docker JSON logs, merge Docker metadata, add `APP_ENV`, ship to Loki |
+| `parsers.conf` | Docker log parsing rules |
 
-## Design Notes
+## Boundaries
 
-- Keep labels aligned with tracing/log correlation strategy.
-- Keep parser changes backward compatible with dashboards/queries.
-- Avoid credentials in config files.
-
-## Package Improvements
-
-- Add sample log record before/after parsing in docs.
-- Add validation script for config syntax.
-- Add guidance for adding new log sources safely.
-- Add alerting recommendations for dropped/failed log events.
+- labels and fields added here must stay compatible with Grafana and Loki queries
+- this package owns log collection and forwarding only; retention and query behavior live in Loki
+- keep secrets and per-machine overrides out of the checked-in config
 
 ---
 

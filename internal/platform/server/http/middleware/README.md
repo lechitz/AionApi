@@ -2,60 +2,40 @@
 
 **Path:** `internal/platform/server/http/middleware`
 
-## Overview
+## Purpose
 
-This package groups platform-level HTTP middlewares that run before context handlers.
-It centralizes cross-cutting transport concerns such as correlation, panic safety, CORS policy, and optional service-to-service authentication.
+This package owns cross-cutting HTTP middleware applied before bounded-context handlers.
 
-## Subpackages
+## Current Runtime Usage
 
-| Subpackage | Primary responsibility |
-| --- | --- |
-| `cors/` | Browser cross-origin policy and credentials support |
-| `recovery/` | Panic interception and delegation to generic recovery handler |
-| `requestid/` | Request correlation ID normalization and propagation |
-| `servicetoken/` | Optional S2S header-based authentication and context enrichment |
+| Middleware | Current scope | What it does |
+| --- | --- | --- |
+| `requestid.New()` | global router and health endpoints | normalizes or generates `X-Request-ID`, stores it in context, echoes it in the response |
+| `recovery.New(genericHandler)` | global router only | catches panics and delegates sanitized response handling to the generic handler |
+| `cors.New()` | global router and health endpoints | applies the current browser-origin and credential policy |
+| `servicetoken.New(cfg, log)` | GraphQL mount only | validates trusted S2S headers and optionally injects service-account user context |
 
-## Middleware Chain Intent
+## Effective Order In `composer.go`
 
-| Concern | Why it exists |
-| --- | --- |
-| Reliability | Prevent panics from crashing request execution |
-| Traceability | Guarantee request-level correlation key across logs/traces/headers |
-| Security boundaries | Enforce transport-level policies before adapter logic |
-| Consistency | Apply shared behavior once, not per handler |
-
-## Recommended Ordering
-
-1. `recovery.New(...)`
-2. `requestid.New()`
+1. `requestid.New()`
+2. `recovery.New(genericHandler)`
 3. `cors.New()`
-4. `servicetoken.New(cfg, log)` (scoped to routes that need S2S)
+4. `servicetoken.New(cfg, log)` only around the GraphQL mount
 
-## Example Wiring
+This order is the current truth and takes precedence over any older “recommended ordering” text elsewhere.
 
-```go
-r.Use(recovery.New(genericHandler))
-r.Use(requestid.New())
-r.Use(cors.New())
+## Current Policy Notes
 
-r.GroupWith(servicetoken.New(cfg, log), func(sr ports.Router) {
-    sr.Mount(cfg.ServerGraphql.Path, graphqlHandler)
-})
-```
+- CORS currently allows `http://localhost:5000` and `http://localhost:5173`, with credentials enabled.
+- Request IDs must be UUIDs; invalid or oversized values are replaced.
+- Health routes intentionally skip the global recovery and `otelhttp` wrappers.
+- `servicetoken` is permissive when no service key header is present and becomes authoritative only when S2S headers are supplied.
 
-## Design Notes
+## Boundary Rule
 
-- Middlewares in this layer must stay transport/platform-focused.
-- Business rules and domain authorization must remain in context adapters/usecases.
-- Subpackage READMEs contain implementation-level details; this README is intentionally high-level.
-
-## Package Improvements
-
-- Add an integration test matrix that validates middleware ordering and combined behavior (panic + request-id + error response).
-- Document which routes are intentionally outside `servicetoken` scope to avoid security ambiguity.
-- Consider a single composer example showing global vs route-scoped middleware in `internal/platform/server/http` docs.
-- Add a short troubleshooting section for common local issues (CORS origin mismatch, missing service key, missing request ID).
+- This README is the current owner for `cors`, `recovery`, and `requestid` behavior.
+- Those leaf READMEs are intentionally removed to reduce drift.
+- `servicetoken` keeps its own README because it is a distinct trust boundary.
 
 ---
 

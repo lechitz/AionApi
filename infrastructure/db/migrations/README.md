@@ -2,46 +2,34 @@
 
 **Path:** `infrastructure/db/migrations`
 
-## Overview
+## Purpose
 
-Versioned SQL migrations managed by `golang-migrate`.
-This folder is the canonical source for schema evolution.
+This folder is the canonical schema history for `AionApi`, managed through `golang-migrate`.
+Each migration pair must preserve the ordered evolution of the live database contract.
 
-## Scope
+## Current Shape
 
 | Artifact | Responsibility |
 | --- | --- |
-| `*.up.sql` | Forward schema changes |
-| `*.down.sql` | Rollback path for matching forward migration |
-
-## Workflow
-
-1. Create migration pair.
-2. Apply with migration tooling.
-3. Validate schema/application compatibility.
-4. Keep rollback path consistent.
+| `000001` - `000019` | current ordered migration chain |
+| `*.up.sql` | forward schema changes |
+| `*.down.sql` | rollback path for the matching migration |
 
 ## Common Commands
 
 ```bash
-make migrate-up
-make migrate-down
+make migrate-dev-up
+make migrate-dev-down
+make migrate-dev-status
+make migrate-dev-reset
 make migrate-new
-make migrate-force VERSION=6
 ```
 
-## Design Notes
+## Boundaries
 
-- Keep migrations immutable after execution in shared environments.
-- Prefer small, focused migration steps.
-- Always include rollback strategy when feasible.
-
-## Package Improvements
-
-- Add CI migration smoke test against disposable Postgres.
-- Add lint/check for missing down migration pairs.
-- Add migration naming convention guide in this README.
-- Add preflight checklist for destructive schema changes.
+- never rewrite an already-applied migration in shared environments
+- keep forward and rollback files paired
+- application code and seed scripts must adapt to the migration chain, not bypass it
 
 ---
 

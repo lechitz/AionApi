@@ -2,29 +2,22 @@
 
 **Path:** `internal/adapter/primary`
 
-## Overview
+## Purpose
 
-Primary adapters expose usecases to external clients (GraphQL/HTTP).
-They convert transport payloads into core input contracts and map responses back to transport formats.
+This layer owns shared inbound transport infrastructure.
+Today that means the central GraphQL boundary consumed across multiple contexts.
 
-## Subpackages
+## Current Surface
 
 | Subpackage | Role |
 | --- | --- |
-| `graphql/` | Central GraphQL transport entrypoint, schema composition, directives, resolvers |
+| `graphql/` | gqlgen config, schema composition, shared resolvers, directives, and server bootstrap |
 
-## Design Notes
+## Boundaries
 
-- Keep resolvers/handlers thin and orchestration-only.
-- Business rules must remain in context core/usecases.
-- Shared transport conventions live here to avoid drift across contexts.
-
-## Package Improvements
-
-- Add short “transport boundary checklist” for new adapters.
-- Add examples for error/status mapping conventions.
-- Add explicit link map to context controllers.
-- Add contract test guidance for primary adapter behavior.
+- most REST handlers remain in the owning bounded context under `internal/<ctx>/adapter/primary/http`
+- shared primary adapter code belongs here only when it coordinates multiple contexts
+- resolvers and transport glue stay orchestration-only; use-case behavior remains in context services
 
 ---
 

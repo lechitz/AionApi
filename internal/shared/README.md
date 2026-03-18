@@ -2,29 +2,21 @@
 
 **Path:** `internal/shared`
 
-## Overview
+## Purpose
 
-Cross-context shared assets that do not contain business logic.
-Currently focused on shared constants and key namespaces used across adapters/usecases/platform.
+`internal/shared` holds the small set of cross-cutting assets that multiple boundaries rely on.
 
-## Subpackages
+## Current Area
 
-| Subpackage | Role |
+| Area | Role |
 | --- | --- |
-| `constants/` | Claims/header/context/log/tracing key definitions |
+| `constants/` | shared keys for claims, headers, context values, roles, and selected tracing attributes |
 
-## Design Notes
+## Boundaries
 
-- Keep this layer minimal and stable.
-- Avoid introducing context business rules here.
-- Use shared keys to reduce duplication and observability drift.
-
-## Package Improvements
-
-- Add deprecation policy for renamed shared keys.
-- Add guidance for introducing new constant namespaces.
-- Add references to dashboards/log queries impacted by key changes.
-- Add integrity checks for duplicate/overlapping constants.
+- this layer must stay minimal and stable
+- do not move business logic or context-specific semantics here
+- prefer local constants in the owning package unless the value is intentionally shared across boundaries
 
 ---
 

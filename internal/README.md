@@ -2,32 +2,25 @@
 
 **Path:** `internal`
 
-## Overview
+## Purpose
 
-Main application code organized by bounded contexts and cross-cutting platform/shared layers.
-Architecture follows ports-and-adapters with clear dependency direction.
+`internal` contains the application code that is not meant to be imported outside the module.
+The repo is organized around bounded contexts plus a small set of cross-cutting runtime layers.
 
-## Main Areas
+## Current Areas
 
 | Area | Role |
 | --- | --- |
-| Context modules (`admin`, `auth`, `category`, `chat`, `record`, `tag`, `user`) | Domain-specific core + adapters |
-| `adapter/` | Shared primary/secondary adapter infrastructure |
-| `platform/` | Runtime configuration, DI, observability, server composition |
-| `shared/` | Cross-cutting constants and lightweight shared contracts |
+| `admin`, `audit`, `auth`, `category`, `chat`, `eventoutbox`, `realtime`, `record`, `tag`, `user` | bounded contexts with core ports, use cases, and local adapters |
+| `adapter/` | shared adapter infrastructure reused across contexts |
+| `platform/` | config, Fx wiring, runtime services, ports, and server composition |
+| `shared/` | stable cross-cutting constants and key namespaces |
 
-## Design Notes
+## Boundaries
 
-- Preserve context isolation and dependency rule.
-- Keep domain logic in core/usecase layers.
-- Keep transport and infrastructure concerns in adapters/platform.
-
-## Package Improvements
-
-- Add architecture map linking each context to its exposed adapters.
-- Add dependency direction examples with allowed/forbidden imports.
-- Add checklist for adding a new bounded context.
-- Add quick references to key subpackage READMEs.
+- context business rules belong inside the owning bounded context
+- shared transport or infra helpers belong in `adapter/` or `platform/` only when they are reused across contexts
+- `shared/` stays intentionally small; context-specific constants should remain local when possible
 
 ---
 
