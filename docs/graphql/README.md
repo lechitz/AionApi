@@ -38,6 +38,10 @@ These artifacts currently include the main read and dashboard surfaces consumed 
 - dashboard reads such as `dashboardSnapshot`, `insightFeed`, `analyticsSeries`, `metricDefinitions`, `dashboardViews`, `dashboardView`, `dashboardWidgetCatalog`, and `suggestMetricDefinitions`
 - dashboard mutations such as `createDashboardView`, `setDefaultDashboardView`, `upsertDashboardWidget`, `reorderDashboardWidgets`, `deleteDashboardWidget`, and `createMetricAndWidget`
 
+`dashboardSnapshot` now also carries an explicit checklist-oriented sub-payload
+inside `metrics[].checklist` for count-backed checklist widgets. This keeps the
+v1 widget surface truthful without introducing a separate dashboard-only schema.
+
 For the widget system specifically, the published GraphQL contract is
 intentionally coarse for v1:
 

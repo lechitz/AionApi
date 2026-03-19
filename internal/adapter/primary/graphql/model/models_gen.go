@@ -98,6 +98,17 @@ type CreateTagInput struct {
 	Icon        *string `json:"icon,omitempty"`
 }
 
+type DashboardChecklist struct {
+	MetricKey       string  `json:"metricKey"`
+	Label           string  `json:"label"`
+	CompletedCount  int32   `json:"completedCount"`
+	TargetCount     *int32  `json:"targetCount,omitempty"`
+	RemainingCount  *int32  `json:"remainingCount,omitempty"`
+	CompletionRatio float64 `json:"completionRatio"`
+	Status          string  `json:"status"`
+	Mode            string  `json:"mode"`
+}
+
 type DashboardGoal struct {
 	GoalID       string  `json:"goalId"`
 	Title        string  `json:"title"`
@@ -109,13 +120,14 @@ type DashboardGoal struct {
 }
 
 type DashboardMetric struct {
-	MetricKey   string   `json:"metricKey"`
-	Label       string   `json:"label"`
-	Value       float64  `json:"value"`
-	Unit        string   `json:"unit"`
-	Target      *float64 `json:"target,omitempty"`
-	ProgressPct float64  `json:"progressPct"`
-	Status      string   `json:"status"`
+	MetricKey   string              `json:"metricKey"`
+	Label       string              `json:"label"`
+	Value       float64             `json:"value"`
+	Unit        string              `json:"unit"`
+	Target      *float64            `json:"target,omitempty"`
+	ProgressPct float64             `json:"progressPct"`
+	Status      string              `json:"status"`
+	Checklist   *DashboardChecklist `json:"checklist,omitempty"`
 }
 
 type DashboardSnapshot struct {

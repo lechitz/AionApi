@@ -42,6 +42,25 @@ func (c *controller) DashboardSnapshot(ctx context.Context, userID uint64, date 
 		if metric.Target != nil {
 			item.Target = metric.Target
 		}
+		if metric.Checklist != nil {
+			checklist := &model.DashboardChecklist{
+				MetricKey:       metric.Checklist.MetricKey,
+				Label:           metric.Checklist.Label,
+				CompletedCount:  int32(metric.Checklist.CompletedCount),
+				CompletionRatio: metric.Checklist.CompletionRatio,
+				Status:          metric.Checklist.Status,
+				Mode:            metric.Checklist.Mode,
+			}
+			if metric.Checklist.TargetCount != nil {
+				targetCount := int32(*metric.Checklist.TargetCount)
+				checklist.TargetCount = &targetCount
+			}
+			if metric.Checklist.RemainingCount != nil {
+				remainingCount := int32(*metric.Checklist.RemainingCount)
+				checklist.RemainingCount = &remainingCount
+			}
+			item.Checklist = checklist
+		}
 		metrics = append(metrics, item)
 	}
 

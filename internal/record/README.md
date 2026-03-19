@@ -26,6 +26,9 @@ Handles record lifecycle and query flows with strict user-scoped validation.
 - Widget layout remains a two-tier v1 contract:
   - `AionApi` owns widget types, coarse sizes, view persistence, ordering, and large-card limits
   - `aionapi-dashboard` owns the richer visual grammar stored in `configJson`, including grid dimensions and free placement coordinates
+- `dashboardSnapshot` now carries an explicit checklist-oriented payload for
+  count-based checklist widgets, so the dashboard no longer has to infer
+  checklist semantics only from generic progress fields.
 - Insight generation and analytics aggregation for v1 belong here, not in dashboard local state.
 - Graph projection contracts for optional export/lab workflows belong here too, but they stay derived and non-authoritative.
 - Scope semantics should stay consistent across GraphQL surfaces:
@@ -38,7 +41,6 @@ Handles record lifecycle and query flows with strict user-scoped validation.
 ## Package Improvements
 
 - Add query operation matrix with expected filters/pagination behavior.
-- Add tests for date/timezone boundary conditions.
 - Add relation consistency checks for category/tag references.
 - Add explicit notes for soft-delete semantics and recovery expectations.
 
