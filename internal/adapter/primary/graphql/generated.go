@@ -108,6 +108,17 @@ type ComplexityRoot struct {
 		UserID        func(childComplexity int) int
 	}
 
+	DashboardChecklist struct {
+		CompletedCount  func(childComplexity int) int
+		CompletionRatio func(childComplexity int) int
+		Label           func(childComplexity int) int
+		MetricKey       func(childComplexity int) int
+		Mode            func(childComplexity int) int
+		RemainingCount  func(childComplexity int) int
+		Status          func(childComplexity int) int
+		TargetCount     func(childComplexity int) int
+	}
+
 	DashboardGoal struct {
 		CurrentValue func(childComplexity int) int
 		GoalID       func(childComplexity int) int
@@ -119,6 +130,7 @@ type ComplexityRoot struct {
 	}
 
 	DashboardMetric struct {
+		Checklist   func(childComplexity int) int
 		Label       func(childComplexity int) int
 		MetricKey   func(childComplexity int) int
 		ProgressPct func(childComplexity int) int
@@ -635,6 +647,55 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.ChatMessage.UserID(childComplexity), true
 
+	case "DashboardChecklist.completedCount":
+		if e.complexity.DashboardChecklist.CompletedCount == nil {
+			break
+		}
+
+		return e.complexity.DashboardChecklist.CompletedCount(childComplexity), true
+	case "DashboardChecklist.completionRatio":
+		if e.complexity.DashboardChecklist.CompletionRatio == nil {
+			break
+		}
+
+		return e.complexity.DashboardChecklist.CompletionRatio(childComplexity), true
+	case "DashboardChecklist.label":
+		if e.complexity.DashboardChecklist.Label == nil {
+			break
+		}
+
+		return e.complexity.DashboardChecklist.Label(childComplexity), true
+	case "DashboardChecklist.metricKey":
+		if e.complexity.DashboardChecklist.MetricKey == nil {
+			break
+		}
+
+		return e.complexity.DashboardChecklist.MetricKey(childComplexity), true
+	case "DashboardChecklist.mode":
+		if e.complexity.DashboardChecklist.Mode == nil {
+			break
+		}
+
+		return e.complexity.DashboardChecklist.Mode(childComplexity), true
+	case "DashboardChecklist.remainingCount":
+		if e.complexity.DashboardChecklist.RemainingCount == nil {
+			break
+		}
+
+		return e.complexity.DashboardChecklist.RemainingCount(childComplexity), true
+	case "DashboardChecklist.status":
+		if e.complexity.DashboardChecklist.Status == nil {
+			break
+		}
+
+		return e.complexity.DashboardChecklist.Status(childComplexity), true
+	case "DashboardChecklist.targetCount":
+		if e.complexity.DashboardChecklist.TargetCount == nil {
+			break
+		}
+
+		return e.complexity.DashboardChecklist.TargetCount(childComplexity), true
+
 	case "DashboardGoal.currentValue":
 		if e.complexity.DashboardGoal.CurrentValue == nil {
 			break
@@ -678,6 +739,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DashboardGoal.Title(childComplexity), true
 
+	case "DashboardMetric.checklist":
+		if e.complexity.DashboardMetric.Checklist == nil {
+			break
+		}
+
+		return e.complexity.DashboardMetric.Checklist(childComplexity), true
 	case "DashboardMetric.label":
 		if e.complexity.DashboardMetric.Label == nil {
 			break
@@ -3864,6 +3931,238 @@ func (ec *executionContext) fieldContext_ChatMessage_updatedAt(_ context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _DashboardChecklist_metricKey(ctx context.Context, field graphql.CollectedField, obj *model.DashboardChecklist) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardChecklist_metricKey,
+		func(ctx context.Context) (any, error) {
+			return obj.MetricKey, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardChecklist_metricKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardChecklist",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardChecklist_label(ctx context.Context, field graphql.CollectedField, obj *model.DashboardChecklist) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardChecklist_label,
+		func(ctx context.Context) (any, error) {
+			return obj.Label, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardChecklist_label(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardChecklist",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardChecklist_completedCount(ctx context.Context, field graphql.CollectedField, obj *model.DashboardChecklist) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardChecklist_completedCount,
+		func(ctx context.Context) (any, error) {
+			return obj.CompletedCount, nil
+		},
+		nil,
+		ec.marshalNInt2int32,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardChecklist_completedCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardChecklist",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardChecklist_targetCount(ctx context.Context, field graphql.CollectedField, obj *model.DashboardChecklist) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardChecklist_targetCount,
+		func(ctx context.Context) (any, error) {
+			return obj.TargetCount, nil
+		},
+		nil,
+		ec.marshalOInt2ᚖint32,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardChecklist_targetCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardChecklist",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardChecklist_remainingCount(ctx context.Context, field graphql.CollectedField, obj *model.DashboardChecklist) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardChecklist_remainingCount,
+		func(ctx context.Context) (any, error) {
+			return obj.RemainingCount, nil
+		},
+		nil,
+		ec.marshalOInt2ᚖint32,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardChecklist_remainingCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardChecklist",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardChecklist_completionRatio(ctx context.Context, field graphql.CollectedField, obj *model.DashboardChecklist) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardChecklist_completionRatio,
+		func(ctx context.Context) (any, error) {
+			return obj.CompletionRatio, nil
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardChecklist_completionRatio(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardChecklist",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardChecklist_status(ctx context.Context, field graphql.CollectedField, obj *model.DashboardChecklist) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardChecklist_status,
+		func(ctx context.Context) (any, error) {
+			return obj.Status, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardChecklist_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardChecklist",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DashboardChecklist_mode(ctx context.Context, field graphql.CollectedField, obj *model.DashboardChecklist) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardChecklist_mode,
+		func(ctx context.Context) (any, error) {
+			return obj.Mode, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardChecklist_mode(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardChecklist",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _DashboardGoal_goalId(ctx context.Context, field graphql.CollectedField, obj *model.DashboardGoal) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4270,6 +4569,53 @@ func (ec *executionContext) fieldContext_DashboardMetric_status(_ context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _DashboardMetric_checklist(ctx context.Context, field graphql.CollectedField, obj *model.DashboardMetric) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DashboardMetric_checklist,
+		func(ctx context.Context) (any, error) {
+			return obj.Checklist, nil
+		},
+		nil,
+		ec.marshalODashboardChecklist2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardChecklist,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_DashboardMetric_checklist(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DashboardMetric",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "metricKey":
+				return ec.fieldContext_DashboardChecklist_metricKey(ctx, field)
+			case "label":
+				return ec.fieldContext_DashboardChecklist_label(ctx, field)
+			case "completedCount":
+				return ec.fieldContext_DashboardChecklist_completedCount(ctx, field)
+			case "targetCount":
+				return ec.fieldContext_DashboardChecklist_targetCount(ctx, field)
+			case "remainingCount":
+				return ec.fieldContext_DashboardChecklist_remainingCount(ctx, field)
+			case "completionRatio":
+				return ec.fieldContext_DashboardChecklist_completionRatio(ctx, field)
+			case "status":
+				return ec.fieldContext_DashboardChecklist_status(ctx, field)
+			case "mode":
+				return ec.fieldContext_DashboardChecklist_mode(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DashboardChecklist", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _DashboardSnapshot_date(ctx context.Context, field graphql.CollectedField, obj *model.DashboardSnapshot) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4366,6 +4712,8 @@ func (ec *executionContext) fieldContext_DashboardSnapshot_metrics(_ context.Con
 				return ec.fieldContext_DashboardMetric_progressPct(ctx, field)
 			case "status":
 				return ec.fieldContext_DashboardMetric_status(ctx, field)
+			case "checklist":
+				return ec.fieldContext_DashboardMetric_checklist(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DashboardMetric", field.Name)
 		},
@@ -14932,6 +15280,74 @@ func (ec *executionContext) _ChatMessage(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var dashboardChecklistImplementors = []string{"DashboardChecklist"}
+
+func (ec *executionContext) _DashboardChecklist(ctx context.Context, sel ast.SelectionSet, obj *model.DashboardChecklist) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dashboardChecklistImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DashboardChecklist")
+		case "metricKey":
+			out.Values[i] = ec._DashboardChecklist_metricKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "label":
+			out.Values[i] = ec._DashboardChecklist_label(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "completedCount":
+			out.Values[i] = ec._DashboardChecklist_completedCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "targetCount":
+			out.Values[i] = ec._DashboardChecklist_targetCount(ctx, field, obj)
+		case "remainingCount":
+			out.Values[i] = ec._DashboardChecklist_remainingCount(ctx, field, obj)
+		case "completionRatio":
+			out.Values[i] = ec._DashboardChecklist_completionRatio(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._DashboardChecklist_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "mode":
+			out.Values[i] = ec._DashboardChecklist_mode(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var dashboardGoalImplementors = []string{"DashboardGoal"}
 
 func (ec *executionContext) _DashboardGoal(ctx context.Context, sel ast.SelectionSet, obj *model.DashboardGoal) graphql.Marshaler {
@@ -15044,6 +15460,8 @@ func (ec *executionContext) _DashboardMetric(ctx context.Context, sel ast.Select
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "checklist":
+			out.Values[i] = ec._DashboardMetric_checklist(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -18986,6 +19404,13 @@ func (ec *executionContext) marshalOCategoryCount2ᚖgithubᚗcomᚋlechitzᚋAi
 		return graphql.Null
 	}
 	return ec._CategoryCount(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalODashboardChecklist2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardChecklist(ctx context.Context, sel ast.SelectionSet, v *model.DashboardChecklist) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._DashboardChecklist(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalODashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx context.Context, sel ast.SelectionSet, v *model.DashboardView) graphql.Marshaler {

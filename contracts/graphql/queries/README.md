@@ -76,6 +76,16 @@ It is part of the canonical consumer contract and must remain aligned with:
 - `queries/dashboard/widget-catalog.graphql`
 - `queries/dashboard/suggest-metric-definitions.graphql`
 
+Dashboard widget contract note:
+
+- `queries/dashboard/widget-catalog.graphql` is the canonical coarse catalog for
+  v1, not a full UI-layout schema
+- the backend owns widget types, coarse sizes, and `maxLargeWidgets`
+- the richer layout grammar stored in `configJson` remains dashboard-owned for
+  now, including grid dimensions and free placement coordinates
+- `INSIGHT_FEED` remains the only widget type that is valid without
+  `metricDefinitionId`
+
 ## v1 Insight and Analytics Contract Notes
 
 Canonical operations:

@@ -83,6 +83,27 @@ type GoalTemplate struct {
 	UpdatedAt   time.Time
 }
 
+const (
+	// DashboardChecklistModeCountGoal represents a checklist backed by a discrete count with an explicit target.
+	DashboardChecklistModeCountGoal = "count_goal"
+	// DashboardChecklistModeCountOnly represents a checklist backed by a discrete count without a configured target.
+	DashboardChecklistModeCountOnly = "count_only"
+	// DashboardChecklistModeBinaryDone represents a checklist backed by a latest-state boolean completion model.
+	DashboardChecklistModeBinaryDone = "binary_done"
+)
+
+// DashboardChecklistValue is the explicit checklist-oriented semantic payload for dashboard consumers.
+type DashboardChecklistValue struct {
+	MetricKey       string
+	Label           string
+	CompletedCount  int
+	TargetCount     *int
+	RemainingCount  *int
+	CompletionRatio float64
+	Status          string
+	Mode            string
+}
+
 // DashboardMetricValue represents a computed metric value for a given date.
 type DashboardMetricValue struct {
 	MetricKey   string
@@ -92,6 +113,7 @@ type DashboardMetricValue struct {
 	Target      *float64
 	ProgressPct float64
 	Status      string
+	Checklist   *DashboardChecklistValue
 }
 
 // DashboardGoalValue represents daily goal progress.

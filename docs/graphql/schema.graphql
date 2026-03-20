@@ -184,6 +184,18 @@ type DashboardMetric {
     target: Float
     progressPct: Float!
     status: String!
+    checklist: DashboardChecklist
+}
+
+type DashboardChecklist {
+    metricKey: String!
+    label: String!
+    completedCount: Int!
+    targetCount: Int
+    remainingCount: Int
+    completionRatio: Float!
+    status: String!
+    mode: String!
 }
 
 type DashboardGoal {

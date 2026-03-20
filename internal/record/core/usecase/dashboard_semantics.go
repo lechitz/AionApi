@@ -37,10 +37,7 @@ func (s *Service) DashboardSnapshot(ctx context.Context, userID uint64, query in
 	}
 
 	day := query.Date
-	if day.IsZero() {
-		day = time.Now().In(loc)
-	}
-	localDay := time.Date(day.In(loc).Year(), day.In(loc).Month(), day.In(loc).Day(), 0, 0, 0, 0, loc)
+	localDay := normalizeDashboardDate(day, loc)
 	startUTC := localDay.UTC()
 	endUTC := localDay.Add(24*time.Hour - time.Nanosecond).UTC()
 
@@ -84,6 +81,7 @@ func (s *Service) DashboardSnapshot(ctx context.Context, userID uint64, query in
 			ProgressPct: progress,
 			Status:      status,
 		}
+		item.Checklist = buildDashboardChecklistValue(def, item)
 		metrics = append(metrics, item)
 		metricMap[def.MetricKey] = item
 	}
@@ -330,6 +328,60 @@ func evaluateGoal(current float64, target float64, comparison string) (string, f
 	}
 }
 
+func buildDashboardChecklistValue(def domain.MetricDefinition, metric domain.DashboardMetricValue) *domain.DashboardChecklistValue {
+	if strings.TrimSpace(def.ValueSource) != DashboardValueSourceCount {
+		return nil
+	}
+
+	completed := int(math.Round(math.Max(metric.Value, 0)))
+	checklist := &domain.DashboardChecklistValue{
+		MetricKey:       metric.MetricKey,
+		Label:           metric.Label,
+		CompletedCount:  completed,
+		CompletionRatio: 0,
+		Status:          metric.Status,
+		Mode:            domain.DashboardChecklistModeCountOnly,
+	}
+
+	if def.GoalDefault != nil && *def.GoalDefault > 0 {
+		target := int(math.Round(math.Max(*def.GoalDefault, 1)))
+		if completed > target {
+			completed = target
+			checklist.CompletedCount = completed
+		}
+		remaining := maxInt(target-completed, 0)
+		ratio := 0.0
+		if target > 0 {
+			ratio = math.Min(float64(completed)/float64(target), 1)
+		}
+
+		checklist.TargetCount = &target
+		checklist.RemainingCount = &remaining
+		checklist.CompletionRatio = ratio
+		checklist.Mode = domain.DashboardChecklistModeCountGoal
+		return checklist
+	}
+
+	if strings.TrimSpace(def.Aggregation) == DashboardAggregationLatest {
+		done := 0
+		if completed > 0 {
+			done = 1
+		}
+		remaining := 1 - done
+		checklist.CompletedCount = done
+		checklist.TargetCount = intPtr(1)
+		checklist.RemainingCount = &remaining
+		checklist.CompletionRatio = float64(done)
+		checklist.Mode = domain.DashboardChecklistModeBinaryDone
+		return checklist
+	}
+
+	if completed > 0 {
+		checklist.CompletionRatio = 1
+	}
+	return checklist
+}
+
 func clampPct(value float64) float64 {
 	if value < 0 {
 		return 0
@@ -338,4 +390,15 @@ func clampPct(value float64) float64 {
 		return 999
 	}
 	return math.Round(value*100) / 100
+}
+
+func intPtr(v int) *int {
+	return &v
+}
+
+func maxInt(a int, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
