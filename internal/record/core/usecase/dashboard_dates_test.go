@@ -1,3 +1,4 @@
+//nolint:testpackage // This file validates package-private date normalization helpers.
 package usecase
 
 import (

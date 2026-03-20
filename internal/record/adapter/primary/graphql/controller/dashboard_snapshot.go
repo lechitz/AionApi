@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"math"
 	"strconv"
 	"time"
 
@@ -46,17 +47,17 @@ func (c *controller) DashboardSnapshot(ctx context.Context, userID uint64, date 
 			checklist := &model.DashboardChecklist{
 				MetricKey:       metric.Checklist.MetricKey,
 				Label:           metric.Checklist.Label,
-				CompletedCount:  int32(metric.Checklist.CompletedCount),
+				CompletedCount:  safeChecklistCount(metric.Checklist.CompletedCount),
 				CompletionRatio: metric.Checklist.CompletionRatio,
 				Status:          metric.Checklist.Status,
 				Mode:            metric.Checklist.Mode,
 			}
 			if metric.Checklist.TargetCount != nil {
-				targetCount := int32(*metric.Checklist.TargetCount)
+				targetCount := safeChecklistCount(*metric.Checklist.TargetCount)
 				checklist.TargetCount = &targetCount
 			}
 			if metric.Checklist.RemainingCount != nil {
-				remainingCount := int32(*metric.Checklist.RemainingCount)
+				remainingCount := safeChecklistCount(*metric.Checklist.RemainingCount)
 				checklist.RemainingCount = &remainingCount
 			}
 			item.Checklist = checklist
@@ -90,4 +91,14 @@ func parseDateOrDefault(date string) (time.Time, error) {
 		return time.Time{}, nil
 	}
 	return time.Parse("2006-01-02", date)
+}
+
+func safeChecklistCount(value int) int32 {
+	if value > math.MaxInt32 {
+		return math.MaxInt32
+	}
+	if value < math.MinInt32 {
+		return math.MinInt32
+	}
+	return int32(value)
 }

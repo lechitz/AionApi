@@ -117,7 +117,7 @@ func TestService_DashboardSnapshot_BuildsChecklistWithoutTarget(t *testing.T) {
 	assert.Equal(t, 3, out.Metrics[0].Checklist.CompletedCount)
 	assert.Nil(t, out.Metrics[0].Checklist.TargetCount)
 	assert.Nil(t, out.Metrics[0].Checklist.RemainingCount)
-	assert.Equal(t, 1.0, out.Metrics[0].Checklist.CompletionRatio)
+	assert.InDelta(t, 1.0, out.Metrics[0].Checklist.CompletionRatio, 0.000001)
 }
 
 func TestService_DashboardSnapshot_BuildsZeroChecklistState(t *testing.T) {
@@ -166,7 +166,7 @@ func TestService_DashboardSnapshot_BuildsZeroChecklistState(t *testing.T) {
 	assert.Equal(t, 0, out.Metrics[0].Checklist.CompletedCount)
 	require.NotNil(t, out.Metrics[0].Checklist.RemainingCount)
 	assert.Equal(t, 3, *out.Metrics[0].Checklist.RemainingCount)
-	assert.Equal(t, 0.0, out.Metrics[0].Checklist.CompletionRatio)
+	assert.InDelta(t, 0.0, out.Metrics[0].Checklist.CompletionRatio, 0.000001)
 }
 
 func TestService_DashboardSnapshot_RespectsTimezoneBoundaryForChecklist(t *testing.T) {

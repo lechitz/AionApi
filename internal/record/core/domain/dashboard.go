@@ -94,14 +94,14 @@ const (
 
 // DashboardChecklistValue is the explicit checklist-oriented semantic payload for dashboard consumers.
 type DashboardChecklistValue struct {
-	MetricKey        string
-	Label            string
-	CompletedCount   int
-	TargetCount      *int
-	RemainingCount   *int
-	CompletionRatio  float64
-	Status           string
-	Mode             string
+	MetricKey       string
+	Label           string
+	CompletedCount  int
+	TargetCount     *int
+	RemainingCount  *int
+	CompletionRatio float64
+	Status          string
+	Mode            string
 }
 
 // DashboardMetricValue represents a computed metric value for a given date.
