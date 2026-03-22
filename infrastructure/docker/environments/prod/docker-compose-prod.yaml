@@ -55,7 +55,6 @@ services:
       - .env.prod
     volumes:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - fluentbit-data-prod:/fluent-bit/state
       - ../../../observability/fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - ../../../observability/fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf:ro

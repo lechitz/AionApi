@@ -10,7 +10,7 @@ This package collects container logs from the Docker host and forwards them to L
 
 | File | Responsibility |
 | --- | --- |
-| `fluent-bit.conf` | tail Docker JSON logs, merge Docker metadata, add `APP_ENV`, ship to Loki |
+| `fluent-bit.conf` | tail Docker JSON logs, add `APP_ENV`, ship to Loki |
 | `parsers.conf` | Docker log parsing rules |
 
 ## Boundaries
