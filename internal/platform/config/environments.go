@@ -19,7 +19,7 @@ type Secret struct {
 type ObservabilityConfig struct {
 	OtelExporterOTLPEndpoint string `envconfig:"OTEL_EXPORTER_OTLP_ENDPOINT" default:"otel-collector:4318"`
 	OtelServiceName          string `envconfig:"OTEL_SERVICE_NAME"           default:"AionApi"`
-	OtelServiceVersion       string `envconfig:"OTEL_SERVICE_VERSION"        default:"0.1.0"`
+	OtelServiceVersion       string `envconfig:"OTEL_SERVICE_VERSION"        default:"0.0.1"`
 	OtelExporterHeaders      string `envconfig:"OTEL_EXPORTER_HEADERS"       default:""`
 	OtelExporterTimeout      string `envconfig:"OTEL_EXPORTER_TIMEOUT"       default:"5s"`
 	OtelExporterCompression  string `envconfig:"OTEL_EXPORTER_COMPRESSION"   default:"none"`

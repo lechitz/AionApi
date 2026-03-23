@@ -1,7 +1,7 @@
 // Package main AionAPI
 //
 // @title AionAPI — REST API Documentation
-// @version 0.1.0
+// @version 0.0.1
 // @description Public and internal REST API for AionAPI. Swagger (OpenAPI 3.x) is generated via swaggo.
 // @termsOfService  https://github.com/lechitz/AionApi
 //
