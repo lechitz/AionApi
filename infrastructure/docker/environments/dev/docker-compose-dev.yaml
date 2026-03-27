@@ -439,12 +439,12 @@ services:
       start_period: 40s
       retries: 5
 
-  aionapi-dashboard:
-    image: aionapi-dashboard:dev
+  aion-web:
+    image: aion-web:dev
     build:
-      context: ../../../../../aionapi-dashboard
+      context: ../../../../../aion-web
       dockerfile: infrastructure/docker/Dockerfile
-    container_name: aionapi-dashboard-dev
+    container_name: aion-web-dev
     restart: unless-stopped
     ports:
       - "5000:5000"
@@ -455,15 +455,15 @@ services:
       - VITE_ASSETS_BASE_URL=http://localhost:4566/aion-assets/category-icons
     volumes:
       # HOT RELOAD: Mounts source code for Vite HMR
-      - ../../../../../aionapi-dashboard/src:/app/src
-      - ../../../../../aionapi-dashboard/public:/app/public
-      - ../../../../../aionapi-dashboard/index.html:/app/index.html
-      - ../../../../../aionapi-dashboard/vite.config.ts:/app/vite.config.ts
-      - ../../../../../aionapi-dashboard/tsconfig.json:/app/tsconfig.json
-      - ../../../../../aionapi-dashboard/tsconfig.app.json:/app/tsconfig.app.json
-      - ../../../../../aionapi-dashboard/tsconfig.node.json:/app/tsconfig.node.json
+      - ../../../../../aion-web/src:/app/src
+      - ../../../../../aion-web/public:/app/public
+      - ../../../../../aion-web/index.html:/app/index.html
+      - ../../../../../aion-web/vite.config.ts:/app/vite.config.ts
+      - ../../../../../aion-web/tsconfig.json:/app/tsconfig.json
+      - ../../../../../aion-web/tsconfig.app.json:/app/tsconfig.app.json
+      - ../../../../../aion-web/tsconfig.node.json:/app/tsconfig.node.json
       # Preserves node_modules (DO NOT overwrite!)
-      - aionapi-dashboard-node-modules:/app/node_modules
+      - aion-web-node-modules:/app/node_modules
     networks:
       - rede_local
     depends_on:
@@ -484,6 +484,6 @@ volumes:
   fluentbit-data:
   aion-ingest-raw-dev:
   # HOT RELOAD: Named volumes to preserve dependencies
-  aionapi-dashboard-node-modules:
+  aion-web-node-modules:
   go-mod-cache:
   go-build-cache:

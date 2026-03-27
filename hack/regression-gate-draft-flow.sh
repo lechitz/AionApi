@@ -6,7 +6,7 @@ set -euo pipefail
 
 API_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 AION_ROOT="$(cd "${API_DIR}/.." && pwd)"
-DASHBOARD_DIR="${AION_ROOT}/aionapi-dashboard"
+DASHBOARD_DIR="${AION_ROOT}/aion-web"
 CHAT_DIR="${AION_ROOT}/aion-chat"
 GOCACHE_DIR="${API_DIR}/.cache/go-build"
 
@@ -34,7 +34,7 @@ assert_dir() {
   fi
 }
 
-assert_dir "$DASHBOARD_DIR" "aionapi-dashboard"
+assert_dir "$DASHBOARD_DIR" "aion-web"
 assert_dir "$CHAT_DIR" "aion-chat"
 mkdir -p "$GOCACHE_DIR"
 

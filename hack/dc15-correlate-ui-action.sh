@@ -43,11 +43,11 @@ if ! command -v docker >/dev/null 2>&1; then
 fi
 
 declare -A PATTERNS
-PATTERNS["aionapi-dashboard-dev"]="draft_id|draft_accept|draft_cancel|action_result|/chat/text|VITE"
+PATTERNS["aion-web-dev"]="draft_id|draft_accept|draft_cancel|action_result|/chat/text|VITE"
 PATTERNS["aion-api-dev"]="HTTP chat request includes UI action|ui_action_type|draft_id|consent_required|consent_confirmed|consent_policy_version|Chat request cancelled"
 PATTERNS["aion-chat-dev"]="UI action metadata detected|Handling UI action|UI action handled|draft_id|status=|High-risk action blocked"
 
-CONTAINERS=("aionapi-dashboard-dev" "aion-api-dev" "aion-chat-dev")
+CONTAINERS=("aion-web-dev" "aion-api-dev" "aion-chat-dev")
 
 print_header() {
   local title="$1"

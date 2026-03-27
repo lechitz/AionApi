@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-DASHBOARD_DIR="${ROOT_DIR}/../aionapi-dashboard"
+DASHBOARD_DIR="${ROOT_DIR}/../aion-web"
 
 check_path() {
   local path="$1"

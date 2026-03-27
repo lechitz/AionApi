@@ -429,7 +429,7 @@ info:
     url: https://opensource.org/licenses/MIT
   termsOfService: https://github.com/lechitz/AionApi
   title: AionAPI — REST API Documentation
-  version: 0.1.0
+  version: 0.0.1
 paths:
   /admin/users/{user_id}/block:
     put:

@@ -55,7 +55,7 @@ make verify
 
 Current integrated development assumes a multi-repo workspace with sibling repositories beside this one, including:
 
-- `aionapi-dashboard`
+- `aion-web`
 - `aion-chat`
 - `aion-ingest`
 - `aion-streams`
@@ -98,7 +98,7 @@ Current contract rules:
 
 - `AionApi` is the authority for schema, resolver behavior, and shared GraphQL artifacts.
 - shared query documents under `contracts/graphql` must stay aligned with the live schema
-- consumers such as `aionapi-dashboard` and `aion-chat` may adapt presentation, but must not invent richer business semantics than the backend exposes
+- consumers such as `aion-web` and `aion-chat` may adapt presentation, but must not invent richer business semantics than the backend exposes
 
 Current v1 scope model:
 
