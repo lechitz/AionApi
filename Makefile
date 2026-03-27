@@ -61,7 +61,7 @@ help:
 	@echo "     dev                      →  Start FULL STACK without rebuilding (default/fast)"
 	@echo "     dev-fast                 →  Same as make dev (compatibility alias)"
 	@echo "     rebuild-dev              →  Build ALL images + start FULL STACK"
-	@echo "                                  Rebuilds: aion-api, aion-chat, aionapi-dashboard"
+	@echo "                                  Rebuilds: aion-api, aion-chat, aion-web"
 	@echo "                                  Preserves: Ollama models + PostgreSQL data (no re-download!)"
 	@echo "                                  🔥 HOT RELOAD enabled for all projects:"
 	@echo "                                     • Go: Air auto-recompile (~3-5s)"
@@ -78,7 +78,7 @@ help:
 	@echo "     logs-ingest              →  Show aion-ingest logs"
 	@echo "     logs-streams             →  Show aion-streams logs"
 	@echo "     logs-streams-worker      →  Show aion-streams-worker logs"
-	@echo "     logs-dashboard           →  Show aionapi-dashboard logs"
+	@echo "     logs-dashboard           →  Show aion-web logs"
 	@echo "     logs-postgres            →  Show PostgreSQL logs"
 	@echo "     logs-redis               →  Show Redis logs"
 	@echo "     logs-kafka               →  Show Kafka logs"
@@ -102,7 +102,7 @@ help:
 	@echo ""
 	@echo "  - [DEV - Rebuild Individual Services (removes old image before rebuild)]"
 	@echo ""
-	@echo "     rebuild-dashboard        →  Stop + remove old image + rebuild aionapi-dashboard"
+	@echo "     rebuild-dashboard        →  Stop + remove old image + rebuild aion-web"
 	@echo "     rebuild-chat             →  Stop + remove old image + rebuild aion-chat"
 	@echo "     rebuild-api              →  Stop + remove old image + rebuild aion-api"
 	@echo ""
@@ -292,7 +292,7 @@ regression-gate-draft:
 	@./hack/regression-gate-draft-flow.sh
 
 e2e-draft-smoke:
-	@cd ../aionapi-dashboard && npm run test:e2e:draft
+	@cd ../aion-web && npm run test:e2e:draft
 
 dc15-correlate:
 	@./hack/dc15-correlate-ui-action.sh --since "$${SINCE:-45m}" $${DRAFT_ID:+--draft-id "$$DRAFT_ID"}

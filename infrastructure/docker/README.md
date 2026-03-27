@@ -27,7 +27,7 @@ make my
 make prod-up
 ```
 
-The `dev` profile also runs the outbox publisher, observability stack, and sibling services from `aion-chat`, `aionapi-dashboard`, `aion-ingest`, and `aion-streams`.
+The `dev` profile also runs the outbox publisher, observability stack, and sibling services from `aion-chat`, `aion-web`, `aion-ingest`, and `aion-streams`.
 
 ## Boundaries
 

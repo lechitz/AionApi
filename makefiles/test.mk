@@ -172,4 +172,4 @@ event-backbone-gate:
 	@$(MAKE) record-projection-page-smoke
 	@$(MAKE) ingest-event-smoke
 	@echo "Running dashboard records smoke..."
-	@cd ../aionapi-dashboard && npm run test:e2e:records
+	@cd ../aion-web && npm run test:e2e:records

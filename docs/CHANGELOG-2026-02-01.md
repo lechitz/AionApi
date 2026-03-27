@@ -95,7 +95,7 @@ make graphql.clean && make graphql.setup
 query_path = Path("../AionApi/graphql/queries/categories/list.graphql")
 ```
 
-**aionapi-dashboard (TypeScript):**
+**aion-web (TypeScript):**
 ```typescript
 const query = readFileSync('../AionApi/graphql/queries/categories/list.graphql');
 ```
