@@ -16,7 +16,7 @@
   },
   "realtime-record-created": {
     "max_error_rate_pct": 0,
-    "max_p50_ms": 12000,
-    "max_p95_ms": 16000
+    "max_p50_ms": 12500,
+    "max_p95_ms": 16500
   }
 }

@@ -64,11 +64,12 @@ Recent clean local runs on 2026-03-28:
 - `auth-login`: 60 measured requests, concurrency 6, p50 about `49-50ms`, p95 about `55-128ms`, error rate `0%`
 - `record-projections-latest`: 80 measured requests, concurrency 8, p50 about `6-10ms`, p95 about `15-16ms`, error rate `0%`
 - `dashboard-snapshot`: 60-80 measured requests, concurrency 6-8, p50 about `3-7ms`, p95 about `6-26ms`, error rate `0%`
-- `realtime-record-created`: 20 measured requests, concurrency 4, p50 about `10.0s`, p95 about `15.0s`, error rate `0%`
+- `realtime-record-created`: 20 measured requests, concurrency 4, p50 about `10-12s`, p95 about `15-16s`, error rate `0%`
 
 Run the load baseline while the dev stack is otherwise idle.
 Hot-reload rebuilds or large doc-generation commands can perturb the auth scenario and produce transport noise that is not representative of the API itself.
 The realtime scenario is intentionally different: it measures the full local async chain from record creation through outbox publication, Kafka consumption, projection readiness, and final SSE delivery.
+Its threshold therefore carries slight headroom above the latest clean local branch measurements rather than pretending the path behaves like a synchronous request.
 
 ## What To Measure Today
 

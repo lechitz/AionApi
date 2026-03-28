@@ -23,7 +23,7 @@ Current committed thresholds:
 - `auth-login`: error rate `0%`, p50 `<= 100ms`, p95 `<= 150ms`
 - `record-projections-latest`: error rate `0%`, p50 `<= 25ms`, p95 `<= 75ms`
 - `dashboard-snapshot`: error rate `0%`, p50 `<= 15ms`, p95 `<= 50ms`
-- `realtime-record-created`: error rate `0%`, p50 `<= 12000ms`, p95 `<= 16000ms`
+- `realtime-record-created`: error rate `0%`, p50 `<= 12500ms`, p95 `<= 16500ms`
 
 ## Usage
 
@@ -62,3 +62,4 @@ make load-test-baseline
 - thresholds should move only after a measured run and a documented reason
 - avoid running doc rebuilds or other hot-reload-triggering commands in parallel with this tool; they can distort local latency and connection stability
 - the realtime scenario measures outbox, Kafka, projection, and SSE delivery together; do not compare its numbers directly to synchronous HTTP or GraphQL reads
+- the current realtime thresholds intentionally include small headroom above recent clean local runs because this path is dominated by async pipeline timing rather than transport-only latency
