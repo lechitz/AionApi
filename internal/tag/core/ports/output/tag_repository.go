@@ -4,7 +4,7 @@ package output
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/tag/core/domain"
+	"github.com/lechitz/aion-api/internal/tag/core/domain"
 )
 
 // TagCreator defines an interface for creating a new tag with specified attributes in a given context.

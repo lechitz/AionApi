@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
-	handler "github.com/lechitz/AionApi/internal/user/adapter/primary/http/handler"
-	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
+	handler "github.com/lechitz/aion-api/internal/user/adapter/primary/http/handler"
+	userdomain "github.com/lechitz/aion-api/internal/user/core/domain"
 	"github.com/stretchr/testify/require"
 )
 

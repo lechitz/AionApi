@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 	"github.com/stretchr/testify/require"
 )
 

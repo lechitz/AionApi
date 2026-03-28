@@ -8,7 +8,7 @@ import (
 
 const (
 	// TracerName is the tracer name used by the event outbox use case layer.
-	TracerName = "aionapi.eventoutbox.usecase"
+	TracerName = "aion-api.eventoutbox.usecase"
 
 	// SpanEnqueue covers input validation and persistence of one outbox event.
 	SpanEnqueue = "eventoutbox.enqueue"
@@ -36,8 +36,8 @@ const (
 	EventVersionV1 = DefaultEventVersion
 	// DefaultEventStatus is the initial persisted status for newly enqueued outbox rows.
 	DefaultEventStatus = "pending"
-	// DefaultSource is the canonical source label used for outbox events emitted by AionApi.
-	DefaultSource = "aionapi"
+	// DefaultSource is the canonical source label used for outbox events emitted by aion-api.
+	DefaultSource = "aion-api"
 	// DefaultPublishBackoff is the retry delay applied between publish attempts for transient failures.
 	DefaultPublishBackoff = 5 * time.Second
 

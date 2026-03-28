@@ -5,12 +5,12 @@ import (
 	"context"
 	"testing"
 
-	authOutput "github.com/lechitz/AionApi/internal/auth/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/hasher"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/user/core/ports/input"
-	userOutput "github.com/lechitz/AionApi/internal/user/core/ports/output"
-	"github.com/lechitz/AionApi/internal/user/core/usecase"
+	authOutput "github.com/lechitz/aion-api/internal/auth/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/hasher"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/user/core/ports/input"
+	userOutput "github.com/lechitz/aion-api/internal/user/core/ports/output"
+	"github.com/lechitz/aion-api/internal/user/core/usecase"
 	"github.com/stretchr/testify/require"
 )
 

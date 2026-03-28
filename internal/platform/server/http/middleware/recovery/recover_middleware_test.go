@@ -5,11 +5,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	ghandler "github.com/lechitz/AionApi/internal/platform/server/http/generic/handler"
-	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/recovery"
-	"github.com/lechitz/AionApi/tests/mocks"
-	"github.com/lechitz/AionApi/tests/setup"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	ghandler "github.com/lechitz/aion-api/internal/platform/server/http/generic/handler"
+	"github.com/lechitz/aion-api/internal/platform/server/http/middleware/recovery"
+	"github.com/lechitz/aion-api/tests/mocks"
+	"github.com/lechitz/aion-api/tests/setup"
 	"go.uber.org/mock/gomock"
 )
 

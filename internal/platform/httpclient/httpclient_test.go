@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/httpclient"
+	"github.com/lechitz/aion-api/internal/platform/httpclient"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"

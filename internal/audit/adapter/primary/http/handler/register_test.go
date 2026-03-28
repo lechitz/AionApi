@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	handlerpkg "github.com/lechitz/AionApi/internal/audit/adapter/primary/http/handler"
-	authdomain "github.com/lechitz/AionApi/internal/auth/core/domain"
-	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
+	handlerpkg "github.com/lechitz/aion-api/internal/audit/adapter/primary/http/handler"
+	authdomain "github.com/lechitz/aion-api/internal/auth/core/domain"
+	"github.com/lechitz/aion-api/internal/platform/server/http/ports"
 	"github.com/stretchr/testify/require"
 )
 

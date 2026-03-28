@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 // RecordCreator interface for creating a new record.

@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	handler "github.com/lechitz/AionApi/internal/platform/server/http/generic/handler"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	handler "github.com/lechitz/aion-api/internal/platform/server/http/generic/handler"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 type fakeLogger struct{}
@@ -30,7 +30,7 @@ func (f *fakeLogger) DebugwCtx(context.Context, string, ...any) {}
 
 func newGenericHandler() *handler.Handler {
 	return handler.New(&fakeLogger{}, config.GeneralConfig{
-		Name:    "AionApi",
+		Name:    "aion-api",
 		Env:     "test",
 		Version: "v0",
 	})
@@ -67,7 +67,7 @@ func TestHealthCheck_Success(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected object result, got %#v", body["result"])
 	}
-	if result["status"] != "healthy" || result["name"] != "AionApi" {
+	if result["status"] != "healthy" || result["name"] != "aion-api" {
 		t.Fatalf("unexpected health payload: %+v", result)
 	}
 }

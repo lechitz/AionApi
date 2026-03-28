@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 type recordProjectionRow struct {

@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/requestid"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/platform/server/http/middleware/requestid"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 func TestRequestIDMiddleware_GeneratesAndInjectsWhenMissing(t *testing.T) {

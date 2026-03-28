@@ -7,8 +7,8 @@ package repository
 // =============================================================================
 
 // TracerName is the tracer name used by the ChatHistory repository.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.chat.repository"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.chat.repository"
 
 // -----------------------------------------------------------------------------
 // Span Names

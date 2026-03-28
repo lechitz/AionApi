@@ -3,9 +3,9 @@ package repository
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/mapper"
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/mapper"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 // ListLatest returns the N most recent records for a user, ordered by event_time DESC.

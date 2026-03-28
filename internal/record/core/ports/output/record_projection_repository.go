@@ -3,7 +3,7 @@ package output
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 // RecordProjectionRepository exposes derived read-model queries owned by the canonical API.

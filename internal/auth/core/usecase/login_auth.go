@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	authDomain "github.com/lechitz/AionApi/internal/auth/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	authDomain "github.com/lechitz/aion-api/internal/auth/core/domain"
+	"github.com/lechitz/aion-api/internal/shared/constants/claimskeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"

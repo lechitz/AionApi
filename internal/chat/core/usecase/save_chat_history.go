@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

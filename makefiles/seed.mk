@@ -8,7 +8,7 @@
 
 POSTGRES_CONTAINER := postgres-dev
 POSTGRES_USER := aion
-POSTGRES_DB := aionapi
+POSTGRES_DB := aion-api
 
 SEED_DEFAULT_PASSWORD := testpassword123
 SEED_DEFAULT_PASSWORD_HASH := $$2a$$10$$BIv0nYxelFEGDods46gtuuIpGH8NCThM1frbbhG5Ro/UqQ80ziwXS
@@ -139,7 +139,7 @@ seed-caller:
 	@echo "Seeding via API (multi-user: count=$(N))..."
 	@echo "📋 Step 0/4: Ensuring migrations are applied..."
 	@if command -v migrate >/dev/null 2>&1; then \
-		migrate -path infrastructure/db/migrations -database "postgres://aion:aion123@localhost:5432/aionapi?sslmode=disable" up 2>&1 | grep -v "no change" || true; \
+		migrate -path infrastructure/db/migrations -database "postgres://aion:aion123@localhost:5432/aion-api?sslmode=disable" up 2>&1 | grep -v "no change" || true; \
 	else \
 		echo "⚠️  'migrate' not found. Assuming DB is already initialized."; \
 	fi

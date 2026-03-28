@@ -3,7 +3,7 @@ package hasher_test
 import (
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/adapter/secondary/hasher"
+	"github.com/lechitz/aion-api/internal/adapter/secondary/hasher"
 	"github.com/stretchr/testify/require"
 )
 

@@ -3,10 +3,10 @@ package handler
 import (
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
-	"github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
-	"github.com/lechitz/AionApi/internal/user/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/httpresponse"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/aion-api/internal/user/adapter/primary/http/dto"
+	"github.com/lechitz/aion-api/internal/user/core/ports/input"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

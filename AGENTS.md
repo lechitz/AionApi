@@ -1,11 +1,11 @@
-# AionAPI - Excellence Guide for Agents
+# aion-api - Excellence Guide for Agents
 
-If this repo is being used from the workspace root `../`, follow the workspace root `AGENTS.md` for global shortcuts, `!issue` behavior, and Project 2 operations. This file remains the local authority for AionAPI architecture and implementation rules.
+If this repo is being used from the workspace root `../`, follow the workspace root `AGENTS.md` for global shortcuts, `!issue` behavior, and Project 2 operations. This file remains the local authority for aion-api architecture and implementation rules.
 
-This document defines the professional standard expected when working on AionAPI. Follow these rules for any change, review, or proposal.
+This document defines the professional standard expected when working on aion-api. Follow these rules for any change, review, or proposal.
 
 ## 1. Project purpose
-AionAPI is a professional Go backend built with Hexagonal (Ports & Adapters) and Clean Architecture, organized by bounded contexts.
+aion-api is a professional Go backend built with Hexagonal (Ports & Adapters) and Clean Architecture, organized by bounded contexts.
 
 ## 2. Non-negotiable rules
 - **Dependency rule:** `internal/<ctx>/core/{domain,ports,usecase}` must not import adapters, platform, or infrastructure. `domain` is pure Go (stdlib only).
@@ -81,4 +81,4 @@ AionAPI is a professional Go backend built with Hexagonal (Ports & Adapters) and
 
 ## 14. Local shortcut note
 - Workspace shortcuts such as `!issue`, `!bug`, `!review`, and `!ship` are defined globally in `../AGENTS.md`.
-- For repo-local implementation, apply those global shortcuts with AionAPI's architectural constraints and the personas in `/agents`.
+- For repo-local implementation, apply those global shortcuts with aion-api's architectural constraints and the personas in `/agents`.

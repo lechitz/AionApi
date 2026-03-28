@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/directives"
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/adapter/primary/graphql/directives"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 	"github.com/stretchr/testify/require"
 )
 

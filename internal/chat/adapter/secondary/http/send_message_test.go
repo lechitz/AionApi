@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	chatdto "github.com/lechitz/AionApi/internal/chat/adapter/primary/http/dto"
-	chathttp "github.com/lechitz/AionApi/internal/chat/adapter/secondary/http"
+	chatdto "github.com/lechitz/aion-api/internal/chat/adapter/primary/http/dto"
+	chathttp "github.com/lechitz/aion-api/internal/chat/adapter/secondary/http"
 	"github.com/stretchr/testify/require"
 )
 

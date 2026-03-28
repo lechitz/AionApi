@@ -3,7 +3,7 @@ package domain_test
 import (
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/admin/core/domain"
+	"github.com/lechitz/aion-api/internal/admin/core/domain"
 	"github.com/stretchr/testify/require"
 )
 

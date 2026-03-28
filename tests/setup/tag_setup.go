@@ -5,8 +5,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/tag/core/usecase"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/internal/tag/core/usecase"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 

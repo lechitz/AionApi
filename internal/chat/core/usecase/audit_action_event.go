@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	auditdomain "github.com/lechitz/AionApi/internal/audit/core/domain"
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	auditdomain "github.com/lechitz/aion-api/internal/audit/core/domain"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 func (s *ChatService) persistAuditActionEvent(
@@ -43,7 +43,7 @@ func (s *ChatService) persistAuditActionEvent(
 	event := auditdomain.AuditActionEvent{
 		TimestampUTC:            time.Now().UTC(),
 		UserID:                  userID,
-		Source:                  "aionapi",
+		Source:                  "aion-api",
 		TraceID:                 extractTraceID(ctx),
 		RequestID:               extractRequestID(ctx),
 		UIActionType:            uiActionType,

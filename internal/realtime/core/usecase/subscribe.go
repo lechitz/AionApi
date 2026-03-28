@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/lechitz/AionApi/internal/realtime/core/domain"
+	"github.com/lechitz/aion-api/internal/realtime/core/domain"
 )
 
 // Subscribe registers a per-user subscriber stream and returns a cleanup function.

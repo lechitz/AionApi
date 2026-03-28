@@ -8,14 +8,14 @@ import (
 	"strings"
 	"testing"
 
-	authdomain "github.com/lechitz/AionApi/internal/auth/core/domain"
-	authinput "github.com/lechitz/AionApi/internal/auth/core/ports/input"
-	handler "github.com/lechitz/AionApi/internal/chat/adapter/primary/http/handler"
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
-	chatinput "github.com/lechitz/AionApi/internal/chat/core/ports/input"
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	authdomain "github.com/lechitz/aion-api/internal/auth/core/domain"
+	authinput "github.com/lechitz/aion-api/internal/auth/core/ports/input"
+	handler "github.com/lechitz/aion-api/internal/chat/adapter/primary/http/handler"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
+	chatinput "github.com/lechitz/aion-api/internal/chat/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/server/http/ports"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 	"github.com/stretchr/testify/require"
 )
 

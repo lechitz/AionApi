@@ -3,10 +3,10 @@ package repository
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/user/adapter/secondary/db/mapper"
-	"github.com/lechitz/AionApi/internal/user/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/user/adapter/secondary/db/mapper"
+	"github.com/lechitz/aion-api/internal/user/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/user/core/domain"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

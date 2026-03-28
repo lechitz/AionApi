@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/keygen"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/keygen"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 )
 
 // Loader is responsible for reading environment configuration.

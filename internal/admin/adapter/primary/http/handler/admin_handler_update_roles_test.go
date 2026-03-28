@@ -9,12 +9,12 @@ import (
 	"testing"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/internal/admin/adapter/primary/http/dto"
-	handler "github.com/lechitz/AionApi/internal/admin/adapter/primary/http/handler"
-	admin "github.com/lechitz/AionApi/internal/admin/core/domain"
-	admininput "github.com/lechitz/AionApi/internal/admin/core/ports/input"
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/aion-api/internal/admin/adapter/primary/http/dto"
+	handler "github.com/lechitz/aion-api/internal/admin/adapter/primary/http/handler"
+	admin "github.com/lechitz/aion-api/internal/admin/core/domain"
+	admininput "github.com/lechitz/aion-api/internal/admin/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
 	"github.com/stretchr/testify/require"
 )
 

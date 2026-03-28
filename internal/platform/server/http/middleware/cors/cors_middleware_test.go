@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/cors"
+	"github.com/lechitz/aion-api/internal/platform/server/http/middleware/cors"
 )
 
 func TestCORSMiddleware_AllowsConfiguredOriginAndCredentials(t *testing.T) {

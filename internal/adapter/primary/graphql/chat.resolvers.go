@@ -3,8 +3,8 @@ package graphql
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 // ChatHistory is the resolver for the chatHistory field.

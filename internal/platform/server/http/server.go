@@ -11,8 +11,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // Params holds the parameters for building a new http.Server instance.

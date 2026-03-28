@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	categorydomain "github.com/lechitz/AionApi/internal/category/core/domain"
-	recorddomain "github.com/lechitz/AionApi/internal/record/core/domain"
-	tagdomain "github.com/lechitz/AionApi/internal/tag/core/domain"
+	categorydomain "github.com/lechitz/aion-api/internal/category/core/domain"
+	recorddomain "github.com/lechitz/aion-api/internal/record/core/domain"
+	tagdomain "github.com/lechitz/aion-api/internal/tag/core/domain"
 	"github.com/stretchr/testify/require"
 )
 

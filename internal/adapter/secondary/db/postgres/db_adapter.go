@@ -4,7 +4,7 @@ package postgres
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
 	"gorm.io/gorm"
 )
 

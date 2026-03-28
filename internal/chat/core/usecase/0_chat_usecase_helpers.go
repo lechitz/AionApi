@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/lechitz/AionApi/internal/chat/adapter/primary/http/dto"
+	"github.com/lechitz/aion-api/internal/chat/adapter/primary/http/dto"
 )
 
 // fetchConversationHistory retrieves recent chat history from cache (Redis).

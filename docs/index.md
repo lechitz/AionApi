@@ -1,8 +1,8 @@
 # Introduction
 
-AionApi is a modular Go backend that powers habit, diary, and structured personal data workflows through REST and GraphQL.
+aion-api is a modular Go backend that powers habit, diary, and structured personal data workflows through REST and GraphQL.
 
-## What AionApi Is
+## What aion-api Is
 
 - API-first backend for personal productivity domains
 - Built with Hexagonal/Clean Architecture and bounded contexts
@@ -31,4 +31,4 @@ AionApi is a modular Go backend that powers habit, diary, and structured persona
 - GraphQL interactive playground: [GraphQL Playground](graphql-playground.md)
 
 !!! note
-    Clicking `AionApi Docs` in the top navbar or left sidebar always returns to this Introduction page.
+    Clicking `aion-api Docs` in the top navbar or left sidebar always returns to this Introduction page.

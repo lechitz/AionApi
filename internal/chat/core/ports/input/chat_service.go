@@ -4,7 +4,7 @@ package input
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
 )
 
 // ChatService defines the interface for chat operations (use cases).

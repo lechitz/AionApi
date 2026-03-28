@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/eventoutbox/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

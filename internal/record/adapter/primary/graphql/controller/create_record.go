@@ -4,7 +4,7 @@ import (
 	"context"
 	"strconv"
 
-	gmodel "github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
+	gmodel "github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

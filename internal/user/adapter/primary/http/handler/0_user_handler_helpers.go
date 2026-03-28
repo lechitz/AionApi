@@ -6,9 +6,9 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 )
 
 // parseUserIDParam extracts and validates the user ID parameter from the URL.

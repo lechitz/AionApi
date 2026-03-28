@@ -4,10 +4,10 @@ package handler
 import (
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
-	"github.com/lechitz/AionApi/internal/user/adapter/primary/http/dto"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/httpresponse"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/tracingkeys"
+	"github.com/lechitz/aion-api/internal/user/adapter/primary/http/dto"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

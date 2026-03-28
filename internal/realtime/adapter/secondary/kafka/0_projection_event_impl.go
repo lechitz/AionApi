@@ -3,7 +3,7 @@ package kafka
 import (
 	"strings"
 
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 	kafkago "github.com/segmentio/kafka-go"
 )
 

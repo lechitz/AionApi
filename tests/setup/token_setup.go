@@ -6,8 +6,8 @@ import (
 
 	"go.uber.org/mock/gomock"
 
-	"github.com/lechitz/AionApi/internal/auth/core/usecase"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/internal/auth/core/usecase"
+	"github.com/lechitz/aion-api/tests/mocks"
 )
 
 // TokenServiceTestSuite groups mocked dependencies and the SUT (TokenService)

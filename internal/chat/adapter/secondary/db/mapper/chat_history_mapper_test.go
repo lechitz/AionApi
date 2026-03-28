@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lechitz/AionApi/internal/chat/adapter/secondary/db/mapper"
-	"github.com/lechitz/AionApi/internal/chat/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
+	"github.com/lechitz/aion-api/internal/chat/adapter/secondary/db/mapper"
+	"github.com/lechitz/aion-api/internal/chat/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )

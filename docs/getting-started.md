@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide takes you from clone to a healthy local AionApi environment with migrations and baseline validation.
+This guide takes you from clone to a healthy local aion-api environment with migrations and baseline validation.
 
 ## Prerequisites
 
@@ -14,8 +14,8 @@ This guide takes you from clone to a healthy local AionApi environment with migr
 ## 1) Clone and Install Tools
 
 ```bash
-git clone https://github.com/lechitz/AionApi.git
-cd AionApi
+git clone https://github.com/lechitz/aion-api.git
+cd aion-api
 make tools-install
 ```
 
@@ -35,7 +35,7 @@ Core services expected in dev mode:
 
 ```bash
 export MIGRATE_BIN="$(go env GOPATH)/bin/migrate"
-export MIGRATION_DB="postgres://aion:aion@localhost:5432/aionapi?sslmode=disable"
+export MIGRATION_DB="postgres://aion:aion@localhost:5432/aion-api?sslmode=disable"
 export MIGRATION_PATH="infrastructure/db/migrations"
 make migrate-up
 ```

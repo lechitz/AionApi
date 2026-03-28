@@ -408,7 +408,7 @@ func loginOrCreateUser(ctx context.Context, client *http.Client, loginURL, creat
 
 	_, _ = fmt.Fprintf(os.Stdout, "⚠️  login falhou para %s, criando usuário e tentando novamente: %v\n", username, err)
 	username = appendRunID(baseUsername, runID)
-	email = fmt.Sprintf("%s@aionapi.dev", username)
+	email = fmt.Sprintf("%s@aion-api.dev", username)
 	if err := createUser(ctx, client, createUserURL, username, email, config.password, runID); err != nil {
 		return "", "", fmt.Errorf("user create failed for %s: %w", username, err)
 	}

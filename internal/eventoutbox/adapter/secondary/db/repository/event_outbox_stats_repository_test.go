@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/internal/eventoutbox/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

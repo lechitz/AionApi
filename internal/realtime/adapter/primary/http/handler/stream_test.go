@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/realtime/core/domain"
-	realtimeUsecase "github.com/lechitz/AionApi/internal/realtime/core/usecase"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/realtime/core/domain"
+	realtimeUsecase "github.com/lechitz/aion-api/internal/realtime/core/usecase"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 func TestStreamWritesSSEEvent(t *testing.T) {

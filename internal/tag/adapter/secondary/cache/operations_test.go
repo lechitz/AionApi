@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	tagcache "github.com/lechitz/AionApi/internal/tag/adapter/secondary/cache"
-	"github.com/lechitz/AionApi/internal/tag/core/domain"
+	tagcache "github.com/lechitz/aion-api/internal/tag/adapter/secondary/cache"
+	"github.com/lechitz/aion-api/internal/tag/core/domain"
 	"github.com/stretchr/testify/require"
 )
 

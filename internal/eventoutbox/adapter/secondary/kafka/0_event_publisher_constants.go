@@ -3,7 +3,7 @@ package kafka
 
 const (
 	// PublisherTracerName is the tracer name used by the Kafka outbox publisher adapter.
-	PublisherTracerName = "aionapi.eventoutbox.kafka.publisher"
+	PublisherTracerName = "aion-api.eventoutbox.kafka.publisher"
 )
 
 const (

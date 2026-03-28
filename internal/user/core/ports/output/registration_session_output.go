@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/user/core/domain"
 )
 
 // RegistrationSessionUniqueness holds uniqueness checks across final users and pending sessions.

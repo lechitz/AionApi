@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 // Stream serves the authenticated realtime SSE stream for the current user.

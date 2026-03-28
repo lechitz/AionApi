@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net/http"
 
-	output "github.com/lechitz/AionApi/internal/platform/ports/output/httpclient"
+	output "github.com/lechitz/aion-api/internal/platform/ports/output/httpclient"
 )
 
 // instrumentedClient wraps *http.Client and implements the output.HTTPClient interface.

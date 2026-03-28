@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )

@@ -5,10 +5,10 @@
 package usecase
 
 import (
-	auditinput "github.com/lechitz/AionApi/internal/audit/core/ports/input"
-	"github.com/lechitz/AionApi/internal/chat/core/ports/input"
-	"github.com/lechitz/AionApi/internal/chat/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	auditinput "github.com/lechitz/aion-api/internal/audit/core/ports/input"
+	"github.com/lechitz/aion-api/internal/chat/core/ports/input"
+	"github.com/lechitz/aion-api/internal/chat/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // ChatService provides operations for processing chat messages using the Aion-Chat AI service.

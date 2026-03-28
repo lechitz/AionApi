@@ -92,12 +92,12 @@ make graphql.clean && make graphql.setup
 
 **aion-chat (Python):**
 ```python
-query_path = Path("../AionApi/graphql/queries/categories/list.graphql")
+query_path = Path("../aion-api/graphql/queries/categories/list.graphql")
 ```
 
 **aion-web (TypeScript):**
 ```typescript
-const query = readFileSync('../AionApi/graphql/queries/categories/list.graphql');
+const query = readFileSync('../aion-api/graphql/queries/categories/list.graphql');
 ```
 
 ### Future Roadmap

@@ -5,9 +5,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/chat/core/ports/input"
-	"github.com/lechitz/AionApi/internal/chat/core/usecase"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/internal/chat/core/ports/input"
+	"github.com/lechitz/aion-api/internal/chat/core/usecase"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 

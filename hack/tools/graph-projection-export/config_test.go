@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	recorddomain "github.com/lechitz/AionApi/internal/record/core/domain"
+	recorddomain "github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 func TestLoadConfig(t *testing.T) {

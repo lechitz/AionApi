@@ -3,7 +3,7 @@ package input_test
 import (
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/admin/core/ports/input"
+	"github.com/lechitz/aion-api/internal/admin/core/ports/input"
 	"github.com/stretchr/testify/require"
 )
 

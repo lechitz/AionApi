@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/adapter/secondary/crypto"
+	"github.com/lechitz/aion-api/internal/adapter/secondary/crypto"
 	"github.com/stretchr/testify/require"
 )
 

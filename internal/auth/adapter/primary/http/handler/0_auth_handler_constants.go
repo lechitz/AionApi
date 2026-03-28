@@ -6,8 +6,8 @@ package handler
 // =============================================================================
 
 // TracerAuthHandler is the tracer name for auth handler operations in OpenTelemetry.
-// Format: aionapi.<domain>.<layer> .
-const TracerAuthHandler = "aionapi.auth.handler"
+// Format: aion-api.<domain>.<layer> .
+const TracerAuthHandler = "aion-api.auth.handler"
 
 // -----------------------------------------------------------------------------
 // Span Names

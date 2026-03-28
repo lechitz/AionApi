@@ -8,8 +8,8 @@ import "time"
 // =============================================================================
 
 // TracerName is the name of the tracer for category cache operations.
-// Format: aionapi.<domain>.<layer>.
-const TracerName = "aionapi.category.cache"
+// Format: aion-api.<domain>.<layer>.
+const TracerName = "aion-api.category.cache"
 
 // -----------------------------------------------------------------------------
 // Span Names

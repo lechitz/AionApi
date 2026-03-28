@@ -8,13 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
-	handler "github.com/lechitz/AionApi/internal/user/adapter/primary/http/handler"
-	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
-	userinput "github.com/lechitz/AionApi/internal/user/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
+	handler "github.com/lechitz/aion-api/internal/user/adapter/primary/http/handler"
+	userdomain "github.com/lechitz/aion-api/internal/user/core/domain"
+	userinput "github.com/lechitz/aion-api/internal/user/core/ports/input"
 	"github.com/stretchr/testify/require"
 )
 

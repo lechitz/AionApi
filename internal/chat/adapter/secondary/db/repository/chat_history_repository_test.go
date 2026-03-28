@@ -4,11 +4,11 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/chat/adapter/secondary/db/model"
-	repository "github.com/lechitz/AionApi/internal/chat/adapter/secondary/db/repository"
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/internal/chat/adapter/secondary/db/model"
+	repository "github.com/lechitz/aion-api/internal/chat/adapter/secondary/db/repository"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/auth/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/auth/core/domain"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

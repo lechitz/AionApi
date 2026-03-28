@@ -4,7 +4,7 @@
 
 ## Purpose
 
-This package owns observability bootstrap helpers for `AionApi`.
+This package owns observability bootstrap helpers for `aion-api`.
 It initializes trace and metric exporters, normalizes OTLP settings, and defines the shared resource metadata attached to telemetry.
 
 ## Structure

@@ -1,17 +1,17 @@
 package graphql
 
 import (
-	categoryController "github.com/lechitz/AionApi/internal/category/adapter/primary/graphql/controller"
-	chatController "github.com/lechitz/AionApi/internal/chat/adapter/primary/graphql/controller"
-	recordController "github.com/lechitz/AionApi/internal/record/adapter/primary/graphql/controller"
-	tagController "github.com/lechitz/AionApi/internal/tag/adapter/primary/graphql/controller"
+	categoryController "github.com/lechitz/aion-api/internal/category/adapter/primary/graphql/controller"
+	chatController "github.com/lechitz/aion-api/internal/chat/adapter/primary/graphql/controller"
+	recordController "github.com/lechitz/aion-api/internal/record/adapter/primary/graphql/controller"
+	tagController "github.com/lechitz/aion-api/internal/tag/adapter/primary/graphql/controller"
 
-	categoryInput "github.com/lechitz/AionApi/internal/category/core/ports/input"
-	chatInput "github.com/lechitz/AionApi/internal/chat/core/ports/input"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	recordInput "github.com/lechitz/AionApi/internal/record/core/ports/input"
-	tagInput "github.com/lechitz/AionApi/internal/tag/core/ports/input"
-	userInput "github.com/lechitz/AionApi/internal/user/core/ports/input"
+	categoryInput "github.com/lechitz/aion-api/internal/category/core/ports/input"
+	chatInput "github.com/lechitz/aion-api/internal/chat/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	recordInput "github.com/lechitz/aion-api/internal/record/core/ports/input"
+	tagInput "github.com/lechitz/aion-api/internal/tag/core/ports/input"
+	userInput "github.com/lechitz/aion-api/internal/user/core/ports/input"
 )
 
 // Resolver wires services into thin GraphQL controllers per context.

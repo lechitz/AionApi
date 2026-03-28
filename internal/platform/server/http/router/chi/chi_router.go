@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	chiv5 "github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
+	"github.com/lechitz/aion-api/internal/platform/server/http/ports"
 )
 
 // router is the chi v5-backed implementation of the Router port.

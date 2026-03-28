@@ -4,7 +4,7 @@
 
 ## Purpose
 
-This layer owns repo-local infrastructure assets used to run, provision, and observe `AionApi`.
+This layer owns repo-local infrastructure assets used to run, provision, and observe `aion-api`.
 It supports the multi-repo local stack, prod-like compose profiles, and database lifecycle work.
 
 ## Current Areas
@@ -20,7 +20,7 @@ It supports the multi-repo local stack, prod-like compose profiles, and database
 
 - keep business logic out of `infrastructure`
 - treat versioned SQL, compose files, and telemetry configs as code
-- cross-repo orchestration still depends on sibling repos in the workspace; this folder owns only the `AionApi` side of that wiring
+- cross-repo orchestration still depends on sibling repos in the workspace; this folder owns only the `aion-api` side of that wiring
 - secrets and machine-specific values belong in ignored env files, not committed infra docs
 
 ---

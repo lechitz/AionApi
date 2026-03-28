@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/realtime/core/domain"
+	"github.com/lechitz/aion-api/internal/realtime/core/domain"
 )
 
 type projectionReadyEnvelope struct {

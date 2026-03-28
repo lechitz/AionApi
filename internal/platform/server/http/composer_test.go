@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/app"
-	"github.com/lechitz/AionApi/internal/platform/config"
-	serverhttp "github.com/lechitz/AionApi/internal/platform/server/http"
+	"github.com/lechitz/aion-api/internal/platform/app"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	serverhttp "github.com/lechitz/aion-api/internal/platform/server/http"
 	"github.com/stretchr/testify/require"
 )
 
@@ -31,7 +31,7 @@ func (mockServerLogger) DebugwCtx(context.Context, string, ...any) {}
 func testHTTPConfig() *config.Config {
 	return &config.Config{
 		General: config.GeneralConfig{
-			Name:    "AionApi",
+			Name:    "aion-api",
 			Env:     "test",
 			Version: "v1",
 		},

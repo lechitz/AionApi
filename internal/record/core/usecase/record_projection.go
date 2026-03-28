@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 // GetProjectedByID returns one derived record projection for the user.

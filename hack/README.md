@@ -40,7 +40,7 @@ bash hack/dev/test-chat.sh
 | `ingest-event-smoke` | `make ingest-event-smoke` | Validate `aion-ingest -> kafka` envelope publication |
 | `outbox-diagnose` | `make outbox-diagnose` | Inspect outbox backlog, oldest pending age, and sample pending/failed rows |
 | `event-backbone-gate-preflight` | `make event-backbone-gate-preflight` | Verify local repo and service prerequisites before the full gate |
-| `event-backbone-gate` | `make event-backbone-gate` | Run the official v2 records gate across `AionApi` and `aion-web` |
+| `event-backbone-gate` | `make event-backbone-gate` | Run the official v2 records gate across `aion-api` and `aion-web` |
 
 ## Design Notes
 

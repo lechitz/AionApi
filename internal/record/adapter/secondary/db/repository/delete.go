@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/model"
 )
 
 // Delete performs a soft delete for the given record belonging to the user.

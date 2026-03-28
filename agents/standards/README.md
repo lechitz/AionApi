@@ -1,6 +1,6 @@
-# Standards (AionAPI)
+# Standards (aion-api)
 
-This folder defines the coding and documentation standards used across the AionAPI codebase. These files describe **how we write**, **name**, and **structure** code and tests.
+This folder defines the coding and documentation standards used across the aion-api codebase. These files describe **how we write**, **name**, and **structure** code and tests.
 
 ## What You Will Find Here
 

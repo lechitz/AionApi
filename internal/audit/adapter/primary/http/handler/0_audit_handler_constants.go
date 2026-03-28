@@ -3,7 +3,7 @@ package handler
 
 const (
 	// TracerAuditHandler is the tracer name for audit HTTP handlers.
-	TracerAuditHandler = "aionapi.audit.handler"
+	TracerAuditHandler = "aion-api.audit.handler"
 )
 
 const (

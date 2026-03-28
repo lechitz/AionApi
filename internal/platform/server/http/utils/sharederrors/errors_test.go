@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	httperrors "github.com/lechitz/AionApi/internal/platform/server/http/errors"
-	sharederrors "github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
+	httperrors "github.com/lechitz/aion-api/internal/platform/server/http/errors"
+	sharederrors "github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
 )
 
 func TestErrorTypesAndConstructors(t *testing.T) {

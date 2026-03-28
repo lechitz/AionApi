@@ -8,8 +8,8 @@ import "errors"
 // =============================================================================
 
 // TracerName is the name of the tracer for record GraphQL controllers.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.record.controller"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.record.controller"
 
 // -----------------------------------------------------------------------------
 // Span Names

@@ -10,8 +10,8 @@ import "time"
 // =============================================================================
 
 // TracerName is the tracer name for Aion-Chat client.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.chat.client"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.chat.client"
 
 // -----------------------------------------------------------------------------
 // Span Names

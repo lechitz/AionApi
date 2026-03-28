@@ -2,8 +2,8 @@
 package mapper
 
 import (
-	"github.com/lechitz/AionApi/internal/eventoutbox/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
+	"github.com/lechitz/aion-api/internal/eventoutbox/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
 )
 
 // EventFromDB converts one DB row into a domain outbox event.

@@ -4,7 +4,7 @@ package output
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
 )
 
 // EventPublisher publishes canonical outbox events to the external event backbone.

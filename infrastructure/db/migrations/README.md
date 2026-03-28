@@ -4,7 +4,7 @@
 
 ## Purpose
 
-This folder is the canonical schema history for `AionApi`, managed through `golang-migrate`.
+This folder is the canonical schema history for `aion-api`, managed through `golang-migrate`.
 Each migration pair must preserve the ordered evolution of the live database contract.
 
 ## Current Shape

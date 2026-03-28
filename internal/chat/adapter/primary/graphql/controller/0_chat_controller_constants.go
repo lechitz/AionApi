@@ -6,8 +6,8 @@ package controller
 // =============================================================================
 
 // TracerName is the name of the tracer for Chat GraphQL controllers.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.chat.controller"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.chat.controller"
 
 // -----------------------------------------------------------------------------
 // Span Names

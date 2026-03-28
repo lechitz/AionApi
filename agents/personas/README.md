@@ -1,6 +1,6 @@
-# Personas (AionAPI)
+# Personas (aion-api)
 
-This folder defines the role-based agents used by AionAPI governance. Each persona has a clear scope, authority level, and decision boundaries.
+This folder defines the role-based agents used by aion-api governance. Each persona has a clear scope, authority level, and decision boundaries.
 
 ## What You Will Find Here
 

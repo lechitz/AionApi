@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"strconv"
 
-	eventoutboxdomain "github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
-	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	eventoutboxdomain "github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
+	eventoutboxinput "github.com/lechitz/aion-api/internal/eventoutbox/core/ports/input"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 func (s *Service) enqueueRecordOutboxEventWithService(ctx context.Context, outboxService eventoutboxinput.Service, eventType string, record domain.Record) {

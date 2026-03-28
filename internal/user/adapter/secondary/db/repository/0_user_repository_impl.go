@@ -4,10 +4,10 @@ package repository
 import (
 	"strings"
 
-	adminoutput "github.com/lechitz/AionApi/internal/admin/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	adminoutput "github.com/lechitz/aion-api/internal/admin/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 )
 
 // UserRepository handles interactions with the user database.

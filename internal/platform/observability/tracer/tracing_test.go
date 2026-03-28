@@ -4,8 +4,8 @@ package tracer
 import (
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

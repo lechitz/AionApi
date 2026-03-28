@@ -2,8 +2,8 @@
 package usecase
 
 import (
-	"github.com/lechitz/AionApi/internal/admin/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/admin/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // Service provides an abstraction for admin management operations.

@@ -3,7 +3,7 @@ package repository
 
 const (
 	// AuditTracerName is the tracer name used by the audit repository.
-	AuditTracerName = "aionapi.audit.repository"
+	AuditTracerName = "aion-api.audit.repository"
 )
 
 const (

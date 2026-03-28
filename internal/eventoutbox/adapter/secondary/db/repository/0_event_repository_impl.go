@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // EventRepository manages DB operations for durable outbox events.

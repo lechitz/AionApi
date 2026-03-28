@@ -1,4 +1,4 @@
-title AionAPI Entrypoint Flow
+title aion-api Entrypoint Flow
 
 participant "Operator" as OP
 participant "cmd/aion-api" as MAIN

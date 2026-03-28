@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	chatcache "github.com/lechitz/AionApi/internal/chat/adapter/secondary/cache"
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
+	chatcache "github.com/lechitz/aion-api/internal/chat/adapter/secondary/cache"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
 	"github.com/stretchr/testify/require"
 )
 

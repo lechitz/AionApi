@@ -6,10 +6,10 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	output "github.com/lechitz/AionApi/internal/platform/ports/output/cache"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	output "github.com/lechitz/aion-api/internal/platform/ports/output/cache"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	"github.com/redis/go-redis/v9"
 )
 

@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	admindomain "github.com/lechitz/AionApi/internal/admin/core/domain"
-	"github.com/lechitz/AionApi/internal/admin/core/usecase"
-	"github.com/lechitz/AionApi/tests/mocks"
+	admindomain "github.com/lechitz/aion-api/internal/admin/core/domain"
+	"github.com/lechitz/aion-api/internal/admin/core/usecase"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 

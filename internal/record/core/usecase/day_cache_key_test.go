@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	usecase "github.com/lechitz/AionApi/internal/record/core/usecase"
+	usecase "github.com/lechitz/aion-api/internal/record/core/usecase"
 	"github.com/stretchr/testify/require"
 )
 

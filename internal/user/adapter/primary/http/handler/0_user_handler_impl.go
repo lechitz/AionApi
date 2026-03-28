@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/user/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/user/core/ports/input"
 )
 
 // Handler is the handler for user-related HTTP operations.

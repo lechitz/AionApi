@@ -4,7 +4,7 @@
 
 ## Purpose
 
-`infrastructure/db` owns the Postgres lifecycle for `AionApi`.
+`infrastructure/db` owns the Postgres lifecycle for `aion-api`.
 It splits durable schema evolution from local and QA seed data.
 
 ## Current Areas

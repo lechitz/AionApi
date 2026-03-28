@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
-	dbport "github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/internal/record/core/ports/output"
+	eventoutboxinput "github.com/lechitz/aion-api/internal/eventoutbox/core/ports/input"
+	dbport "github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/record/core/ports/output"
 )
 
 type recordRepositoryWithDB interface {

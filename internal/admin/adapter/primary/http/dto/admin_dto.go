@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/admin/core/ports/input"
+	"github.com/lechitz/aion-api/internal/admin/core/ports/input"
 )
 
 // UpdateUserRolesRequest represents the payload for updating a user's roles.

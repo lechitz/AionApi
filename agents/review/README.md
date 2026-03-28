@@ -1,4 +1,4 @@
-# Review (AionAPI)
+# Review (aion-api)
 
 This folder contains review checklists used to validate changes before merge. These rubrics define what reviewers must verify across architecture, security, and observability.
 

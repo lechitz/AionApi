@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	recorddomain "github.com/lechitz/AionApi/internal/record/core/domain"
+	recorddomain "github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 var (

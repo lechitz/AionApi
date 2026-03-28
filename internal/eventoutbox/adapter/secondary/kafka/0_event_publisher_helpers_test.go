@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
 )
 
 func TestTopicForRecordEvent(t *testing.T) {
@@ -29,7 +29,7 @@ func TestBuildEnvelope(t *testing.T) {
 		AggregateID:   "123",
 		EventType:     "record.created",
 		EventVersion:  "v1",
-		Source:        "aionapi",
+		Source:        "aion-api",
 		TraceID:       "trace-1",
 		RequestID:     "req-1",
 		CreatedAt:     time.Date(2026, time.March, 13, 13, 0, 0, 0, time.UTC),

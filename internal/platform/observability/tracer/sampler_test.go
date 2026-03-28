@@ -4,7 +4,7 @@ package tracer
 import (
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/config"
 	"github.com/stretchr/testify/require"
 	semconv "go.opentelemetry.io/otel/semconv/v1.32.0"
 )

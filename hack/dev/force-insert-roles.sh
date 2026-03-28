@@ -6,7 +6,7 @@ set -euo pipefail
 
 CONTAINER="postgres-dev"
 DB_USER="aion"
-DB_NAME="aionapi"
+DB_NAME="aion-api"
 
 echo "🔧 Force inserting roles into database..."
 

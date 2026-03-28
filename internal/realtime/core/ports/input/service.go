@@ -4,7 +4,7 @@ package input
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/realtime/core/domain"
+	"github.com/lechitz/aion-api/internal/realtime/core/domain"
 )
 
 // Service defines the realtime publish and subscribe operations.

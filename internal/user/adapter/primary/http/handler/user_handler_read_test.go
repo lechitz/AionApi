@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/lechitz/AionApi/internal/platform/config"
-	httperrors "github.com/lechitz/AionApi/internal/platform/server/http/errors"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
-	handler "github.com/lechitz/AionApi/internal/user/adapter/primary/http/handler"
-	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	httperrors "github.com/lechitz/aion-api/internal/platform/server/http/errors"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
+	handler "github.com/lechitz/aion-api/internal/user/adapter/primary/http/handler"
+	userdomain "github.com/lechitz/aion-api/internal/user/core/domain"
 	"github.com/stretchr/testify/require"
 )
 

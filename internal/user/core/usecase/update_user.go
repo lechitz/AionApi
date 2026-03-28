@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/user/core/domain"
-	"github.com/lechitz/AionApi/internal/user/core/ports/input"
+	"github.com/lechitz/aion-api/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/user/core/ports/input"
 	"go.opentelemetry.io/otel/codes"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )

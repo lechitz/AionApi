@@ -5,10 +5,10 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/auth/adapter/primary/http/dto"
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/cookies"
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/aion-api/internal/auth/adapter/primary/http/dto"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/cookies"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/httpresponse"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"

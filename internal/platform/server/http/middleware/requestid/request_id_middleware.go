@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 // New returns a middleware that injects/normalizes the X-Request-ID.

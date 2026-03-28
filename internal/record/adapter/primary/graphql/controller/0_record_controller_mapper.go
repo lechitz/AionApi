@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	gmodel "github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
-	"github.com/lechitz/AionApi/internal/record/core/ports/input"
+	gmodel "github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/core/ports/input"
 )
 
 // toModelOut converts a domain.Record to a GraphQL model.Record.

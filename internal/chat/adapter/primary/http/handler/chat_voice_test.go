@@ -9,9 +9,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	handler "github.com/lechitz/AionApi/internal/chat/adapter/primary/http/handler"
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	handler "github.com/lechitz/aion-api/internal/chat/adapter/primary/http/handler"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 	"github.com/stretchr/testify/require"
 )
 

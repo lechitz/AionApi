@@ -4,7 +4,7 @@ package output
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/category/core/domain"
+	"github.com/lechitz/aion-api/internal/category/core/domain"
 )
 
 // CategoryCreator defines an interface for creating a new category with specified attributes in a given context.

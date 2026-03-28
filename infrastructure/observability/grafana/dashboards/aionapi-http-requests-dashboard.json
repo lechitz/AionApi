@@ -35,7 +35,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<div style=\"font-size:2.7rem;font-weight:bold;text-align:center;padding:12px 0;letter-spacing:2px;color:#ff9800;\">AionAPI — HTTP Request Analytics</div>",
+        "content": "<div style=\"font-size:2.7rem;font-weight:bold;text-align:center;padding:12px 0;letter-spacing:2px;color:#ff9800;\">aion-api — HTTP Request Analytics</div>",
         "mode": "html"
       },
       "pluginVersion": "10.4.2",
@@ -55,7 +55,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Overview\n\nMonitors **AionAPI HTTP requests** in real time: response time, status code, CRUD breakdown, and errors.\n\n_Built with Prometheus, Grafana, Tempo & OTEL._\n\n**Key Features:**\n- Live CRUD & status tracking (POST, GET, PUT, DELETE)\n- Min/avg/max response time\n- Tracing & error detection\n- Path analytics (see table below)\n",
+        "content": "# Overview\n\nMonitors **aion-api HTTP requests** in real time: response time, status code, CRUD breakdown, and errors.\n\n_Built with Prometheus, Grafana, Tempo & OTEL._\n\n**Key Features:**\n- Live CRUD & status tracking (POST, GET, PUT, DELETE)\n- Min/avg/max response time\n- Tracing & error detection\n- Path analytics (see table below)\n",
         "mode": "markdown"
       },
       "pluginVersion": "10.4.2",
@@ -75,7 +75,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Overview\n\nMonitors **AionAPI HTTP requests** in real time: response time, status code, CRUD breakdown, and errors.\n\n_Built with Prometheus, Grafana, Tempo & OTEL._\n\n**Key Features:**\n- Live CRUD & status tracking (POST, GET, PUT, DELETE)\n- Min/avg/max response time\n- Tracing & error detection\n- Path analytics (see table below)\n",
+        "content": "# Overview\n\nMonitors **aion-api HTTP requests** in real time: response time, status code, CRUD breakdown, and errors.\n\n_Built with Prometheus, Grafana, Tempo & OTEL._\n\n**Key Features:**\n- Live CRUD & status tracking (POST, GET, PUT, DELETE)\n- Min/avg/max response time\n- Tracing & error detection\n- Path analytics (see table below)\n",
         "mode": "markdown"
       },
       "pluginVersion": "10.4.2",
@@ -531,7 +531,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# Overview\n\nMonitors **AionAPI HTTP requests** in real time: response time, status code, CRUD breakdown, and errors.\n\n_Built with Prometheus, Grafana, Tempo & OTEL._\n\n**Key Features:**\n- Live CRUD & status tracking (POST, GET, PUT, DELETE)\n- Min/avg/max response time\n- Tracing & error detection\n- Path analytics (see table below)\n",
+        "content": "# Overview\n\nMonitors **aion-api HTTP requests** in real time: response time, status code, CRUD breakdown, and errors.\n\n_Built with Prometheus, Grafana, Tempo & OTEL._\n\n**Key Features:**\n- Live CRUD & status tracking (POST, GET, PUT, DELETE)\n- Min/avg/max response time\n- Tracing & error detection\n- Path analytics (see table below)\n",
         "mode": "markdown"
       },
       "pluginVersion": "10.4.2",
@@ -616,7 +616,7 @@
   "refresh": "5s",
   "schemaVersion": 39,
   "tags": [
-    "AionAPI",
+    "aion-api",
     "CRUD",
     "HTTP",
     "OTEL",
@@ -631,8 +631,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "AionAPI - HTTP Analytics (Pro)",
-  "uid": "aionapi-http-pro",
+  "title": "aion-api - HTTP Analytics (Pro)",
+  "uid": "aion-api-http-pro",
   "version": 1,
   "weekStart": ""
 }

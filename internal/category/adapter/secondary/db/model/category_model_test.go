@@ -3,7 +3,7 @@ package model_test
 import (
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/category/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/category/adapter/secondary/db/model"
 	"github.com/stretchr/testify/require"
 )
 

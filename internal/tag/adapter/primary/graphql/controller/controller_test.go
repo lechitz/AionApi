@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	gmodel "github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
-	"github.com/lechitz/AionApi/internal/tag/adapter/primary/graphql/controller"
-	"github.com/lechitz/AionApi/internal/tag/core/domain"
-	taginput "github.com/lechitz/AionApi/internal/tag/core/ports/input"
+	gmodel "github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/tag/adapter/primary/graphql/controller"
+	"github.com/lechitz/aion-api/internal/tag/core/domain"
+	taginput "github.com/lechitz/aion-api/internal/tag/core/ports/input"
 	"github.com/stretchr/testify/require"
 )
 

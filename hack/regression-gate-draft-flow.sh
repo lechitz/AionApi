@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Cross-repo local regression gate focused on draft-card flow.
-# Must be executed from AionApi make target or directly from this repo.
+# Must be executed from aion-api make target or directly from this repo.
 
 API_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 AION_ROOT="$(cd "${API_DIR}/.." && pwd)"
@@ -47,10 +47,10 @@ run_step "aion-chat ui_action/quick_add unit tests" \
 run_step "aion-chat draft time-range/implicit-action regression tests" \
   bash -lc "cd \"$CHAT_DIR\" && ./.venv/bin/pytest -q tests/unit/contexts/chat_interaction/core/usecase/test_mutation_draft_flow.py"
 
-run_step "AionApi chat HTTP handler tests" \
+run_step "aion-api chat HTTP handler tests" \
   bash -lc "cd \"$API_DIR\" && GOCACHE=\"$GOCACHE_DIR\" go test ./internal/chat/adapter/primary/http/handler/..."
 
-run_step "AionApi ui_action extraction contract test" \
+run_step "aion-api ui_action extraction contract test" \
   bash -lc "cd \"$API_DIR\" && GOCACHE=\"$GOCACHE_DIR\" go test ./internal/chat/core/usecase -run \"TestExtractUIActionMetadata\""
 
 printf '\nAll regression gate checks passed.\n'

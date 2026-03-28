@@ -2,9 +2,9 @@
 package usecase
 
 import (
-	"github.com/lechitz/AionApi/internal/audit/core/ports/input"
-	"github.com/lechitz/AionApi/internal/audit/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/audit/core/ports/input"
+	"github.com/lechitz/aion-api/internal/audit/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // Service provides audit event write/list operations.

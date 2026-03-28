@@ -8,8 +8,8 @@ import "time"
 // =============================================================================
 
 // TracerName is the name of the tracer for chat cache operations.
-// Format: aionapi.<domain>.<layer>.
-const TracerName = "aionapi.chat.cache"
+// Format: aion-api.<domain>.<layer>.
+const TracerName = "aion-api.chat.cache"
 
 // -----------------------------------------------------------------------------
 // Span Names

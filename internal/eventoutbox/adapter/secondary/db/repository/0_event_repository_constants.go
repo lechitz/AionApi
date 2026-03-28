@@ -3,7 +3,7 @@ package repository
 
 const (
 	// OutboxTracerName is the tracer name used by the outbox repository.
-	OutboxTracerName = "aionapi.eventoutbox.repository"
+	OutboxTracerName = "aion-api.eventoutbox.repository"
 )
 
 const (

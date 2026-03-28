@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

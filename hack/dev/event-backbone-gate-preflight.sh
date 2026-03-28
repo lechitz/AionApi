@@ -35,7 +35,7 @@ check_path "${DASHBOARD_DIR}"
 check_cmd curl
 check_cmd npm
 
-check_http "AionApi" "http://localhost:5001/aion/health"
+check_http "aion-api" "http://localhost:5001/aion/health"
 check_http "aion-ingest" "http://localhost:8091/health"
 check_http "aion-streams-admin" "http://localhost:8092/health"
 

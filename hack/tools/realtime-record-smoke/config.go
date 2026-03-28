@@ -28,7 +28,7 @@ func loadConfig(args []string) config {
 	fs := flag.NewFlagSet("realtime-record-smoke", flag.ContinueOnError)
 	cfg := config{}
 
-	fs.StringVar(&cfg.host, "host", defaultRealtimeSmokeHost, "AionApi host base URL")
+	fs.StringVar(&cfg.host, "host", defaultRealtimeSmokeHost, "aion-api host base URL")
 	fs.StringVar(&cfg.username, "username", defaultRealtimeSmokeUser, "login username")
 	fs.StringVar(&cfg.password, "password", defaultRealtimeSmokePassword, "login password")
 	fs.StringVar(&cfg.tagID, "tag-id", defaultRealtimeSmokeTagID, "record tag ID used in smoke flow")

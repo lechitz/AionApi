@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/lechitz/AionApi/internal/platform/fxapp"
+	"github.com/lechitz/aion-api/internal/platform/fxapp"
 	"go.uber.org/fx"
 )
 

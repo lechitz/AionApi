@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	repository "github.com/lechitz/AionApi/internal/admin/adapter/secondary/db/repository"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/tests/mocks"
+	repository "github.com/lechitz/aion-api/internal/admin/adapter/secondary/db/repository"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

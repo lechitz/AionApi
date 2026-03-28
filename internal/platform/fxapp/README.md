@@ -4,7 +4,7 @@
 
 ## Purpose
 
-This package is the Uber Fx composition root for `AionApi`.
+This package is the Uber Fx composition root for `aion-api`.
 It wires infrastructure providers, application services, HTTP runtime, realtime consumption, and the dedicated outbox publisher process.
 
 ## Current Modules

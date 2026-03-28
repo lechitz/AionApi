@@ -6,9 +6,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/server/http/middleware/servicetoken"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/server/http/middleware/servicetoken"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 type fakeLogger struct{}

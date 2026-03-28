@@ -9,12 +9,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/audit/adapter/primary/http/handler"
-	"github.com/lechitz/AionApi/internal/audit/core/domain"
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
-	"github.com/lechitz/AionApi/tests/mocks"
-	"github.com/lechitz/AionApi/tests/setup"
+	"github.com/lechitz/aion-api/internal/audit/adapter/primary/http/handler"
+	"github.com/lechitz/aion-api/internal/audit/core/domain"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/tests/mocks"
+	"github.com/lechitz/aion-api/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

@@ -4,7 +4,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
 )
 
 // ListMetricDefinitions returns active metric definitions with multi-tag support.

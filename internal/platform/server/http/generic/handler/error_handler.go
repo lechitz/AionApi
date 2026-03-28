@@ -4,14 +4,14 @@ package handler
 import (
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
-	"github.com/lechitz/AionApi/internal/shared/constants/tracingkeys"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/httpresponse"
+	"github.com/lechitz/aion-api/internal/shared/constants/tracingkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 // ErrorHandler handles errors with a standardized error body.

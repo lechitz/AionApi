@@ -5,8 +5,8 @@
 package usecase
 
 import (
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/tag/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/tag/core/ports/output"
 )
 
 // Service provides operations for managing tags including creation, retrieval, updates, and soft deletion, using a repository and contextlogger.

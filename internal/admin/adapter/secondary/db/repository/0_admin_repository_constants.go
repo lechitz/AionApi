@@ -8,8 +8,8 @@ import "errors"
 // =============================================================================
 
 // TracerName is the name of the tracer used in the admin repository.
-// Format: aionapi.<domain>.<layer>.
-const TracerName = "aionapi.admin.repository"
+// Format: aion-api.<domain>.<layer>.
+const TracerName = "aion-api.admin.repository"
 
 // -----------------------------------------------------------------------------
 // Span Names

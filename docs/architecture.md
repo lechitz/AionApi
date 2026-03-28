@@ -1,6 +1,6 @@
 # System Design
 
-AionApi follows Hexagonal (Ports & Adapters) architecture with clear bounded contexts and strict dependency direction.
+aion-api follows Hexagonal (Ports & Adapters) architecture with clear bounded contexts and strict dependency direction.
 
 ## Architecture Snapshot
 

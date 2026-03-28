@@ -2,8 +2,8 @@
 package mapper
 
 import (
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 // RecordFromDB maps a model.Record object to a domain.Record object.

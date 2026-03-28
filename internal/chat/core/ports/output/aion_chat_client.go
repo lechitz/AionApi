@@ -4,7 +4,7 @@ package output
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/chat/adapter/primary/http/dto"
+	"github.com/lechitz/aion-api/internal/chat/adapter/primary/http/dto"
 )
 
 // AionChatClient defines the interface for communicating with the Aion-Chat service (Python).

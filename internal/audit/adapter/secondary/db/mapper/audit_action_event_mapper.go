@@ -4,8 +4,8 @@ package mapper
 import (
 	"encoding/json"
 
-	"github.com/lechitz/AionApi/internal/audit/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/audit/core/domain"
+	"github.com/lechitz/aion-api/internal/audit/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/audit/core/domain"
 )
 
 // AuditActionEventToDB converts a domain audit event into the DB model.

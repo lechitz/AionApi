@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------
-# Lint Workflow for AionAPI (Go)
+# Lint Workflow for aion-api (Go)
 # Purpose: Run the repo's canonical CI verify entrypoint for lint and related gates.
 # Extras: Ensures local and CI lint behavior stay aligned through a single make target.
 # Trigger: Every PR targeting 'main'.

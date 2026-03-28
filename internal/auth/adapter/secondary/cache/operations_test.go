@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	authcache "github.com/lechitz/AionApi/internal/auth/adapter/secondary/cache"
-	"github.com/lechitz/AionApi/internal/auth/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	authcache "github.com/lechitz/aion-api/internal/auth/adapter/secondary/cache"
+	"github.com/lechitz/aion-api/internal/auth/core/domain"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	"github.com/stretchr/testify/require"
 )
 

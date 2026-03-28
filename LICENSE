@@ -1,6 +1,6 @@
 Copyright (c) 2024 Felipe Bravo. All rights reserved.
 
-AionApi is proprietary software.
+aion-api is proprietary software.
 
 No license is granted to use, copy, modify, merge, publish, distribute,
 sublicense, sell, host, deploy, reverse engineer, or create derivative works
@@ -14,7 +14,7 @@ software in any environment, commercial or non-commercial.
 Any unauthorized use, reproduction, distribution, modification, public
 display, public performance, or derivative work is strictly prohibited.
 
-This restriction applies only to the original AionApi source code and
+This restriction applies only to the original aion-api source code and
 associated original documentation. Third-party components, dependencies, and
 their respective licenses remain subject to their own license terms.
 

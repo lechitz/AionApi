@@ -4,7 +4,7 @@ package input
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/user/core/domain"
 )
 
 // UserCreator defines a method to create a new user with the given details and return the created user or an error.

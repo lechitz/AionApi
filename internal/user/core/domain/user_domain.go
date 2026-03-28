@@ -3,7 +3,7 @@ package domain
 
 import "time"
 
-// User represents a user within the AionApi system.
+// User represents a user within the aion-api system.
 // It contains identification data, credentials, and lifecycle metadata.
 type User struct {
 	CreatedAt time.Time  // Timestamp of when the user was created

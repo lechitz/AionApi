@@ -3,9 +3,9 @@ package repository
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/mapper"
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/mapper"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 // Update updates a record and returns the updated entity.

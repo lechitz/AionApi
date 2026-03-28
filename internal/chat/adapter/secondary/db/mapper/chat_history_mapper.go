@@ -4,8 +4,8 @@ package mapper
 import (
 	"encoding/json"
 
-	"github.com/lechitz/AionApi/internal/chat/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
+	"github.com/lechitz/aion-api/internal/chat/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
 )
 
 // ChatHistoryToDB converts a domain ChatHistory to a database ChatHistoryDB model.

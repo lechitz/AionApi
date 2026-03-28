@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
 )
 
 func (p *EventPublisher) topicFor(event domain.Event) (string, error) {

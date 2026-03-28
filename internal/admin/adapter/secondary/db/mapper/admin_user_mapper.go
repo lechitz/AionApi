@@ -2,8 +2,8 @@
 package mapper
 
 import (
-	"github.com/lechitz/AionApi/internal/admin/core/domain"
-	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/admin/core/domain"
+	userdomain "github.com/lechitz/aion-api/internal/user/core/domain"
 )
 
 // AdminUserFromUser converts a user.User to admin.AdminUser.

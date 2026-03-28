@@ -8,7 +8,7 @@ import "time"
 // =============================================================================
 
 // RoleCacheTracerName is the name of the tracer for role cache operations.
-const RoleCacheTracerName = "aionapi.auth.role_cache"
+const RoleCacheTracerName = "aion-api.auth.role_cache"
 
 // Span names.
 const (

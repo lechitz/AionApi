@@ -4,8 +4,8 @@ package handler
 import (
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/auth/adapter/primary/http/middleware"
-	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
+	"github.com/lechitz/aion-api/internal/auth/adapter/primary/http/middleware"
+	"github.com/lechitz/aion-api/internal/platform/server/http/ports"
 )
 
 // RegisterHTTP attaches the auth routes to the given router.

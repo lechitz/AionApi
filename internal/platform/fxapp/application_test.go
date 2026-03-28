@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	httpclientPort "github.com/lechitz/AionApi/internal/platform/ports/output/httpclient"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	httpclientPort "github.com/lechitz/aion-api/internal/platform/ports/output/httpclient"
 	"github.com/stretchr/testify/require"
 )
 

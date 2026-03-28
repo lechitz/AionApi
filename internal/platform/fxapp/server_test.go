@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/config"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
 )
@@ -23,7 +23,7 @@ func (f *fakeLifecycle) Append(h fx.Hook) {
 func testFxConfig() *config.Config {
 	return &config.Config{
 		General: config.GeneralConfig{
-			Name:    "AionApi",
+			Name:    "aion-api",
 			Env:     "test",
 			Version: "v1",
 		},

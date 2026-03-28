@@ -9,7 +9,7 @@ import (
 
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

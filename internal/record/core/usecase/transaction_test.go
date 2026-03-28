@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	eventoutboxdomain "github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
-	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
-	dbport "github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/internal/record/core/ports/output"
-	"github.com/lechitz/AionApi/tests/mocks"
+	eventoutboxdomain "github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
+	eventoutboxinput "github.com/lechitz/aion-api/internal/eventoutbox/core/ports/input"
+	dbport "github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/record/core/ports/output"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 

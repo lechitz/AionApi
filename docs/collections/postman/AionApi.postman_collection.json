@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "800127e6-6e33-45bb-a711-0c58470a5e61",
-		"name": "AionApi - Complete 2026",
-		"description": "Complete API collection for AionApi including Auth, User, Admin, Chat, GraphQL and Health endpoints",
+		"name": "aion-api - Complete 2026",
+		"description": "Complete API collection for aion-api including Auth, User, Admin, Chat, GraphQL and Health endpoints",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "29364746"
 	},

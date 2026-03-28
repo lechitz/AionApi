@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	auditdomain "github.com/lechitz/AionApi/internal/audit/core/domain"
-	"github.com/lechitz/AionApi/internal/chat/adapter/primary/http/dto"
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
-	"github.com/lechitz/AionApi/tests/setup"
+	auditdomain "github.com/lechitz/aion-api/internal/audit/core/domain"
+	"github.com/lechitz/aion-api/internal/chat/adapter/primary/http/dto"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

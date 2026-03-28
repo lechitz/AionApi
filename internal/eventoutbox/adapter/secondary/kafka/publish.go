@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	kafkago "github.com/segmentio/kafka-go"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"

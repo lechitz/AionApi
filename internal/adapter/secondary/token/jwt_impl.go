@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/claimskeys"
 )
 
 // ExpTimeToken is the default expiration time for JWT tokens.

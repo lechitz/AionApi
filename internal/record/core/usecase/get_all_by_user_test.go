@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/record/core/usecase"
-	"github.com/lechitz/AionApi/tests/setup"
+	"github.com/lechitz/aion-api/internal/record/core/usecase"
+	"github.com/lechitz/aion-api/tests/setup"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"

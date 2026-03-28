@@ -3,8 +3,8 @@ package usecase_test
 import (
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/record/core/domain"
-	"github.com/lechitz/AionApi/tests/setup"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
+	"github.com/lechitz/aion-api/tests/setup"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
