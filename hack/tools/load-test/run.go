@@ -160,9 +160,7 @@ func resolveScenario(name string) (scenarioDefinition, error) {
 					query: strings.TrimSpace(string(query)),
 				}, nil
 			},
-			execute: func(ctx context.Context, client *http.Client, cfg config, state *scenarioState) error {
-				return fetchRecordProjectionsLatest(ctx, client, cfg, state)
-			},
+			execute: fetchRecordProjectionsLatest,
 		}, nil
 	case dashboardSnapshotScenario:
 		return scenarioDefinition{
@@ -183,14 +181,12 @@ func resolveScenario(name string) (scenarioDefinition, error) {
 				}
 
 				return &scenarioState{
-					token: token,
-					query: strings.TrimSpace(string(query)),
+					token:         token,
+					query:         strings.TrimSpace(string(query)),
 					dashboardDate: dashboardDate,
 				}, nil
 			},
-			execute: func(ctx context.Context, client *http.Client, cfg config, state *scenarioState) error {
-				return fetchDashboardSnapshot(ctx, client, cfg, state)
-			},
+			execute: fetchDashboardSnapshot,
 		}, nil
 	case realtimeRecordScenario:
 		return scenarioDefinition{
@@ -202,9 +198,7 @@ func resolveScenario(name string) (scenarioDefinition, error) {
 				}
 				return &scenarioState{token: token}, nil
 			},
-			execute: func(ctx context.Context, client *http.Client, cfg config, state *scenarioState) error {
-				return runRealtimeRecordScenario(ctx, client, cfg, state)
-			},
+			execute: runRealtimeRecordScenario,
 		}, nil
 	default:
 		return scenarioDefinition{}, fmt.Errorf("unsupported scenario %q", name)
@@ -212,7 +206,11 @@ func resolveScenario(name string) (scenarioDefinition, error) {
 }
 
 func loadThresholds(path string) (thresholdsFile, error) {
-	raw, err := os.ReadFile(path)
+	if path != defaultThresholdsFile {
+		return nil, fmt.Errorf("unsupported thresholds file %q", path)
+	}
+
+	raw, err := os.ReadFile(defaultThresholdsFile)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +223,7 @@ func loadThresholds(path string) (thresholdsFile, error) {
 }
 
 func warmupScenario(ctx context.Context, client *http.Client, cfg config, def scenarioDefinition, state *scenarioState) error {
-	for i := 0; i < cfg.warmupRequests; i++ {
+	for i := range cfg.warmupRequests {
 		if err := def.execute(ctx, client, cfg, state); err != nil {
 			return fmt.Errorf("warmup failed on request %d: %w", i+1, err)
 		}
@@ -239,7 +237,7 @@ func executeScenario(ctx context.Context, client *http.Client, cfg config, def s
 	jobs := make(chan struct{}, cfg.requests)
 	results := make(chan sample, cfg.requests)
 
-	for i := 0; i < cfg.requests; i++ {
+	for range cfg.requests {
 		jobs <- struct{}{}
 	}
 	close(jobs)
@@ -250,7 +248,7 @@ func executeScenario(ctx context.Context, client *http.Client, cfg config, def s
 	}
 
 	var wg sync.WaitGroup
-	for i := 0; i < workerCount; i++ {
+	for range workerCount {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()

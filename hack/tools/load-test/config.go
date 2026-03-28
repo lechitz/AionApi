@@ -1,3 +1,4 @@
+// Package main provides the versioned local load-test entrypoints for aion-api.
 package main
 
 import (
@@ -6,22 +7,22 @@ import (
 )
 
 const (
-	defaultScenario       = "auth-login"
-	defaultBaseURL        = "http://localhost:5001"
-	defaultRequests       = 60
-	defaultConcurrency    = 6
-	defaultWarmupRequests = 5
-	defaultTimeout        = 5 * time.Second
+	defaultScenario            = "auth-login"
+	defaultBaseURL             = "http://localhost:5001"
+	defaultRequests            = 60
+	defaultConcurrency         = 6
+	defaultWarmupRequests      = 5
+	defaultTimeout             = 5 * time.Second
 	defaultRealtimeRequests    = 20
 	defaultRealtimeConcurrency = 4
 	defaultRealtimeWarmup      = 2
 	defaultRealtimeTimeout     = 30 * time.Second
-	defaultUsername       = "testuser"
-	defaultPassword       = "Test@123"
-	defaultTagID          = "24"
-	defaultRecordLimit    = 20
-	defaultDashboardTZ    = "UTC"
-	defaultThresholdsFile = "hack/tools/load-test/thresholds.json"
+	defaultUsername            = "testuser"
+	defaultPassword            = "Test@123"
+	defaultTagID               = "24"
+	defaultRecordLimit         = 20
+	defaultDashboardTZ         = "UTC"
+	defaultThresholdsFile      = "hack/tools/load-test/thresholds.json"
 )
 
 type config struct {
