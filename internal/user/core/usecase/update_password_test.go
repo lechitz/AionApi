@@ -8,13 +8,13 @@ import (
 	"testing"
 	"time"
 
-	authdomain "github.com/lechitz/AionApi/internal/auth/core/domain"
-	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
-	"github.com/lechitz/AionApi/internal/user/core/usecase"
+	authdomain "github.com/lechitz/aion-api/internal/auth/core/domain"
+	userdomain "github.com/lechitz/aion-api/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/user/core/usecase"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/internal/shared/constants/claimskeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

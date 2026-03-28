@@ -6,8 +6,8 @@ package handler
 // =============================================================================
 
 // TracerChatHandler is the tracer name for chat handler.
-// Format: aionapi.<domain>.<layer> .
-const TracerChatHandler = "aionapi.chat.handler"
+// Format: aion-api.<domain>.<layer> .
+const TracerChatHandler = "aion-api.chat.handler"
 
 // -----------------------------------------------------------------------------
 // Span Names

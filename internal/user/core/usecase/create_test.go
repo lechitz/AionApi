@@ -6,12 +6,12 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
-	"github.com/lechitz/AionApi/internal/user/core/domain"
-	"github.com/lechitz/AionApi/internal/user/core/ports/input"
-	"github.com/lechitz/AionApi/internal/user/core/ports/output"
-	"github.com/lechitz/AionApi/internal/user/core/usecase"
-	"github.com/lechitz/AionApi/tests/setup"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/aion-api/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/user/core/ports/input"
+	"github.com/lechitz/aion-api/internal/user/core/ports/output"
+	"github.com/lechitz/aion-api/internal/user/core/usecase"
+	"github.com/lechitz/aion-api/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

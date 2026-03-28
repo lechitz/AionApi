@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/mapper"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/mapper"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 // Create inserts a record and returns the created entity with ID populated.

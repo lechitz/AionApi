@@ -34,7 +34,7 @@ Then confirm traces and metrics appear in dashboards.
 
 ## Grafana Verification
 
-1. Open **AionAPI - RED Metrics Dashboard (Professional)**.
+1. Open **aion-api - RED Metrics Dashboard (Professional)**.
 2. Confirm latency, error-rate, and throughput panels are populated.
 3. Use trace links from exemplars to jump into Jaeger.
 

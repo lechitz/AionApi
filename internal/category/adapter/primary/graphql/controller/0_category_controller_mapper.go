@@ -4,9 +4,9 @@ package controller
 import (
 	"strconv"
 
-	gmodel "github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
-	"github.com/lechitz/AionApi/internal/category/core/domain"
-	"github.com/lechitz/AionApi/internal/category/core/ports/input"
+	gmodel "github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/category/core/domain"
+	"github.com/lechitz/aion-api/internal/category/core/ports/input"
 )
 
 // toModelOut converts a domain.Category to a GraphQL model.Category.

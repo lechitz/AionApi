@@ -1,8 +1,8 @@
-site_name: AionApi Docs
+site_name: aion-api Docs
 site_description: Production-grade Go backend with Hexagonal Architecture, REST/GraphQL APIs, and observability.
-site_url: https://lechitz.github.io/AionApi/
-repo_name: lechitz/AionApi
-repo_url: https://github.com/lechitz/AionApi
+site_url: https://lechitz.github.io/aion-api/
+repo_name: lechitz/aion-api
+repo_url: https://github.com/lechitz/aion-api
 edit_uri: edit/main/docs/
 
 theme:

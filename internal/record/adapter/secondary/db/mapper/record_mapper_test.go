@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/mapper"
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/mapper"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/model"
 	"github.com/stretchr/testify/require"
 )
 

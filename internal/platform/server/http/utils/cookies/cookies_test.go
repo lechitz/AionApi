@@ -5,9 +5,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	cookies "github.com/lechitz/AionApi/internal/platform/server/http/utils/cookies"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	cookies "github.com/lechitz/aion-api/internal/platform/server/http/utils/cookies"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 )
 
 func TestSetAuthCookie_AndClearAuthCookie(t *testing.T) {

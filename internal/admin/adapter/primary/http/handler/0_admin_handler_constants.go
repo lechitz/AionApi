@@ -8,8 +8,8 @@ import "errors"
 // =============================================================================
 
 // TracerName is the tracer name for admin handler.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.admin.handler"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.admin.handler"
 
 // -----------------------------------------------------------------------------
 // Span Names

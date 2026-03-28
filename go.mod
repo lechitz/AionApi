@@ -1,4 +1,4 @@
-module github.com/lechitz/AionApi
+module github.com/lechitz/aion-api
 
 go 1.25.4
 

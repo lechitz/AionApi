@@ -7,8 +7,8 @@ package repository
 // =============================================================================
 
 // TracerName is the tracer name used by the category repository.
-// Format: aionapi.<domain>.<layer>.
-const TracerName = "aionapi.category.repository"
+// Format: aion-api.<domain>.<layer>.
+const TracerName = "aion-api.category.repository"
 
 // -----------------------------------------------------------------------------
 // Span Names

@@ -5,6 +5,7 @@
 // This file was automatically patched by hack/tools/patch-introspection.sh
 // to enable GraphQL introspection required by aion-chat LangChain integration.
 // Introspection checks (if ec.DisableIntrospection) are disabled (if false).
+// gqlgen hyphen-safe patch also normalizes mangled identifiers for aion-api.
 // DO NOT manually edit - changes will be overwritten by make graphql + auto-patch.
 
 package graphql
@@ -21,7 +22,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -2258,7 +2259,7 @@ func (ec *executionContext) dir_auth_args(ctx context.Context, rawArgs map[strin
 func (ec *executionContext) field_Mutation_createCategory_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateCategoryInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateCategoryInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateCategoryInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateCategoryInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2269,7 +2270,7 @@ func (ec *executionContext) field_Mutation_createCategory_args(ctx context.Conte
 func (ec *executionContext) field_Mutation_createDashboardView_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateDashboardViewInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateDashboardViewInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateDashboardViewInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateDashboardViewInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2280,7 +2281,7 @@ func (ec *executionContext) field_Mutation_createDashboardView_args(ctx context.
 func (ec *executionContext) field_Mutation_createMetricAndWidget_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateMetricAndWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateMetricAndWidgetInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateMetricAndWidgetInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateMetricAndWidgetInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2291,7 +2292,7 @@ func (ec *executionContext) field_Mutation_createMetricAndWidget_args(ctx contex
 func (ec *executionContext) field_Mutation_createRecord_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateRecordInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateRecordInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateRecordInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateRecordInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2302,7 +2303,7 @@ func (ec *executionContext) field_Mutation_createRecord_args(ctx context.Context
 func (ec *executionContext) field_Mutation_createTag_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateTagInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateTagInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateTagInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2313,7 +2314,7 @@ func (ec *executionContext) field_Mutation_createTag_args(ctx context.Context, r
 func (ec *executionContext) field_Mutation_deleteDashboardWidget_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteDashboardWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteDashboardWidgetInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteDashboardWidgetInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteDashboardWidgetInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2324,7 +2325,7 @@ func (ec *executionContext) field_Mutation_deleteDashboardWidget_args(ctx contex
 func (ec *executionContext) field_Mutation_deleteGoalTemplate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteGoalTemplateInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteGoalTemplateInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteGoalTemplateInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteGoalTemplateInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2335,7 +2336,7 @@ func (ec *executionContext) field_Mutation_deleteGoalTemplate_args(ctx context.C
 func (ec *executionContext) field_Mutation_reorderDashboardWidgets_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNReorderDashboardWidgetsInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetsInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNReorderDashboardWidgetsInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetsInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2346,7 +2347,7 @@ func (ec *executionContext) field_Mutation_reorderDashboardWidgets_args(ctx cont
 func (ec *executionContext) field_Mutation_setDefaultDashboardView_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNSetDefaultDashboardViewInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSetDefaultDashboardViewInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNSetDefaultDashboardViewInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSetDefaultDashboardViewInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2357,7 +2358,7 @@ func (ec *executionContext) field_Mutation_setDefaultDashboardView_args(ctx cont
 func (ec *executionContext) field_Mutation_softDeleteCategory_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteCategoryInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteCategoryInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteCategoryInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteCategoryInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2368,7 +2369,7 @@ func (ec *executionContext) field_Mutation_softDeleteCategory_args(ctx context.C
 func (ec *executionContext) field_Mutation_softDeleteRecord_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteRecordInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteRecordInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteRecordInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteRecordInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2379,7 +2380,7 @@ func (ec *executionContext) field_Mutation_softDeleteRecord_args(ctx context.Con
 func (ec *executionContext) field_Mutation_softDeleteTag_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteTagInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNDeleteTagInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteTagInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2390,7 +2391,7 @@ func (ec *executionContext) field_Mutation_softDeleteTag_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_updateCategory_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateCategoryInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateCategoryInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateCategoryInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateCategoryInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2401,7 +2402,7 @@ func (ec *executionContext) field_Mutation_updateCategory_args(ctx context.Conte
 func (ec *executionContext) field_Mutation_updateRecord_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateRecordInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateRecordInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateRecordInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateRecordInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2412,7 +2413,7 @@ func (ec *executionContext) field_Mutation_updateRecord_args(ctx context.Context
 func (ec *executionContext) field_Mutation_updateTag_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateTagInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateTagInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateTagInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2423,7 +2424,7 @@ func (ec *executionContext) field_Mutation_updateTag_args(ctx context.Context, r
 func (ec *executionContext) field_Mutation_upsertDashboardWidget_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpsertDashboardWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpsertDashboardWidgetInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2434,7 +2435,7 @@ func (ec *executionContext) field_Mutation_upsertDashboardWidget_args(ctx contex
 func (ec *executionContext) field_Mutation_upsertGoalTemplate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpsertGoalTemplateInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertGoalTemplateInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpsertGoalTemplateInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertGoalTemplateInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2445,7 +2446,7 @@ func (ec *executionContext) field_Mutation_upsertGoalTemplate_args(ctx context.C
 func (ec *executionContext) field_Mutation_upsertMetricDefinition_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpsertMetricDefinitionInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpsertMetricDefinitionInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput)
 	if err != nil {
 		return nil, err
 	}
@@ -2472,7 +2473,7 @@ func (ec *executionContext) field_Query_analyticsSeries_args(ctx context.Context
 		return nil, err
 	}
 	args["seriesKey"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "window", ec.unmarshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "window", ec.unmarshalNInsightWindow2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow)
 	if err != nil {
 		return nil, err
 	}
@@ -2584,7 +2585,7 @@ func (ec *executionContext) field_Query_dashboardView_args(ctx context.Context, 
 func (ec *executionContext) field_Query_insightFeed_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "window", ec.unmarshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "window", ec.unmarshalNInsightWindow2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow)
 	if err != nil {
 		return nil, err
 	}
@@ -2674,7 +2675,7 @@ func (ec *executionContext) field_Query_recordProjections_args(ctx context.Conte
 func (ec *executionContext) field_Query_recordStats_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "filters", ec.unmarshalORecordStatsFilters2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStatsFilters)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "filters", ec.unmarshalORecordStatsFilters2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStatsFilters)
 	if err != nil {
 		return nil, err
 	}
@@ -2797,7 +2798,7 @@ func (ec *executionContext) field_Query_records_args(ctx context.Context, rawArg
 func (ec *executionContext) field_Query_searchRecords_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "filters", ec.unmarshalNSearchFilters2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSearchFilters)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "filters", ec.unmarshalNSearchFilters2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSearchFilters)
 	if err != nil {
 		return nil, err
 	}
@@ -3027,7 +3028,7 @@ func (ec *executionContext) _AnalyticsSeriesResult_window(ctx context.Context, f
 			return obj.Window, nil
 		},
 		nil,
-		ec.marshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow,
+		ec.marshalNInsightWindow2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow,
 		true,
 		true,
 	)
@@ -3056,7 +3057,7 @@ func (ec *executionContext) _AnalyticsSeriesResult_points(ctx context.Context, f
 			return obj.Points, nil
 		},
 		nil,
-		ec.marshalNAnalyticsPoint2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPointᚄ,
+		ec.marshalNAnalyticsPoint2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPointᚄ,
 		true,
 		true,
 	)
@@ -3383,7 +3384,7 @@ func (ec *executionContext) _ChatContext_recentChats(ctx context.Context, field 
 			return obj.RecentChats, nil
 		},
 		nil,
-		ec.marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessageᚄ,
+		ec.marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessageᚄ,
 		true,
 		true,
 	)
@@ -3517,7 +3518,7 @@ func (ec *executionContext) _ChatDataPack_categories(ctx context.Context, field 
 			return obj.Categories, nil
 		},
 		nil,
-		ec.marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryᚄ,
+		ec.marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryᚄ,
 		true,
 		true,
 	)
@@ -3560,7 +3561,7 @@ func (ec *executionContext) _ChatDataPack_tags(ctx context.Context, field graphq
 			return obj.Tags, nil
 		},
 		nil,
-		ec.marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ,
+		ec.marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ,
 		true,
 		true,
 	)
@@ -3607,7 +3608,7 @@ func (ec *executionContext) _ChatDataPack_recentRecords(ctx context.Context, fie
 			return obj.RecentRecords, nil
 		},
 		nil,
-		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
 	)
@@ -3664,7 +3665,7 @@ func (ec *executionContext) _ChatDataPack_userStats(ctx context.Context, field g
 			return obj.UserStats, nil
 		},
 		nil,
-		ec.marshalOUserStats2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats,
+		ec.marshalOUserStats2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats,
 		true,
 		false,
 	)
@@ -4579,7 +4580,7 @@ func (ec *executionContext) _DashboardMetric_checklist(ctx context.Context, fiel
 			return obj.Checklist, nil
 		},
 		nil,
-		ec.marshalODashboardChecklist2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardChecklist,
+		ec.marshalODashboardChecklist2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardChecklist,
 		true,
 		false,
 	)
@@ -4684,7 +4685,7 @@ func (ec *executionContext) _DashboardSnapshot_metrics(ctx context.Context, fiel
 			return obj.Metrics, nil
 		},
 		nil,
-		ec.marshalNDashboardMetric2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetricᚄ,
+		ec.marshalNDashboardMetric2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetricᚄ,
 		true,
 		true,
 	)
@@ -4731,7 +4732,7 @@ func (ec *executionContext) _DashboardSnapshot_goals(ctx context.Context, field 
 			return obj.Goals, nil
 		},
 		nil,
-		ec.marshalNDashboardGoal2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoalᚄ,
+		ec.marshalNDashboardGoal2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoalᚄ,
 		true,
 		true,
 	)
@@ -4863,7 +4864,7 @@ func (ec *executionContext) _DashboardView_widgets(ctx context.Context, field gr
 			return obj.Widgets, nil
 		},
 		nil,
-		ec.marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetᚄ,
+		ec.marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetᚄ,
 		true,
 		true,
 	)
@@ -5061,7 +5062,7 @@ func (ec *executionContext) _DashboardWidget_widgetType(ctx context.Context, fie
 			return obj.WidgetType, nil
 		},
 		nil,
-		ec.marshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType,
+		ec.marshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType,
 		true,
 		true,
 	)
@@ -5090,7 +5091,7 @@ func (ec *executionContext) _DashboardWidget_size(ctx context.Context, field gra
 			return obj.Size, nil
 		},
 		nil,
-		ec.marshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize,
+		ec.marshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize,
 		true,
 		true,
 	)
@@ -5322,7 +5323,7 @@ func (ec *executionContext) _DashboardWidgetCatalog_sizes(ctx context.Context, f
 			return obj.Sizes, nil
 		},
 		nil,
-		ec.marshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSizeᚄ,
+		ec.marshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSizeᚄ,
 		true,
 		true,
 	)
@@ -5351,7 +5352,7 @@ func (ec *executionContext) _DashboardWidgetCatalog_types(ctx context.Context, f
 			return obj.Types, nil
 		},
 		nil,
-		ec.marshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetTypeᚄ,
+		ec.marshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetTypeᚄ,
 		true,
 		true,
 	)
@@ -5728,7 +5729,7 @@ func (ec *executionContext) _InsightCard_window(ctx context.Context, field graph
 			return obj.Window, nil
 		},
 		nil,
-		ec.marshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow,
+		ec.marshalNInsightWindow2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow,
 		true,
 		true,
 	)
@@ -5844,7 +5845,7 @@ func (ec *executionContext) _InsightCard_evidence(ctx context.Context, field gra
 			return obj.Evidence, nil
 		},
 		nil,
-		ec.marshalNInsightEvidence2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidenceᚄ,
+		ec.marshalNInsightEvidence2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidenceᚄ,
 		true,
 		true,
 	)
@@ -6596,7 +6597,7 @@ func (ec *executionContext) _Mutation_createCategory(ctx context.Context, field 
 			next = directive1
 			return next
 		},
-		ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
+		ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
 		true,
 		true,
 	)
@@ -6669,7 +6670,7 @@ func (ec *executionContext) _Mutation_updateCategory(ctx context.Context, field 
 			next = directive1
 			return next
 		},
-		ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
+		ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
 		true,
 		true,
 	)
@@ -6801,7 +6802,7 @@ func (ec *executionContext) _Mutation_createRecord(ctx context.Context, field gr
 			next = directive1
 			return next
 		},
-		ec.marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord,
+		ec.marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord,
 		true,
 		true,
 	)
@@ -6888,7 +6889,7 @@ func (ec *executionContext) _Mutation_updateRecord(ctx context.Context, field gr
 			next = directive1
 			return next
 		},
-		ec.marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord,
+		ec.marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord,
 		true,
 		true,
 	)
@@ -7081,7 +7082,7 @@ func (ec *executionContext) _Mutation_upsertMetricDefinition(ctx context.Context
 			next = directive1
 			return next
 		},
-		ec.marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition,
+		ec.marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition,
 		true,
 		true,
 	)
@@ -7164,7 +7165,7 @@ func (ec *executionContext) _Mutation_upsertGoalTemplate(ctx context.Context, fi
 			next = directive1
 			return next
 		},
-		ec.marshalNGoalTemplate2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐGoalTemplate,
+		ec.marshalNGoalTemplate2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐGoalTemplate,
 		true,
 		true,
 	)
@@ -7298,7 +7299,7 @@ func (ec *executionContext) _Mutation_createDashboardView(ctx context.Context, f
 			next = directive1
 			return next
 		},
-		ec.marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView,
+		ec.marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView,
 		true,
 		true,
 	)
@@ -7371,7 +7372,7 @@ func (ec *executionContext) _Mutation_setDefaultDashboardView(ctx context.Contex
 			next = directive1
 			return next
 		},
-		ec.marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView,
+		ec.marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView,
 		true,
 		true,
 	)
@@ -7444,7 +7445,7 @@ func (ec *executionContext) _Mutation_upsertDashboardWidget(ctx context.Context,
 			next = directive1
 			return next
 		},
-		ec.marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget,
+		ec.marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget,
 		true,
 		true,
 	)
@@ -7527,7 +7528,7 @@ func (ec *executionContext) _Mutation_reorderDashboardWidgets(ctx context.Contex
 			next = directive1
 			return next
 		},
-		ec.marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetᚄ,
+		ec.marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetᚄ,
 		true,
 		true,
 	)
@@ -7669,7 +7670,7 @@ func (ec *executionContext) _Mutation_createMetricAndWidget(ctx context.Context,
 			next = directive1
 			return next
 		},
-		ec.marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget,
+		ec.marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget,
 		true,
 		true,
 	)
@@ -7752,7 +7753,7 @@ func (ec *executionContext) _Mutation_createTag(ctx context.Context, field graph
 			next = directive1
 			return next
 		},
-		ec.marshalNTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
+		ec.marshalNTag2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
 		true,
 		true,
 	)
@@ -7829,7 +7830,7 @@ func (ec *executionContext) _Mutation_updateTag(ctx context.Context, field graph
 			next = directive1
 			return next
 		},
-		ec.marshalNTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
+		ec.marshalNTag2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
 		true,
 		true,
 	)
@@ -7993,7 +7994,7 @@ func (ec *executionContext) _Query_categories(ctx context.Context, field graphql
 			next = directive1
 			return next
 		},
-		ec.marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryᚄ,
+		ec.marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryᚄ,
 		true,
 		true,
 	)
@@ -8055,7 +8056,7 @@ func (ec *executionContext) _Query_categoryById(ctx context.Context, field graph
 			next = directive1
 			return next
 		},
-		ec.marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
+		ec.marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
 		true,
 		false,
 	)
@@ -8128,7 +8129,7 @@ func (ec *executionContext) _Query_categoryByName(ctx context.Context, field gra
 			next = directive1
 			return next
 		},
-		ec.marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
+		ec.marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory,
 		true,
 		false,
 	)
@@ -8201,7 +8202,7 @@ func (ec *executionContext) _Query_chatHistory(ctx context.Context, field graphq
 			next = directive1
 			return next
 		},
-		ec.marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessageᚄ,
+		ec.marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessageᚄ,
 		true,
 		true,
 	)
@@ -8277,7 +8278,7 @@ func (ec *executionContext) _Query_chatContext(ctx context.Context, field graphq
 			next = directive1
 			return next
 		},
-		ec.marshalNChatContext2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatContext,
+		ec.marshalNChatContext2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatContext,
 		true,
 		true,
 	)
@@ -8335,7 +8336,7 @@ func (ec *executionContext) _Query_chatDataPack(ctx context.Context, field graph
 			next = directive1
 			return next
 		},
-		ec.marshalNChatDataPack2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatDataPack,
+		ec.marshalNChatDataPack2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatDataPack,
 		true,
 		true,
 	)
@@ -8404,7 +8405,7 @@ func (ec *executionContext) _Query_recordById(ctx context.Context, field graphql
 			next = directive1
 			return next
 		},
-		ec.marshalORecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord,
+		ec.marshalORecord2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord,
 		true,
 		false,
 	)
@@ -8491,7 +8492,7 @@ func (ec *executionContext) _Query_recordProjectionById(ctx context.Context, fie
 			next = directive1
 			return next
 		},
-		ec.marshalORecordProjection2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection,
+		ec.marshalORecordProjection2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection,
 		true,
 		false,
 	)
@@ -8598,7 +8599,7 @@ func (ec *executionContext) _Query_records(ctx context.Context, field graphql.Co
 			next = directive1
 			return next
 		},
-		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
 	)
@@ -8685,7 +8686,7 @@ func (ec *executionContext) _Query_recordProjections(ctx context.Context, field 
 			next = directive1
 			return next
 		},
-		ec.marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjectionᚄ,
+		ec.marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjectionᚄ,
 		true,
 		true,
 	)
@@ -8792,7 +8793,7 @@ func (ec *executionContext) _Query_recordsLatest(ctx context.Context, field grap
 			next = directive1
 			return next
 		},
-		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
 	)
@@ -8879,7 +8880,7 @@ func (ec *executionContext) _Query_recordProjectionsLatest(ctx context.Context, 
 			next = directive1
 			return next
 		},
-		ec.marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjectionᚄ,
+		ec.marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjectionᚄ,
 		true,
 		true,
 	)
@@ -8986,7 +8987,7 @@ func (ec *executionContext) _Query_recordsByTag(ctx context.Context, field graph
 			next = directive1
 			return next
 		},
-		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
 	)
@@ -9073,7 +9074,7 @@ func (ec *executionContext) _Query_recordsByCategory(ctx context.Context, field 
 			next = directive1
 			return next
 		},
-		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
 	)
@@ -9160,7 +9161,7 @@ func (ec *executionContext) _Query_recordsByDay(ctx context.Context, field graph
 			next = directive1
 			return next
 		},
-		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
 	)
@@ -9247,7 +9248,7 @@ func (ec *executionContext) _Query_recordsUntil(ctx context.Context, field graph
 			next = directive1
 			return next
 		},
-		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
 	)
@@ -9334,7 +9335,7 @@ func (ec *executionContext) _Query_recordsBetween(ctx context.Context, field gra
 			next = directive1
 			return next
 		},
-		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
 	)
@@ -9421,7 +9422,7 @@ func (ec *executionContext) _Query_searchRecords(ctx context.Context, field grap
 			next = directive1
 			return next
 		},
-		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
+		ec.marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ,
 		true,
 		true,
 	)
@@ -9508,7 +9509,7 @@ func (ec *executionContext) _Query_recordStats(ctx context.Context, field graphq
 			next = directive1
 			return next
 		},
-		ec.marshalNRecordStats2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStats,
+		ec.marshalNRecordStats2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStats,
 		true,
 		true,
 	)
@@ -9585,7 +9586,7 @@ func (ec *executionContext) _Query_dashboardSnapshot(ctx context.Context, field 
 			next = directive1
 			return next
 		},
-		ec.marshalNDashboardSnapshot2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardSnapshot,
+		ec.marshalNDashboardSnapshot2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardSnapshot,
 		true,
 		true,
 	)
@@ -9654,7 +9655,7 @@ func (ec *executionContext) _Query_insightFeed(ctx context.Context, field graphq
 			next = directive1
 			return next
 		},
-		ec.marshalNInsightCard2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCardᚄ,
+		ec.marshalNInsightCard2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCardᚄ,
 		true,
 		true,
 	)
@@ -9737,7 +9738,7 @@ func (ec *executionContext) _Query_analyticsSeries(ctx context.Context, field gr
 			next = directive1
 			return next
 		},
-		ec.marshalNAnalyticsSeriesResult2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsSeriesResult,
+		ec.marshalNAnalyticsSeriesResult2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsSeriesResult,
 		true,
 		true,
 	)
@@ -9805,7 +9806,7 @@ func (ec *executionContext) _Query_metricDefinitions(ctx context.Context, field 
 			next = directive1
 			return next
 		},
-		ec.marshalNMetricDefinition2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionᚄ,
+		ec.marshalNMetricDefinition2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionᚄ,
 		true,
 		true,
 	)
@@ -9876,7 +9877,7 @@ func (ec *executionContext) _Query_dashboardViews(ctx context.Context, field gra
 			next = directive1
 			return next
 		},
-		ec.marshalNDashboardView2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardViewᚄ,
+		ec.marshalNDashboardView2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardViewᚄ,
 		true,
 		true,
 	)
@@ -9938,7 +9939,7 @@ func (ec *executionContext) _Query_dashboardView(ctx context.Context, field grap
 			next = directive1
 			return next
 		},
-		ec.marshalODashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView,
+		ec.marshalODashboardView2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView,
 		true,
 		false,
 	)
@@ -10010,7 +10011,7 @@ func (ec *executionContext) _Query_dashboardWidgetCatalog(ctx context.Context, f
 			next = directive1
 			return next
 		},
-		ec.marshalNDashboardWidgetCatalog2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetCatalog,
+		ec.marshalNDashboardWidgetCatalog2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetCatalog,
 		true,
 		true,
 	)
@@ -10066,7 +10067,7 @@ func (ec *executionContext) _Query_suggestMetricDefinitions(ctx context.Context,
 			next = directive1
 			return next
 		},
-		ec.marshalNMetricDefinitionSuggestion2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestionᚄ,
+		ec.marshalNMetricDefinitionSuggestion2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestionᚄ,
 		true,
 		true,
 	)
@@ -10143,7 +10144,7 @@ func (ec *executionContext) _Query_tagByName(ctx context.Context, field graphql.
 			next = directive1
 			return next
 		},
-		ec.marshalOTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
+		ec.marshalOTag2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
 		true,
 		false,
 	)
@@ -10220,7 +10221,7 @@ func (ec *executionContext) _Query_tagById(ctx context.Context, field graphql.Co
 			next = directive1
 			return next
 		},
-		ec.marshalOTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
+		ec.marshalOTag2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag,
 		true,
 		false,
 	)
@@ -10296,7 +10297,7 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 			next = directive1
 			return next
 		},
-		ec.marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ,
+		ec.marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ,
 		true,
 		true,
 	)
@@ -10362,7 +10363,7 @@ func (ec *executionContext) _Query_tagsByCategoryId(ctx context.Context, field g
 			next = directive1
 			return next
 		},
-		ec.marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ,
+		ec.marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ,
 		true,
 		true,
 	)
@@ -10438,7 +10439,7 @@ func (ec *executionContext) _Query_userStats(ctx context.Context, field graphql.
 			next = directive1
 			return next
 		},
-		ec.marshalNUserStats2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats,
+		ec.marshalNUserStats2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats,
 		true,
 		true,
 	)
@@ -12331,7 +12332,7 @@ func (ec *executionContext) _UserStats_mostUsedCategory(ctx context.Context, fie
 			return obj.MostUsedCategory, nil
 		},
 		nil,
-		ec.marshalOCategoryCount2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryCount,
+		ec.marshalOCategoryCount2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryCount,
 		true,
 		false,
 	)
@@ -12368,7 +12369,7 @@ func (ec *executionContext) _UserStats_mostUsedTag(ctx context.Context, field gr
 			return obj.MostUsedTag, nil
 		},
 		nil,
-		ec.marshalOTagCount2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagCount,
+		ec.marshalOTagCount2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagCount,
 		true,
 		false,
 	)
@@ -13939,14 +13940,14 @@ func (ec *executionContext) unmarshalInputCreateMetricAndWidgetInput(ctx context
 		switch k {
 		case "metric":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metric"))
-			data, err := ec.unmarshalNUpsertMetricDefinitionInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput(ctx, v)
+			data, err := ec.unmarshalNUpsertMetricDefinitionInput2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Metric = data
 		case "widget":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("widget"))
-			data, err := ec.unmarshalNUpsertDashboardWidgetInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput(ctx, v)
+			data, err := ec.unmarshalNUpsertDashboardWidgetInput2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14342,7 +14343,7 @@ func (ec *executionContext) unmarshalInputReorderDashboardWidgetsInput(ctx conte
 			it.ViewID = data
 		case "items":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("items"))
-			data, err := ec.unmarshalNReorderDashboardWidgetItemInput2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInputᚄ(ctx, v)
+			data, err := ec.unmarshalNReorderDashboardWidgetItemInput2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14686,14 +14687,14 @@ func (ec *executionContext) unmarshalInputUpsertDashboardWidgetInput(ctx context
 			it.MetricDefinitionID = data
 		case "widgetType":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("widgetType"))
-			data, err := ec.unmarshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx, v)
+			data, err := ec.unmarshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.WidgetType = data
 		case "size":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("size"))
-			data, err := ec.unmarshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx, v)
+			data, err := ec.unmarshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -17804,7 +17805,7 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAnalyticsPoint2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPointᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AnalyticsPoint) graphql.Marshaler {
+func (ec *executionContext) marshalNAnalyticsPoint2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPointᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AnalyticsPoint) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17828,7 +17829,7 @@ func (ec *executionContext) marshalNAnalyticsPoint2ᚕᚖgithubᚗcomᚋlechitz�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNAnalyticsPoint2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPoint(ctx, sel, v[i])
+			ret[i] = ec.marshalNAnalyticsPoint2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPoint(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17848,7 +17849,7 @@ func (ec *executionContext) marshalNAnalyticsPoint2ᚕᚖgithubᚗcomᚋlechitz�
 	return ret
 }
 
-func (ec *executionContext) marshalNAnalyticsPoint2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPoint(ctx context.Context, sel ast.SelectionSet, v *model.AnalyticsPoint) graphql.Marshaler {
+func (ec *executionContext) marshalNAnalyticsPoint2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsPoint(ctx context.Context, sel ast.SelectionSet, v *model.AnalyticsPoint) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -17858,11 +17859,11 @@ func (ec *executionContext) marshalNAnalyticsPoint2ᚖgithubᚗcomᚋlechitzᚋA
 	return ec._AnalyticsPoint(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNAnalyticsSeriesResult2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsSeriesResult(ctx context.Context, sel ast.SelectionSet, v model.AnalyticsSeriesResult) graphql.Marshaler {
+func (ec *executionContext) marshalNAnalyticsSeriesResult2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsSeriesResult(ctx context.Context, sel ast.SelectionSet, v model.AnalyticsSeriesResult) graphql.Marshaler {
 	return ec._AnalyticsSeriesResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNAnalyticsSeriesResult2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsSeriesResult(ctx context.Context, sel ast.SelectionSet, v *model.AnalyticsSeriesResult) graphql.Marshaler {
+func (ec *executionContext) marshalNAnalyticsSeriesResult2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐAnalyticsSeriesResult(ctx context.Context, sel ast.SelectionSet, v *model.AnalyticsSeriesResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -17888,11 +17889,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCategory2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v model.Category) graphql.Marshaler {
+func (ec *executionContext) marshalNCategory2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v model.Category) graphql.Marshaler {
 	return ec._Category(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Category) graphql.Marshaler {
+func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Category) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17916,7 +17917,7 @@ func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAion
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory(ctx, sel, v[i])
+			ret[i] = ec.marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17936,7 +17937,7 @@ func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlechitzᚋAion
 	return ret
 }
 
-func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
+func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -17946,11 +17947,11 @@ func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlechitzᚋAionApi
 	return ec._Category(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNChatContext2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatContext(ctx context.Context, sel ast.SelectionSet, v model.ChatContext) graphql.Marshaler {
+func (ec *executionContext) marshalNChatContext2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatContext(ctx context.Context, sel ast.SelectionSet, v model.ChatContext) graphql.Marshaler {
 	return ec._ChatContext(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNChatContext2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatContext(ctx context.Context, sel ast.SelectionSet, v *model.ChatContext) graphql.Marshaler {
+func (ec *executionContext) marshalNChatContext2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatContext(ctx context.Context, sel ast.SelectionSet, v *model.ChatContext) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -17960,11 +17961,11 @@ func (ec *executionContext) marshalNChatContext2ᚖgithubᚗcomᚋlechitzᚋAion
 	return ec._ChatContext(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNChatDataPack2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatDataPack(ctx context.Context, sel ast.SelectionSet, v model.ChatDataPack) graphql.Marshaler {
+func (ec *executionContext) marshalNChatDataPack2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatDataPack(ctx context.Context, sel ast.SelectionSet, v model.ChatDataPack) graphql.Marshaler {
 	return ec._ChatDataPack(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNChatDataPack2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatDataPack(ctx context.Context, sel ast.SelectionSet, v *model.ChatDataPack) graphql.Marshaler {
+func (ec *executionContext) marshalNChatDataPack2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatDataPack(ctx context.Context, sel ast.SelectionSet, v *model.ChatDataPack) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -17974,7 +17975,7 @@ func (ec *executionContext) marshalNChatDataPack2ᚖgithubᚗcomᚋlechitzᚋAio
 	return ec._ChatDataPack(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ChatMessage) graphql.Marshaler {
+func (ec *executionContext) marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ChatMessage) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17998,7 +17999,7 @@ func (ec *executionContext) marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋA
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNChatMessage2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessage(ctx, sel, v[i])
+			ret[i] = ec.marshalNChatMessage2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessage(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18018,7 +18019,7 @@ func (ec *executionContext) marshalNChatMessage2ᚕᚖgithubᚗcomᚋlechitzᚋA
 	return ret
 }
 
-func (ec *executionContext) marshalNChatMessage2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessage(ctx context.Context, sel ast.SelectionSet, v *model.ChatMessage) graphql.Marshaler {
+func (ec *executionContext) marshalNChatMessage2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐChatMessage(ctx context.Context, sel ast.SelectionSet, v *model.ChatMessage) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18028,32 +18029,32 @@ func (ec *executionContext) marshalNChatMessage2ᚖgithubᚗcomᚋlechitzᚋAion
 	return ec._ChatMessage(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCreateCategoryInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateCategoryInput(ctx context.Context, v any) (model.CreateCategoryInput, error) {
+func (ec *executionContext) unmarshalNCreateCategoryInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateCategoryInput(ctx context.Context, v any) (model.CreateCategoryInput, error) {
 	res, err := ec.unmarshalInputCreateCategoryInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateDashboardViewInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateDashboardViewInput(ctx context.Context, v any) (model.CreateDashboardViewInput, error) {
+func (ec *executionContext) unmarshalNCreateDashboardViewInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateDashboardViewInput(ctx context.Context, v any) (model.CreateDashboardViewInput, error) {
 	res, err := ec.unmarshalInputCreateDashboardViewInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateMetricAndWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateMetricAndWidgetInput(ctx context.Context, v any) (model.CreateMetricAndWidgetInput, error) {
+func (ec *executionContext) unmarshalNCreateMetricAndWidgetInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateMetricAndWidgetInput(ctx context.Context, v any) (model.CreateMetricAndWidgetInput, error) {
 	res, err := ec.unmarshalInputCreateMetricAndWidgetInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateRecordInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateRecordInput(ctx context.Context, v any) (model.CreateRecordInput, error) {
+func (ec *executionContext) unmarshalNCreateRecordInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateRecordInput(ctx context.Context, v any) (model.CreateRecordInput, error) {
 	res, err := ec.unmarshalInputCreateRecordInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateTagInput(ctx context.Context, v any) (model.CreateTagInput, error) {
+func (ec *executionContext) unmarshalNCreateTagInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCreateTagInput(ctx context.Context, v any) (model.CreateTagInput, error) {
 	res, err := ec.unmarshalInputCreateTagInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNDashboardGoal2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoalᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardGoal) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardGoal2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoalᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardGoal) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18077,7 +18078,7 @@ func (ec *executionContext) marshalNDashboardGoal2ᚕᚖgithubᚗcomᚋlechitz�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNDashboardGoal2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoal(ctx, sel, v[i])
+			ret[i] = ec.marshalNDashboardGoal2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoal(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18097,7 +18098,7 @@ func (ec *executionContext) marshalNDashboardGoal2ᚕᚖgithubᚗcomᚋlechitz�
 	return ret
 }
 
-func (ec *executionContext) marshalNDashboardGoal2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoal(ctx context.Context, sel ast.SelectionSet, v *model.DashboardGoal) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardGoal2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardGoal(ctx context.Context, sel ast.SelectionSet, v *model.DashboardGoal) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18107,7 +18108,7 @@ func (ec *executionContext) marshalNDashboardGoal2ᚖgithubᚗcomᚋlechitzᚋAi
 	return ec._DashboardGoal(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNDashboardMetric2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetricᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardMetric) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardMetric2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetricᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardMetric) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18131,7 +18132,7 @@ func (ec *executionContext) marshalNDashboardMetric2ᚕᚖgithubᚗcomᚋlechitz
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNDashboardMetric2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetric(ctx, sel, v[i])
+			ret[i] = ec.marshalNDashboardMetric2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetric(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18151,7 +18152,7 @@ func (ec *executionContext) marshalNDashboardMetric2ᚕᚖgithubᚗcomᚋlechitz
 	return ret
 }
 
-func (ec *executionContext) marshalNDashboardMetric2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetric(ctx context.Context, sel ast.SelectionSet, v *model.DashboardMetric) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardMetric2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardMetric(ctx context.Context, sel ast.SelectionSet, v *model.DashboardMetric) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18161,11 +18162,11 @@ func (ec *executionContext) marshalNDashboardMetric2ᚖgithubᚗcomᚋlechitzᚋ
 	return ec._DashboardMetric(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNDashboardSnapshot2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardSnapshot(ctx context.Context, sel ast.SelectionSet, v model.DashboardSnapshot) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardSnapshot2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardSnapshot(ctx context.Context, sel ast.SelectionSet, v model.DashboardSnapshot) graphql.Marshaler {
 	return ec._DashboardSnapshot(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNDashboardSnapshot2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardSnapshot(ctx context.Context, sel ast.SelectionSet, v *model.DashboardSnapshot) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardSnapshot2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardSnapshot(ctx context.Context, sel ast.SelectionSet, v *model.DashboardSnapshot) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18175,11 +18176,11 @@ func (ec *executionContext) marshalNDashboardSnapshot2ᚖgithubᚗcomᚋlechitz�
 	return ec._DashboardSnapshot(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNDashboardView2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx context.Context, sel ast.SelectionSet, v model.DashboardView) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardView2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx context.Context, sel ast.SelectionSet, v model.DashboardView) graphql.Marshaler {
 	return ec._DashboardView(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNDashboardView2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardViewᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardView) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardView2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardViewᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardView) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18203,7 +18204,7 @@ func (ec *executionContext) marshalNDashboardView2ᚕᚖgithubᚗcomᚋlechitz�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx, sel, v[i])
+			ret[i] = ec.marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18223,7 +18224,7 @@ func (ec *executionContext) marshalNDashboardView2ᚕᚖgithubᚗcomᚋlechitz�
 	return ret
 }
 
-func (ec *executionContext) marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx context.Context, sel ast.SelectionSet, v *model.DashboardView) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx context.Context, sel ast.SelectionSet, v *model.DashboardView) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18233,11 +18234,11 @@ func (ec *executionContext) marshalNDashboardView2ᚖgithubᚗcomᚋlechitzᚋAi
 	return ec._DashboardView(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNDashboardWidget2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidget) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardWidget2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidget) graphql.Marshaler {
 	return ec._DashboardWidget(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardWidget) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DashboardWidget) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18261,7 +18262,7 @@ func (ec *executionContext) marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitz
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget(ctx, sel, v[i])
+			ret[i] = ec.marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18281,7 +18282,7 @@ func (ec *executionContext) marshalNDashboardWidget2ᚕᚖgithubᚗcomᚋlechitz
 	return ret
 }
 
-func (ec *executionContext) marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget(ctx context.Context, sel ast.SelectionSet, v *model.DashboardWidget) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidget(ctx context.Context, sel ast.SelectionSet, v *model.DashboardWidget) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18291,11 +18292,11 @@ func (ec *executionContext) marshalNDashboardWidget2ᚖgithubᚗcomᚋlechitzᚋ
 	return ec._DashboardWidget(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNDashboardWidgetCatalog2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetCatalog(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidgetCatalog) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardWidgetCatalog2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetCatalog(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidgetCatalog) graphql.Marshaler {
 	return ec._DashboardWidgetCatalog(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNDashboardWidgetCatalog2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetCatalog(ctx context.Context, sel ast.SelectionSet, v *model.DashboardWidgetCatalog) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardWidgetCatalog2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetCatalog(ctx context.Context, sel ast.SelectionSet, v *model.DashboardWidgetCatalog) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18305,24 +18306,24 @@ func (ec *executionContext) marshalNDashboardWidgetCatalog2ᚖgithubᚗcomᚋlec
 	return ec._DashboardWidgetCatalog(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx context.Context, v any) (model.DashboardWidgetSize, error) {
+func (ec *executionContext) unmarshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx context.Context, v any) (model.DashboardWidgetSize, error) {
 	var res model.DashboardWidgetSize
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidgetSize) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidgetSize) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSizeᚄ(ctx context.Context, v any) ([]model.DashboardWidgetSize, error) {
+func (ec *executionContext) unmarshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSizeᚄ(ctx context.Context, v any) ([]model.DashboardWidgetSize, error) {
 	var vSlice []any
 	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]model.DashboardWidgetSize, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -18330,7 +18331,7 @@ func (ec *executionContext) unmarshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlech
 	return res, nil
 }
 
-func (ec *executionContext) marshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSizeᚄ(ctx context.Context, sel ast.SelectionSet, v []model.DashboardWidgetSize) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSizeᚄ(ctx context.Context, sel ast.SelectionSet, v []model.DashboardWidgetSize) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18354,7 +18355,7 @@ func (ec *executionContext) marshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechit
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx, sel, v[i])
+			ret[i] = ec.marshalNDashboardWidgetSize2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetSize(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18374,24 +18375,24 @@ func (ec *executionContext) marshalNDashboardWidgetSize2ᚕgithubᚗcomᚋlechit
 	return ret
 }
 
-func (ec *executionContext) unmarshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx context.Context, v any) (model.DashboardWidgetType, error) {
+func (ec *executionContext) unmarshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx context.Context, v any) (model.DashboardWidgetType, error) {
 	var res model.DashboardWidgetType
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidgetType) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx context.Context, sel ast.SelectionSet, v model.DashboardWidgetType) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetTypeᚄ(ctx context.Context, v any) ([]model.DashboardWidgetType, error) {
+func (ec *executionContext) unmarshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetTypeᚄ(ctx context.Context, v any) ([]model.DashboardWidgetType, error) {
 	var vSlice []any
 	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]model.DashboardWidgetType, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -18399,7 +18400,7 @@ func (ec *executionContext) unmarshalNDashboardWidgetType2ᚕgithubᚗcomᚋlech
 	return res, nil
 }
 
-func (ec *executionContext) marshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []model.DashboardWidgetType) graphql.Marshaler {
+func (ec *executionContext) marshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []model.DashboardWidgetType) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18423,7 +18424,7 @@ func (ec *executionContext) marshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechit
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx, sel, v[i])
+			ret[i] = ec.marshalNDashboardWidgetType2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardWidgetType(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18443,27 +18444,27 @@ func (ec *executionContext) marshalNDashboardWidgetType2ᚕgithubᚗcomᚋlechit
 	return ret
 }
 
-func (ec *executionContext) unmarshalNDeleteCategoryInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteCategoryInput(ctx context.Context, v any) (model.DeleteCategoryInput, error) {
+func (ec *executionContext) unmarshalNDeleteCategoryInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteCategoryInput(ctx context.Context, v any) (model.DeleteCategoryInput, error) {
 	res, err := ec.unmarshalInputDeleteCategoryInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNDeleteDashboardWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteDashboardWidgetInput(ctx context.Context, v any) (model.DeleteDashboardWidgetInput, error) {
+func (ec *executionContext) unmarshalNDeleteDashboardWidgetInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteDashboardWidgetInput(ctx context.Context, v any) (model.DeleteDashboardWidgetInput, error) {
 	res, err := ec.unmarshalInputDeleteDashboardWidgetInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNDeleteGoalTemplateInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteGoalTemplateInput(ctx context.Context, v any) (model.DeleteGoalTemplateInput, error) {
+func (ec *executionContext) unmarshalNDeleteGoalTemplateInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteGoalTemplateInput(ctx context.Context, v any) (model.DeleteGoalTemplateInput, error) {
 	res, err := ec.unmarshalInputDeleteGoalTemplateInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNDeleteRecordInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteRecordInput(ctx context.Context, v any) (model.DeleteRecordInput, error) {
+func (ec *executionContext) unmarshalNDeleteRecordInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteRecordInput(ctx context.Context, v any) (model.DeleteRecordInput, error) {
 	res, err := ec.unmarshalInputDeleteRecordInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNDeleteTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteTagInput(ctx context.Context, v any) (model.DeleteTagInput, error) {
+func (ec *executionContext) unmarshalNDeleteTagInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDeleteTagInput(ctx context.Context, v any) (model.DeleteTagInput, error) {
 	res, err := ec.unmarshalInputDeleteTagInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -18484,11 +18485,11 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
-func (ec *executionContext) marshalNGoalTemplate2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐGoalTemplate(ctx context.Context, sel ast.SelectionSet, v model.GoalTemplate) graphql.Marshaler {
+func (ec *executionContext) marshalNGoalTemplate2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐGoalTemplate(ctx context.Context, sel ast.SelectionSet, v model.GoalTemplate) graphql.Marshaler {
 	return ec._GoalTemplate(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNGoalTemplate2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐGoalTemplate(ctx context.Context, sel ast.SelectionSet, v *model.GoalTemplate) graphql.Marshaler {
+func (ec *executionContext) marshalNGoalTemplate2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐGoalTemplate(ctx context.Context, sel ast.SelectionSet, v *model.GoalTemplate) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18544,7 +18545,7 @@ func (ec *executionContext) marshalNID2ᚕstringᚄ(ctx context.Context, sel ast
 	return ret
 }
 
-func (ec *executionContext) marshalNInsightCard2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCardᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.InsightCard) graphql.Marshaler {
+func (ec *executionContext) marshalNInsightCard2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCardᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.InsightCard) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18568,7 +18569,7 @@ func (ec *executionContext) marshalNInsightCard2ᚕᚖgithubᚗcomᚋlechitzᚋA
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNInsightCard2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCard(ctx, sel, v[i])
+			ret[i] = ec.marshalNInsightCard2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCard(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18588,7 +18589,7 @@ func (ec *executionContext) marshalNInsightCard2ᚕᚖgithubᚗcomᚋlechitzᚋA
 	return ret
 }
 
-func (ec *executionContext) marshalNInsightCard2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCard(ctx context.Context, sel ast.SelectionSet, v *model.InsightCard) graphql.Marshaler {
+func (ec *executionContext) marshalNInsightCard2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightCard(ctx context.Context, sel ast.SelectionSet, v *model.InsightCard) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18598,7 +18599,7 @@ func (ec *executionContext) marshalNInsightCard2ᚖgithubᚗcomᚋlechitzᚋAion
 	return ec._InsightCard(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNInsightEvidence2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidenceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.InsightEvidence) graphql.Marshaler {
+func (ec *executionContext) marshalNInsightEvidence2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidenceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.InsightEvidence) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18622,7 +18623,7 @@ func (ec *executionContext) marshalNInsightEvidence2ᚕᚖgithubᚗcomᚋlechitz
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNInsightEvidence2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidence(ctx, sel, v[i])
+			ret[i] = ec.marshalNInsightEvidence2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidence(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18642,7 +18643,7 @@ func (ec *executionContext) marshalNInsightEvidence2ᚕᚖgithubᚗcomᚋlechitz
 	return ret
 }
 
-func (ec *executionContext) marshalNInsightEvidence2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidence(ctx context.Context, sel ast.SelectionSet, v *model.InsightEvidence) graphql.Marshaler {
+func (ec *executionContext) marshalNInsightEvidence2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightEvidence(ctx context.Context, sel ast.SelectionSet, v *model.InsightEvidence) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18652,13 +18653,13 @@ func (ec *executionContext) marshalNInsightEvidence2ᚖgithubᚗcomᚋlechitzᚋ
 	return ec._InsightEvidence(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow(ctx context.Context, v any) (model.InsightWindow, error) {
+func (ec *executionContext) unmarshalNInsightWindow2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow(ctx context.Context, v any) (model.InsightWindow, error) {
 	var res model.InsightWindow
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNInsightWindow2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow(ctx context.Context, sel ast.SelectionSet, v model.InsightWindow) graphql.Marshaler {
+func (ec *executionContext) marshalNInsightWindow2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐInsightWindow(ctx context.Context, sel ast.SelectionSet, v model.InsightWindow) graphql.Marshaler {
 	return v
 }
 
@@ -18678,11 +18679,11 @@ func (ec *executionContext) marshalNInt2int32(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNMetricDefinition2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition(ctx context.Context, sel ast.SelectionSet, v model.MetricDefinition) graphql.Marshaler {
+func (ec *executionContext) marshalNMetricDefinition2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition(ctx context.Context, sel ast.SelectionSet, v model.MetricDefinition) graphql.Marshaler {
 	return ec._MetricDefinition(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNMetricDefinition2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MetricDefinition) graphql.Marshaler {
+func (ec *executionContext) marshalNMetricDefinition2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MetricDefinition) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18706,7 +18707,7 @@ func (ec *executionContext) marshalNMetricDefinition2ᚕᚖgithubᚗcomᚋlechit
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition(ctx, sel, v[i])
+			ret[i] = ec.marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18726,7 +18727,7 @@ func (ec *executionContext) marshalNMetricDefinition2ᚕᚖgithubᚗcomᚋlechit
 	return ret
 }
 
-func (ec *executionContext) marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition(ctx context.Context, sel ast.SelectionSet, v *model.MetricDefinition) graphql.Marshaler {
+func (ec *executionContext) marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinition(ctx context.Context, sel ast.SelectionSet, v *model.MetricDefinition) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18736,7 +18737,7 @@ func (ec *executionContext) marshalNMetricDefinition2ᚖgithubᚗcomᚋlechitz�
 	return ec._MetricDefinition(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNMetricDefinitionSuggestion2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MetricDefinitionSuggestion) graphql.Marshaler {
+func (ec *executionContext) marshalNMetricDefinitionSuggestion2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MetricDefinitionSuggestion) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18760,7 +18761,7 @@ func (ec *executionContext) marshalNMetricDefinitionSuggestion2ᚕᚖgithubᚗco
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNMetricDefinitionSuggestion2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestion(ctx, sel, v[i])
+			ret[i] = ec.marshalNMetricDefinitionSuggestion2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestion(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18780,7 +18781,7 @@ func (ec *executionContext) marshalNMetricDefinitionSuggestion2ᚕᚖgithubᚗco
 	return ret
 }
 
-func (ec *executionContext) marshalNMetricDefinitionSuggestion2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestion(ctx context.Context, sel ast.SelectionSet, v *model.MetricDefinitionSuggestion) graphql.Marshaler {
+func (ec *executionContext) marshalNMetricDefinitionSuggestion2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐMetricDefinitionSuggestion(ctx context.Context, sel ast.SelectionSet, v *model.MetricDefinitionSuggestion) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18790,11 +18791,11 @@ func (ec *executionContext) marshalNMetricDefinitionSuggestion2ᚖgithubᚗcom�
 	return ec._MetricDefinitionSuggestion(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNRecord2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v model.Record) graphql.Marshaler {
+func (ec *executionContext) marshalNRecord2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v model.Record) graphql.Marshaler {
 	return ec._Record(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Record) graphql.Marshaler {
+func (ec *executionContext) marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Record) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18818,7 +18819,7 @@ func (ec *executionContext) marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionAp
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx, sel, v[i])
+			ret[i] = ec.marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18838,7 +18839,7 @@ func (ec *executionContext) marshalNRecord2ᚕᚖgithubᚗcomᚋlechitzᚋAionAp
 	return ret
 }
 
-func (ec *executionContext) marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v *model.Record) graphql.Marshaler {
+func (ec *executionContext) marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v *model.Record) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18848,7 +18849,7 @@ func (ec *executionContext) marshalNRecord2ᚖgithubᚗcomᚋlechitzᚋAionApi�
 	return ec._Record(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjectionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.RecordProjection) graphql.Marshaler {
+func (ec *executionContext) marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjectionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.RecordProjection) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18872,7 +18873,7 @@ func (ec *executionContext) marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechit
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNRecordProjection2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection(ctx, sel, v[i])
+			ret[i] = ec.marshalNRecordProjection2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18892,7 +18893,7 @@ func (ec *executionContext) marshalNRecordProjection2ᚕᚖgithubᚗcomᚋlechit
 	return ret
 }
 
-func (ec *executionContext) marshalNRecordProjection2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection(ctx context.Context, sel ast.SelectionSet, v *model.RecordProjection) graphql.Marshaler {
+func (ec *executionContext) marshalNRecordProjection2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection(ctx context.Context, sel ast.SelectionSet, v *model.RecordProjection) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18902,11 +18903,11 @@ func (ec *executionContext) marshalNRecordProjection2ᚖgithubᚗcomᚋlechitz�
 	return ec._RecordProjection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNRecordStats2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStats(ctx context.Context, sel ast.SelectionSet, v model.RecordStats) graphql.Marshaler {
+func (ec *executionContext) marshalNRecordStats2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStats(ctx context.Context, sel ast.SelectionSet, v model.RecordStats) graphql.Marshaler {
 	return ec._RecordStats(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNRecordStats2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStats(ctx context.Context, sel ast.SelectionSet, v *model.RecordStats) graphql.Marshaler {
+func (ec *executionContext) marshalNRecordStats2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStats(ctx context.Context, sel ast.SelectionSet, v *model.RecordStats) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -18916,14 +18917,14 @@ func (ec *executionContext) marshalNRecordStats2ᚖgithubᚗcomᚋlechitzᚋAion
 	return ec._RecordStats(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNReorderDashboardWidgetItemInput2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInputᚄ(ctx context.Context, v any) ([]*model.ReorderDashboardWidgetItemInput, error) {
+func (ec *executionContext) unmarshalNReorderDashboardWidgetItemInput2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInputᚄ(ctx context.Context, v any) ([]*model.ReorderDashboardWidgetItemInput, error) {
 	var vSlice []any
 	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]*model.ReorderDashboardWidgetItemInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNReorderDashboardWidgetItemInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNReorderDashboardWidgetItemInput2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -18931,22 +18932,22 @@ func (ec *executionContext) unmarshalNReorderDashboardWidgetItemInput2ᚕᚖgith
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNReorderDashboardWidgetItemInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInput(ctx context.Context, v any) (*model.ReorderDashboardWidgetItemInput, error) {
+func (ec *executionContext) unmarshalNReorderDashboardWidgetItemInput2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetItemInput(ctx context.Context, v any) (*model.ReorderDashboardWidgetItemInput, error) {
 	res, err := ec.unmarshalInputReorderDashboardWidgetItemInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNReorderDashboardWidgetsInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetsInput(ctx context.Context, v any) (model.ReorderDashboardWidgetsInput, error) {
+func (ec *executionContext) unmarshalNReorderDashboardWidgetsInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐReorderDashboardWidgetsInput(ctx context.Context, v any) (model.ReorderDashboardWidgetsInput, error) {
 	res, err := ec.unmarshalInputReorderDashboardWidgetsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNSearchFilters2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSearchFilters(ctx context.Context, v any) (model.SearchFilters, error) {
+func (ec *executionContext) unmarshalNSearchFilters2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSearchFilters(ctx context.Context, v any) (model.SearchFilters, error) {
 	res, err := ec.unmarshalInputSearchFilters(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNSetDefaultDashboardViewInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSetDefaultDashboardViewInput(ctx context.Context, v any) (model.SetDefaultDashboardViewInput, error) {
+func (ec *executionContext) unmarshalNSetDefaultDashboardViewInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐSetDefaultDashboardViewInput(ctx context.Context, v any) (model.SetDefaultDashboardViewInput, error) {
 	res, err := ec.unmarshalInputSetDefaultDashboardViewInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -18997,11 +18998,11 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
-func (ec *executionContext) marshalNTag2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx context.Context, sel ast.SelectionSet, v model.Tag) graphql.Marshaler {
+func (ec *executionContext) marshalNTag2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx context.Context, sel ast.SelectionSet, v model.Tag) graphql.Marshaler {
 	return ec._Tag(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Tag) graphql.Marshaler {
+func (ec *executionContext) marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Tag) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -19025,7 +19026,7 @@ func (ec *executionContext) marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApi�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx, sel, v[i])
+			ret[i] = ec.marshalNTag2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -19045,7 +19046,7 @@ func (ec *executionContext) marshalNTag2ᚕᚖgithubᚗcomᚋlechitzᚋAionApi�
 	return ret
 }
 
-func (ec *executionContext) marshalNTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx context.Context, sel ast.SelectionSet, v *model.Tag) graphql.Marshaler {
+func (ec *executionContext) marshalNTag2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx context.Context, sel ast.SelectionSet, v *model.Tag) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -19055,51 +19056,51 @@ func (ec *executionContext) marshalNTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋin
 	return ec._Tag(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUpdateCategoryInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateCategoryInput(ctx context.Context, v any) (model.UpdateCategoryInput, error) {
+func (ec *executionContext) unmarshalNUpdateCategoryInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateCategoryInput(ctx context.Context, v any) (model.UpdateCategoryInput, error) {
 	res, err := ec.unmarshalInputUpdateCategoryInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateRecordInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateRecordInput(ctx context.Context, v any) (model.UpdateRecordInput, error) {
+func (ec *executionContext) unmarshalNUpdateRecordInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateRecordInput(ctx context.Context, v any) (model.UpdateRecordInput, error) {
 	res, err := ec.unmarshalInputUpdateRecordInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateTagInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateTagInput(ctx context.Context, v any) (model.UpdateTagInput, error) {
+func (ec *executionContext) unmarshalNUpdateTagInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpdateTagInput(ctx context.Context, v any) (model.UpdateTagInput, error) {
 	res, err := ec.unmarshalInputUpdateTagInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpsertDashboardWidgetInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput(ctx context.Context, v any) (model.UpsertDashboardWidgetInput, error) {
+func (ec *executionContext) unmarshalNUpsertDashboardWidgetInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput(ctx context.Context, v any) (model.UpsertDashboardWidgetInput, error) {
 	res, err := ec.unmarshalInputUpsertDashboardWidgetInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpsertDashboardWidgetInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput(ctx context.Context, v any) (*model.UpsertDashboardWidgetInput, error) {
+func (ec *executionContext) unmarshalNUpsertDashboardWidgetInput2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertDashboardWidgetInput(ctx context.Context, v any) (*model.UpsertDashboardWidgetInput, error) {
 	res, err := ec.unmarshalInputUpsertDashboardWidgetInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpsertGoalTemplateInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertGoalTemplateInput(ctx context.Context, v any) (model.UpsertGoalTemplateInput, error) {
+func (ec *executionContext) unmarshalNUpsertGoalTemplateInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertGoalTemplateInput(ctx context.Context, v any) (model.UpsertGoalTemplateInput, error) {
 	res, err := ec.unmarshalInputUpsertGoalTemplateInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpsertMetricDefinitionInput2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput(ctx context.Context, v any) (model.UpsertMetricDefinitionInput, error) {
+func (ec *executionContext) unmarshalNUpsertMetricDefinitionInput2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput(ctx context.Context, v any) (model.UpsertMetricDefinitionInput, error) {
 	res, err := ec.unmarshalInputUpsertMetricDefinitionInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpsertMetricDefinitionInput2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput(ctx context.Context, v any) (*model.UpsertMetricDefinitionInput, error) {
+func (ec *executionContext) unmarshalNUpsertMetricDefinitionInput2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUpsertMetricDefinitionInput(ctx context.Context, v any) (*model.UpsertMetricDefinitionInput, error) {
 	res, err := ec.unmarshalInputUpsertMetricDefinitionInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUserStats2githubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats(ctx context.Context, sel ast.SelectionSet, v model.UserStats) graphql.Marshaler {
+func (ec *executionContext) marshalNUserStats2githubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats(ctx context.Context, sel ast.SelectionSet, v model.UserStats) graphql.Marshaler {
 	return ec._UserStats(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserStats2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats(ctx context.Context, sel ast.SelectionSet, v *model.UserStats) graphql.Marshaler {
+func (ec *executionContext) marshalNUserStats2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats(ctx context.Context, sel ast.SelectionSet, v *model.UserStats) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -19392,28 +19393,28 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
+func (ec *executionContext) marshalOCategory2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Category(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOCategoryCount2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryCount(ctx context.Context, sel ast.SelectionSet, v *model.CategoryCount) graphql.Marshaler {
+func (ec *executionContext) marshalOCategoryCount2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐCategoryCount(ctx context.Context, sel ast.SelectionSet, v *model.CategoryCount) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._CategoryCount(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalODashboardChecklist2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardChecklist(ctx context.Context, sel ast.SelectionSet, v *model.DashboardChecklist) graphql.Marshaler {
+func (ec *executionContext) marshalODashboardChecklist2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardChecklist(ctx context.Context, sel ast.SelectionSet, v *model.DashboardChecklist) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._DashboardChecklist(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalODashboardView2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx context.Context, sel ast.SelectionSet, v *model.DashboardView) graphql.Marshaler {
+func (ec *executionContext) marshalODashboardView2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐDashboardView(ctx context.Context, sel ast.SelectionSet, v *model.DashboardView) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -19527,21 +19528,21 @@ func (ec *executionContext) marshalOJSON2ᚖstring(ctx context.Context, sel ast.
 	return res
 }
 
-func (ec *executionContext) marshalORecord2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v *model.Record) graphql.Marshaler {
+func (ec *executionContext) marshalORecord2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v *model.Record) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Record(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalORecordProjection2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection(ctx context.Context, sel ast.SelectionSet, v *model.RecordProjection) graphql.Marshaler {
+func (ec *executionContext) marshalORecordProjection2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordProjection(ctx context.Context, sel ast.SelectionSet, v *model.RecordProjection) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._RecordProjection(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalORecordStatsFilters2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStatsFilters(ctx context.Context, v any) (*model.RecordStatsFilters, error) {
+func (ec *executionContext) unmarshalORecordStatsFilters2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐRecordStatsFilters(ctx context.Context, v any) (*model.RecordStatsFilters, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -19567,21 +19568,21 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOTag2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx context.Context, sel ast.SelectionSet, v *model.Tag) graphql.Marshaler {
+func (ec *executionContext) marshalOTag2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTag(ctx context.Context, sel ast.SelectionSet, v *model.Tag) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Tag(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOTagCount2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagCount(ctx context.Context, sel ast.SelectionSet, v *model.TagCount) graphql.Marshaler {
+func (ec *executionContext) marshalOTagCount2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐTagCount(ctx context.Context, sel ast.SelectionSet, v *model.TagCount) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._TagCount(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOUserStats2ᚖgithubᚗcomᚋlechitzᚋAionApiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats(ctx context.Context, sel ast.SelectionSet, v *model.UserStats) graphql.Marshaler {
+func (ec *executionContext) marshalOUserStats2ᚖgithubᚗcomᚋlechitzᚋaionᚑapiᚋinternalᚋadapterᚋprimaryᚋgraphqlᚋmodelᚐUserStats(ctx context.Context, sel ast.SelectionSet, v *model.UserStats) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

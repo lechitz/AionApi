@@ -6,12 +6,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/adapter/secondary/db/model"
-	repository "github.com/lechitz/AionApi/internal/eventoutbox/adapter/secondary/db/repository"
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/internal/eventoutbox/adapter/secondary/db/model"
+	repository "github.com/lechitz/aion-api/internal/eventoutbox/adapter/secondary/db/repository"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -35,7 +35,7 @@ func TestEventRepository_Save(t *testing.T) {
 		AggregateID:    "1",
 		EventType:      "record.created",
 		EventVersion:   "v1",
-		Source:         "aionapi",
+		Source:         "aion-api",
 		TraceID:        "trace-1",
 		RequestID:      "req-1",
 		Status:         "pending",

@@ -41,7 +41,7 @@ print_info() {
 
 # Check working directory and Compose
 if [ ! -f "go.mod" ]; then
-    print_error "Run this script from the AionApi project root!"
+    print_error "Run this script from the aion-api project root!"
     exit 1
 fi
 
@@ -90,7 +90,7 @@ print_header "PHASE 1: Checking created/updated files"
 files_to_check=(
     "infrastructure/observability/prometheus/prometheus.yml"
     "infrastructure/observability/grafana/datasources/jaeger.yaml"
-    "infrastructure/observability/grafana/dashboards/aionapi-red-dashboard.json"
+    "infrastructure/observability/grafana/dashboards/aion-api-red-dashboard.json"
     "docs/observability-runbook.md"
     "notes/v2/OBSERVABILITY_IMPLEMENTATION_GUIDE.md"
     "notes/v2/OBSERVABILITY_SUMMARY.md"
@@ -280,11 +280,11 @@ print_header "PHASE 8: Checking dashboards in Grafana"
 dashboards=$(curl -s -u "aion:aion" http://localhost:3000/api/search?type=dash-db 2>/dev/null || echo '[]')
 
 if command -v jq &> /dev/null; then
-    red_dashboard=$(echo "$dashboards" | jq -r '.[] | select(.uid=="aionapi-red-pro") | .title' 2>/dev/null || echo "")
+    red_dashboard=$(echo "$dashboards" | jq -r '.[] | select(.uid=="aion-api-red-pro") | .title' 2>/dev/null || echo "")
 
     if [ -n "$red_dashboard" ]; then
         print_success "RED dashboard found: $red_dashboard"
-        print_info "URL: http://localhost:3000/d/aionapi-red-pro"
+        print_info "URL: http://localhost:3000/d/aion-api-red-pro"
     else
         print_warning "RED dashboard not found (provisioning may take longer)"
         print_info "Check manually: http://localhost:3000/dashboards"
@@ -335,7 +335,7 @@ echo -e "${GREEN}✅ Containers verified${NC}"
 echo -e "${GREEN}✅ Services validated${NC}"
 echo ""
 echo -e "${BLUE}📊 Important URLs:${NC}"
-echo -e "   • RED dashboard: ${YELLOW}http://localhost:3000/d/aionapi-red-pro${NC}"
+echo -e "   • RED dashboard: ${YELLOW}http://localhost:3000/d/aion-api-red-pro${NC}"
 echo -e "   • Grafana:       ${YELLOW}http://localhost:3000${NC} (login: aion/aion)"
 echo -e "   • Jaeger:        ${YELLOW}http://localhost:16686${NC}"
 echo -e "   • Prometheus:    ${YELLOW}http://localhost:9090${NC}"

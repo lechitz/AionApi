@@ -5,8 +5,8 @@
 package usecase
 
 import (
-	"github.com/lechitz/AionApi/internal/category/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/category/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // Service provides operations for managing categories including creation, retrieval, updates, and soft deletion, using a repository and contextlogger.

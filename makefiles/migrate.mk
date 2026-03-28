@@ -3,7 +3,7 @@
 # ============================================================
 
 # Default dev database URL (used by migrate-dev-* commands)
-DEV_MIGRATION_DB ?= postgres://aion:aion123@localhost:5432/aionapi?sslmode=disable
+DEV_MIGRATION_DB ?= postgres://aion:aion123@localhost:5432/aion-api?sslmode=disable
 
 .PHONY: migrate-up migrate-down migrate-force migrate-new migrate-dev-up migrate-dev-down migrate-dev-status migrate-install
 

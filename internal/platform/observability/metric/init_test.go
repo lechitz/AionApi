@@ -4,7 +4,7 @@ package metric
 import (
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/config"
 	"github.com/stretchr/testify/require"
 )
 

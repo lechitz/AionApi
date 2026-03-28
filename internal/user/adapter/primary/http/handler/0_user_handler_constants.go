@@ -4,7 +4,7 @@ package handler
 import "errors"
 
 // TracerUserHandler is the tracer name for user handler operations in OpenTelemetry.
-const TracerUserHandler = "aionapi.user.handler"
+const TracerUserHandler = "aion-api.user.handler"
 
 // Span names for OpenTelemetry user handler operations.
 const (

@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/record/adapter/primary/graphql/controller"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/adapter/primary/graphql/controller"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

@@ -108,7 +108,7 @@ Current v1 restriction:
 Consumer compatibility rules:
 
 - additive changes are preferred
-- field removal or meaning changes require explicit coordinated updates across `AionApi`, `aion-web`, and `aion-chat`
+- field removal or meaning changes require explicit coordinated updates across `aion-api`, `aion-web`, and `aion-chat`
 - the first insight returned by `InsightFeed` is the dominant insight for that scope
 - consumers may humanize wording, but they must not reinterpret business meaning
 

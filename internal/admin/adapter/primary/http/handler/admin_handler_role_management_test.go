@@ -8,12 +8,12 @@ import (
 	"testing"
 
 	"github.com/go-chi/chi/v5"
-	handler "github.com/lechitz/AionApi/internal/admin/adapter/primary/http/handler"
-	admin "github.com/lechitz/AionApi/internal/admin/core/domain"
-	admininput "github.com/lechitz/AionApi/internal/admin/core/ports/input"
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	handler "github.com/lechitz/aion-api/internal/admin/adapter/primary/http/handler"
+	admin "github.com/lechitz/aion-api/internal/admin/core/domain"
+	admininput "github.com/lechitz/aion-api/internal/admin/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 	"github.com/stretchr/testify/require"
 )
 

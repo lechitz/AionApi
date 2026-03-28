@@ -6,12 +6,12 @@ import (
 	"errors"
 	"strconv"
 
-	eventoutboxinput "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
-	dbport "github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/record/core/ports/output"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
-	tagoutput "github.com/lechitz/AionApi/internal/tag/core/ports/output"
+	eventoutboxinput "github.com/lechitz/aion-api/internal/eventoutbox/core/ports/input"
+	dbport "github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/record/core/ports/output"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
+	tagoutput "github.com/lechitz/aion-api/internal/tag/core/ports/output"
 )
 
 // Service implements the record use cases.

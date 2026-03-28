@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel/trace"
 )
 

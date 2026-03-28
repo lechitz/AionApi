@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	adminmodel "github.com/lechitz/AionApi/internal/admin/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	usermodel "github.com/lechitz/AionApi/internal/user/adapter/secondary/db/model"
+	adminmodel "github.com/lechitz/aion-api/internal/admin/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	usermodel "github.com/lechitz/aion-api/internal/user/adapter/secondary/db/model"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

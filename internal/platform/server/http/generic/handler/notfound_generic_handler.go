@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/httpresponse"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/httpresponse"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 // NotFoundHandler handles 404 resource not found responses with a standardized error body.

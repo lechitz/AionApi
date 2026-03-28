@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	repository "github.com/lechitz/AionApi/internal/category/adapter/secondary/db/repository"
-	"github.com/lechitz/AionApi/internal/category/core/domain"
-	"github.com/lechitz/AionApi/tests/mocks"
+	repository "github.com/lechitz/aion-api/internal/category/adapter/secondary/db/repository"
+	"github.com/lechitz/aion-api/internal/category/core/domain"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 

@@ -4,8 +4,8 @@ package mapper
 import (
 	"time"
 
-	"github.com/lechitz/AionApi/internal/category/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/category/core/domain"
+	"github.com/lechitz/aion-api/internal/category/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/category/core/domain"
 	"gorm.io/gorm"
 )
 

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/tag/core/domain"
-	"github.com/lechitz/AionApi/internal/tag/core/usecase"
-	"github.com/lechitz/AionApi/tests/setup"
+	"github.com/lechitz/aion-api/internal/tag/core/domain"
+	"github.com/lechitz/aion-api/internal/tag/core/usecase"
+	"github.com/lechitz/aion-api/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

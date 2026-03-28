@@ -2,17 +2,17 @@
 package app
 
 import (
-	inputAdmin "github.com/lechitz/AionApi/internal/admin/core/ports/input"
-	inputAudit "github.com/lechitz/AionApi/internal/audit/core/ports/input"
-	inputAuth "github.com/lechitz/AionApi/internal/auth/core/ports/input"
-	inputCategory "github.com/lechitz/AionApi/internal/category/core/ports/input"
-	inputChat "github.com/lechitz/AionApi/internal/chat/core/ports/input"
-	inputEventOutbox "github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	inputRealtime "github.com/lechitz/AionApi/internal/realtime/core/ports/input"
-	inputRecord "github.com/lechitz/AionApi/internal/record/core/ports/input"
-	inputTag "github.com/lechitz/AionApi/internal/tag/core/ports/input"
-	inputUser "github.com/lechitz/AionApi/internal/user/core/ports/input"
+	inputAdmin "github.com/lechitz/aion-api/internal/admin/core/ports/input"
+	inputAudit "github.com/lechitz/aion-api/internal/audit/core/ports/input"
+	inputAuth "github.com/lechitz/aion-api/internal/auth/core/ports/input"
+	inputCategory "github.com/lechitz/aion-api/internal/category/core/ports/input"
+	inputChat "github.com/lechitz/aion-api/internal/chat/core/ports/input"
+	inputEventOutbox "github.com/lechitz/aion-api/internal/eventoutbox/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	inputRealtime "github.com/lechitz/aion-api/internal/realtime/core/ports/input"
+	inputRecord "github.com/lechitz/aion-api/internal/record/core/ports/input"
+	inputTag "github.com/lechitz/aion-api/internal/tag/core/ports/input"
+	inputUser "github.com/lechitz/aion-api/internal/user/core/ports/input"
 )
 
 // Dependencies exposes application services that primary adapters (HTTP/GraphQL) consume.

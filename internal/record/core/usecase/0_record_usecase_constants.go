@@ -7,8 +7,8 @@ import "errors"
 // =============================================================================
 
 // TracerName identifies the OpenTelemetry tracer for the Record usecase package.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.record.usecase"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.record.usecase"
 
 // -----------------------------------------------------------------------------
 // Span Names

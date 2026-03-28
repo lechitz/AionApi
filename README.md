@@ -1,10 +1,10 @@
-# AionApi
+# aion-api
 
-AionApi is a production-oriented Go backend that exposes REST and GraphQL APIs for habit and diary workflows, built with Hexagonal/Clean Architecture and strong observability.
+aion-api is a production-oriented Go backend that exposes REST and GraphQL APIs for habit and diary workflows, built with Hexagonal/Clean Architecture and strong observability.
 
 ## Why This Project
 
-AionApi focuses on three goals:
+aion-api focuses on three goals:
 
 - keep business logic isolated from transport and infrastructure
 - provide stable API contracts for multiple clients
@@ -12,8 +12,8 @@ AionApi focuses on three goals:
 
 ## Quick Links
 
-- Documentation portal: [AionApi Docs](https://lechitz.github.io/AionApi/)
-- REST explorer: [Swagger UI](https://lechitz.github.io/AionApi/swagger-ui/)
+- Documentation portal: [aion-api Docs](https://lechitz.github.io/aion-api/)
+- REST explorer: [Swagger UI](https://lechitz.github.io/aion-api/swagger-ui/)
 - OpenAPI contract: `contracts/openapi/swagger.yaml`
 - GraphQL schema artifact: [`docs/graphql/schema.graphql`](./docs/graphql/schema.graphql)
 - GraphQL shared mutations: [`contracts/graphql/mutations/README.md`](./contracts/graphql/mutations/README.md)
@@ -51,7 +51,7 @@ make verify
 
 ## Workspace Model
 
-`AionApi` is the operational hub of the current Aion v2 local stack.
+`aion-api` is the operational hub of the current Aion v2 local stack.
 
 Current integrated development assumes a multi-repo workspace with sibling repositories beside this one, including:
 
@@ -62,9 +62,9 @@ Current integrated development assumes a multi-repo workspace with sibling repos
 
 Implications:
 
-- `make build-dev` and `make dev` are intended for this multi-repo workspace, not for an isolated clone of `AionApi`
+- `make build-dev` and `make dev` are intended for this multi-repo workspace, not for an isolated clone of `aion-api`
 - the `event-backbone-gate` workflow and preflight are designed for a self-hosted runner with that workspace already available, and are intentionally manual (`workflow_dispatch`)
-- if you clone only `AionApi`, some integrated dev and runtime validation flows will not work until those sibling repos are also present
+- if you clone only `aion-api`, some integrated dev and runtime validation flows will not work until those sibling repos are also present
 
 ## Quality Gates
 
@@ -96,7 +96,7 @@ Canonical GraphQL operations:
 
 Current contract rules:
 
-- `AionApi` is the authority for schema, resolver behavior, and shared GraphQL artifacts.
+- `aion-api` is the authority for schema, resolver behavior, and shared GraphQL artifacts.
 - shared query documents under `contracts/graphql` must stay aligned with the live schema
 - consumers such as `aion-web` and `aion-chat` may adapt presentation, but must not invent richer business semantics than the backend exposes
 

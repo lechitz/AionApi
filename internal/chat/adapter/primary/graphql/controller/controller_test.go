@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/chat/adapter/primary/graphql/controller"
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
-	chatinput "github.com/lechitz/AionApi/internal/chat/core/ports/input"
+	"github.com/lechitz/aion-api/internal/chat/adapter/primary/graphql/controller"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
+	chatinput "github.com/lechitz/aion-api/internal/chat/core/ports/input"
 	"github.com/stretchr/testify/require"
 )
 

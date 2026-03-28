@@ -3,10 +3,10 @@ package handler
 import (
 	"net/http"
 
-	authmw "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/middleware"
-	authInput "github.com/lechitz/AionApi/internal/auth/core/ports/input"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
+	authmw "github.com/lechitz/aion-api/internal/auth/adapter/primary/http/middleware"
+	authInput "github.com/lechitz/aion-api/internal/auth/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/platform/server/http/ports"
 )
 
 // RegisterHTTP mounts realtime routes behind the auth middleware.

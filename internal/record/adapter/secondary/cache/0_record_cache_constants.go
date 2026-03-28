@@ -8,7 +8,7 @@ import "time"
 // =============================================================================
 
 // TracerName is the name of the tracer for record cache operations.
-const TracerName = "aionapi.record.cache"
+const TracerName = "aion-api.record.cache"
 
 // Span Names.
 const (

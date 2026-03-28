@@ -4,8 +4,8 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 // UserStats is the resolver for the userStats field.

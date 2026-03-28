@@ -6,8 +6,8 @@ package middleware
 // =============================================================================
 
 // TracerAuthMiddleware is the tracer name used by the auth middleware.
-// Format: aionapi.<domain>.<layer> .
-const TracerAuthMiddleware = "aionapi.auth.middleware"
+// Format: aion-api.<domain>.<layer> .
+const TracerAuthMiddleware = "aion-api.auth.middleware"
 
 // -----------------------------------------------------------------------------
 // Span Names

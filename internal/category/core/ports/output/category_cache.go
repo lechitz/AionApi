@@ -5,7 +5,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/category/core/domain"
+	"github.com/lechitz/aion-api/internal/category/core/domain"
 )
 
 // CategoryCache defines cache operations for categories.

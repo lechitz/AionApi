@@ -1,7 +1,7 @@
 package setup
 
 import (
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"go.uber.org/mock/gomock"
 )
 

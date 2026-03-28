@@ -4,9 +4,9 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/tag/core/domain"
-	"github.com/lechitz/AionApi/internal/tag/core/ports/input"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/tag/core/domain"
+	"github.com/lechitz/aion-api/internal/tag/core/ports/input"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

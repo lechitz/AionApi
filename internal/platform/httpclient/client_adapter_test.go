@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/httpclient"
+	"github.com/lechitz/aion-api/internal/platform/httpclient"
 )
 
 func newRestrictedSafeServer(t *testing.T, handler http.HandlerFunc) *httptest.Server {

@@ -3,8 +3,8 @@ package handler_test
 import (
 	"testing"
 
-	handler "github.com/lechitz/AionApi/internal/admin/adapter/primary/http/handler"
-	"github.com/lechitz/AionApi/internal/platform/config"
+	handler "github.com/lechitz/aion-api/internal/admin/adapter/primary/http/handler"
+	"github.com/lechitz/aion-api/internal/platform/config"
 	"github.com/stretchr/testify/require"
 )
 

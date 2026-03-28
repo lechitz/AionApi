@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"testing"
 
-	handlerpkg "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/handler"
-	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
+	handlerpkg "github.com/lechitz/aion-api/internal/auth/adapter/primary/http/handler"
+	"github.com/lechitz/aion-api/internal/platform/server/http/ports"
 	"github.com/stretchr/testify/require"
 )
 

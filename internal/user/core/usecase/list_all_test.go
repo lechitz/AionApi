@@ -5,8 +5,8 @@ import (
 	"errors"
 	"testing"
 
-	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
-	"github.com/lechitz/AionApi/tests/setup"
+	userdomain "github.com/lechitz/aion-api/internal/user/core/domain"
+	"github.com/lechitz/aion-api/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

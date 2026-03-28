@@ -4,7 +4,7 @@ package output
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
 )
 
 // ChatHistoryCache defines an interface for managing chat history in cache (Redis).

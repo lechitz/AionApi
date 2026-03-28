@@ -5,10 +5,10 @@ import (
 	"errors"
 	"testing"
 
-	userdomain "github.com/lechitz/AionApi/internal/user/core/domain"
-	userinput "github.com/lechitz/AionApi/internal/user/core/ports/input"
-	"github.com/lechitz/AionApi/internal/user/core/usecase"
-	"github.com/lechitz/AionApi/tests/setup"
+	userdomain "github.com/lechitz/aion-api/internal/user/core/domain"
+	userinput "github.com/lechitz/aion-api/internal/user/core/ports/input"
+	"github.com/lechitz/aion-api/internal/user/core/usecase"
+	"github.com/lechitz/aion-api/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

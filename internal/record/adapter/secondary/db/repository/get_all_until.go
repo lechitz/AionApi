@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/mapper"
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/mapper"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 // ListAllUntil returns records with event_time up to (and including) the given timestamp.

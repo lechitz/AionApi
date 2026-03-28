@@ -6,8 +6,8 @@ package repository
 // =============================================================================
 
 // TracerName is the name of the tracer used in the user repository.
-// Format: aionapi.<domain>.<layer>.
-const TracerName = "aionapi.user.repository"
+// Format: aion-api.<domain>.<layer>.
+const TracerName = "aion-api.user.repository"
 
 // -----------------------------------------------------------------------------
 // Span Names

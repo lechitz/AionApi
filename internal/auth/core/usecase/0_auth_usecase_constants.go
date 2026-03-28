@@ -21,8 +21,8 @@ const GracePeriodDuration = 60 * time.Second
 // =============================================================================
 
 // TracerName identifies the tracer used in auth use cases.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.auth.usecase"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.auth.usecase"
 
 // -----------------------------------------------------------------------------
 // Span Names

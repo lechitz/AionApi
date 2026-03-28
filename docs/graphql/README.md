@@ -47,7 +47,7 @@ intentionally coarse for v1:
 
 - `dashboardWidgetCatalog` exposes canonical widget types, coarse sizes, and
   large-card limits
-- widget records expose persisted `configJson`, but `AionApi` currently treats
+- widget records expose persisted `configJson`, but `aion-api` currently treats
   the richer visual layout grammar inside that JSON as a dashboard-owned concern
   rather than a server-validated schema
 

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`cmd/api` is the process entrypoint for the `AionApi` binary.
+`cmd/api` is the process entrypoint for the `aion-api` binary.
 It owns bootstrap, lifecycle, and process-level metadata only.
 
 ## Current Runtime Flow

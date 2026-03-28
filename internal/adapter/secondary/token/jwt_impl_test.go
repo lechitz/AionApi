@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/lechitz/AionApi/internal/adapter/secondary/token"
-	"github.com/lechitz/AionApi/internal/shared/constants/claimskeys"
+	"github.com/lechitz/aion-api/internal/adapter/secondary/token"
+	"github.com/lechitz/aion-api/internal/shared/constants/claimskeys"
 	"github.com/stretchr/testify/require"
 )
 

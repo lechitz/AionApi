@@ -5,10 +5,10 @@ import (
 	"os"
 	"sync"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	realtimeKafka "github.com/lechitz/AionApi/internal/realtime/adapter/secondary/kafka"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	realtimeKafka "github.com/lechitz/aion-api/internal/realtime/adapter/secondary/kafka"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	"go.uber.org/fx"
 )
 

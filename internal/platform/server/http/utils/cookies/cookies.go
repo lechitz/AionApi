@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/config"
 )
 
 // SetAuthCookie sets a secure HTTP-only authentication cookie with the given token and expiration configuration.

@@ -4,9 +4,9 @@ package controller
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
-	"github.com/lechitz/AionApi/internal/chat/core/ports/input"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/chat/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // ChatController is the contract used by GraphQL resolvers.

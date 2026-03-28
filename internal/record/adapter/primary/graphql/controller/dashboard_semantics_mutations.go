@@ -4,8 +4,8 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
-	"github.com/lechitz/AionApi/internal/record/core/ports/input"
+	"github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/record/core/ports/input"
 )
 
 func (c *controller) UpsertMetricDefinition(ctx context.Context, userID uint64, in model.UpsertMetricDefinitionInput) (*model.MetricDefinition, error) {

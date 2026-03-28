@@ -4,7 +4,7 @@ package output
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/audit/core/domain"
+	"github.com/lechitz/aion-api/internal/audit/core/domain"
 )
 
 // AuditActionEventRepository defines persistence contract for immutable audit events.

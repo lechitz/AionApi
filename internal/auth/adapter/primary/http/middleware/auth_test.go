@@ -7,12 +7,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/auth/adapter/primary/http/middleware"
-	authdomain "github.com/lechitz/AionApi/internal/auth/core/domain"
-	input "github.com/lechitz/AionApi/internal/auth/core/ports/input"
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/auth/adapter/primary/http/middleware"
+	authdomain "github.com/lechitz/aion-api/internal/auth/core/domain"
+	input "github.com/lechitz/aion-api/internal/auth/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 )
 
 type fakeAuthService struct {

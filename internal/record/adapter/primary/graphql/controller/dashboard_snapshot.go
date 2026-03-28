@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
-	"github.com/lechitz/AionApi/internal/record/core/ports/input"
+	"github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/record/core/ports/input"
 )
 
 // DashboardSnapshot returns aggregated deterministic metrics and goals for the day.

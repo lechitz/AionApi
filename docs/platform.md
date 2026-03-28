@@ -72,7 +72,7 @@ Recommended local environment:
 
 ```bash
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
-export OTEL_SERVICE_NAME="AionApi"
+export OTEL_SERVICE_NAME="aion-api"
 export OTEL_SERVICE_VERSION="0.0.1"
 ```
 

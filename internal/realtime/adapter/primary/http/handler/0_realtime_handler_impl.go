@@ -4,9 +4,9 @@ package handler
 import (
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	realtimeInput "github.com/lechitz/AionApi/internal/realtime/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	realtimeInput "github.com/lechitz/aion-api/internal/realtime/core/ports/input"
 )
 
 // Handler serves realtime SSE endpoints.

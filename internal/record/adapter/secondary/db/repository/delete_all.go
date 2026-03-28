@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/record/adapter/secondary/db/model"
 )
 
 // DeleteAllByUser performs a bulk soft delete for all records of a user.

@@ -1,6 +1,6 @@
 # GraphQL Guide
 
-This page is the practical GraphQL entrypoint for AionApi consumers.
+This page is the practical GraphQL entrypoint for aion-api consumers.
 
 ## Endpoints
 

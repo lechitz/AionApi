@@ -2,8 +2,8 @@
 package mapper
 
 import (
-	"github.com/lechitz/AionApi/internal/admin/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/admin/core/domain"
+	"github.com/lechitz/aion-api/internal/admin/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/admin/core/domain"
 )
 
 // RoleFromDB converts a model.RoleDB object into a domain.Role object.

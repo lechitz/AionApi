@@ -2,10 +2,10 @@
 package usecase
 
 import (
-	authOutput "github.com/lechitz/AionApi/internal/auth/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/hasher"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	userOutput "github.com/lechitz/AionApi/internal/user/core/ports/output"
+	authOutput "github.com/lechitz/aion-api/internal/auth/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/hasher"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	userOutput "github.com/lechitz/aion-api/internal/user/core/ports/output"
 )
 
 // Service provides an abstraction for user management, including creating, retrieving, updating, and deleting users, plus authentication handling.

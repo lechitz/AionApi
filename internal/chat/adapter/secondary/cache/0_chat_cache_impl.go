@@ -4,8 +4,8 @@ package cache
 import (
 	"fmt"
 
-	output "github.com/lechitz/AionApi/internal/platform/ports/output/cache"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	output "github.com/lechitz/aion-api/internal/platform/ports/output/cache"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // Store is a repository for managing chat history in cache.

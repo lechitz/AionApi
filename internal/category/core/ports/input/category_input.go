@@ -4,7 +4,7 @@ package input
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/category/core/domain"
+	"github.com/lechitz/aion-api/internal/category/core/domain"
 )
 
 // CategoryCreator defines a contract for creating a new handler within the system.

@@ -8,7 +8,7 @@ import "time"
 // =============================================================================
 
 // TracerName is the name of the tracer for user cache operations.
-const TracerName = "aionapi.user.cache"
+const TracerName = "aion-api.user.cache"
 
 // Span Names.
 const (

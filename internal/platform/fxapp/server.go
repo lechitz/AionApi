@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	serverHTTP "github.com/lechitz/AionApi/internal/platform/server/http"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	serverHTTP "github.com/lechitz/aion-api/internal/platform/server/http"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	"go.uber.org/fx"
 )
 

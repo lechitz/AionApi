@@ -4,7 +4,7 @@ package dto
 import (
 	"time"
 
-	"github.com/lechitz/AionApi/internal/user/core/ports/input"
+	"github.com/lechitz/aion-api/internal/user/core/ports/input"
 )
 
 // UpdateUserRequest represents the payload for updating user information.

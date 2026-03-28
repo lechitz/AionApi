@@ -5,7 +5,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/tag/core/domain"
+	"github.com/lechitz/aion-api/internal/tag/core/domain"
 )
 
 // TagCache defines cache operations for tags.

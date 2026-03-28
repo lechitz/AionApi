@@ -3,9 +3,9 @@ package usecase
 import (
 	"time"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/ports/input"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // PublisherService publishes pending outbox rows to the event backbone.

@@ -4,7 +4,7 @@ package output
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/admin/core/domain"
+	"github.com/lechitz/aion-api/internal/admin/core/domain"
 )
 
 // UserRoleUpdater defines an interface for updating user roles in the system.

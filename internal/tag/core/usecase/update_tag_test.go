@@ -4,10 +4,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/tag/core/domain"
-	"github.com/lechitz/AionApi/internal/tag/core/ports/input"
-	"github.com/lechitz/AionApi/tests/setup"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/tag/core/domain"
+	"github.com/lechitz/aion-api/internal/tag/core/ports/input"
+	"github.com/lechitz/aion-api/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

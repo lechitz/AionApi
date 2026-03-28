@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/adapter/secondary/db/mapper"
-	"github.com/lechitz/AionApi/internal/eventoutbox/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/eventoutbox/adapter/secondary/db/mapper"
+	"github.com/lechitz/aion-api/internal/eventoutbox/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 )
 
 // ListByStatus returns outbox events filtered by status for operational diagnostics.

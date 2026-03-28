@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/realtime/core/domain"
+	"github.com/lechitz/aion-api/internal/realtime/core/domain"
 )
 
 // Publish fans out a realtime event to subscribers of the same user.

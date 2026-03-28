@@ -10,7 +10,7 @@ This page is a convenience surface. If it drifts, `docs/graphql/schema.graphql` 
 <div style="border:1px solid #cfd8e3;border-radius:12px;overflow:hidden;height:82vh;background:#fff;">
   <iframe
     src="../tools/graphql-playground/index.html"
-    title="AionApi GraphQL Playground"
+    title="aion-api GraphQL Playground"
     style="width:100%;height:100%;border:0;"
     loading="lazy">
   </iframe>

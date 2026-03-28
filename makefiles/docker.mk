@@ -97,7 +97,7 @@ dev-down:
 
 rebuild-dev: build-dev
 	@echo "[REBUILD-DEV] Building images + starting FULL STACK (detached)..."
-	@echo "      → AionApi + aion-chat + dashboard + infrastructure"
+	@echo "      → aion-api + aion-chat + dashboard + infrastructure"
 	@echo "      ℹ️  Volumes preserved (Ollama models + Database)"
 	@echo "      💡 Use 'make dev' for fast startup without forced rebuild"
 	@echo ""
@@ -112,7 +112,7 @@ rebuild-dev: build-dev
 	@echo ""
 	@echo "⏳ Waiting for Database to be ready..."
 	@for i in $$(seq 1 30); do \
-		if docker exec postgres-dev pg_isready -U aion -d aionapi >/dev/null 2>&1; then \
+		if docker exec postgres-dev pg_isready -U aion -d aion-api >/dev/null 2>&1; then \
 			echo "✅ Database is ready!"; \
 			break; \
 		fi; \
@@ -124,7 +124,7 @@ rebuild-dev: build-dev
 	@echo ""
 	@echo "🗄️  Running database migrations..."
 	@if command -v migrate >/dev/null 2>&1; then \
-		migrate -path infrastructure/db/migrations -database "postgres://aion:aion123@localhost:5432/aionapi?sslmode=disable" up && \
+		migrate -path infrastructure/db/migrations -database "postgres://aion:aion123@localhost:5432/aion-api?sslmode=disable" up && \
 		echo "✅ Migrations applied successfully"; \
 	else \
 		echo "⚠️  'migrate' CLI not found. Run: make migrate-install"; \
@@ -181,14 +181,14 @@ dev-fast:
 	@echo ""
 	@echo "Waiting for Database..."
 	@for i in $$(seq 1 20); do \
-		if docker exec postgres-dev pg_isready -U aion -d aionapi >/dev/null 2>&1; then \
+		if docker exec postgres-dev pg_isready -U aion -d aion-api >/dev/null 2>&1; then \
 			break; \
 		fi; \
 		sleep 1; \
 	done
 	@echo " Applying migrations..."
 	@if command -v migrate >/dev/null 2>&1; then \
-		migrate -path infrastructure/db/migrations -database "postgres://aion:aion123@localhost:5432/aionapi?sslmode=disable" up 2>&1 | grep -v "no change" || true; \
+		migrate -path infrastructure/db/migrations -database "postgres://aion:aion123@localhost:5432/aion-api?sslmode=disable" up 2>&1 | grep -v "no change" || true; \
 	fi
 	@echo ""
 	@echo " Services started (using existing images)"
@@ -395,7 +395,7 @@ my:
 	@echo "This will:"
 	@echo "  ✓ Build aion-api:my, aion-chat:dev, aion-web:dev"
 	@echo "  ✓ Start ALL services (postgres-my, redis-my, etc.)"
-	@echo "  ✓ Use SEPARATE database (aionapi_my)"
+	@echo "  ✓ Use SEPARATE database (aion-api_my)"
 	@echo "  ✓ Share Ollama with dev environment (saves resources)"
 	@echo "  ✓ Enable hot-reload for all projects"
 	@echo ""
@@ -422,11 +422,11 @@ my:
 	@echo "✅ Personal environment started!"
 	@echo ""
 	@echo "📍 Services:"
-	@echo "   • AionAPI:       http://localhost:5001/aion/api/v1/health"
+	@echo "   • aion-api:       http://localhost:5001/aion/api/v1/health"
 	@echo "   • Dashboard:     http://localhost:5000"
 	@echo "   • Aion-Chat:     http://localhost:8000/health"
 	@echo "   • GraphQL:       http://localhost:5001/aion/graphql"
-	@echo "   • PostgreSQL:    localhost:5432 (DB: aionapi_my)"
+	@echo "   • PostgreSQL:    localhost:5432 (DB: aion-api_my)"
 	@echo "   • Redis:         localhost:6379"
 	@echo "   • Ollama:        http://localhost:11434 (shared with dev)"
 	@echo "   • Jaeger UI:     http://localhost:16686"
@@ -460,9 +460,9 @@ my-fast:
 	@echo "✅ Personal environment started!"
 	@echo ""
 	@echo "📍 Services:"
-	@echo "   • AionAPI:       http://localhost:5001/aion/api/v1/health"
+	@echo "   • aion-api:       http://localhost:5001/aion/api/v1/health"
 	@echo "   • Dashboard:     http://localhost:5000"
-	@echo "   • PostgreSQL:    localhost:5432 (DB: aionapi_my)"
+	@echo "   • PostgreSQL:    localhost:5432 (DB: aion-api_my)"
 	@echo ""
 	@echo "📋 Logs: make logs-all"
 	@echo "⏹️  Stop:  make my-down"
@@ -474,7 +474,7 @@ my-clean: clean-my
 clean-my:
 	@echo "[CLEAN-MY] Cleaning MY containers, volumes, images..."
 	@echo "      ⚠️  This will remove:"
-	@echo "         • PostgreSQL data (aionapi_my)"
+	@echo "         • PostgreSQL data (aion-api_my)"
 	@echo "         • Redis cache (redis-my)"
 	@echo "         • Localstack assets"
 	@echo "         • aion-api:my image"
@@ -565,13 +565,13 @@ docker-disk:
 	@docker ps -a | grep -E "(aion|dashboard)" || echo "   (none found)"
 	@echo ""
 	@echo "Tips:"
-	@echo "   make docker-prune-aion       → Clean only AionApi images/containers"
+	@echo "   make docker-prune-aion       → Clean only aion-api images/containers"
 	@echo "   make docker-prune-dangling   → Remove dangling images (safe)"
 	@echo "   make docker-prune-build-cache → Clear Docker build cache"
 
-# Clean ONLY AionApi-related images and containers (safe, preserves volumes)
+# Clean ONLY aion-api-related images and containers (safe, preserves volumes)
 docker-prune-aion:
-	@echo "Cleaning AionApi-related images and containers..."
+	@echo "Cleaning aion-api-related images and containers..."
 	@echo "   ⚠️  This will NOT delete volumes (PostgreSQL data, Ollama models)"
 	@echo ""
 	@echo "→ Stopping Aion containers..."
@@ -584,7 +584,7 @@ docker-prune-aion:
 	@echo "→ Removing dangling images from Aion builds..."
 	@docker images --filter "dangling=true" -q | xargs -r docker rmi 2>/dev/null || true
 	@echo ""
-	@echo "✅ AionApi cleanup complete!"
+	@echo "✅ aion-api cleanup complete!"
 	@echo "   Next 'make dev' will rebuild images from scratch (using cache)"
 
 # Remove dangling images only (safe, no data loss)
@@ -602,9 +602,9 @@ docker-prune-build-cache:
 	@echo ""
 	@echo "✅ Build cache cleared!"
 
-# Full prune for AionApi stack (containers + images + build cache, preserves volumes)
+# Full prune for aion-api stack (containers + images + build cache, preserves volumes)
 docker-prune-full:
-	@echo "Full AionApi Docker cleanup..."
+	@echo "Full aion-api Docker cleanup..."
 	@echo "   ⚠️  This will remove:"
 	@echo "      • All Aion containers"
 	@echo "      • All Aion images"

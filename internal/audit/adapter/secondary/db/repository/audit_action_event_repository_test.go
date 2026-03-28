@@ -5,11 +5,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/audit/adapter/secondary/db/model"
-	repository "github.com/lechitz/AionApi/internal/audit/adapter/secondary/db/repository"
-	"github.com/lechitz/AionApi/internal/audit/core/domain"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/internal/audit/adapter/secondary/db/model"
+	repository "github.com/lechitz/aion-api/internal/audit/adapter/secondary/db/repository"
+	"github.com/lechitz/aion-api/internal/audit/core/domain"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -45,7 +45,7 @@ func TestAuditActionEventRepository_Save(t *testing.T) {
 		EventID:      "evt-1",
 		TimestampUTC: time.Now().UTC(),
 		UserID:       10,
-		Source:       "aionapi",
+		Source:       "aion-api",
 		TraceID:      "trace-1",
 		UIActionType: "draft_accept",
 		DraftID:      "draft-1",

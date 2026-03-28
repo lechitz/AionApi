@@ -4,7 +4,7 @@
 
 ## Purpose
 
-This package composes the complete HTTP transport surface for `AionApi`.
+This package composes the complete HTTP transport surface for `aion-api`.
 It owns router creation, middleware wiring, Swagger/docs mounts, REST registrar composition, GraphQL mount, and health endpoints.
 
 ## Current Composition

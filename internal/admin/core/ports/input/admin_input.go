@@ -4,7 +4,7 @@ package input
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/admin/core/domain"
+	"github.com/lechitz/aion-api/internal/admin/core/domain"
 )
 
 // RoleUpdater defines methods for updating user roles in the system.

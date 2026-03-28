@@ -4,10 +4,10 @@ package handler
 import (
 	"net/http"
 
-	authMiddleware "github.com/lechitz/AionApi/internal/auth/adapter/primary/http/middleware"
-	"github.com/lechitz/AionApi/internal/auth/core/ports/input"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
+	authMiddleware "github.com/lechitz/aion-api/internal/auth/adapter/primary/http/middleware"
+	"github.com/lechitz/aion-api/internal/auth/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/platform/server/http/ports"
 )
 
 // RegisterHTTP attaches the chat routes to the given router.

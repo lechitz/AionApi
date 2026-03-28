@@ -1,6 +1,6 @@
-# AionApi Documentation
+# aion-api Documentation
 
-AionApi is a modular Go backend for habit and diary workflows, built with Hexagonal Architecture and strong observability by default.
+aion-api is a modular Go backend for habit and diary workflows, built with Hexagonal Architecture and strong observability by default.
 
 ## What You Can Do Here
 
@@ -14,10 +14,10 @@ AionApi is a modular Go backend for habit and diary workflows, built with Hexago
 
 ## Quick Links
 
-- Docs site: <https://lechitz.github.io/AionApi/>
-- Swagger UI: <https://lechitz.github.io/AionApi/swagger-ui/>
-- OpenAPI spec: <https://raw.githubusercontent.com/lechitz/AionApi/main/swagger/swagger.yaml>
-- Repository: <https://github.com/lechitz/AionApi>
+- Docs site: <https://lechitz.github.io/aion-api/>
+- Swagger UI: <https://lechitz.github.io/aion-api/swagger-ui/>
+- OpenAPI spec: <https://raw.githubusercontent.com/lechitz/aion-api/main/swagger/swagger.yaml>
+- Repository: <https://github.com/lechitz/aion-api>
 
 ## Recommended Reading Path
 

@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/category/adapter/secondary/db/mapper"
-	"github.com/lechitz/AionApi/internal/category/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/category/core/domain"
+	"github.com/lechitz/aion-api/internal/category/adapter/secondary/db/mapper"
+	"github.com/lechitz/aion-api/internal/category/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/category/core/domain"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )

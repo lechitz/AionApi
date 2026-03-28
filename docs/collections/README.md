@@ -11,7 +11,7 @@ The canonical REST contract still lives in `contracts/openapi/swagger.yaml`.
 
 | Path | Purpose |
 | --- | --- |
-| `postman/AionApi.postman_collection.json` | Postman collection covering auth, user, admin, chat, GraphQL, and health flows |
+| `postman/aion-api.postman_collection.json` | Postman collection covering auth, user, admin, chat, GraphQL, and health flows |
 
 ## Usage
 

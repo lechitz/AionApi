@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/auth/core/domain"
+	"github.com/lechitz/aion-api/internal/auth/core/domain"
 )
 
 // AuthStore abstracts persistence for the current valid token per user (access or refresh).

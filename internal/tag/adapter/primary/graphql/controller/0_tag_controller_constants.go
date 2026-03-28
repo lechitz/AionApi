@@ -8,8 +8,8 @@ import "errors"
 // =============================================================================
 
 // TracerName is the name of the tracer for Tag GraphQL controllers.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.tag.controller"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.tag.controller"
 
 // -----------------------------------------------------------------------------
 // Span Names

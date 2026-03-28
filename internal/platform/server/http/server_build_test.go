@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	serverhttp "github.com/lechitz/AionApi/internal/platform/server/http"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	serverhttp "github.com/lechitz/aion-api/internal/platform/server/http"
 	"github.com/stretchr/testify/require"
 )
 

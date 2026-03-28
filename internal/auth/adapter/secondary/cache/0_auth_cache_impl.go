@@ -2,8 +2,8 @@
 package cache
 
 import (
-	"github.com/lechitz/AionApi/internal/platform/ports/output/cache"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/cache"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // Store is a repository for managing tokens.

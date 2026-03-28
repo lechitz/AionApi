@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lechitz/AionApi/internal/audit/core/domain"
+	"github.com/lechitz/aion-api/internal/audit/core/domain"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -68,7 +68,7 @@ func normalizeEvent(event domain.AuditActionEvent) domain.AuditActionEvent {
 		event.TimestampUTC = time.Now().UTC()
 	}
 	if strings.TrimSpace(event.Source) == "" {
-		event.Source = "aionapi"
+		event.Source = "aion-api"
 	}
 	return event
 }

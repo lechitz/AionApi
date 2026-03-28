@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/audit/core/domain"
+	"github.com/lechitz/aion-api/internal/audit/core/domain"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

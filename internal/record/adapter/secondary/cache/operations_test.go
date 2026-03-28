@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	recordcache "github.com/lechitz/AionApi/internal/record/adapter/secondary/cache"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	recordcache "github.com/lechitz/aion-api/internal/record/adapter/secondary/cache"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 	"github.com/stretchr/testify/require"
 )
 

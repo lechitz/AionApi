@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/tag/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/tag/adapter/secondary/db/model"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

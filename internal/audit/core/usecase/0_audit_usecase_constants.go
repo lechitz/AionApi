@@ -3,7 +3,7 @@ package usecase
 
 const (
 	// TracerName is the tracer name for audit use cases.
-	TracerName = "aionapi.audit.usecase"
+	TracerName = "aion-api.audit.usecase"
 )
 
 const (

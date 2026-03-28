@@ -6,12 +6,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/adapter/secondary/db/postgres"
-	outboxrepo "github.com/lechitz/AionApi/internal/eventoutbox/adapter/secondary/db/repository"
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
-	platformcfg "github.com/lechitz/AionApi/internal/platform/config"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/keygen"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/adapter/secondary/db/postgres"
+	outboxrepo "github.com/lechitz/aion-api/internal/eventoutbox/adapter/secondary/db/repository"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
+	platformcfg "github.com/lechitz/aion-api/internal/platform/config"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/keygen"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 func run(cfg config) error {

@@ -1,8 +1,8 @@
 package mapper
 
 import (
-	dbmodel "github.com/lechitz/AionApi/internal/record/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	dbmodel "github.com/lechitz/aion-api/internal/record/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 // MetricDefinitionFromDB maps a DB metric definition row into the core domain model.

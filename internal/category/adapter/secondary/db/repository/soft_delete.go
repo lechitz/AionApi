@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/category/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/category/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"

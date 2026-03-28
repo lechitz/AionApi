@@ -8,8 +8,8 @@ import "time"
 // =============================================================================
 
 // TracerName is the name of the tracer for token cache operations.
-// Format: aionapi.<domain>.<layer>.
-const TracerName = "aionapi.auth.cache"
+// Format: aion-api.<domain>.<layer>.
+const TracerName = "aion-api.auth.cache"
 
 // -----------------------------------------------------------------------------
 // Span Names

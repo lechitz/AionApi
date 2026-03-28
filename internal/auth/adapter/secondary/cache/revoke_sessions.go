@@ -3,7 +3,7 @@ package cache
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
 )
 
 // RevokeUserSessions removes access and refresh tokens for the user.

@@ -7,8 +7,8 @@ import "errors"
 // =============================================================================
 
 // TracerName is the name of the tracer.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.category.usecase"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.category.usecase"
 
 // -----------------------------------------------------------------------------
 // Span Names

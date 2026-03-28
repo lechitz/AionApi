@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"strconv"
 
-	gmodel "github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
-	"github.com/lechitz/AionApi/internal/chat/core/domain"
+	gmodel "github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/chat/core/domain"
 )
 
 // safeInt32 safely converts int to int32 with range validation.

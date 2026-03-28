@@ -1,8 +1,8 @@
 package mapper
 
 import (
-	"github.com/lechitz/AionApi/internal/user/adapter/secondary/db/model"
-	"github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/user/adapter/secondary/db/model"
+	"github.com/lechitz/aion-api/internal/user/core/domain"
 )
 
 // RegistrationSessionFromDB maps db model to domain object.

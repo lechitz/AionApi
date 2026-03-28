@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	httperrors "github.com/lechitz/AionApi/internal/platform/server/http/errors"
+	httperrors "github.com/lechitz/aion-api/internal/platform/server/http/errors"
 )
 
 // MapErrorToHTTPStatus maps domain and validation errors to the correct HTTP status code.

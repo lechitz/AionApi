@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/record/adapter/primary/graphql/controller"
+	"github.com/lechitz/aion-api/internal/record/adapter/primary/graphql/controller"
 	"github.com/stretchr/testify/require"
 )
 

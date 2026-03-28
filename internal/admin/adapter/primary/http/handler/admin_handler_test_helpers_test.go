@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	admin "github.com/lechitz/AionApi/internal/admin/core/domain"
-	admininput "github.com/lechitz/AionApi/internal/admin/core/ports/input"
-	authdomain "github.com/lechitz/AionApi/internal/auth/core/domain"
-	authinput "github.com/lechitz/AionApi/internal/auth/core/ports/input"
-	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
+	admin "github.com/lechitz/aion-api/internal/admin/core/domain"
+	admininput "github.com/lechitz/aion-api/internal/admin/core/ports/input"
+	authdomain "github.com/lechitz/aion-api/internal/auth/core/domain"
+	authinput "github.com/lechitz/aion-api/internal/auth/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/server/http/ports"
 	"github.com/stretchr/testify/require"
 )
 

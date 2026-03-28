@@ -1,9 +1,9 @@
-// Package main AionAPI
+// Package main aion-api
 //
-// @title AionAPI — REST API Documentation
+// @title aion-api — REST API Documentation
 // @version 0.0.1
-// @description Public and internal REST API for AionAPI. Swagger (OpenAPI 3.x) is generated via swaggo.
-// @termsOfService  https://github.com/lechitz/AionApi
+// @description Public and internal REST API for aion-api. Swagger (OpenAPI 3.x) is generated via swaggo.
+// @termsOfService  https://github.com/lechitz/aion-api
 //
 // @contact.name   Lechitz
 // @contact.url    https://github.com/lechitz
@@ -31,13 +31,13 @@ package main
 import (
 	"path"
 
-	swagger "github.com/lechitz/AionApi/contracts/openapi"
-	"github.com/lechitz/AionApi/internal/platform/config"
+	swagger "github.com/lechitz/aion-api/contracts/openapi"
+	"github.com/lechitz/aion-api/internal/platform/config"
 )
 
 const (
 	// SwaggerTitle is the default human-readable title shown in the generated API documentation (Swagger/OpenAPI).
-	SwaggerTitle = "AionAPI — REST API"
+	SwaggerTitle = "aion-api — REST API"
 )
 
 // configureSwagger applies runtime metadata from the loaded application configuration to the generated Swagger/OpenAPI spec.

@@ -6,9 +6,9 @@ package http
 //revive:enable:var-naming
 
 import (
-	"github.com/lechitz/AionApi/internal/chat/core/ports/output"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/httpclient"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/chat/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/httpclient"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // AionChatClient is the HTTP client for communicating with Aion-Chat service.

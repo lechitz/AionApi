@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/usecase"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/usecase"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 	"github.com/stretchr/testify/require"
 )
 

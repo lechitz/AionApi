@@ -3,10 +3,10 @@ package usecase
 import (
 	"time"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/ports/input"
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/ports/output"
-	dbport "github.com/lechitz/AionApi/internal/platform/ports/output/db"
-	"github.com/lechitz/AionApi/internal/platform/ports/output/logger"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/ports/input"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/ports/output"
+	dbport "github.com/lechitz/aion-api/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/logger"
 )
 
 // Service provides durable enqueue operations for canonical outbox events.

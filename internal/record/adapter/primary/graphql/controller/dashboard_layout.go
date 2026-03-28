@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lechitz/AionApi/internal/adapter/primary/graphql/model"
-	"github.com/lechitz/AionApi/internal/record/core/domain"
-	"github.com/lechitz/AionApi/internal/record/core/ports/input"
+	"github.com/lechitz/aion-api/internal/adapter/primary/graphql/model"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/core/ports/input"
 )
 
 func (c *controller) ListDashboardViews(ctx context.Context, userID uint64) ([]*model.DashboardView, error) {

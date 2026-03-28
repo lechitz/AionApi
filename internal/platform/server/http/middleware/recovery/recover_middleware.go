@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/lechitz/AionApi/internal/platform/server/http/generic/handler"
+	"github.com/lechitz/aion-api/internal/platform/server/http/generic/handler"
 )
 
 // New is a middleware that recovers from panics, logs the error, and returns an internal server error response.

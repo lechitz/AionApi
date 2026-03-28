@@ -27,7 +27,7 @@ bash hack/dev/test-chat.sh
 
 ## Workspace Assumption
 
-These scripts assume the current multi-repo Aion workspace and local services already running from `AionApi`.
+These scripts assume the current multi-repo Aion workspace and local services already running from `aion-api`.
 
 - use them from the integrated local stack, not from an isolated clone
 - provide required secrets such as `AION_CHAT_SERVICE_KEY` through local env files or shell env

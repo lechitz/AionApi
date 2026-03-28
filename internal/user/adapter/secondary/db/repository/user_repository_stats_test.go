@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/ports/output/db"
+	"github.com/lechitz/aion-api/internal/platform/ports/output/db"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

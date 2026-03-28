@@ -4,7 +4,7 @@
 
 ## Purpose
 
-This package is the canonical source for typed runtime configuration, env defaults, and cross-section validation used to bootstrap `AionApi`.
+This package is the canonical source for typed runtime configuration, env defaults, and cross-section validation used to bootstrap `aion-api`.
 
 ## Canonical Source
 

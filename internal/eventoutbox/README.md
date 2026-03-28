@@ -4,7 +4,7 @@
 
 `internal/eventoutbox` owns the durable outbox that persists canonical backend events before publication to Kafka.
 
-It is the relay boundary between transactional writes inside `AionApi` and the wider event backbone.
+It is the relay boundary between transactional writes inside `aion-api` and the wider event backbone.
 
 ## Current Surface
 

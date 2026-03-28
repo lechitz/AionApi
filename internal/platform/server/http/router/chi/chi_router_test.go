@@ -5,8 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/ports"
-	chirouter "github.com/lechitz/AionApi/internal/platform/server/http/router/chi"
+	"github.com/lechitz/aion-api/internal/platform/server/http/ports"
+	chirouter "github.com/lechitz/aion-api/internal/platform/server/http/router/chi"
 )
 
 func TestChiRouter_BasicVerbsAndServeHTTP(t *testing.T) {

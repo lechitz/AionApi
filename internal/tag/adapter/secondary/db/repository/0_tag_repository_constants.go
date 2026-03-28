@@ -7,8 +7,8 @@ package repository
 // =============================================================================
 
 // TracerName is the tracer name used by the Tag repository.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.tag.repository"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.tag.repository"
 
 // -----------------------------------------------------------------------------
 // Span Names

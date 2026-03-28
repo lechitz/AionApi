@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/config"
-	handler "github.com/lechitz/AionApi/internal/user/adapter/primary/http/handler"
-	"github.com/lechitz/AionApi/internal/user/core/ports/input"
+	"github.com/lechitz/aion-api/internal/platform/config"
+	handler "github.com/lechitz/aion-api/internal/user/adapter/primary/http/handler"
+	"github.com/lechitz/aion-api/internal/user/core/ports/input"
 	"github.com/stretchr/testify/require"
 )
 

@@ -5,10 +5,10 @@ import (
 	"errors"
 	"testing"
 
-	admindomain "github.com/lechitz/AionApi/internal/admin/core/domain"
-	admininput "github.com/lechitz/AionApi/internal/admin/core/ports/input"
-	"github.com/lechitz/AionApi/internal/admin/core/usecase"
-	"github.com/lechitz/AionApi/tests/setup"
+	admindomain "github.com/lechitz/aion-api/internal/admin/core/domain"
+	admininput "github.com/lechitz/aion-api/internal/admin/core/ports/input"
+	"github.com/lechitz/aion-api/internal/admin/core/usecase"
+	"github.com/lechitz/aion-api/tests/setup"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )

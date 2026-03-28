@@ -6,8 +6,8 @@ package usecase
 // =============================================================================
 
 // TracerName is the name of the tracer for the chat service.
-// Format: aionapi.<domain>.<layer> .
-const TracerName = "aionapi.chat.usecase"
+// Format: aion-api.<domain>.<layer> .
+const TracerName = "aion-api.chat.usecase"
 
 // -----------------------------------------------------------------------------
 // Span Names

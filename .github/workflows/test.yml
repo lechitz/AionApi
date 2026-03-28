@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------
-# Test Workflow for AionAPI (Go)
+# Test Workflow for aion-api (Go)
 # Purpose: Run unit tests with race detection, JUnit reporting and proper caching.
 # Trigger: Pull Requests targeting the 'main' branch.
 # ---------------------------------------------------------------------

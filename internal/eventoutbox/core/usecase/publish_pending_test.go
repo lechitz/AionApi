@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/eventoutbox/core/domain"
+	"github.com/lechitz/aion-api/internal/eventoutbox/core/domain"
 )
 
 type stubEventRepository struct {

@@ -4,7 +4,7 @@ package input
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/audit/core/domain"
+	"github.com/lechitz/aion-api/internal/audit/core/domain"
 )
 
 // Service defines audit use cases for writing and querying immutable action events.

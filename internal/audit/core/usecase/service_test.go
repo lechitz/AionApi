@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/audit/core/domain"
-	"github.com/lechitz/AionApi/internal/audit/core/usecase"
-	"github.com/lechitz/AionApi/tests/mocks"
+	"github.com/lechitz/aion-api/internal/audit/core/domain"
+	"github.com/lechitz/aion-api/internal/audit/core/usecase"
+	"github.com/lechitz/aion-api/tests/mocks"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -52,7 +52,7 @@ func TestWriteEvent(t *testing.T) {
 		repo.EXPECT().Save(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, got domain.AuditActionEvent) error {
 			require.NotEmpty(t, got.EventID)
 			require.False(t, got.TimestampUTC.IsZero())
-			require.Equal(t, "aionapi", got.Source)
+			require.Equal(t, "aion-api", got.Source)
 			return nil
 		})
 

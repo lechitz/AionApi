@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/server/http/utils/sharederrors"
-	"github.com/lechitz/AionApi/internal/shared/constants/commonkeys"
-	"github.com/lechitz/AionApi/internal/user/core/ports/input"
-	userOutput "github.com/lechitz/AionApi/internal/user/core/ports/output"
+	"github.com/lechitz/aion-api/internal/platform/server/http/utils/sharederrors"
+	"github.com/lechitz/aion-api/internal/shared/constants/commonkeys"
+	"github.com/lechitz/aion-api/internal/user/core/ports/input"
+	userOutput "github.com/lechitz/aion-api/internal/user/core/ports/output"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )

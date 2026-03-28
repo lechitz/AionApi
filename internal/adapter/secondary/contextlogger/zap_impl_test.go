@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/adapter/secondary/contextlogger"
-	"github.com/lechitz/AionApi/internal/shared/constants/ctxkeys"
+	"github.com/lechitz/aion-api/internal/adapter/secondary/contextlogger"
+	"github.com/lechitz/aion-api/internal/shared/constants/ctxkeys"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/otel/trace"
 )

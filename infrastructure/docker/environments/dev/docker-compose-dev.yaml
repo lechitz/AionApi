@@ -306,7 +306,7 @@ services:
       - DLQ_TOPIC=aion.record.events.dlq.v1
       - MAX_RETRIES=3
       - RETRY_BACKOFF_MS=250
-      - PROJECTION_STORE_DSN=postgres://aion:aion123@postgres:5432/aionapi?sslmode=disable
+      - PROJECTION_STORE_DSN=postgres://aion:aion123@postgres:5432/aion-api?sslmode=disable
       - READINESS_MAX_STALENESS_SECS=120
       - GRACEFUL_TIMEOUT_SECS=10
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
@@ -345,7 +345,7 @@ services:
       - DLQ_TOPIC=aion.record.events.dlq.v1
       - MAX_RETRIES=3
       - RETRY_BACKOFF_MS=250
-      - PROJECTION_STORE_DSN=postgres://aion:aion123@postgres:5432/aionapi?sslmode=disable
+      - PROJECTION_STORE_DSN=postgres://aion:aion123@postgres:5432/aion-api?sslmode=disable
       - GRACEFUL_TIMEOUT_SECS=10
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
     networks:

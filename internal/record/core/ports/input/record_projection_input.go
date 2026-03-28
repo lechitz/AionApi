@@ -3,7 +3,7 @@ package input
 import (
 	"context"
 
-	"github.com/lechitz/AionApi/internal/record/core/domain"
+	"github.com/lechitz/aion-api/internal/record/core/domain"
 )
 
 // RecordProjectionRetriever defines derived projection read operations.

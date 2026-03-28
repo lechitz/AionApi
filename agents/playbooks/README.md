@@ -1,6 +1,6 @@
-# Playbooks (AionAPI)
+# Playbooks (aion-api)
 
-This folder contains step-by-step workflows used by AionAPI governance. Playbooks define **how** to execute common tasks safely and consistently.
+This folder contains step-by-step workflows used by aion-api governance. Playbooks define **how** to execute common tasks safely and consistently.
 
 ## What You Will Find Here
 

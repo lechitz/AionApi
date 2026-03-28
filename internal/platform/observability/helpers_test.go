@@ -3,7 +3,7 @@ package observability_test
 import (
 	"testing"
 
-	"github.com/lechitz/AionApi/internal/platform/observability"
+	"github.com/lechitz/aion-api/internal/platform/observability"
 	"github.com/stretchr/testify/require"
 )
 

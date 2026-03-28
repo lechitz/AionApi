@@ -4,7 +4,7 @@ package input
 import (
 	"context"
 
-	authdomain "github.com/lechitz/AionApi/internal/auth/core/domain"
+	authdomain "github.com/lechitz/aion-api/internal/auth/core/domain"
 )
 
 // Validator validates a raw token and returns the resolved userID and claims.

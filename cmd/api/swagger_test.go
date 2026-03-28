@@ -3,8 +3,8 @@ package main
 import (
 	"testing"
 
-	swagger "github.com/lechitz/AionApi/contracts/openapi"
-	"github.com/lechitz/AionApi/internal/platform/config"
+	swagger "github.com/lechitz/aion-api/contracts/openapi"
+	"github.com/lechitz/aion-api/internal/platform/config"
 )
 
 func TestConfigureSwagger(t *testing.T) {

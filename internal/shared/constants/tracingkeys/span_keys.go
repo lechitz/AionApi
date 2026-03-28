@@ -7,7 +7,7 @@
 //
 // Each bounded context should define its own tracing constants locally in
 // internal/<ctx>/core/usecase/*_constants.go including:
-//   - TracerName (e.g., "aionapi.category.usecase")
+//   - TracerName (e.g., "aion-api.category.usecase")
 //   - Span names (e.g., "category.create")
 //   - Event names (e.g., "category.cache.hit")
 //   - Status descriptions (e.g., "created", "retrieved")

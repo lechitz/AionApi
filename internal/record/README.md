@@ -24,7 +24,7 @@ Handles record lifecycle and query flows with strict user-scoped validation.
 - Keep persistence concerns in secondary adapters.
 - Dashboard white-label layout rules are enforced in usecase layer (including large-card limits).
 - Widget layout remains a two-tier v1 contract:
-  - `AionApi` owns widget types, coarse sizes, view persistence, ordering, and large-card limits
+  - `aion-api` owns widget types, coarse sizes, view persistence, ordering, and large-card limits
   - `aion-web` owns the richer visual grammar stored in `configJson`, including grid dimensions and free placement coordinates
 - `dashboardSnapshot` now carries an explicit checklist-oriented payload for
   count-based checklist widgets, so the dashboard no longer has to infer

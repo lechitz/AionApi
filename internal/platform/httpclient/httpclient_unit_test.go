@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/platform/httpclient"
+	"github.com/lechitz/aion-api/internal/platform/httpclient"
 )
 
 type roundTripperFunc func(*http.Request) (*http.Response, error)

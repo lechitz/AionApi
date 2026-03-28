@@ -5,7 +5,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/lechitz/AionApi/internal/user/core/domain"
+	"github.com/lechitz/aion-api/internal/user/core/domain"
 )
 
 // UserCache defines operations for caching user profile data.

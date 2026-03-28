@@ -30,7 +30,7 @@
       "title": "View Traces in Jaeger",
       "tooltip": "Open Jaeger UI",
       "type": "link",
-      "url": "http://localhost:16686/search?service=AionApi&operation=${endpoint}&start=${__from:date:seconds}000000&end=${__to:date:seconds}000000&limit=50&lookback=custom"
+      "url": "http://localhost:16686/search?service=aion-api&operation=${endpoint}&start=${__from:date:seconds}000000&end=${__to:date:seconds}000000&limit=50&lookback=custom"
     }
   ],
   "panels": [
@@ -52,7 +52,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<div style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);\">\n  <div style=\"font-size: 2.5rem; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);\">\n    🚀 AionAPI — Service Performance Monitoring\n  </div>\n  <div style=\"text-align: center; color: #e0e0e0; font-size: 0.95rem; margin-top: 8px;\">\n    Real-time RED Metrics (Request Rate • Error Rate • Duration) | Click data points to view traces\n  </div>\n</div>",
+        "content": "<div style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);\">\n  <div style=\"font-size: 2.5rem; font-weight: 700; text-align: center; color: #ffffff; letter-spacing: 1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);\">\n    🚀 aion-api — Service Performance Monitoring\n  </div>\n  <div style=\"text-align: center; color: #e0e0e0; font-size: 0.95rem; margin-top: 8px;\">\n    Real-time RED Metrics (Request Rate • Error Rate • Duration) | Click data points to view traces\n  </div>\n</div>",
         "mode": "html"
       },
       "pluginVersion": "10.4.2",
@@ -500,7 +500,7 @@
             {
               "targetBlank": true,
               "title": "View Traces in Jaeger",
-              "url": "http://localhost:16686/search?service=AionApi&operation=${__field.labels.http_route}&tags=%7B%22http.route%22%3A%22${__field.labels.http_route}%22%7D&start=${__from:date:seconds}000000&end=${__to:date:seconds}000000&limit=50&lookback=custom&maxDuration&minDuration"
+              "url": "http://localhost:16686/search?service=aion-api&operation=${__field.labels.http_route}&tags=%7B%22http.route%22%3A%22${__field.labels.http_route}%22%7D&start=${__from:date:seconds}000000&end=${__to:date:seconds}000000&limit=50&lookback=custom&maxDuration&minDuration"
             }
           ],
           "mappings": [],
@@ -608,7 +608,7 @@
             {
               "targetBlank": true,
               "title": "View Error Traces in Jaeger",
-              "url": "http://localhost:16686/search?service=AionApi&operation=${__field.labels.http_route}&tags=%7B%22error%22%3A%22true%22%7D&start=${__from:date:seconds}000000&end=${__to:date:seconds}000000&limit=20"
+              "url": "http://localhost:16686/search?service=aion-api&operation=${__field.labels.http_route}&tags=%7B%22error%22%3A%22true%22%7D&start=${__from:date:seconds}000000&end=${__to:date:seconds}000000&limit=20"
             }
           ],
           "mappings": [],
@@ -717,7 +717,7 @@
             {
               "targetBlank": true,
               "title": "View Traces",
-              "url": "http://localhost:16686/search?service=AionApi&operation=${__data.fields.Endpoint}&tags=%7B%22http.route%22%3A%22${__data.fields.Endpoint}%22%7D&start=${__from:date:seconds}000000&end=${__to:date:seconds}000000&limit=50&lookback=custom"
+              "url": "http://localhost:16686/search?service=aion-api&operation=${__data.fields.Endpoint}&tags=%7B%22http.route%22%3A%22${__data.fields.Endpoint}%22%7D&start=${__from:date:seconds}000000&end=${__to:date:seconds}000000&limit=50&lookback=custom"
             }
           ],
           "mappings": [],
@@ -1418,7 +1418,7 @@
   "refresh": "10s",
   "schemaVersion": 39,
   "tags": [
-    "aionapi",
+    "aion-api",
     "red",
     "spm",
     "observability",
@@ -1470,8 +1470,8 @@
     ]
   },
   "timezone": "browser",
-  "title": "AionAPI - RED Metrics Dashboard (Professional)",
-  "uid": "aionapi-red-pro",
+  "title": "aion-api - RED Metrics Dashboard (Professional)",
+  "uid": "aion-api-red-pro",
   "version": 1,
   "weekStart": ""
 }
